@@ -7084,7 +7084,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
   const TRAFFIC_FINALS = 320;   // inside this of its berth a hauler stops giving way
   const OUTER_MARKER   = 300;   // ...and runs in along its own bearing from here
   const FEND_OFF       = 420;   // hard personal space, honoured even on finals
-  const SCREEN_ANCHOR_Y = 0.58; // camera anchor point as a fraction of screen height (0.5 = dead center); pushed down slightly so the ship isn't tucked under the top dock
+  let SCREEN_ANCHOR_Y = 0.58; // camera anchor point as a fraction of screen height (0.5 = dead center); pushed down slightly so the ship isn't tucked under the top dock
   /* HOW MANY PIXELS THE OVERLAY IS WORTH.
      A phone runs this game about five times faster than a desktop does, and
      the reason is not the processor -- it is that a desktop was being asked to
@@ -17205,7 +17205,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
        The TRACTOR is the one exception, and has to be: it is a tool, not a
        gun, and sweeping it across a rock you are trying to tow while spraying
        bolts into that rock would break the very thing you were reaching for. */
-    if (mode !== "TRACTOR_BEAM") fireTwinLasers();
+    if (mode !== "TRACTOR_BEAM" && !__padSpecialOnly) fireTwinLasers();   // the pad's SPECIALTY button fires only the specialty
 
     /* The lasers have already gone — they always do. What follows is the
        expensive half, and it does not happen if there is nothing out there to
@@ -17361,6 +17361,38 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
   window.addEventListener("pointerleave", releaseHelm);
   document.addEventListener("visibilitychange", () => { if (document.hidden) releaseHelm(); });
   container.style.touchAction = "none";
+  /* THE PHONE PAD'S WAY IN. The pad is a separate script (end of the page);
+     these are the only things it can touch. */
+  let __stickHeld = false;
+  var __padSpecialOnly = false;
+  window.__8G_SPACE = {
+    steer(x, y, on) {
+      __stickHeld = !!on;
+      if (!on) { moveTarget = null; return; }
+      if (gamePaused || dockedAt || minedAt || bridgeOpen) return;
+      const m = Math.hypot(x, y);
+      if (m < 0.05) { moveTarget = null; return; }
+      const R = 160 + 1500 * Math.min(1, m);
+      moveTarget = { x: pX + x / m * R, y: pY + y / m * R };
+    },
+    lasers() {
+      if (gamePaused || dockedAt || minedAt || bridgeOpen) return false;
+      if (playerWebUntil && globalTick < playerWebUntil) return false;
+      lastCombatTick = globalTick; stillTimer = 0;
+      if (!scopeOn && !volley) aimAssist("TWIN_LASERS");
+      fireTwinLasers(); return true;
+    },
+    special() {
+      if (gamePaused || dockedAt || minedAt || bridgeOpen) return false;
+      __padSpecialOnly = true;
+      try { fireActiveWeapon(); } finally { __padSpecialOnly = false; }
+      return true;
+    },
+    weapon() { return weaponSystems[activeWeaponIndex]; },
+    busy() { return !!(gamePaused || dockedAt || minedAt || bridgeOpen); },
+    anchor(v) { if (v > 0.2 && v < 0.8) SCREEN_ANCHOR_Y = v; return SCREEN_ANCHOR_Y; },
+    ship() { return { x: pX, y: pY, target: moveTarget, lasers: playerLasers.length, energy: playerEnergy }; }
+  };
 
   function drawFlagshipCanvas(ctx, cX, cY, angle) {
     ctx.save(); ctx.translate(cX, cY); ctx.rotate(angle - Math.PI / 2); ctx.scale(0.85, 0.85);
@@ -20289,7 +20321,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
 
            Hand-flying is untouched: if you are holding the screen, the ship goes
            exactly where you point it, into a rock if that is what you want. */
-        if (!pointerActive) {
+        if (!pointerActive && !__stickHeld) {
           /* IT LOOKS FOR THE GAP, NOT THE ROCK.
              Leaning away from the nearest rock is fine in open sky and useless
              in a belt: shove off one rock and you are pointed at the next, and
@@ -20389,7 +20421,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
     }
     vX *= 0.94; vY *= 0.94; pX += vX * timeScale; pY += vY * timeScale;
 
-    let activeInputHeld = pointerIsHolding && !!moveTarget;
+    let activeInputHeld = (pointerIsHolding || __stickHeld) && !!moveTarget;
 
     playerProxy.x = pX; playerProxy.y = pY; playerProxy.vx = vX; playerProxy.vy = vY;
     playerProxy.heading = pAngle;
@@ -23259,6 +23291,134 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
     } catch (err) { console.error('test helm:', err); }
   }
   requestAnimationFrame(loop);
+</script>
+
+<script id="space-pad">
+/* SPACE PAD (Ben, 27 Sep) — touch screens only, except the centring, which
+   every screen gets. Drives window.__8G_SPACE, which the map exposes. */
+(function () {
+  var touch = false;
+  try { touch = matchMedia('(pointer: coarse)').matches; } catch (e) {}
+  if (window.__8G_FORCE_TOUCH) touch = true;
+  if (window.__8G_NO_TOUCH) touch = false;
+  var S = function () { return window.__8G_SPACE; };
+
+  /* THE SHIP IN THE MIDDLE, north to south, of the sky you can actually see:
+     between the bottom of the top bar and the top of whatever sits along the
+     bottom (the pad on a phone, the compass and fuel gauge on a desk). */
+  function centre() {
+    var api = S(); if (!api) return;
+    var vh = innerHeight, top = 0, bottom = vh;
+    var dock = document.getElementById('bottomDock');
+    if (dock) { var r = dock.getBoundingClientRect(); if (r.bottom > 0 && r.bottom < vh * 0.4) top = r.bottom; }
+    if (touch) bottom = vh - 128;
+    else {
+      ['home-compass', 'helm-cluster'].forEach(function (id) {
+        var e = document.getElementById(id); if (!e) return;
+        var r = e.getBoundingClientRect(); if (r.height && getComputedStyle(e).display !== 'none' && r.top > vh * 0.5) bottom = Math.min(bottom, r.top);
+      });
+    }
+    api.anchor(((top + bottom) / 2) / vh);
+  }
+  setInterval(centre, 500);
+  addEventListener('resize', centre);
+  if (!touch) return;
+  document.documentElement.classList.add('pc-touch');
+
+  var css = document.createElement('style');
+  css.textContent = [
+    '#pc-root { position: fixed; left: 0; right: 0; bottom: 0; height: 0; z-index: 3200; pointer-events: none; }',
+    '#pc-root.off > * { opacity: 0; pointer-events: none !important; }',
+    '#pc-stick { position: fixed; left: calc(14px + env(safe-area-inset-left, 0px)); bottom: calc(18px + env(safe-area-inset-bottom, 0px));',
+    '  width: 104px; height: 104px; border-radius: 50%; pointer-events: auto; touch-action: none;',
+    '  background: radial-gradient(circle, rgba(10,20,34,.30) 0%, rgba(10,20,34,.55) 70%);',
+    '  border: 2px solid rgba(127,227,255,.45); box-shadow: 0 0 14px rgba(56,189,248,.25); }',
+    '#pc-knob { position: absolute; left: 50%; top: 50%; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%;',
+    '  background: radial-gradient(circle at 40% 35%, #e6fbff, #7fe3ff 55%, #2b8fb3); box-shadow: 0 2px 8px rgba(0,0,0,.5); }',
+    '#pc-btns { position: fixed; right: calc(14px + env(safe-area-inset-right, 0px)); bottom: calc(40px + env(safe-area-inset-bottom, 0px)); display: flex; gap: 12px; }',
+    '.pc-btn { width: 52px; height: 52px; border-radius: 50%; pointer-events: auto; touch-action: none; user-select: none; -webkit-user-select: none;',
+    '  display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; overflow: hidden;',
+    '  font: 900 7.5px/1 Orbitron, system-ui, sans-serif; letter-spacing: .4px; border: 2px solid rgba(255,255,255,.55);',
+    '  box-shadow: 0 3px 0 rgba(0,0,0,.45), 0 0 12px rgba(0,0,0,.35); -webkit-tap-highlight-color: transparent; }',
+    '.pc-btn b { font-size: 19px; line-height: 1; margin-bottom: 2px; }',
+    '.pc-btn.down { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,.45); filter: brightness(1.25); }',
+    '#pc-fire { background: radial-gradient(circle at 40% 35%, #ff9a8a, #d9463b 60%, #8e1f19); }',
+    '#pc-next { background: radial-gradient(circle at 40% 35%, #ffe08a, #e0a526 60%, #8a5a0e); }',
+    /* the instruments make room for the pad */
+    'html.pc-touch #home-compass { left: 50% !important; right: auto !important; bottom: calc(18px + env(safe-area-inset-bottom, 0px)) !important;',
+    '  transform: translateX(-50%) scale(.56) !important; transform-origin: center bottom !important; }',
+    'html.pc-touch #helm-cluster { top: 104px; bottom: auto !important; left: 6px; right: auto !important; transform: scale(.62) !important; transform-origin: left top !important; }',
+    'html.pc-touch #course-toggle { bottom: calc(132px + env(safe-area-inset-bottom, 0px)) !important; }',
+    'html.pc-touch #test-credits { bottom: calc(160px + env(safe-area-inset-bottom, 0px)) !important; }',
+    'html.pc-touch #buoy-prompt { bottom: calc(190px + env(safe-area-inset-bottom, 0px)) !important; }',
+    'html.pc-touch #tour-hud { top: 104px; bottom: auto !important; }'
+  ].join('\n');
+  document.head.appendChild(css);
+
+  var root = document.createElement('div');
+  root.id = 'pc-root';
+  root.innerHTML = '<div id="pc-stick" aria-label="Fly"><div id="pc-knob"></div></div>' +
+    '<div id="pc-btns"><div class="pc-btn" id="pc-fire" role="button" aria-label="Twin lasers"><b>✹</b>LASERS</div>' +
+    '<div class="pc-btn" id="pc-next" role="button" aria-label="Specialty weapon"><b>☄</b><span id="pc-wname">SPECIAL</span></div></div>';
+  document.body.appendChild(root);
+  ['pointerdown', 'pointerup', 'pointermove', 'pointercancel', 'touchstart', 'touchend', 'touchmove', 'mousedown', 'mouseup', 'click']
+    .forEach(function (t) { root.addEventListener(t, function (e) { e.stopPropagation(); }, { passive: true }); });
+  var stop = function (e) { e.stopPropagation(); if (e.cancelable) e.preventDefault(); };
+
+  /* the stick flies the ship: held every frame, so the course is always ahead */
+  var sid = null, cx = 0, cy = 0, sx = 0, sy = 0, held = false;
+  function knob(x, y) { document.getElementById('pc-knob').style.transform = 'translate(' + x * 30 + 'px,' + y * 30 + 'px)'; }
+  root.addEventListener('pointerdown', function (e) {
+    if (!e.target.closest || !e.target.closest('#pc-stick')) return;
+    stop(e); sid = e.pointerId; held = true;
+    var r = document.getElementById('pc-stick').getBoundingClientRect(); cx = r.left + r.width / 2; cy = r.top + r.height / 2;
+    try { e.target.setPointerCapture(e.pointerId); } catch (x) {}
+    mv(e);
+  });
+  function mv(e) {
+    if (e.pointerId !== sid) return;
+    var dx = (e.clientX - cx) / 42, dy = (e.clientY - cy) / 42, l = Math.hypot(dx, dy);
+    if (l > 1) { dx /= l; dy /= l; }
+    if (l < 0.18) { dx = 0; dy = 0; }
+    sx = dx; sy = dy; knob(dx, dy);
+  }
+  root.addEventListener('pointermove', function (e) { if (e.pointerId === sid) { stop(e); mv(e); } });
+  function up(e) { if (e.pointerId !== sid) return; sid = null; held = false; sx = sy = 0; knob(0, 0); var a = S(); if (a) a.steer(0, 0, false); }
+  root.addEventListener('pointerup', up); root.addEventListener('pointercancel', up);
+  (function frame() {
+    var a = S();
+    if (a && held) a.steer(sx, sy, true);
+    requestAnimationFrame(frame);
+  })();
+
+  function hold(id, fn, every) {
+    var t = null, pid = null, el = null;
+    root.addEventListener('pointerdown', function (e) {
+      var b = e.target.closest && e.target.closest('#' + id); if (!b) return;
+      stop(e); el = b; pid = e.pointerId; b.classList.add('down');
+      try { b.setPointerCapture(e.pointerId); } catch (x) {}
+      fn(); if (every) { clearInterval(t); t = setInterval(fn, every); }
+    });
+    var off = function (e) { if (pid !== null && e.pointerId !== pid) return; pid = null; clearInterval(t); t = null; if (el) el.classList.remove('down'); };
+    root.addEventListener('pointerup', off); root.addEventListener('pointercancel', off);
+  }
+  // button 1: the twin lasers. button 2: whatever specialty is selected in WEAPONS.
+  hold('pc-fire', function () { var a = S(); if (a) a.lasers(); }, 120);
+  hold('pc-next', function () { var a = S(); if (a) a.special(); }, 200);
+  function label() {
+    var a = S(), el = document.getElementById('pc-wname'); if (!a || !el) return;
+    var w = String(a.weapon() || '').replace(/_/g, ' ');
+    var short = { 'RED CANNON': 'CANNON', 'TRACTOR BEAM': 'TRACTOR', 'TWIN LASERS': 'SPECIAL', 'PLASMA TORPEDO': 'TORPEDO' }[w] || w;
+    el.textContent = short.slice(0, 8) || 'SPECIAL';
+  }
+  setInterval(function () {
+    var a = S(); if (!a) return;
+    var busy = a.busy();
+    root.classList.toggle('off', busy);
+    if (busy && held) { held = false; sid = null; knob(0, 0); a.steer(0, 0, false); }
+    label();
+  }, 150);
+})();
 </script>
 </body>
 </html>
