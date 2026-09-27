@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#05060f">
+<title>8 GATES</title>
+<style>
+  :root { --bg:#05060f; --panel:#0e1230; --line:#2a3170; --ink:#f4f6ff; --dim:#aab3e6; --go:#34d399; --go2:#a7f3d0; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; background:var(--bg); color:var(--ink);
+    font:17px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  body { min-height:100vh; padding:28px 16px 40px;
+    background: radial-gradient(1200px 600px at 50% -10%, #1b2270 0%, transparent 60%), var(--bg); }
+  main { max-width:560px; margin:0 auto; }
+  h1 { font-size:44px; letter-spacing:6px; margin:8px 0 4px; text-align:center; font-weight:900; }
+  .sub { text-align:center; color:var(--dim); margin:0 0 28px; }
+  a.play { display:block; text-align:center; text-decoration:none; font-weight:900; letter-spacing:2px;
+    font-size:22px; color:#04140d; padding:22px 16px; border-radius:14px;
+    background:linear-gradient(180deg,var(--go2),var(--go)); box-shadow:0 0 30px rgba(52,211,153,.45); }
+  a.play:focus-visible, .grid a:focus-visible { outline:3px solid #fff; outline-offset:3px; }
+  h2 { font-size:15px; letter-spacing:3px; color:var(--dim); margin:34px 0 12px; text-transform:uppercase; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .grid a { display:block; padding:16px 12px; min-height:56px; border-radius:10px; text-decoration:none;
+    color:var(--ink); background:var(--panel); border:1px solid var(--line); font-weight:700; text-align:center; }
+  .grid a small { display:block; color:var(--dim); font-weight:400; font-size:13px; }
+  .note { color:var(--dim); font-size:14px; margin-top:28px; text-align:center; }
+</style>
+</head>
+<body>
+<main>
+  <h1>8 GATES</h1>
+  <p class="sub">Nine worlds. One galaxy.</p>
+  <a class="play" href="Space_world__asteroids_touch_350.html">LAUNCH INTO SPACE</a>
+
+  <h2>Test a world directly</h2>
+  <nav class="grid" aria-label="Worlds">
+    <a href="surface_player.html">Home world<small>your planet</small></a>
+    <a href="station.html">The Station<small>Deep Space Fox</small></a>
+    <a href="surface_meru.html">Meru</a>
+    <a href="surface_gaya.html">Gaya</a>
+    <a href="surface_luxor.html">Luxor</a>
+    <a href="surface_ur.html">Ur</a>
+    <a href="surface_zion.html">Zion</a>
+    <a href="surface_nebo.html">Nebo</a>
+    <a href="surface_kufa.html">Kufa</a>
+    <a href="surface_jidda.html">Jidda</a>
+    <a href="surface_earth.html">Earth</a>
+  </nav>
+  <p class="note">Each world is a big download the first time (6–16 MB). Wi-Fi recommended.</p>
+</main>
+</body>
+</html>
