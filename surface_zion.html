@@ -20694,6 +20694,7 @@ if (this.shieldsActive) {
       let iy = (k.s ? 1 : 0) - (k.w ? 1 : 0);
       const m = Math.hypot(ix, iy) || 1;
       ix /= m; iy /= m;
+      if (this.stick && this.stick.on && (this.stick.x || this.stick.y)) { ix = this.stick.x; iy = this.stick.y; }   // the phone stick
       this.vX += ix * moveScale; this.vY += iy * moveScale;
       this.lastMoveDirX = ix; this.lastMoveDirY = iy;
       if (ix) this.faceDir = ix < 0 ? -1 : 1;
@@ -40207,6 +40208,351 @@ g._party = function () {
   })();
 })();
 
+/* 63 · PHONE CONTROLS (Ben, 27 Sep). Touch screens only — a desktop never
+   sees any of this.
+
+     bottom left     a JOYSTICK. It drives the fox exactly as W A S D do (the
+                     same keys are pressed, so vehicles and turrets answer it
+                     too), and on foot it is analogue: a small push walks.
+     bottom right    two small round buttons in a row, like a game pad:
+                       ⚔  MELEE   — the blade, at whoever is nearest
+                       ◎  RANGED  — the gun, auto-aimed at the nearest hostile
+                     Hold either to keep attacking.
+     bottom middle   the QUEST HINT, moved down from wherever that world drew
+                     it, between the stick and the buttons. Tap it for the
+                     world's full quest page, the same as the old card.
+     ACTIONS         gains SAVE / LOAD and RETURN TO ORBIT, and the two
+                     floating buttons that used to sit on the screen go.
+
+   The controls step aside whenever something else owns the screen — a
+   conversation, a menu, a prompt, a film — so they never sit on top of a
+   choice you need to tap. */
+(function () {
+  var touch = false;
+  try { touch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches; } catch (e) {}
+  if (window.__8G_FORCE_TOUCH) touch = true;
+  if (window.__8G_NO_TOUCH) touch = false;
+  if (!touch) return;
+  document.documentElement.classList.add('pc-touch');
+
+  /* --------------------------------------------------------------- styles */
+  var css = document.createElement('style');
+  css.textContent = [
+    'html.pc-touch #u-save, html.pc-touch #g8-orbit, html.pc-touch #buildTag { display: none !important; }',
+    '#pc-root { position: fixed; left: 0; right: 0; bottom: 0; height: 0; z-index: 8000; pointer-events: none; }',
+    '#pc-root.off > * { opacity: 0; pointer-events: none !important; }',
+    '#pc-stick { position: fixed; left: calc(14px + env(safe-area-inset-left, 0px)); bottom: calc(18px + env(safe-area-inset-bottom, 0px));',
+    '  width: 104px; height: 104px; border-radius: 50%; pointer-events: auto; touch-action: none;',
+    '  background: radial-gradient(circle, rgba(10,20,34,.30) 0%, rgba(10,20,34,.55) 70%);',
+    '  border: 2px solid rgba(127,227,255,.45); box-shadow: 0 0 14px rgba(56,189,248,.25); transition: opacity .15s; }',
+    '#pc-knob { position: absolute; left: 50%; top: 50%; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%;',
+    '  background: radial-gradient(circle at 40% 35%, #e6fbff, #7fe3ff 55%, #2b8fb3); box-shadow: 0 2px 8px rgba(0,0,0,.5); }',
+    '#pc-btns { position: fixed; right: calc(14px + env(safe-area-inset-right, 0px)); bottom: calc(40px + env(safe-area-inset-bottom, 0px));',
+    '  display: flex; gap: 12px; pointer-events: none; transition: opacity .15s; }',
+    '.pc-btn { width: 52px; height: 52px; border-radius: 50%; pointer-events: auto; touch-action: none; user-select: none; -webkit-user-select: none;',
+    '  display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff;',
+    '  font: 900 7.5px/1 Orbitron, system-ui, sans-serif; letter-spacing: .4px; border: 2px solid rgba(255,255,255,.55);',
+    '  box-shadow: 0 3px 0 rgba(0,0,0,.45), 0 0 12px rgba(0,0,0,.35); -webkit-tap-highlight-color: transparent; }',
+    '.pc-btn b { font-size: 19px; line-height: 1; margin-bottom: 2px; }',
+    '.pc-btn.down { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,.45); filter: brightness(1.25); }',
+    '#pc-melee { background: radial-gradient(circle at 40% 35%, #ff9a8a, #d9463b 60%, #8e1f19); }',
+    '#pc-ranged { background: radial-gradient(circle at 40% 35%, #9fe8ff, #2f9fd6 60%, #145b86); }',
+    '#pc-hint { position: fixed; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); pointer-events: auto;',
+    '  background: rgba(6,9,16,.80); border: 1px solid rgba(255,209,102,.55); border-radius: 9px; padding: 6px 8px;',
+    '  color: #eef6ff; font: 700 11px/1.25 system-ui, -apple-system, sans-serif; text-align: center;',
+    '  max-height: 104px; overflow: hidden; display: none; transition: opacity .15s; }',
+    '#pc-hint .t { color: #ffd166; font-size: 9.5px; letter-spacing: .8px; text-transform: uppercase; margin-bottom: 3px; }',
+    '#pc-hint .w { color: #7dd3fc; font-size: 10px; margin-top: 3px; }'
+  ].join('\n');
+  document.head.appendChild(css);
+
+  var root = document.createElement('div');
+  root.id = 'pc-root';
+  root.innerHTML =
+    '<div id="pc-stick" aria-label="Move"><div id="pc-knob"></div></div>' +
+    '<div id="pc-hint" role="status"></div>' +
+    '<div id="pc-btns">' +
+      '<div class="pc-btn" id="pc-melee" role="button" aria-label="Melee attack"><b>⚔</b>MELEE</div>' +
+      '<div class="pc-btn" id="pc-ranged" role="button" aria-label="Ranged attack"><b>◎</b>RANGED</div>' +
+    '</div>';
+  function mount() { if (!document.body) return setTimeout(mount, 30); document.body.appendChild(root); layout(); }
+  mount();
+
+  var G = function () { return window.game; };
+  var stop = function (e) { e.stopPropagation(); if (e.cancelable) e.preventDefault(); };
+  ['pointerdown', 'pointerup', 'pointermove', 'pointercancel', 'touchstart', 'touchend', 'touchmove', 'mousedown', 'mouseup', 'click']
+    .forEach(function (t) { root.addEventListener(t, function (e) { e.stopPropagation(); }, { passive: true }); });
+
+  /* ------------------------------------------------------------ layout */
+  function layout() {
+    var vw = window.innerWidth, stickR = 14 + 104 + 10, btnsR = 14 + 52 * 2 + 12 + 10;
+    var h = document.getElementById('pc-hint');
+    if (!h) return;
+    h.style.left = stickR + 'px';
+    h.style.width = Math.max(90, vw - stickR - btnsR) + 'px';
+    h.style.boxSizing = 'border-box';
+  }
+  window.addEventListener('resize', layout);
+
+  /* ------------------------------------------------------------ joystick */
+  var stickId = null, cx = 0, cy = 0;
+  function setStick(x, y, on) {
+    var g = G(); if (!g || !g.keys) return;
+    g.stick = { on: !!on, x: x, y: y };
+    var T = 0.38;
+    g.keys.a = on && x < -T; g.keys.d = on && x > T;
+    g.keys.w = on && y < -T; g.keys.s = on && y > T;
+    if (on && (x || y)) {
+      var l = Math.hypot(x, y) || 1;
+      g.lastMoveDirX = x / l; g.lastMoveDirY = y / l;
+      if (!g.turret && !g.vehicle) g.viewFacing = (y < -0.4 && Math.abs(x) < 0.6) ? 'BACK' : 'FRONT';
+      g.moveTarget = null;
+    }
+    var k = document.getElementById('pc-knob');
+    if (k) k.style.transform = 'translate(' + (x * 30) + 'px,' + (y * 30) + 'px)';
+  }
+  var stickEl = function () { return document.getElementById('pc-stick'); };
+  root.addEventListener('pointerdown', function (e) {
+    if (!e.target.closest || !e.target.closest('#pc-stick')) return;
+    stop(e);
+    stickId = e.pointerId;
+    var r = stickEl().getBoundingClientRect(); cx = r.left + r.width / 2; cy = r.top + r.height / 2;
+    try { stickEl().setPointerCapture(e.pointerId); } catch (x) {}
+    move(e);
+  });
+  function move(e) {
+    if (e.pointerId !== stickId) return;
+    var dx = (e.clientX - cx) / 42, dy = (e.clientY - cy) / 42;
+    var l = Math.hypot(dx, dy);
+    if (l > 1) { dx /= l; dy /= l; l = 1; }
+    if (l < 0.18) { setStick(0, 0, true); return; }
+    setStick(dx, dy, true);
+  }
+  root.addEventListener('pointermove', function (e) { if (e.pointerId === stickId) { stop(e); move(e); } });
+  function release(e) {
+    if (e.pointerId !== stickId) return;
+    stickId = null; setStick(0, 0, false);
+  }
+  root.addEventListener('pointerup', release);
+  root.addEventListener('pointercancel', release);
+
+  /* ------------------------------------------------------------ attacks */
+  function hostiles(g, range) {
+    var best = null, bd = range;
+    var R = g.npcRoster || [];
+    for (var i = 0; i < R.length; i++) {
+      var n = R[i];
+      if (!n || n.defeated || n.townsfolk) continue;
+      if (!n.hostile && n !== g.attackTarget) continue;
+      if (n.scene && n.scene !== g.currentScene) continue;
+      var d = Math.hypot(n.worldX - g.pX, n.worldY - g.pY);
+      if (d < bd) { bd = d; best = n; }
+    }
+    return best;
+  }
+  function facing(g) {
+    var s = g.stick;
+    if (s && s.on && (s.x || s.y)) { var l = Math.hypot(s.x, s.y); return { x: s.x / l, y: s.y / l }; }
+    var x = g.lastMoveDirX || 0, y = g.lastMoveDirY || 0;
+    if (!x && !y) x = g.faceDir || 1;
+    var m = Math.hypot(x, y) || 1;
+    return { x: x / m, y: y / m };
+  }
+  function blocked(g) {
+    return !g || g.gamePaused || g.pendingChoice || g.turnBasedActive || g.caveDialogueOpen ||
+           (g.state && g.state.phoneMenuOpen) || g.film;
+  }
+  function aimAt(g, n) {
+    var dx = n.worldX - g.pX, dy = (n.worldY - 20) - g.pY, l = Math.hypot(dx, dy) || 1;
+    if (Math.abs(dx) > 0.12 * l) g.faceDir = dx < 0 ? -1 : 1;
+    return { x: dx / l, y: dy / l };
+  }
+  function melee() {
+    var g = G(); if (blocked(g)) return;
+    g._tapWorld = null;
+    if (g.turret || g.vehicle) { g.fireActiveWeapon(facing(g)); return; }
+    var reach = (g.bladeReach ? g.bladeReach() : 180) * 1.8;
+    var n = hostiles(g, reach);
+    var aim = n ? aimAt(g, n) : facing(g);
+    var real = g.state.weapon;
+    if (real === 'ROD') return;
+    g.state.weapon = 'SWORD';
+    try { g.fireActiveWeapon(aim); } catch (e) { console.warn('[pad] melee', e); }
+    finally { if (g.state.weapon === 'SWORD') g.state.weapon = real; }
+  }
+  var noGunSaid = 0;
+  function ranged() {
+    var g = G(); if (blocked(g)) return;
+    g._tapWorld = null;
+    if (g.turret || g.vehicle) { g.fireActiveWeapon(facing(g)); return; }
+    var w = g.state.weapon;
+    if (w === 'SWORD' || w === 'PHONE' || w === 'ROD') {
+      if (Date.now() - noGunSaid > 2500) {
+        noGunSaid = Date.now();
+        if (g.showFloatingNote) g.showFloatingNote('NO RANGED WEAPON', 'Pick one in WEAPONS.');
+      }
+      return;
+    }
+    var n = hostiles(g, g.weaponRange ? g.weaponRange() : 900);
+    var aim = n ? aimAt(g, n) : facing(g);
+    g._autoFire = true;
+    try { g.fireActiveWeapon(aim); } catch (e) { console.warn('[pad] ranged', e); }
+    finally { g._autoFire = false; }
+  }
+  function holdButton(id, fn, every) {
+    var el = null, timer = null, pid = null;
+    function up(e) {
+      if (pid !== null && e && e.pointerId !== pid) return;
+      pid = null; if (timer) { clearInterval(timer); timer = null; }
+      if (el) el.classList.remove('down');
+    }
+    root.addEventListener('pointerdown', function (e) {
+      var t = e.target.closest && e.target.closest('#' + id);
+      if (!t) return;
+      stop(e); el = t; pid = e.pointerId;
+      try { t.setPointerCapture(e.pointerId); } catch (x) {}
+      t.classList.add('down');
+      fn();
+      if (timer) clearInterval(timer);
+      timer = setInterval(fn, every);
+    });
+    root.addEventListener('pointerup', up);
+    root.addEventListener('pointercancel', up);
+  }
+  holdButton('pc-melee', melee, 260);
+  holdButton('pc-ranged', ranged, 220);
+
+  /* ------------------------------------------------------------ quest hint */
+  function hintNow(g) {
+    try {
+      // Zion: the river job, bottom of the screen
+      if (typeof g.drawQuestHint === 'function' && g.questStep) {
+        var st = g.questStep();
+        if (st && st.hint) {
+          var T = g.questTarget && g.questTarget();
+          var way = T && g.compassDirection ? g.compassDirection(T.x - g.pX, T.y - g.pY) : '';
+          return { t: (typeof GAYA !== 'undefined' && GAYA.riverQuest && GAYA.riverQuest.name) || 'QUEST',
+                   b: st.hint, w: way ? 'HEAD ' + way : '' };
+        }
+      }
+      // Gaya and home: the guide card
+      if (typeof g.guideCfg === 'function' && g.guideStepText) {
+        var c = g.guideCfg();
+        if (c) {
+          var s2 = g.guideStep();
+          return { t: c.title || 'OBJECTIVE', b: s2 ? g.guideStepText(s2) : (c.allDone || 'Nothing outstanding.'),
+                   w: s2 && g.guideRoomLine ? g.guideRoomLine(s2) : '', tap: 'guide' };
+        }
+      }
+      // Ur: the running job
+      if (typeof g.questRunning === 'function' && g.qStepText) {
+        var run = g.questRunning();
+        if (run && run.length) {
+          var q = run[0], step = g.questStep && g.questStep(q.key);
+          var at = g.qList ? g.qList(step && step.at) : [];
+          var w3 = '';
+          if (at.length && at.indexOf(g.currentScene) < 0) { var s0 = g.scenes[at[0]]; w3 = '→ ' + ((s0 && s0.label) || at[0]); }
+          return { t: q.name || q.key, b: g.qStepText(q), w: w3, tap: 'ur' };
+        }
+      }
+      // Luxor: the job board
+      if (typeof g.drawQuestBanner === 'function' && g.qActive) {
+        var a = g.qActive();
+        if (a) {
+          var room = (g.qRooms ? g.qRooms(a.stage.at) : []).map(function (k) { return (g.scenes[k] && g.scenes[k].label) || ''; }).filter(Boolean)[0] || '';
+          return { t: a.q.name || 'JOB', b: (a.stage.title || '') + '  ·  ' + (a.i + 1) + '/' + a.of,
+                   w: room ? '→ ' + room.toUpperCase() : '', tap: 'luxor' };
+        }
+      }
+    } catch (e) {}
+    return null;
+  }
+  var lastHint = '';
+  function paintHint(g) {
+    var el = document.getElementById('pc-hint'); if (!el) return;
+    var h = (g.inBattleMap && g.inBattleMap()) ? null : hintNow(g);
+    var key = h ? h.t + '|' + h.b + '|' + h.w : '';
+    if (key === lastHint) return;
+    lastHint = key;
+    if (!h) { el.style.display = 'none'; el._tap = null; return; }
+    el.innerHTML = '';
+    var t = document.createElement('div'); t.className = 't'; t.textContent = h.t;
+    var b = document.createElement('div'); b.textContent = h.b;
+    el.appendChild(t); el.appendChild(b);
+    if (h.w) { var w = document.createElement('div'); w.className = 'w'; w.textContent = h.w; el.appendChild(w); }
+    el._tap = h.tap || null;
+    el.style.display = 'block';
+  }
+  root.addEventListener('click', function (e) {
+    var el = e.target.closest && e.target.closest('#pc-hint');
+    if (!el) return;
+    var g = G(); if (!g) return;
+    if (el._tap === 'guide' && g.guideToggle) g.guideToggle();
+    else if (el._tap === 'ur') g._journalOpen = ((g._journalOpen || 0) + 1) % 3;
+    else if (el._tap === 'luxor') g.questPage = ((g.questPage || 0) + 1) % 3;
+  });
+
+  /* ------------------------------------------------------------ install on the game */
+  function install(g) {
+    // the old on-screen cards step aside while the hint is down here; their
+    // full pages still open where they always did
+    if (typeof g.drawQuestHint === 'function') { g.drawQuestHint = function () {}; }
+    if (typeof g.drawGuideCard === 'function') { g.drawGuideCard = function () { g._guideCardBox = null; }; }
+    if (typeof g.drawQuestHud === 'function') {
+      var urHud = g.drawQuestHud;
+      g.drawQuestHud = function (ctx) { if (g._journalOpen) return urHud.call(g, ctx); };
+    }
+    if (typeof g.drawQuestBanner === 'function') {
+      var lxBanner = g.drawQuestBanner;
+      g.drawQuestBanner = function (ctx) { if (g.questPage) return lxBanner.call(g, ctx); g.questCardRect = null; };
+    }
+    // ACTIONS gets the two buttons that used to float on the screen
+    var realRender = g.renderPhoneScreen;
+    g.renderPhoneScreen = function () {
+      var out = realRender.apply(g, arguments);
+      try {
+        if (g.phoneScreen === 'main' && g.state && g.state.phoneMenuOpen) {
+          var list = document.getElementById('phoneOptionsList');
+          if (list && !list.querySelector('.pc-extra')) {
+            var add = function (label, fn) {
+              var btn = document.createElement('button');
+              btn.className = 'phoneOption pc-extra';
+              btn.textContent = label;
+              btn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                if (g.closePhoneMenu) g.closePhoneMenu();
+                else { g.state.phoneMenuOpen = false; if (g.closePhoneMenuUI) g.closePhoneMenuUI(); }
+                g.gamePaused = false;
+                setTimeout(fn, 60);
+              });
+              list.appendChild(btn);
+            };
+            if (document.getElementById('u-save')) add('SAVE / LOAD', function () { var pill = document.querySelector('#u-save .pill') || document.getElementById('u-save'); pill.click(); });
+            // only where the world lets you leave (some worlds hold the button back until a quest is done)
+            if (document.getElementById('g8-orbit')) add('RETURN TO ORBIT', function () {
+              var o = document.getElementById('g8-orbit'); if (o) o.click();
+            });
+          }
+        }
+      } catch (e) {}
+      return out;
+    };
+    setInterval(function () {
+      var busy = !g || g.gamePaused || g.caveDialogueOpen || g.missionPromptOpen || g.film ||
+                 (g.state && g.state.phoneMenuOpen) || g.miniGameOpen || g.levelUpOpen || g.weaponsOpen;
+      root.classList.toggle('off', !!busy);
+      if (busy && stickId !== null) { stickId = null; setStick(0, 0, false); }
+      paintHint(g);
+    }, 120);
+  }
+  var tries = 0;
+  (function wait() {
+    var g = G();
+    if (g && g.layoutReady && g.renderPhoneScreen) { try { install(g); } catch (e) { console.warn('[pad]', e); } return; }
+    if (++tries < 1200) setTimeout(wait, 50);
+  })();
+})();
+
 /* ZION — generated by tools/split.js from the planet's own surface.
    Edit here; build/build.py puts it back together. */
 
@@ -57405,6 +57751,7 @@ if (this.swordSwingTimer > 0 && (this.state.weapon === 'SWORD' || this.dualWield
       let iy = (k.s ? 1 : 0) - (k.w ? 1 : 0);
       const m = Math.hypot(ix, iy) || 1;
       ix /= m; iy /= m;
+      if (this.stick && this.stick.on && (this.stick.x || this.stick.y)) { ix = this.stick.x; iy = this.stick.y; }   // the phone stick
       this.vX += ix * moveScale; this.vY += iy * moveScale;
       this.lastMoveDirX = ix; this.lastMoveDirY = iy;
       if (ix) this.faceDir = ix < 0 ? -1 : 1;
