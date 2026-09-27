@@ -10999,7 +10999,7 @@ class Game {
     const R = Math.min(w, h) / 2 - dpr * 2;
     const cx = w / 2, cy = h / 2;
     ctx.save();
-    ctx.beginPath(); ctx.arc(cx, cyk, R, 0, Math.PI * 2); ctx.clip();
+    ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.clip();
     const g = ctx.createRadialGradient(cx, cy - R * 0.45, R * 0.12, cx, cy, R * 1.25);
     g.addColorStop(0, '#14263f'); g.addColorStop(1, '#04080f');
     ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
@@ -11044,7 +11044,7 @@ class Game {
 
     // ring, matching the phone's own trim
     ctx.strokeStyle = 'rgba(127,227,255,0.8)'; ctx.lineWidth = dpr * 2;
-    ctx.beginPath(); ctx.arc(cx, cyk, R, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.stroke();
     ctx.strokeStyle = 'rgba(56,189,248,0.25)'; ctx.lineWidth = dpr;
     ctx.beginPath(); ctx.arc(cx, cy, R - dpr * 3.5, 0, Math.PI * 2); ctx.stroke();
     return true;
@@ -20415,6 +20415,7 @@ if (this.shieldsActive) {
     // 360-unit avenue — about three and a half avenues tall.
     const desiredVisibleWorldH = 1280;
     this.baseZoom = c.height / desiredVisibleWorldH;
+    if (this.isPhoneScreen && this.isPhoneScreen()) this.baseZoom *= 0.8;   // phones: 20% out (Ben)
     this.zoom = this.baseZoom;
 
     // A room smaller than the view is framed whole rather than followed; a
@@ -39908,6 +39909,299 @@ g._party = function () {
   })();
 })();
 
+/* 62 · EVERY PLANET BEGINS ON ITS BATTLE MAP, AND THE PHONE FIXES.
+
+   THE OPENING (Ben, 27 Sep). The first time you come down to a world, the
+   transport is interrupted: you land on that world's battle map, told
+
+     TRANSPORT INTERRUPTED
+     DEFEND PAD for 30 SECONDS while TRANSPORT recharges...
+     BONUSES for each enemy GATE destroyed.
+
+   and thirty seconds of standing inside the pad's shield later the transport
+   finishes and puts you down in the town square — where that square's own
+   film and music are waiting. Once per world per save: the flag
+   `<world>.landingBattle` is written into the story bag the moment it is done,
+   so a reload in the square does not send you back to the fight.
+
+   Installed on the INSTANCE, not the prototype, because each world's
+   planet.js puts its own updateBattleMission on the prototype after the
+   engine loads; an instance method sits in front of all of them. Outside the
+   opening every call goes straight to the world's own method.
+
+   MUSIC ON A PHONE. iOS ignores `audio.volume` — it always reads 1 — so the
+   rooms' crossfade (fade the square to 0, then pause it) never reached 0 and
+   never paused: the town square played on at full volume under the shop's
+   own track. Where volume cannot be set, a track that is no longer wanted is
+   paused outright instead of faded. */
+(function () {
+  var WORLD = window.__8G_WORLD || '';
+  var GATE_BONUS = 50;
+  var HOLD_SECONDS = 30;
+
+  /* ---------------------------------------------------------------- helpers */
+  var _volOk = null;
+  function volumeSettable() {
+    if (_volOk !== null) return _volOk;
+    try { var a = new Audio(); a.volume = 0.25; _volOk = Math.abs(a.volume - 0.25) < 0.02; }
+    catch (e) { _volOk = true; }
+    return _volOk;
+  }
+  window.__8G_VOLUME_SETTABLE = volumeSettable;
+
+  function battleSceneFor(g) {
+    var S = g.scenes || {};
+    if (S.meruBridge && S.meruBridge.arsenal) return { key: 'meruBridge', meru: true, label: 'MERU' };
+    var start = (typeof GAYA !== 'undefined' && GAYA.startScene) || g.currentScene;
+    var best = null;
+    for (var k in S) {
+      var s = S[k];
+      if (!s || !s.battleTo || !s.battleTo.scene) continue;
+      var r = { key: k, label: s.battleTo.label || 'THE SURFACE', to: s.battleTo.scene };
+      if (s.battleTo.scene === start) return r;
+      if (!best) best = r;
+    }
+    return best;
+  }
+
+  function hud(on, text, frac) {
+    var el = document.getElementById('openingHud');
+    if (!on) { if (el) el.style.display = 'none'; return; }
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'openingHud';
+      el.setAttribute('role', 'status');
+      el.setAttribute('aria-live', 'polite');
+      el.style.cssText = 'position:fixed;left:50%;top:70px;' +
+        'transform:translateX(-50%);z-index:9000;pointer-events:none;text-align:center;' +
+        'font:900 clamp(12px,3.6vw,15px)/1.2 Orbitron,system-ui,sans-serif;letter-spacing:2px;color:#e6fbff;white-space:nowrap;' +
+        'background:rgba(4,12,24,.78);border:1px solid rgba(127,227,255,.55);border-radius:10px;' +
+        'padding:7px 14px 9px;box-shadow:0 0 18px rgba(56,189,248,.35);min-width:200px;';
+      el.innerHTML = '<div id="openingHudText"></div>' +
+        '<div style="margin-top:7px;height:6px;border-radius:3px;background:rgba(127,227,255,.18);overflow:hidden">' +
+        '<div id="openingHudBar" style="height:100%;width:0;background:linear-gradient(90deg,#38bdf8,#a7f3d0)"></div></div>';
+      document.body.appendChild(el);
+    }
+    el.style.display = 'block';
+    /* UNDER THE TOP BAR, WHEREVER IT ENDS. On a phone the bar wraps to two
+       rows and the shield counter hangs below it, so the countdown is put
+       beneath the lowest thing already pinned to the top of the screen —
+       measured, twice a second, rather than guessed. */
+    var now = Date.now();
+    if (!hud._at || now - hud._at > 500) {
+      hud._at = now;
+      var vh = window.innerHeight || 800, low = 8;
+      var all = document.body.querySelectorAll('*');
+      for (var i = 0; i < all.length; i++) {
+        var e = all[i];
+        if (e === el || el.contains(e) || e.tagName === 'CANVAS') continue;
+        var r = e.getBoundingClientRect();
+        if (r.height < 8 || r.height > vh * 0.35 || r.top > vh * 0.3 || r.bottom <= 0) continue;
+        var cs = getComputedStyle(e);
+        if (cs.visibility === 'hidden' || cs.display === 'none' || +cs.opacity < 0.2) continue;
+        if (cs.position !== 'fixed' && cs.position !== 'absolute') continue;
+        if (r.bottom > low) low = r.bottom;
+      }
+      el.style.top = Math.round(Math.min(low + 8, vh * 0.34)) + 'px';
+    }
+    document.getElementById('openingHudText').textContent = text;
+    document.getElementById('openingHudBar').style.width = Math.round(Math.max(0, Math.min(1, frac)) * 100) + '%';
+  }
+
+  /* The flag rides in the landing bridge's own save: land() reads it into
+     g._landingBattleDone and patch() writes it back, so it travels to orbit
+     and down again with everything else. */
+  function openingSeen(g) { return !!g._landingBattleDone; }
+  function markSeen(g) {
+    g._landingBattleDone = true;
+    try { if (window.G8_CHECKPOINT) window.G8_CHECKPOINT(); } catch (e) {}
+  }
+
+  /* ---------------------------------------------------------------- install */
+  function install(g) {
+    /* ===== MUSIC ON A PHONE ===== */
+    if (typeof g.musicTick === 'function' && !g._iosMusicWrapped) {
+      g._iosMusicWrapped = true;
+      var realTick = g.musicTick;
+      g.musicTick = function () {
+        var out = realTick.apply(this, arguments);
+        if (volumeSettable()) return out;
+        try {
+          // Gaya-style worlds: this._music keyed by track key, this._musicKey wanted
+          if (this._music) {
+            for (var k in this._music) {
+              var a = this._music[k];
+              if (k !== this._musicKey && a && !a.paused) a.pause();
+            }
+          }
+          // Kufa: this._mus keyed by src, musicWant() the wanted src; a film ducks
+          // by volume, which a phone cannot do, so under a film it stops.
+          if (this._mus) {
+            var want = this.film ? null : (this.musicWant ? this.musicWant() : null);
+            for (var s in this._mus) {
+              var b = this._mus[s];
+              if (s !== want && b && !b.paused) b.pause();
+            }
+          }
+        } catch (e) {}
+        return out;
+      };
+    }
+
+    /* ===== THE OPENING ===== */
+    if (WORLD === 'station') return;
+    if (window.__8G_NO_OPENING) return;
+    if (openingSeen(g)) return;
+    var B = battleSceneFor(g);
+    if (!B) return;
+    var sc = g.scenes[B.key];
+    // Nebo's crash site was built as a battle map and never switched on.
+    if (!sc.arsenal) sc.arsenal = true;
+
+    var st = g._opening = { key: B.key, meru: !!B.meru, label: B.label, held: 0,
+                            last: 0, gates: 0, padsSeen: null, briefed: false, done: false };
+    var P = B.meru
+      ? { update: 'updateBridgeMission', exitAsk: 'bridgeExitAsk', arrive: 'beginBridgeArrival',
+          beamIn: 'bridgeTransportIn', leave: 'leaveBridge', briefed: '_bridgeBriefed', doneFlag: '_bridgeDone' }
+      : { update: 'updateBattleMission', exitAsk: 'battleExitAsk', arrive: 'beginBattleArrival',
+          beamIn: 'battleTransportIn', leave: 'leaveBattle', briefed: '_battleBriefed', doneFlag: '_battleDone' };
+    var real = {};
+    real.update = g[P.update];
+    real.exitAsk = g[P.exitAsk];
+
+    function onMap() {
+      var on = g.currentScene === st.key;
+      if (!on) st.onSince = 0;
+      return on;
+    }
+    // Knocked down on the map: the world restarts the fight, and the pad is
+    // briefed and the clock started again with it.
+    var P_restart = B.meru ? 'restartBridge' : 'restartBattle';
+    if (typeof g[P_restart] === 'function') {
+      var realRestart = g[P_restart];
+      g[P_restart] = function () {
+        if (g._opening) { st.briefed = false; st.onSince = 0; st.held = 0; st.last = 0; }
+        return realRestart.apply(g, arguments);
+      };
+    }
+    function finish() {
+      if (st.done) return;
+      st.done = true;
+      hud(false);
+      markSeen(g);
+      g._opening = null;
+      // back to the world's own methods for good
+      delete g[P.update]; delete g[P.exitAsk];
+      g[P.leave](false);
+    }
+
+    g[P.update] = function () {
+      if (!g._opening || !onMap()) return real.update.apply(g, arguments);
+      if (g[P.doneFlag]) return;
+      if (g.missionPromptOpen) return;
+      /* SETTLED FIRST. changeScene names the new room before it has finished
+         arriving, and the arrival resets the world's own briefing flag — so the
+         briefing waits until the room has been ours for a moment, and after
+         that only this opening's own flag says whether it has been given. */
+      var tnow = (performance || Date).now();
+      if (!st.onSince) st.onSince = tnow;
+      if (!st.briefed && tnow - st.onSince < 450) return;
+      if (!st.briefed) {
+        st.briefed = true; g[P.briefed] = true;
+        st.held = 0; st.last = 0; st.padsSeen = null;
+        if (g[P.arrive]) g[P.arrive]();
+        g.openMissionPrompt(
+          'TRANSPORT INTERRUPTED',
+          'DEFEND PAD for ' + HOLD_SECONDS + ' SECONDS while TRANSPORT recharges... ' +
+          'BONUSES for each enemy GATE destroyed.',
+          [{ label: 'DEFEND THE PAD', action: function () { if (g[P.beamIn]) g[P.beamIn](); } }]);
+        return;
+      }
+      if (g.beamIn) { st.last = 0; return; }
+      /* THE SHIELD HOLDS FOR THE THIRTY SECONDS. Ben: «the player can easily
+         stay inside the shield for 30 seconds». On a normal battle map the
+         pad's screen can be worn down and breached; while the transport is
+         recharging it cannot, so standing on the pad is always safe. */
+      var co = g.core;
+      if (co) { co.dead = false; co.up = true; co.hp = co.maxHp; co.breach = 0; co.inside = 0; }
+      var now = (performance || Date).now();
+      var live = !(g.gamePaused || g.caveDialogueOpen || g.pendingChoice || g.film);
+      if (live && st.last) st.held += Math.min(0.25, (now - st.last) / 1000);
+      st.last = live ? now : 0;
+
+      // a bonus for every gate, the moment it goes down
+      var left = g.padsLeft ? g.padsLeft() : 0;
+      if (st.padsSeen === null) st.padsSeen = left;
+      if (left < st.padsSeen) {
+        var n = st.padsSeen - left;
+        st.gates += n;
+        g.addGold(GATE_BONUS * n, 'GATE DESTROYED — BONUS');
+      }
+      st.padsSeen = left;
+
+      var rest = Math.max(0, HOLD_SECONDS - st.held);
+      hud(true, 'TRANSPORT RECHARGING  ' + Math.ceil(rest) + 's', st.held / HOLD_SECONDS);
+      if (rest <= 0 && live) {
+        hud(true, 'TRANSPORT CHARGED', 1);
+        g.openMissionPrompt(
+          'TRANSPORT CHARGED',
+          'Pad defended. Transporting to ' + st.label + '.' +
+          (st.gates ? ' ' + st.gates + (st.gates === 1 ? ' gate' : ' gates') + ' destroyed: +' +
+            (st.gates * GATE_BONUS) + ' CREDITS.' : ''),
+          [{ label: 'TRANSPORT NOW', action: finish }]);
+      }
+    };
+    g[P.exitAsk] = function () {
+      if (!g._opening || !onMap()) return real.exitAsk.apply(g, arguments);
+      // the exits are not the way out of this one: the pad is
+      if (g._openingExitAsked) return;
+      g._openingExitAsked = true;
+      var rest = Math.max(0, Math.ceil(HOLD_SECONDS - st.held));
+      g.openMissionPrompt('TRANSPORT RECHARGING',
+        'Hold the PAD — ' + rest + ' seconds until the TRANSPORT is charged.',
+        [{ label: 'BACK TO THE PAD', action: function () { setTimeout(function () { g._openingExitAsked = false; }, 2500); } }]);
+    };
+
+    /* DOWN ON THE BATTLE MAP. The briefing is the map's own first frame. If the
+       world had already started a film or a greeting in the square before we
+       got here, it is put away and its flag cleared, so it plays when you
+       actually arrive in the square. */
+    var filmFlag = null;
+    try { if (g.film && g.film.F && g.film.F.flag) filmFlag = g.film.F.flag; if (g.film && g.closeFilm) g.closeFilm(); } catch (e) {}
+    try { if (filmFlag && g.qClear) g.qClear(filmFlag); } catch (e) {}
+    /* AND A GREETER WHO HAD ALREADY STARTED (Gaya's Let at the customs pad
+       speaks on the very first frame) is un-greeted, so he is waiting for
+       you when the transport puts you down on his pad. */
+    try {
+      var who = g.caveDialogueOpen && g.caveDialogueNpc && g.caveDialogueNpc.key;
+      var rows = (typeof GAYA !== 'undefined' && GAYA.greeters) || [];
+      for (var gi = 0; gi < rows.length; gi++) {
+        var row = rows[gi];
+        if (!row || row.npc !== who) continue;
+        if (g._greeted) delete g._greeted[row.key];
+        if (row.once && g.qClear) g.qClear(row.once);
+      }
+    } catch (e) {}
+    // Put away WITHOUT its ending: a greeting's onClose is what it does when
+    // you have heard it (Gaya's customs boxes your weapons), and you have not.
+    try { for (var k2 = 0; k2 < 10 && g.caveDialogueOpen; k2++) { g.caveDialogueOnClose = null; g.caveDialogueChoices = null; g.closeCaveDialogue(); } } catch (e) {}
+    g[P.briefed] = false; g[P.doneFlag] = false;
+    Promise.resolve(g.changeScene(st.key, 'spawn')).then(function () {
+      g.playerHp = g.playerMaxHp || g.playerHp;
+    });
+  }
+
+  var tries = 0;
+  (function wait() {
+    var g = window.game;
+    if (g && g._bridgeLanded && g.layoutReady && g.scenes) {
+      try { install(g); } catch (e) { g._openingErr = String(e); console.warn('[opening]', e); }
+      return;
+    }
+    if (++tries < 1200) setTimeout(wait, 50);
+  })();
+})();
+
 /* EARTH — generated by tools/split.js from the planet's own surface.
    Edit here; build/build.py puts it back together. */
 
@@ -54772,6 +55066,17 @@ const UNIVERSE = (function () {
     if (f.partyMate || (f.avatarIs && f.avatarIs !== 'fox')) {   // '' = alone
       g._partyPending = { mate: f.partyMate || null, avatar: f.avatarIs || 'fox' };
     }
+    /* NOBLE COMES WITH YOU FROM THE START (Ben, 27 Sep). Once per save: a fox
+       who has never had the choice made for him is given Noble at his heel.
+       `nobleAuto` is written the first time, so if you later send Noble home
+       or take Hope instead, that choice is what travels — not the default. */
+    if (!f.nobleAuto && !f.partyMate) {
+      g._partyPending = { mate: 'noble', avatar: (f.avatarIs && f.avatarIs !== 'hope') ? f.avatarIs : 'fox' };
+    }
+    g._nobleAuto = true;
+    /* AND WHETHER THIS WORLD'S LANDING FIGHT HAS BEEN FOUGHT (62-opening.js). */
+    try { g._landingBattleDone = !!(universe.story && universe.story.flags && universe.story.flags[WORLD + '.landingBattle']); }
+    catch (e) { g._landingBattleDone = false; }
     // ONLY IF A PURSE ACTUALLY ARRIVED.
     if (universe.purse && universe.purse.credits != null) g.gold = universe.purse.credits | 0;
 
@@ -54810,7 +55115,8 @@ const UNIVERSE = (function () {
            value over a null, so a null could never say "not any more". */
         aid: g.playerAid || '',
         partyMate: g.partyMate || '',
-        avatarIs: g.avatarIs || 'fox'
+        avatarIs: g.avatarIs || 'fox',
+        nobleAuto: true
       },
       mech: (g._mechSave ? g._mechSave() : null),
       blind: (g._blindSave ? g._blindSave() : null),
@@ -54818,6 +55124,7 @@ const UNIVERSE = (function () {
       story: { pending: null, flags: {} }
     };
     try { p.story.flags = UNIVERSE.flagsPatch(WORLD, W.story.collect(g)); } catch (e) {}
+    if (g._landingBattleDone) { p.story.flags = p.story.flags || {}; p.story.flags[WORLD + '.landingBattle'] = true; }
     if (W.patch) { try { W.patch(g, p); } catch (e) {} }
     return p;
   }
