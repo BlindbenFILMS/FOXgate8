@@ -4870,6 +4870,8 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
 
   let pX = 0, pY = 0, vX = 0, vY = 0, pAngle = 0;
   let camX = 0, camY = 0;
+  let __chaseX = 0, __chaseY = 0, __camOutX = NaN, __camOutY = NaN;
+  const CAM_TRAIL = window.__8G_CAM_TRAIL != null ? window.__8G_CAM_TRAIL : 0.5;   // share of the old drift kept
   let globalTick = 0;
   
   let engineParticles = [];
@@ -5105,7 +5107,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
      It is deliberately NOT a hundred guarded damage sites. Once a frame the
      hull, the tank and the screens are simply put back, which cannot be missed
      by a weapon added later and needs no special case anywhere else. */
-  let testCredits = true;
+  let testCredits = false;   // 50 credits to start, carried everywhere (Ben, 28 Sep)
   let testGod = true;
   /* ==========================================================================
      THE TEST HELM  ·  temporary
@@ -5281,6 +5283,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
   let tipStill = 999999;
 
   function showTip(tip) {
+    if (!tip || !tip.__quest) __noteUntil = Date.now() + 5000;   // a notice gets five seconds, then the quest is back
     const h = document.getElementById('dockTipHeader');
     const d = document.getElementById('dockTipDetail');
     if (h) h.textContent = tip.header;
@@ -5855,7 +5858,36 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
   // 0.5 = everything appears half size, so twice the world fits on screen. A phone
   // has a third of the width to work with, so it zooms in: ships and stations read
   // at arm's length instead of being specks. Desktop is untouched at 0.5.
-  function zoomFor() {
+  /* PHONE PACE (Ben, 27 Sep): a touch screen flies at half the desk's pace
+     and sees the map 15% smaller. */
+  var __PHONE_TOUCH = (function () { var t = false; try { t = matchMedia("(pointer: coarse)").matches; } catch (e) {}
+    if (window.__8G_FORCE_TOUCH) t = true; if (window.__8G_NO_TOUCH) t = false; return t; })();
+  var __PHONE_PACE = (__PHONE_TOUCH && !window.__8G_FULL_PACE) ? 0.5 : 1;
+  var __PHONE_MAP = __PHONE_TOUCH ? 0.85 : 1;
+  /* THE STORY LINE ON THE BAR (Ben, 27 Sep) */
+  var __storyFlags = {};
+  var __noteUntil = 0, __questShown = '';
+  function __storyQuest() {
+    const f = __storyFlags || {};
+    if (!f['meru.flagshipParked']) {
+      const at = meruWorldAt();
+      return { x: at.x, y: at.y, name: 'MERU', header: 'FLY TO MERU:',
+               detail: 'CELEBRATE KING MIGHT\u2019S BIRTHDAY AT THE CENTER PLANET' };
+    }
+    return { x: MACHINE_BERTH.x, y: MACHINE_BERTH.y, name: 'MACHINE FLEET STN', header: 'ESCORT KING MIGHT:',
+             detail: 'GET THE KING TO THE MACHINE FLEET STATION' };
+  }
+  function __questTipTick() {
+    if (Date.now() < __noteUntil) { __questShown = ''; return; }
+    const q = __storyQuest(); if (!q) return;
+    const h = document.getElementById('dockTipHeader');
+    const key = q.header + '|' + q.detail;
+    if (key === __questShown && h && h.textContent === q.header) return;
+    __questShown = key;
+    showTip({ header: q.header, detail: q.detail, __quest: true });
+  }
+  function zoomFor() { return __zoomFor0() * __PHONE_MAP; }
+  function __zoomFor0() {
     /* A DESKTOP NOW LOOKS AT WHAT A PHONE LOOKS AT.
        This returned 0.5 for anything wider than 820, which meant a desktop was
        shown twice its window in world units: four times the area a phone sees.
@@ -5943,7 +5975,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
     } catch (e) { /* private browsing: the default stands */ }
   }
   loadSpeed();
-  let timeScale = speedPref;
+  let timeScale = speedPref * __PHONE_PACE;
   /* PLANNING IS NOT PLAYED AGAINST A CLOCK.
      A fifth speed was still a speed: a target could drift out of your reach
      while you were reading the odds on it, which is exactly the pressure this
@@ -8672,7 +8704,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
     const k = scopeBlend();
     const mask = document.getElementById('scope-mask');
     if (mask) { mask.style.opacity = k.toFixed(2); if (k <= 0.02 && mask.classList.contains('on')) mask.classList.remove('on'); }
-    timeScale = (volley.phase === 'hold' ? 0.06 : VOLLEY_FIRE_TIME) * speedPref;
+    timeScale = (volley.phase === 'hold' ? 0.06 : VOLLEY_FIRE_TIME) * speedPref * __PHONE_PACE;
     if (volley.phase === 'hold') {
       if (now >= volley.until) { volley.phase = 'fire'; volley.until = now; }
       return;
@@ -8758,7 +8790,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
        with a panel full of dashes, which is indistinguishable from a crash.
        It simply does not open. */
     if (!scopeLock) {
-      scopeOn = false; timeScale = speedPref;
+      scopeOn = false; timeScale = speedPref * __PHONE_PACE;
       document.getElementById('scope-mask').classList.remove('on');
       document.getElementById('scope-read').classList.remove('on');
       document.getElementById('scope-con').classList.remove('on');
@@ -8770,7 +8802,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
   }
   function closeScope() {
     if (!scopeOn && !volley) return;
-    scopeOn = false; timeScale = speedPref; volley = null;
+    scopeOn = false; timeScale = speedPref * __PHONE_PACE; volley = null;
     const m2 = document.getElementById('scope-mask');
     m2.classList.remove('on'); m2.style.opacity = '1';
     document.getElementById('scope-read').classList.remove('on');
@@ -9513,6 +9545,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
         if (f && f.kind === 'cache' && f.active) { f.active = false; f.towed = false; relicsHome++; }
       });
     }
+    __storyFlags = (u.story && u.story.flags) || {};
     if (u.story.flags && u.story.flags.homeName) {
       WORLD_LABEL['8g'] = u.story.flags.homeName;
       homeNamed = !!u.story.flags.homeNamed;
@@ -12074,7 +12107,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
     armOpeningAmbush();
     /* STRAIGHT OUT THE DOOR. Test mode is on and the tour is a tour of the
        deep, so there is nothing to be gained by parking on the pad first. */
-    if (testGod && TOUR_DEEP_ONLY) startTour();
+    if (testGod && TOUR_DEEP_ONLY && !__PHONE_TOUCH) startTour();
     // everything that was already drawn with the old label gets redrawn
     if (bridgeOpen) renderBridge();
     saveUniverse();
@@ -14304,7 +14337,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
         meruIntercept();
         return;
       }
-      if (!courseShown) return;          // the compass has it; the sky stays clean
+      if (!courseShown || __storyQuest()) return;   // the compass has it; the story line owns the course
       const d = Math.hypot(at.x - pX, at.y - pY);
       drawGuideLine(midX, midY, at.x, at.y,
         (WORLD_LABEL[nx] || '') + ' STATION',
@@ -14779,6 +14812,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
   /* Where the needle points, in priority order: the live quest, then a course
      you plotted yourself, then home. */
   function compassTarget() {
+    if (!meruAct) { const sq = __storyQuest(); if (sq) return { x: sq.x, y: sq.y, name: sq.name, tone: 'quest', quest: true, story: true }; }
     if (typeof tradeRun !== 'undefined' && tradeRun && !tradeRun.done && !meruAct) {
       const nx = tradeRun.next();
       if (nx) {
@@ -17391,7 +17425,9 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
     weapon() { return weaponSystems[activeWeaponIndex]; },
     busy() { return !!(gamePaused || dockedAt || minedAt || bridgeOpen); },
     anchor(v) { if (v > 0.2 && v < 0.8) SCREEN_ANCHOR_Y = v; return SCREEN_ANCHOR_Y; },
-    ship() { return { x: pX, y: pY, target: moveTarget, lasers: playerLasers.length, energy: playerEnergy }; }
+    quest() { const q = __storyQuest(); const h = document.getElementById('dockTipHeader'), d = document.getElementById('dockTipDetail'); return { q: q, header: h && h.textContent, detail: d && d.textContent, compass: compassTarget() }; },
+    flag(k, v) { __storyFlags[k] = v; __questShown = ''; },
+    ship() { return { x: pX, y: pY, vx: vX, vy: vY, target: moveTarget, lasers: playerLasers.length, energy: playerEnergy, zoom: ZOOM, pace: __PHONE_PACE, timeScale: timeScale }; }
   };
 
   function drawFlagshipCanvas(ctx, cX, cY, angle) {
@@ -19855,7 +19891,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
     speedPref = v;
     /* Do not stamp on a scope that is running: the reset at the top of the
        frame will pick the new pace up the moment slow motion ends. */
-    if (!scopeOn && !volley) timeScale = v;
+    if (!scopeOn && !volley) timeScale = v * __PHONE_PACE;
     try { window.localStorage.setItem(SPEED_KEY, String(v)); } catch (e) {}
     paintSpeedRows();
   }
@@ -20247,8 +20283,8 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
        mistaken for a stuck state. Neither of these should ever fire. If one
        does it writes to the log, so the path that caused it can be found.
        ================================================================== */
-    if (!scopeOn && !volley && timeScale !== speedPref) {
-      timeScale = speedPref;
+    if (!scopeOn && !volley && timeScale !== speedPref * __PHONE_PACE) {
+      timeScale = speedPref * __PHONE_PACE;
       logEvent('TIME SCALE RESTORED \u00b7 THE HELM WAS LEFT SLOW');
     }
     if (gamePaused && !bridgeOpen && !dockedAt && !minedAt && !prizeShip && !namingWorld
@@ -20405,8 +20441,8 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
         const haul = (towedHull ? TOW_DRAG : 1) * playerAccelMul * HULLS[playerClass].accel * speedMul();
         if (playerFuel > 0) {
           playerFuel = Math.max(0, playerFuel - FUEL_BURN * playerBurnMul * fuelMul() * (towedHull ? FUEL_TOW_PENALTY : 1));
-          vX += Math.cos(moveAngle) * PLAYER_ACCEL * SPEED_FACTOR * haul * timeScale;
-          vY += Math.sin(moveAngle) * PLAYER_ACCEL * SPEED_FACTOR * haul * timeScale;
+          vX += Math.cos(moveAngle) * PLAYER_ACCEL * SPEED_FACTOR * haul * timeScale / __PHONE_PACE;
+          vY += Math.sin(moveAngle) * PLAYER_ACCEL * SPEED_FACTOR * haul * timeScale / __PHONE_PACE;
         } else {
           moving = false;                        // dry tanks: the engines are dead
         }
@@ -20425,7 +20461,9 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
 
     playerProxy.x = pX; playerProxy.y = pY; playerProxy.vx = vX; playerProxy.vy = vY;
     playerProxy.heading = pAngle;
-    camX += (pX - camX) * 0.1; camY += (pY - camY) * 0.1;
+    if (camX !== __camOutX || camY !== __camOutY) { __chaseX = camX; __chaseY = camY; }   // snapped elsewhere
+    __chaseX += (pX - __chaseX) * 0.1; __chaseY += (pY - __chaseY) * 0.1;
+    camX = pX + (__chaseX - pX) * CAM_TRAIL; camY = pY + (__chaseY - pY) * CAM_TRAIL;
     globalTick++; pCtx.clearRect(0, 0, stageW, stageH);
     /* THE SHAKE.
        Everything in the world is drawn relative to the camera, so knocking the
@@ -20437,6 +20475,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
       camX += (Math.random() - 0.5) * meruShake;
       camY += (Math.random() - 0.5) * meruShake;
     }
+    __camOutX = camX; __camOutY = camY;
     {
       const red = document.getElementById('meru-red');
       if (red) {
@@ -20524,9 +20563,10 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
        already-seen indices to avoid repeats, which is machinery a nine-card
        loop does not need — it simply counts. */
     if (moving) { stillTimer = 0; tipStill = 0; } else { stillTimer++; tipStill++; }
+    __questTipTick();                                  // the quest owns the tip slot now
     if (tipStill > TIP_STILL) {
       // parked long enough to have stopped reading: back to the first card
-      if (!tipHeld) { tipHeld = true; tipIdx = 0; showTip(tipMessages[0]); }
+      if (!tipHeld) { tipHeld = true; tipIdx = 0; }
       tipRotateTimer = 0;
     } else {
       /* THE CLOCK RUNS ON "FLYING", NOT ON "UNDER POWER THIS EXACT FRAME".
@@ -20544,14 +20584,14 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
         /* AND THE FIRST CARD DOES NOT GET A SECOND TURN. TO FLY has been on
            the glass the whole time the ship sat there; the moment it moves,
            that lesson is learned and the player is owed the next one. */
-        tipHeld = false; tipIdx = 1; tipRotateTimer = 0; showTip(tipMessages[1]);
+        tipHeld = false; tipIdx = 1; tipRotateTimer = 0;
         shuffleTips();                                   // a fresh pack for this run
       }
       tipRotateTimer++;
       if (tipRotateTimer >= TIP_EVERY) {
         tipRotateTimer = 0;
         tipIdx = nextTipIndex();
-        showTip(tipMessages[tipIdx]);
+        /* the old hint cards no longer take the slot */
       }
     }
 
@@ -23254,10 +23294,10 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
     drawLowFuelLine(midX, midY);
     if (courseShown && !storyLock) {
       const ct = compassTarget();
-      if (ct && ct.home) {
+      if (ct && (ct.home || ct.story)) {
         const hd = Math.hypot(ct.x - pX, ct.y - pY);
         drawGuideLine(midX, midY, ct.x, ct.y, ct.name,
-          Math.round(hd).toLocaleString() + 'u  \u00b7  HOME', 'nav', [16, 12]);
+          Math.round(hd).toLocaleString() + 'u  \u00b7  ' + (ct.story ? 'QUEST' : 'HOME'), ct.story ? 'quest' : 'nav', [16, 12]);
       }
     }
     updateHomeCompass();
@@ -23293,6 +23333,29 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
   requestAnimationFrame(loop);
 </script>
 
+<script id="zoom-lock">
+/* NO BROWSER ZOOM (Ben, 27 Sep): a stray pinch or double-tap zoomed the whole
+   page. The page already asks for user-scalable=no, but iPhone Safari ignores
+   that, so the gestures themselves are refused: pinch (gesture events and
+   two-finger moves), double-tap, and ctrl + wheel / ctrl + plus-minus on a
+   desk. Taps, drags, the stick and the buttons are untouched. */
+(function () {
+  if (window.__8G_ZOOM_LOCK) return; window.__8G_ZOOM_LOCK = true;
+  var no = function (e) { if (e.cancelable) e.preventDefault(); };
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (t) { document.addEventListener(t, no, { passive: false }); });
+  document.addEventListener('touchmove', function (e) { if (e.touches && e.touches.length > 1) no(e); }, { passive: false });
+  // double-tap zoom is refused by touch-action: manipulation below, which keeps
+  // quick double taps on buttons working (a touchend trick would eat them)
+  document.addEventListener('dblclick', no, { passive: false });
+  window.addEventListener('wheel', function (e) { if (e.ctrlKey) no(e); }, { passive: false });
+  window.addEventListener('keydown', function (e) {
+    if ((e.ctrlKey || e.metaKey) && ['+', '-', '=', '0', '_'].indexOf(e.key) >= 0) no(e);
+  });
+  var css = document.createElement('style');
+  css.textContent = 'html, body { touch-action: manipulation; -webkit-text-size-adjust: 100%; }';
+  (document.head || document.documentElement).appendChild(css);
+})();
+</script>
 <script id="space-pad">
 /* SPACE PAD (Ben, 27 Sep) — touch screens only, except the centring, which
    every screen gets. Drives window.__8G_SPACE, which the map exposes. */
@@ -23322,6 +23385,35 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
   }
   setInterval(centre, 500);
   addEventListener('resize', centre);
+
+  /* CREDITS BESIDE ACTIONS (Ben, 27 Sep), every screen: the purse leaves its
+     corner and sits in the bar's button row, right of ACTIONS. */
+  (function () {
+    var purse = document.getElementById('purse'), menu = document.getElementById('btn-MENU');
+    if (!purse || !menu || !menu.parentNode) return;
+    var st = document.createElement('style');
+    st.textContent = [
+      '#bottomDock #purse { position: static !important; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box;',
+      '  height: 36px; padding: 0 10px; border-radius: 8px; font-size: 14px; letter-spacing: 1.2px; flex: 0 0 auto;',
+      '  background: rgba(8,14,24,.55); border: 1px solid rgba(250,204,21,.45); color: #fde68a; text-shadow: 0 1px 4px rgba(0,0,0,.9); }',
+      '#bottomDock #purse.rise { color: #7cf3c4; }',
+      'html.pc-touch #bottomDock #purse { font-size: 10px; letter-spacing: .4px; padding: 0 6px; }',
+      /* the quest is a sentence: let it wrap onto a second line rather than cut it off */
+      '#dockTipDetail { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }',
+      /* the quest on the left, then HP / EN, then the fuel ring (Ben, 27 Sep) */
+      /* and the buttons after them, on their own line on a phone (Ben, 28 Sep) */
+      'html.pc-touch #bottomDock #dockTip { order: -2 !important; flex: 1 1 0 !important; max-width: none !important; min-width: 0 !important; padding-left: 4px; }',
+      'html.pc-touch #bottomDock .dock-bars { order: -1 !important; margin-right: 4px; }',
+      'html.pc-touch #bottomDock .dock-buttons { order: 5 !important; }',
+      'html:not(.pc-touch) #bottomDock #dockTip { order: -4; }',
+      'html:not(.pc-touch) #bottomDock .dock-row > .dock-divider:nth-child(2) { order: -3; }',
+      'html:not(.pc-touch) #bottomDock .dock-bars { order: -2; }',
+      'html:not(.pc-touch) #bottomDock .dock-row > .dock-divider:nth-child(4) { order: -1; }',
+      'html:not(.pc-touch) #bottomDock .dock-buttons { order: 5; }'
+    ].join('\n');
+    document.head.appendChild(st);
+    menu.parentNode.insertBefore(purse, menu.nextSibling);
+  })();
   if (!touch) return;
   document.documentElement.classList.add('pc-touch');
 
@@ -23344,23 +23436,72 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
     '.pc-btn.down { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,.45); filter: brightness(1.25); }',
     '#pc-fire { background: radial-gradient(circle at 40% 35%, #ff9a8a, #d9463b 60%, #8e1f19); }',
     '#pc-next { background: radial-gradient(circle at 40% 35%, #ffe08a, #e0a526 60%, #8a5a0e); }',
-    /* the instruments make room for the pad */
-    'html.pc-touch #home-compass { left: 50% !important; right: auto !important; bottom: calc(18px + env(safe-area-inset-bottom, 0px)) !important;',
-    '  transform: translateX(-50%) scale(.56) !important; transform-origin: center bottom !important; }',
-    'html.pc-touch #helm-cluster { top: 104px; bottom: auto !important; left: 6px; right: auto !important; transform: scale(.62) !important; transform-origin: left top !important; }',
-    'html.pc-touch #course-toggle { bottom: calc(132px + env(safe-area-inset-bottom, 0px)) !important; }',
-    'html.pc-touch #test-credits { bottom: calc(160px + env(safe-area-inset-bottom, 0px)) !important; }',
-    'html.pc-touch #buoy-prompt { bottom: calc(190px + env(safe-area-inset-bottom, 0px)) !important; }',
-    'html.pc-touch #tour-hud { top: 104px; bottom: auto !important; }'
+    /* the stick says which way it goes: four fixed arrows round the ring */
+    '.pc-arr { position: absolute; width: 0; height: 0; pointer-events: none; opacity: .8; }',
+    '.pc-arr.u { left: 50%; top: 5px; margin-left: -7px; border: 7px solid transparent; border-top: 0; border-bottom: 9px solid rgba(190,240,255,.85); }',
+    '.pc-arr.d { left: 50%; bottom: 5px; margin-left: -7px; border: 7px solid transparent; border-bottom: 0; border-top: 9px solid rgba(190,240,255,.85); }',
+    '.pc-arr.l { top: 50%; left: 5px; margin-top: -7px; border: 7px solid transparent; border-left: 0; border-right: 9px solid rgba(190,240,255,.85); }',
+    '.pc-arr.r { top: 50%; right: 5px; margin-top: -7px; border: 7px solid transparent; border-right: 0; border-left: 9px solid rgba(190,240,255,.85); }',
+    '#pc-knob { z-index: 1; }',
+    /* THE PHONE LAYOUT (Ben, 27 Sep, second pass)
+       1 · SAVE / LOAD lives in ACTIONS (the bridge), not on the bar
+       2 · no TOUR button, no TEST MODE banner
+       3 · the fuel ring in the top right corner, beside ACTIONS, up to the top
+       4 · the ship buttons in a row under WEAPONS, outside the bar
+       5 · compass arrow above the distance, the distance bigger
+       6 · HIGHLIGHT COURSE under the destination's name */
+    'html.pc-touch #u-save, html.pc-touch #btn-TOUR, html.pc-touch #test-credits { display: none !important; }',
+    'html.pc-touch #bottomDock { padding-right: 94px; box-sizing: border-box; }',
+    'html.pc-touch #helm-cluster { display: contents !important; transform: none !important; }',
+    'html.pc-touch #fuel-gauge { position: fixed; z-index: 3150; top: calc(6px + env(safe-area-inset-top, 0px)); right: calc(6px + env(safe-area-inset-right, 0px));',
+    '  width: 80px; height: 80px; }',
+    'html.pc-touch #fuel-gauge svg { width: 80px; height: 80px; }',
+    'html.pc-touch #ship-picker { position: fixed; z-index: 3150; left: calc(6px + env(safe-area-inset-left, 0px)); top: var(--pc-under, 104px);',
+    '  flex-direction: row !important; flex-wrap: wrap; align-items: center !important; gap: 5px !important; max-width: calc(100vw - 110px); }',
+    'html.pc-touch #ship-picker button { font-size: 9px; padding: 6px 8px; min-width: 64px; letter-spacing: .1em; }',
+    'html.pc-touch #home-compass { left: calc(50% - 6px) !important; right: auto !important; max-width: 128px; box-sizing: border-box; bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;',
+    '  transform: translateX(-50%) !important; flex-direction: column !important; align-items: center !important; gap: 2px !important;',
+    '  padding: 6px 10px 5px !important; border-radius: 12px !important; text-align: center; }',
+    'html.pc-touch #home-compass svg { width: 40px; height: 40px; }',
+    'html.pc-touch #home-compass .hc-txt { align-items: center; }',
+    'html.pc-touch #home-compass .hc-txt b { font-size: 19px; }',
+    'html.pc-touch #home-compass .hc-txt span { font-size: 8px; letter-spacing: .12em; max-width: 108px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
+    /* HIGHLIGHT COURSE under the two round buttons, bottom right (Ben, 27 Sep) */
+    'html.pc-touch #course-toggle { left: auto !important; right: calc(12px + env(safe-area-inset-right, 0px)) !important; transform: none !important; white-space: nowrap;',
+    '  bottom: calc(8px + env(safe-area-inset-bottom, 0px)) !important; width: 120px; box-sizing: border-box; text-align: center; font-size: 8px !important; padding: 6px 4px !important; letter-spacing: .1em !important; }',
+    'html.pc-touch #buoy-prompt { bottom: calc(170px + env(safe-area-inset-bottom, 0px)) !important; }',
+    'html.pc-touch #tour-hud { top: 150px; bottom: auto !important; }'
   ].join('\n');
   document.head.appendChild(css);
 
   var root = document.createElement('div');
   root.id = 'pc-root';
-  root.innerHTML = '<div id="pc-stick" aria-label="Fly"><div id="pc-knob"></div></div>' +
+  root.innerHTML = '<div id="pc-stick" aria-label="Fly"><i class="pc-arr u"></i><i class="pc-arr d"></i><i class="pc-arr l"></i><i class="pc-arr r"></i><div id="pc-knob"></div></div>' +
     '<div id="pc-btns"><div class="pc-btn" id="pc-fire" role="button" aria-label="Twin lasers"><b>✹</b>LASERS</div>' +
     '<div class="pc-btn" id="pc-next" role="button" aria-label="Specialty weapon"><b>☄</b><span id="pc-wname">SPECIAL</span></div></div>';
   document.body.appendChild(root);
+
+  /* SAVE / LOAD in ACTIONS: a third button on the bridge's foot, beside the
+     log book. It opens the same save panel the bar's pill did (the pill is
+     still there, only hidden, so it stays the one way in). */
+  (function () {
+    var acts = document.querySelector('#bridge .bg-actions'), log = document.getElementById('bg-logbtn');
+    if (!acts || document.getElementById('bg-savebtn')) return;
+    var b = document.createElement('button');
+    b.id = 'bg-savebtn'; b.innerHTML = 'Save<br>Load';
+    b.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var pill = document.querySelector('#u-save .pill'); if (pill) pill.click();
+      this.blur();
+    });
+    acts.insertBefore(b, log || acts.firstChild);
+  })();
+  /* the ship buttons sit just under the bar, however tall the bar is */
+  setInterval(function () {
+    var d = document.getElementById('bottomDock'); if (!d) return;
+    var r = d.getBoundingClientRect();
+    document.documentElement.style.setProperty('--pc-under', Math.round(Math.max(0, r.bottom) + 6) + 'px');
+  }, 500);
   ['pointerdown', 'pointerup', 'pointermove', 'pointercancel', 'touchstart', 'touchend', 'touchmove', 'mousedown', 'mouseup', 'click']
     .forEach(function (t) { root.addEventListener(t, function (e) { e.stopPropagation(); }, { passive: true }); });
   var stop = function (e) { e.stopPropagation(); if (e.cancelable) e.preventDefault(); };

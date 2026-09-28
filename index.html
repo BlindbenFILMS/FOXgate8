@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#05060f">
 <title>8 GATES</title>
 <style>
@@ -49,5 +49,28 @@
   </nav>
   <p class="note">Each world is a big download the first time (6–16 MB). Wi-Fi recommended.</p>
 </main>
+<script>
+/* NO BROWSER ZOOM (Ben, 27 Sep): a stray pinch or double-tap zoomed the whole
+   page. The page already asks for user-scalable=no, but iPhone Safari ignores
+   that, so the gestures themselves are refused: pinch (gesture events and
+   two-finger moves), double-tap, and ctrl + wheel / ctrl + plus-minus on a
+   desk. Taps, drags, the stick and the buttons are untouched. */
+(function () {
+  if (window.__8G_ZOOM_LOCK) return; window.__8G_ZOOM_LOCK = true;
+  var no = function (e) { if (e.cancelable) e.preventDefault(); };
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (t) { document.addEventListener(t, no, { passive: false }); });
+  document.addEventListener('touchmove', function (e) { if (e.touches && e.touches.length > 1) no(e); }, { passive: false });
+  // double-tap zoom is refused by touch-action: manipulation below, which keeps
+  // quick double taps on buttons working (a touchend trick would eat them)
+  document.addEventListener('dblclick', no, { passive: false });
+  window.addEventListener('wheel', function (e) { if (e.ctrlKey) no(e); }, { passive: false });
+  window.addEventListener('keydown', function (e) {
+    if ((e.ctrlKey || e.metaKey) && ['+', '-', '=', '0', '_'].indexOf(e.key) >= 0) no(e);
+  });
+  var css = document.createElement('style');
+  css.textContent = 'html, body { touch-action: manipulation; -webkit-text-size-adjust: 100%; }';
+  (document.head || document.documentElement).appendChild(css);
+})();
+</script>
 </body>
 </html>

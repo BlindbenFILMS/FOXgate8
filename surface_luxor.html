@@ -4696,7 +4696,7 @@ class Game {
     ctx.restore(); ctx.restore();
   }
   drawFaceMouth(ctx, cx, y, r) {
-    if (this._speakingPortrait) {
+    if (this._speakingPortrait || this._talkMouth) {
       const mo = 0.5 + 0.5 * Math.sin((this.caveTick || 0) * 0.45); // medium speed
       const mr = r * 1.1;          // slightly wider than rest, not overwhelming
       const my = y + 9;            // gap below nose dot
@@ -11155,7 +11155,7 @@ class Game {
     // The choice buttons are things the PLAYER says, so while they are up the
     // plate and the name belong to the player — not to whoever asked.
     const speakerIsPlayer = this.caveDialogueChoosing || lineWho === 'player';
-    const speaker = speakerIsPlayer ? 'YOU' : ((npc && (npc.displayName || npc.key)) || '');
+    const speaker = speakerIsPlayer ? (this.playerName || 'YOU') : ((npc && (npc.displayName || npc.key)) || '');
     const t = this.caveTick || 0;
 
     ctx.save();
@@ -11164,15 +11164,16 @@ class Game {
     // This replaces the flat fillRect so the spotlight punches through cleanly.
     {
       let spX = W / 2, spY = H * 0.38;  // fallback: upper-centre
-      if (npc && npc.worldX != null) {
+      const _sp = speakerIsPlayer ? { worldX: this.pX, worldY: this.pY } : npc;   // the light follows whoever is talking
+      if (_sp && _sp.worldX != null) {
         /* HALF A BODY UP. worldY is the ground he is standing on; the fox is
            painted upward from it, so centring here lit her boots and left her
            face outside the pool. 70 is a little over half a fox at bodyScale
            1, taken in world units so it holds at any zoom, and scaled by the
            room's own body scale so the tall rooms agree with the small ones. */
         const lift = 70 * (this.sceneBodyScale ? this.sceneBodyScale() : 1);
-        spX = (npc.worldX - this.cameraCenterX) * this.zoom + W * (this.screenAnchorX || 0.5);
-        spY = (npc.worldY - lift - this.cameraCenterY) * this.zoom + H * (this.screenAnchorY || 0.5);
+        spX = (_sp.worldX - this.cameraCenterX) * this.zoom + W * (this.screenAnchorX || 0.5);
+        spY = (_sp.worldY - lift - this.cameraCenterY) * this.zoom + H * (this.screenAnchorY || 0.5);
       }
       const spotR = Math.min(W, H) * 0.09;  // tight circle — just the NPC
       const sg = ctx.createRadialGradient(spX, spY, 0, spX, spY, Math.max(W, H) * 0.75);
@@ -11225,8 +11226,9 @@ class Game {
     // there is of YOU reading the list, and it is charging the list a third of
     // the panel for the privilege.
     const counterList = this.caveDialogueChoosing && !!this.shopOpenWith;
+    const noPlate = counterList || !window.__8G_PLATE;   // no portrait circle (13)
     let plateR, plateCX, plateCY;
-    if (counterList) {
+    if (noPlate) {
       plateR = 0; plateCX = px; plateCY = py;      // nothing drawn, nothing reserved
     } else if (narrow) {
       plateR = Math.min(ph * 0.19, 50);
@@ -11247,13 +11249,13 @@ class Game {
       plateCX = brX - plateR;
       plateCY = py + ph / 2;
     }
-    if (!counterList) {
+    if (!noPlate) {
     ctx.fillStyle = '#120c07';
     ctx.strokeStyle = '#b5822f'; ctx.lineWidth = 3;
     ctx.beginPath(); ctx.arc(plateCX, plateCY, plateR + 8, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
     }
     // draw the speaker's face into the plate (player for questions, NPC for answers)
-    if (counterList) {
+    if (noPlate) {
       // nothing — the counter has the panel to itself
     } else if (speakerIsPlayer) {
       ctx.save();
@@ -11301,8 +11303,8 @@ class Game {
     // With no plate at all the header starts at the panel's own left margin,
     // and it names the KEEPER rather than saying YOU: their picture is gone,
     // so the word is the only thing left that says whose counter this is.
-    const textX = counterList ? px + 24 : plateCX + plateR + (narrow ? 16 : 28);
-    const nameY = (counterList || !narrow) ? py + 22 : plateCY - 12;
+    const textX = noPlate ? px + 24 : plateCX + plateR + (narrow ? 16 : 28);
+    const nameY = (noPlate || !narrow) ? py + 22 : plateCY - 12;
     ctx.textAlign = 'left'; ctx.textBaseline = 'top';
     ctx.fillStyle = (speakerIsPlayer && !counterList) ? '#8fd3ff' : '#ffcf85';
     // Shrink the name rather than let it run under the NEXT/CLOSE label in the
@@ -11313,15 +11315,15 @@ class Game {
     while (nfs2 > 11 && ctx.measureText(speaker.toUpperCase()).width > nameRoom) {
       nfs2 -= 1; ctx.font = 'bold ' + nfs2 + 'px Arial, Helvetica, sans-serif';
     }
-    ctx.fillText((counterList && npc ? (npc.displayName || npc.key) : speaker).toUpperCase(), textX, nameY);
+    ctx.fillText((counterList && npc ? (npc.displayName || npc.key) : speaker).toUpperCase() + ':', textX, nameY);
 
     // Where the words begin. Beside the plate on a wide panel; BELOW the badge
     // when the panel is stacked. Everything under it — the button stack
     // included — is measured from here, which is what keeps the buttons off
     // the portrait: in the stacked layout there is no room above this line,
     // because that is where the picture is.
-    const areaX = (counterList || narrow) ? px + 24 : textX, areaR = px + pw - 26;
-    const areaTop = (counterList || !narrow) ? py + 56 : plateCY + plateR + 14;
+    const areaX = (noPlate || narrow) ? px + 24 : textX, areaR = px + pw - 26;
+    const areaTop = (noPlate || !narrow) ? py + 56 : plateCY + plateR + 14;
 
     // The buttons get their room FIRST, out of the space between the words and
     // the floor of the panel. They used to be laid out under the words with a
@@ -11367,7 +11369,7 @@ class Game {
       return out;
     };
     let fs = 20, lines = wrapAt(fs);
-    while (fs > 11 && lines.length * (fs + 7) > areaH) { fs -= 1; lines = wrapAt(fs); }
+    while (fs > Math.round(11 * (this._dpr || 1)) && lines.length * (fs + 7) > areaH) { fs -= 1; lines = wrapAt(fs); }
     const lh = fs + 7;
     // Past the smallest font the text used to keep printing — over the buttons,
     // over the border, off the panel. Whatever will not fit is cut, with an
@@ -11409,7 +11411,7 @@ class Game {
         const label = '\u203A ' + opt.label;
         let bfs = Math.min(this.shopOpenWith ? 22 : 18, bh * (this.shopOpenWith ? 0.5 : 0.46));
         ctx.font = 'bold ' + bfs + 'px Arial, sans-serif';
-        while (bfs > 10 && ctx.measureText(label).width > bww - 26) { bfs -= 1; ctx.font = 'bold ' + bfs + 'px Arial, sans-serif'; }
+        while (bfs > Math.round(11 * (this._dpr || 1)) && ctx.measureText(label).width > bww - 26) { bfs -= 1; ctx.font = 'bold ' + bfs + 'px Arial, sans-serif'; }
         ctx.fillStyle = '#fdf4e3';
         ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
         ctx.fillText(label, bxx + 14, byy + bh / 2);
@@ -18832,7 +18834,7 @@ if (this.shieldsActive) {
 
     /* ---- and it fires itself ---- */
     if (v.cool > 0) v.cool -= 1;
-    else if (v.hasTarget) {                      // nothing in reach, nothing fired
+    else if ((this._vehManual ? !!this._vehTrigger : v.hasTarget)) {                      // nothing in reach, nothing fired
       v.cool = spec.rate;
       v.kick = 6;
       const dx = Math.cos(v.ang), dy = Math.sin(v.ang);
@@ -36736,7 +36738,7 @@ if (this.shieldsActive) {
       /* ---- 5. THE BUTTON ---------------------------------------------------- */
       var btn = document.createElement('button');
       btn.id = 'mechBtn';
-      btn.style.cssText = 'position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:9500;'
+      btn.style.cssText = 'position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:3050;'
         + 'padding:11px 26px;border-radius:11px;cursor:pointer;display:none;'
         + 'font:700 13px system-ui,sans-serif;letter-spacing:.10em;white-space:nowrap;'
         + 'background:linear-gradient(180deg,#0f2436,#081522);color:#7dd3fc;border:2px solid #2b6f8f;'
@@ -36876,7 +36878,12 @@ if (this.shieldsActive) {
         var hy = v.y + (v.bob || 0) - HEAD_CENTRE + 56 * HEAD_SCALE;
         g._mechSeating = 1;
         try {
-          g.drawPolishedFace(v.x, hy, 0, HEAD_SCALE);
+          var _who = (g.avatarIs && g.avatarIs !== 'fox') ? (g._companionCast || []).find(function (c) { return c && c.key === g.avatarIs; }) : null;
+          if (_who && _who.drawFace && _who.state) {
+            var _st = _who.state, _hs = _st.headScale, _fd = _st.faceDir, _vf = _st.viewFacing;
+            _st.headScale = HEAD_SCALE; _st.faceDir = g.faceDir || 1; _st.viewFacing = g.viewFacing || 'FRONT';
+            try { _who.drawFace(_st, v.x, hy, 0); } finally { _st.headScale = _hs; _st.faceDir = _fd; _st.viewFacing = _vf; }
+          } else g.drawPolishedFace(v.x, hy, 0, HEAD_SCALE);
           /* AND IT REPORTS WHAT IT DID. Not debugging left in — the head is drawn
              through the ORIGINAL bound method, so it is invisible to anything that
              wraps the painter afterwards, which is exactly what a harness does.
@@ -37447,7 +37454,7 @@ if (this.shieldsActive) {
       /* --------------------------------------------------------- the two halves */
       var bar = document.createElement('div');
       bar.id = 'visionBar';
-      bar.style.cssText = 'position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:9500;'
+      bar.style.cssText = 'position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:3050;'
         + 'display:none;border-radius:11px;overflow:hidden;border:2px solid #2b6f8f;'
         + 'box-shadow:0 8px 26px rgba(0,0,0,.55);background:#081522';
 
@@ -39606,7 +39613,7 @@ function shimFor(key) {
 
 var realBody = g.paintPlayerBody.bind(g);
 g.paintPlayerBody = function (pX, pY, s, faceDir, legSwing, armSwing, bob, breathe, hBob, moving, headScale) {
-  if (g.avatarIs === 'fox') return realBody.apply(null, arguments);
+  if (g.avatarIs === 'fox' || (g.vehicle && g.mech && g.vehicle === g.mech.veh && !g._portraitScale && !g._speakingPortrait)) return realBody.apply(null, arguments);   // in the mech: head only (12)
   var sh = shimFor(g.avatarIs);
   if (!sh) return realBody.apply(null, arguments);
   /* KEPT FOR THE SHADOW PASS, which runs before this and reads the last
@@ -40094,16 +40101,65 @@ g._party = function () {
     function finish() {
       if (st.done) return;
       st.done = true;
-      hud(false);
+      hud(false); goBtn(false);
       markSeen(g);
       g._opening = null;
       // back to the world's own methods for good
       delete g[P.update]; delete g[P.exitAsk];
+      if (realDefeat) g.triggerDefeat = realDefeat;
+      g.playerDefeated = false;
       g[P.leave](false);
+    }
+    /* STAY AND KEEP FIGHTING (Ben, 27 Sep): "ALLOW the player to STAY and keep
+       fighting but transport them to town square if they die." The pad has
+       done its job, so the opening is marked seen; the map becomes the world's
+       own battle again (its waves, its gates, its shield), a TRANSPORT button
+       waits under the clock for whenever you have had enough, and going down
+       here is not a TRY AGAIN — the transport pulls you out to the square. */
+    function stay() {
+      st.staying = true;
+      markSeen(g);
+      hud(true, 'TRANSPORT READY — FIGHTING ON', 1);
+      goBtn(true);
+    }
+    var realDefeat = g.triggerDefeat;
+    g.triggerDefeat = function () {
+      if (g._opening && st.staying && onMap() && !st.done) {
+        if (g.playerDefeated) return;
+        g.playerDefeated = true;
+        try { if (window.sfx && sfx.defeat) sfx.defeat(); } catch (e) {}
+        g.openMissionPrompt('TRANSPORT ENGAGED',
+          'You held the line as long as you could. The transport pulls you out to ' + st.label + '.' +
+          (st.gates ? ' ' + st.gates + (st.gates === 1 ? ' gate' : ' gates') + ' destroyed: +' + (st.gates * GATE_BONUS) + ' CREDITS.' : ''),
+          [{ label: 'TRANSPORT', action: function () { g.playerHp = g.playerMaxHp || g.playerHp; finish(); } }]);
+        return;
+      }
+      return realDefeat.apply(g, arguments);
+    };
+    function goBtn(on) {
+      var b = document.getElementById('openingGo');
+      if (!on) { if (b) b.style.display = 'none'; return; }
+      if (!b) {
+        b = document.createElement('button');
+        b.id = 'openingGo'; b.type = 'button'; b.textContent = 'TRANSPORT TO ' + st.label;
+        b.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);z-index:9000;pointer-events:auto;' +
+          'font:800 11px/1 Archivo,Arial,sans-serif;letter-spacing:1.4px;padding:9px 14px;border-radius:8px;cursor:pointer;' +
+          'background:rgba(6,30,22,.92);color:#6ee7b7;border:1px solid rgba(110,231,183,.65);box-shadow:0 0 14px rgba(110,231,183,.25)';
+        ['pointerdown', 'pointerup', 'touchstart', 'touchend', 'mousedown', 'mouseup'].forEach(function (t) {
+          b.addEventListener(t, function (e) { e.stopPropagation(); }, { passive: true });
+        });
+        b.addEventListener('click', function (e) { e.stopPropagation(); e.preventDefault(); finish(); });
+        document.body.appendChild(b);
+      }
+      var h = document.getElementById('openingHud');
+      var top = h ? h.getBoundingClientRect().bottom + 6 : 110;
+      b.style.top = Math.round(top) + 'px';
+      b.style.display = (g.gamePaused || g.missionPromptOpen || g.caveDialogueOpen) ? 'none' : 'block';
     }
 
     g[P.update] = function () {
-      if (!g._opening || !onMap()) return real.update.apply(g, arguments);
+      if (!g._opening || !onMap()) { if (st.staying) goBtn(false); return real.update.apply(g, arguments); }
+      if (st.staying) { goBtn(true); return real.update.apply(g, arguments); }
       if (g[P.doneFlag]) return;
       if (g.missionPromptOpen) return;
       /* SETTLED FIRST. changeScene names the new room before it has finished
@@ -40155,11 +40211,12 @@ g._party = function () {
           'Pad defended. Transporting to ' + st.label + '.' +
           (st.gates ? ' ' + st.gates + (st.gates === 1 ? ' gate' : ' gates') + ' destroyed: +' +
             (st.gates * GATE_BONUS) + ' CREDITS.' : ''),
-          [{ label: 'TRANSPORT NOW', action: finish }]);
+          [{ label: 'TRANSPORT NOW', action: finish },
+           { label: 'STAY AND KEEP FIGHTING', action: stay }]);
       }
     };
     g[P.exitAsk] = function () {
-      if (!g._opening || !onMap()) return real.exitAsk.apply(g, arguments);
+      if (!g._opening || !onMap() || st.staying) return real.exitAsk.apply(g, arguments);
       // the exits are not the way out of this one: the pad is
       if (g._openingExitAsked) return;
       g._openingExitAsked = true;
@@ -40248,6 +40305,13 @@ g._party = function () {
     '  border: 2px solid rgba(127,227,255,.45); box-shadow: 0 0 14px rgba(56,189,248,.25); transition: opacity .15s; }',
     '#pc-knob { position: absolute; left: 50%; top: 50%; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%;',
     '  background: radial-gradient(circle at 40% 35%, #e6fbff, #7fe3ff 55%, #2b8fb3); box-shadow: 0 2px 8px rgba(0,0,0,.5); }',
+    /* four fixed arrows round the ring, so it reads as a stick (Ben, 27 Sep) */
+    '#pc-knob { z-index: 1; }',
+    '.pc-arr { position: absolute; width: 0; height: 0; pointer-events: none; opacity: .8; }',
+    '.pc-arr.u { left: 50%; top: 5px; margin-left: -7px; border: 7px solid transparent; border-top: 0; border-bottom: 9px solid rgba(190,240,255,.85); }',
+    '.pc-arr.d { left: 50%; bottom: 5px; margin-left: -7px; border: 7px solid transparent; border-bottom: 0; border-top: 9px solid rgba(190,240,255,.85); }',
+    '.pc-arr.l { top: 50%; left: 5px; margin-top: -7px; border: 7px solid transparent; border-left: 0; border-right: 9px solid rgba(190,240,255,.85); }',
+    '.pc-arr.r { top: 50%; right: 5px; margin-top: -7px; border: 7px solid transparent; border-right: 0; border-left: 9px solid rgba(190,240,255,.85); }',
     '#pc-btns { position: fixed; right: calc(14px + env(safe-area-inset-right, 0px)); bottom: calc(40px + env(safe-area-inset-bottom, 0px));',
     '  display: flex; gap: 12px; pointer-events: none; transition: opacity .15s; }',
     '.pc-btn { width: 52px; height: 52px; border-radius: 50%; pointer-events: auto; touch-action: none; user-select: none; -webkit-user-select: none;',
@@ -40258,20 +40322,54 @@ g._party = function () {
     '.pc-btn.down { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,.45); filter: brightness(1.25); }',
     '#pc-melee { background: radial-gradient(circle at 40% 35%, #ff9a8a, #d9463b 60%, #8e1f19); }',
     '#pc-ranged { background: radial-gradient(circle at 40% 35%, #9fe8ff, #2f9fd6 60%, #145b86); }',
+    /* riding: FIRE 10% smaller, EXIT 10% bigger and in the exit button's red */
+    '#pc-btns { align-items: center; }',
+    '#pc-root.riding #pc-melee { width: 47px; height: 47px; background: radial-gradient(circle at 40% 35%, #ffc38a, #ea6a1f 60%, #8e3a12); }',
+    '#pc-root.riding #pc-ranged { width: 57px; height: 57px; background: radial-gradient(circle at 40% 35%, #5a1010, #2e0404 70%); border-color: #ff2f2f; color: #ff7a7a; }',
     '#pc-hint { position: fixed; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); pointer-events: auto;',
     '  background: rgba(6,9,16,.80); border: 1px solid rgba(255,209,102,.55); border-radius: 9px; padding: 6px 8px;',
     '  color: #eef6ff; font: 700 11px/1.25 system-ui, -apple-system, sans-serif; text-align: center;',
     '  max-height: 104px; overflow: hidden; display: none; transition: opacity .15s; }',
     '#pc-hint .t { color: #ffd166; font-size: 9.5px; letter-spacing: .8px; text-transform: uppercase; margin-bottom: 3px; }',
-    '#pc-hint .w { color: #7dd3fc; font-size: 10px; margin-top: 3px; }'
+    '#pc-hint .w { color: #7dd3fc; font-size: 10px; margin-top: 3px; }',
+    /* the ring: a key over the stick, and the two punches in boxing colours */
+    '#pc-ringkey { position: fixed; left: calc(10px + env(safe-area-inset-left, 0px)); bottom: calc(146px + env(safe-area-inset-bottom, 0px)); display: none;',
+    '  padding: 4px 7px; border-radius: 7px; background: rgba(6,9,16,.78); border: 1px solid rgba(255,209,102,.5);',
+    '  color: #fde68a; font: 800 9px/1.35 system-ui, -apple-system, sans-serif; letter-spacing: .5px; pointer-events: none; white-space: nowrap; }',
+    '#pc-root.ring #pc-ringkey { display: block; }',
+    /* the bike race: a lane key over the stick, GAS in green and TURBO in fire */
+    '#pc-racekey { position: fixed; left: calc(10px + env(safe-area-inset-left, 0px)); bottom: calc(146px + env(safe-area-inset-bottom, 0px)); display: none;',
+    '  padding: 4px 7px; border-radius: 7px; background: rgba(6,9,16,.78); border: 1px solid rgba(125,211,252,.5);',
+    '  color: #bae6fd; font: 800 9px/1.35 system-ui, -apple-system, sans-serif; letter-spacing: .5px; pointer-events: none; white-space: nowrap; }',
+    '#pc-root.race #pc-racekey { display: block; }',
+    /* and the race's messages, in the gap between the stick and the buttons */
+    '#pc-racemsg { position: fixed; display: none; box-sizing: border-box; padding: 5px 6px; border-radius: 9px; pointer-events: none; text-align: center;',
+    '  background: rgba(6,9,16,.82); border: 1px solid rgba(125,211,252,.45); font-family: system-ui, -apple-system, sans-serif; }',
+    '#pc-root.race #pc-racemsg { display: block; }',
+    '#pc-racemsg .l1 { font: 900 11px/1.2 system-ui, sans-serif; letter-spacing: .3px; color: #e0f2fe; white-space: nowrap; overflow: hidden; }',
+    '#pc-racemsg .l2 { font: 800 10px/1.25 system-ui, sans-serif; letter-spacing: .3px; color: #7dd3fc; margin-top: 2px; white-space: nowrap; overflow: hidden; }',
+    '#pc-racemsg.warn { border-color: rgba(248,113,113,.8); box-shadow: 0 0 12px rgba(248,113,113,.35); }',
+    '#pc-racemsg.warn .l1 { color: #fca5a5; } #pc-racemsg.warn .l2 { color: #fde68a; }',
+    '#pc-racemsg.hot { border-color: rgba(251,146,60,.85); box-shadow: 0 0 12px rgba(251,146,60,.35); }',
+    '#pc-racemsg.hot .l1 { color: #fdba74; } #pc-racemsg.hot .l2 { color: #fde68a; }',
+    '#pc-racemsg.flash { animation: pcflash .5s ease-in-out infinite alternate; }',
+    '@keyframes pcflash { from { opacity: 1; } to { opacity: .55; } }',
+    '#pc-root.race #pc-melee { background: radial-gradient(circle at 40% 35%, #b6f7c9, #22c55e 60%, #14532d); }',
+    '#pc-root.race #pc-ranged { background: radial-gradient(circle at 40% 35%, #ffd89a, #f97316 60%, #7c2d12); }',
+    '#pc-root.race .pc-btn.hot { box-shadow: 0 0 16px rgba(255,140,40,.9), 0 3px 0 rgba(0,0,0,.45); }',
+    '#pc-root.ring #pc-melee { background: radial-gradient(circle at 40% 35%, #ffb199, #e0452e 60%, #7d1a10); }',
+    '#pc-root.ring #pc-ranged { background: radial-gradient(circle at 40% 35%, #ffe08a, #e0a21f 60%, #7d5410); }'
   ].join('\n');
   document.head.appendChild(css);
 
   var root = document.createElement('div');
   root.id = 'pc-root';
   root.innerHTML =
-    '<div id="pc-stick" aria-label="Move"><div id="pc-knob"></div></div>' +
+    '<div id="pc-stick" aria-label="Move"><i class="pc-arr u"></i><i class="pc-arr d"></i><i class="pc-arr l"></i><i class="pc-arr r"></i><div id="pc-knob"></div></div>' +
     '<div id="pc-hint" role="status"></div>' +
+    '<div id="pc-racemsg" role="status" aria-live="polite"><div class="l1"></div><div class="l2"></div></div>' +
+    '<div id="pc-racekey">▲ ▼ &nbsp;CHANGE LANE</div>' +
+    '<div id="pc-ringkey">◀ ▶ SLIP &nbsp;·&nbsp; ▼ GUARD &nbsp;·&nbsp; ▲ SUPER</div>' +
     '<div id="pc-btns">' +
       '<div class="pc-btn" id="pc-melee" role="button" aria-label="Melee attack"><b>⚔</b>MELEE</div>' +
       '<div class="pc-btn" id="pc-ranged" role="button" aria-label="Ranged attack"><b>◎</b>RANGED</div>' +
@@ -40302,6 +40400,29 @@ g._party = function () {
     g.stick = { on: !!on, x: x, y: y };
     var T = 0.38;
     g.keys.a = on && x < -T; g.keys.d = on && x > T;
+    if (inRace(g)) {
+      /* ON THE BIKE (Ben, 28 Sep): up and down change lane — a lane steps on
+         the push and repeats while you hold it, exactly like the old buttons. */
+      g.keys.w = g.keys.s = g.keys.a = g.keys.d = false;
+      var R0 = g.race, want = on && y < -T ? 'up' : (on && y > T ? 'down' : null);
+      if (want) R0.ptr.set('pc-stick', want); else R0.ptr.delete('pc-stick');
+      raceKeys(g);
+      var k1 = document.getElementById('pc-knob');
+      if (k1) k1.style.transform = 'translate(' + (x * 30) + 'px,' + (y * 30) + 'px)';
+      return;
+    }
+    if (inRing(g)) {
+      /* IN THE RING (Ben, 28 Sep): left / right slip, pull down to cover up,
+         push up to let the SUPER go. Up and down are not punches here — the
+         two buttons are. */
+      g.keys.w = false; g.keys.s = false;
+      g.keys.space = on && y > T && Math.abs(x) < 0.75;
+      g.keys.q = on && y < -0.6 && Math.abs(x) < 0.6;
+      if (on || x || y) g.boxing._tapped = true;
+      var k0 = document.getElementById('pc-knob');
+      if (k0) k0.style.transform = 'translate(' + (x * 30) + 'px,' + (y * 30) + 'px)';
+      return;
+    }
     g.keys.w = on && y < -T; g.keys.s = on && y > T;
     if (on && (x || y)) {
       var l = Math.hypot(x, y) || 1;
@@ -40359,6 +40480,120 @@ g._party = function () {
     var m = Math.hypot(x, y) || 1;
     return { x: x / m, y: y / m };
   }
+  /* THE BOXING RING (Luxor): the pad stays up through a bout and speaks the
+     ring's language — MELEE is a punch to the head, RANGED a punch to the body,
+     one per press; the meter still decides whether that is a jab or an
+     uppercut, a body shot or a hook. */
+  /* THE BIKE RACE (Luxor's FOXY BURNER): the pad stays up from the grid to the
+     flag. GAS rides steady and never lights the burner; TURBO lights it at once
+     and builds heat — Excitebike's two buttons. */
+  function inRace(g) { return !!(g && g.race && (g.race.state === 'grid' || g.race.state === 'run') && !window.__8G_NO_RACE_PAD); }
+  function raceKeys(g) {
+    var R = g.race, was = R.keys || {};
+    R.keys = g.raceKeys(R);
+    [['up', -1], ['down', 1]].forEach(function (kd) {
+      if (R.keys[kd[0]] && !was[kd[0]]) { R._laneRep = 0; g.raceLaneStep(R, kd[1]); }
+    });
+  }
+  /* WHAT THE RIDER NEEDS TO KNOW RIGHT NOW (Ben, 28 Sep): the next thing in
+     your lane, then the engine, then where you stand. Two short lines. */
+  var HAZ = { slicks: 'OIL SLICK', stalls: 'WRECK', kerbs: 'BARRIER', vents: 'STEAM VENT' };
+  function raceMsg(g) {
+    var R = g.race, D = R.R || {}, lap = D.lap || 1;
+    if (R.state === 'grid') return { a: 'GET READY', b: 'HOLD GAS AT GO', k: '' };
+    if ((R.stall || 0) > 0) return { a: 'ENGINE BOILED!', b: 'WAIT FOR IT TO COOL', k: 'hot flash' };
+    if ((R.down || 0) > 0) return { a: 'WIPEOUT!', b: 'BACK ON IN A MOMENT', k: 'warn' };
+    var t = R.s % lap; if (t < 0) t += lap;
+    var look = Math.max(320, (R.v || 0) * 1.7), lane = Math.round(R.laneF != null ? R.laneF : R.lane), lanes = g.RACE_LANES();
+    var near = null;
+    Object.keys(HAZ).forEach(function (k) {
+      (D[k] || []).forEach(function (h) {
+        var d = h.at - t; if (d < -((h.len || 100) * 0.5)) d += lap;
+        if (d < -40 || d > look) return;
+        var lo = h.lane, hi = h.lane + ((h.lanes || 1) - 1);
+        if (lane < lo || lane > hi) return;
+        if (k === 'vents' && g.raceVentState && g.raceVentState(h) === 'idle' && d > look * 0.6) return;
+        if (!near || d < near.d) near = { d: d, k: k, lo: lo, hi: hi, to: h.to };
+      });
+    });
+    if (near) {
+      // which way is clear?
+      var clear = function (L) {
+        if (L < 0 || L >= lanes) return false;
+        var ok = true;
+        Object.keys(HAZ).forEach(function (k) { (D[k] || []).forEach(function (h) {
+          var d = h.at - t; if (d < -((h.len || 100) * 0.5)) d += lap;
+          if (d < -40 || d > look) return;
+          if (L >= h.lane && L <= h.lane + ((h.lanes || 1) - 1)) ok = false;
+        }); });
+        return ok;
+      };
+      var up = clear(near.lo - 1), dn = clear(near.hi + 1);
+      var how = up && dn ? 'CHANGE LANE ▲ OR ▼' : up ? 'CHANGE LANE ▲' : dn ? 'CHANGE LANE ▼' : 'BRACE YOURSELF';
+      return { a: 'OBSTACLE: ' + HAZ[near.k], b: how, k: 'warn' + (near.d < look * 0.45 ? ' flash' : '') };
+    }
+    var heat = R.heat || 0;
+    if (heat > 0.78) return { a: 'BIKE GETTING HOT!', b: 'EASE OFF TURBO', k: 'hot flash' };
+    if (heat > 0.55 && R.boost) return { a: 'HEAT RISING', b: 'WATCH THE GAUGE', k: 'hot' };
+    var place = R.place || 1, suf = ['TH', 'ST', 'ND', 'RD'][place > 3 ? 0 : place] || 'TH';
+    if (R.boost) return { a: 'TURBO!', b: place + suf + ' · LAP ' + (R.lap || 1) + ' OF ' + (R.laps || 1), k: '' };
+    return { a: place + suf + ' PLACE', b: 'LAP ' + (R.lap || 1) + ' OF ' + (R.laps || 1) + (heat < 0.3 ? ' · TURBO READY' : ''), k: '' };
+  }
+  function paintRaceMsg(g) {
+    var el = document.getElementById('pc-racemsg'); if (!el) return;
+    var st = document.getElementById('pc-stick'), bt = document.getElementById('pc-btns');
+    if (st && bt) {
+      var a = st.getBoundingClientRect(), b = bt.getBoundingClientRect();
+      var left = a.right + 6, w = Math.max(90, b.left - a.right - 12);
+      el.style.left = Math.round(left) + 'px'; el.style.width = Math.round(w) + 'px';
+      el.style.top = Math.round(b.top + b.height / 2 - 22) + 'px';
+    }
+    var m = raceMsg(g);
+    var l1 = el.querySelector('.l1'), l2 = el.querySelector('.l2');
+    var fit = function (node, txt, max) {             // the whole line, never an ellipsis: it steps down in size to fit
+      if (node.textContent === txt && node._fit) return;
+      node.textContent = txt; node._fit = true;
+      for (var fs = max; fs >= 7.5; fs -= 0.5) { node.style.fontSize = fs + 'px'; if (node.scrollWidth <= node.clientWidth + 1) break; }
+    };
+    fit(l1, m.a, 11.5); fit(l2, m.b, 10.5);
+    var cls = m.k || '';
+    if (el._k !== cls) { el.className = cls; el._k = cls; }
+  }
+  window.__8G_RACE_MSG = function () { var g = G(); return g && g.race ? raceMsg(g) : null; };
+  function raceGas(g, which, down) {
+    var R = g.race; if (!R) return;
+    if (down) R.ptr.set('pc-' + which, 'gas'); else R.ptr.delete('pc-' + which);
+    R._padTurbo = R.ptr.has('pc-turbo');
+    R._padGas = R.ptr.has('pc-gas');
+    raceKeys(g);
+  }
+  function inRing(g) { return !!(g && g.boxing && g.boxing.state !== 'over' && !window.__8G_NO_RING_PAD); }
+  var ringPress = { head: false, body: false };
+  /* where the ring's bars go on a phone, measured off the pad itself so it
+     holds on any screen: in canvas pixels, plus the key's place in CSS pixels */
+  function ringLayout(g) {
+    if (!inRing(g) || !document.documentElement.classList.contains('pc-touch') || !g.canvas) return null;
+    var st = document.getElementById('pc-stick'), bt = document.getElementById('pc-btns');
+    if (!st || !bt) return null;
+    var cr = g.canvas.getBoundingClientRect(), W = g.canvas.width, H = g.canvas.height;
+    var k = W / Math.max(1, cr.width);
+    var a = st.getBoundingClientRect(), b = bt.getBoundingClientRect();
+    var sw = Math.min(124, Math.max(80, b.left - a.right - 12)), sh = 40;
+    var sxC = (a.right + b.left) / 2 - sw / 2, cyC = b.top + b.height / 2;
+    var syC = cyC - sh / 2, mh = 17, mwC = b.right - sxC;
+    var myC = Math.min(syC - 7, b.top - 5) - mh;
+    return { k: k, W: W, H: H,
+      sx: (sxC - cr.left) * k, sy: (syC - cr.top) * k, sw: sw * k, sh: sh * k,
+      mx: (sxC - cr.left) * k, my: (myC - cr.top) * k, mw: mwC * k, mh: mh * k,
+      keyLeft: sxC, keyTop: b.bottom + 6 };
+  }
+  function punch(g, zone) {
+    var b = g.boxing; b._tapped = true;
+    if (ringPress[zone]) return;              // one punch per press, not a flurry while held
+    ringPress[zone] = true;
+    if (b.state !== 'fighting' || typeof g.boxThrow !== 'function') return;
+    try { g.boxThrow(b.you, g.boxPick(zone, b.you.charge)); } catch (e) { console.warn('[pad] box', e); }
+  }
   function blocked(g) {
     return !g || g.gamePaused || g.pendingChoice || g.turnBasedActive || g.caveDialogueOpen ||
            (g.state && g.state.phoneMenuOpen) || g.film;
@@ -40369,9 +40604,12 @@ g._party = function () {
     return { x: dx / l, y: dy / l };
   }
   function melee() {
-    var g = G(); if (blocked(g)) return;
+    var g = G(); if (inRace(g)) { raceGas(g, 'gas', true); return; }
+    if (inRing(g)) { punch(g, 'head'); return; }
+    if (blocked(g)) return;
     g._tapWorld = null;
-    if (g.turret || g.vehicle) { g.fireActiveWeapon(facing(g)); return; }
+    if (g.vehicle) { g._vehManual = true; g._vehTrigger = true; return; }
+    if (g.turret) { g.fireActiveWeapon(facing(g)); return; }
     var reach = (g.bladeReach ? g.bladeReach() : 180) * 1.8;
     var n = hostiles(g, reach);
     var aim = n ? aimAt(g, n) : facing(g);
@@ -40383,9 +40621,17 @@ g._party = function () {
   }
   var noGunSaid = 0;
   function ranged() {
-    var g = G(); if (blocked(g)) return;
+    var g = G(); if (inRace(g)) { raceGas(g, 'turbo', true); return; }
+    if (inRing(g)) { punch(g, 'body'); return; }
+    if (exitPress) return;
+    if (blocked(g)) return;
     g._tapWorld = null;
-    if (g.turret || g.vehicle) { g.fireActiveWeapon(facing(g)); return; }
+    if (g.turret || g.vehicle) {
+      exitPress = true; g._vehTrigger = false;
+      if (g.turret && g.leaveTurret) g.leaveTurret(false);
+      else if (g.vehicle && g.leaveVehicle) g.leaveVehicle(false);
+      return;
+    }
     var w = g.state.weapon;
     if (w === 'SWORD' || w === 'PHONE' || w === 'ROD') {
       if (Date.now() - noGunSaid > 2500) {
@@ -40400,12 +40646,14 @@ g._party = function () {
     try { g.fireActiveWeapon(aim); } catch (e) { console.warn('[pad] ranged', e); }
     finally { g._autoFire = false; }
   }
-  function holdButton(id, fn, every) {
+  function holdButton(id, fn, every, onUp) {
     var el = null, timer = null, pid = null;
     function up(e) {
       if (pid !== null && e && e.pointerId !== pid) return;
+      var was = pid !== null;
       pid = null; if (timer) { clearInterval(timer); timer = null; }
       if (el) el.classList.remove('down');
+      if (was && onUp) onUp();
     }
     root.addEventListener('pointerdown', function (e) {
       var t = e.target.closest && e.target.closest('#' + id);
@@ -40420,8 +40668,13 @@ g._party = function () {
     root.addEventListener('pointerup', up);
     root.addEventListener('pointercancel', up);
   }
-  holdButton('pc-melee', melee, 260);
-  holdButton('pc-ranged', ranged, 220);
+  /* IN A VEHICLE (Ben, 27 Sep): the left button is FIRE — the hull's gun fires
+     while it is held, instead of firing itself — and the right one is EXIT.
+     One press of EXIT is one exit: the rest of that press does nothing, so
+     holding it never turns into a shot on foot. */
+  var exitPress = false;
+  holdButton('pc-melee', melee, 260, function () { var g = G(); ringPress.head = false; if (g) { g._vehTrigger = false; if (g.race) raceGas(g, 'gas', false); } });
+  holdButton('pc-ranged', ranged, 220, function () { var g = G(); ringPress.body = false; exitPress = false; if (g && g.race) raceGas(g, 'turbo', false); });
 
   /* ------------------------------------------------------------ quest hint */
   function hintNow(g) {
@@ -40493,8 +40746,64 @@ g._party = function () {
     else if (el._tap === 'luxor') g.questPage = ((g.questPage || 0) + 1) % 3;
   });
 
+  /* ------------------------------------------------------------ WEAPONS, one hand at a time
+     (Ben, 28 Sep): "the list is too tall to fit, and there is no way to go
+     back". A MELEE / RANGED switch at the top shows one list at a time, the
+     card scrolls if it ever has to, and DONE (and a cross in the corner) are
+     always on screen. */
+  function weaponsToggle(g) {
+    var box = document.getElementById('weaponsBox'), rg = document.getElementById('wpnRanged'), cl = document.getElementById('wpnClose');
+    if (!box || !rg || !cl || box._g8Toggle) return;
+    box._g8Toggle = true;
+    var card = box.firstElementChild, colR = rg.parentElement, colC = cl.parentElement;
+    var css = document.createElement('style');
+    css.textContent = [
+      'html.pc-touch #weaponsBox > div { max-height: 88vh; overflow-y: auto; padding: 14px !important; box-sizing: border-box; position: relative; }',
+      'html.pc-touch #weaponsBox .wpnPick { margin-bottom: 7px !important; padding: 9px 12px !important; }',
+      'html.pc-touch #weaponsBox .wpnPick div:first-child { font-size: 14px !important; }',
+      'html.pc-touch #weaponsBox .wpnPick div + div { font-size: 11px !important; }',
+      '#g8-wpnTabs { display: none; }',
+      'html.pc-touch #g8-wpnTabs { display: flex; gap: 0; margin: 12px 0 4px; border: 2px solid #59e3ff; border-radius: 10px; overflow: hidden; }',
+      '#g8-wpnTabs button { flex: 1 1 50%; padding: 10px 0; font: 800 13px/1 Arial, sans-serif; letter-spacing: 2px; border: 0; cursor: pointer; background: #0b1119; color: #8fd8ff; }',
+      '#g8-wpnTabs button.on { background: #59e3ff; color: #06121a; }',
+      '#g8-wpnX { display: none; }',
+      'html.pc-touch #g8-wpnX { display: block; position: absolute; top: 8px; right: 10px; width: 34px; height: 34px; border-radius: 50%; border: 2px solid #59e3ff; background: #0b1119; color: #59e3ff; font: 800 16px/1 Arial, sans-serif; cursor: pointer; }',
+      'html.pc-touch #weaponsBox .g8-hidden-hand { display: none !important; }',
+      'html.pc-touch #weaponsBox .g8-hand-col { flex: 1 1 100% !important; min-width: 0 !important; }'
+    ].join('\n');
+    document.head.appendChild(css);
+    var tabs = document.createElement('div');
+    tabs.id = 'g8-wpnTabs';
+    tabs.innerHTML = '<button type="button" data-hand="close">MELEE</button><button type="button" data-hand="ranged">RANGED</button>';
+    var title = card.firstElementChild;
+    card.insertBefore(tabs, title ? title.nextSibling : card.firstChild);
+    var x = document.createElement('button'); x.id = 'g8-wpnX'; x.type = 'button'; x.textContent = '\u2715'; x.setAttribute('aria-label', 'Close');
+    card.appendChild(x);
+    colR.classList.add('g8-hand-col'); colC.classList.add('g8-hand-col');
+    var hand = 'close';
+    function show() {
+      colC.classList.toggle('g8-hidden-hand', hand !== 'close');
+      colR.classList.toggle('g8-hidden-hand', hand !== 'ranged');
+      [].forEach.call(tabs.children, function (b) { b.classList.toggle('on', b.getAttribute('data-hand') === hand); });
+    }
+    tabs.addEventListener('click', function (e) {
+      var b = e.target.closest && e.target.closest('button'); if (!b) return;
+      e.stopPropagation(); hand = b.getAttribute('data-hand'); show();
+    });
+    x.addEventListener('click', function (e) { e.stopPropagation(); if (g.closeWeaponsBox) g.closeWeaponsBox(); });
+    // opening it shows the hand you are holding: the gun if a gun is out, else the blade
+    var realOpen = g.openWeaponsBox;
+    if (typeof realOpen === 'function') g.openWeaponsBox = function () {
+      var w = g.state && g.state.weapon;
+      hand = (w && w !== 'SWORD' && w !== 'PHONE' && w !== 'ROD') ? 'ranged' : 'close';
+      var out = realOpen.apply(g, arguments); show(); return out;
+    };
+    show();
+  }
+
   /* ------------------------------------------------------------ install on the game */
   function install(g) {
+    try { weaponsToggle(g); } catch (e) { console.warn('[pad] weapons', e); }
     // the old on-screen cards step aside while the hint is down here; their
     // full pages still open where they always did
     if (typeof g.drawQuestHint === 'function') { g.drawQuestHint = function () {}; }
@@ -40506,6 +40815,60 @@ g._party = function () {
     if (typeof g.drawQuestBanner === 'function') {
       var lxBanner = g.drawQuestBanner;
       g.drawQuestBanner = function (ctx) { if (g.questPage) return lxBanner.call(g, ctx); g.questCardRect = null; };
+    }
+    /* ON THE BIKE: the race's own button strip makes way for the pad (and gets
+       shorter, so the road gets taller), GAS never lights the burner, TURBO
+       lights it at once. */
+    if (typeof g.raceStep === 'function') {
+      var realStep = g.raceStep;
+      g.raceStep = function (f, c, dt) {
+        if (f && f === g.race && inRace(g)) {
+          var light = g.RACE_LIGHT();
+          if (f._padTurbo) f.hold = Math.max(f.hold || 0, light + 0.001);
+          else if (f._padGas) f.hold = Math.min(f.hold || 0, Math.max(0, light - (dt || 0.017) - 0.002));
+        }
+        return realStep.apply(g, arguments);
+      };
+      var realRects = g.raceBtnRects;
+      g.raceBtnRects = function () {
+        if (inRace(g) && document.documentElement.classList.contains('pc-touch')) return [];
+        return realRects.apply(g, arguments);
+      };
+      var realRStage = g.raceStage;
+      g.raceStage = function () {
+        var st = realRStage.apply(g, arguments);
+        if (!inRace(g) || !document.documentElement.classList.contains('pc-touch')) return st;
+        var btn = Math.round(st.H * 0.20), grow = st.btn - btn;
+        if (grow <= 0) return st;
+        var room = st.H - st.hud - btn;
+        var laneH = Math.min(st.laneH * 1.25, (room * 0.5) / st.lanes);
+        var bandH = laneH * st.lanes, bandY = st.H - btn - bandH;
+        return Object.assign({}, st, { btn: btn, laneH: laneH, bandH: bandH, bandY: bandY, skyH: bandY - st.hud });
+      };
+    }
+    /* AND THE RING'S OWN BUTTONS MAKE WAY. On a phone the stick and the two
+       punches do what SLIP / GUARD / SLIP did, so those three leave the glass;
+       the meter rises clear of the pad and SUPER sits in the gap between the
+       stick and the buttons. */
+    if (typeof g.boxUI === 'function') {
+      var realUI = g.boxUI;
+      g.boxUI = function () {
+        var u = realUI.apply(g, arguments);
+        var L = ringLayout(g);
+        if (!L) return u;
+        var gone = { x: -9999, y: -9999, w: 0, h: 0 };
+        u.left = Object.assign({}, u.left, gone);
+        u.right = Object.assign({}, u.right, gone);
+        u.guard = Object.assign({}, u.guard, gone);
+        /* (Ben, 28 Sep) SUPER centred on the punch buttons, in the gap beside
+           them; POWER small, just above it, from the same left edge to the far
+           side of the buttons; your own gloves stay low, where the ring drew them. */
+        u.gloveY = u.meter.y;               // the gloves stay exactly where the fight drew them
+        u.meterH = L.mh;
+        u.meter = Object.assign({}, u.meter, { x: L.sx, y: L.my, w: L.mw, h: L.mh });
+        if (u.sup) u.sup = Object.assign({}, u.sup, { x: L.sx, y: L.sy, w: L.sw, h: L.sh });
+        return u;
+      };
     }
     // ACTIONS gets the two buttons that used to float on the screen
     var realRender = g.renderPhoneScreen;
@@ -40541,9 +40904,49 @@ g._party = function () {
     setInterval(function () {
       var busy = !g || g.gamePaused || g.caveDialogueOpen || g.missionPromptOpen || g.film ||
                  (g.state && g.state.phoneMenuOpen) || g.miniGameOpen || g.levelUpOpen || g.weaponsOpen;
+      var ring = inRing(g), race = inRace(g);
+      if (ring || race) busy = false;
+      if (race !== root.classList.contains('race')) {
+        root.classList.toggle('race', race);
+        var mb1 = document.getElementById('pc-melee'), rb1 = document.getElementById('pc-ranged');
+        if (race) {
+          if (mb1) { mb1.innerHTML = '<b>▶</b>GAS'; mb1.setAttribute('aria-label', 'Gas'); }
+          if (rb1) { rb1.innerHTML = '<b>🔥</b>TURBO'; rb1.setAttribute('aria-label', 'Turbo'); }
+        } else {
+          if (mb1) { mb1.innerHTML = '<b>⚔</b>MELEE'; mb1.setAttribute('aria-label', 'Melee attack'); }
+          if (rb1) { rb1.innerHTML = '<b>◎</b>RANGED'; rb1.setAttribute('aria-label', 'Ranged attack'); }
+          if (g && g.race) { ['pc-stick', 'pc-gas', 'pc-turbo'].forEach(function (k) { g.race.ptr.delete(k); }); g.race._padTurbo = g.race._padGas = false; }
+        }
+      }
+      if (race) { var rb2 = document.getElementById('pc-ranged'); if (rb2) rb2.classList.toggle('hot', !!(g.race && g.race.boost)); try { paintRaceMsg(g); } catch (e) {} }
       root.classList.toggle('off', !!busy);
+      if (ring !== root.classList.contains('ring')) {
+        root.classList.toggle('ring', ring);
+        var mb0 = document.getElementById('pc-melee'), rb0 = document.getElementById('pc-ranged');
+        if (mb0) { mb0.innerHTML = ring ? '<b>👊</b>HEAD' : '<b>⚔</b>MELEE'; mb0.setAttribute('aria-label', ring ? 'Punch to the head' : 'Melee attack'); }
+        if (rb0) { rb0.innerHTML = ring ? '<b>🥊</b>BODY' : '<b>◎</b>RANGED'; rb0.setAttribute('aria-label', ring ? 'Punch to the body' : 'Ranged attack'); }
+        if (!ring && g && g.keys) { g.keys.space = false; g.keys.q = false; }
+        ringPress.head = ringPress.body = false;
+      }
+      if (ring) {
+        var L = ringLayout(g), key = document.getElementById('pc-ringkey');
+        if (L && key) { key.style.left = Math.round(L.keyLeft) + 'px'; key.style.top = Math.round(L.keyTop) + 'px'; key.style.bottom = 'auto'; }
+      }
+      var riding = !ring && !!(g && (g.vehicle || g.turret));
+      if (riding !== root.classList.contains('riding')) {
+        root.classList.toggle('riding', riding);
+        var mb = document.getElementById('pc-melee'), rb = document.getElementById('pc-ranged');
+        if (mb) mb.innerHTML = riding ? '<b>✹</b>FIRE' : '<b>⚔</b>MELEE';
+        if (rb) rb.innerHTML = riding ? '<b>⏏</b>EXIT' : '<b>◎</b>RANGED';
+        if (mb) mb.setAttribute('aria-label', riding ? 'Fire' : 'Melee attack');
+        if (rb) rb.setAttribute('aria-label', riding ? 'Exit' : 'Ranged attack');
+        if (!riding) g._vehTrigger = false;
+      }
+      if (g) g._vehManual = true;
       if (busy && stickId !== null) { stickId = null; setStick(0, 0, false); }
-      paintHint(g);
+      // the quest tip lives on the top bar now and the compass has this slot
+      // (66-quest-hud.js), so the bottom hint stays down
+      var ph = document.getElementById('pc-hint'); if (ph && ph.style.display !== 'none') ph.style.display = 'none';
     }, 120);
   }
   var tries = 0;
@@ -40594,6 +40997,2375 @@ g._party = function () {
       window.addEventListener('resize', function () { setTimeout(function () { measure(window.game); }, 60); });
       return;
     }
+    if (++tries < 1200) setTimeout(wait, 50);
+  })();
+})();
+
+/* 65 · THE ZOOM STAYS WHERE IT BELONGS (Ben, 27 Sep): "we need to always have
+   the zoom the same unless it's specifically specified ... we get stuck very
+   close up".
+
+   The close-up is the transport's arrival shot. A battle map opens TIGHT —
+   2.35 times in — on the pad, holds there while the briefing is read, and
+   pulls back as the fox materialises when you press the briefing's button.
+   If that button never runs (the card closed some other way, or another card
+   replaced it), nothing ever pulls the camera back: the fox stays hidden and
+   the shot stays 2.35 times in for the rest of the room.
+
+   So twice a second this looks for exactly that, and finishes the arrival:
+     · a battle map with the fox still hidden, no card up and no beam running
+       -> run the transport-in the button would have run
+     · a beam that has ended but left its zoom behind -> hand the room back
+       at its own framing
+     · anything held more than 1.6 times in, for more than two seconds, with
+       none of the game's own set pieces running (a vehicle, a turret, the
+       tennis court, the bath, a landing or film shot, the lanes show, a
+       dialogue or a card) -> ease back to the room's normal framing
+   The normal framing is the game's own rule: the room's fit-to-screen zoom
+   for a small interior, otherwise the base zoom. */
+(function () {
+  var since = 0;
+  function normal(g) { return (g.interiorFitsOnScreen && g._fitZoom) ? g._fitZoom : g.baseZoom; }
+  function setPiece(g) {
+    return !!(g.beamIn || g.turret || g.vehicle || g.laneShow || g.match || g.soakIn || g.film ||
+              (g.land && (g.land.cam || g.land.camNow)) || g._act || g.pingPong ||
+              g.caveDialogueOpen || g.missionPromptOpen || g.gamePaused || g.levelUpOpen);
+  }
+  function tick() {
+    var g = window.game;
+    if (window.__8G_NO_ZOOM_GUARD) return;              // a check switches it off to see the stuck state
+    if (!g || !g.layoutReady || !g.baseZoom) return;
+    try {
+      // 1 · a battle arrival nobody finished
+      if (g._hidePlayer && !g.beamIn && !g.missionPromptOpen && !g.caveDialogueOpen &&
+          g.inBattleMap && g.inBattleMap()) {
+        g._zoomGuardFixed = (g._zoomGuardFixed || 0) + 1;
+        if (typeof g.battleTransportIn === 'function') g.battleTransportIn();
+        else if (typeof g.bridgeTransportIn === 'function') g.bridgeTransportIn();
+        else { g._hidePlayer = false; g.zoom = normal(g); }
+        return;
+      }
+      // 2 · a beam that ended and left its zoom behind
+      if (!g.beamIn && g._beamZoomTo) { g.zoom = g._beamZoomTo; g._beamZoomTo = null; g._zoomGuardFixed = (g._zoomGuardFixed || 0) + 1; }
+      // 3 · stuck close up
+      var n = normal(g);
+      if (!setPiece(g) && g.zoom > n * 1.6) {
+        if (!since) since = Date.now();
+        if (Date.now() - since > 2000) {
+          g.zoom = n; since = 0;
+          g._roomCamBase = null; g._lobCam = null; g._lobbyCamBase = null;
+          g._zoomGuardFixed = (g._zoomGuardFixed || 0) + 1;
+        }
+      } else since = 0;
+    } catch (e) {}
+  }
+  setInterval(tick, 500);
+})();
+
+/* NO BROWSER ZOOM (Ben, 27 Sep): a stray pinch or double-tap zoomed the whole
+   page. The page already asks for user-scalable=no, but iPhone Safari ignores
+   that, so the gestures themselves are refused: pinch (gesture events and
+   two-finger moves), double-tap, and ctrl + wheel / ctrl + plus-minus on a
+   desk. Taps, drags, the stick and the buttons are untouched. */
+(function () {
+  if (window.__8G_ZOOM_LOCK) return; window.__8G_ZOOM_LOCK = true;
+  var no = function (e) { if (e.cancelable) e.preventDefault(); };
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (t) { document.addEventListener(t, no, { passive: false }); });
+  document.addEventListener('touchmove', function (e) { if (e.touches && e.touches.length > 1) no(e); }, { passive: false });
+  // double-tap zoom is refused by touch-action: manipulation below, which keeps
+  // quick double taps on buttons working (a touchend trick would eat them)
+  document.addEventListener('dblclick', no, { passive: false });
+  window.addEventListener('wheel', function (e) { if (e.ctrlKey) no(e); }, { passive: false });
+  window.addEventListener('keydown', function (e) {
+    if ((e.ctrlKey || e.metaKey) && ['+', '-', '=', '0', '_'].indexOf(e.key) >= 0) no(e);
+  });
+  var css = document.createElement('style');
+  css.textContent = 'html, body { touch-action: manipulation; -webkit-text-size-adjust: 100%; }';
+  (document.head || document.documentElement).appendChild(css);
+})();
+
+/* 66 · THE QUEST ON THE BAR, A COMPASS ON THE GROUND (Ben, 27 Sep)
+     1 · CREDITS beside ACTIONS on the top bar
+     2 · the top tip slot shows the QUEST TIP instead of cycling hints. A
+         one-off notice ("ARMS SURRENDERED", "NO STAFF YET") still takes the
+         slot for five seconds, then the quest comes back. A world with no
+         quest of its own keeps its old hints.
+     3 · a COMPASS at the bottom middle: an arrow, the distance and the name of
+         where it points, with HIGHLIGHT COURSE under it. It points at the
+         quest's person / thing when they are in this room, otherwise at the
+         exit that leads toward them. HIGHLIGHT COURSE draws the walking route
+         (round the walls, the engine's own pathfinder) on the floor.
+   Every screen, touch or not. window.__8G_QUEST exposes hint() and target()
+   for the phone pad and the checks. */
+(function () {
+  function G() {
+    if (window.game) return window.game;
+    try { return (typeof game !== 'undefined') ? game : null; } catch (e) { return null; }
+  }
+  var Q = window.__8G_QUEST = {};
+  var sceneLabel = function (g, k) {
+    var s = (g.scenes && g.scenes[k]) || (typeof GAYA !== 'undefined' && GAYA.maps && GAYA.maps[k]);
+    return String((s && s.label) || k || '').toUpperCase();
+  };
+  var npcName = function (g, key) {
+    var n = (g.npcRoster || []).find(function (o) { return o && o.key === key; });
+    return String((n && (n.name || n.displayName || n.label)) || key || '').toUpperCase();
+  };
+  var mid = function (p) {
+    if (!p) return null;
+    if (p.p) p = p.p; else if (p.first) p = p.first;
+    if (!Number.isFinite(p.x)) return null;
+    return { x: (p.x + (p.x2 == null ? p.x : p.x2)) / 2, y: (p.y + (p.y2 == null ? p.y : p.y2)) / 2, to: p.to };
+  };
+
+  /* ------------------------------------------------ what the quest says */
+  Q.hint = function (g) {
+    g = g || G(); if (!g) return null;
+    try {
+      // Zion: the river job
+      if (typeof g.questTarget === 'function' && typeof g.questStep === 'function' && typeof GAYA !== 'undefined' && GAYA.riverQuest) {
+        var st = g.questStep();
+        if (st && st.hint) {
+          var here = st.scene === g.currentScene;
+          return { t: (GAYA.riverQuest.name) || 'QUEST', b: st.hint, w: here ? '' : '→ ' + sceneLabel(g, st.scene) };
+        }
+      }
+      // Gaya and home: the guide
+      if (typeof g.guideCfg === 'function' && g.guideStepText) {
+        var c = g.guideCfg();
+        if (c) {
+          var s2 = g.guideStep();
+          return { t: c.title || 'OBJECTIVE', b: s2 ? g.guideStepText(s2) : (c.allDone || 'Nothing outstanding.'),
+                   w: s2 && g.guideRoomLine ? g.guideRoomLine(s2) : '', tap: 'guide' };
+        }
+      }
+      // Ur: the running job
+      if (typeof g.questRunning === 'function' && g.qStepText) {
+        var run = g.questRunning();
+        if (run && run.length) {
+          var q = run[0], step = g.questStep && g.questStep(q.key);
+          var at = g.qList ? g.qList(step && step.at) : [];
+          var w3 = (at.length && at.indexOf(g.currentScene) < 0) ? '→ ' + sceneLabel(g, at[0]) : '';
+          return { t: q.name || q.key, b: g.qStepText(q), w: w3, tap: 'ur' };
+        }
+      }
+      // Luxor: the job board
+      if (typeof g.qActive === 'function' && g.qRooms) {
+        var a = g.qActive();
+        if (a) {
+          var rooms = g.qRooms(a.stage.at) || [];
+          var w4 = (rooms.length && rooms.indexOf(g.currentScene) < 0) ? '→ ' + sceneLabel(g, rooms[0]) : '';
+          return { t: a.q.name || 'JOB', b: (a.stage.title || '') + '  ·  ' + (a.i + 1) + '/' + a.of, w: w4, tap: 'luxor' };
+        }
+      }
+      // Kufa: the errands in the phone
+      if (typeof g.errands === 'function') {
+        var open = g.errands().filter(function (x) { return !x.st.done; });
+        if (open.length) return { t: open[0].q.title || 'ERRAND', b: open[0].st.text || '', w: '' };
+      }
+    } catch (e) {}
+    return null;
+  };
+
+  /* ------------------------------------------------ where it points */
+  Q.target = function (g) {
+    g = g || G(); if (!g) return null;
+    try {
+      // Zion
+      if (typeof g.questTarget === 'function' && typeof GAYA !== 'undefined' && GAYA.riverQuest) {
+        var T = g.questTarget(), st = g.questStep && g.questStep();
+        if (T && Number.isFinite(T.x)) return { x: T.x, y: T.y, here: !!T.here, kind: T.here ? (st && st.npc ? 'who' : 'thing') : 'room',
+          name: T.here ? String(T.label || (st && st.npc && npcName(g, st.npc)) || 'OBJECTIVE').toUpperCase()
+                       : '→ ' + sceneLabel(g, st && st.scene) };
+        return null;
+      }
+      // Gaya and home
+      if (typeof g.guideCfg === 'function' && g.guideStep) {
+        if (!g.guideCfg()) return null;
+        var s = g.guideStep(); if (!s) return null;
+        var inRoom = g.guideList(s.at).indexOf(g.currentScene) >= 0;
+        if (inRoom) {
+          var m = g.guideMarkAt(s);
+          return m ? { x: m.x, y: m.y, here: true, kind: s.who ? 'who' : s.golem ? 'foe' : 'thing', name: s.who ? npcName(g, s.who) : (s.golem ? npcName(g, s.golem) : 'OBJECTIVE') } : null;
+        }
+        var p = mid(g.guideWayOut && g.guideWayOut());
+        var goal = g.guideList(s.at)[0];
+        return p ? { x: p.x, y: p.y, here: false, kind: 'room', name: '→ ' + sceneLabel(g, goal) } : null;
+      }
+      // Ur
+      if (typeof g.questRunning === 'function' && g.questMarkAt) {
+        var q = g.questRunning()[0]; if (!q) return null;
+        var s3 = g.questStep(q.key); if (!s3) return null;
+        var at = g.qList(s3.at);
+        if (!at.length || at.indexOf(g.currentScene) >= 0) {
+          var m3 = g.questMarkAt(s3);
+          return m3 ? { x: m3.x, y: m3.y, here: true, kind: s3.who ? 'who' : 'thing', name: s3.who ? npcName(g, s3.who) : 'OBJECTIVE' } : null;
+        }
+        var w = g.questWayOut && g.questWayOut(), p3 = mid(w);
+        return p3 ? { x: p3.x, y: p3.y, here: false, kind: 'room', name: '→ ' + sceneLabel(g, at[0]) } : null;
+      }
+      // Luxor
+      if (typeof g.qActive === 'function' && g.questMarkAt) {
+        var a = g.qActive(); if (!a) return null;
+        var rooms = g.qRooms(a.stage.at) || [];
+        if (!rooms.length || rooms.indexOf(g.currentScene) >= 0) {
+          var m4 = g.questMarkAt(a.stage);
+          if (!m4) return null;
+          var who = a.stage.who && g.qNextWho ? g.qNextWho(a.stage.who) : null;
+          return { x: m4.x, y: m4.y, here: true, kind: who ? 'who' : 'thing', name: who ? npcName(g, who.key) : 'OBJECTIVE' };
+        }
+        var p4 = mid(g.questWayOut && g.questWayOut());
+        return p4 ? { x: p4.x, y: p4.y, here: false, kind: 'room', name: '→ ' + sceneLabel(g, rooms[0]) } : null;
+      }
+    } catch (e) {}
+    return null;
+  };
+
+  /* THE TITLE IS WHAT TO DO, IN FOUR WORDS OR FEWER (Ben, 27 Sep):
+     "VISIT CHURCH:", "TALK TO VESPER:" — the long story name stays on the
+     quest page. The sentence under it is the step itself. */
+  var fourWords = function (t) {
+    var w = String(t || '').replace(/[→:]/g, ' ').replace(/\s+/g, ' ').trim().toUpperCase().split(' ');
+    if (w[0] === 'THE' && w.length > 1) w.shift();
+    return w.slice(0, 4).join(' ');
+  };
+  var place = function (t) { var w = String(t || '').replace(/→/g, ' ').trim().toUpperCase().split(/\s+/); if (w[0] === 'THE' && w.length > 1) w.shift(); return w.join(' '); };
+  Q.title = function (g, h, T) {
+    g = g || G(); h = h || Q.hint(g); if (!h) return '';
+    if (T === undefined) T = Q.target(g);
+    var t;
+    if (T && T.kind === 'room') t = 'VISIT ' + place(T.name);
+    else if (T && T.kind === 'who' && T.name) t = 'TALK TO ' + place(T.name);
+    else if (T && T.kind === 'foe' && T.name) t = 'FACE ' + place(T.name);
+    else if (h.w) t = 'VISIT ' + place(h.w);
+    else t = h.t;
+    return fourWords(t) + ':';
+  };
+
+  var busyNow = function (g) {
+    return !g || g.gamePaused || g.caveDialogueOpen || g.missionPromptOpen || g.film || g._cutsceneOpen ||
+      (g.state && g.state.phoneMenuOpen) || g.miniGameOpen || g.levelUpOpen || g.weaponsOpen || g.scroll;
+  };
+  var inBattle = function (g) { try { return !!(g.inBattleMap && g.inBattleMap()); } catch (e) { return false; } };
+
+  /* ------------------------------------------------ the page furniture */
+  var css = document.createElement('style');
+  css.textContent = [
+    '#g8-cr { display: inline-flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box;',
+    '  height: 34px; min-width: 58px; padding: 0 8px; border-radius: 8px; white-space: nowrap; pointer-events: none;',
+    '  background: rgba(8,14,24,.55); border: 1px solid rgba(250,204,21,.45); color: #fde68a; font-family: Archivo, Arial, sans-serif; }',
+    '#g8-cr small { font-size: 7px; font-weight: 800; letter-spacing: 1.4px; opacity: .8; line-height: 1; margin-bottom: 2px; }',
+    '#g8-cr b { font-size: 12px; font-weight: 900; letter-spacing: .5px; line-height: 1; }',
+    '#dockTip.g8-quest { cursor: pointer; }',
+    /* one credits readout, not two: Meru and the station had their own tag */
+    '#creditTag { display: none !important; }',
+    /* the station's FLY TO… shuttle button is gone (Ben, 28 Sep) */
+    '#dsfBerth { display: none !important; }',
+    /* the quest is a sentence: let it wrap rather than run off the end */
+    '#dockTipDetail { white-space: normal !important; }',
+    /* the phone's two-row bar: top row from WEAPONS' left edge, quest to the right edge */
+    /* buttons first, then the quest and HP / EN (Ben, 28 Sep): on a phone the
+       buttons are the top line and the quest with the bars sits under them */
+    /* (Ben, 28 Sep, morning) back as it was: the quest and HP / EN on the top
+       line, WEAPONS, scope, ACTIONS and CREDITS after them — on a phone, the
+       line under them */
+    '#bottomDock .dock-row > .dock-tip { order: 0 !important; }',
+    '#bottomDock .dock-row > .dock-divider:nth-child(2) { order: 1 !important; }',
+    '#bottomDock .dock-row > .dock-bars { order: 2 !important; }',
+    '#bottomDock .dock-row > .dock-divider:nth-child(4) { order: 3 !important; }',
+    '#bottomDock .dock-row > .dock-buttons { order: 4 !important; }',
+    'html.g8-tworow #bottomDock .dock-row > .dock-divider:nth-child(4) { display: none !important; }',
+    'html.g8-tworow #bottomDock .dock-row { justify-content: flex-start !important; }',
+    'html.g8-tworow #bottomDock .dock-buttons { flex: 1 0 100%; justify-content: center; }',
+    'html.g8-tworow #bottomDock .dock-divider:nth-of-type(2), html.g8-tworow #bottomDock .dock-divider ~ .dock-divider { display: none; }',
+    'html.g8-tworow #bottomDock .dock-tip { flex: 1 1 0 !important; width: auto !important; min-width: 0 !important; max-width: none !important; padding-right: 4px; }',
+    'html.g8-tworow #dockTipHeader { white-space: nowrap; }',
+    /* a desk's one-row bar: room for the sentence on two lines */
+    'html:not(.g8-tworow) #bottomDock .dock-tip.g8-q { flex: 0 1 auto !important; width: auto !important; min-width: 118px !important; max-width: 330px !important; }',
+    '#g8-compass { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(46px + env(safe-area-inset-bottom, 0px)); z-index: 3100;',
+    '  display: none; flex-direction: column; align-items: center; gap: 1px; padding: 6px 8px 5px; border-radius: 12px; pointer-events: none;',
+    '  background: rgba(8,14,24,.8); border: 1px solid rgba(125,211,252,.35); font-family: Archivo, Arial, sans-serif; text-align: center; }',
+    '#g8-compass.on { display: flex; }',
+    '#g8-compass svg { width: 38px; height: 38px; display: block; }',
+    '#g8-compass b { color: #fff; font-size: 18px; font-weight: 900; letter-spacing: .5px; line-height: 1.1; }',
+    '#g8-compass span { color: #7dd3fc; font-size: 8px; font-weight: 800; letter-spacing: 1px; max-width: 104px;',
+    '  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
+    '#g8-compass.here span { color: #fde68a; }',
+    '#g8-course { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 3100;',
+    '  display: none; white-space: nowrap; cursor: pointer; font: 800 8px/1 Archivo, Arial, sans-serif; letter-spacing: 1.6px;',
+    '  padding: 7px 10px; border-radius: 6px; background: rgba(8,14,24,.85); color: #bfe9ff; border: 1px solid rgba(125,211,252,.45);',
+    '  -webkit-tap-highlight-color: transparent; touch-action: manipulation; }',
+    '#g8-course.on { display: block; }',
+    '#g8-course.lit { color: #7cf3c4; border-color: rgba(124,243,196,.7); box-shadow: 0 0 12px rgba(124,243,196,.35); }',
+    /* a desk has RETURN TO ORBIT bottom-left and room to spare: a little bigger */
+    /* a phone (Ben, 27 Sep): HIGHLIGHT COURSE sits under the two round buttons,
+       bottom right, and the compass drops to the bottom middle in its place */
+    'html.pc-touch #g8-course { left: auto !important; transform: none !important; right: calc(12px + env(safe-area-inset-right, 0px)); bottom: calc(8px + env(safe-area-inset-bottom, 0px)); width: 120px; box-sizing: border-box; text-align: center; padding: 7px 4px; letter-spacing: 1.1px; }',
+    /* in the middle of the gap between the stick and the buttons, not of the screen */
+    'html.pc-touch #g8-compass { bottom: calc(10px + env(safe-area-inset-bottom, 0px)); left: calc(50% - 6px); padding: 6px 7px 5px; max-width: 128px; box-sizing: border-box; }',
+    'html.pc-touch #g8-compass span { max-width: 112px; }',
+    'html:not(.pc-touch) #g8-compass { bottom: 44px; padding: 8px 14px 6px; }',
+    /* THE SUMMON / VISION BUTTONS (Noble's mech, Hope's sight) sit ABOVE the
+       compass, and under anything with words on it (Ben, 28 Sep) */
+    'html.pc-touch #mechBtn, html.pc-touch #visionBar { bottom: calc(112px + env(safe-area-inset-bottom, 0px)) !important; }',
+    'html.pc-touch #mechBtn { font-size: 10px !important; padding: 7px 14px !important; }',
+    'html.pc-touch #visionBar button { font-size: 10px !important; padding: 7px 14px !important; }',
+    'html:not(.pc-touch) #mechBtn, html:not(.pc-touch) #visionBar { bottom: 124px !important; }',
+    '.g8-under { visibility: hidden !important; pointer-events: none !important; }',
+    'html:not(.pc-touch) #g8-compass svg { width: 46px; height: 46px; }',
+    'html:not(.pc-touch) #g8-compass b { font-size: 21px; }',
+    'html:not(.pc-touch) #g8-compass span { font-size: 9.5px; max-width: 220px; }',
+    'html:not(.pc-touch) #g8-course { bottom: 10px; font-size: 9.5px; }'
+  ].join('\n');
+  document.head.appendChild(css);
+
+  var comp = document.createElement('div');
+  comp.id = 'g8-compass';
+  comp.innerHTML = '<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="rgba(0,0,0,.35)" stroke="rgba(125,211,252,.55)" stroke-width="4"/>' +
+    '<g stroke="rgba(190,230,255,.7)" stroke-width="4"><line x1="60" y1="12" x2="60" y2="22"/><line x1="60" y1="98" x2="60" y2="108"/>' +
+    '<line x1="12" y1="60" x2="22" y2="60"/><line x1="98" y1="60" x2="108" y2="60"/></g>' +
+    '<g id="g8-needle"><path d="M60 16 L80 70 L60 58 L40 70 Z" fill="#7cf3c4" style="filter:drop-shadow(0 0 6px #7cf3c4)"/></g>' +
+    '<circle cx="60" cy="60" r="5.5" fill="#fff"/></svg><b id="g8-dist">0u</b><span id="g8-where"></span>';
+  var btn = document.createElement('button');
+  btn.id = 'g8-course'; btn.type = 'button'; btn.textContent = 'HIGHLIGHT COURSE';
+
+  var course = false, route = null, routeAt = 0, routeFor = '';
+  btn.addEventListener('click', function (e) {
+    e.stopPropagation(); e.preventDefault();
+    course = !course; route = null; routeFor = '';
+    btn.textContent = course ? 'DISMISS COURSE' : 'HIGHLIGHT COURSE';
+    btn.classList.toggle('lit', course);
+    btn.blur();
+  });
+  ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'touchstart', 'touchend'].forEach(function (t) {
+    btn.addEventListener(t, function (e) { e.stopPropagation(); }, { passive: true });
+  });
+  Q.course = function (v) { if (v !== undefined && !!v !== course) btn.click(); return course; };
+
+  /* ------------------------------------------------ the line on the floor */
+  function drawCourse(g, ctx) {
+    if (!course || busyNow(g) || inBattle(g)) return;
+    var T = Q.target(g); if (!T) return;
+    var key = g.currentScene + '|' + Math.round(T.x) + ',' + Math.round(T.y);
+    var now = Date.now();
+    if (key !== routeFor || now - routeAt > 450) {
+      routeFor = key; routeAt = now;
+      var legs = null;
+      try { legs = (typeof g.findRoute === 'function') ? g.findRoute(T.x, T.y) : null; } catch (e) { legs = null; }
+      route = legs && legs.length ? legs : [{ x: T.x, y: T.y }];
+    }
+    var pts = [{ x: g.pX, y: g.pY }].concat(route);
+    var z = g.zoom || 1, dpr = g._dpr || window.devicePixelRatio || 1;
+    var px = function (n) { return n * dpr / z; };
+    ctx.save();
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath();
+    pts.forEach(function (p, i) { if (i) ctx.lineTo(p.x, p.y); else ctx.moveTo(p.x, p.y); });
+    ctx.strokeStyle = 'rgba(0,0,0,.55)'; ctx.lineWidth = px(9); ctx.stroke();
+    ctx.setLineDash([px(16), px(12)]);
+    ctx.lineDashOffset = -((g.tick || 0) * px(1.2));
+    ctx.strokeStyle = T.here ? '#fde68a' : '#7cf3c4'; ctx.lineWidth = px(5); ctx.stroke();
+    ctx.setLineDash([]);
+    var end = pts[pts.length - 1];
+    ctx.beginPath(); ctx.arc(end.x, end.y, px(14), 0, Math.PI * 2);
+    ctx.lineWidth = px(4); ctx.strokeStyle = T.here ? '#fde68a' : '#7cf3c4'; ctx.stroke();
+    ctx.restore();
+  }
+
+  /* ------------------------------------------------ install */
+  function install(g) {
+    var dock = document.getElementById('bottomDock');
+    // 1 · credits, right of ACTIONS
+    var act = document.getElementById('actionsMenuBtn');
+    if (act && !document.getElementById('g8-cr')) {
+      var cr = document.createElement('div');
+      cr.id = 'g8-cr'; cr.setAttribute('aria-label', 'Credits');
+      cr.innerHTML = '<small>CREDITS</small><b id="g8-cr-n">0</b>';
+      act.parentNode.insertBefore(cr, act.nextSibling);
+    }
+    document.body.appendChild(comp);
+    document.body.appendChild(btn);
+
+    // 2 · the quest tip owns the tip slot. Notices still get their five seconds.
+    var noteUntil = 0;
+    var realNote = g.showFloatingNote;
+    if (typeof realNote === 'function') g.showFloatingNote = function () { noteUntil = Date.now() + 5000; return realNote.apply(g, arguments); };
+    var realCycle = g.updateTipCycle;
+    if (typeof realCycle === 'function') g.updateTipCycle = function () {
+      if (!inBattle(g) && Q.hint(g)) return;          // the quest has the slot
+      return realCycle.apply(g, arguments);
+    };
+    // the canvas quest cards step aside; tapping the tip still opens the full page
+    if (typeof g.drawQuestHint === 'function') g.drawQuestHint = function () {};
+    if (typeof g.drawGuideCard === 'function') g.drawGuideCard = function () { g._guideCardBox = null; };
+    if (typeof g.drawQuestHud === 'function') { var urHud = g.drawQuestHud; g.drawQuestHud = function (ctx) { if (g._journalOpen) return urHud.call(g, ctx); }; }
+    if (typeof g.drawQuestBanner === 'function') { var lx = g.drawQuestBanner; g.drawQuestBanner = function (ctx) { if (g.questPage) return lx.call(g, ctx); g.questCardRect = null; }; }
+    var tip = document.getElementById('dockTip'), tapKind = null;
+    if (tip) tip.addEventListener('click', function (e) {
+      if (!tapKind) return;
+      e.stopPropagation();
+      if (tapKind === 'guide' && g.guideToggle) g.guideToggle();
+      else if (tapKind === 'ur') g._journalOpen = ((g._journalOpen || 0) + 1) % 3;
+      else if (tapKind === 'luxor') g.questPage = ((g.questPage || 0) + 1) % 3;
+    });
+    var shown = '';
+    function paintTip() {
+      if (inBattle(g)) { shown = ''; if (tip) tip.classList.remove('g8-quest'); tapKind = null; return; }
+      var h = Q.hint(g);
+      if (!h) { if (tip) tip.classList.remove('g8-q'); if (shown) { shown = ''; if (tip) tip.classList.remove('g8-quest'); tapKind = null; } return; }
+      tapKind = h.tap || null;
+      if (tip) { tip.classList.toggle('g8-quest', !!tapKind); tip.classList.add('g8-q'); }
+      if (Date.now() < noteUntil) { shown = ''; return; }
+      var head = document.getElementById('dockTipHeader');
+      var head0 = Q.title(g, h);
+      var detail = h.b;
+      var key = head0 + '|' + detail;
+      if (key === shown && head && head.textContent === head0) return;
+      shown = key;
+      if (typeof g.showTip === 'function') g.showTip({ header: head0, detail: detail });
+      twoLines();
+    }
+    /* TWO LINES, IDEALLY. The sentence starts at its normal size and steps
+       down only until it sits on two lines; a very long one stops at a
+       readable floor and is allowed a third. */
+    function twoLines() {
+      var d = document.getElementById('dockTipDetail'); if (!d || !d.clientWidth) return;
+      var base = parseFloat(d.dataset.g8Base || getComputedStyle(d).fontSize) || 10;
+      d.dataset.g8Base = base;
+      var px = base; d.style.fontSize = px + 'px';
+      var lines = function () { var lh = parseFloat(getComputedStyle(d).lineHeight) || px * 1.2; return Math.round(d.scrollHeight / lh); };
+      while (px > 7.5 && lines() > 2) { px -= 0.5; d.style.fontSize = px + 'px'; }
+    }
+    /* THE BARS START WHERE WEAPONS STARTS (Ben, 27 Sep). On a phone the bar
+       is two rows: HP / EN and the quest on top, the buttons under them.
+       The top row now begins at the left edge of WEAPONS and the quest runs
+       all the way to the right, so the sentence has the width to sit on two
+       lines. */
+    var mq = window.matchMedia ? matchMedia('(max-width: 620px)') : null;
+    /* THE QUEST FIRST, THEN HP / EN (Ben, 27 Sep, later): the top row reads
+       quest on the left, bars on the right. On a phone the quest starts at the
+       left edge of WEAPONS and the bars end at the right edge of CREDITS. */
+    function alignBars() {
+      var row = document.querySelector('#bottomDock .dock-row'), bars = document.querySelector('#bottomDock .dock-bars');
+      var tipEl = document.getElementById('dockTip');
+      var wpn = document.getElementById('weaponsBtn');
+      var last = document.getElementById('g8-cr') || document.getElementById('actionsMenuBtn');
+      if (!row || !bars || !wpn || !tipEl) return;
+      var two = mq && mq.matches;
+      document.documentElement.classList.toggle('g8-tworow', !!two);
+      if (bars.style.marginLeft) bars.style.marginLeft = '';
+      if (!two) { if (tipEl.style.marginLeft) tipEl.style.marginLeft = ''; if (bars.style.marginRight) bars.style.marginRight = ''; return; }
+      if (!wpn.offsetParent) return;                      // the bar is down (a world intro)
+      var rr0 = row.getBoundingClientRect();
+      var wantL = Math.max(0, Math.round(wpn.getBoundingClientRect().left - rr0.left)) + 'px';
+      var wantR = last ? Math.max(0, Math.round(rr0.right - last.getBoundingClientRect().right)) + 'px' : '0px';
+      if (tipEl.style.marginLeft !== wantL) { tipEl.style.marginLeft = wantL; shown = ''; }
+      if (bars.style.marginRight !== wantR) { bars.style.marginRight = wantR; shown = ''; }
+    }
+    setInterval(alignBars, 400);
+    addEventListener('resize', function () { setTimeout(alignBars, 50); });
+
+    // 3 · the compass
+    var realPortals = g.drawPortals;
+    if (typeof realPortals === 'function') g.drawPortals = function (ctx) {
+      var out = realPortals.apply(g, arguments);
+      try { drawCourse(g, ctx || g.ctx); } catch (e) {}
+      return out;
+    };
+    function paintCompass() {
+      var T = (!busyNow(g) && !inBattle(g)) ? Q.target(g) : null;
+      comp.classList.toggle('on', !!T);
+      btn.classList.toggle('on', !!T);
+      if (!T) return;
+      var d = Math.hypot(T.x - g.pX, T.y - g.pY);
+      var ang = Math.atan2(T.y - g.pY, T.x - g.pX) * 180 / Math.PI + 90;
+      document.getElementById('g8-needle').setAttribute('transform', 'rotate(' + ang.toFixed(1) + ' 60 60)');
+      document.getElementById('g8-dist').textContent = Math.round(d).toLocaleString() + 'u';
+      var w = document.getElementById('g8-where');
+      if (w.textContent !== T.name) w.textContent = T.name;
+      comp.classList.toggle('here', !!T.here);
+    }
+    function paintCredits() {
+      var n = document.getElementById('g8-cr-n'); if (!n) return;
+      var v = Math.round(g.gold || 0).toLocaleString();
+      if (n.textContent !== v) {
+        n.textContent = v;
+        n.style.fontSize = v.length > 9 ? '10px' : v.length > 7 ? '11px' : '12px';
+      }
+    }
+    function underWords() {
+      var busy = busyNow(g) || !!document.getElementById('u-panel') && document.getElementById('u-panel').classList.contains('on');
+      ['mechBtn', 'visionBar'].forEach(function (id) { var e = document.getElementById(id); if (e) e.classList.toggle('g8-under', !!busy); });
+    }
+    setInterval(function () { try { paintTip(); paintCompass(); paintCredits(); underWords(); } catch (e) {} }, 200);
+  }
+  var tries = 0;
+  (function wait() {
+    var g = G();
+    if (g && g.layoutReady) { try { install(g); } catch (e) { console.warn('[quest-hud]', e); } return; }
+    if (++tries < 1200) setTimeout(wait, 50);
+  })();
+})();
+
+/* 67 · MERU'S TOWN SQUARE: DOORS YOU CAN SEE, AND ROOFS WITH SHAPE (Ben, 27 Sep)
+   "can we make the doors more noticable? especially the buildings on the south
+    AAAAND can you please polish the look feel of the roofs?"
+
+   DOORS. Every lobby door on the square gets a lit doorway: the opening itself
+   dark with warm light inside it, the building's own colour on the two posts
+   and the lintel, a lamp either side, light spilling out across the paving, a
+   mat on the step, a bigger bobbing arrow and the shop's name on a plaque. The
+   four on the south side face the plaza with their backs to you, so they get
+   the same treatment at full strength. Painted as the very last world layer
+   (this module wraps drawDark outermost), so no roof covers a door.
+
+   ROOFS. The four big roofs (casino, lanes, tent, diner) were flat slabs with
+   stripes and a faded name. Their painters now hand the job to
+   window.__8G_ROOF (postsplit patches the call in): a hipped roof with lit and
+   shaded faces, a ridge, the material each building is made of (slate for the
+   casino, standing-seam metal for the lanes, canvas for the tent, corrugated
+   tin for the diner), eaves with a fascia in the building's colour, rooftop
+   vents, a shadow cast on the lawn, and the name on a proper roof sign. Same
+   footprint, same cut-out round the drawn shop front, same lift when you walk
+   in. Meru only; every other world ignores this file. */
+(function () {
+  function G() {
+    if (window.game) return window.game;
+    try { return (typeof game !== 'undefined') ? game : null; } catch (e) { return null; }
+  }
+  var TOWN = 'meruTown';
+
+  /* ------------------------------------------------------------ helpers */
+  function shade(hex, k) {           // k > 0 lighter, k < 0 darker
+    var m = /^#?([0-9a-f]{6})$/i.exec(hex || ''); if (!m) return hex;
+    var n = parseInt(m[1], 16), r = n >> 16, gg = (n >> 8) & 255, b = n & 255;
+    var f = function (c) { return Math.max(0, Math.min(255, Math.round(k > 0 ? c + (255 - c) * k : c * (1 + k)))); };
+    return 'rgb(' + f(r) + ',' + f(gg) + ',' + f(b) + ')';
+  }
+  function rgba(hex, a) {
+    var m = /^#?([0-9a-f]{6})$/i.exec(hex || ''); if (!m) return 'rgba(255,255,255,' + a + ')';
+    var n = parseInt(m[1], 16);
+    return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  function rr(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
+  }
+
+  /* ------------------------------------------------------------ THE ROOFS */
+  var STYLE = {
+    casino:  { base: '#2b2244', name: 'CASINO',         mat: 'slate' },
+    bowling: { base: '#1f2b3a', name: 'MERU LANES',     mat: 'seam'  },
+    fortune: { base: '#33285a', name: 'FORTUNE TELLER', mat: 'canvas' },
+    burgers: { base: '#3a2b24', name: 'FOXY DINER',     mat: 'tin'   }
+  };
+  /* the four faces of a hipped roof over x0,y0 w×h, ridge down the long side */
+  function facets(x0, y0, w, h) {
+    var x1 = x0 + w, y1 = y0 + h, cx = x0 + w / 2, cy = y0 + h / 2;
+    if (w >= h) {
+      var a = x0 + h / 2, b = x1 - h / 2;
+      return { ridge: [[a, cy], [b, cy]],
+        N: [[x0, y0], [x1, y0], [b, cy], [a, cy]], S: [[x0, y1], [x1, y1], [b, cy], [a, cy]],
+        W: [[x0, y0], [a, cy], [x0, y1]], E: [[x1, y0], [b, cy], [x1, y1]] };
+    }
+    var c = y0 + w / 2, d = y1 - w / 2;
+    return { ridge: [[cx, c], [cx, d]],
+      W: [[x0, y0], [cx, c], [cx, d], [x0, y1]], E: [[x1, y0], [cx, c], [cx, d], [x1, y1]],
+      N: [[x0, y0], [x1, y0], [cx, c]], S: [[x0, y1], [x1, y1], [cx, d]] };
+  }
+  function poly(ctx, pts) { ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]); ctx.closePath(); }
+
+  function material(ctx, st, x0, y0, w, h, trim) {
+    var x, y, i, row;
+    ctx.save();
+    switch (st.mat) {
+      case 'slate':                   // overlapping slate courses, gold-flecked
+        for (row = 0, y = y0; y < y0 + h; y += 54, row++) {
+          for (x = x0 - (row % 2) * 60; x < x0 + w; x += 120) {
+            ctx.fillStyle = ((row * 7 + Math.round(x / 120)) % 5 === 0) ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.10)';
+            rr(ctx, x + 3, y + 3, 114, 50, 10); ctx.fill();
+          }
+          ctx.fillStyle = 'rgba(0,0,0,0.28)'; ctx.fillRect(x0, y + 50, w, 5);
+          ctx.fillStyle = 'rgba(255,236,200,0.06)'; ctx.fillRect(x0, y, w, 4);
+        }
+        break;
+      case 'seam':                    // standing-seam metal, running with the lanes
+        for (x = x0 + 30; x < x0 + w; x += 78) {
+          ctx.fillStyle = 'rgba(200,235,255,0.10)'; ctx.fillRect(x, y0, 5, h);
+          ctx.fillStyle = 'rgba(0,0,0,0.30)'; ctx.fillRect(x + 5, y0, 6, h);
+        }
+        break;
+      case 'tin':                     // corrugated tin
+        for (x = x0; x < x0 + w; x += 40) {
+          var gr = ctx.createLinearGradient(x, 0, x + 40, 0);
+          gr.addColorStop(0, 'rgba(0,0,0,0.22)'); gr.addColorStop(0.5, 'rgba(255,230,200,0.10)'); gr.addColorStop(1, 'rgba(0,0,0,0.22)');
+          ctx.fillStyle = gr; ctx.fillRect(x, y0, 40, h);
+        }
+        for (y = y0 + 280; y < y0 + h; y += 280) { ctx.fillStyle = 'rgba(0,0,0,0.30)'; ctx.fillRect(x0, y, w, 6); }
+        break;
+      case 'canvas':                  // stretched canvas panels from a centre pole
+        var cx = x0 + w / 2, cy = y0 + h / 2, R = Math.hypot(w, h);
+        for (i = 0; i < 16; i++) {
+          var a0 = i * Math.PI / 8, a1 = a0 + Math.PI / 8;
+          ctx.beginPath(); ctx.moveTo(cx, cy);
+          ctx.lineTo(cx + Math.cos(a0) * R, cy + Math.sin(a0) * R);
+          ctx.lineTo(cx + Math.cos(a1) * R, cy + Math.sin(a1) * R); ctx.closePath();
+          ctx.fillStyle = i % 2 ? 'rgba(210,180,255,0.07)' : 'rgba(0,0,0,0.10)'; ctx.fill();
+        }
+        ctx.strokeStyle = rgba(trim, 0.35); ctx.lineWidth = 5;
+        for (i = 0; i < 16; i++) {
+          var aa = i * Math.PI / 8;
+          ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(aa) * R, cy + Math.sin(aa) * R); ctx.stroke();
+        }
+        break;
+    }
+    ctx.restore();
+  }
+
+  function vent(ctx, x, y, w, h) {
+    ctx.fillStyle = 'rgba(0,0,0,0.35)'; rr(ctx, x + 10, y + 14, w, h, 8); ctx.fill();
+    ctx.fillStyle = '#4a4f5c'; rr(ctx, x, y, w, h, 8); ctx.fill();
+    ctx.fillStyle = '#5d6372'; rr(ctx, x + 6, y + 6, w - 12, h * 0.45, 5); ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.45)'; ctx.lineWidth = 3;
+    for (var i = x + 14; i < x + w - 8; i += 16) { ctx.beginPath(); ctx.moveTo(i, y + h * 0.58); ctx.lineTo(i, y + h - 8); ctx.stroke(); }
+  }
+
+  /* PAINTED ONCE, BLITTED EVERY FRAME. Six hundred slates a frame is a real
+     cost on a phone, so each roof is baked into its own canvas the first time
+     it is asked for (at 0.6 of world size, which is sharper than any zoom the
+     square is ever seen at on a phone) and drawn as one image after that. */
+  var BAKE = 0.6, MARGIN = 120, baked = {};
+  window.__8G_ROOF = function (ctx, L, D, key, a) {
+    var st = STYLE[key]; if (!st || !L || window.__8G_NO_ROOF) return false;
+    var id = key + '|' + L.x0 + ',' + L.y0 + ',' + L.x1 + ',' + L.y1 + '|' + D.join(',');
+    var b = baked[key];
+    if (!b || b.id !== id) {
+      var cv = document.createElement('canvas');
+      cv.width = Math.ceil((L.x1 - L.x0 + MARGIN * 2) * BAKE);
+      cv.height = Math.ceil((L.y1 - L.y0 + MARGIN * 2) * BAKE);
+      var bc = cv.getContext('2d');
+      bc.scale(BAKE, BAKE);
+      bc.translate(-(L.x0 - MARGIN), -(L.y0 - MARGIN));
+      paintRoof(bc, L, D, key, st);
+      b = baked[key] = { id: id, cv: cv };
+      window.__8G_ROOF_BAKES = (window.__8G_ROOF_BAKES || 0) + 1;
+    }
+    ctx.drawImage(b.cv, L.x0 - MARGIN, L.y0 - MARGIN, b.cv.width / BAKE, b.cv.height / BAKE);
+    return true;
+  };
+  function paintRoof(ctx, L, D, key, st) {
+    var x0 = L.x0, y0 = L.y0, w = L.x1 - L.x0, h = L.y1 - L.y0, x1 = L.x1, y1 = L.y1;
+    var trim = L.trim || '#f0b429';
+    var hole = function () { ctx.rect(D[0], D[1], D[2] - D[0], y1 - D[1]); };
+
+    // a shadow on the lawn, south and east, outside the walls and round the front
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x0 - MARGIN, y0 - MARGIN, w + MARGIN * 2, h + MARGIN * 2);
+    ctx.rect(x0, y0, w, h); hole();
+    ctx.clip('evenodd');
+    ctx.fillStyle = 'rgba(0,0,0,0.30)'; ctx.fillRect(x0 + 34, y0 + 46, w, h);
+    ctx.fillStyle = 'rgba(0,0,0,0.16)'; ctx.fillRect(x0 + 60, y0 + 76, w, h);
+    ctx.restore();
+
+    // everything else is the roof: the footprint, minus the shop front the square draws
+    ctx.beginPath(); ctx.rect(x0, y0, w, h); hole(); ctx.clip('evenodd');
+
+    var gb = ctx.createLinearGradient(x0, y0, x1, y1);
+    gb.addColorStop(0, shade(st.base, 0.14)); gb.addColorStop(1, shade(st.base, -0.28));
+    ctx.fillStyle = gb; ctx.fillRect(x0, y0, w, h);
+    material(ctx, st, x0, y0, w, h, trim);
+
+    // the faces: lit from the north-west, so N and W catch it and S and E fall away
+    var F = facets(x0 + 26, y0 + 26, w - 52, h - 52);
+    if (st.mat === 'canvas') {                          // a tent is a pyramid to its pole
+      var cx = x0 + w / 2, cy = y0 + h / 2;
+      F = { ridge: null, N: [[x0, y0], [x1, y0], [cx, cy]], S: [[x0, y1], [x1, y1], [cx, cy]],
+            W: [[x0, y0], [cx, cy], [x0, y1]], E: [[x1, y0], [cx, cy], [x1, y1]] };
+    }
+    var tone = { N: 'rgba(255,240,220,0.10)', W: 'rgba(255,240,220,0.05)', E: 'rgba(0,0,0,0.16)', S: 'rgba(0,0,0,0.26)' };
+    ['N', 'W', 'E', 'S'].forEach(function (k) { poly(ctx, F[k]); ctx.fillStyle = tone[k]; ctx.fill(); });
+    // hip lines
+    ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.lineWidth = 7; ctx.lineCap = 'round';
+    var corner = [[x0 + 26, y0 + 26], [x1 - 26, y0 + 26], [x1 - 26, y1 - 26], [x0 + 26, y1 - 26]];
+    var ends = F.ridge ? [F.ridge[0], F.ridge[1], F.ridge[1], F.ridge[0]] : [[x0 + w / 2, y0 + h / 2], [x0 + w / 2, y0 + h / 2], [x0 + w / 2, y0 + h / 2], [x0 + w / 2, y0 + h / 2]];
+    if (F.ridge && w < h) ends = [F.ridge[0], F.ridge[0], F.ridge[1], F.ridge[1]];
+    for (var i = 0; i < 4; i++) {
+      ctx.beginPath(); ctx.moveTo(corner[i][0], corner[i][1]); ctx.lineTo(ends[i][0], ends[i][1]); ctx.stroke();
+      ctx.strokeStyle = 'rgba(255,240,220,0.10)'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(corner[i][0] - 3, corner[i][1] - 3); ctx.lineTo(ends[i][0] - 3, ends[i][1] - 3); ctx.stroke();
+      ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.lineWidth = 7;
+    }
+    // the ridge cap, in the building's colour
+    if (F.ridge) {
+      ctx.lineWidth = 26; ctx.strokeStyle = shade(st.base, -0.35);
+      ctx.beginPath(); ctx.moveTo(F.ridge[0][0], F.ridge[0][1]); ctx.lineTo(F.ridge[1][0], F.ridge[1][1]); ctx.stroke();
+      ctx.lineWidth = 12; ctx.strokeStyle = rgba(trim, 0.75);
+      ctx.beginPath(); ctx.moveTo(F.ridge[0][0], F.ridge[0][1]); ctx.lineTo(F.ridge[1][0], F.ridge[1][1]); ctx.stroke();
+      ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+      ctx.beginPath(); ctx.moveTo(F.ridge[0][0], F.ridge[0][1] - 4); ctx.lineTo(F.ridge[1][0], F.ridge[1][1] - 4); ctx.stroke();
+    } else {                                            // the tent's finial
+      var px = x0 + w / 2, py = y0 + h / 2;
+      ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.beginPath(); ctx.arc(px + 10, py + 14, 34, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = trim; ctx.beginPath(); ctx.arc(px, py, 30, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.55)'; ctx.beginPath(); ctx.arc(px - 9, py - 10, 10, 0, Math.PI * 2); ctx.fill();
+    }
+    // rooftop kit: a pair of vents off the ridge, clear of the signs
+    if (st.mat !== 'canvas') {
+      if (w >= h) { vent(ctx, x0 + w * 0.70, y0 + h * 0.64, 120, 86); vent(ctx, x0 + w * 0.16, y0 + h * 0.66, 96, 70); }
+      else { vent(ctx, x0 + w * 0.62, y0 + h * 0.70, 110, 80); vent(ctx, x0 + w * 0.14, y0 + h * 0.80, 90, 66); }
+    }
+    // the eaves: a dark drip edge, then the fascia in the building's colour
+    ctx.lineWidth = 22; ctx.strokeStyle = shade(st.base, -0.55); ctx.strokeRect(x0 + 11, y0 + 11, w - 22, h - 22);
+    ctx.lineWidth = 8; ctx.strokeStyle = trim; ctx.strokeRect(x0 + 18, y0 + 18, w - 36, h - 36);
+    ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(255,255,255,0.25)'; ctx.strokeRect(x0 + 25, y0 + 25, w - 50, h - 50);
+
+    // the name, on a painted roof sign rather than a watermark
+    /* in the band of roof north of the drawn shop front, so the front never cuts it */
+    var sy = Math.min(y0 + h * 0.22, (y0 + D[1]) / 2 + 10);
+    var fs = key === 'fortune' ? 78 : key === 'bowling' ? 96 : 104;
+    ctx.font = '900 ' + fs + 'px Archivo, Arial, sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    var tw = ctx.measureText(st.name).width + fs * 1.1, th = fs * 1.55, sx = x0 + w / 2;
+    ctx.fillStyle = 'rgba(0,0,0,0.45)'; rr(ctx, sx - tw / 2 + 14, sy - th / 2 + 18, tw, th, 22); ctx.fill();
+    ctx.fillStyle = 'rgba(10,10,20,0.88)'; rr(ctx, sx - tw / 2, sy - th / 2, tw, th, 22); ctx.fill();
+    ctx.lineWidth = 8; ctx.strokeStyle = trim; ctx.stroke();
+    ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(255,255,255,0.3)'; rr(ctx, sx - tw / 2 + 12, sy - th / 2 + 12, tw - 24, th - 24, 14); ctx.stroke();
+    ctx.shadowColor = trim; ctx.shadowBlur = 22;
+    ctx.fillStyle = shade(trim, 0.35); ctx.fillText(st.name, sx, sy + fs * 0.04);
+    ctx.shadowBlur = 0;
+  }
+
+  /* ------------------------------------------------------------ THE DOORS */
+  function worldTransform(g, ctx) {
+    var cv = ctx.canvas;
+    ctx.translate(cv.width * (g.screenAnchorX == null ? 0.5 : g.screenAnchorX),
+                  cv.height * (g.screenAnchorY == null ? 0.5 : g.screenAnchorY));
+    ctx.scale(g.zoom, g.zoom);
+    ctx.translate(-g.cameraCenterX + (g.shakeX || 0), -g.cameraCenterY + (g.shakeY || 0));
+  }
+  function arrow(ctx, mx, my, dir, col, k) {
+    ctx.save(); ctx.translate(mx, my); ctx.scale(k, k * dir);
+    ctx.beginPath();
+    ctx.moveTo(0, 34); ctx.lineTo(-38, -10); ctx.lineTo(-15, -10); ctx.lineTo(-15, -40);
+    ctx.lineTo(15, -40); ctx.lineTo(15, -10); ctx.lineTo(38, -10); ctx.closePath();
+    ctx.lineJoin = 'round'; ctx.lineWidth = 8; ctx.strokeStyle = 'rgba(6,8,16,0.85)'; ctx.stroke();
+    ctx.shadowColor = col; ctx.shadowBlur = 18; ctx.fillStyle = col; ctx.fill();
+    ctx.shadowBlur = 0; ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.beginPath(); ctx.moveTo(-9, -36); ctx.lineTo(9, -36); ctx.lineTo(9, -14); ctx.lineTo(-9, -14); ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+  function paintDoors(g, ctx) {
+    var LOB = g.lobbies; if (!LOB) return;
+    var t = (g._shTick || g.tick || 0);
+    var bob = Math.sin(t * 0.08) * 8, pulse = 0.75 + Math.sin(t * 0.06) * 0.25;
+    ctx.save();
+    worldTransform(g, ctx);
+    for (var k = 0; k < LOB.length; k++) {
+      var L = LOB[k];
+      var lift = g.lobbyLift ? g.lobbyLift(L.key) : 0;
+      if (lift > 0.35) continue;                       // you are inside it
+      var fade = 1 - lift / 0.35;
+      var s = L.street, trim = L.trim || '#f0b429';
+      var north = L.face === 'N';                      // door on the north wall, opening onto the plaza
+      var sx0 = s[0], sx1 = s[2], dw = sx1 - sx0, mx = (sx0 + sx1) / 2;
+      var wallY = north ? s[1] : s[3];                 // the wall line the door is cut in
+      var out = north ? -1 : 1;                        // which way is the plaza
+      var near = Math.hypot(g.pX - mx, g.pY - wallY);
+      var boost = near < 700 ? 1 : near < 1600 ? 1 - (near - 700) / 1800 : 0.5;
+      ctx.globalAlpha = fade;
+
+      // 1 · light spilling out across the paving
+      var spill = ctx.createLinearGradient(0, wallY, 0, wallY + out * 260);
+      spill.addColorStop(0, rgba(trim, 0.42 * pulse)); spill.addColorStop(1, rgba(trim, 0));
+      ctx.fillStyle = spill;
+      ctx.beginPath();
+      ctx.moveTo(sx0 - 10, wallY); ctx.lineTo(sx1 + 10, wallY);
+      ctx.lineTo(sx1 + 90, wallY + out * 260); ctx.lineTo(sx0 - 90, wallY + out * 260); ctx.closePath(); ctx.fill();
+
+      // 2 · the opening, cut into the wall: dark at the back, warm light pouring
+      //     out of it towards the step
+      var oh = 74, oy = north ? wallY - 4 : wallY - oh + 4;
+      ctx.fillStyle = '#0a0912'; ctx.fillRect(sx0, oy, dw, oh);
+      var inG = ctx.createLinearGradient(0, north ? oy + oh : oy, 0, north ? oy : oy + oh);
+      inG.addColorStop(0, 'rgba(255,190,110,0.0)'); inG.addColorStop(0.6, 'rgba(255,205,140,0.35)'); inG.addColorStop(1, 'rgba(255,236,200,0.85)');
+      ctx.fillStyle = inG; ctx.fillRect(sx0 + 8, oy, dw - 16, oh);
+      // a lit step across the doorway, on the plaza side
+      ctx.fillStyle = 'rgba(255,240,210,0.9)';
+      ctx.fillRect(sx0, north ? wallY - 10 : wallY - 2, dw, 12);
+
+      // 3 · the jambs: wall ends in the building's colour, with a cap of light
+      [sx0 - 34, sx1].forEach(function (jx) {
+        ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fillRect(jx, oy - 6, 34, oh + 12);
+        ctx.fillStyle = shade(trim, -0.2); ctx.fillRect(jx + 4, oy - 2, 26, oh + 4);
+        ctx.fillStyle = trim; ctx.fillRect(jx + 4, north ? oy - 2 : oy + oh - 14, 26, 16);
+        ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.fillRect(jx + 6, oy, 5, oh);
+      });
+
+      // 4 · a lamp on each post
+      [sx0 - 15, sx1 + 15].forEach(function (lx) {
+        var ly = wallY + out * 34;
+        var halo = ctx.createRadialGradient(lx, ly, 2, lx, ly, 70);
+        halo.addColorStop(0, 'rgba(255,236,190,' + (0.85 * pulse) + ')'); halo.addColorStop(1, 'rgba(255,200,120,0)');
+        ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(lx, ly, 70, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#fff4d6'; ctx.beginPath(); ctx.arc(lx, ly, 11, 0, Math.PI * 2); ctx.fill();
+      });
+
+      // 5 · a mat on the step
+      var my0 = north ? wallY - 78 : wallY + 26;
+      ctx.fillStyle = 'rgba(0,0,0,0.45)'; rr(ctx, mx - dw * 0.42 + 6, my0 + 8, dw * 0.84, 52, 10); ctx.fill();
+      ctx.fillStyle = shade(trim, -0.45); rr(ctx, mx - dw * 0.42, my0, dw * 0.84, 52, 10); ctx.fill();
+      ctx.lineWidth = 5; ctx.strokeStyle = trim; ctx.stroke();
+
+      // 6 · the arrow, bigger and bobbing, and the name over it
+      var ay = wallY + out * (150 + bob);
+      arrow(ctx, mx, ay, north ? 1 : -1, trim, 1.35);
+      if (boost > 0.02) {
+        ctx.globalAlpha = fade * Math.max(0.55, boost);
+        var label = L.label || '';
+        ctx.font = '900 44px Archivo, Arial, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        var tw = ctx.measureText(label).width + 44, py = wallY + out * (250 + bob);
+        ctx.fillStyle = 'rgba(8,10,20,0.9)'; rr(ctx, mx - tw / 2, py - 32, tw, 64, 16); ctx.fill();
+        ctx.lineWidth = 5; ctx.strokeStyle = trim; ctx.stroke();
+        ctx.fillStyle = '#fff'; ctx.fillText(label, mx, py + 2);
+      }
+    }
+    ctx.restore();
+  }
+
+  var tries = 0;
+  (function wait() {
+    var g = G();
+    if (g && g.layoutReady && g.drawDark) {
+      if (!g.lobbies || !g.lobbies.length) return;      // not Meru
+      window.__8G_DOORS_ON = true;
+      var realDark = g.drawDark;
+      g.drawDark = function (ctx) {
+        var out = realDark.apply(g, arguments);
+        if (g.currentScene === TOWN && !window.__8G_NO_DOORS && !g.guidePage) {
+          try { paintDoors(g, ctx || g.ctx); } catch (e) { g._doorErr = String(e); }
+        }
+        return out;
+      };
+      return;
+    }
+    if (++tries < 1200) setTimeout(wait, 50);
+  })();
+})();
+
+/* 68 · FILMS PLAY WITH SOUND, AND ARE WATCHED TO THE END (Ben, 27 Sep)
+   "ensure that they play sound without having to click the screen. IN ALL
+    cases the video has strategically been placed after the player has already
+    clicked in the game ... MAKE the video a requirement to watch, no skipping."
+
+   SOUND. Every film is started from game code, a beat after the tap that
+   caused it, so on a phone (iPhone above all) the browser treats it as
+   "not started by the player" and refuses its sound: the players fall back to
+   muted. The browser's rule is per MEDIA ELEMENT — an element that was played
+   during a real tap may play with sound for the rest of its life. So:
+     · on every tap / click / key, a small stock of fresh <video> and <audio>
+       elements is "blessed" by playing a few milliseconds of silence inside
+       that gesture;
+     · document.createElement('video') and new Audio() hand out a blessed,
+       never-used element when there is one;
+     · the shared cutscene <video> (Meru, the station and every engine film)
+       is blessed on the first tap too.
+   A blessed element is otherwise a brand-new element: nothing about the
+   players changes.
+
+   NO SKIPPING. A tap or a key while a film is up does nothing, the TAP TO SKIP
+   line is gone (postsplit takes it out of every world's film painter) and the
+   engine cutscene's SKIP button is hidden. A film that cannot play still ends
+   itself — every player has its own "never started" and "ran over" guards —
+   so nobody can be trapped behind a broken file. window.__8G_FILM_SKIP = true
+   puts skipping back (for testing). */
+(function () {
+  if (window.__8G_FILM_SOUND) return; window.__8G_FILM_SOUND = true;
+
+  /* a twentieth of a second of silence, made here rather than shipped */
+  var silentUrl = (function () {
+    try {
+      var sr = 8000, n = 400, buf = new ArrayBuffer(44 + n * 2), d = new DataView(buf);
+      var w = function (o, s) { for (var i = 0; i < s.length; i++) d.setUint8(o + i, s.charCodeAt(i)); };
+      w(0, 'RIFF'); d.setUint32(4, 36 + n * 2, true); w(8, 'WAVEfmt ');
+      d.setUint32(16, 16, true); d.setUint16(20, 1, true); d.setUint16(22, 1, true);
+      d.setUint32(24, sr, true); d.setUint32(28, sr * 2, true); d.setUint16(32, 2, true); d.setUint16(34, 16, true);
+      w(36, 'data'); d.setUint32(40, n * 2, true);
+      return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+    } catch (e) { return ''; }
+  })();
+
+  var realCreate = document.createElement.bind(document);
+  var RealAudio = window.Audio;
+  var vids = [], auds = [], blessedAt = 0;
+  window.__8G_MEDIA_POOL = function () { return { video: vids.length, audio: auds.length, handed: handed, blessedAt: blessedAt }; };
+  var handed = 0;
+
+  function bless(el) {
+    try {
+      el.muted = false;
+      el.setAttribute('playsinline', ''); el.playsInline = true;
+      if (silentUrl) el.src = silentUrl;
+      var p = el.play();                              // inside the gesture: this is the blessing
+      var tidy = function () { try { el.pause(); el.removeAttribute('src'); el.load(); } catch (e) {} };
+      if (p && p.then) p.then(tidy, tidy); else tidy();
+    } catch (e) {}
+    return el;
+  }
+  function stock() {
+    blessedAt = Date.now();
+    while (vids.length < 3) vids.push(bless(realCreate('video')));
+    while (auds.length < 2 && RealAudio) auds.push(bless(new RealAudio()));
+    var cv = document.getElementById('cutsceneVideo');
+    if (cv && !cv._g8Blessed) {
+      var g = window.game;
+      if (!(g && g._cutsceneOpen)) { cv._g8Blessed = true; bless(cv); }
+    }
+  }
+  ['touchend', 'pointerup', 'click', 'keydown'].forEach(function (t) {
+    document.addEventListener(t, stock, true);
+  });
+
+  document.createElement = function (tag, opts) {
+    if (vids.length && String(tag).toLowerCase() === 'video') {
+      var v = vids.shift();
+      try { v.removeAttribute('src'); v.muted = false; v.loop = false; v.autoplay = false; } catch (e) {}
+      handed++;
+      return v;
+    }
+    return opts === undefined ? realCreate(tag) : realCreate(tag, opts);
+  };
+  if (RealAudio) {
+    var PooledAudio = function (src) {
+      var a;
+      if (auds.length) { a = auds.shift(); handed++; try { a.removeAttribute('src'); a.loop = false; } catch (e) {} }
+      else a = new RealAudio();
+      if (src !== undefined) a.src = src;
+      return a;
+    };
+    PooledAudio.prototype = RealAudio.prototype;
+    window.Audio = PooledAudio;
+  }
+
+  /* ------------------------------------------------ no skipping */
+  var css = realCreate('style');
+  css.textContent = 'html:not(.g8-film-skip) #cutsceneSkip { display: none !important; }';
+  (document.head || document.documentElement).appendChild(css);
+  // the engine cutscene ends on a tap of its overlay: that tap stops here first
+  document.addEventListener('click', function (e) {
+    if (window.__8G_FILM_SKIP) return;
+    var box = document.getElementById('cutsceneOverlay');
+    if (box && box.style.display !== 'none' && box.contains(e.target)) { e.stopPropagation(); e.preventDefault(); }
+  }, true);
+
+  var tries = 0;
+  (function wait() {
+    var g = window.game;
+    if (g && g.layoutReady) {
+      if (typeof g.skipFilm === 'function') {
+        var realSkip = g.skipFilm;
+        g.skipFilm = function () { if (window.__8G_FILM_SKIP) return realSkip.apply(g, arguments); };
+      }
+      if (window.__8G_FILM_SKIP) document.documentElement.classList.add('g8-film-skip');
+      return;
+    }
+    if (++tries < 1200) setTimeout(wait, 50);
+  })();
+})();
+
+/* 69 · HOPE HOLDS THE BASE (Ben, 27 Sep)
+   "ALWAYS have HOPE join the PLAYER and NOBLE on the battle map, but she stays
+    around the base, not the center, but patrolling around it with her cane,
+    and attacking anyone within range."
+
+   On every battle map (the landing fight and any other), Hope is put down at
+   the base and walks a slow ring round it — never across the middle — with
+   her white cane. Anything hostile that comes within reach of her is struck
+   (and she steps out to meet something close to her ring), then she goes back
+   to her beat. She is her own body for this map only: the Hope who lives in
+   the hub square keeps her spot, and if you are playing AS Hope, or she is
+   already your companion, she is not doubled. */
+(function () {
+  function G() { return window.game || null; }
+  var PATROL_SPEED = 3.0, CHASE_SPEED = 4.2, SPOT = 420, REACH = 130, HIT = 10, RATE = 48;
+
+  function inBattle(g) { try { return !!(g.inBattleMap && g.inBattleMap()); } catch (e) { return false; } }
+  function base(g) {
+    if (g.core && Number.isFinite(g.core.x)) return { x: g.core.x, y: g.core.y, r: g.core.r || 900 };
+    var A = (g.scene && g.scene.anchors) || {};
+    var a = A.transportPad || A.spawn || A.entrance;
+    var k = (g.scene && g.scene.scale) || 1;
+    if (a && Number.isFinite(a.x)) return { x: a.x * k, y: a.y * k, r: 700 };
+    return { x: g.pX, y: g.pY, r: 700 };
+  }
+  function canStand(g, x, y) {
+    try { if (g.walk && g.walk.canStand) return g.walk.canStand(x, y, 30); } catch (e) {}
+    return x > 40 && y > 40 && x < (g.worldWidth || 3000) - 40 && y < (g.worldHeight || 3000) - 40;
+  }
+  function doubled(g) {
+    return g.avatarIs === 'hope' || g.partyMate === 'hope' || g.playerAid === 'cane' ||
+      (g.npcRoster || []).some(function (n) { return n && n.key === 'hope' && n.scene === g.currentScene && !n.defeated; });
+  }
+
+  var hope = null, scene = null, ang = 0, cool = 0, swing = 0, stuckFor = 0;
+  function make(g) {
+    var src = (g._companionCast || []).find(function (n) { return n && n.key === 'hope'; });
+    var st = g.makeNpcState ? g.makeNpcState() : {};
+    var n = {
+      key: 'hopeGuard', displayName: 'Hope', state: st, scene: g.currentScene,
+      worldX: 0, worldY: 0, faceDir: 1, homeFaceDir: 1,
+      torso: src ? src.torso : ['#ffffff', '#e7edf4', '#6b7d93'], crestType: src ? src.crestType : 'eightGate',
+      drawFace: src ? src.drawFace : (g.drawHopeFace ? g.drawHopeFace.bind(g) : null),
+      drawWeapon: null,
+      drawUnder: src ? src.drawUnder : null, drawRobe: src ? src.drawRobe : null,
+      hp: 110, maxHp: 110, hitFlash: 0, defeated: false, aiState: 'IDLE', attackCooldown: 0,
+      bumpCooldown: 0, moving: false, alertTimer: 0, swordHasHit: false, windupTimer: 0, knockX: 0, knockY: 0,
+      hostile: false, companion: true, driven: true, guard: true,
+      combat: { speed: 1.6, meleeDamage: 12, attackCooldownFrames: 70, windupFrames: 20, aggroRange: 0, preferredRange: 106 }
+    };
+    return n;
+  }
+  function place(g) {
+    var b = base(g), R = Math.max(240, Math.min(520, b.r * 0.75));
+    for (var i = 0; i < 24; i++) {
+      var a = ang + i * Math.PI / 12, x = b.x + Math.cos(a) * R, y = b.y + Math.sin(a) * R;
+      if (canStand(g, x, y)) { ang = a; hope.worldX = x; hope.worldY = y; return true; }
+    }
+    hope.worldX = b.x + R; hope.worldY = b.y; return false;
+  }
+  /* something her cane cannot hurt (behind a screen, a machine that shrugs it
+     off) is left alone for a few seconds rather than hit for ever */
+  var ignore = new Map();
+  function nearestFoe(g, x, y, within) {
+    var best = null, bd = within, now = Date.now();
+    (g.npcRoster || []).forEach(function (n) {
+      if (!n || n === hope || n.defeated || !n.hostile || (n.hp != null && n.hp <= 0)) return;
+      if ((ignore.get(n) || 0) > now) return;
+      if (n.scene && n.scene !== g.currentScene) return;
+      var d = Math.hypot(n.worldX - x, n.worldY - y);
+      if (d < bd) { bd = d; best = n; }
+    });
+    return best;
+  }
+  function stepTo(g, tx, ty, sp) {
+    var dx = tx - hope.worldX, dy = ty - hope.worldY, d = Math.hypot(dx, dy);
+    if (d < 2) { hope.moving = false; return true; }
+    var k = Math.min(1, sp / d), nx = hope.worldX + dx * k, ny = hope.worldY + dy * k;
+    if (canStand(g, nx, ny)) { hope.worldX = nx; hope.worldY = ny; }
+    else if (canStand(g, nx, hope.worldY)) hope.worldX = nx;
+    else if (canStand(g, hope.worldX, ny)) hope.worldY = ny;
+    hope.moving = true;
+    if (Math.abs(dx) > 1) hope.faceDir = dx < 0 ? -1 : 1;
+    return d <= sp;
+  }
+  function strike(g, foe) {
+    swing = 14;
+    var shake = g.triggerShake, spawnText = g.spawnText;
+    try {
+      g.triggerShake = function () {};                     // her blows, not yours: the screen stays still
+      if (g.applyDamage) g.applyDamage(foe, HIT, hope.worldX, hope.worldY, 1.2);
+      else { foe.hp = Math.max(0, (foe.hp || 0) - HIT); foe.hitFlash = 8; }
+    } catch (e) {} finally { g.triggerShake = shake; }
+    try { if (g.spawnBurst) g.spawnBurst((hope.worldX + foe.worldX) / 2, (hope.worldY + foe.worldY) / 2 - 50, '#e0f2fe'); } catch (e) {}
+    try { if (spawnText && Math.random() < 0.35) spawnText.call(g, hope.worldX, hope.worldY - 150, 'CANE!', '#bae6fd'); } catch (e) {}
+  }
+
+  function tick() {
+    requestAnimationFrame(tick);
+    var g = G(); if (!g || !g.layoutReady || window.__8G_NO_HOPE_GUARD) return;
+    var on = inBattle(g) && !doubled(g);
+    if (!on) {
+      if (hope && g.npcRoster) { var i = g.npcRoster.indexOf(hope); if (i >= 0) g.npcRoster.splice(i, 1); }
+      if (!inBattle(g)) { hope = null; scene = null; }
+      return;
+    }
+    if (!hope || scene !== g.currentScene) {
+      hope = make(g); scene = g.currentScene; ang = Math.random() * Math.PI * 2;
+      place(g);
+      g._hopeGuard = hope;
+    }
+    if ((g.npcRoster || []).indexOf(hope) < 0) { hope.scene = g.currentScene; g.npcRoster.push(hope); }
+    if (g.gamePaused || g.caveDialogueOpen || g.missionPromptOpen || g.film || g._cutsceneOpen || g.beamIn) { hope.moving = false; return; }
+
+    var b = base(g), R = Math.max(240, Math.min(520, b.r * 0.75));
+    if (cool > 0) cool--;
+    if (swing > 0) swing--;
+    hope.state && (hope.state.swingT = swing);
+    var foe = stuckFor > 40 ? null : nearestFoe(g, hope.worldX, hope.worldY, SPOT);
+    if (stuckFor > 40 && ++stuckFor > 160) stuckFor = 0;   // a wall in the way: back to her beat for a while
+    // she steps out to meet it, but never further than the edge of her beat
+    if (foe && Math.hypot(foe.worldX - b.x, foe.worldY - b.y) < R + SPOT * 0.6) {
+      var d = Math.hypot(foe.worldX - hope.worldX, foe.worldY - hope.worldY);
+      if (d > REACH) {
+        var x0 = hope.worldX, y0 = hope.worldY;
+        stepTo(g, foe.worldX, foe.worldY, CHASE_SPEED);
+        stuckFor = (Math.hypot(hope.worldX - x0, hope.worldY - y0) < 0.5) ? stuckFor + 1 : 0;
+      }
+      else {
+        hope.moving = false;
+        hope.faceDir = foe.worldX < hope.worldX ? -1 : 1;
+        if (!cool) {
+          var hp0 = foe.hp;
+          strike(g, foe); cool = RATE;
+          if (foe.hp === hp0 && !foe.defeated) { foe._hopeMiss = (foe._hopeMiss || 0) + 1; if (foe._hopeMiss >= 3) { ignore.set(foe, Date.now() + 6000); foe._hopeMiss = 0; } }
+          else foe._hopeMiss = 0;
+        }
+      }
+      g._hopeGuardState = 'fighting';
+      g._hopeGuardFoe = { key: foe.key, hp: foe.hp, d: Math.round(Math.hypot(foe.worldX - hope.worldX, foe.worldY - hope.worldY)), stuck: stuckFor, golem: !!foe.golem, scene: foe.scene };
+      return;
+    }
+    // her beat: a ring of standable points round the base, walked in order;
+    // a point she cannot reach (a wall between) is skipped after a moment
+    if (!beat || beat.scene !== g.currentScene || beat.cx !== b.x) beat = makeBeat(g, b, R);
+    if (!beat.pts.length) { hope.moving = false; return; }
+    var wp = beat.pts[beat.i % beat.pts.length];
+    var bx0 = hope.worldX, by0 = hope.worldY;
+    var there = stepTo(g, wp.x, wp.y, PATROL_SPEED);
+    if (Math.hypot(hope.worldX - bx0, hope.worldY - by0) < 0.5) { beat.stuck++; beat.frozen++; } else { beat.stuck = 0; beat.frozen = 0; }
+    if (there || beat.stuck > 30) { beat.i++; beat.stuck = 0; }
+    // pinned somewhere she cannot walk out of: she steps onto her beat
+    if (beat.frozen > 100) { var np = beat.pts[beat.i % beat.pts.length]; hope.worldX = np.x; hope.worldY = np.y; beat.frozen = 0; }
+    g._hopeGuardState = 'patrol';
+  }
+  var beat = null;
+  function makeBeat(g, b, R) {
+    var pts = [], N = 20;
+    for (var k = 0; k < N; k++) {
+      var a = k * Math.PI * 2 / N;
+      var radii = [R, R * 0.85, R * 1.15, R * 0.7];
+      for (var q = 0; q < radii.length; q++) {
+        var x = b.x + Math.cos(a) * radii[q], y = b.y + Math.sin(a) * radii[q];
+        if (canStand(g, x, y)) { pts.push({ x: x, y: y }); break; }
+      }
+    }
+    // start at the point nearest to where she stands
+    var i0 = 0, bd = 1e9;
+    for (var m = 0; m < pts.length; m++) { var d = Math.hypot(pts[m].x - hope.worldX, pts[m].y - hope.worldY); if (d < bd) { bd = d; i0 = m; } }
+    return { scene: g.currentScene, cx: b.x, pts: pts, i: i0, stuck: 0, frozen: 0 };
+  }
+  requestAnimationFrame(tick);
+})();
+
+/* 70 · CONVERSATIONS (Ben, 28 Sep), every world, phone and desk
+   1 · THE CAMERA PUSHES IN ON WHOEVER IS TALKING, and swaps to the player when
+       the player speaks (a reply line, or the list of things to say), then back
+       to the other person. Meru already had the push for the other person
+       (its conversation camera); the rest of the worlds get the same push
+       here, and on Meru the player is let into its shot too (meru_town.py).
+   2 · THAT PERSON'S MOUTH MOVES in the world — the portrait circle that used to
+       do the talking is gone from the box (postsplit 13).
+   3 · AT MOST FOUR THINGS TO SAY, AND THANKS, BYE LAST. A menu of choices is
+       sorted so the thing that matters (a minigame, a job, a challenge, news:
+       anything marked `lead`, anything that does something) comes first, cut
+       to four, and closed with THANKS, BYE. Short yes/no decisions without a
+       way out of their own are left exactly as they are — they are a question
+       that needs an answer, not a menu — and so is a shop counter's list of
+       goods. window.__8G_ALL_CHOICES = true turns the trimming off. */
+(function () {
+  function G() { return window.game || null; }
+  var MAX = 4, BYE = 'THANKS, BYE';
+  var BYE_RE = /^(\s*[←<-]\s*)?(thanks,?\s*bye|good\s*bye|bye|farewell|leave|i('| a)?ll (go|leave|be going)|never\s*mind|nothing|not now|later|maybe later|keep (them|it)|no,? thanks|no thank you|done|back|close|that'?s all|see you|walk away|goodbye for now|just (browsing|looking|watching)|nevermind)\b/i;
+  var HOT_RE = /(play|game|challenge|race|dart|pool|bowl|fish|spar|duel|bet|gamble|wager|tournament|match|juke|hockey|pinball|cards|dice|surf|dance|tennis|quest|job|task|help|news|urgent|important|join|board|rent|hire|enter|ride|train|teach|lesson|fight|arena|sing|song|deal)/i;
+
+  function labelOf(o) { return String((o && (o.label || o.text)) || ''); }
+  function isBye(o) { return !!o && (o.bye || (!o.action && BYE_RE.test(labelOf(o).trim()))); }   // a 'leave' that DOES something is a choice, not a goodbye
+  function score(o) {
+    if (!o) return -1;
+    if (o.lead) return 3;
+    if (HOT_RE.test(labelOf(o))) return 2;
+    if (o.action) return 1;
+    return 0;
+  }
+  var seen = typeof WeakSet !== 'undefined' ? new WeakSet() : null;
+  function trim(g, list) {
+    if (!Array.isArray(list) || window.__8G_ALL_CHOICES) return list;
+    if (seen && seen.has(list)) return list;
+    if (g.shopOpenWith) return list;                     // a counter's goods are a list of goods
+    var byes = list.filter(isBye), rest = list.filter(function (o) { return !isBye(o); });
+    // a question that needs its answer (no way out of its own, and short) stays as written
+    if (!byes.length && list.length <= MAX) { if (seen) seen.add(list); return list; }
+    var order = rest.map(function (o, i) { return { o: o, i: i, s: score(o) }; });
+    order.sort(function (a, b) { return (b.s - a.s) || (a.i - b.i); });
+    var kept = order.slice(0, MAX).map(function (x) { return x.o; });
+    var b0 = byes[0] || null;
+    var bye = { label: BYE, replies: (b0 && b0.replies) || [], action: (b0 && b0.action) || null, bye: true };
+    var out = kept.concat([bye]);
+    if (seen) seen.add(out);
+    g._choicesTrimmed = (g._choicesTrimmed || 0) + (list.length !== out.length || byes.length ? 1 : 0);
+    return out;
+  }
+  window.__8G_TRIM_CHOICES = function (list) { return trim(G() || {}, list); };
+
+  /* ------------------------------------------------ who is talking */
+  var proxy = { key: '__player', __player: true, displayName: 'YOU', state: { viewFacing: 'FRONT' }, worldX: 0, worldY: 0 };
+  function playerSpeaks(g) {
+    if (!g.caveDialogueOpen) return false;
+    if (g.caveDialogueChoosing) return true;
+    var raw = g.caveDialogueLines && g.caveDialogueLines[g.caveDialogueIndex];
+    return !!(raw && typeof raw === 'object' && raw.who === 'player');
+  }
+
+  function install(g) {
+    // 3 · the choices, wherever they come from
+    var realOpen = g.openCaveDialogue;
+    if (typeof realOpen === 'function') g.openCaveDialogue = function (npc, lines, onClose, choices) {
+      return realOpen.call(g, npc, lines, onClose, choices ? trim(g, choices) : choices);
+    };
+    var realBox = g.drawCaveDialogueBox;
+    if (typeof realBox === 'function') g.drawCaveDialogueBox = function () {
+      if (g.caveDialogueOpen && g.caveDialogueChoices && g.caveDialogueChoices.length) {
+        var t = trim(g, g.caveDialogueChoices);
+        if (t !== g.caveDialogueChoices) g.caveDialogueChoices = t;
+      }
+      return realBox.apply(g, arguments);
+    };
+
+    // 1 · the shot: the player when the player talks
+    var realSubject = g.dialogueCameraSubject;
+    if (typeof realSubject === 'function') g.dialogueCameraSubject = function () {
+      var s = realSubject.apply(g, arguments);
+      if (!window.__8G_NO_TALK_SWAP && playerSpeaks(g)) {
+        proxy.worldX = g.pX; proxy.worldY = g.pY; proxy.faceDir = g.faceDir;
+        return proxy;
+      }
+      return s;
+    };
+
+    // … and pushed in, on every world that does not already do it (Meru does)
+    if (!g._talkZoom && typeof g.updateCamera === 'function') {
+      var realCam = g.updateCamera, K = 0, base = null, baseScene = null, want = 1;
+      var contested = function () {
+        return !!(g.turret || g.vehicle || g.laneShow || g._beamZoomTo || g.beamIn || g.shopOpenWith ||
+                  (g._portalSettling && g._portalSettling() > 0));
+      };
+      g.updateCamera = function () {
+        var sp = g.caveDialogueOpen && g.dialogueCameraSubject ? g.dialogueCameraSubject() : null;
+        var on = !!(g.caveDialogueOpen && sp && sp.worldX != null && !contested()) && !window.__8G_NO_TALK_ZOOM;
+        if (contested()) { K = 0; base = null; baseScene = null; return realCam.apply(g, arguments); }
+        if (on) {
+          if (base === null || baseScene !== g.currentScene) { base = g.zoom; baseScene = g.currentScene; }
+          var Hc = g.canvas.height;
+          var free = Hc - (g.caveDialogueBoxH ? g.caveDialogueBoxH(Hc) : Hc * 0.34) - Math.max(24, Hc * 0.04);
+          var person = 200 * (g.sceneBodyScale ? g.sceneBodyScale() : 1);
+          want = (free > 40 && base) ? Math.max(1, Math.min(3.2, (free * 0.72) / (person * base))) : 1;
+          K += (1 - K) * 0.085;
+        } else if (base !== null) {
+          if (baseScene !== g.currentScene) { K = 0; base = null; baseScene = null; return realCam.apply(g, arguments); }
+          K += (0 - K) * 0.13;
+          if (K < 0.004) { g.zoom = base; K = 0; base = null; baseScene = null; return realCam.apply(g, arguments); }
+        }
+        if (base !== null && K > 0) g.zoom = base * (1 + (want - 1) * K);
+        return realCam.apply(g, arguments);
+      };
+      g._talkPush = function () { return { K: K, want: want, base: base, zoom: g.zoom }; };
+    }
+
+    // 2 · the mouth of whoever is talking moves, in the world
+    var realNpc = g.drawNPCBody;
+    if (typeof realNpc === 'function') g.drawNPCBody = function (npc) {
+      var talk = g.caveDialogueOpen && !playerSpeaks(g) && !g._speakingPortrait && !g._inShadowPass &&
+                 npc && g.dialogueSpeakerNpc && npc === g.dialogueSpeakerNpc();
+      if (!talk) return realNpc.apply(g, arguments);
+      g._talkMouth = true;
+      try { return realNpc.apply(g, arguments); } finally { g._talkMouth = false; }
+    };
+    var realBody = g.paintPlayerBody;
+    if (typeof realBody === 'function') g.paintPlayerBody = function () {
+      var talk = playerSpeaks(g) && !g._speakingPortrait && !g._inShadowPass && !g._portraitScale;
+      if (!talk) return realBody.apply(g, arguments);
+      g._talkMouth = true;
+      try { return realBody.apply(g, arguments); } finally { g._talkMouth = false; }
+    };
+  }
+
+  var tries = 0;
+  (function wait() {
+    var g = G();
+    if (g && g.layoutReady && g.openCaveDialogue) { try { install(g); } catch (e) { console.warn('[dialogue]', e); } return; }
+    if (++tries < 1200) setTimeout(wait, 50);
+  })();
+})();
+
+/* 71 · A RING FOR EVERY GAME (Ben, 28 Sep)
+   "PLEASE add MERU style hotspots FOR all MiniGAMES on all surfaces ... as
+    close to the machine or game as possible. FOR the restaurant minigames,
+    ADD the hotspot on the customer side of the counter ... ADD a hotspot in
+    the sport arena next to the person that usually would be triggering the
+    sport minigame. PLEASE look for DART boards and JUKEBOXES in all worlds
+    AND copy the minigame from MERU tavern dartboard and jukebox."
+
+   Meru's yellow floor rings, on every other surface:
+     · a game somebody runs (a counter, a table, a coach) gets a ring on the
+       customer side of that person — the first open floor south of them, then
+       round the compass. Stepping into it asks PLAY <GAME>? and starts it, or,
+       where the game has a choice to make first (which team, which run, which
+       rung of a ladder), opens that person's conversation;
+     · a game you already start by standing somewhere (a pinball table, the
+       hoops cage, a panning shallow, the surf) gets its ring drawn where you
+       stand — the world's own trigger does the rest;
+     · every dartboard and jukebox in a tavern's plans gets Meru's darts and
+       Meru's jukebox, in a frame of their own (the records play on after the
+       panel closes, until you leave the room).
+   A ring asks once; walk out of it and back in to be asked again.
+   Meru has its own rings and is left alone. window.__8G_NO_HOTSPOTS = true
+   turns all of this off. */
+(function () {
+  function G() { return window.game || null; }
+  var WORLD = window.__8G_WORLD || '';
+  if (WORLD === 'meru' || WORLD === 'station') return;
+
+  function row(n) { try { return ((typeof GAYA !== 'undefined' && GAYA.guests) || []).find(function (x) { return x && n && x.key === n.key; }) || null; } catch (e) { return null; } }
+  function roster(g, key) { return (g.npcRoster || []).find(function (n) { return n && n.key === key; }) || null; }
+  var P = function (fn) { return function (g, n) { return fn(g, n); }; };
+
+  /* talk: that person's conversation (the game has a pick to make, or a
+     story gate in front of it). start: straight in, after PLAY?. mark: a ring
+     on a spot the world already triggers on. */
+  var T = {
+    gaya: [
+      { npc: 'slicePlayer', label: 'TENNIS', talk: true },
+      { npc: 'pongFar', label: 'PING PONG', start: P(function (g, n) { g.openPingPong(n); }) },
+      { npc: 'kGoMaster', label: 'GO', start: P(function (g, n) { g.openGo(n, row(n)); }) },
+      { npc: 'kGeisha', label: 'DANCE', talk: true },
+      { npc: 'kActor', label: 'NOH STAGE', start: P(function (g, n) { g.openNoh(n, row(n)); }) },
+      { npc: 'kStable', label: 'SUMO', talk: true },
+      { npc: 'kArchMaster', label: 'ARCHERY', start: P(function (g, n) { g.openArchery(n, row(n)); }) },
+      { npc: 'kSecond', label: 'KENDO', talk: true },
+      { npc: 'barracksMasterOfArms', label: 'SPAR', talk: true },
+      { npc: 'kSushi', label: 'SUSHI', counter: true, start: P(function (g) { g.foxyOpen(); }) }
+    ],
+    player: [
+      { npc: 'pongFar', label: 'AIR HOCKEY', start: P(function (g, n) { g.openPingPong(n); }) },
+      { npc: 'trackStarter', label: 'ICE HOCKEY', talk: true },
+      { npc: 'skiLodgeHand', label: 'SLALOM', talk: true },
+      { npc: 'gayaPizzaChef', label: 'PIZZA', counter: true, talk: true },
+      { npc: 'clubGreeter', label: 'THE COUNTER', counter: true, talk: true }
+    ],
+    jidda: [
+      { npc: 'julep', label: 'SMOOTHIES', counter: true, start: P(function (g) { g.openSmoothie(); }) },
+      { npc: 'jody', label: 'SHUFFLEBOARD', start: P(function (g, n) { g.openShuffle(n); }) },
+      { npc: 'jory', label: 'SPAR', start: P(function (g, n) { g.openSparTitle(n); }) },
+      { scene: 'jSurfContest', x: 1300, y: 660, r: 110, label: 'SURF', mark: true }
+    ],
+    kufa: [
+      { scene: 'kufaTavern', anchor: 'foosball', side: 'W', label: 'FOOSBALL',
+        start: P(function (g) { g.openFoosball(roster(g, 'kufaBarkeep')); }) },
+      { npc: 'kufaCreamer', label: 'SOFT SERVE', counter: true, start: P(function (g, n) { g.openSoftServe(n); }) },
+      { npc: 'kufaFaruq', label: 'SOCCER', start: P(function (g, n) { g.openShootout(n); }) }
+    ],
+    luxor: [
+      { npc: 'luxorDabb', label: 'POOL', start: P(function (g, n) { g.openPool(n); }) },
+      { npc: 'luxorPia', label: 'DELI', counter: true, start: P(function (g, n) { g.openDeli(n, 0); }) },
+      { npc: 'luxorOrn', label: 'BIKE RACE', talk: true },
+      { npc: 'luxorHolt', label: 'BOXING GYM', talk: true },
+      { npc: 'luxorFerroPit', label: 'BOXING', talk: true }
+    ],
+    nebo: [
+      { npc: 'neboCandyMaker', label: 'CANDY SHOP', counter: true, start: P(function (g, n) { g.openCandyShift(n); }) }
+    ],
+    zion: [
+      { npc: 'zionRingmaster', label: 'TRUCK ARENA', start: P(function (g) { g.openArena(); }) },
+      { npc: 'zionOvie', label: 'SPAR', talk: true },
+      { npc: 'zionBaker', label: 'BAKERY', counter: true, start: P(function (g) { g.openBake(); }) },
+      { scene: 'zionTavern', x: 960, y: 2200, r: 110, label: 'HOOPS', mark: true },
+      { scene: 'zionPinball', x: 780, y: 815.4, r: 84, label: 'GOLD RIVER', mark: true },
+      { scene: 'zionPinball', x: 1350, y: 815.4, r: 84, label: 'THE CRUSHER', mark: true },
+      { scene: 'zionPinball', x: 1920, y: 815.4, r: 84, label: 'HILL RUN', mark: true },
+      { scene: 'zionPinball', x: 2442, y: 960, r: 84, label: 'BLACKOUT', mark: true },
+      { scene: 'zionPinball', x: 2442, y: 1500, r: 84, label: 'TRUCK ROAD', mark: true },
+      { scene: 'zionPinball', x: 810, y: 1434.6, r: 84, label: 'THE ASSAY', mark: true },
+      { scene: 'zionPinball', x: 1350, y: 1434.6, r: 84, label: 'ZION', mark: true },
+      { scene: 'zionGoldRiver', x: 588, y: 832, r: 100, label: 'PAN FOR GOLD', mark: true },
+      { scene: 'zionGoldRiver', x: 1740, y: 1640, r: 100, label: 'PAN FOR GOLD', mark: true },
+      { scene: 'zionGoldRiver', x: 2452, y: 2680, r: 100, label: 'PAN FOR GOLD', mark: true }
+    ],
+    ur: [
+      { prop: ['tokenMachine', 'tokenMachineNamed'], label: 'SKEE-BALL' },
+      { npc: 'urBarista', label: 'ESPRESSO', counter: true, talk: true },
+      { npc: 'barracksMasterOfArms', label: 'SPAR', talk: true }
+    ],
+    earth: [
+      { npc: 'e_bobbie', label: 'STREET RACE', start: P(function (g) { g.openMarquee('race'); }) },
+      { npc: 'e_duty', label: 'HOUSEKEEPING', talk: true },
+      { npc: 'e_pink_sable', label: 'HOUSEKEEPING', talk: true }
+    ]
+  };
+  var LIST = T[WORLD] || [];
+
+  /* ------------------------------------------------ where a ring goes */
+  function canStand(g, x, y) {
+    if (!(x > 60 && y > 60 && x < (g.worldWidth || 3000) - 60 && y < (g.worldHeight || 3000) - 60)) return false;
+    try { if (g.walk && g.walk.canStand) return !!g.walk.canStand(x, y, 34); } catch (e) {}
+    try { if (g.canStandAt) return !!g.canStandAt(x, y); } catch (e) {}
+    return true;
+  }
+  var DIRS = [[0, 1], [-0.7, 0.7], [0.7, 0.7], [-1, 0], [1, 0], [-0.7, -0.7], [0.7, -0.7], [0, -1]];
+  var SIDE = { S: 0, SW: 1, SE: 2, W: 3, E: 4, NW: 5, NE: 6, N: 7 };
+  function freeOf(g, x, y, taken, self) {
+    for (var i = 0; i < taken.length; i++) if (Math.hypot(taken[i].x - x, taken[i].y - y) < 185) return false;
+    var ok = true;
+    (g.npcRoster || []).forEach(function (n) {
+      if (!ok || !n || n === self || n.defeated || (n.scene && n.scene !== g.currentScene)) return;
+      if (Math.hypot(n.worldX - x, n.worldY - y) < 95) ok = false;
+    });
+    return ok;
+  }
+  // the customer side: the first open floor south of them, then round the compass
+  function beside(g, x, y, taken, self, side, near) {
+    var order = DIRS.slice();
+    if (side && SIDE[side] != null) { var d0 = order.splice(SIDE[side], 1)[0]; order.unshift(d0); }
+    var dists = near || [170, 220, 280, 340, 130];
+    for (var di = 0; di < dists.length; di++)
+      for (var k = 0; k < order.length; k++) {
+        var px = x + order[k][0] * dists[di], py = y + order[k][1] * dists[di];
+        if (canStand(g, px, py) && freeOf(g, px, py, taken, self)) return { x: px, y: py };
+      }
+    return null;
+  }
+  /* A COUNTER: the keeper stands behind it, so the ring goes on the far side
+     of whatever is between you — the first open floor past the counter. */
+  function across(g, x, y, taken, self) {
+    var dists = [190, 240, 290, 340, 400];
+    for (var k = 0; k < DIRS.length; k++)          // the front of the counter first, then its ends, then behind
+      for (var di = 0; di < dists.length; di++) {
+        var px = x + DIRS[k][0] * dists[di], py = y + DIRS[k][1] * dists[di];
+        if (!canStand(g, px, py) || !freeOf(g, px, py, taken, self)) continue;
+        var blocked = false;
+        for (var t = 0.2; t < 0.95; t += 0.1) if (!canStand(g, x + (px - x) * t, y + (py - y) * t)) { blocked = true; break; }
+        if (blocked) return { x: px, y: py };
+      }
+    return null;
+  }
+  function anchorPt(v, k) {
+    if (!v) return null;
+    if (Array.isArray(v)) return { x: v[0] * k, y: v[1] * k };
+    if (Number.isFinite(v.x)) return { x: v.x * k, y: v.y * k };
+    return null;
+  }
+
+  /* ------------------------------------------------ the rings in this room */
+  var built = null, builtFor = '', builtAt = 0;
+  function spotsHere(g) {
+    var now = Date.now();
+    if (built && builtFor === g.currentScene && now - builtAt < 1500) return built;
+    var keep = (built && builtFor === g.currentScene) ? built : [];
+    var out = [], taken = [];
+    var scale = 1;                       // a live scene's anchors are already in world units
+    var A = (g.scene && g.scene.anchors) || {};
+    LIST.forEach(function (s, i) {
+      var prev = keep.find(function (q) { return q.i === i; });
+      var p = null, who = null;
+      if (s.npc) {
+        who = (g.npcRoster || []).find(function (n) { return n && n.key === s.npc && n.scene === g.currentScene && !n.defeated && !n.hostile; });
+        if (!who) return;
+        // the same place while they stand still (a ring that follows a pacing
+        // keeper round the room is no ring at all)
+        if (prev && prev.who === who && Math.hypot(prev.ax - who.worldX, prev.ay - who.worldY) < 80) p = { x: prev.x, y: prev.y };
+        else p = (s.counter && across(g, who.worldX, who.worldY, taken, who)) || beside(g, who.worldX, who.worldY, taken, who, s.side);
+        if (p) { p.ax = who.worldX; p.ay = who.worldY; }
+      } else if (s.anchor) {
+        if (s.scene !== g.currentScene || !A[s.anchor]) return;
+        var a = A[s.anchor], c = anchorPt(a, scale);
+        if (!c && Number.isFinite(a.x0)) c = { x: (a.x0 + a.x1) / 2 * scale, y: (a.y0 + a.y1) / 2 * scale };
+        if (!c) return;
+        var half = Number.isFinite(a.x0) ? Math.max(Math.abs(a.x1 - a.x0), Math.abs(a.y1 - a.y0)) / 2 * scale : 120;
+        p = prev ? { x: prev.x, y: prev.y } : null;
+        if (!p) {
+          var d = DIRS[SIDE[s.side || 'S']];
+          var tries = [half * 0 + (Math.abs(d[0]) ? (Math.abs(a.x1 - a.x0) / 2 * scale) : (Math.abs(a.y1 - a.y0) / 2 * scale)) + 90];
+          for (var t = 0; t < 4 && !p; t++) {
+            var px = c.x + d[0] * (tries[0] + t * 50), py = c.y + d[1] * (tries[0] + t * 50);
+            if (canStand(g, px, py)) p = { x: px, y: py };
+          }
+          if (!p) p = beside(g, c.x, c.y, taken, null, s.side);
+        }
+      } else if (s.prop) {
+        var props = [];
+        try { props = (g.propsHere ? g.propsHere() : []).filter(function (q) { return s.prop.indexOf(q.key) >= 0 && (!g.propLive || g.propLive(q)); }); } catch (e) {}
+        if (!props.length) return;
+        who = props[0];
+        p = prev ? { x: prev.x, y: prev.y } : beside(g, who.x, who.y, taken, null, 'E');
+      } else if (s.scene === g.currentScene) {
+        p = { x: s.x, y: s.y };
+      }
+      if (!p) return;
+      var spot = { i: i, s: s, x: p.x, y: p.y, ax: p.ax, ay: p.ay, r: s.r || 84, label: s.label, who: who };
+      taken.push(spot); out.push(spot);
+    });
+    // Meru's darts and jukebox, wherever a room's plans name a board or a box
+    if (window.__8G_TAVERN_B64 && /tavern/i.test(String(g.currentScene))) {
+      Object.keys(A).forEach(function (k) {
+        var lk = k.toLowerCase(), a = A[k], kind = null;
+        if (lk === 'jukebox') kind = 'jukebox';
+        else if (lk === 'dartboard' || lk === 'darts') kind = 'darts';
+        if (!kind || !a || typeof a !== 'object') return;
+        var prev = keep.find(function (q) { return q.kind === kind && q.key === k; });
+        var p = prev ? { x: prev.x, y: prev.y } : (anchorPt(a.useAt || a.playAt || a.oche || a.standAt, scale));
+        if (!p && Array.isArray(a.rect)) p = { x: (a.rect[0] + a.rect[2]) / 2 * scale, y: (a.rect[3] + 90) * scale };
+        if (!p) return;
+        if (!prev && (!canStand(g, p.x, p.y) || !freeOf(g, p.x, p.y, taken, null))) { var q = beside(g, p.x, p.y, taken, null, 'S', [60, 100, 140, 190, 240]); if (q) p = q; }
+        var spot = { kind: kind, key: k, x: p.x, y: p.y, r: 80, label: kind === 'darts' ? 'DARTS' : 'JUKEBOX' };
+        taken.push(spot); out.push(spot);
+      });
+    }
+    built = out; builtFor = g.currentScene; builtAt = now;
+    return out;
+  }
+
+  /* ------------------------------------------------ Meru's ring */
+  function ring(ctx, g, sp) {
+    var t = (g.tick || 0);
+    var pulse = 0.5 + Math.sin(t * 2.2) * 0.25, label = 0.72 - Math.sin(t * 2.2) * 0.28;
+    var col = sp.kind === 'jukebox' && jb.playing ? '#f472b6' : '#facc15';
+    ctx.save();
+    ctx.globalAlpha = pulse; ctx.strokeStyle = col; ctx.lineWidth = 6;
+    ctx.beginPath(); ctx.arc(sp.x, sp.y, sp.r, 0, Math.PI * 2); ctx.stroke();
+    ctx.globalAlpha = pulse * 0.35; ctx.fillStyle = col;
+    ctx.beginPath(); ctx.arc(sp.x, sp.y, sp.r, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = Math.max(0.8, label);
+    var fs = Math.round(Math.min(28, (sp.r * 1.8) / Math.max(4, sp.label.length) * 1.55));
+    ctx.font = 'bold ' + fs + 'px Arial, Helvetica, sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.lineJoin = 'round'; ctx.lineWidth = 5; ctx.strokeStyle = 'rgba(0,0,0,0.7)'; ctx.strokeText(sp.label, sp.x, sp.y + 2);
+    ctx.fillStyle = '#ffffff'; ctx.fillText(sp.label, sp.x, sp.y + 2);
+    ctx.restore();
+  }
+
+  /* ------------------------------------------------ darts and the jukebox */
+  var jb = { frame: null, playing: null, scene: null, muted: null };
+  function mgBox() {
+    var box = document.getElementById('g8-mg');
+    if (box) return box;
+    var css = document.createElement('style');
+    css.textContent = '#g8-mg, #g8-jb { position: fixed; inset: 0; z-index: 20000; background: #000; display: none; }' +
+      '#g8-mg iframe, #g8-jb iframe { width: 100%; height: 100%; border: 0; display: block; }' +
+      'html.g8-mg-on #pc-root, html.g8-mg-on #bottomDock { visibility: hidden !important; }';
+    document.head.appendChild(css);
+    box = document.createElement('div'); box.id = 'g8-mg';
+    box.innerHTML = '<iframe id="g8-mgFrame" allow="autoplay; fullscreen"></iframe>';
+    document.body.appendChild(box);
+    var jbox = document.createElement('div'); jbox.id = 'g8-jb';
+    jbox.innerHTML = '<iframe id="g8-jbFrame" allow="autoplay"></iframe>';
+    document.body.appendChild(jbox);
+    ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'touchstart', 'touchend', 'click'].forEach(function (t) {
+      box.addEventListener(t, function (e) { e.stopPropagation(); });
+      jbox.addEventListener(t, function (e) { e.stopPropagation(); });
+    });
+    return box;
+  }
+  var blobs = {};
+  function gameUrl(key) {
+    var b64 = (window.__8G_TAVERN_B64 || {})[key];
+    if (!b64) return null;
+    if (b64.indexOf('url:') === 0) return b64.slice(4);
+    if (blobs[key]) return blobs[key];
+    try {
+      var bin = atob(b64), bytes = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      return (blobs[key] = URL.createObjectURL(new Blob([bytes], { type: 'text/html' })));
+    } catch (e) { return 'data:text/html;base64,' + b64; }
+  }
+  var open = null;       // 'darts' | 'jukebox' while a panel is up
+  function pause(g, on) {
+    g.miniGameOpen = on; g.gamePaused = on;
+    if (on) { g.moveTarget = null; g.vX = 0; g.vY = 0; g.pointerActive = false; g.pointerIsHolding = false; if (g.keys) for (var k in g.keys) g.keys[k] = false; }
+    document.documentElement.classList.toggle('g8-mg-on', on);
+  }
+  function openPanel(g, kind) {
+    mgBox();
+    open = kind; pause(g, true);
+    if (kind === 'darts') {
+      var f = document.getElementById('g8-mgFrame');
+      f.src = gameUrl('darts') + (g._dartsTut ? '#tut=1' : '');
+      document.getElementById('g8-mg').style.display = 'block';
+    } else {
+      var jf = document.getElementById('g8-jbFrame');
+      if (!jb.frame) { jf.src = gameUrl('jukebox'); jb.frame = jf; }
+      jb.scene = g.currentScene;
+      document.getElementById('g8-jb').style.display = 'block';
+    }
+  }
+  function closePanel(g) {
+    if (!open) return;
+    if (open === 'darts') {
+      var f = document.getElementById('g8-mgFrame'); if (f) f.src = 'about:blank';
+      document.getElementById('g8-mg').style.display = 'none';
+    } else document.getElementById('g8-jb').style.display = 'none';     // the record plays on
+    open = null; pause(g, false);
+  }
+  function stopRecord() {
+    if (jb.frame) { try { jb.frame.src = 'about:blank'; } catch (e) {} }
+    jb.frame = null; jb.playing = null; jb.scene = null;
+  }
+  window.addEventListener('message', function (e) {
+    var g = G(), d = e && e.data; if (!g) return;
+    var mine = false;
+    try {
+      var f1 = document.getElementById('g8-mgFrame'), f2 = document.getElementById('g8-jbFrame');
+      mine = (f1 && e.source === f1.contentWindow) || (f2 && e.source === f2.contentWindow);
+    } catch (x) {}
+    if (!mine) return;
+    if (d === 'backToTavern' || d === 'backToCasino') { closePanel(g); return; }
+    if (d && d.__darts === 'wantIntro') { try { e.source.postMessage({ __darts: 'intro', room: 'TAVERN', best: g._dartsBest || 0 }, '*'); } catch (x) {} return; }
+    if (d && d.darts === 'score') { g._dartsBest = Math.max(g._dartsBest || 0, d.score || 0); return; }
+    if (d && d.darts === 'tutdone') { g._dartsTut = true; return; }
+    if (d && d.jb === 'play') { jb.playing = { title: d.title, genre: d.genre }; return; }
+    if (d && d.jb === 'stop') { jb.playing = null; return; }
+  });
+  window.__8G_TAVERN = function () { return { open: open, playing: jb.playing, loaded: !!jb.frame }; };
+
+  /* ------------------------------------------------ stepping into a ring */
+  var asked = null;      // the ring that has already asked, until you step out of it
+  var dwell = null, last = null, seenScene = null, arrivedAt = 0;
+  function busy(g) {
+    return !g || g.gamePaused || g.caveDialogueOpen || g.missionPromptOpen || g.pendingChoice || g.film || g._cutsceneOpen ||
+      g.miniGameOpen || g.levelUpOpen || g.weaponsOpen || g.vehicle || g.turret || g.beamIn || g.playerDefeated ||
+      (g.state && g.state.phoneMenuOpen) || open;
+  }
+  function ask(g, sp) {
+    var s = sp.s || {};
+    if (sp.kind) {
+      if (g.openMissionPrompt) g.openMissionPrompt(sp.kind === 'darts' ? 'PLAY DARTS?' : 'PLAY THE JUKEBOX?', '', [{ label: sp.kind === 'darts' ? 'PLAY' : 'PICK A RECORD', action: function () { setTimeout(function () { openPanel(g, sp.kind); }, 120); } }, { label: 'NOT NOW' }]);
+      else openPanel(g, sp.kind);
+      return;
+    }
+    if (s.prop) { try { g.openProp(sp.who); } catch (e) { console.warn('[hotspots]', e); } return; }
+    if (s.talk || !s.start) { try { if (g.startDialogue) g.startDialogue(sp.who); else if (sp.who.talk) sp.who.talk(); } catch (e) { console.warn('[hotspots]', e); } return; }
+    var go = function () {
+      try { s.start(g, sp.who); }
+      catch (e) {
+        console.warn('[hotspots] ' + s.label, e);
+        try { if (sp.who && g.startDialogue) g.startDialogue(sp.who); } catch (x) {}
+      }
+    };
+    if (g.openMissionPrompt) g.openMissionPrompt('PLAY ' + sp.label + '?', '', [{ label: 'PLAY', action: function () { setTimeout(go, 120); } }, { label: 'NOT NOW' }]);
+    else go();
+  }
+  window.__8G_HOTSPOTS = function () {
+    var g = G(); if (!g) return [];
+    return spotsHere(g).map(function (sp) { return { label: sp.label, x: Math.round(sp.x), y: Math.round(sp.y), r: sp.r, kind: sp.kind || (sp.s.mark ? 'mark' : sp.s.talk ? 'talk' : sp.s.prop ? 'prop' : 'start'), npc: sp.s && sp.s.npc }; });
+  };
+  window.__8G_HOTSPOT_SCENES = function () {
+    var g = G(), out = {};
+    LIST.forEach(function (s) {
+      if (s.scene) out[s.scene] = 1;
+      if (s.npc) {
+        var n = roster(g, s.npc); if (n && n.scene) out[n.scene] = 1;
+        try { ((typeof GAYA !== 'undefined' && GAYA.guests) || []).forEach(function (x) { if (x && x.key === s.npc && x.scene) out[x.scene] = 1; }); } catch (e) {}
+        try { ['townsfolk', 'keepers'].forEach(function (L) { ((typeof GAYA !== 'undefined' && GAYA[L]) || []).forEach(function (x) { if (x && x.key === s.npc && x.scene) out[x.scene] = 1; }); }); } catch (e) {}
+      }
+      if (s.prop) out.urTownSquare = 1;
+    });
+    try {
+      if (window.__8G_TAVERN_B64) Object.keys((typeof GAYA !== 'undefined' && GAYA.maps) || {}).forEach(function (k) {
+        var a = (GAYA.maps[k] || {}).anchors || {};
+        if (/tavern/i.test(k) && Object.keys(a).some(function (q) { return /^(jukebox|dartboard|darts)$/i.test(q); })) out[k] = 1;
+      });
+    } catch (e) {}
+    return Object.keys(out);
+  };
+  window.__8G_HOTSPOT_GO =function (i) { var g = G(); var sp = spotsHere(g)[i]; if (sp) ask(g, sp); return !!sp; };
+
+  function tick() {
+    var g = G();
+    if (!g || !g.layoutReady || window.__8G_NO_HOTSPOTS) return;
+    // the record stops when you leave the room it is playing in
+    if (jb.frame && jb.scene && g.currentScene !== jb.scene && open !== 'jukebox') stopRecord();
+    // and the room's own music makes way for it
+    try {
+      var el = g.activeMusicEl ? g.activeMusicEl() : null;
+      var want = !!(jb.playing && jb.frame);
+      if (el && jb.muted !== want) { el.muted = want; jb.muted = want; }
+    } catch (e) {}
+    if (g.currentScene !== seenScene) { seenScene = g.currentScene; arrivedAt = Date.now(); }
+    if (busy(g) || window.__8G_HOTSPOTS_NOASK) return;
+    var inBattle = false; try { inBattle = !!(g.inBattleMap && g.inBattleMap()); } catch (e) {}
+    if (inBattle) return;
+    var here = spotsHere(g), inside = null;
+    for (var i = 0; i < here.length; i++) {
+      var sp = here[i];
+      if (sp.s && sp.s.mark) continue;
+      if (Math.hypot(sp.x - g.pX, sp.y - g.pY) < sp.r * 0.85) { inside = sp; break; }
+    }
+    if (asked && (!inside || inside.label !== asked.label || Math.hypot(asked.x - inside.x, asked.y - inside.y) > 5)) {
+      if (Math.hypot(asked.x - g.pX, asked.y - g.pY) > asked.r * 1.2 || asked.scene !== g.currentScene) asked = null;
+    }
+    /* NOT ON THE WAY PAST. The ring sits where you walk up to the counter, so
+       it asks once you have stopped in it (or lingered), not while you cross
+       it on the way to talk — and never in the moment you arrive in a room. */
+    var moved = last ? Math.hypot(g.pX - last.x, g.pY - last.y) : 0;
+    last = { x: g.pX, y: g.pY };
+    if (!inside || (dwell && dwell.label !== inside.label)) dwell = null;
+    if (inside && !dwell) dwell = { label: inside.label, at: Date.now() };
+    var ready = inside && Date.now() - arrivedAt > 1500 && dwell &&
+      ((moved < 1.5 && Date.now() - dwell.at > 200) || Date.now() - dwell.at > 1100);
+    if (ready && !asked) {
+      asked = { x: inside.x, y: inside.y, r: inside.r, label: inside.label, scene: g.currentScene };
+      g.moveTarget = null; g.playerGoal = null;
+      ask(g, inside);
+    }
+  }
+
+  var tries = 0;
+  (function wait() {
+    var g = G();
+    if (g && g.layoutReady && typeof g.drawPortals === 'function') {
+      var real = g.drawPortals;
+      g.drawPortals = function (ctx) {
+        var out = real.apply(g, arguments);
+        if (!window.__8G_NO_HOTSPOTS) {
+          var inBattle = false; try { inBattle = !!(g.inBattleMap && g.inBattleMap()); } catch (e) {}
+          if (!inBattle) try { spotsHere(g).forEach(function (sp) { ring(ctx || g.ctx, g, sp); }); } catch (e) {}
+        }
+        return out;
+      };
+      setInterval(tick, 60);
+      return;
+    }
+    if (++tries < 1200) setTimeout(wait, 50);
+  })();
+})();
+
+/* 72 · THE RING, PUNCH-OUT STYLE (Ben, 28 Sep) — Luxor's boxing
+   "move the NPC boxer NORTH and put in a visible player FOX BOXER, similar to
+    the original PUNCH-OUT ... the NPC needs to be 2 times bigger than the
+    player ... boxing gloves always layered behind his head ... FOXES in boxing
+    shorts, a female boxer needs a top ... a WHITE tank top on the player"
+
+   · YOUR FOX, FROM BEHIND, at the bottom of the ring, about half your
+     opponent's height (NES Punch-Out's Little Mac): ears, cheeks and ruff, a
+     white tank top, blue trunks with a gold stripe, a tail. His gloves sit
+     behind his head; on guard they come up beside his ears.
+   · HE MOVES WITH THE FIGHT. A head punch (jab, uppercut, super) hops him up
+     onto his toes and the glove lands on the other fox's face; a body punch
+     (body shot, hook) keeps him low and drives into the belly. The uppercut
+     and the hook load first (a crouch, a wind-back) because they are the
+     big ones. A landed punch flashes a hit star, a blocked one a grey spark.
+     A slip sways him aside, a hit rocks him back and flashes him red, and a
+     knockdown puts him on the canvas.
+   · THE OTHER FOX STANDS FURTHER BACK (the whole stage is lifted a little so
+     his face clears yours) and fights in fur: trunks in his own colour with a
+     white waistband, and a sports top for a woman.
+   Everything is drawn over the existing fight — the rules, timing, AI and
+   controls are untouched. window.__8G_NO_PUNCHOUT = true puts the old
+   first-person gloves back. */
+(function () {
+  if ((window.__8G_WORLD || '') !== 'luxor') return;
+  function G() { return window.game || null; }
+  var FEMALE = { luxorFerroPit: 1 };
+  var OUT = '#1b1410';
+
+  function install(g) {
+    if (typeof g.drawBoxHands !== 'function' || typeof g.boxStage !== 'function') return;
+    var on = function () { return !!(g.boxing && !window.__8G_NO_PUNCHOUT); };
+    var refHand = null;   // the referee's counting hand, drawn over the fighter lying in front of him
+
+    /* ---- THE STAGE, LIFTED: him, his face, his sparks and the high/low line all
+       hang off boxStage, so they all move together */
+    var realStage = g.boxStage;
+    g.boxStage = function () {
+      var st = realStage.apply(g, arguments);
+      if (!on()) return st;
+      var lift = (st.H - st.horizon) * (st.H > st.W ? 0.06 : 0.045);
+      return Object.assign({}, st, { cy: st.cy - lift, chinY: st.chinY - lift, splitY: st.splitY - lift, lifted: lift });
+    };
+
+    /* ---- HE FIGHTS IN FUR: body, arms and legs take his fur colours while the
+       ring draws him, and his own colours become his trunks */
+    var realFoe = g.drawBoxFoe;
+    g.drawBoxFoe = function (gg) {
+      var npc = on() && gg && gg.foe && gg.foe.npc;
+      if (!npc || npc.human || npc.body) return realFoe.apply(g, arguments);
+      var keepFur = npc.fur, keepTorso = npc.torso;
+      var f0 = npc.fur || {}, A = f0.tailA || '#fdba74', B = f0.tailB || '#ea580c';
+      npc._g8Kit = keepTorso; npc._g8Fur = f0;
+      npc.fur = Object.assign({}, f0, { armA: B, armB: A, padA: A, padB: B, padEdge: '#3a1a08', padRing: 'rgba(0,0,0,0)', legA: A, legB: B });
+      npc.torso = [A, B, B];
+      var c = g.ctx, W = arguments[1], H = arguments[2];
+      c.save();
+      try { poseFoe(gg, W, H); return realFoe.apply(g, arguments); }
+      finally { c.restore(); npc.fur = keepFur; npc.torso = keepTorso; delete npc._g8Kit; delete npc._g8Fur;
+                try { foeFun(gg, W, H); if (refHand) refHand(gg, W, H, g.boxStage().horizon); } catch (e) { console.warn('[punch-out] fun', e); } }
+    };
+
+    /* ================= HIS SHOW (Ben, 28 Sep: "fun animations for the NPC fox")
+       · THE WIND-UP: on a big one he rears back on his heels, grows a little,
+         and his eye twinkles just before it comes (Punch-Out's tell); on any
+         punch he leans in as it lands.
+       · A TAUNT: leave him alone for a few seconds and he bounces on his toes
+         and tells you to come on.
+       · COMIC POPS: POW! when he tags you, NOPE! when he blocks you, WHIFF!
+         when he slips you.
+       · SWEAT flies off his head when you land one up top; OOF puffs off a
+         body shot; steam from his ears when he is hurt and you keep hitting.
+       · DIZZY: stars circle his head while he is stunned or out of wind, and
+         over him on the canvas.
+       · THE VICTORY BOUNCE when he wins, and slumped shoulders when he loses. */
+    var fx = window.__8G_PO_FX = { parts: [], pops: [], lastYouFlash: 0, lastHead: 0, lastBody: 0, lastAct: null, idleSince: 0, tauntAt: -999, lastT: 0 };
+    function foeSpot(gg, W, H) {
+      var st = g.boxStage(), f = gg.foe, yd = gg.you.dodge;
+      var slip = yd ? Math.sin(Math.min(1, yd.t / g.BOX_DODGE()) * Math.PI) * 78 * st.S : 0;
+      var cx = W / 2 + Math.sin(f.bob || 0) * W * 0.012 + (f.lean || 0) * W * 0.02 + (f.away ? (f.side || 1) * W * 0.17 : 0)
+             - (yd ? yd.dir * slip : 0) + (f.dodge ? f.dodge.dir * Math.sin(Math.min(1, f.dodge.t / g.BOX_DODGE()) * Math.PI) * 34 * st.S : 0);
+      var down = (f.down || 0) > 0;
+      return { x: cx, head: down ? st.cy - H * 0.055 : st.cy - 70 * st.S, feet: st.cy + 60 * st.S, S: st.S, down: down };
+    }
+    function poseFoe(gg, W, H) {
+      var f = gg.foe, c = g.ctx; if (!f || (f.down || 0) > 0) return;
+      var sp = foeSpot(gg, W, H), S = sp.S, t = gg.t || 0;
+      var rot = 0, sc = 1, dy = 0;
+      if (f.act) {
+        var P = g.BOX_PUNCH()[f.act.kind] || { wind: 12, live: 4 };
+        var wind = f.act.tell != null ? f.act.tell : P.wind, side = f.side || 1, k = f.act.t;
+        if (k < wind) { var u = k / wind, big = f.act.big ? 1 : 0.45;
+          rot = -side * 0.16 * u * big; sc = 1 + 0.06 * u * big; dy = -10 * S * u * big; }          // rears back, grows
+        else if (k < wind + P.live + 8) { var v = Math.min(1, (k - wind) / (P.live + 8));
+          rot = side * 0.09 * Math.sin(v * Math.PI); sc = 1 + 0.05 * Math.sin(v * Math.PI); dy = 8 * S * Math.sin(v * Math.PI); }  // and leans in
+      }
+      if (gg.state === 'over' && gg.over === 'loss') dy += -Math.abs(Math.sin(t * 0.16)) * 26 * S;   // he won: the victory bounce
+      if (gg.state === 'over' && gg.over === 'win') { dy += 10 * S; sc *= 0.97; }                        // he lost: slumped
+      if (!f.act && t - fx.tauntAt < 110) dy += -Math.abs(Math.sin(t * 0.22)) * 12 * S;               // bouncing on his toes, taunting
+      if (!rot && sc === 1 && !dy) return;
+      c.translate(sp.x, sp.feet); c.rotate(rot); c.scale(sc, sc); c.translate(-sp.x, -sp.feet + dy);
+    }
+    function pop(text, x, y, col, S, t, dur) { fx.pops.push({ text: text, x: x, y: y, col: col, S: S, t0: t, dur: dur || 60 }); if (fx.pops.length > 4) fx.pops.shift(); }
+    function star(c, x, y, r, rot, fill) {
+      c.save(); c.translate(x, y); c.rotate(rot); c.fillStyle = fill; c.strokeStyle = 'rgba(60,30,0,.7)'; c.lineWidth = Math.max(1, r * 0.18);
+      c.beginPath(); for (var i = 0; i < 10; i++) { var rr = i % 2 ? r * 0.45 : r, a = -Math.PI / 2 + i * Math.PI / 5; c.lineTo(Math.cos(a) * rr, Math.sin(a) * rr); } c.closePath(); c.fill(); c.stroke(); c.restore();
+    }
+    function foeFun(gg, W, H) {
+      var f = gg.foe, you = gg.you, c = g.ctx, t = gg.t || 0; if (!f) return;
+      var sp = foeSpot(gg, W, H), S = sp.S;
+      if (t < fx.lastT) { fx.parts = []; fx.pops = []; fx.tauntAt = -999; fx.idleSince = t; }
+      fx.lastT = t;
+      var fighting = gg.state === 'fighting';
+      if (gg.state !== fx.lastState) { fx.pops = []; fx.lastState = gg.state; }
+
+      // ---- events
+      var yf = you.flash || 0;
+      if (yf > fx.lastYouFlash + 2 && fighting) pop(Math.random() < 0.5 ? 'POW!' : 'BAM!', W / 2 + (Math.random() - 0.5) * 60 * S, H * 0.62, '#ff5a3c', S, t);
+      fx.lastYouFlash = yf;
+      var hf = f.headFlash || 0, bf = f.bodyFlash || 0;
+      if (hf > fx.lastHead + 4) {               // you tagged his head: sweat flies
+        for (var i = 0; i < 9; i++) { var a = -Math.PI / 2 + (Math.random() - 0.5) * 2.4;
+          fx.parts.push({ x: sp.x, y: sp.head - 10 * S, vx: Math.cos(a) * (3 + Math.random() * 4) * S * 0.5, vy: Math.sin(a) * (3 + Math.random() * 4) * S * 0.5, life: 34, kind: 'sweat' }); }
+        if ((f.hp || 1) < (f.maxHp || 1) * 0.4) fx.steamUntil = t + 70;
+      }
+      if (bf > fx.lastBody + 4) {
+        pop('OOF', sp.x + (Math.random() < 0.5 ? -1 : 1) * 44 * S, sp.head + 70 * S, '#ffd166', S * 0.8, t);
+        if ((f.hp || 1) < (f.maxHp || 1) * 0.4) fx.steamUntil = t + 70;
+      }
+      fx.lastHead = hf; fx.lastBody = bf;
+      // your punch, at the moment it should land: blocked, slipped?
+      var ya = you.act;
+      if (ya && ya !== fx.lastAct) fx.lastAct = ya, fx.checkAt = t + ((g.BOX_PUNCH()[ya.kind] || { wind: 8 }).wind + 3);
+      if (fx.checkAt && t >= fx.checkAt) {
+        fx.checkAt = 0;
+        if (fighting && !(hf > 10 || bf > 10)) {
+          if (f.dodge) pop('WHIFF!', sp.x, sp.head - 40 * S, '#8fe3ff', S, t);
+          else if (f.guard) pop('NOPE!', sp.x, sp.head - 40 * S, '#e6e9ef', S, t);
+        }
+      }
+      // the taunt: nothing from you for three seconds
+      if (ya || !fighting || f.act) fx.idleSince = t;
+      if (fighting && t - fx.idleSince > 180 && t - fx.tauntAt > 420) {
+        fx.tauntAt = t; fx.idleSince = t;
+        var lines = ['COME ON!', 'IS THAT ALL?', 'SCARED?', 'HIT ME!'];
+        pop(lines[(Math.random() * lines.length) | 0], sp.x, sp.head - 48 * S, '#ffffff', S * 0.62, t, 120);
+      }
+
+      // ---- the wind-up's eye twinkle
+      if (f.act && f.act.big && fighting) {
+        var tell = f.act.tell || 20;
+        if (f.act.t > tell * 0.55 && f.act.t < tell) {
+          var q = (f.act.t - tell * 0.55) / (tell * 0.45);
+          star(c, sp.x + (f.side || 1) * 14 * S, sp.head - 6 * S, (6 + 10 * Math.sin(q * Math.PI)) * S * 0.9, t * 0.2, '#fffbe0');
+        }
+      }
+      // ---- dizzy stars: stunned, winded, or on the canvas
+      if ((f.stun || 0) > 0 || (f.wind || 1) <= 0 || sp.down) {
+        for (var j = 0; j < 3; j++) {
+          var ang = t * 0.12 + j * Math.PI * 2 / 3;
+          star(c, sp.x + Math.cos(ang) * 34 * S, (sp.down ? sp.head - 30 * S : sp.head - 44 * S) + Math.sin(ang) * 9 * S, 7 * S, ang, j === 1 ? '#8fe3ff' : '#ffd166');
+        }
+      }
+      // ---- steam from his ears
+      if (fx.steamUntil && t < fx.steamUntil && !sp.down) {
+        for (var e = -1; e <= 1; e += 2) {
+          var ph = (t * 0.08) % 1;
+          for (var n = 0; n < 3; n++) { var pp = (ph + n / 3) % 1;
+            c.fillStyle = 'rgba(245,245,250,' + (0.7 * (1 - pp)).toFixed(2) + ')';
+            c.beginPath(); c.arc(sp.x + e * (34 + pp * 22) * S, sp.head - (30 + pp * 40) * S, (5 + pp * 9) * S, 0, Math.PI * 2); c.fill(); }
+        }
+      }
+      // ---- sweat
+      fx.parts = fx.parts.filter(function (q) {
+        q.x += q.vx; q.y += q.vy; q.vy += 0.35 * S * 0.5; q.life--;
+        c.fillStyle = 'rgba(190,235,255,' + Math.min(1, q.life / 14).toFixed(2) + ')';
+        c.beginPath(); c.ellipse(q.x, q.y, 2.6 * S, 4 * S, Math.atan2(q.vy, q.vx) + Math.PI / 2, 0, Math.PI * 2); c.fill();
+        return q.life > 0;
+      });
+      // ---- the pops
+      fx.pops = fx.pops.filter(function (q) {
+        var age = t - q.t0, D = q.dur || 60; if (age > D) return false;
+        var k = Math.min(1, age / 8), a = age > D - 16 ? 1 - (age - (D - 16)) / 16 : 1;
+        c.save(); c.globalAlpha = Math.max(0, a); c.translate(q.x, q.y - age * 0.5 * q.S); c.scale(0.6 + 0.5 * k, 0.6 + 0.5 * k); c.rotate(-0.08);
+        c.font = '900 ' + Math.round(22 * q.S) + 'px system-ui, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+        c.lineJoin = 'round'; c.lineWidth = 6 * q.S * 0.5; c.strokeStyle = '#1b1410'; c.strokeText(q.text, 0, 0);
+        c.fillStyle = q.col; c.fillText(q.text, 0, 0); c.restore();
+        return true;
+      });
+    }
+    var realBody = g.drawNPCBody;
+    g.drawNPCBody = function (npc) {
+      if (!on() || !g._boxHideArms || !npc || !npc._g8Kit) return realBody.apply(g, arguments);
+      var keepCrest = npc.crestType; npc.crestType = null;
+      var out;
+      try { out = realBody.apply(g, arguments); } finally { npc.crestType = keepCrest; }
+      var f0 = npc._g8Fur || {}, A = f0.tailA || '#fdba74', B = f0.tailB || '#ea580c';
+      var K = npc._g8Kit, kit = (K && K[1]) || '#2f6fd6', kitD = (K && K[2]) || '#1b2b4a';
+      var c = g.ctx, sc = 1.35 * g.sceneBodyScale();
+      c.save(); c.translate(npc.worldX, npc.worldY); c.scale((npc.faceDir || 1) * sc, sc); c.lineJoin = 'round';
+      // the chest again in fur (no collar), and a pale chest patch
+      var tg = c.createLinearGradient(0, -26, 0, 32); tg.addColorStop(0, A); tg.addColorStop(1, B);
+      c.fillStyle = tg; c.strokeStyle = '#1e293b'; c.lineWidth = 2;
+      c.beginPath(); c.moveTo(-28, -28); c.quadraticCurveTo(-31, -5, -25, 10); c.lineTo(-20, 18); c.lineTo(0, 36); c.lineTo(20, 18); c.lineTo(25, 10); c.quadraticCurveTo(31, -5, 28, -28); c.closePath(); c.fill(); c.stroke();
+      c.fillStyle = 'rgba(255,246,234,.85)'; c.beginPath(); c.ellipse(0, -8, 13, 19, 0, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = 'rgba(120,50,10,.35)'; c.lineWidth = 1.3;
+      c.beginPath(); c.moveTo(-12, -14); c.quadraticCurveTo(-6, -10, -1, -14); c.moveTo(12, -14); c.quadraticCurveTo(6, -10, 1, -14); c.stroke();
+      var female = FEMALE[npc.key] || (npc.box && npc.box.female);
+      if (female) {
+        c.fillStyle = kit; c.strokeStyle = '#1e293b'; c.lineWidth = 2;
+        c.beginPath(); c.moveTo(-27, -22); c.quadraticCurveTo(0, -30, 27, -22); c.lineTo(26, -6); c.quadraticCurveTo(0, -1, -26, -6); c.closePath(); c.fill(); c.stroke();
+        c.strokeStyle = 'rgba(255,255,255,.7)'; c.lineWidth = 1.4; c.beginPath(); c.moveTo(-25, -9); c.quadraticCurveTo(0, -4, 25, -9); c.stroke();
+      }
+      // trunks
+      c.fillStyle = kit; c.strokeStyle = '#1e293b'; c.lineWidth = 1.8;
+      c.beginPath(); c.moveTo(-25, 13); c.lineTo(25, 13); c.lineTo(27, 41); c.lineTo(3, 42); c.lineTo(0, 34); c.lineTo(-3, 42); c.lineTo(-27, 41); c.closePath(); c.fill(); c.stroke();
+      c.fillStyle = '#f8f5ee'; c.fillRect(-25, 13, 50, 5); c.strokeRect(-25, 13, 50, 5);
+      c.fillStyle = kitD; c.fillRect(-27, 37, 24, 3); c.fillRect(3, 37, 24, 3);
+      c.restore();
+      return out;
+    };
+
+    /* ================= MORE SHOW (Ben, 28 Sep: "YES to all of the above")
+       · SIGNATURE MOVES: every fighter on the card has one, called out loud and
+         thrown as a quick run of ordinary punches (so the rules do not change —
+         every one can still be slipped or blocked): Holt's DOUBLE JAB, Ferro's
+         SPINNING FLURRY (she spins on the wind-up), and the others'.
+       · THE CROWD: on a knockdown the whole hall jumps and cheers, with camera
+         flashes going off in the stands.
+       · THE REFEREE COUNTS on his fingers, arm pumping down on each number.
+       · THE REPLAY: the knockout punch again, in slow motion, before the card. */
+    var SIG = {
+      luxorHolt: { name: 'DOUBLE JAB', run: ['jab', 'jab'] },
+      luxorFerroPit: { name: 'SPINNING FLURRY', run: ['jab', 'body', 'jab'], spin: true },
+      luxorVek: { name: 'THE HAMMER', run: ['hook'], big: true },
+      luxorPodd: { name: 'BODY BLITZ', run: ['body', 'body', 'hook'] },
+      luxorSura: { name: 'SAND STORM', run: ['jab', 'body', 'jab', 'body'] },
+      luxorMarshal: { name: 'THE LAW', run: ['jab', 'hook'], big: true }
+    };
+    var realAi = g.boxAi;
+    if (typeof realAi === 'function') g.boxAi = function () {
+      var b = g.boxing;
+      if (!on() || !b || b.mode === 'bag' || b.mode === 'pads' || b.state !== 'fighting') return realAi.apply(g, arguments);
+      var f = b.foe, P = g.BOX_PUNCH();
+      if (f.act || f.stun > 0 || f.down > 0 || f.dodge) return realAi.apply(g, arguments);
+      var sig = (f.npc && SIG[f.npc.key]) || { name: 'ONE-TWO', run: ['jab', 'jab'] };
+      // the next punch of a run already under way
+      if (f._run && f._run.length) {
+        var kind = f._run.shift(), K = P[kind], tell = f._runFirst ? 22 : 8;
+        f._runFirst = false;
+        f.side = kind === 'hook' ? 1 : (f.side ? -f.side : 1);
+        f.act = { kind: kind, t: 0, dur: tell + K.live + K.rec, hit: false, tell: tell, big: !!(sig.big && !f._run.length), sig: true, spin: !!sig.spin };
+        f.thrown++; f.wind = Math.max(0, f.wind - K.cost * 0.7); f.guard = false; f.think = 0;
+        return;
+      }
+      // now and then, with breath to spare, he goes for it
+      f._sigCool = (f._sigCool || 0) - 1;
+      if (f._sigCool <= 0 && f.wind > 55 && Math.random() < 0.004) {
+        f._sigCool = 600; f._run = sig.run.slice(); f._runFirst = true; f._sigName = sig.name;
+        if (g.boxSay) g.boxSay(sig.name + '!');
+        return;
+      }
+      return realAi.apply(g, arguments);
+    };
+
+    /* ---- the crowd: jumps and flashes while somebody is down */
+    var realCrowd = g.drawBoxCrowd;
+    if (typeof realCrowd === 'function') g.drawBoxCrowd = function (gg, W, H, horizon) {
+      if (!on() || !gg || gg.state !== 'down') return realCrowd.apply(g, arguments);
+      var keep = gg.shake, t = gg.t || 0;
+      gg.shake = Math.max(keep || 0, 5 + 4 * Math.abs(Math.sin(t * 0.18)));
+      var out;
+      try { out = realCrowd.apply(g, arguments); } finally { gg.shake = keep; }
+      var c = g.ctx;
+      for (var i = 0; i < 5; i++) {                           // camera flashes in the stands
+        var seed = Math.floor(t / 7) * 5 + i, h1 = (Math.sin(seed * 12.9898) * 43758.5453) % 1, h2 = (Math.sin(seed * 78.233) * 12345.678) % 1;
+        h1 = Math.abs(h1); h2 = Math.abs(h2);
+        if (h1 < 0.55) continue;
+        var fx0 = h2 * W, fy0 = H * 0.05 + h1 * (horizon - H * 0.08), r = Math.min(W, H) * 0.02 * (1 - (t % 7) / 7);
+        var gr = c.createRadialGradient(fx0, fy0, 0, fx0, fy0, r * 3);
+        gr.addColorStop(0, 'rgba(255,255,255,.95)'); gr.addColorStop(0.3, 'rgba(255,250,220,.5)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+        c.fillStyle = gr; c.beginPath(); c.arc(fx0, fy0, r * 3, 0, Math.PI * 2); c.fill();
+      }
+      return out;
+    };
+
+    /* ---- the referee counts on his fingers */
+    refHand = function (gg, W, H, horizon) {
+      if (!on() || !gg || gg.state !== 'down') return;
+      var n = Math.min(10, 1 + Math.floor((gg.count || 0) / 20)), beat = ((gg.count || 0) % 20) / 20;
+      var u = 0.50, y = horizon + (H - horizon) * u, halfAt = 0.30 - 0.60 * u * u;
+      var x = W * (1 - halfAt - 0.052) + Math.sin((gg.t || 0) * 0.022) * W * 0.011;
+      var S = Math.min(W / 200, H / 300) * 0.55;
+      var c = g.ctx, pump = beat < 0.25 ? Math.sin(beat / 0.25 * Math.PI) : 0;
+      var hx = x - 24 * S, hy = y - 66 * S + pump * 14 * S;
+      c.save(); c.lineCap = 'round';
+      // his arm up, in the stripes
+      c.strokeStyle = '#12151b'; c.lineWidth = 9 * S; c.beginPath(); c.moveTo(x - 10 * S, y - 22 * S); c.lineTo(hx, hy + 8 * S); c.stroke();
+      c.strokeStyle = '#f2efe8'; c.lineWidth = 6.5 * S; c.beginPath(); c.moveTo(x - 10 * S, y - 22 * S); c.lineTo(hx, hy + 8 * S); c.stroke();
+      // the hand(s): a palm and as many fingers as the count
+      var hands = n > 5 ? [5, n - 5] : [n];
+      var S0 = S; S = S * 1.7;
+      hands.forEach(function (k, j) {
+        var px = hx - j * 22 * S, py = hy - (j ? 4 * S : 0);
+        c.fillStyle = '#f0b27a'; c.strokeStyle = '#3a2410'; c.lineWidth = 1.6 * S;
+        c.beginPath(); c.roundRect(px - 7 * S, py - 4 * S, 14 * S, 12 * S, 4 * S); c.fill(); c.stroke();
+        for (var q = 0; q < 5; q++) {
+          var up = q < k, fxq = px - 6 * S + q * 3 * S;
+          c.beginPath(); c.roundRect(fxq - 1.3 * S, py - (up ? 13 : 6) * S, 2.8 * S, (up ? 11 : 4) * S, 1.4 * S); c.fill(); c.stroke();
+        }
+      });
+      S = S0;
+      // and the number, in a bubble over him
+      c.fillStyle = 'rgba(12,10,8,.85)'; c.strokeStyle = '#ffd166'; c.lineWidth = 2 * S;
+      c.beginPath(); c.arc(x + 4 * S, y - 96 * S, 13 * S, 0, Math.PI * 2); c.fill(); c.stroke();
+      c.fillStyle = '#ffd166'; c.font = '900 ' + Math.round(15 * S) + 'px system-ui, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+      c.fillText(String(n), x + 4 * S, y - 95 * S);
+      c.restore();
+    };
+
+    /* ---- THE REPLAY. The last second and a bit of the fight is kept, small,
+       every other frame; when somebody goes down that stretch (and a little
+       after) is set aside, and when the bout ends on a knockout it plays back
+       at a third of the speed, letterboxed, before the card. */
+    var rec = { buf: [], clip: null, after: 0, lastDown: false, play: null, frame: 0 };
+    var pool = [];
+    function grab(src) {
+      var cv = pool.pop() || document.createElement('canvas');
+      var w = Math.min(260, src.width), h = Math.round(src.height * w / src.width);
+      if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+      cv.getContext('2d').drawImage(src, 0, 0, w, h);
+      return cv;
+    }
+    var realDraw = g.drawBoxing;
+    if (typeof realDraw === 'function') g.drawBoxing = function () {
+      var b = g.boxing;
+      if (!on() || !b) { rec.buf = []; rec.clip = null; rec.play = null; return realDraw.apply(g, arguments); }
+      if (rec.play) { b.overAt = b.t; drawReplay(b); return; }   // the card's own clock waits for the tape
+      var out = realDraw.apply(g, arguments);
+      rec.frame++;
+      var someoneDown = b.state === 'down';
+      if ((b.state === 'fighting' || someoneDown) && rec.frame % 2 === 0 && !window.__8G_NO_REPLAY) {
+        if (rec.after > 0) { rec.clip.push(grab(g.canvas)); rec.after--; }
+        else if (!someoneDown) { rec.buf.push(grab(g.canvas)); if (rec.buf.length > 40) pool.push(rec.buf.shift()); }
+      }
+      if (someoneDown && !rec.lastDown) { rec.clip = rec.buf; rec.buf = []; rec.after = 16; rec.clipWho = b.whoDown === b.you ? 'you' : 'them'; }
+      rec.lastDown = someoneDown;
+      // the fight is over on a knockout: roll the tape
+      if (b.state === 'over' && !b._g8Replayed && rec.clip && rec.clip.length > 8) {
+        b._g8Replayed = true;
+        var ko = (b.over === 'win' && rec.clipWho === 'them') || (b.over === 'loss' && rec.clipWho === 'you');
+        if (ko) rec.play = { t0: performance.now(), clip: rec.clip, who: rec.clipWho };
+        rec.clip = null;
+      }
+      return out;
+    };
+    function drawReplay(b) {
+      var c = g.ctx, W = g.canvas.width, H = g.canvas.height, R = rec.play;
+      var dur = Math.max(2600, R.clip.length * 95), el = performance.now() - R.t0;
+      if (el > dur + 500) { rec.play = null; return realDraw.apply(g, []); }
+      var i = Math.min(R.clip.length - 1, Math.floor(el / dur * R.clip.length));
+      var fr = R.clip[i], z = 1 + 0.08 * (el / dur);
+      c.save(); c.setTransform(1, 0, 0, 1, 0, 0);
+      c.fillStyle = '#000'; c.fillRect(0, 0, W, H);
+      c.translate(W / 2, H / 2); c.scale(z, z); c.translate(-W / 2, -H / 2);
+      c.imageSmoothingEnabled = true; c.drawImage(fr, 0, 0, W, H);
+      c.setTransform(1, 0, 0, 1, 0, 0);
+      var bar = H * 0.09;
+      c.fillStyle = '#000'; c.fillRect(0, 0, W, bar); c.fillRect(0, H - bar, W, bar);
+      var fs = Math.round(Math.min(W, H) * 0.05);
+      c.font = '900 ' + fs + 'px system-ui, sans-serif'; c.textBaseline = 'middle'; c.textAlign = 'left';
+      if (Math.floor(el / 400) % 2 === 0) { c.fillStyle = '#ff3b30'; c.beginPath(); c.arc(fs * 0.9, bar / 2, fs * 0.32, 0, Math.PI * 2); c.fill(); }
+      c.fillStyle = '#fff'; c.fillText('REPLAY', fs * 1.5, bar / 2);
+      c.textAlign = 'right'; c.fillStyle = '#ffd166';
+      c.fillText(R.who === 'them' ? 'KNOCKOUT!' : 'DOWN GOES THE FOX', W - fs * 0.8, H - bar / 2);
+      c.restore();
+    }
+    // no taps or keys reach the card while the tape is running
+    var realPointer = g.boxPointer;
+    if (typeof realPointer === 'function') g.boxPointer = function () { if (rec.play) return; return realPointer.apply(g, arguments); };
+    window.__8G_REPLAY = function () { return { buf: rec.buf.length, clip: rec.clip ? rec.clip.length : 0, playing: !!rec.play }; };
+
+    /* ---- Ferro spins on her wind-up */
+    var realPose = poseFoe;
+    poseFoe = function (gg, W, H) {
+      var f = gg.foe;
+      if (f && f.act && f.act.spin && f.act.t < (f.act.tell || 20)) {
+        var sp = foeSpot(gg, W, H), u = f.act.t / (f.act.tell || 20);
+        g.ctx.translate(sp.x, sp.head + 40 * sp.S); g.ctx.scale(Math.cos(u * Math.PI * 2), 1); g.ctx.translate(-sp.x, -(sp.head + 40 * sp.S));
+      }
+      return realPose(gg, W, H);
+    };
+
+    /* ---- YOUR FOX */
+    var realHands = g.drawBoxHands;
+    g.drawBoxHands = function (gg, W, H) {
+      if (!on()) return realHands.apply(g, arguments);
+      try { drawFox(gg, W, H); } catch (e) { console.warn('[punch-out]', e); return realHands.apply(g, arguments); }
+    };
+
+    function drawFox(gg, W, H) {
+      var c = g.ctx, you = gg.you, foe = gg.foe, st = g.boxStage(), ui = g.boxUI();
+      var port = H > W;
+      var u = st.S * (port ? 0.30 : 0.34);
+      var t = gg.t || 0;
+      var P = g.BOX_PUNCH();
+
+      // --- where he stands, and what the punch does to him
+      var act = you.act, p = act ? P[act.kind] : null;
+      var total = p ? (p.wind + p.live + p.rec) : 1;
+      var k = act ? Math.min(1, act.t / total) : 0;
+      // out on the wind and the live frames, back on the recovery
+      var hitAt = p ? (p.wind + p.live * 0.5) / total : 0.5;
+      var reach = !act ? 0 : (k < hitAt ? Math.pow(k / hitAt, 1.6) : Math.max(0, 1 - (k - hitAt) / (1 - hitAt)));
+      var big = act && (act.kind === 'upper' || act.kind === 'hook' || act.kind === 'super');
+      var load = big && k < hitAt * 0.55 ? Math.sin((k / (hitAt * 0.55)) * Math.PI) : 0;   // the crouch before the big one
+      var head = p && p.zone === 'head';
+      var side = act ? ((act.kind === 'jab' || act.kind === 'upper' || act.kind === 'super') ? -1 : 1) : 0;
+
+      var yd = you.dodge;
+      var slip = yd ? Math.sin(Math.min(1, yd.t / g.BOX_DODGE()) * Math.PI) * yd.dir : 0;
+      var bob = Math.sin((you.bob || 0) + t * 0.09) * 4 * u;
+      var rock = (you.snap || 0) * 26 * u;                         // a punch he took pushes him back and down
+      var baseY = port ? H * 0.86 : Math.min(H * 0.99, ui.meter.y + 95 * u);
+      var hop = act ? (head ? -(act.kind === 'super' ? 140 : 118) : -34) * u * reach : 0;
+      var x = W / 2 + slip * 70 * u + side * 14 * u * reach;
+      var y = baseY + bob + hop + rock + load * 22 * u;
+      var lean = slip * 0.18 - side * 0.10 * reach + (you.snap || 0) * 0.06 * (you.snapDir || 1);
+      var down = (you.down || 0) > 0;
+      if (down) { y += 110 * u; lean = 0.55; }
+
+      c.save();
+      c.lineJoin = 'round'; c.lineCap = 'round';
+      c.translate(x, y); c.rotate(lean); c.translate(-x, -y);
+
+      // tail
+      var tw = Math.sin(t * 0.07) * 10 * u;
+      c.fillStyle = '#e46f22'; c.strokeStyle = OUT; c.lineWidth = 3 * u;
+      c.beginPath(); c.moveTo(x + 36 * u, y - 20 * u);
+      c.bezierCurveTo(x + 120 * u, y - 10 * u, x + 150 * u + tw, y - 90 * u, x + 112 * u + tw, y - 150 * u);
+      c.bezierCurveTo(x + 104 * u + tw, y - 90 * u, x + 70 * u, y - 60 * u, x + 30 * u, y - 55 * u); c.closePath(); c.fill(); c.stroke();
+      c.fillStyle = '#fff6ea'; c.beginPath(); c.ellipse(x + 113 * u + tw, y - 140 * u, 10 * u, 17 * u, 0.4, 0, Math.PI * 2); c.fill();
+
+      // back in fur, then the white tank top over it, then trunks
+      var bg = c.createLinearGradient(x - 80 * u, 0, x + 80 * u, 0);
+      bg.addColorStop(0, '#b9531a'); bg.addColorStop(0.45, '#f08a3c'); bg.addColorStop(1, '#a84a15');
+      c.fillStyle = bg; c.strokeStyle = OUT; c.lineWidth = 3.5 * u;
+      c.beginPath();
+      c.moveTo(x - 72 * u, y - 148 * u); c.quadraticCurveTo(x, y - 170 * u, x + 72 * u, y - 148 * u);
+      c.quadraticCurveTo(x + 66 * u, y - 60 * u, x + 50 * u, y + 20 * u); c.lineTo(x - 50 * u, y + 20 * u);
+      c.quadraticCurveTo(x - 66 * u, y - 60 * u, x - 72 * u, y - 148 * u); c.closePath(); c.fill(); c.stroke();
+      var tk = c.createLinearGradient(x - 70 * u, 0, x + 70 * u, 0);
+      tk.addColorStop(0, '#c9ced6'); tk.addColorStop(0.45, '#ffffff'); tk.addColorStop(1, '#bfc5ce');
+      c.fillStyle = tk; c.lineWidth = 3 * u;
+      c.beginPath();
+      c.moveTo(x - 46 * u, y - 160 * u); c.lineTo(x - 28 * u, y - 162 * u);
+      c.quadraticCurveTo(x - 20 * u, y - 118 * u, x, y - 116 * u);
+      c.quadraticCurveTo(x + 20 * u, y - 118 * u, x + 28 * u, y - 162 * u);
+      c.lineTo(x + 46 * u, y - 160 * u);
+      c.quadraticCurveTo(x + 52 * u, y - 128 * u, x + 64 * u, y - 108 * u);
+      c.quadraticCurveTo(x + 62 * u, y - 50 * u, x + 52 * u, y + 4 * u);
+      c.lineTo(x - 52 * u, y + 4 * u);
+      c.quadraticCurveTo(x - 62 * u, y - 50 * u, x - 64 * u, y - 108 * u);
+      c.quadraticCurveTo(x - 52 * u, y - 128 * u, x - 46 * u, y - 160 * u);
+      c.closePath(); c.fill(); c.stroke();
+      c.strokeStyle = 'rgba(40,40,60,.18)'; c.lineWidth = 2.2 * u;
+      c.beginPath(); c.moveTo(x - 30 * u, y - 60 * u); c.quadraticCurveTo(x - 20 * u, y - 40 * u, x - 34 * u, y - 18 * u); c.stroke();
+      c.beginPath(); c.moveTo(x + 32 * u, y - 70 * u); c.quadraticCurveTo(x + 22 * u, y - 48 * u, x + 30 * u, y - 26 * u); c.stroke();
+      c.fillStyle = '#2f6fd6'; c.strokeStyle = OUT; c.lineWidth = 3 * u;
+      c.beginPath(); c.moveTo(x - 54 * u, y - 14 * u); c.lineTo(x + 54 * u, y - 14 * u); c.lineTo(x + 58 * u, y + 60 * u); c.lineTo(x - 58 * u, y + 60 * u); c.closePath(); c.fill(); c.stroke();
+      c.fillStyle = '#f8f5ee'; c.fillRect(x - 54 * u, y - 14 * u, 108 * u, 12 * u); c.strokeRect(x - 54 * u, y - 14 * u, 108 * u, 12 * u);
+      c.fillStyle = '#ffd166'; c.fillRect(x - 52 * u, y - 2 * u, 8 * u, 62 * u); c.fillRect(x + 44 * u, y - 2 * u, 8 * u, 62 * u);
+
+      // --- the gloves: where each one is
+      var target = function (sd) {
+        var tx = W / 2 + sd * (head ? 8 : 16) * st.S;
+        var ty = head ? st.cy - 64 * st.S : st.cy + 4 * st.S;
+        return { x: tx, y: ty };
+      };
+      var glove = function (sd) {
+        var lead = act && sd === side;
+        var gx = x + sd * 60 * u, gy = y - 186 * u;
+        if (you.guard && !act) { gx = x + sd * 40 * u; gy = y - 224 * u; }
+        if (down) { gx = x + sd * 70 * u; gy = y - 120 * u; }
+        if (lead) {
+          if (load > 0) { gx += sd * 26 * u * load; gy += 24 * u * load; }          // drawn back for the big one
+          var T = target(sd);
+          var hook = act.kind === 'hook' ? Math.sin(reach * Math.PI) * sd * 70 * u : 0;  // the hook swings in from the side
+          gx = gx + (T.x - gx) * reach + hook; gy = gy + (T.y - gy) * reach;
+        }
+        return { x: gx, y: gy, lead: !!lead, sd: sd };
+      };
+      var L = glove(-1), R = glove(1);
+      var arm = function (Gl) {
+        var sx = x + Gl.sd * 64 * u, sy = y - 142 * u;
+        var ex, ey;
+        if (Gl.lead && reach > 0.15) { ex = (sx + Gl.x) / 2 + Gl.sd * 18 * u; ey = (sy + Gl.y) / 2 + 8 * u; }
+        else { ex = x + Gl.sd * 96 * u; ey = y - 108 * u; }
+        var wOut = (Gl.lead ? 38 : 30) * u, wIn = (Gl.lead ? 30 : 23) * u;
+        c.strokeStyle = OUT; c.lineWidth = wOut;
+        c.beginPath(); c.moveTo(sx, sy); c.quadraticCurveTo(ex, ey, Gl.x, Gl.y + 12 * u); c.stroke();
+        c.strokeStyle = you.flash > 0 ? '#ff8f6a' : '#e46f22'; c.lineWidth = wIn;
+        c.beginPath(); c.moveTo(sx, sy); c.quadraticCurveTo(ex, ey, Gl.x, Gl.y + 12 * u); c.stroke();
+      };
+      var loaded = (you.charge || 0) >= g.BOX_HEAVY() && !you.guard && !act;
+      var paintGlove = function (Gl, r) {
+        if (loaded) {                                   // a loaded punch glows
+          var pl = 0.35 + 0.25 * Math.sin(t * 0.25);
+          c.fillStyle = 'rgba(255,150,70,' + pl.toFixed(2) + ')';
+          c.beginPath(); c.arc(Gl.x, Gl.y, r * 1.45, 0, Math.PI * 2); c.fill();
+        }
+        c.fillStyle = '#d8342a'; c.strokeStyle = OUT; c.lineWidth = 3 * u;
+        c.beginPath(); c.ellipse(Gl.x, Gl.y, r, r * 0.92, 0, 0, Math.PI * 2); c.fill(); c.stroke();
+        c.fillStyle = 'rgba(255,255,255,.4)'; c.beginPath(); c.ellipse(Gl.x - r * 0.3, Gl.y - r * 0.35, r * 0.36, r * 0.22, -0.5, 0, Math.PI * 2); c.fill();
+        c.fillStyle = '#f4f4f4'; c.fillRect(Gl.x - r * 0.6, Gl.y + r * 0.62, r * 1.2, r * 0.34); c.strokeRect(Gl.x - r * 0.6, Gl.y + r * 0.62, r * 1.2, r * 0.34);
+      };
+      // arms, then the gloves that are NOT out, all behind his head (Ben)
+      arm(L); arm(R);
+      if (!L.lead) paintGlove(L, 25 * u);
+      if (!R.lead) paintGlove(R, 25 * u);
+
+      // --- his head, from behind
+      c.fillStyle = '#fff6ea'; c.strokeStyle = OUT; c.lineWidth = 3 * u;
+      c.beginPath(); c.ellipse(x, y - 166 * u, 34 * u, 15 * u, 0, 0, Math.PI * 2); c.fill(); c.stroke();
+      [-1, 1].forEach(function (sd) {
+        c.fillStyle = '#e46f22'; c.beginPath();
+        c.moveTo(x + sd * 14 * u, y - 232 * u); c.lineTo(x + sd * 40 * u, y - 286 * u); c.lineTo(x + sd * 50 * u, y - 214 * u); c.closePath(); c.fill(); c.stroke();
+        c.fillStyle = OUT; c.beginPath();
+        c.moveTo(x + sd * 33 * u, y - 272 * u); c.lineTo(x + sd * 40 * u, y - 286 * u); c.lineTo(x + sd * 44 * u, y - 268 * u); c.closePath(); c.fill();
+      });
+      var hg = c.createRadialGradient(x - 12 * u, y - 222 * u, 4 * u, x, y - 204 * u, 50 * u);
+      hg.addColorStop(0, '#ff9c4a'); hg.addColorStop(1, '#cf5c18');
+      c.fillStyle = you.flash > 0 ? '#ff9e80' : hg;
+      c.beginPath(); c.moveTo(x - 50 * u, y - 196 * u); c.quadraticCurveTo(x - 52 * u, y - 250 * u, x, y - 252 * u);
+      c.quadraticCurveTo(x + 52 * u, y - 250 * u, x + 50 * u, y - 196 * u); c.quadraticCurveTo(x + 30 * u, y - 166 * u, x, y - 166 * u);
+      c.quadraticCurveTo(x - 30 * u, y - 166 * u, x - 50 * u, y - 196 * u); c.closePath(); c.fill(); c.stroke();
+      c.fillStyle = 'rgba(120,45,10,.35)'; c.beginPath(); c.ellipse(x, y - 214 * u, 10 * u, 26 * u, 0, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#fff6ea';
+      [-1, 1].forEach(function (sd) { c.beginPath(); c.ellipse(x + sd * 42 * u, y - 190 * u, 9 * u, 13 * u, sd * 0.4, 0, Math.PI * 2); c.fill(); });
+
+      // --- the punching glove is out past his head, so it is in front of it
+      var Gd = L.lead ? L : (R.lead ? R : null);
+      if (Gd) {
+        paintGlove(Gd, (act.kind === 'super' ? 36 : 31) * u);
+        if (reach > 0.85) {
+          var landed = (foe.headFlash || 0) > 8 || (foe.bodyFlash || 0) > 8 || (foe.flash || 0) > 4;
+          var blocked = !landed && foe.guard;
+          if (landed || blocked) {
+            c.save(); c.translate(Gd.x + Gd.sd * 20 * u, Gd.y - 24 * u);
+            c.fillStyle = blocked ? 'rgba(220,226,235,.9)' : '#fff3b0'; c.strokeStyle = blocked ? '#8a93a3' : '#ff8a2a'; c.lineWidth = 4 * u;
+            var big2 = blocked ? 0.6 : (big ? 1.35 : 1);
+            c.beginPath();
+            for (var i = 0; i < 16; i++) { var rr = (i % 2 ? 16 : 40) * u * big2, a2 = i * Math.PI / 8; c.lineTo(Math.cos(a2) * rr, Math.sin(a2) * rr); }
+            c.closePath(); c.fill(); c.stroke(); c.restore();
+          }
+        }
+      }
+      c.restore();
+
+      // the high / low line, when a big one is loaded (the old gloves drew it)
+      if (loaded) {
+        c.save();
+        c.setLineDash([9, 7]); c.strokeStyle = 'rgba(255,150,110,0.45)'; c.lineWidth = 2;
+        c.beginPath(); c.moveTo(0, st.splitY); c.lineTo(W, st.splitY); c.stroke(); c.setLineDash([]);
+        c.textAlign = 'left'; c.textBaseline = 'bottom';
+        c.font = '800 ' + Math.round(Math.max(11, W * 0.020)) + 'px system-ui, sans-serif';
+        c.fillStyle = 'rgba(255,180,140,0.8)';
+        c.fillText('TAP HIGH — UPPERCUT', 14, st.splitY - 7);
+        c.textBaseline = 'top'; c.fillText('TAP LOW — HOOK', 14, st.splitY + 7);
+        c.restore();
+      }
+    }
+  }
+
+  var tries = 0;
+  (function wait() {
+    var g = G();
+    if (g && g.layoutReady && g.drawBoxHands) { try { install(g); } catch (e) { console.warn('[punch-out]', e); } return; }
+    if (++tries < 1200) setTimeout(wait, 50);
+  })();
+})();
+
+/* 73 · FOXY BURNER, FEATHERED (Ben, 28 Sep) — Luxor's bike race
+   "the bike would have to cool all the way down before gassing again. It
+    should play that the player is able to tap the gas and let up and tap
+    again to prevent burn out"
+
+   Measured before the change (checks/_heat.js):
+     · letting go of GAS put the burner out, and pressing again needed a fresh
+       0.9 s hold before it relit — so tapping the gas to manage the heat
+       (the whole Excitebike skill) meant never burning at all;
+     · a boil cut the engine for 2.6 s and the bike rolled to a DEAD STOP
+       (311 → 0) before it would go again.
+   Now, for your bike only (the rivals ride exactly as before):
+     · the burner RELIGHTS AT ONCE if you let go and press again within
+       0.8 s of it burning — tap, let up, tap;
+     · letting go cools the engine faster (0.55 → 0.8 a second), so a tap
+       really does bring the gauge down;
+     · a boil stalls you for 1.5 s instead of 2.6, and you keep rolling at
+       half the coast-down instead of stopping dead. Boiling still costs —
+       30% of your speed and a 1.5 s stall — but it is no longer a wall.
+   window.__8G_RACE_CLASSIC = true puts the old numbers back. */
+(function () {
+  if ((window.__8G_WORLD || '') !== 'luxor') return;
+  var RELIGHT = 0.8, EXTRA_COOL = 0.25, STALL = 1.5;
+
+  function install(g) {
+    if (typeof g.raceStep !== 'function') return;
+    var realStall = g.RACE_STALL;
+    g.RACE_STALL = function () { return window.__8G_RACE_CLASSIC ? realStall.call(g) : STALL; };
+    var realStep = g.raceStep;
+    g.raceStep = function (f, c, dt) {
+      var R = g.race;
+      if (!R || f !== R || window.__8G_RACE_CLASSIC) return realStep.apply(g, arguments);
+      var now = R.t || 0;
+      var gas = !!(c && c.gas), wasBoiled = (f.stall || 0) > 0;
+      // tap, let up, tap: the burner comes straight back if it was lit a moment ago
+      // (on the phone's GAS button the burner stays out — that is what TURBO is for)
+      if (gas && !f._g8GasWas && !wasBoiled && !(f._padGas && !f._padTurbo) && f._g8LitAt != null && now - f._g8LitAt < RELIGHT)
+        f.hold = Math.max(f.hold || 0, g.RACE_LIGHT() + 0.001);
+      var v0 = f.v;
+      var out = realStep.apply(g, arguments);
+      if (f.boost) f._g8LitAt = now;
+      // off the burner, the engine sheds heat faster
+      if (!f.boost && !((f.stall || 0) > 0) && f.heat > 0) f.heat = Math.max(0, f.heat - EXTRA_COOL * dt);
+      // a stalled bike rolls on at half the coast-down rather than stopping dead
+      if ((f.stall || 0) > 0 && !f.air && f.v < v0) f.v = v0 - (v0 - f.v) * 0.5;
+      f._g8GasWas = gas;
+      return out;
+    };
+  }
+  var tries = 0;
+  (function wait() {
+    var g = window.game;
+    if (g && g.layoutReady && g.raceStep) { try { install(g); } catch (e) { console.warn('[race-tune]', e); } return; }
     if (++tries < 1200) setTimeout(wait, 50);
   })();
 })();
@@ -53793,7 +56565,7 @@ if (this.swordSwingTimer > 0 && (this.state.weapon === 'SWORD' || this.dualWield
        punch is most of the screen — and the button fills are translucent, so
        an unclipped forearm lies straight across SLIP, GUARD and the meter. */
     ctx.save();
-    ctx.beginPath(); ctx.rect(0, 0, W, u.meter.y - 3); ctx.clip();
+    ctx.beginPath(); ctx.rect(0, 0, W, (u.gloveY != null ? u.gloveY : u.meter.y) - 3); ctx.clip();
     /* AND YOUR OWN HANDS SIT ON TOP OF THE BUTTON ROW, not underneath it. The
        first pass hung them a screen-height below the buttons, where the row
        painted straight over the only feedback telling you what your hands were
@@ -53807,7 +56579,7 @@ if (this.swordSwingTimer > 0 && (this.state.weapon === 'SWORD' || this.dualWield
        two-hundred-pixel disc sitting over the one bar that tells you why it is
        glowing. */
     const gr = Math.max(30, Math.min(W * 0.08, H * 0.065));
-    const base = u.meter.y - gr * 1.5;
+    const base = (u.gloveY != null ? u.gloveY : u.meter.y) - gr * 1.5;
     const spread = W * 0.29;
     for (const side of [-1, 1]) {
       /* THE WIND-UP IS VISIBLE IN YOUR OWN HANDS. They draw back and down as the
@@ -54060,14 +56832,14 @@ if (this.swordSwingTimer > 0 && (this.state.weapon === 'SWORD' || this.dualWield
     ctx.beginPath(); ctx.roundRect(m.x, m.y, m.w, m.h, m.h / 2); ctx.stroke();
     /* THE LABELS GO INSIDE THE BAR. Above it they sat exactly where your own
        gloves come up, and the bar is tall enough to hold them. */
-    const fs = Math.round(Math.max(9, Math.min(m.h * 0.62, W * 0.019)));
+    const fs = Math.round(Math.max(9 * (W / Math.max(1, this.canvas.getBoundingClientRect().width)), Math.min(m.h * 0.62, W * 0.019)));
     ctx.font = '800 ' + fs + 'px system-ui, sans-serif';
     ctx.textBaseline = 'middle';
     ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(10,7,5,0.55)';
     ctx.textAlign = 'left';
-    ctx.strokeText('POWER', m.x + m.h * 0.62, m.y + m.h / 2);
+    ctx.strokeText('HOLD for more POWER', m.x + m.h * 0.62, m.y + m.h / 2);
     ctx.fillStyle = 'rgba(255,255,255,0.8)';
-    ctx.fillText('POWER', m.x + m.h * 0.62, m.y + m.h / 2);
+    ctx.fillText('HOLD for more POWER', m.x + m.h * 0.62, m.y + m.h / 2);
     ctx.textAlign = 'right';
     const lab = loaded ? 'UPPERCUT · HOOK' : 'JAB · BODY';
     ctx.strokeText(lab, m.x + m.w - m.h * 0.62, m.y + m.h / 2);
@@ -54151,13 +56923,13 @@ if (this.swordSwingTimer > 0 && (this.state.weapon === 'SWORD' || this.dualWield
       ctx.fillStyle = 'rgba(255,209,102,' + a.toFixed(2) + ')';
       /* HIGHER THAN THE CALLOUT. Both live at the top of the glass, and at
          0.175 the third line of this ran straight through ROUND 1. */
-      ctx.fillText('TAP HIM TO PUNCH — HIGH FOR THE HEAD, LOW FOR THE BODY',
+      ctx.fillText((document.documentElement.classList.contains('pc-touch') ? 'HEAD AND BODY BUTTONS TO PUNCH — OR TAP HIM' : 'TAP HIM TO PUNCH — HIGH FOR THE HEAD, LOW FOR THE BODY'),
                    W / 2, H * 0.118);
       ctx.font = '700 ' + Math.round(Math.max(10, W * 0.017)) + 'px system-ui, sans-serif';
       ctx.fillStyle = 'rgba(240,230,218,' + (a * 0.8).toFixed(2) + ')';
       ctx.fillText('WAIT AND THE PUNCH GETS BIGGER   ·   SLIP AWAY FROM HIS ARC',
                    W / 2, H * 0.118 + Math.max(18, W * 0.030));
-      ctx.fillText('W HEAD · S BODY · A / D SLIP · SPACE GUARD · Q SUPER · ESC',
+      ctx.fillText((document.documentElement.classList.contains('pc-touch') ? 'STICK: ◀ ▶ SLIP · ▼ GUARD · ▲ SUPER' : 'W HEAD · S BODY · A / D SLIP · SPACE GUARD · Q SUPER · ESC'),
                    W / 2, H * 0.118 + Math.max(36, W * 0.056));
       ctx.restore();
     }
@@ -58180,7 +60952,7 @@ if (this.swordSwingTimer > 0 && (this.state.weapon === 'SWORD' || this.dualWield
       ctx.fillStyle = '#f3e6e6';
       ctx.font = '600 12px system-ui, sans-serif';
       ctx.textAlign = 'right';
-      ctx.fillText('TAP TO SKIP', W - 18, H - 16);
+      if (window.__8G_FILM_SKIP) ctx.fillText('TAP TO SKIP', W - 18, H - 16);
     }
     ctx.restore();
   }
