@@ -9781,7 +9781,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
     const el = document.getElementById('surface-prompt');
     if (!el) return;
     const w = surfaceTarget();
-    const ok = !!(w && UNIVERSE.FILES && UNIVERSE.FILES.surface && UNIVERSE.FILES.surface[w.prefix]) && tradeRun.meruDone;
+    const ok = !!(w && UNIVERSE.FILES && UNIVERSE.FILES.surface && UNIVERSE.FILES.surface[w.prefix]) && (tradeRun.meruDone || w.prefix === 'meru');   // Meru first, and Meru is reachable (Ben, 30 Sep)
     surfaceFor = ok ? w.prefix : null;
     const want = ok ? 'block' : 'none';
     if (el.style.display !== want) el.style.display = want;
@@ -9790,6 +9790,9 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
     e.stopPropagation(); this.blur();
     const at = surfaceFor;
     if (!at || atWar(at) || meruAct || dockedAt) return;
+    if (at === 'meru' && !tradeRun.meruDone && !window.__8G_NO_MERU_INTRO) {   // they come as you go to land (Ben, 30 Sep)
+      g8BlessMf(); G8M.armed = false; g8MachineFilm(); return;
+    }
     descendToSurface(at);
   });
   window.__8G_SURFACE_FOR = function () { return surfaceFor; };
@@ -14451,7 +14454,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
   const MERU_RING      = 250;     // how wide they hold the circle
   const MERU_RING_MS   = 2200;    // and how long you sit inside it before the beams
   const MERU_CINE_ZOOM = 1.3;    // how far the camera comes in for it
-  const MERU_FIGHT_MS  = 10000;   // a backstop: it ends on hits taken, or on running   // how long the machine stays before it breaks off
+  const MERU_FIGHT_MS  = 45000;   // a backstop: it ends on hits taken, or on running (a longer fight, Ben 30 Sep)   // how long the machine stays before it breaks off
   const MERU_FLOOR     = 8;       // the sliver of hull it can never take
   // null | 'closing' | 'hail' | 'fight' | 'crippled' | 'falling' | 'docking'
   let meruAct = null;
@@ -14617,7 +14620,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
   function meruBeginFight() {
     meruAct = 'fight';
     g8Hits = 0;
-    g8Fight = { x: pX, y: pY, need: 3 + (Math.random() < 0.5 ? 1 : 0), fleeAt: 0, done: false };
+    g8Fight = { x: pX, y: pY, need: 8 + Math.floor(Math.random() * 3), fleeAt: 0, done: false };   // room to fight back (Ben, 30 Sep)
     meruUntil = performance.now() + MERU_FIGHT_MS;
     /* The camera lets go at the same moment they do — the close look was for
        the arrest, and the fight needs the room. */
@@ -14694,22 +14697,22 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
          the hull bar empties. It simply cannot reach zero while this is running,
          so the scene always gets to its ending. */
       if (playerHP < MERU_FLOOR) playerHP = MERU_FLOOR;
-      /* DOWN AFTER THREE OR FOUR HITS, AND NO OUTRUNNING THEM (Ben, 30 Sep). */
+      /* A REAL FIGHT, BUT NO OUTRUNNING THEM (Ben, 30 Sep: "allow the player to fight back MORE ... if player trys to get away THEEEN they quickly shoot him down"). */
       if (g8Fight && !g8Fight.done) {
         if (g8Hits >= g8Fight.need) { g8Fight.done = true; meruCrippled(); return; }
         const away = Math.hypot(pX - g8Fight.x, pY - g8Fight.y);
-        if (away > 900 && !g8Fight.fleeAt) { g8Fight.fleeAt = performance.now(); flashMessage('YOU CANNOT OUTRUN THEM'); }
-        if (g8Fight.fleeAt && performance.now() - g8Fight.fleeAt > 3200) { g8Fight.done = true; meruCrippled(); return; }
+        if (away > 650 && !g8Fight.fleeAt) { g8Fight.fleeAt = performance.now(); flashMessage('YOU CANNOT OUTRUN THEM'); }
+        if (g8Fight.fleeAt && performance.now() - g8Fight.fleeAt > 1500) { g8Fight.done = true; meruCrippled(); return; }
         if (g8Fight.fleeAt) meruShips.forEach(m => {
           if (!m || m.dead) return;
           const dx = pX - m.x, dy = pY - m.y, d = Math.hypot(dx, dy);
           if (d > 380) { m.x += dx / d * (d - 380) * 0.14; m.y += dy / d * (d - 380) * 0.14; }
           if (m.fireCooldown > 20) m.fireCooldown = 20;
         });
-        /* AND THE HITS LAND: the scene is three or four, so one lands every second and a half (faster if you run). */
+        /* AND THE HITS LAND: eight to ten of them, one every two and a half seconds or so (a volley if you run). */
         const nowZ = performance.now();
         if (!g8Fight.nextAt) g8Fight.nextAt = nowZ + 1300;
-        if (nowZ >= g8Fight.nextAt) { g8Zap(); g8Fight.nextAt = nowZ + (g8Fight.fleeAt ? 650 : 1400 + Math.random() * 500); }
+        if (nowZ >= g8Fight.nextAt) { g8Zap(); g8Fight.nextAt = nowZ + (g8Fight.fleeAt ? 330 : 2300 + Math.random() * 900); }
       }
       for (let i = 0; i < meruShips.length; i++) {
         const meruShip = meruShips[i];
@@ -15013,10 +15016,12 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
     if (gamePaused || dockedAt || minedAt) return;
     const w = meruWorldAt(), stn = tradeRun.where('meru');
     const t = performance.now() - G8M.t0;
-    if (t > G8M_MS
-        || Math.hypot(pX - G8M.x, pY - G8M.y) > G8M_OUT
-        || Math.hypot(pX - w.x, pY - w.y) < G8M_NEAR
-        || (stn && Math.hypot(pX - stn.x, pY - stn.y) < G8M_STN)) g8MachineFilm();
+    /* THE LAND BUTTON IS THE TRIGGER NOW (Ben, 30 Sep: "allow the player to be
+       able to ACTUALLY get to meru AND have them press the button to go to MERU
+       be the thing that trigger the MACHINE FLEET VIDEO"). The clock and the
+       distance no longer fire it; only flying in on Meru's own station does,
+       so the station cannot be used to slip past them. */
+    if (stn && Math.hypot(pX - stn.x, pY - stn.y) < G8M_STN) g8MachineFilm();
   }
 
   /* THEY COME. The film first — the approach, the thin pink beams, "WE ARE
@@ -17011,6 +17016,10 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
     }
     actor.hp -= dmg;
     actor.hitFlash = 10;
+    if (actor.meruScript && actor.hp < actor.maxHp * 0.2) {   // the Machine Fleet cannot be beaten here (Ben, 30 Sep)
+      actor.hp = actor.maxHp * 0.2;
+      if (!actor._g8Shield) { actor._g8Shield = true; flashMessage('MACHINE SHIELDS REGENERATING'); }
+    }
     /* A CREATURE IS PUSHED BY A ROUND. Hulls have mass and engines and shrug it
        off; a living thing takes the blow. It is a small shove, but it is the
        difference between shooting a thing and shooting a decal. */
@@ -23937,6 +23946,52 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
     label();
   }, 150);
 })();
+</script>
+<script>
+/* 79 · WHAT THE PAD IS DOING, ON THE PHONE ITSELF (Ben, 30 Sep: "THE weapon
+   buttons are for sure missing in all instances" — on his iPhone, where the
+   simulated phones all show them). Open any world with #paddebug on the end
+   of the address and a small panel in the top-left reports, twice a second,
+   what the controls see: touch or not, whether the pad is stepped aside and
+   why, where the two buttons are and whether they are drawn, and the last
+   errors the page threw. A screenshot of it says what is different there. */
+(function () {
+  var on = /paddebug/i.test(location.hash || '');
+  try { if (on) localStorage.setItem('8g_paddebug', '1'); else if (/nopaddebug/i.test(location.hash || '')) localStorage.removeItem('8g_paddebug'); on = on || localStorage.getItem('8g_paddebug') === '1'; } catch (e) {}
+  if (!on) return;
+  var errs = [];
+  window.addEventListener('error', function (e) { errs.push((e.message || String(e)).slice(0, 90) + ' @' + ((e.filename || '').split('/').pop() || '') + ':' + (e.lineno || '')); if (errs.length > 4) errs.shift(); });
+  window.addEventListener('unhandledrejection', function (e) { errs.push('promise: ' + String(e.reason).slice(0, 80)); if (errs.length > 4) errs.shift(); });
+  var box = document.createElement('pre');
+  box.style.cssText = 'position:fixed;left:4px;top:4px;z-index:2147483647;max-width:94vw;margin:0;padding:6px 8px;background:rgba(0,0,0,.82);color:#9ff;' +
+    'font:10px/1.35 ui-monospace,Menlo,monospace;white-space:pre-wrap;pointer-events:none;border:1px solid #3aa0ff;border-radius:6px';
+  function put() { (document.body || document.documentElement).appendChild(box); }
+  if (document.body) put(); else document.addEventListener('DOMContentLoaded', put);
+  function rect(id) {
+    var e = document.getElementById(id); if (!e) return id + ': none';
+    var r = e.getBoundingClientRect(), cs = getComputedStyle(e);
+    return id + ': ' + Math.round(r.left) + ',' + Math.round(r.top) + ' ' + Math.round(r.width) + 'x' + Math.round(r.height) +
+      ' ' + cs.display + '/' + cs.visibility + '/op' + cs.opacity;
+  }
+  setInterval(function () {
+    var g = window.game, R = document.getElementById('pc-root'), st = {};
+    try { st = window.__8G_PAD_STATE ? __8G_PAD_STATE() : {}; } catch (e) { st = { err: String(e) }; }
+    var ag = null, pm = null;
+    try { ag = window.__8G_ACTIVE_GAME ? __8G_ACTIVE_GAME() : null; } catch (e) { ag = 'ERR ' + e; }
+    try { pm = window.__8G_PADMODE && g ? (__8G_PADMODE(g) || {}).key : null; } catch (e) { pm = 'ERR ' + e; }
+    var coarse = false; try { coarse = matchMedia('(pointer: coarse)').matches; } catch (e) {}
+    box.textContent = [
+      'PAD DEBUG · ' + (window.__8G_WORLD || '') + ' · ' + innerWidth + 'x' + innerHeight + ' dpr' + devicePixelRatio,
+      'coarse:' + coarse + ' html:' + document.documentElement.className,
+      'pc-root: ' + (R ? '"' + R.className + '"' : 'MISSING') + ' ready:' + !!(g && g.layoutReady),
+      'state: ' + JSON.stringify(st),
+      'game:' + JSON.stringify(ag) + ' padmode:' + pm + ' paused:' + !!(g && g.gamePaused) + ' mini:' + !!(g && g.miniGameOpen),
+      rect('pc-stick'), rect('pc-btns'), rect('pc-melee'), rect('pc-ranged'), rect('pc-fire'), rect('pc-next'),
+      'errors: ' + (errs.length ? '\n  ' + errs.join('\n  ') : 'none')
+    ].join('\n');
+  }, 500);
+})();
+
 </script>
 </body>
 </html>
