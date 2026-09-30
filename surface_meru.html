@@ -623,7 +623,7 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: #0916
 </style><script>
 (function(){
  var L=document.getElementById('g8-load');if(!L)return;
- var W="meru",MARKS=[0.0037, 0.3492, 0.3494, 0.3515, 0.3529, 0.7675, 0.9537, 1.0],T={"lore": ["Myth says the Nine Known Worlds were grown from CRYSTALS brought from a far away world, called EARTH.", "Meru sits at the centre of the Nine. Every trade lane in the sky bends toward it.", "The old ones say King Might's crown was cut from the first crystal ever planted on Meru.", "Fishers on the lake swear something enormous sleeps beneath it. They call her Nelly, and they do not row far out.", "The ruins beyond the desert are older than the kingdom. Nobody agrees on who built them."], "monks": ["The crystal does not hurry, and yet it grows.", "A gate is only a door until you choose to walk through it.", "Stillness is not the absence of motion. It is motion that has found its home.", "The traveller who carries the least sees the most.", "Every world is far away until you land on it.", "Listen to the light. It has crossed a long dark to reach you.", "The fox who waits at the right moment outruns the fox who runs at the wrong one.", "What you plant in a world, the world plants in you."], "monksBy": "Sayings of the Gaya Monks", "tips": ["Tap an NPC to talk to them.", "Walk into a yellow ring to start a minigame.", "Follow the glowing way markers to find doors and exits.", "Open ACTIONS to change the game speed at any time.", "SAVE often. You have one autosave and three slots.", "On a phone, the joystick moves you and the two round buttons fight.", "In a minigame on a phone, tap the ✕ twice to leave.", "RETURN TO ORBIT takes you back to your ship."]},TOTAL=12969027;
+ var W="meru",MARKS=[0.0037, 0.3494, 0.3496, 0.3517, 0.3531, 0.7676, 0.9537, 1.0],T={"lore": ["Myth says the Nine Known Worlds were grown from CRYSTALS brought from a far away world, called EARTH.", "Meru sits at the centre of the Nine. Every trade lane in the sky bends toward it.", "The old ones say King Might's crown was cut from the first crystal ever planted on Meru.", "Fishers on the lake swear something enormous sleeps beneath it. They call her Nelly, and they do not row far out.", "The ruins beyond the desert are older than the kingdom. Nobody agrees on who built them."], "monks": ["The crystal does not hurry, and yet it grows.", "A gate is only a door until you choose to walk through it.", "Stillness is not the absence of motion. It is motion that has found its home.", "The traveller who carries the least sees the most.", "Every world is far away until you land on it.", "Listen to the light. It has crossed a long dark to reach you.", "The fox who waits at the right moment outruns the fox who runs at the wrong one.", "What you plant in a world, the world plants in you."], "monksBy": "Sayings of the Gaya Monks", "tips": ["Tap an NPC to talk to them.", "Walk into a yellow ring to start a minigame.", "Follow the glowing way markers to find doors and exits.", "Open ACTIONS to change the game speed at any time.", "SAVE often. You have one autosave and three slots.", "On a phone, the joystick moves you and the two round buttons fight.", "In a minigame on a phone, tap the ✕ twice to leave.", "RETURN TO ORBIT takes you back to your ship."]},TOTAL=12972678;
  var bar=L.querySelector('.g8l-bar i'),pct=L.querySelector('.g8l-pct'),line=L.querySelector('.g8l-line'),txt=L.querySelector('.g8l-text'),by=L.querySelector('.g8l-by');
  // the home world's own name, if the player has given it one
  var home='YOUR WORLD';
@@ -40154,6 +40154,74 @@ g._party = function () {
   function install(g) {
     // Meru's own player (the square, the station) asks the same question its own way
     if (IOS) { try { g.canFadeVolume = false; } catch (e) {} }
+    /* ===== NO MUSIC OVER A FILM (Ben, 30 Sep: "in MERU the music is playing
+       over the videos"). Meru's player hushes itself for a film by turning its
+       volume to nothing, which an iPhone ignores. While any film is up, its two
+       players are paused outright, and the one that was carrying the room comes
+       back when the film is done. ===== */
+    if (!g._g8FilmQuiet) {
+      g._g8FilmQuiet = true;
+      // and Meru's watchdog, which restarts a stopped track, waits for the film too
+      if (typeof g.nudgeMusic === 'function') {
+        var realNudge = g.nudgeMusic;
+        g.nudgeMusic = function () {
+          if (g._cutsceneOpen || g.film || document.querySelector('#g8-film.on')) return;
+          return realNudge.apply(this, arguments);
+        };
+      }
+      var held = [];
+      setInterval(function () {
+        var on = !!(g._cutsceneOpen || g.film || g._g8PrePlaying || document.querySelector('#g8-film.on'));
+        if (on) {
+          [g.bgMusic, g.musicB].forEach(function (a) {
+            if (a && !a.paused) { try { a.pause(); } catch (e) {} if (held.indexOf(a) < 0) held.push(a); }
+          });
+        } else if (held.length) {
+          var act = null; try { act = g.activeMusicEl ? g.activeMusicEl() : null; } catch (e) {}
+          held.forEach(function (a) { if (a === act || !act) { try { var p = a.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {} } });
+          held = [];
+        }
+      }, 150);
+    }
+    /* ===== AN iPHONE ONLY STARTS SOUND FROM A TOUCH (Ben, 30 Sep: "in luxor
+       the music is not reliably changing per map"). A new room's track asked to
+       play by the game itself, with no finger on the glass, is refused — so the
+       old one stopped and the new one never started. Every touch now starts
+       the room's track if it is not playing, and the first touch primes every
+       track of the world (silently), which lets the game start them itself
+       from then on. ===== */
+    if (IOS && !g._g8Bless) {
+      g._g8Bless = true;
+      var primed = false;
+      var bless = function () {
+        try {
+          var M = (typeof GAYA !== 'undefined' && GAYA.music) || null;
+          if (!primed && M && M.tracks && typeof g.musicEl === 'function') {
+            primed = true;
+            M.tracks.forEach(function (t) {
+              var el = g.musicEl(t);
+              if (!el || t.key === g._musicKey) return;
+              el.muted = true;
+              var p = el.play();
+              var back = function () { if (g._musicKey !== t.key) { try { el.pause(); } catch (e) {} } el.muted = false; };
+              if (p && p.then) p.then(back, back); else back();
+            });
+          }
+          // the room's own track (Gaya-style worlds)
+          var w = g._musicKey && g._music && g._music[g._musicKey];
+          if (w && w.paused && !g.film) { var q = w.play(); if (q && q.catch) q.catch(function () {}); }
+          // Kufa keeps its players by file
+          if (g._mus && typeof g.musicWant === 'function' && !g.film) {
+            var want = g.musicWant(), k = want && g._mus[want];
+            if (k && k.paused) { var r = k.play(); if (r && r.catch) r.catch(function () {}); }
+          }
+          // Meru's own player
+          var act = g.activeMusicEl ? g.activeMusicEl() : null;
+          if (act && act.paused && act.src && g.currentMusicKey && !g._cutsceneOpen && !g.film && g.bgMusicStarted) { var u = act.play(); if (u && u.catch) u.catch(function () {}); }
+        } catch (e) {}
+      };
+      ['touchend', 'pointerup', 'click', 'keydown'].forEach(function (t) { window.addEventListener(t, bless, true); });
+    }
     /* ===== MUSIC ON A PHONE ===== */
     if (typeof g.musicTick === 'function' && !g._iosMusicWrapped) {
       g._iosMusicWrapped = true;
@@ -45427,7 +45495,7 @@ window.addEventListener('DOMContentLoaded', () => {
     </div>
   </div>
 </div>
-<script>window.__g8L&&__g8L(0.3492)</script><script>
+<script>window.__g8L&&__g8L(0.3494)</script><script>
 (function () {
   const wire = () => {
     const inp = document.getElementById('storeNameInput');
@@ -45451,7 +45519,7 @@ window.addEventListener('DOMContentLoaded', () => {
     </div>
   </div>
 </div>
-<script>window.__g8L&&__g8L(0.3494)</script><script>
+<script>window.__g8L&&__g8L(0.3496)</script><script>
 const UNIVERSE = (function () {
   const VERSION = 1;
 
@@ -46030,7 +46098,7 @@ const UNIVERSE = (function () {
 
 </script>
 
-<script>window.__g8L&&__g8L(0.3515)</script><script>
+<script>window.__g8L&&__g8L(0.3517)</script><script>
 /* ============================================================================
    THE LANDING BRIDGE  ·  town surface -> universe          (ONE copy, all worlds)
    ----------------------------------------------------------------------------
@@ -46377,7 +46445,7 @@ const UNIVERSE = (function () {
 })();
 
 </script>
-<script>window.__g8L&&__g8L(0.3529)</script><script>
+<script>window.__g8L&&__g8L(0.3531)</script><script>
 /* ============================================================================
    MERU — MINI-GAMES (inlined companion module)
 
@@ -46439,7 +46507,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = root.MERU_
 
 </script>
 
-<script>window.__g8L&&__g8L(0.7675)</script><script>
+<script>window.__g8L&&__g8L(0.7676)</script><script>
 /* ============================================================================
    MERU — planet content module
    Extracted from 8Gate_ThroneRoom_standalone_532.html on the 8 Gates engine.
