@@ -601,7 +601,7 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: #0916
 </style><script>
 (function(){
  var L=document.getElementById('g8-load');if(!L)return;
- var W="zion",MARKS=[0.0053, 0.0604, 0.888, 0.8882, 0.8914, 0.8934, 1.0],T={"lore": ["Gold still washes down Zion's river after every storm, and the panners are always waiting.", "The pinball parlour on Zion was built before the town. Some say the town grew around it.", "Zion's truck arena roars every night. You can hear it from the river bend."], "monks": ["The crystal does not hurry, and yet it grows.", "A gate is only a door until you choose to walk through it.", "Stillness is not the absence of motion. It is motion that has found its home.", "The traveller who carries the least sees the most.", "Every world is far away until you land on it.", "Listen to the light. It has crossed a long dark to reach you.", "The fox who waits at the right moment outruns the fox who runs at the wrong one.", "What you plant in a world, the world plants in you."], "monksBy": "Sayings of the Gaya Monks", "tips": ["Tap an NPC to talk to them.", "Walk into a yellow ring to start a minigame.", "Follow the glowing way markers to find doors and exits.", "Open ACTIONS to change the game speed at any time.", "SAVE often. You have one autosave and three slots.", "On a phone, the joystick moves you and the two round buttons fight.", "In a minigame on a phone, tap the ✕ twice to leave.", "RETURN TO ORBIT takes you back to your ship."]},TOTAL=8771463;
+ var W="zion",MARKS=[0.0053, 0.0604, 0.888, 0.8882, 0.8914, 0.8935, 1.0],T={"lore": ["Gold still washes down Zion's river after every storm, and the panners are always waiting.", "The pinball parlour on Zion was built before the town. Some say the town grew around it.", "Zion's truck arena roars every night. You can hear it from the river bend."], "monks": ["The crystal does not hurry, and yet it grows.", "A gate is only a door until you choose to walk through it.", "Stillness is not the absence of motion. It is motion that has found its home.", "The traveller who carries the least sees the most.", "Every world is far away until you land on it.", "Listen to the light. It has crossed a long dark to reach you.", "The fox who waits at the right moment outruns the fox who runs at the wrong one.", "What you plant in a world, the world plants in you."], "monksBy": "Sayings of the Gaya Monks", "tips": ["Tap an NPC to talk to them.", "Walk into a yellow ring to start a minigame.", "Follow the glowing way markers to find doors and exits.", "Open ACTIONS to change the game speed at any time.", "SAVE often. You have one autosave and three slots.", "On a phone, the joystick moves you and the two round buttons fight.", "In a minigame on a phone, tap the ✕ twice to leave.", "RETURN TO ORBIT takes you back to your ship."]},TOTAL=8775951;
  var bar=L.querySelector('.g8l-bar i'),pct=L.querySelector('.g8l-pct'),line=L.querySelector('.g8l-line'),txt=L.querySelector('.g8l-text'),by=L.querySelector('.g8l-by');
  // the home world's own name, if the player has given it one
  var home='YOUR WORLD';
@@ -4807,6 +4807,8 @@ class Game {
       return;
     }
     if (this.dualWield() && real !== 'PHONE' && real !== 'ROD') {
+      // GLOVES ARE BOTH HANDS (Ben, 30 Sep): no laser drawn beside boxing gloves
+      if (real === 'SWORD' && this.gear && this.gear.weapon === 'gloves') { this.drawWeaponLayerCore(s); return; }
       this._offArm = true;
       this.state.weapon = (real === 'SWORD') ? 'RAYGUN' : real;
       this.drawWeaponLayerCore(s);          // full size: you have to be able to name it
@@ -40036,8 +40038,17 @@ g._party = function () {
 
   /* ---------------------------------------------------------------- helpers */
   var _volOk = null;
+  /* AN iPHONE CANNOT TURN MUSIC DOWN, whatever it says (Ben, 30 Sep: "the
+     music is bleeding over between maps"). Newer iOS reads back the volume a
+     page sets without ever playing it quieter, so the test below passed, the
+     rooms crossfaded, and for the whole fade the old room's track played on at
+     full volume under the new one. An iPhone or iPad changes track outright. */
+  var IOS = /iPad|iPhone|iPod/.test(navigator.userAgent || '') ||
+            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  window.__8G_IOS = IOS;
   function volumeSettable() {
     if (_volOk !== null) return _volOk;
+    if (IOS) return (_volOk = false);
     try { var a = new Audio(); a.volume = 0.25; _volOk = Math.abs(a.volume - 0.25) < 0.02; }
     catch (e) { _volOk = true; }
     return _volOk;
@@ -40114,6 +40125,8 @@ g._party = function () {
 
   /* ---------------------------------------------------------------- install */
   function install(g) {
+    // Meru's own player (the square, the station) asks the same question its own way
+    if (IOS) { try { g.canFadeVolume = false; } catch (e) {} }
     /* ===== MUSIC ON A PHONE ===== */
     if (typeof g.musicTick === 'function' && !g._iosMusicWrapped) {
       g._iosMusicWrapped = true;
@@ -40501,15 +40514,6 @@ g._party = function () {
     '  padding: 4px 7px; border-radius: 7px; background: rgba(6,9,16,.78); border: 1px solid rgba(125,211,252,.5);',
     '  color: #bae6fd; font: 800 9px/1.35 system-ui, -apple-system, sans-serif; letter-spacing: .5px; pointer-events: none; white-space: nowrap; }',
     '#pc-root.race #pc-racekey { display: block; }',
-    '#pc-gamekey { position: fixed; left: calc(10px + env(safe-area-inset-left, 0px)); bottom: calc(146px + env(safe-area-inset-bottom, 0px)); display: none; padding: 4px 9px; border-radius: 9px; background: rgba(8,14,30,.72); border: 1px solid rgba(160,220,255,.45); color: #cfeeff; font: 800 11px/1.2 system-ui, sans-serif; letter-spacing: .08em; pointer-events: none; white-space: nowrap; }',
-    '#pc-root.game #pc-gamekey { display: block; opacity: .8; }',
-    /* the game's own words are often under the pad: in a game it lets them through */
-    '#pc-root.game #pc-stick, #pc-root.game .pc-btn { opacity: .62; }',
-    '#pc-root.game .pc-btn.down { opacity: .9; }',
-    'html.pc-game #g8-compass, html.pc-game #g8-course { display: none !important; }',
-    '#pc-root.game.nob #pc-ranged { display: none; }',
-    '#pc-root.game #pc-melee { background: radial-gradient(circle at 40% 35%, #b8f0ff, #22a6d6 60%, #0c4a66); }',
-    '#pc-root.game #pc-ranged { background: radial-gradient(circle at 40% 35%, #ffe3a8, #e6932a 60%, #7a4210); }',
     /* and the race's messages, in the gap between the stick and the buttons */
     '#pc-racemsg { position: fixed; display: none; box-sizing: border-box; padding: 5px 6px; border-radius: 9px; pointer-events: none; text-align: center;',
     '  background: rgba(6,9,16,.82); border: 1px solid rgba(125,211,252,.45); font-family: system-ui, -apple-system, sans-serif; }',
@@ -40537,7 +40541,6 @@ g._party = function () {
     '<div id="pc-hint" role="status"></div>' +
     '<div id="pc-racemsg" role="status" aria-live="polite"><div class="l1"></div><div class="l2"></div></div>' +
     '<div id="pc-racekey">▲ ▼ &nbsp;CHANGE LANE</div>' +
-    '<div id="pc-gamekey"></div>' +
     '<div id="pc-ringkey">◀ ▶ SLIP &nbsp;·&nbsp; ▼ GUARD &nbsp;·&nbsp; ▲ SUPER</div>' +
     '<div id="pc-btns">' +
       '<div class="pc-btn" id="pc-melee" role="button" aria-label="Melee attack"><b>⚔</b>MELEE</div>' +
@@ -40590,17 +40593,6 @@ g._party = function () {
       if (on || x || y) g.boxing._tapped = true;
       var k0 = document.getElementById('pc-knob');
       if (k0) k0.style.transform = 'translate(' + (x * 30) + 'px,' + (y * 30) + 'px)';
-      return;
-    }
-    var PM = padMode(g);
-    if (PM) {
-      /* IN A MINIGAME (Ben, 30 Sep): engine/76-game-pad.js says what the stick
-         is for there; games that read the arrow keys get them from it. */
-      g.keys.w = g.keys.s = g.keys.a = g.keys.d = false;
-      if (PM.keys === 'wasd' || PM.keys === 'x') { g.keys.a = on && x < -T; g.keys.d = on && x > T; }
-      if (PM.keys === 'wasd') { g.keys.w = on && y < -T; g.keys.s = on && y > T; }
-      var k2 = document.getElementById('pc-knob');
-      if (k2) k2.style.transform = 'translate(' + (x * 30) + 'px,' + (y * 30) + 'px)';
       return;
     }
     g.keys.w = on && y < -T; g.keys.s = on && y > T;
@@ -40783,30 +40775,9 @@ g._party = function () {
     if (Math.abs(dx) > 0.12 * l) g.faceDir = dx < 0 ? -1 : 1;
     return { x: dx / l, y: dy / l };
   }
-  function padMode(g) {
-    if (!g || !window.__8G_PADMODE || inRace(g) || inRing(g)) return null;
-    try { return window.__8G_PADMODE(g); } catch (e) { return null; }
-  }
-  var padHeld = { a: null, b: null };
-  function padPress(which, g) {
-    var M = padHeld[which];
-    if (!M) {
-      M = padMode(g); if (!M || !M[which]) return false;
-      padHeld[which] = M;
-      try { M[which].down(g); } catch (e) { console.warn('[pad] ' + M.key, e); }
-      return true;
-    }
-    if (M[which].repeat) { try { M[which].repeat(g); } catch (e) {} }
-    return true;
-  }
-  function padRelease(which) {
-    var M = padHeld[which], g = G(); padHeld[which] = null;
-    if (M && M[which].up && g) { try { M[which].up(g); } catch (e) {} }
-  }
   function melee() {
     var g = G(); if (inRace(g)) { raceGas(g, 'gas', true); return; }
     if (inRing(g)) { punch(g, 'head'); return; }
-    if (padHeld.a || padMode(g)) { padPress('a', g); return; }
     if (blocked(g)) return;
     g._tapWorld = null;
     if (g.vehicle) { g._vehManual = true; g._vehTrigger = true; return; }
@@ -40824,7 +40795,6 @@ g._party = function () {
   function ranged() {
     var g = G(); if (inRace(g)) { raceGas(g, 'turbo', true); return; }
     if (inRing(g)) { punch(g, 'body'); return; }
-    if (padHeld.b || padMode(g)) { padPress('b', g); return; }
     if (exitPress) return;
     if (blocked(g)) return;
     g._tapWorld = null;
@@ -40875,8 +40845,8 @@ g._party = function () {
      One press of EXIT is one exit: the rest of that press does nothing, so
      holding it never turns into a shot on foot. */
   var exitPress = false;
-  holdButton('pc-melee', melee, 260, function () { padRelease('a'); var g = G(); ringPress.head = false; if (g) { g._vehTrigger = false; if (g.race) raceGas(g, 'gas', false); } });
-  holdButton('pc-ranged', ranged, 220, function () { padRelease('b'); var g = G(); ringPress.body = false; exitPress = false; if (g && g.race) raceGas(g, 'turbo', false); });
+  holdButton('pc-melee', melee, 260, function () { var g = G(); ringPress.head = false; if (g) { g._vehTrigger = false; if (g.race) raceGas(g, 'gas', false); } });
+  holdButton('pc-ranged', ranged, 220, function () { var g = G(); ringPress.body = false; exitPress = false; if (g && g.race) raceGas(g, 'turbo', false); });
 
   /* ------------------------------------------------------------ quest hint */
   function hintNow(g) {
@@ -41130,22 +41100,13 @@ g._party = function () {
                  (g.state && g.state.phoneMenuOpen) || g.miniGameOpen || g.levelUpOpen || g.weaponsOpen;
       var ring = inRing(g), race = inRace(g);
       if (ring || race) busy = false;
-      var PMi = null, AG = null;
-      try { PMi = padMode(g); } catch (e) { PMi = null; }
-      if (PMi) busy = false;
-      /* A GAME THAT IS PLAYED BY TAPPING (Ben, 30 Sep: the store shift's item
-         cards and hockey's FACE OFF were under the stick): while one of the
-         minigames engine/77 knows is up, and the pad has no shape for it, the
-         pad steps aside (unless 77 says the game is walked with the stick). */
-      try { AG = window.__8G_ACTIVE_GAME ? window.__8G_ACTIVE_GAME() : null; } catch (e) { AG = null; }
-      if (AG && !PMi && !ring && !race && !AG.pad) busy = true;
       // A flag left up after its panel has gone (Ben, 29 Sep: "the weapons can be
       // seen equipped BUT no buttons" on the station and his own planet). If the
       // game is running — not paused — and nothing is actually on the screen
       // over the play area for a couple of seconds, the pad comes back.
       // (a conversation and a film are painted on the canvas, so they are never
       // second-guessed — only the panels that are real page elements)
-      if (busy && g && !g.gamePaused && !g.caveDialogueOpen && !g.film && !coveredNow() && !(AG && !PMi && !AG.pad)) {
+      if (busy && g && !g.gamePaused && !g.caveDialogueOpen && !g.film && !coveredNow()) {
         if (!staleSince) staleSince = Date.now();
         if (Date.now() - staleSince > 1800) { busy = false; if (!staleWarned) { staleWarned = true; try { console.warn('[pad] stale flag, pad shown', staleFlags(g)); } catch (e) {} } }
       } else staleSince = 0;
@@ -41185,26 +41146,6 @@ g._party = function () {
         if (rb) rb.setAttribute('aria-label', riding ? 'Exit' : 'Ranged attack');
         if (!riding) g._vehTrigger = false;
       }
-      var gk = PMi ? PMi.key : '';
-      if (gk !== (root.getAttribute('data-game') || '')) {
-        root.setAttribute('data-game', gk);
-        root.classList.toggle('game', !!PMi);
-        document.documentElement.classList.toggle('pc-game', !!PMi);   // the quest compass steps aside for the game
-        root.classList.toggle('nob', !!PMi && !PMi.b);
-        var mbg = document.getElementById('pc-melee'), rbg = document.getElementById('pc-ranged'), kg = document.getElementById('pc-gamekey');
-        if (PMi) {
-          if (mbg) { mbg.innerHTML = PMi.a ? '<b>' + PMi.a.icon + '</b>' + PMi.a.label : '<b>·</b>'; mbg.style.visibility = PMi.a ? '' : 'hidden'; mbg.setAttribute('aria-label', PMi.a ? PMi.a.label : ''); }
-          if (rbg && PMi.b) { rbg.innerHTML = '<b>' + PMi.b.icon + '</b>' + PMi.b.label; rbg.setAttribute('aria-label', PMi.b.label); }
-          if (kg) kg.textContent = PMi.hint || '';
-        } else {
-          if (mbg) { mbg.style.visibility = ''; mbg.innerHTML = '<b>⚔</b>MELEE'; mbg.setAttribute('aria-label', 'Melee attack'); }
-          if (rbg) { rbg.innerHTML = '<b>◎</b>RANGED'; rbg.setAttribute('aria-label', 'Ranged attack'); }
-          if (padHeld.a) padRelease('a'); if (padHeld.b) padRelease('b');
-          if (g && g.keys) g.keys.space = g.keys.shift = false;
-          // the default labels for riding / ring / race are put back by their own toggles next tick
-          root.classList.remove('riding', 'ring', 'race');
-        }
-      }
       if (g) g._vehManual = true;
       if (busy && stickId !== null) { stickId = null; setStick(0, 0, false); }
       // the quest tip lives on the top bar now and the compass has this slot
@@ -41219,7 +41160,6 @@ g._party = function () {
     if (++tries < 1200) setTimeout(wait, 50);
   })();
 })();
-
 /* 64 · THE FOX IN THE MIDDLE (Ben, 27 Sep). "Always have the player be in the
    centre, north to south, between the on-screen HUD." The camera used to hang
    him at 70% of the way down the screen, which on a phone put him in the
@@ -44615,7 +44555,6 @@ g._party = function () {
 (function () {
   if (window.__8G_NO_GAMEPAD) return;
   var clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
-  var T = 0.38;
 
   var MODES = [
     { key: 'rink', hint: 'STICK · SKATE',
@@ -44714,10 +44653,148 @@ g._party = function () {
   window.__8G_PADMODE = modeFor;
   window.__8G_PADMODES = MODES.map(function (m) { return m.key; });
 
+  /* ======================================================================
+     ATTACHED FROM THE OUTSIDE (Ben, 30 Sep: "what if we were to strip the
+     buttons away and add them again? they were working great"). The phone
+     controls in 63-phone-controls.js are back exactly as they were overnight,
+     and nothing here edits them. While a minigame is up this layer takes the
+     stick and the two buttons itself — it catches the touch before the
+     controls see it — relabels them, keeps them showing over the game, and
+     hides the whole pad in the games that are played by tapping. Outside a
+     game it does nothing at all.
+     ====================================================================== */
+  var T = 0.38;
+  var css = document.createElement('style');
+  css.textContent = [
+    '#pc-gamekey { position: fixed; left: calc(10px + env(safe-area-inset-left, 0px)); bottom: calc(146px + env(safe-area-inset-bottom, 0px)); display: none; padding: 4px 9px; border-radius: 9px; background: rgba(8,14,30,.72); border: 1px solid rgba(160,220,255,.45); color: #cfeeff; font: 800 11px/1.2 system-ui, sans-serif; letter-spacing: .08em; pointer-events: none; white-space: nowrap; z-index: 8001; }',
+    'html.g8-padgame #pc-gamekey { display: block; opacity: .8; }',
+    // in a game the pad shows even though the world underneath is paused
+    'html.g8-padgame #pc-root.off > #pc-stick, html.g8-padgame #pc-root.off > #pc-btns { opacity: .62 !important; }',
+    'html.g8-padgame #pc-root.off > #pc-stick { pointer-events: auto !important; }',
+    'html.g8-padgame #pc-root #pc-stick, html.g8-padgame #pc-root .pc-btn { opacity: .62; }',
+    'html.g8-padgame #pc-root .pc-btn.g8down { opacity: .95; transform: translateY(2px); filter: brightness(1.25); }',
+    'html.g8-padgame.g8-nob #pc-ranged { display: none !important; }',
+    'html.g8-padgame #pc-melee { background: radial-gradient(circle at 40% 35%, #b8f0ff, #22a6d6 60%, #0c4a66) !important; }',
+    'html.g8-padgame #pc-ranged { background: radial-gradient(circle at 40% 35%, #ffe3a8, #e6932a 60%, #7a4210) !important; }',
+    'html.g8-padgame #g8-compass, html.g8-padgame #g8-course { display: none !important; }',
+    // a game played by tapping: the pad steps aside altogether
+    'html.g8-pad-away #pc-root > * { opacity: 0 !important; pointer-events: none !important; }'
+  ].join('\n');
+  document.head.appendChild(css);
+  var H = document.documentElement;
+  var key = document.createElement('div'); key.id = 'pc-gamekey';
+  (function put() { if (document.body) document.body.appendChild(key); else setTimeout(put, 50); })();
+
+  function inRace(g) { return !!(g && g.race && (g.race.state === 'grid' || g.race.state === 'run') && !window.__8G_NO_RACE_PAD); }
+  function inRing(g) { return !!(g && g.boxing && g.boxing.state !== 'over' && !window.__8G_NO_RING_PAD); }
+  function current(g) { if (!g || !H.classList.contains('pc-touch') || inRace(g) || inRing(g)) return null; return modeFor(g); }
+
+  var shown = '', saved = null;
+  setInterval(function () {
+    var g = window.game; if (!g) return;
+    var M = current(g);
+    var k = M ? M.key : '';
+    if (k !== shown) {
+      var mb = document.getElementById('pc-melee'), rb = document.getElementById('pc-ranged');
+      if (M && !shown && mb && rb) saved = { m: mb.innerHTML, r: rb.innerHTML };
+      shown = k;
+      H.classList.toggle('g8-padgame', !!M);
+      H.classList.toggle('g8-nob', !!M && !M.b);
+      if (M) {
+        if (mb) { mb.innerHTML = M.a ? '<b>' + M.a.icon + '</b>' + M.a.label : '<b>·</b>'; mb.style.visibility = M.a ? '' : 'hidden'; }
+        if (rb && M.b) rb.innerHTML = '<b>' + M.b.icon + '</b>' + M.b.label;
+        key.textContent = M.hint || '';
+      } else {
+        if (mb) { mb.style.visibility = ''; mb.innerHTML = saved ? saved.m : '<b>⚔</b>MELEE'; }
+        if (rb) rb.innerHTML = saved ? saved.r : '<b>◎</b>RANGED';
+        saved = null; release('a'); release('b'); stickUp();
+        if (g.keys) { g.keys.space = false; g.keys.shift = false; }
+      }
+    }
+    // the games played by tapping (engine/77 knows them): no pad over them
+    var AG = null; try { AG = window.__8G_ACTIVE_GAME ? window.__8G_ACTIVE_GAME() : null; } catch (e) {}
+    H.classList.toggle('g8-pad-away', !!(AG && !M && !AG.pad && !inRace(g) && !inRing(g) && H.classList.contains('pc-touch')));
+  }, 100);
+
+  /* ---- the stick, in a game ---- */
+  var sid = null, scx = 0, scy = 0;
+  function knob(x, y) { var kb = document.getElementById('pc-knob'); if (kb) kb.style.transform = 'translate(' + (x * 30) + 'px,' + (y * 30) + 'px)'; }
+  function stickSet(x, y, on) {
+    var g = window.game; if (!g) return;
+    g.stick = { on: !!on, x: x, y: y };
+    var M = current(g);
+    if (g.keys) {
+      g.keys.w = g.keys.s = g.keys.a = g.keys.d = false;
+      if (M && (M.keys === 'wasd' || M.keys === 'x')) { g.keys.a = on && x < -T; g.keys.d = on && x > T; }
+      if (M && M.keys === 'wasd') { g.keys.w = on && y < -T; g.keys.s = on && y > T; }
+    }
+    knob(on ? x : 0, on ? y : 0);
+  }
+  function stickUp() { if (sid !== null) { sid = null; stickSet(0, 0, false); } }
+  function stickAt(e) {
+    var dx = (e.clientX - scx) / 42, dy = (e.clientY - scy) / 42, l = Math.hypot(dx, dy);
+    if (l > 1) { dx /= l; dy /= l; }
+    stickSet(dx, dy, true);
+  }
+  /* ---- the two buttons, in a game ---- */
+  var held = { a: null, b: null }, rep = { a: null, b: null }, bid = { a: null, b: null };
+  function press(which, e) {
+    var g = window.game, M = current(g); if (!M || !M[which]) return false;
+    held[which] = M; bid[which] = e.pointerId;
+    var el = document.getElementById(which === 'a' ? 'pc-melee' : 'pc-ranged'); if (el) el.classList.add('g8down');
+    try { M[which].down(g); } catch (x) { console.warn('[gamepad] ' + M.key, x); }
+    if (M[which].repeat) rep[which] = setInterval(function () { try { M[which].repeat(window.game); } catch (x) {} }, 220);
+    return true;
+  }
+  function release(which) {
+    var M = held[which]; held[which] = null; bid[which] = null;
+    if (rep[which]) { clearInterval(rep[which]); rep[which] = null; }
+    var el = document.getElementById(which === 'a' ? 'pc-melee' : 'pc-ranged'); if (el) el.classList.remove('g8down');
+    if (M && M[which].up && window.game) { try { M[which].up(window.game); } catch (x) {} }
+  }
+  function swallow(e) { e.stopImmediatePropagation(); e.stopPropagation(); if (e.cancelable) e.preventDefault(); }
+  // caught on the way DOWN, before the controls' own listeners hear it
+  window.addEventListener('pointerdown', function (e) {
+    if (!H.classList.contains('g8-padgame')) return;
+    var t = e.target && e.target.closest ? e.target : null; if (!t) return;
+    var st = t.closest('#pc-stick'), btn = t.closest('#pc-melee, #pc-ranged');
+    if (st) {
+      var r = st.getBoundingClientRect(); scx = r.left + r.width / 2; scy = r.top + r.height / 2;
+      sid = e.pointerId; try { st.setPointerCapture(e.pointerId); } catch (x) {}
+      stickAt(e); swallow(e); return;
+    }
+    if (btn) {
+      var which = btn.id === 'pc-melee' ? 'a' : 'b';
+      try { btn.setPointerCapture(e.pointerId); } catch (x) {}
+      press(which, e); swallow(e);
+    }
+  }, true);
+  window.addEventListener('pointermove', function (e) {
+    if (sid === null || e.pointerId !== sid) return;
+    stickAt(e); swallow(e);
+  }, true);
+  function ups(e) {
+    var hit = false;
+    if (sid !== null && e.pointerId === sid) { stickUp(); hit = true; }
+    if (bid.a !== null && e.pointerId === bid.a) { release('a'); hit = true; }
+    if (bid.b !== null && e.pointerId === bid.b) { release('b'); hit = true; }
+    if (hit) swallow(e);
+  }
+  window.addEventListener('pointerup', ups, true);
+  window.addEventListener('pointercancel', ups, true);
+  // (a touch that started on the pad is not also a tap on the game underneath)
+  ['touchstart', 'touchmove', 'touchend', 'mousedown', 'mouseup', 'click'].forEach(function (t) {
+    window.addEventListener(t, function (e) {
+      if (!H.classList.contains('g8-padgame')) return;
+      var el = e.target && e.target.closest && e.target.closest('#pc-stick, #pc-melee, #pc-ranged');
+      if (el) e.stopImmediatePropagation();
+    }, true);
+  });
+
   // the stick as the game sees it, every frame, for the games that steer by it
   setInterval(function () {
     var g = window.game; if (!g) return;
-    var M = modeFor(g);
+    var M = current(g);
     if (M && M.tick) { try { M.tick(g, g.stick); } catch (e) {} }
   }, 33);
 })();
@@ -45239,7 +45316,7 @@ g._party = function () {
       var v = level[key] + Math.sign(goal - level[key]) * Math.min(Math.abs(goal - level[key]), 0.03);
       level[key] = v;
       try { a2.volume = v; } catch (e) {}
-      if (v <= 0.001 && key !== cur && !a2.paused) { try { a2.pause(); } catch (e) {} }
+      if ((v <= 0.001 || window.__8G_IOS) && key !== cur && !a2.paused) { try { a2.pause(); } catch (e) {} }   // an iPhone cannot fade: it stops
       // iOS ignores .volume: there it is simply on or off
       if (key === cur && a2.paused && !document.hidden) { try { var p2 = a2.play(); if (p2 && p2.catch) p2.catch(function () {}); } catch (e) {} }
     }
@@ -64694,7 +64771,7 @@ const UNIVERSE = (function () {
 
 </script>
 
-<script>window.__g8L&&__g8L(0.8934)</script><script>
+<script>window.__g8L&&__g8L(0.8935)</script><script>
 /* ======================================================================== *
  *  LOBBY MODULE — the six shopfronts, open onto the square.
  *
