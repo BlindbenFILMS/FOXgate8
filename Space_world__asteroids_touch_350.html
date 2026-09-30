@@ -3656,7 +3656,7 @@ a{color:#8fe3ff}a:hover{color:#cdf0ff}.mp-scope /* every rotating group needs tr
 <div id="opening">
   <div class="op-inner">
     <div id="op-crest"></div>
-    <h1 id="op-title">8 GATES</h1>
+    <h1 id="op-title" style="display:none">8 GATES</h1>
     <div id="op-rule"></div>
     <div id="op-ask">NAME YOUR PLANET</div>
     <input id="op-in" maxlength="14" autocomplete="off" spellcheck="false" placeholder="PLAYER">
@@ -6003,9 +6003,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
      than assumed. Nobody is told 1.6 and handed 2.6. */
   const SPEED_STEPS = [
     { k: 'SLOW',    v: 0.78, x: '0.6', d: 'Gentle. Best on an older machine, or a browser that is struggling.' },
-    { k: 'RELAXED', v: 0.89, x: '0.8', d: 'A little calmer than standard. Easier to line up a shot.' },
     { k: 'NORMAL',  v: 1.00, x: '1',   d: 'The pace the game is tuned at.' },
-    { k: 'BRISK',   v: 1.14, x: '1.3', d: 'Quicker across the map. Costs the machine nothing extra.' },
     { k: 'FAST',    v: 1.26, x: '1.6', d: 'Everything moves hard. The most demanding way to fly.' }
   ];
   const SPEED_KEY = '8g_speed';
