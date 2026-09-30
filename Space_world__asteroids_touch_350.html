@@ -181,6 +181,33 @@
   background: radial-gradient(circle at 50% 42%, #0b1626 0%, #05080f 62%, #02040a 100%); }
 #opening.on { display: flex; }
 #opening .op-inner { width: min(92vw, 460px); padding: 8px 0 4px; }
+/* the FOXgate8 film, looping where the crest was (Ben, 30 Sep) */
+#op-logo { display: block; width: min(74vw, 330px); height: auto; aspect-ratio: 1 / 1; margin: -18px auto -26px;
+  mix-blend-mode: screen; pointer-events: none; }
+#g8-film { position: fixed; inset: 0; z-index: 12000; display: none; background: #000;
+  align-items: center; justify-content: center; }
+#g8-film.on { display: flex; }
+#g8-film video { width: 100%; height: 100%; object-fit: contain; background: #000; }
+#g8-film .snd { position: absolute; left: 50%; bottom: 7%; transform: translateX(-50%); display: none;
+  font: 900 14px Orbitron, sans-serif; letter-spacing: .18em; color: #04140d; background: #6ee7b7;
+  border: 0; border-radius: 8px; padding: 14px 22px; cursor: pointer; }
+#g8-film.muted .snd { display: block; }
+#g8-mf { position: fixed; left: 50%; bottom: max(14px, env(safe-area-inset-bottom)); transform: translateX(-50%);
+  z-index: 9006; display: none; width: min(94vw, 470px); background: rgba(14,6,16,.94);
+  border: 1px solid rgba(236,72,153,.6); border-radius: 10px; padding: 16px 18px 14px; color: #f3f2f2;
+  box-shadow: 0 0 60px rgba(236,72,153,.25), 0 0 80px rgba(0,0,0,.8); font-family: Archivo, system-ui, sans-serif; }
+#g8-mf.on { display: block; }
+#g8-mf .st { font: 800 9px Orbitron, sans-serif; letter-spacing: .24em; color: #f472b6; margin-bottom: 10px; }
+#g8-mf .say { display: block; margin: 0 0 12px; font-size: 14px; line-height: 1.6; letter-spacing: .01em; }
+#g8-mf .say b { display: block; font: 800 9px Orbitron, sans-serif; letter-spacing: .22em; color: #f472b6; margin-bottom: 4px; }
+#g8-mf .say.you { border-left: 2px solid rgba(127,208,255,.6); padding-left: 11px; }
+#g8-mf .say.you b { color: #7fd0ff; }
+#g8-mf button { display: block; width: 100%; margin-top: 8px; padding: 12px 12px; border-radius: 6px; cursor: pointer;
+  border: 1px solid rgba(127,208,255,.55); background: rgba(10,24,40,.95); color: #e6f6ff; text-align: left;
+  font: 700 14px Archivo, system-ui, sans-serif; letter-spacing: .01em; }
+#g8-mf button:hover, #g8-mf button:focus-visible { border-color: #7fd0ff; background: rgba(20,44,70,.98); outline: none; }
+#g8-mf button.go { text-align: center; background: #ec4899; border-color: #f9a8d4; color: #1a0610;
+  font: 900 13px Orbitron, sans-serif; letter-spacing: .16em; }
 #op-crest { display: flex; justify-content: center; margin-bottom: 20px;
   filter: drop-shadow(0 0 34px rgba(127,208,255,.45)); animation: opFloat 5.5s ease-in-out infinite; }
 @keyframes opFloat { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-9px) } }
@@ -3642,6 +3669,7 @@ a{color:#8fe3ff}a:hover{color:#cdf0ff}.mp-scope /* every rotating group needs tr
   </div>
 </div>
 <div id="dock-prompt"><button id="dock-btn">DOCK</button></div>
+<div id="surface-prompt"><button id="surface-btn">VISIT PLANET SURFACE</button></div>
 
 <div id="land-prompt"><button id="land-btn">LAND</button><div class="why" id="land-why"></div></div>
 <div id="exp-track"><h4 id="exp-head">COLONY EXPEDITION <b>MORE</b></h4><div id="exp-rows"></div><div id="exp-hint"></div></div>
@@ -4414,7 +4442,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
   <div id="mine-hud"><div id="mine-title">MINING PLATFORM</div><div id="mine-sub"></div>
     <div id="mine-actions"></div><div><button id="mine-leave" class="ghost">BACK TO SPACE</button></div></div>
 </div>
-<audio id="bgMusic" src="https://static.wixstatic.com/mp3/543289_226cd6922e9a491682282097644edce2.wav" loop preload="auto"></audio>
+<audio id="bgMusic" src="SPACE/MUSIC/SPACEMAPmusic.mp3" loop preload="auto"></audio>
 
 <div id="bottomDock">
   <div class="dock-row">
@@ -4501,7 +4529,8 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
     if (!audioUnlocked) {
       audioUnlocked = true;
       bgMusic.volume = 0.35;
-      bgMusic.play().catch(() => {});
+      if (window.__g8FilmOn) window.__g8MusicWanted = true;   // not over a film (Ben, 30 Sep)
+      else bgMusic.play().catch(() => {});
     }
   }
 
@@ -5862,7 +5891,20 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
      and sees the map 15% smaller. */
   var __PHONE_TOUCH = (function () { var t = false; try { t = matchMedia("(pointer: coarse)").matches; } catch (e) {}
     if (window.__8G_FORCE_TOUCH) t = true; if (window.__8G_NO_TOUCH) t = false; return t; })();
-  var __PHONE_PACE = (__PHONE_TOUCH && !window.__8G_FULL_PACE) ? 0.5 : 1;
+  var __PHONE_PACE = (__PHONE_TOUCH && !window.__8G_FULL_PACE) ? 0.39 : 1;   // NORMAL = the old SLOW (Ben, 29 Sep)
+  /* NPCs at half your pace, on a phone (Ben, 29 Sep): no other hull outruns
+     half of your ship's top speed. Units a frame, before timeScale. */
+  var __NPC_PHONE_CAP = !window.__8G_NPC_FULL;   // desktop too now (Ben, 30 Sep: yes)
+  // your own top speed as it stands: hull, upgrades, game speed (not a tow)
+  function __npcCap() {
+    var h = 1; try { h = playerAccelMul * HULLS[playerClass].accel * speedMul(); } catch (e) {}
+    return PLAYER_TOP_SPEED * speedPref * h * 0.5;
+  }
+  function __npcClamp(a) {
+    if (!__NPC_PHONE_CAP || !a || a.meruScript) return;   // the Machine Fleet does not wait for you
+    var cap = __npcCap(), v = Math.hypot(a.vx || 0, a.vy || 0);
+    if (v > cap) { a.vx = a.vx / v * cap; a.vy = a.vy / v * cap; }
+  }
   var __PHONE_MAP = __PHONE_TOUCH ? 0.85 : 1;
   /* THE STORY LINE ON THE BAR (Ben, 27 Sep) */
   var __storyFlags = {};
@@ -9737,7 +9779,22 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
      lands on surface_frontier.html, and the Meru fall, which is a story beat
      that goes where the story says. Put the nine surface files beside the
      build and this is a couple of lines to turn back on. */
-  function updateSurfacePrompt() { /* the prompt is gone; nothing to update */ }
+  function updateSurfacePrompt() {
+    const el = document.getElementById('surface-prompt');
+    if (!el) return;
+    const w = surfaceTarget();
+    const ok = !!(w && UNIVERSE.FILES && UNIVERSE.FILES.surface && UNIVERSE.FILES.surface[w.prefix]) && tradeRun.meruDone;
+    surfaceFor = ok ? w.prefix : null;
+    const want = ok ? 'block' : 'none';
+    if (el.style.display !== want) el.style.display = want;
+  }
+  document.getElementById('surface-btn').addEventListener('click', function (e) {
+    e.stopPropagation(); this.blur();
+    const at = surfaceFor;
+    if (!at || atWar(at) || meruAct || dockedAt) return;
+    descendToSurface(at);
+  });
+  window.__8G_SURFACE_FOR = function () { return surfaceFor; };
 
   function descendToSurface(prefix) {
     saveUniverse();
@@ -12085,7 +12142,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
   function openOpening() {
     const box = document.getElementById('opening');
     if (!box) return;
-    document.getElementById('op-crest').innerHTML = crestSvg('8g', 132);
+    g8Logo();                       // the FOXgate8 film, looping (Ben, 30 Sep)
     box.classList.add('on');
     gamePaused = true;
     setTimeout(() => { try { document.getElementById('op-in').focus(); } catch (e) {} }, 60);
@@ -12105,9 +12162,10 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
        card can sit for a minute while somebody thinks about a name for their
        world, and three seconds after THAT is what "three seconds in" means. */
     armOpeningAmbush();
+    g8AfterNaming();               // the opening film, then the Meru approach (Ben, 30 Sep)
     /* STRAIGHT OUT THE DOOR. Test mode is on and the tour is a tour of the
        deep, so there is nothing to be gained by parking on the pad first. */
-    if (testGod && TOUR_DEEP_ONLY && !__PHONE_TOUCH) startTour();
+    if (testGod && TOUR_DEEP_ONLY && !__PHONE_TOUCH && tradeRun.meruDone) startTour();   // Meru first
     // everything that was already drawn with the old label gets redrawn
     if (bridgeOpen) renderBridge();
     saveUniverse();
@@ -14252,6 +14310,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
        the game is the same story every time; after that it is simply whichever
        one you are closest to, because by then you can read a chart. */
     next() {
+      if (!this.meruDone) return 'meru';      // the game starts at Meru now (Ben, 30 Sep)
       /* THE RUN DOES NOT SEND YOU BACKWARDS.
          The order is your own station, then Gaya, then Meru — and the first of
          those is a berth you are already sitting on when the game starts, so a
@@ -14332,7 +14391,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
          THIS RUNS WHETHER OR NOT THE LINE IS DRAWN — the intercept is a place in
          the world, not a piece of the interface, and hiding the line must never
          be able to switch a story beat off. */
-      if (nx === 'meru' && !meruAct && !this.meruDone && this.seen['ga']
+      if (window.__G8_OLD_MERU && nx === 'meru' && !meruAct && !this.meruDone && this.seen['ga']
           && Math.hypot(at.x - pX, at.y - pY) < MERU_TRIGGER) {
         meruIntercept();
         return;
@@ -14390,11 +14449,11 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
      staging: the beat where nothing happens except that you are surrounded is
      the one that does the work. Only then do the beams come on, all four at
      once, and only then does anybody speak. */
-  const MERU_SHIPS     = 4;
-  const MERU_RING      = 300;     // how wide they hold the circle
+  const MERU_SHIPS     = 3;       // three, in a triangle (Ben, 30 Sep)
+  const MERU_RING      = 250;     // how wide they hold the circle
   const MERU_RING_MS   = 2200;    // and how long you sit inside it before the beams
-  const MERU_CINE_ZOOM = 1.85;    // how far the camera comes in for it
-  const MERU_FIGHT_MS  = 20000;   // how long the machine stays before it breaks off
+  const MERU_CINE_ZOOM = 1.3;    // how far the camera comes in for it
+  const MERU_FIGHT_MS  = 10000;   // a backstop: it ends on hits taken, or on running   // how long the machine stays before it breaks off
   const MERU_FLOOR     = 8;       // the sliver of hull it can never take
   // null | 'closing' | 'hail' | 'fight' | 'crippled' | 'falling' | 'docking'
   let meruAct = null;
@@ -14524,6 +14583,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
   }
   // the beam that holds you: drawn from the gunner's nose to your hull
   function drawMeruBeam(midX, midY) {
+    g8DrawZaps(midX, midY);
     if (meruAct !== 'grab' && meruAct !== 'hail') return;   // nothing while they are still flying in
     const grip = meruAct === 'hail' ? 1 : Math.min(1, 1 - (meruUntil - performance.now()) / MERU_GRAB_MS);
     const tx = midX + (pX - camX), ty = midY + (pY - camY);
@@ -14558,6 +14618,8 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
   // called when the hail window is dismissed: the shooting starts
   function meruBeginFight() {
     meruAct = 'fight';
+    g8Hits = 0;
+    g8Fight = { x: pX, y: pY, need: 3 + (Math.random() < 0.5 ? 1 : 0), fleeAt: 0, done: false };
     meruUntil = performance.now() + MERU_FIGHT_MS;
     /* The camera lets go at the same moment they do — the close look was for
        the arrest, and the fight needs the room. */
@@ -14574,7 +14636,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
   }
 
   function meruUpdate() {
-    if (!meruAct) return;
+    if (!meruAct) { g8MachineCheck(); return; }
     if (meruAct === 'approach' || meruAct === 'ring' || meruAct === 'grab' || meruAct === 'hail') {
       /* THREE BEATS, IN ORDER. It FLIES IN under its own power with nothing
          projected — you watch a police boat come alongside. Only when it is
@@ -14634,6 +14696,23 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
          the hull bar empties. It simply cannot reach zero while this is running,
          so the scene always gets to its ending. */
       if (playerHP < MERU_FLOOR) playerHP = MERU_FLOOR;
+      /* DOWN AFTER THREE OR FOUR HITS, AND NO OUTRUNNING THEM (Ben, 30 Sep). */
+      if (g8Fight && !g8Fight.done) {
+        if (g8Hits >= g8Fight.need) { g8Fight.done = true; meruCrippled(); return; }
+        const away = Math.hypot(pX - g8Fight.x, pY - g8Fight.y);
+        if (away > 900 && !g8Fight.fleeAt) { g8Fight.fleeAt = performance.now(); flashMessage('YOU CANNOT OUTRUN THEM'); }
+        if (g8Fight.fleeAt && performance.now() - g8Fight.fleeAt > 3200) { g8Fight.done = true; meruCrippled(); return; }
+        if (g8Fight.fleeAt) meruShips.forEach(m => {
+          if (!m || m.dead) return;
+          const dx = pX - m.x, dy = pY - m.y, d = Math.hypot(dx, dy);
+          if (d > 380) { m.x += dx / d * (d - 380) * 0.14; m.y += dy / d * (d - 380) * 0.14; }
+          if (m.fireCooldown > 20) m.fireCooldown = 20;
+        });
+        /* AND THE HITS LAND: the scene is three or four, so one lands every second and a half (faster if you run). */
+        const nowZ = performance.now();
+        if (!g8Fight.nextAt) g8Fight.nextAt = nowZ + 1300;
+        if (nowZ >= g8Fight.nextAt) { g8Zap(); g8Fight.nextAt = nowZ + (g8Fight.fleeAt ? 650 : 1400 + Math.random() * 500); }
+      }
       for (let i = 0; i < meruShips.length; i++) {
         const meruShip = meruShips[i];
         if (!meruShip || meruShip.dead) continue;
@@ -14763,6 +14842,301 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
       UNIVERSE.go(universe, 'surface', 'meru', universePatch());
     }, 2800);
   }
+
+
+  /* ==========================================================================
+     THE OPENING AND THE MACHINE FLEET (Ben, 30 Sep) · __G8_INTRO
+     ========================================================================== */
+  const G8_LOGO  = 'SPACE/videos/FOXgate8-logo-loop.mp4';
+  const G8_OPEN  = 'SPACE/videos/SPACE-opening.mp4';
+  const G8_MF    = 'SPACE/videos/SPACE-MACHINE-FLEET.mp4';
+  const G8M_MS   = 5000;          // seconds of flying before they come, at most
+  const G8M_OUT  = 1300;          // or this far from where you started
+  const G8M_NEAR = 430;           // or this near the planet
+  const G8M_STN  = 360;           // or this near its station
+  const G8M = { armed: false, t0: 0, x: 0, y: 0 };
+  let g8Hits = 0, g8Fight = null;
+  let g8VOpen = null, g8VMf = null, g8Bless = false;
+
+  // a twentieth of a second of silence: played inside a tap, it lets a video
+  // element keep its sound for later (a phone's rule is per element)
+  const G8_SILENCE = (function () {
+    try {
+      const sr = 8000, n = 400, buf = new ArrayBuffer(44 + n * 2), d = new DataView(buf);
+      const w = (o, t) => { for (let i = 0; i < t.length; i++) d.setUint8(o + i, t.charCodeAt(i)); };
+      w(0, 'RIFF'); d.setUint32(4, 36 + n * 2, true); w(8, 'WAVEfmt ');
+      d.setUint32(16, 16, true); d.setUint16(20, 1, true); d.setUint16(22, 1, true);
+      d.setUint32(24, sr, true); d.setUint32(28, sr * 2, true); d.setUint16(32, 2, true); d.setUint16(34, 16, true);
+      w(36, 'data'); d.setUint32(40, n * 2, true);
+      return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+    } catch (e) { return ''; }
+  })();
+  function g8Video() {
+    const v = document.createElement('video');
+    v.setAttribute('playsinline', ''); v.playsInline = true; v.preload = 'auto';
+    return v;
+  }
+  function g8BlessMf() {                  // call inside a tap
+    if (g8Bless) return; g8Bless = true;
+    g8VMf = g8VMf || g8Video();
+    try {
+      g8VMf.muted = false;
+      if (G8_SILENCE) g8VMf.src = G8_SILENCE;
+      const p = g8VMf.play();
+      const tidy = () => { try { g8VMf.pause(); g8VMf.removeAttribute('src'); g8VMf.load(); } catch (e) {} };
+      if (p && p.then) p.then(tidy, tidy); else tidy();
+    } catch (e) {}
+  }
+
+  function g8Logo() {
+    const box = document.getElementById('op-crest'); if (!box) return;
+    box.style.filter = 'none';          // a filtered parent would keep the film's black square
+    box.style.animation = 'none';
+    box.innerHTML = '<video id="op-logo" src="' + G8_LOGO + '" autoplay muted loop playsinline preload="auto"></video>';
+    const v = document.getElementById('op-logo');
+    v.muted = true;
+    v.addEventListener('error', () => { box.style.filter = ''; box.style.animation = ''; box.innerHTML = crestSvg('8g', 132); });
+    try { const p = v.play(); if (p && p.catch) p.catch(() => {}); } catch (e) {}
+  }
+
+  /* THE MUSIC WAITS. The space map's song and its effects are held while a
+     film runs, and come back when it ends. */
+  let g8Held = false;
+  function g8MusicHold(on) {
+    if (on) {
+      window.__g8FilmOn = true;
+      try { if (!bgMusic.paused) { g8Held = true; bgMusic.pause(); } } catch (e) {}
+      try { if (audioCtx && audioCtx.state === 'running') audioCtx.suspend(); } catch (e) {}
+    } else {
+      window.__g8FilmOn = false;
+      try { if ((g8Held || window.__g8MusicWanted) && !muted) bgMusic.play().catch(() => {}); } catch (e) {}
+      g8Held = false; window.__g8MusicWanted = false;
+      try { if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume(); } catch (e) {}
+    }
+  }
+
+  /* ONE FILM, FULL SCREEN, WATCHED TO THE END. If the browser will not give
+     it sound, it plays muted with a TAP FOR SOUND button; if it cannot play
+     at all, it ends itself, so nobody is ever stuck behind a broken file. */
+  function g8Film(v, src, then) {
+    let box = document.getElementById('g8-film');
+    if (!box) {
+      box = document.createElement('div'); box.id = 'g8-film';
+      box.innerHTML = '<button class="snd" type="button">🔊 TAP FOR SOUND</button>';
+      document.body.appendChild(box);
+      box.addEventListener('pointerdown', e => e.stopPropagation());
+      box.addEventListener('click', e => e.stopPropagation());
+    }
+    const snd = box.querySelector('.snd');
+    Array.from(box.querySelectorAll('video')).forEach(x => x.remove());
+    box.insertBefore(v, snd);
+    box.classList.remove('muted');
+    box.classList.add('on');
+    g8MusicHold(true);
+    let done = false, guard = 0;
+    const end = () => {
+      if (done) return; done = true;
+      clearTimeout(guard);
+      box.classList.remove('on', 'muted');
+      try { v.pause(); v.removeAttribute('src'); v.load(); } catch (e) {}
+      v.remove();
+      g8MusicHold(false);
+      if (then) then();
+    };
+    v.onended = end;
+    v.onerror = end;
+    guard = setTimeout(() => { if (!(v.currentTime > 0.2)) end(); }, 15000);      // never started
+    v.onloadedmetadata = () => {
+      clearTimeout(guard);
+      if (isFinite(v.duration)) guard = setTimeout(end, v.duration * 1000 + 25000);  // ran over
+    };
+    snd.onclick = e => { e.stopPropagation(); v.muted = false; box.classList.remove('muted'); try { v.play(); } catch (x) {} };
+    v.muted = false;
+    v.src = src;
+    try {
+      const p = v.play();
+      if (p && p.catch) p.catch(() => {
+        v.muted = true; box.classList.add('muted');
+        const q = v.play(); if (q && q.catch) q.catch(end);
+      });
+    } catch (e) { end(); }
+  }
+
+  /* BEGIN: the opening film, then the sky. */
+  function g8AfterNaming() {
+    g8BlessMf();
+    if (!tradeRun.meruDone) g8MeruPlace();      // (the start can be moved after load; put it back)
+    g8VOpen = g8Video();
+    gamePaused = true;
+    g8Film(g8VOpen, G8_OPEN, () => {
+      gamePaused = false;
+      if (!tradeRun.meruDone) g8Arm();
+    });
+  }
+
+  /* WHERE YOU START until Meru is done: between Meru's rock belt and the
+     planet, facing the planet. */
+  function g8MeruPlace() {
+    const w = meruWorldAt();
+    const f = MINE_FIELDS.find(q => q.prefix === 'meru') || { x: w.x - 1120, y: w.y };
+    pX = f.x + (w.x - f.x) * 0.34; pY = f.y + 160;
+    pAngle = Math.atan2(w.y - pY, w.x - pX);
+    vX = 0; vY = 0; moveTarget = null;
+    camX = pX; camY = pY;
+    try { playerProxy.x = pX; playerProxy.y = pY; playerProxy.vx = 0; playerProxy.vy = 0; playerProxy.heading = pAngle; } catch (e) {}
+    wingActors.forEach((a, i) => { if (!a) return; a.x = pX - 110 * (i + 1); a.y = pY + (i % 2 ? -90 : 90); a.vx = 0; a.vy = 0; });
+  }
+  function g8MeruInit() {
+    if (tradeRun.meruDone) return;
+    g8MeruPlace();
+    setStoryLock(true);                     // nothing else in the sky until they have you
+    if (homeNamed || arrivedFromElsewhere) {
+      // a game picked up again: the clock starts when the pilot touches something
+      const go = () => {
+        window.removeEventListener('keydown', go, true);
+        window.removeEventListener('pointerdown', go, true);
+        g8BlessMf();
+        if (!tradeRun.meruDone && !G8M.armed && !meruAct) { g8MeruPlace(); g8Arm(); }
+      };
+      window.addEventListener('keydown', go, true);
+      window.addEventListener('pointerdown', go, true);
+    }
+  }
+  function g8Arm() {
+    if (window.__8G_NO_MERU_INTRO) return;           // (the control checks fly without the scene)
+    G8M.armed = true; G8M.t0 = performance.now(); G8M.x = pX; G8M.y = pY;
+    setStoryLock(true);
+  }
+  window.__G8_INTRO = function () { return { armed: G8M.armed, meruAct: meruAct, hits: g8Hits, fight: g8Fight, ships: meruShips.length, paused: gamePaused, film: !!window.__g8FilmOn, lock: storyLock, meruDone: !!tradeRun.meruDone, p: [Math.round(pX), Math.round(pY)], meru: meruWorldAt() }; };
+  window.__G8_FIRE = function () { if (!meruAct) g8MachineFilm(); };
+
+  function g8MachineCheck() {
+    if (!G8M.armed || tradeRun.meruDone || meruAct) return;
+    if (gamePaused || dockedAt || minedAt) return;
+    const w = meruWorldAt(), stn = tradeRun.where('meru');
+    const t = performance.now() - G8M.t0;
+    if (t > G8M_MS
+        || Math.hypot(pX - G8M.x, pY - G8M.y) > G8M_OUT
+        || Math.hypot(pX - w.x, pY - w.y) < G8M_NEAR
+        || (stn && Math.hypot(pX - stn.x, pY - stn.y) < G8M_STN)) g8MachineFilm();
+  }
+
+  /* THEY COME. The film first — the approach, the thin pink beams, "WE ARE
+     MACHINE FLEET" — and when it ends you are where the film left you. */
+  function g8MachineFilm() {
+    G8M.armed = false;
+    meruAct = 'film';
+    moveTarget = null; vX = 0; vY = 0;
+    gamePaused = true;
+    g8VMf = g8VMf || g8Video();
+    logEvent('MACHINE FLEET · THREE HULLS · MERU APPROACH');
+    g8Film(g8VMf, G8_MF, g8Surround);
+  }
+  function g8Surround() {
+    gamePaused = false;
+    moveTarget = null; vX = 0; vY = 0;
+    const w = meruWorldAt();
+    const ang = Math.atan2(w.y - pY, w.x - pX);       // one of them sits between you and Meru
+    const dim = 104;
+    meruShips = [];
+    for (let i = 0; i < MERU_SHIPS; i++) {
+      const a = ang + (i / MERU_SHIPS) * Math.PI * 2;
+      const m = {
+        element: machineEl('gunner', dim), offsetSize: dim / 2, isStation: false, machine: true,
+        prefix: 'mk', shipClass: 'gunner', radius: dim * 0.48,
+        x: pX + Math.cos(a) * MERU_RING, y: pY + Math.sin(a) * MERU_RING,
+        centerX: pX, centerY: pY, guardX: pX, guardY: pY,
+        orbitRadius: MERU_RING, orbitAngle: a, orbitSpeed: 0.0035,
+        maxHp: MACHINE_HP.gunner, hp: MACHINE_HP.gunner, fuel: 100,
+        pace: CLASS_SPEED.gunner || 1,
+        maxSpeed: NPC_MAX_SPEED * (CLASS_SPEED.gunner || 1),
+        accel: NPC_ACCEL * (CLASS_SPEED.gunner || 1),
+        vx: 0, vy: 0, heading: a + Math.PI,
+        hostile: false, dead: false, respawnAt: 0, hitFlash: 0,
+        chaseOffset: (i / MERU_SHIPS) * Math.PI * 2,
+        fireCooldown: 99999, state: 'patrol', meruScript: true, ringSlot: a
+      };
+      allFleetActors.push(m);
+      meruShips.push(m);
+    }
+    meruShip = meruShips[0];
+    const stn0 = tradeRun.where('meru');
+    meruHoldAt = stn0 ? Math.hypot(stn0.x - pX, stn0.y - pY) : 0;
+    meruAct = 'hail';                                 // beams on, at full grip
+    cineWant = MERU_CINE_ZOOM;
+    try { sfx.tractorOn(); } catch (e) {}
+    flashMessage('HELD — THREE TRACTOR BEAMS');
+    g8Talk();
+  }
+
+  /* THE CONVERSATION. Three things you might say; none of them helps. */
+  function g8Talk() {
+    let box = document.getElementById('g8-mf');
+    if (!box) {
+      box = document.createElement('div'); box.id = 'g8-mf';
+      document.body.appendChild(box);
+      ['pointerdown', 'mousedown', 'touchstart', 'click', 'keydown'].forEach(t =>
+        box.addEventListener(t, e => e.stopPropagation(), { passive: true }));
+    }
+    const say = (who, line, you) => '<span class="say' + (you ? ' you' : '') + '"><b>' + esc(who) + '</b>' + esc(line) + '</span>';
+    const REPLIES = ['WAIT! What did we do?', 'When did Meru become restricted space?', 'Who authorized you to do this?!'];
+    box.innerHTML = '<div class="st">INCOMING · MACHINE FLEET</div>'
+      + say('MACHINE FLEET', 'WE ARE MACHINE FLEET, you are TRESPASSING, prepare to be boarded.')
+      + REPLIES.map((r, i) => '<button type="button" data-i="' + i + '">' + esc(r) + '</button>').join('');
+    box.classList.add('on');
+    Array.from(box.querySelectorAll('button')).forEach(b => b.addEventListener('click', e => {
+      e.stopPropagation();
+      g8Answer(REPLIES[+b.dataset.i]);
+    }));
+    saveUniverse();
+  }
+  function g8Answer(reply) {
+    const box = document.getElementById('g8-mf');
+    const say = (who, line, you) => '<span class="say' + (you ? ' you' : '') + '"><b>' + esc(who) + '</b>' + esc(line) + '</span>';
+    box.innerHTML = '<div class="st">INCOMING · MACHINE FLEET</div>'
+      + say('YOU', reply, true)
+      + say('MACHINE FLEET', 'You are resisting our commands. Now engaging BATTLE protocol.')
+      + '<button type="button" class="go">BRACE!</button>';
+    let gone = false;
+    const fight = () => {
+      if (gone) return; gone = true;
+      box.classList.remove('on');
+      setStoryLock(false);
+      meruBeginFight();
+    };
+    box.querySelector('.go').addEventListener('click', e => { e.stopPropagation(); fight(); });
+    setTimeout(fight, 4200);
+  }
+
+  const g8Zaps = [];
+  function g8Zap() {
+    const live = meruShips.filter(m => m && !m.dead); if (!live.length) return;
+    const m = live[Math.floor(Math.random() * live.length)];
+    g8Zaps.push({ x: m.x, y: m.y, t: 14 });
+    m.heading = Math.atan2(pY - m.y, pX - m.x);
+    if (!shieldAbsorb(pX, pY, 22, '#ec4899')) {
+      playerHP = Math.max(0, playerHP - hullHit(22)); lastCombatTick = globalTick;
+      playerHitFlash = 14;
+    }
+    try { impactBurst(pX, pY, 'you', 1.5, 0, 0); } catch (e) {}
+    try { sfx.explosion(); } catch (e) {}
+    g8Hits++;
+  }
+  function g8DrawZaps(midX, midY) {
+    for (let i = g8Zaps.length - 1; i >= 0; i--) {
+      const z = g8Zaps[i];
+      if (--z.t <= 0) { g8Zaps.splice(i, 1); continue; }
+      const sx = midX + (z.x - camX), sy = midY + (z.y - camY), tx = midX + (pX - camX), ty = midY + (pY - camY);
+      pCtx.save();
+      pCtx.globalAlpha = z.t / 14; pCtx.lineCap = 'round';
+      pCtx.strokeStyle = '#f43f5e'; pCtx.shadowColor = '#f43f5e'; pCtx.shadowBlur = 18; pCtx.lineWidth = 7;
+      pCtx.beginPath(); pCtx.moveTo(sx, sy); pCtx.lineTo(tx, ty); pCtx.stroke();
+      pCtx.strokeStyle = '#ffe4ec'; pCtx.shadowBlur = 0; pCtx.lineWidth = 2.5;
+      pCtx.beginPath(); pCtx.moveTo(sx, sy); pCtx.lineTo(tx, ty); pCtx.stroke();
+      pCtx.restore();
+    }
+  }
+  window.__G8_PUSH = function (dx, dy) { pX += dx; pY += dy; camX = pX; camY = pY; };   // (for the tests)
 
   function nearestStation() {
     let best = null, bd = Infinity;
@@ -16524,7 +16898,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
   const OPENING_RANGE    = 760;
   let openingAtMs = 0, openingDone = false;
   function armOpeningAmbush() {
-    if (openingDone) return;
+    if (openingDone || !tradeRun.meruDone) return;   // Meru first (Ben, 30 Sep)
     openingAtMs = performance.now() + OPENING_DELAY_MS;
   }
   function checkOpeningAmbush() {
@@ -17427,7 +17801,10 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
     anchor(v) { if (v > 0.2 && v < 0.8) SCREEN_ANCHOR_Y = v; return SCREEN_ANCHOR_Y; },
     quest() { const q = __storyQuest(); const h = document.getElementById('dockTipHeader'), d = document.getElementById('dockTipDetail'); return { q: q, header: h && h.textContent, detail: d && d.textContent, compass: compassTarget() }; },
     flag(k, v) { __storyFlags[k] = v; __questShown = ''; },
-    ship() { return { x: pX, y: pY, vx: vX, vy: vY, target: moveTarget, lasers: playerLasers.length, energy: playerEnergy, zoom: ZOOM, pace: __PHONE_PACE, timeScale: timeScale }; }
+    ship() { return { x: pX, y: pY, vx: vX, vy: vY, target: moveTarget, lasers: playerLasers.length, energy: playerEnergy, zoom: ZOOM, pace: __PHONE_PACE, timeScale: timeScale, npcCap: __NPC_PHONE_CAP ? __npcCap() : 0, top: PLAYER_TOP_SPEED, pv: Math.hypot(vX, vY),
+      npcFastest: (typeof allFleetActors !== 'undefined' ? allFleetActors : []).reduce(function (m, a) { return (a && !a.dead && !a.isStation) ? Math.max(m, Math.hypot(a.vx || 0, a.vy || 0)) : m; }, 0),
+      fastWho: (typeof allFleetActors !== 'undefined' ? allFleetActors : []).filter(function (a) { return a && !a.dead && !a.isStation; }).sort(function (a, b) { return Math.hypot(b.vx || 0, b.vy || 0) - Math.hypot(a.vx || 0, a.vy || 0); }).slice(0, 3).map(function (a) { return [a.shipClass, a.state, a.creature ? 'beast' : '', a.isTrader ? 'trader' : '', a.pirate ? 'pirate' : '', Math.hypot(a.vx || 0, a.vy || 0).toFixed(1), a.towed ? 'towed' : '', a.docked ? 'dock' : ''].join(' '); }),
+      npcs: (typeof allFleetActors !== 'undefined' ? allFleetActors.length : -1) }; }
   };
 
   function drawFlagshipCanvas(ctx, cX, cY, angle) {
@@ -18573,7 +18950,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
       const home = FLEET_WORLDS.some(w => w.prefix === prefix && w.isPlayer);
       if (dsc) {
         dsc.textContent = 'DESCEND TO ' + (WORLD_LABEL[prefix] || 'THE') + ' SURFACE';
-        dsc.style.display = UNIVERSE.FILES.surface[prefix] ? '' : 'none';
+        dsc.style.display = 'none';   // the surface is offered from orbit now (Ben, 29 Sep)
       }
       if (stn) stn.style.display = home ? '' : 'none';
     }
@@ -18627,7 +19004,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
   function modalUp() {
     return !!document.querySelector('#exp-modal.on, #distress.on, #wreck.on, #lowfuel.on, '
       + '#fuelcall.on, #wreckcard.on, #cutcard.on, #buoycard.on, #hull-lost.on, #exp-modal.on, #swap.on, #armnew.on, '
-      + '#route-card.on, #wpn-panel.on');
+      + '#route-card.on, #wpn-panel.on, #g8-film.on, #g8-mf.on');
   }
   function resumeIfClear() {
     if (bridgeOpen || minedAt || dockedAt || prizeShip || namingWorld) return;
@@ -18694,6 +19071,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
     });
     /* Raise it on a fresh universe only. A save that already carries a name —
        or a pilot who arrived here from another layer — is already flying. */
+    g8MeruInit();                  // until Meru is done, you start beside it (Ben, 30 Sep)
     if (!homeNamed && !arrivedFromElsewhere) openOpening();
   }
 
@@ -20963,6 +21341,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
           actor.heading = turnToward(actor.heading, want, 0.09);
           actor.vx = Math.cos(actor.heading) * TRADER_SPEED;
           actor.vy = Math.sin(actor.heading) * TRADER_SPEED;
+          __npcClamp(actor);
           actor.x += actor.vx * timeScale * stride;
           actor.y += actor.vy * timeScale * stride;
         }
@@ -21360,7 +21739,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
         if (actor.webUntil && globalTick < actor.webUntil) {
           actor.vx *= 0.55; actor.vy *= 0.55;                 // caught in the net
         }
-        actor.x += actor.vx * timeScale * stride; actor.y += actor.vy * timeScale * stride;
+        __npcClamp(actor); actor.x += actor.vx * timeScale * stride; actor.y += actor.vy * timeScale * stride;
 
         // heading eases round instead of snapping to a jittering velocity vector
         // A ship with a target yaws onto it. Without this a wingman points along
@@ -22871,7 +23250,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
         gone = true;
       }
       if (!gone && tpCanHitYou && !cloakActive && playerInvulnerable <= 0 && Math.hypot(tp.x - pX, tp.y - pY) < tp.size + 30) {
-        playerHP = Math.max(0, playerHP - hullHit(tp.dmg)); lastCombatTick = globalTick;
+        playerHP = Math.max(0, playerHP - hullHit(tp.dmg)); lastCombatTick = globalTick; if (meruAct === 'fight') g8Hits++;
         playerHitFlash = 16; playerInvulnerable = 24; sfx.explosion();
         for (let k = 0; k < 14; k++) combatExplosions.push({ x: tp.x, y: tp.y, vX: Math.random()*8-4, vY: Math.random()*8-4, size: 4, alpha: 1, color: '#f97316' });
         gone = true;
@@ -22967,13 +23346,13 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
       const boCanHitYou = !bo.friend && (bo.pirate || !bo.fleet || atWar(bo.fleet));
       if (boCanHitYou && !cloakActive && shieldsActive
           && segHitsCircle(lastX(bo), lastY(bo), bo.x, bo.y, pX, pY, shieldRadius() + 6)) {
-        shieldAbsorb(bo.x, bo.y, bo.dmg || 6, '#ff9c6b');
+        shieldAbsorb(bo.x, bo.y, bo.dmg || 6, '#ff9c6b'); if (meruAct === 'fight') g8Hits++;
         npcBolts.splice(i, 1);
         continue;
       }
       if (boCanHitYou && !cloakActive && playerInvulnerable <= 0
           && segHitsCircle(lastX(bo), lastY(bo), bo.x, bo.y, pX, pY, 34)) {
-        playerHP = Math.max(0, playerHP - hullHit(bo.dmg || 6)); lastCombatTick = globalTick;
+        playerHP = Math.max(0, playerHP - hullHit(bo.dmg || 6)); lastCombatTick = globalTick; if (meruAct === 'fight') g8Hits++;
         playerHitFlash = 14; playerInvulnerable = 20;
         // a round on your own plating is the loudest one on the board
         impactBurst(bo.x, bo.y, 'you', 1.5, bo.vX, bo.vY);
