@@ -7,6 +7,7 @@ import { MeshBVH } from '../vendor/three/three-mesh-bvh.js';
 import { rr, pick, clamp, smooth, damp, makeGradient } from '../village-game.js';
 import { foxKit, PLAYER_MALE, PLAYER_FEMALE } from '../fox-kit.js';
 import { crestTex } from './textures.js';
+import { makeWood, woodify, isWhiteFloorMat, buildWing, buildDoor } from './gallery-wing.js';
 
 const BASE = 'gallery/';
 const SPAWN = { x: 5.5, y: 0.5, z: 0, face: -Math.PI / 2 };
@@ -30,9 +31,10 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   // ---------------------------------------------------------------- the building
   const data = await (await fetch(BASE + 'gallery.json')).json();
   // all artwork/poster images ship as one pack file (one download, one file to commit); each becomes a blob URL
+  let IMGURL = {}; const RES = u => (u && IMGURL[u]) || u;
   try {
     const [idx, buf] = await Promise.all([fetch(BASE + 'img.index.json').then(r => r.json()), fetch(BASE + 'img.pack').then(r => r.arrayBuffer())]);
-    const url = {}; for (const [k, [o, l]] of Object.entries(idx)) url[k] = URL.createObjectURL(new Blob([buf.slice(o, o + l)], { type: 'image/webp' }));
+    const url = IMGURL; for (const [k, [o, l]] of Object.entries(idx)) url[k] = URL.createObjectURL(new Blob([buf.slice(o, o + l)], { type: 'image/webp' }));
     const R = u => (u && url[u]) || u;
     data.signs.forEach(s => { if (s.img) s.img = R(s.img); }); data.vids.forEach(v => { v.poster = R(v.poster); });
     data.edu.forEach(e => (e.people || []).forEach(p => { p.img = R(p.img); }));
@@ -40,12 +42,14 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const gltf = await new Promise((res, rej) => new GLTFLoader().load(BASE + 'gallery.glb', res, e => e.total && onProgress(e.loaded / e.total), rej));
   const world = gltf.scene; scene.add(world); world.updateMatrixWorld(true);
   const colGeos = [];
+  const wood = makeWood();   // honey oak planks, drawn here (no file)
   world.traverse(o => {
     if (!o.isMesh) return;
     const old = o.material, mats = Array.isArray(old) ? old : [old];
     const conv = mats.map(m => {   // Lambert: cheap on phones, and no black metal without an env map
       const n = new THREE.MeshLambertMaterial({ color: m.color, map: m.map, emissive: m.emissive, emissiveMap: m.emissiveMap, emissiveIntensity: m.emissiveIntensity ?? 1, transparent: m.transparent, opacity: m.opacity, alphaTest: m.alphaTest, side: m.side, vertexColors: m.vertexColors });
       if (m.metalness > 0.5 && !m.map) n.color.multiplyScalar(0.85);
+      if (isWhiteFloorMat(n)) woodify(n, wood);   // the white floors become hardwood (walls keep their colour)
       return n;
     });
     o.material = Array.isArray(old) ? conv : conv[0];
@@ -56,6 +60,15 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       for (let i = 0; i < o.count; i++) { const mi = new THREE.Matrix4(); o.getMatrixAt(i, mi); const g = o.geometry.clone(); g.applyMatrix4(new THREE.Matrix4().multiplyMatrices(o.matrixWorld, mi)); colGeos.push(g); }
     } else { const g = o.geometry.clone(); g.applyMatrix4(o.matrixWorld); colGeos.push(g); }
   });
+  // New Artists Wing: built from Ben's artist pages, entered through a doorway in the main hall (quick fade, like our interiors)
+  const WING_O = new THREE.Vector3(-100, -150, 0);
+  const wing = data.wing ? buildWing({ scene, wing: data.wing, O: WING_O, wood, resolveImg: RES }) : null;
+  const doors = [];
+  if (wing) {
+    for (const m of wing.col) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); colGeos.push(g); }
+    doors.push({ ...buildDoor({ scene, pos: new THREE.Vector3(-96, -3.35, 12), face: Math.PI / 2, title: 'NEW ARTISTS WING', sub: data.wing.artists.map(a => a.name).join(' · ') }), to: { x: WING_O.x - 4.5, y: WING_O.y, z: WING_O.z, face: -Math.PI / 2 }, wing: true });
+    doors.push({ ...buildDoor({ scene, pos: new THREE.Vector3(WING_O.x - 0.9, WING_O.y, WING_O.z), face: Math.PI / 2, title: '← BACK TO THE GALLERY', sub: 'The main hall of the Blind Canvas Project' }), to: { x: -92, y: -3.35, z: 12, face: Math.PI / 2 }, wing: false });
+  }
   // one position-only collision mesh with a BVH (fast rays on phones)
   let total = 0; for (const g of colGeos) total += (g.index ? g.index.count : g.attributes.position.count);
   const P = new Float32Array(total * 3); let k = 0;
@@ -104,6 +117,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     const { desc, imgDesc } = splitDesc(a.d);
     return { title: a.t, desc, imgDesc, img: best < 1.5 ? img : null, ctr, n };
   });
+  if (wing) arts.push(...wing.arts);
   function showSign(sg) {
     if (sg.mesh) return; const s = sg.s;
     let mat;
@@ -210,11 +224,12 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     if (input.jump && Pl.ground && extra !== 'chair') { Pl.vy = 6.2; Pl.ground = false; } input.jump = 0;
     if (Pl.ground && gy > Pl.y - 0.45 && Pl.vy <= 0) { Pl.y = damp(Pl.y, gy, 30, dt); Pl.vy = 0; }
     else { Pl.vy -= 22 * dt; Pl.y += Pl.vy * dt; Pl.ground = false; if (Pl.y <= gy) { Pl.y = gy; Pl.vy = 0; Pl.ground = true; } }
-    if (Pl.y < -60) respawn();
+    if (Pl.y < (Pl.y < -100 ? WING_O.y - 30 : -60)) respawn();
     Pl.speed = Math.hypot(dx, dz) / Math.max(dt, 1e-4) + (mag > 0.05 ? sp * 0.3 : 0);
   }
   function respawn() { Pl.x = SPAWN.x; Pl.z = SPAWN.z; Pl.y = groundAt(SPAWN.x, 1.5, SPAWN.z); Pl.vy = 0; Pl.face = SPAWN.face; St.yaw = SPAWN.face + Math.PI; }
 
+  const DBG = { freeCam: false };
   function updateCamera(dt) {
     const head = new THREE.Vector3(Pl.x, Pl.y + 1.35, Pl.z);
     const cp = Math.cos(St.pitch), dir = new THREE.Vector3(Math.sin(St.yaw) * cp, Math.sin(St.pitch), Math.cos(St.yaw) * cp);
@@ -265,16 +280,31 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     for (const e of edu) { const d = e.pos.distanceTo(p); if (d < e.r + 1 && d < bd + 1.5) { bd = d; best = { kind: 'edu', item: e, label: (e.prompt || 'LEARN MORE').replace(/^Press E to /i, '') }; } }
     return best;
   }
+  let doorT = 0;
+  const fadeEl = document.createElement('div'); fadeEl.style.cssText = 'position:absolute;inset:0;background:#0b0a12;opacity:0;pointer-events:none;transition:opacity .28s;z-index:6'; container.appendChild(fadeEl);
+  function travel(d) {
+    if (d.wing && wing) wing.load();
+    fadeEl.style.opacity = 1;
+    setTimeout(() => { const t = d.to; Pl.x = t.x; Pl.z = t.z; Pl.y = t.y; Pl.vy = 0; Pl.face = t.face; St.yaw = t.face + Math.PI; St.camDist = 1; streamT = 0; onZone(d.wing ? 'New Artists Wing' : 'The Gallery'); setTimeout(() => fadeEl.style.opacity = 0, 120); }, 300);
+  }
   function tick(now) {
     raf = requestAnimationFrame(tick);
     const dt = Math.min(0.05, (now - last) / 1000); last = now;
     move(dt);
     player.position.set(Pl.x, Pl.y + (extra === 'chair' ? 0 : 0.02), Pl.z); player.rotation.y = Pl.face;
     animFox(player, dt, Pl.speed / FOX_SCALE * 0.6, !Pl.ground);
-    updateCamera(dt);
+    if (!DBG.freeCam) updateCamera(dt);
+    doorT -= dt;
+    for (const d of doors) {
+      d.portal.material.opacity = 0.78 + Math.sin(now / 400) * 0.12;
+      if (doorT > 0) continue;
+      const lx = Pl.x - d.pos.x, lz = Pl.z - d.pos.z, along = lx * Math.cos(d.face) - lz * Math.sin(d.face), across = lx * Math.sin(d.face) + lz * Math.cos(d.face);
+      if (Math.abs(along) < 1.5 && Math.abs(across) < 0.55 && Math.abs(Pl.y - d.pos.y) < 2) { doorT = 1.2; travel(d); }
+    }
     streamT -= dt;
     if (streamT <= 0) {
       streamT = 0.4; const p = new THREE.Vector3(Pl.x, Pl.y, Pl.z);
+      if (wing && Pl.y < -100) wing.load();
       for (const sg of signs) { const d = sg.ctr.distanceTo(p); if (d < NEAR) showSign(sg); else if (d > FAR) hideSign(sg); }
       // which video zone are we in?
       let zUrl = null; const pp = new THREE.Vector3(Pl.x, Pl.y + 0.5, Pl.z);
@@ -300,7 +330,8 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     jump() { input.jump = 1; },
     setRun(v) { input.run = v ? 1 : 0; },
     respawn,
-    debug: { Pl, St, input, scene, camera, renderer, vids, signs, teleport(x, y, z, face) { Pl.x = x; Pl.z = z; Pl.y = y ?? groundAt(x, 30, z); Pl.vy = 0; if (face != null) { Pl.face = face; St.yaw = face + Math.PI; } }, groundAt, cast, info: () => ({ calls: renderer.info.render.calls, tris: renderer.info.render.triangles, tex: renderer.info.memory.textures, geo: renderer.info.memory.geometries }) },
+    goWing() { const d = doors.find(x => x.wing); if (d) travel(d); },
+    debug: { THREE, DBG, Pl, St, input, scene, camera, renderer, vids, signs, teleport(x, y, z, face) { Pl.x = x; Pl.z = z; Pl.y = y ?? groundAt(x, 30, z); Pl.vy = 0; if (face != null) { Pl.face = face; St.yaw = face + Math.PI; } }, groundAt, cast, info: () => ({ calls: renderer.info.render.calls, tris: renderer.info.render.triangles, tex: renderer.info.memory.textures, geo: renderer.info.memory.geometries }) },
     destroy() { cancelAnimationFrame(raf); ro.disconnect(); removeEventListener('keydown', onKeyDown); removeEventListener('keyup', onKeyUp); if (hls) hls.destroy(); video.pause(); renderer.dispose(); el.remove(); joyBase.remove(); joyKnob.remove(); },
   };
 }

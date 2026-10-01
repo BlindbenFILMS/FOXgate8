@@ -86,7 +86,7 @@ const pref = (() => { try { return JSON.parse(localStorage.getItem('8gates.galle
 const savePref = () => { try { localStorage.setItem('8gates.gallery.v1', JSON.stringify(pref)); } catch (e) {} };
 let G;
 try {
-  G = await createGallery({ container: $('stage'), onProgress: f => { $('lb').style.width = Math.round(f * 100) + '%'; }, onNear });
+  G = await createGallery({ container: $('stage'), onProgress: f => { $('lb').style.width = Math.round(f * 100) + '%'; }, onNear, onZone: z => { document.querySelector('#place .c').textContent = z; } });
 } catch (e) { $('lt').textContent = 'The gallery could not open: ' + e.message; throw e; }
 window.G = G;
 $('load').style.display = 'none';

@@ -59,3 +59,5 @@ Open `gallery.html` (or the Blind Canvas card on the galaxy page).
 - [ ] Try the learning stations: tools, ally tips, the spectrum and the Wall of Why.
 - [ ] Videos play in each room's screens while you stand in that room. Tap the screen once to turn the sound on. **Test this on the iPhone; Vimeo streams can't be reached from the build machine.**
 - [ ] In the ☰ menu, try Fox or Vixen, glasses, a white cane, a wheelchair, read-aloud and larger text.
+- [ ] In the main hall, walk into the teal NEW ARTISTS WING doorway. You should arrive in the wing, where 7 artists each have 3 canvases and a bio board. Walk into the doorway behind you to go back.
+- [ ] The white floors are now honey oak. Check that nothing important turned to wood by mistake, such as white tabletops.

@@ -65,3 +65,8 @@ Ben's PlayCanvas project (BCP export) was exported with PlayCanvas's own GltfExp
   2. `wpos.js` exports the script entity positions.
   3. A Python step builds `gallery.json`.
   4. `conv.js` makes the webp images, then they are packed into `img.pack`.
+- **1 Oct, later.** Art comes from Ben's artist pages ("BCP Viverse/all art - SQUARE/HTML files/*.html", 22 artists): titles, quotes, image descriptions, bios and the art at up to 1024 px. `/home/claude/bcp/wix/parse.js` extracts it and `apply.py` maps it onto the walls.
+  - 45 existing pieces were upgraded and 16 bios replaced.
+  - The Wall of Why portraits were mislabelled "Roots of Kinship" in the source; that's fixed.
+  - The New Artists Wing (`engine/gallery-wing.js`) holds 7 artists × 3 canvases plus bio boards. It is built at (-100,-150,0) and you enter it through the teal doorway in the main hall at (-96,-3.35,12).
+  - White floors are now honey oak. The shader swaps white, upward-facing pixels, including palette-textured materials.
