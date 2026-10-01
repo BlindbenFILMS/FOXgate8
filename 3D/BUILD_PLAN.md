@@ -54,3 +54,14 @@ World kit v1 (overnight 1 Oct, Claude in Cowork): every world below is PLAYABLE 
 - 1 Oct overnight: engine/world-kit.js + tools/gen_worlds.py + world.html + index.html (galaxy). 10 worlds generated and checked for errors; minigame panel; room dressing (tables/stools/candles, wall trim, lamps, banners, rugs); indoor lighting fix. Morning checklist: TRY_THIS.md.
 - 1 Oct (cont.): hero pass — layered ground, Meru-style trees/lamps/tufts, per-world building kit + baking, zone props from 2D spots, castles at every castle gate, Kyoto quarter (torii, pagoda, keep, dohyo, sakura), Vegas vision, set pieces in every world, station pass, creatures.js (12 kinds + combat feel), space.html, HUD compass/banners, 7 3D minigames. All 216 places load with no errors.
 - 1 Oct (second night): surface polish on every world (see TRY_THIS.md 'second night'), space map v2. Sweep: all 216 places load with no errors.
+
+## Blind Canvas gallery (1 Oct): playable
+Ben's PlayCanvas project (BCP export) was exported with PlayCanvas's own GltfExporter and optimized with gltf-transform into `gallery/gallery.glb` (3 MB).
+- **Signs and art:** the 281 UI elements (text plus 110 artworks), 73 art-viewer entries (title, quote, image description), 27 zone videos (Vimeo HLS plus posters) and 4 learning stations are in `gallery/gallery.json`. Images are packed into `gallery/img.pack` + `img.index.json`.
+- **Engine:** `engine/gallery-game.js` uses three-mesh-bvh collision, streams signs in near the player, plays zone video through hls.js (native on iOS) and uses the fox kit (cane, glasses and wheelchair options). The page is `gallery.html`.
+- **Not started:** multiplayer, waiting on Ben's answers about crowd size and public vs invite-only. Audio beacons on the artworks are also not started.
+- **Rebuild steps** (scripts in `g3d_checks`):
+  1. `wexp.js` exports the GLB and the element info.
+  2. `wpos.js` exports the script entity positions.
+  3. A Python step builds `gallery.json`.
+  4. `conv.js` makes the webp images, then they are packed into `img.pack`.

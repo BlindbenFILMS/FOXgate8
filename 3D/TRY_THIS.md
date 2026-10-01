@@ -51,3 +51,11 @@ Everything below is built to Meru's look: toon shading, ink outlines, warm lamps
 
 ## What I would do next
 Tell me which world feels best and worst. Then: hand-polish interiors of the big rooms (throne rooms, temples), battle maps in 3D, more 3D minigames from the 2D set (fishing, diving, bowling, darts in 3D), and a quest line per world.
+
+## Blind Canvas gallery (1 Oct)
+Open `gallery.html` (or the Blind Canvas card on the galaxy page).
+- [ ] Walk from the entrance through the eye and down the long hall. You should not pass through walls, and ramps and stairs should work.
+- [ ] Stand by an artwork, then tap the red button (or press E). Check the title, quote and image description, then try 🔊 Read aloud.
+- [ ] Try the learning stations: tools, ally tips, the spectrum and the Wall of Why.
+- [ ] Videos play in each room's screens while you stand in that room. Tap the screen once to turn the sound on. **Test this on the iPhone; Vimeo streams can't be reached from the build machine.**
+- [ ] In the ☰ menu, try Fox or Vixen, glasses, a white cane, a wheelchair, read-aloud and larger text.

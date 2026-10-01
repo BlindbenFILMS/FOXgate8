@@ -1,5 +1,5 @@
 // 8 GATES 3D — SPACE: the ship, flight, the fights, the trade, the HUD. Scene and set dressing live in space-game.js.
-import { mk, marks, THREE, scene, camera, renderer, WORLDS, EARTH, BODIES, STRUCTS, PORTS3, ROCKS, DSF, M, BOX, CYL, toon, glowing, glow, outlineMat, ANIM, SPIN, MOONS, GATE_MATS, rocksNear, writeRock, ROCK_IM, razePort, low, touch, $, show, TAU, wrapA, QS, save } from './space-game.js';
+import { mk, marks, THREE, scene, camera, renderer, WORLDS, EARTH, BODIES, STRUCTS, PORTS3, ROCKS, DSF, M, BOX, CYL, toon, glowing, glow, outlineMat, ANIM, SPIN, MOONS, GATE_MATS, grad, rocksNear, writeRock, ROCK_IM, razePort, low, touch, $, show, TAU, wrapA, QS, save } from './space-game.js';
 import { rr, pick, clamp, smooth, damp, Ambience } from '../village-game.js';
 
 // ================================================================ SHIP MODELS
@@ -20,15 +20,10 @@ function foxFighter(hullCol = '#eef2f7', acc = '#ec3013', canopy = '#7fd8ff') {
   g.userData.flames = flames; g.userData.engines = [-1, 1].map(s => new THREE.Vector3(s * 1.55, -0.1, -4.6));
   return g;
 }
-function corsair(kind) {   // raiders: black hulls, red teeth; gunships wider and heavier; aces gold-trimmed
-  const g = new THREE.Group(), hull = toon(kind === 'ace' ? '#2a2420' : '#24202c'), red = toon(kind === 'ace' ? '#e6b45a' : '#a8162e'), dark = toon('#141218');
-  const L = kind === 'gunship' ? 1.4 : 1;
-  M(new THREE.CapsuleGeometry(1.2 * L, 4.6 * L, 6, 12), hull, 0, 0, 0, g, 0.06, 1.2).rotation.x = Math.PI / 2;
-  M(new THREE.ConeGeometry(0.9 * L, 2.4, 6), red, 0, 0, 3.8 * L, g, 0.05).rotation.x = Math.PI / 2;
-  M(new THREE.SphereGeometry(0.7 * L, 12, 8, 0, TAU, 0, Math.PI / 2), glowing('#ff5a3a', 1.2), 0, 0.6 * L, 1.2 * L, g, 0.04);
-  for (const s of [-1, 1]) { const w = M(BOX(4.6 * L, 0.2, 2.2 * L), red, s * 2.7 * L, -0.1, -0.6, g, 0.05); w.rotation.y = s * 0.45; w.rotation.z = s * -0.18; M(BOX(0.25, 1.6, 1.2), dark, s * 4.8 * L, -0.5, -1.4, g, 0.03); if (kind === 'gunship') M(CYL(0.3, 0.3, 3, 8), dark, s * 2.2 * L, -0.5, 1.8, g, 0.03).rotation.x = Math.PI / 2; }
-  M(BOX(0.2, 1.8, 1.6), red, 0, 1.1, -2.2 * L, g, 0.04);
-  const fl = [glow(0, 0, -3.4 * L, 0xff6a3a, 3.4, g)]; g.userData.flames = fl; g.userData.engines = [new THREE.Vector3(0, 0, -3.3 * L)];
+function corsair(kind) {   // the 2D map's own pirate hulls: raiders fly the fighter, gunships the gunner, aces the flagship
+  const art = { raider: 'fighter', gunship: 'gunner', ace: 'flagship' }[kind];
+  const g = svgShip('space/ships/pirate_' + art + '.svg', kind === 'gunship' ? 12 : kind === 'ace' ? 15 : 10, { edge: kind === 'ace' ? '#8a6a2a' : '#7a1426', nozzle: '#2a0a10', flame: 0xff6a3a, thick: 0.07, lights: [[0.12, 0.7, 0xff3a2a], [0.88, 0.7, 0xff3a2a]] });
+  const halo = glow(0, 0.5, 0, kind === 'ace' ? 0xffc040 : 0xff3a2a, kind === 'ace' ? 22 : 15, g, 0.25); g.userData.halo = halo;
   return g;
 }
 function cruiser() {   // King Might's peacekeepers: long, grey, quiet
@@ -40,7 +35,8 @@ function cruiser() {   // King Might's peacekeepers: long, grey, quiet
   M(BOX(6, 0.4, 6), toon('#e6b45a'), 0, 3.1, 10, g, 0.05);
   return g;
 }
-function hauler(tint) { const g = new THREE.Group(), hull = toon('#cfd5df'), acc = toon(tint); M(BOX(4, 3.4, 9), hull, 0, 0, 4, g, 0.08); for (let i = 0; i < 3; i++) M(BOX(5, 4.4, 4.2), i % 2 ? acc : toon('#8a94a8'), 0, 0, -2 - i * 4.6, g, 0.08); M(BOX(2.2, 1, 1.4), glowing('#7fd8ff', 0.8), 0, 1.6, 7.6, g, 0.03); const fl = [glow(0, 0, -15, 0x7fd8ff, 4, g)]; g.userData.flames = fl; return g; }
+const FLEET_OF = { player: '8g', luxor: 'l', ur: 'ur', gaya: 'ga', meru: 'meru', zion: 'zi', nebo: 'ne', kufa: 'ku', jidda: 'ji' };
+function hauler(tint, k) { const g = svgShip('space/ships/' + (FLEET_OF[k] || 'meru') + '_cargo.svg', 18, { edge: tint, thick: 0.1 }); return g; }
 
 // ================================================================ TRAILS (engine ribbons)
 class Trail {   // a ribbon of the last ~0.4s of an engine's path; old points age out so it stays short at any frame rate
@@ -54,6 +50,49 @@ class Trail {   // a ribbon of the last ~0.4s of an engine's path; old points ag
   dispose() { scene.remove(this.mesh); this.mesh.geometry.dispose(); }
 }
 
+
+// ================================================================ SHIPS FROM THE 2D ART: the space map's own fleet drawings, given a hull
+// The silhouette is traced from the drawing's alpha, extruded into a hull with a bevelled edge, and the drawing
+// itself is laid on the deck, so the ship IS the 2D ship seen from above, with depth, light and an ink outline.
+const SHIP_IMG = new Map();
+function loadShipArt(url) { if (!SHIP_IMG.has(url)) SHIP_IMG.set(url, new Promise(res => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = url; })); return SHIP_IMG.get(url); }
+function svgShip(url, len, o = {}) {
+  const g = new THREE.Group(), body = new THREE.Group(); g.add(body);
+  g.userData.flames = []; g.userData.engines = (o.engines || [[0.5, 0.9]]).map(() => new THREE.Vector3(0, 0, -len * 0.4));
+  loadShipArt(url).then(im => { if (!im) return;
+    const N = 160, c = document.createElement('canvas'); c.width = c.height = N; const x = c.getContext('2d'); x.drawImage(im, 0, 0, N, N); const a = x.getImageData(0, 0, N, N).data;
+    const L = [], R = []; for (let y = 0; y < N; y++) { let l = -1, r = -1; for (let i = 0; i < N; i++) if (a[(y * N + i) * 4 + 3] > 40) { if (l < 0) l = i; r = i; } if (l >= 0) { L.push([l, y]); R.push([r + 1, y]); } }
+    if (L.length < 4) return;
+    // the outline: down the left edge, back up the right, thinned to every few rows
+    const pts = [], step = 2; for (let i = 0; i < L.length; i += step) pts.push(L[i]); pts.push(L[L.length - 1]); for (let i = R.length - 1; i >= 0; i -= step) pts.push(R[i]); pts.push(R[0]);
+    const k = len / N, sx = px => (N / 2 - px) * k, sz = py => (N / 2 - py) * k;   // mirrored in x so the art reads right way round from behind
+    const sh = new THREE.Shape(pts.map(([px, py]) => new THREE.Vector2(sx(px), sz(py))));
+    const th = len * (o.thick || 0.06), bev = len * 0.018;
+    const geo = new THREE.ExtrudeGeometry(sh, { depth: th, bevelEnabled: true, bevelThickness: bev, bevelSize: bev * 0.8, bevelSegments: 2, curveSegments: 1 });
+    geo.rotateX(Math.PI / 2); geo.translate(0, th / 2 + bev, 0);   // shape y -> world +z (nose forward); the front cap faces up
+    // a blended wing, not a slab: thick along the spine, thin at the wing tips, the belly swept up
+    { geo.computeBoundingBox(); const hw = Math.max(-geo.boundingBox.min.x, geo.boundingBox.max.x), mid = th / 2 + bev, P0 = geo.attributes.position; for (let i = 0; i < P0.count; i++) { const f = 1 - 0.78 * Math.pow(Math.min(1, Math.abs(P0.getX(i)) / hw), 1.3), y = P0.getY(i); P0.setY(i, y > mid ? mid + (y - mid) * f + th * 0.9 * f : mid + (y - mid) * f * 0.8); } geo.computeVertexNormals(); }
+    // deck UVs: straight down from above, the drawing's own square
+    const P = geo.attributes.position, uv = geo.attributes.uv; for (let i = 0; i < P.count; i++) uv.setXY(i, 0.5 - P.getX(i) / len, 0.5 + P.getZ(i) / len);
+    const tc = document.createElement('canvas'); tc.width = tc.height = low ? 512 : 1024; tc.getContext('2d').drawImage(im, 0, 0, tc.width, tc.height);
+    const tex = new THREE.CanvasTexture(tc); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
+    const deck = new THREE.MeshToonMaterial({ map: tex, gradientMap: grad, emissive: new THREE.Color('#ffffff'), emissiveMap: tex, emissiveIntensity: 0.18 });
+    const side = toon(o.edge || '#3a4a7a');
+    // groups: ExtrudeGeometry puts caps in group 0 and walls in group 1
+    const hull = new THREE.Mesh(geo, [deck, side]); body.add(hull);
+    const ol = new THREE.Mesh(geo, outlineMat); ol.scale.set(1 + 0.4 / len, 1.1, 1 + 0.4 / len); ol.position.y = -0.03; body.add(ol);
+    // the crest dome over the drawing's medallion, and a glass canopy
+    if (o.dome) { const [u, v, r] = o.dome; const d = new THREE.Mesh(new THREE.SphereGeometry(r * len, 24, 12, 0, TAU, 0, Math.PI / 2), new THREE.MeshPhongMaterial({ color: 0x9fdcff, transparent: true, opacity: 0.16, shininess: 120, specular: 0xffffff, depthWrite: false })); d.scale.y = 0.45; d.position.set((0.5 - u) * len, th * 1.9 + bev * 2 + 0.02, (0.5 - v) * len); body.add(d);
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(r * len * 1.02, len * 0.007, 6, 40), glowing('#7fd8ff', 2.0)); ring.rotation.x = Math.PI / 2; ring.position.copy(d.position); body.add(ring); g.userData.ring = ring; }
+    (o.raise || []).forEach(([u, v, w, d2, h, col]) => M(BOX(w * len, h * len, d2 * len), toon(col || '#3f6a9a'), (0.5 - u) * len, th + bev * 2 + h * len / 2, (0.5 - v) * len, body, 0.05));
+    (o.engines || [[0.5, (L[L.length - 1][1] - 4) / N]]).forEach(([u, v], i) => { const p = new THREE.Vector3((0.5 - u) * len, th * 0.6, (0.5 - v) * len - len * 0.03); g.userData.engines[i].copy(p); const n = M(CYL(len * 0.035, len * 0.045, len * 0.08, 12), toon(o.nozzle || '#1d2238'), p.x, p.y, p.z + len * 0.02, body, 0.04); n.rotation.x = Math.PI / 2; g.userData.flames.push(glow(p.x, p.y, p.z - len * 0.02, o.flame || 0x7fd8ff, 3, g)); });
+    (o.lights || []).forEach(([u, v, col], i) => { const s = glow((0.5 - u) * len, th + bev * 2, (0.5 - v) * len, col, len * 0.08, g); g.userData.nav = g.userData.nav || []; g.userData.nav.push({ s, ph: i }); });
+    g.userData.ready = true;
+  });
+  return g;
+}
+const PLAYER_ART = { url: 'space/ships/8g_drone.svg', len: 16, dome: [0.5, 0.55, 0.115], engines: [[0.425, 0.8], [0.572, 0.8]], lights: [[0.06, 0.72, 0xff4a4a], [0.94, 0.72, 0x4aff8a]], edge: '#33406e' };
+
 // ================================================================ STATE, UPGRADES, SAVE
 const UPG = { hull: { n: 'Hull plating', d: '+25 hull', c: [150, 260, 420] }, shield: { n: 'Shield capacitor', d: '+25 shield, faster recharge', c: [150, 260, 420] }, laser: { n: 'Laser coils', d: '+30% laser damage', c: [200, 340, 520] }, missile: { n: 'Missile rack', d: '+1 missile', c: [220, 380, 560] }, engine: { n: 'Engine tune', d: '+12% speed and boost', c: [180, 300, 480] } };
 const up = k => save.stat('space.up.' + k, 0);
@@ -66,7 +105,7 @@ function addOre(n) { save.setStat('space.ore', oreOf() + n); }
 { const from = QS.get('from'); const w = WORLDS.find(w => w.k === from) || (from === 'station' ? WORLDS[0] : null) || (from === 'earth' ? EARTH : null) || WORLDS[4];
   const st = from === 'station' ? STRUCTS.find(s => s.kind === 'dsf') : STRUCTS.find(s => s.kind === 'dock' && s.w === w);
   if (st) { S.x = st.x + 60; S.z = st.z + 10; S.yaw = Math.PI / 2; } else { S.x = w.x + w.r + 160; S.z = w.z; S.yaw = Math.PI / 2; } }
-const ship = foxFighter(); ship.scale.setScalar(1.25); scene.add(ship);
+const ship = svgShip(PLAYER_ART.url, PLAYER_ART.len, PLAYER_ART); scene.add(ship);
 const trails = [new Trail(0x7fd8ff, 0.9), new Trail(0x7fd8ff, 0.9)];
 const shieldBubble = new THREE.Mesh(new THREE.SphereGeometry(8, 24, 16), new THREE.MeshBasicMaterial({ color: 0x7fd8ff, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false })); ship.add(shieldBubble); shieldBubble.scale.set(0.9, 0.5, 1.1);
 
@@ -113,8 +152,7 @@ const KIND = { raider: { hp: 26, sp: 150, turn: 2.4, range: 420, cone: 0.22, rof
 const ACE_NAMES = ['Captain Rook', 'Mad Sal Vane', 'The Widow Krell', 'Jax "Ninefinger"', 'Oona Black'];
 let raidN = 0;
 function spawnFoe(kind, x, z, port, lead) {
-  const K = KIND[kind]; const g = corsair(kind); g.scale.setScalar(kind === 'gunship' ? 1.5 : 1.2); scene.add(g);
-  g.traverse(o => { if (o.isMesh && o.material !== outlineMat && !o.material.emissiveIntensity) { o.material = o.material.clone(); o.material.userData.own = true; } });
+  const K = KIND[kind]; const g = corsair(kind); scene.add(g);
   const f = { kind, K, g, x, z, yaw: Math.atan2(S.x - x, S.z - z), v: K.sp * 0.8, hp: K.hp, max: K.hp, sh: K.shield || 0, state: 'transit', st: 0, cd: rr(0.5, 1.5), burst: 0, port, lead, off: new THREE.Vector2(rr(-30, 30), rr(-40, -10)), trail: new Trail(0xff7a3a, kind === 'gunship' ? 1.1 : 0.7, 18), flashT: 0, jink: 0, name: kind === 'ace' ? pick(ACE_NAMES) + ' of ' + port.name : (kind === 'gunship' ? 'Corsair gunship' : 'Corsair raider') };
   FOES.push(f); return f;
 }
@@ -130,14 +168,78 @@ const RAID = { on: false, next: 75, port: null, t: 0 };
 const NEUTRAL = [];
 for (let i = 0; i < 2; i++) { const g = cruiser(); scene.add(g); NEUTRAL.push({ kind: 'cruiser', g, a: i * Math.PI, R: 760, sp: 0.03, x: 0, z: 0, yaw: 0, warned: false, name: 'Machine cruiser' }); }
 const DOCKS = STRUCTS.filter(s => s.kind === 'dock');
-for (let i = 0; i < (low ? 5 : 9); i++) { const a = pick(DOCKS); let b = pick(DOCKS); if (b === a) b = DOCKS[(DOCKS.indexOf(a) + 1) % DOCKS.length]; const g = hauler(a.w.tint); g.scale.setScalar(1.6); scene.add(g); const t = Math.random(); NEUTRAL.push({ kind: 'hauler', g, from: a, to: b, t, x: a.x + (b.x - a.x) * t, z: a.z + (b.z - a.z) * t, yaw: Math.atan2(b.x - a.x, b.z - a.z), name: a.w.n + ' hauler', tr: new Trail(0x7fd8ff, 0.8, 16) }); }
+for (let i = 0; i < (low ? 5 : 9); i++) { const a = pick(DOCKS); let b = pick(DOCKS); if (b === a) b = DOCKS[(DOCKS.indexOf(a) + 1) % DOCKS.length]; const g = hauler(a.w.tint, a.w.k); scene.add(g); const t = Math.random(); NEUTRAL.push({ kind: 'hauler', g, from: a, to: b, t, x: a.x + (b.x - a.x) * t, z: a.z + (b.z - a.z) * t, yaw: Math.atan2(b.x - a.x, b.z - a.z), name: a.w.n + ' hauler', tr: new Trail(0x7fd8ff, 0.8, 16) }); }
 
 // ================================================================ DUST (the speed you can feel) and far-object culling
 const DUST_N = low ? 500 : 1100, DUST_R = 160; const dustPos = new Float32Array(DUST_N * 3); for (let i = 0; i < DUST_N; i++) dustPos.set([rr(-DUST_R, DUST_R), rr(-40, 30), rr(-DUST_R, DUST_R)], i * 3);
 const dustGeo = new THREE.BufferGeometry(); dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
 const dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({ color: 0xcfe0ff, size: 0.55, transparent: true, opacity: 0.55, depthWrite: false })); dust.frustumCulled = false; scene.add(dust);
 function tickDust() { const p = dustPos; for (let i = 0; i < DUST_N; i++) { let x = p[i * 3] - S.x, z = p[i * 3 + 2] - S.z; if (x > DUST_R) p[i * 3] -= DUST_R * 2; else if (x < -DUST_R) p[i * 3] += DUST_R * 2; if (z > DUST_R) p[i * 3 + 2] -= DUST_R * 2; else if (z < -DUST_R) p[i * 3 + 2] += DUST_R * 2; } dustGeo.attributes.position.needsUpdate = true; }
+const HIDDEN = new Set();
 let cullT = 0; function cull() { const cx = camera.position.x, cz = camera.position.z; for (const s of STRUCTS) s.g.visible = Math.hypot(s.x - cx, s.z - cz) < (s.kind === 'gate' || s.kind === 'dsf' ? 2600 : 1500); for (const P of PORTS3) P.g.visible = Math.hypot(P.x - cx, P.z - cz) < 3200; for (const n of NEUTRAL) n.g.visible = Math.hypot(n.x - cx, n.z - cz) < 1800; }
+
+
+// ================================================================ BEASTS: the Belt Serpent and the moth nest (the 2D map's creatures, in 3D)
+const BEASTS = [];   // anything with {x, z, hp, max, dead, name, kind, hitR, hit(dmg,x,z), yaw, v}
+function makeSerpent(hx, hz) {
+  const n = low ? 14 : 20, segs = [], skin = toon('#2f8a7a'), belly = toon('#e8d8a8'), fin = toon('#7a3f8a');
+  const head = new THREE.Group(); scene.add(head);
+  M(new THREE.SphereGeometry(5, 18, 12), skin, 0, 0, 0, head, 0.12, 5).scale.set(1, 0.8, 1.5);
+  const jaw = new THREE.Group(); jaw.position.set(0, -1.5, 2); head.add(jaw); M(new THREE.SphereGeometry(3.6, 14, 10), belly, 0, 0, 2.5, jaw, 0.1, 3.6).scale.set(1, 0.45, 1.4);
+  for (const sx of [-1, 1]) { M(new THREE.SphereGeometry(1.0, 10, 8), glowing('#ffd23a', 2.4), sx * 2.6, 1.6, 4.2, head, 0.06, 1); M(new THREE.ConeGeometry(0.9, 5, 6), fin, sx * 2.4, 3.4, -1.5, head, 0.06).rotation.set(-0.9, 0, sx * -0.4); }
+  for (let i = 0; i < 6; i++) M(new THREE.ConeGeometry(0.35, 1.4, 5), toon('#f4f1ea'), -1.6 + i * 0.64, -0.9, 6.4, head, 0).rotation.x = Math.PI;
+  for (let i = 0; i < n; i++) { const r = 4.4 * (1 - i / n * 0.7), g = new THREE.Group(); scene.add(g); M(new THREE.SphereGeometry(r, 14, 10), i % 2 ? skin : toon('#277a6a'), 0, 0, 0, g, 0.1, r); if (i % 3 === 0) M(new THREE.ConeGeometry(r * 0.35, r * 1.4, 5), fin, 0, r * 0.9, 0, g, 0.04).rotation.x = -0.6; segs.push({ g, r, x: hx, z: hz - (i + 1) * 6 }); }
+  const B = { kind: 'serpent', name: 'The Belt Serpent', head, jaw, segs, x: hx, z: hz, home: [hx, hz], yaw: 0, v: 60, hp: 300, max: 300, state: 'prowl', st: 0, hitR: 6, dead: false, wan: rr(0, TAU), bite: 0 };
+  B.hit = (dmg, x, z) => { if (B.dead) return; const head2 = dist(x, z, B.x, B.z) < 9; B.hp -= dmg * (head2 ? 1.6 : 1); flash(x, 0, z, head2 ? 0xffd23a : 0x9fffe0, head2 ? 7 : 5, 0.2); if (B.state === 'prowl') { B.state = 'hunt'; B.st = 0; logLine('The Belt Serpent turns on you', true); sfx.alarm(); } if (B.hp <= 0) killBeast(B); };
+  BEASTS.push(B); return B;
+}
+function serpentAI(B, dt, T) {
+  B.st += dt; const d = dist(B.x, B.z, S.x, S.z), toP = Math.atan2(S.x - B.x, S.z - B.z); let want = B.yaw, sp = 60;
+  const ok = started && !S.dead;
+  if (B.state === 'prowl') { B.wan += dt * 0.25; const tx = B.home[0] + Math.cos(B.wan) * 220, tz = B.home[1] + Math.sin(B.wan * 1.3) * 220; want = Math.atan2(tx - B.x, tz - B.z); sp = 55; if (ok && d < 300) { B.state = 'hunt'; B.st = 0; logLine('Something big in the rocks', true); sfx.alarm(); } }
+  else if (B.state === 'hunt') { want = toP; sp = d < 160 ? 120 : 175; if (d < 95 && B.st > 1 && Math.abs(wrapA(toP - B.yaw)) < 0.3) { B.state = 'lunge'; B.st = 0; } if (!ok || d > 900) { B.state = 'prowl'; } }
+  else if (B.state === 'lunge') { sp = 330; if (B.st > 0.7) { B.state = 'coil'; B.st = 0; B.coilDir = Math.random() < 0.5 ? 1 : -1; } }
+  else if (B.state === 'coil') { want = B.yaw + B.coilDir * 2.2 * dt * 30; sp = 120; if (B.st > 2.2) { B.state = 'hunt'; B.st = 0; } }
+  const turnK = B.state === 'lunge' ? 0.9 : B.state === 'coil' ? 2.6 : 2.3; B.yaw += clamp(wrapA(want - B.yaw), -turnK * dt, turnK * dt); B.v = damp(B.v, sp, 2.2, dt);
+  const ox = B.x, oz = B.z; B.x += Math.sin(B.yaw) * B.v * dt; B.z += Math.cos(B.yaw) * B.v * dt;
+  for (const w of BODIES) { const dd = dist(B.x, B.z, w.x, w.z); if (dd < w.r + 40) { B.x = w.x + (B.x - w.x) / dd * (w.r + 40); B.z = w.z + (B.z - w.z) / dd * (w.r + 40); } }
+  const y = Math.sin(T * 1.3) * 4; B.head.position.set(B.x, y, B.z); B.head.rotation.set(Math.sin(T * 2) * 0.1, B.yaw, Math.sin(T * 1.7) * 0.15);
+  B.jaw.rotation.x = B.state === 'lunge' ? 0.7 : B.state === 'hunt' ? 0.25 + Math.sin(T * 6) * 0.1 : 0.08;
+  let px = B.x, pz = B.z; B.segs.forEach((g, i) => { const gap = 5.2 * (1 - i / B.segs.length * 0.5); const dx = g.x - px, dz = g.z - pz, L = Math.hypot(dx, dz) || 1; g.x = px + dx / L * gap; g.z = pz + dz / L * gap; const sw = Math.sin(T * 3 - i * 0.6) * 0.6; g.g.position.set(g.x + Math.cos(B.yaw) * sw, Math.sin(T * 1.3 - i * 0.35) * 4, g.z - Math.sin(B.yaw) * sw); g.g.rotation.y = Math.atan2(px - g.x, pz - g.z); px = g.x; pz = g.z; });
+  // the bite and the body
+  if (ok) { B.bite -= dt; if (B.bite <= 0 && segHit(ox, oz, B.x, B.z, S.x, S.z, 12)) { B.bite = 1.1; hurtPlayer(B.state === 'lunge' ? 22 : 12, B.x, B.z); shake(0.8); S.vx += Math.sin(B.yaw) * 120; S.vz += Math.cos(B.yaw) * 120; }
+    for (const g of B.segs) { const dd = dist(g.x, g.z, S.x, S.z); if (dd < g.r + 4) { const nx = (S.x - g.x) / dd, nz = (S.z - g.z) / dd; S.x = g.x + nx * (g.r + 4); S.z = g.z + nz * (g.r + 4); if (B.bite <= 0.6) { hurtPlayer(5, g.x, g.z); B.bite = 1.1; } } } }
+}
+function makeNest(hx, hz) {
+  const g = new THREE.Group(); g.position.set(hx, 0, hz); scene.add(g);
+  const rock = M(new THREE.DodecahedronGeometry(16, 1), toon('#4a3a52'), 0, -4, 0, g, 0.3, 16); rock.scale.set(1.2, 0.8, 1);
+  for (let i = 0; i < 9; i++) { const a = i / 9 * TAU; const c = M(new THREE.OctahedronGeometry(rr(2, 4), 0), glowing('#c88aff', 1.6), Math.cos(a) * 12, rr(2, 8), Math.sin(a) * 10, g, 0.06); c.scale.y = 2.4; c.rotation.z = rr(-0.4, 0.4); }
+  const pods = []; for (let i = 0; i < 5; i++) { const a = i / 5 * TAU + 0.3; pods.push(M(new THREE.SphereGeometry(2.2, 12, 8), glowing('#ffb0ff', 0.8), Math.cos(a) * 7, 6 + (i % 2) * 2, Math.sin(a) * 6, g, 0.06, 2.2)); }
+  glow(0, 6, 0, 0xc88aff, 60, g, 0.4);
+  const N = { kind: 'nest', name: 'Moth nest', g, x: hx, z: hz, hp: 120, max: 120, hitR: 18, dead: false, pods, moths: [], spawnT: 0, yaw: 0, v: 0 };
+  N.hit = (dmg, x, z) => { if (N.dead) return; N.hp -= dmg; flash(x, 2, z, 0xe0a0ff, 7, 0.2); N.pods.forEach(p => p.scale.setScalar(1 + Math.random() * 0.2)); if (N.hp <= 0) { N.dead = true; for (let i = 0; i < 5; i++) setTimeout(() => explode(hx + rr(-12, 12), hz + rr(-12, 12), 1.1, '#4a3a52'), i * 180); loot(hx, hz, 'ore', 8); loot(hx, hz, 'cr', 8); logLine('Moth nest burned out · loot', false); N.g.traverse(o => { if (o.isMesh && o.material !== outlineMat) o.material = toon('#2a2230'); }); } };
+  BEASTS.push(N); for (let i = 0; i < (low ? 7 : 10); i++) makeMoth(N); return N;
+}
+const wingGeo = (() => { const sh = new THREE.Shape(); sh.moveTo(0, 0); sh.bezierCurveTo(1.2, 1.6, 3.4, 1.4, 3.2, -0.4); sh.bezierCurveTo(2.2, -1.6, 0.8, -1.0, 0, 0); return new THREE.ShapeGeometry(sh); })();
+function makeMoth(N) {
+  const g = new THREE.Group(); scene.add(g); M(new THREE.CapsuleGeometry(0.45, 1.6, 4, 8), toon('#3a2a4a'), 0, 0, 0, g, 0.04).rotation.x = Math.PI / 2;
+  const wm = new THREE.MeshBasicMaterial({ color: 0xd8a8ff, transparent: true, opacity: 0.9, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false });
+  const wings = [-1, 1].map(s => { const w = new THREE.Mesh(wingGeo, wm); w.rotation.x = -Math.PI / 2; w.scale.x = s; g.add(w); return w; });
+  glow(0, 0, 0, 0xe0b0ff, 5, g, 0.6);
+  const a = rr(0, TAU); const m = { kind: 'moth', name: 'Void moth', g, wings, nest: N, x: N.x + Math.cos(a) * 30, z: N.z + Math.sin(a) * 30, yaw: rr(0, TAU), v: 40, hp: 6, max: 6, hitR: 3.4, dead: false, ph: rr(0, TAU), state: 'flutter', st: 0, dart: rr(2, 4) };
+  m.hit = (dmg, x, z) => { if (m.dead) return; m.hp -= dmg; if (m.hp <= 0) { m.dead = true; flash(m.x, 0, m.z, 0xe0b0ff, 10, 0.4, 3); debris(m.x, m.z, '#3a2a4a', 4, 20); loot(m.x, m.z, 'cr', 1); scene.remove(g); sfx.boom(0.3); } };
+  N.moths.push(m); BEASTS.push(m); return m;
+}
+function mothAI(m, dt, T) {
+  m.st += dt; const N = m.nest, d = dist(m.x, m.z, S.x, S.z), ok = started && !S.dead; let tx, tz, sp = 50;
+  if (m.state === 'flutter') { const a = T * 0.6 + m.ph; tx = N.x + Math.cos(a) * (26 + Math.sin(T + m.ph) * 8); tz = N.z + Math.sin(a * 1.3) * 26; if (ok && dist(N.x, N.z, S.x, S.z) < 280) { m.state = 'swarm'; m.st = 0; } }
+  else { const a = T * 2.2 + m.ph; tx = S.x + Math.cos(a) * 16; tz = S.z + Math.sin(a) * 16; sp = Math.hypot(S.vx, S.vz) + 90; m.dart -= dt; if (m.dart <= 0) { tx = S.x; tz = S.z; sp = 220; if (d < 4.5) { hurtPlayer(3, m.x, m.z); m.dart = rr(2.5, 4.5); } } if (!ok || dist(N.x, N.z, S.x, S.z) > 650) m.state = 'flutter'; }
+  const want = Math.atan2(tx - m.x, tz - m.z); m.yaw += clamp(wrapA(want - m.yaw), -5 * dt, 5 * dt); m.v = damp(m.v, sp, 3, dt); m.x += Math.sin(m.yaw) * m.v * dt; m.z += Math.cos(m.yaw) * m.v * dt;
+  m.g.position.set(m.x, Math.sin(T * 5 + m.ph) * 2, m.z); m.g.rotation.set(0, m.yaw, 0); const f = Math.sin(T * 26 + m.ph) * 0.9; m.wings[0].rotation.y = f; m.wings[1].rotation.y = -f;
+}
+function killBeast(B) { B.dead = true; logLine('The Belt Serpent is dead · loot', false); toast('The Belt Serpent is dead.'); for (let i = 0; i <= B.segs.length; i++) setTimeout(() => { const g = i === 0 ? B.head : B.segs[i - 1].g; const p = g.position; explode(p.x, p.z, i === 0 ? 1.8 : 0.8, '#2f8a7a'); scene.remove(g); }, i * 90); loot(B.x, B.z, 'ore', 14); loot(B.x, B.z, 'cr', 12); save.addGold(80); setTimeout(() => { if (BEASTS.includes(B)) BEASTS.splice(BEASTS.indexOf(B), 1); makeSerpent(B.home[0], B.home[1]); }, 300000); }
+makeSerpent(720, 720); makeNest(-720, -700);
+function beastBodies(B) { return B.kind === 'serpent' ? [{ x: B.x, z: B.z, r: B.hitR }, ...B.segs.map(g => ({ x: g.x, z: g.z, r: g.r + 0.5 }))] : [{ x: B.x, z: B.z, r: B.hitR }]; }
 
 // ================================================================ INPUT
 const keys = new Set(), joy = { x: 0, y: 0, on: false, id: null, ox: 0, oy: 0 };
@@ -177,7 +279,7 @@ function fireLasers() {
 function fireMissile() { if (!started || S.dead || S.mis <= 0) return; S.mis--; const t = S.tgt && !S.tgt.dead ? S.tgt : bestTarget(1.0); missile(S.x + Math.sin(S.yaw) * 6, S.z + Math.cos(S.yaw) * 6, S.yaw, t); }
 function leadPoint(x, z, t, sp) { const d = dist(x, z, t.x, t.z), tt = d / sp, vx = t.v ? Math.sin(t.yaw) * t.v : 0, vz = t.v ? Math.cos(t.yaw) * t.v : 0; return { x: t.x + vx * tt, z: t.z + vz * tt }; }
 function forwardSpeed() { return S.vx * Math.sin(S.yaw) + S.vz * Math.cos(S.yaw); }
-function hostiles() { const L = FOES.filter(f => !f.dead); for (const P of PORTS3) if (!P.razed) { for (const t of P.turrets) if (!t.dead && dist(P.x, P.z, S.x, S.z) < 1200) L.push(t); if (dist(P.x, P.z, S.x, S.z) < 1200) L.push(P); } return L; }
+function hostiles() { const L = FOES.filter(f => !f.dead); for (const B of BEASTS) if (!B.dead && dist(B.x, B.z, S.x, S.z) < 1100) L.push(B); for (const P of PORTS3) if (!P.razed) { for (const t of P.turrets) if (!t.dead && dist(P.x, P.z, S.x, S.z) < 1200) L.push(t); if (dist(P.x, P.z, S.x, S.z) < 1200) L.push(P); } return L; }
 function bestTarget(cone = 0.6) { let best = null, bs = 1e9; for (const f of hostiles()) { const fx = f.x ?? f.wx, fz = f.z ?? f.wz; const d = dist(S.x, S.z, fx, fz); if (d > 1100) continue; const a = Math.abs(wrapA(Math.atan2(fx - S.x, fz - S.z) - S.yaw)); if (a > cone) continue; const s = d * (1 + a * 2); if (s < bs) { bs = s; best = f; } } return best; }
 function cycleTarget() { const L = hostiles().filter(f => dist(S.x, S.z, f.x, f.z) < 1100).sort((a, b) => dist(S.x, S.z, a.x, a.z) - dist(S.x, S.z, b.x, b.z)); if (!L.length) { S.tgt = null; return; } const i = L.indexOf(S.tgt); S.tgt = L[(i + 1) % L.length]; sfx.lock(); }
 let near = null;
@@ -265,7 +367,7 @@ function step(dtO) {
   // the ship
   const spd = Math.hypot(S.vx, S.vz);
   ship.position.set(S.x, Math.sin(T * 1.6) * 0.35, S.z); ship.rotation.set(0, S.yaw, 0); ship.rotateZ(S.bank); ship.rotateX(-clamp(thr, -1, 1) * 0.05);
-  ship.userData.flames.forEach(f => f.scale.setScalar((boosting ? 6 : 2.4) + spd / 60 + Math.sin(T * 40) * 0.4));
+  ship.userData.flames.forEach(f => f.scale.setScalar((boosting ? 6 : 2.4) + spd / 60 + Math.sin(T * 40) * 0.4)); (ship.userData.nav || []).forEach(n => n.s.material.opacity = Math.sin(T * 3 + n.ph * 1.5) > 0.3 ? 1 : 0.15); if (ship.userData.ring) ship.userData.ring.material.emissiveIntensity = 1.6 + Math.sin(T * 2.4) * 0.6 + (boosting ? 1 : 0);
   shieldBubble.material.opacity = Math.max(0, shieldBubble.material.opacity - dt * 1.6);
   { ship.updateMatrixWorld(); const side = V2.set(Math.cos(S.yaw), 0, -Math.sin(S.yaw)); ship.userData.engines.forEach((e, i) => { V.copy(e).applyMatrix4(ship.matrixWorld); trails[i].w = boosting ? 1.4 : 0.8; trails[i].push(V, side, started ? clamp(spd / 120, 0.15, 1.2) : 0); }); }
   // shields recharge
@@ -276,7 +378,7 @@ function step(dtO) {
   for (const a of ANIM) a.fn(T, dt);
   for (const g of GATE_MATS) g.uniforms.uT.value = T;
   // ---- rocks drift a little (only the near ones are rewritten)
-  { const touched = new Set(); for (const r of rocksNear(S.x, S.z)) { r.rot.y += r.spin * dt; writeRock(r); touched.add(r.im); touched.add(r.ol); if (r.gl) touched.add(r.gl); } touched.forEach(m => m.instanceMatrix.needsUpdate = true); }
+  { const touched = new Set(); for (const r of rocksNear(S.x, S.z)) { r.rot.y += r.spin * dt; if (HIDDEN.has(r)) continue; writeRock(r); touched.add(r.im); touched.add(r.ol); if (r.gl) touched.add(r.gl); } touched.forEach(m => m.instanceMatrix.needsUpdate = true); }
   // ---- director: the quiet minute, then a raid every 50-90s from the nearest standing port
   if (started && !S.dead) { RAID.next -= dt; const alive = FOES.filter(f => !f.dead && f.state !== 'flee');
     if (RAID.on && !alive.length) { RAID.on = false; RAID.next = rr(50, 90); logLine('Raid broken'); }
@@ -285,6 +387,9 @@ function step(dtO) {
     for (const P of PORTS3) { if (P.razed) continue; const d = dist(P.x, P.z, S.x, S.z); if (d < 700 && (P.guardT || 0) <= T) { P.guardT = T + 70; for (let i = 0; i < 2; i++) spawnFoe('raider', P.x + rr(-40, 40), P.z + rr(-40, 40), P, null); logLine(P.name + ' guard sortie', true); sfx.alarm(); } } }
   // ---- foes
   for (const f of FOES) { if (f.dead) continue; foeAI(f, dt, T); }
+  for (const B of BEASTS) { if (B.dead) continue; if (B.kind === 'serpent') serpentAI(B, dt, T); else if (B.kind === 'moth') mothAI(B, dt, T); }
+  for (let i = BEASTS.length - 1; i >= 0; i--) if (BEASTS[i].dead && BEASTS[i].kind === 'moth') BEASTS.splice(i, 1);
+  for (const N of BEASTS) if (N.kind === 'nest' && !N.dead && (N.spawnT -= dt) <= 0 && N.moths.filter(m => !m.dead).length < 4) { N.spawnT = 12; makeMoth(N); }
   for (let i = FOES.length - 1; i >= 0; i--) { const f = FOES[i]; if (f.dead && f.deadT < T - 0.1) { scene.remove(f.g); f.trail.dispose(); FOES.splice(i, 1); if (S.tgt === f) S.tgt = null; } }
   // port turrets
   for (const P of PORTS3) { if (P.razed) continue; const dP = dist(P.x, P.z, S.x, S.z); for (const t of P.turrets) { if (t.dead) continue; t.t.getWorldPosition(V); t.x = V.x; t.z = V.z; t.yaw = 0; t.v = 0; t.name = P.name + ' turret'; t.max = 30; if (dP < 600 && started && !S.dead) { const a = Math.atan2(S.x - V.x, S.z - V.z); t.head.rotation.y = a - P.g.rotation.y; t.cd -= dt; if (t.cd <= 0) { t.cd = rr(0.9, 1.6); const lp = leadPoint(V.x, V.z, { x: S.x, z: S.z, yaw: Math.atan2(S.vx, S.vz), v: spd }, 300); const dx = lp.x - V.x, dz = lp.z - V.z, L = Math.hypot(dx, dz); bolt('t', V.x, 0, V.z, dx / L, dz / L, 300, 7, 2.2); sfx.elaser(); } } } P.wx = P.x; P.wz = P.z; }
@@ -294,6 +399,7 @@ function step(dtO) {
   // ---- bolts
   for (let i = BOLTS.length - 1; i >= 0; i--) { const b = BOLTS[i]; b.t -= dt; const px = b.m.position.x, pz = b.m.position.z; b.m.position.x += b.vx * dt; b.m.position.z += b.vz * dt; const x = b.m.position.x, z = b.m.position.z; let hit = false;
     if (b.team === 'p') { for (const f of FOES) { if (f.dead) continue; if (segHit(px, pz, x, z, f.x, f.z, f.kind === 'gunship' ? 7 : 5.5)) { damageFoe(f, b.dmg, x, z); hit = true; break; } }
+      if (!hit) for (const B of BEASTS) { if (B.dead || dist(B.x, B.z, x, z) > 160) continue; for (const q of beastBodies(B)) if (segHit(px, pz, x, z, q.x, q.z, q.r)) { B.hit(b.dmg, x, z); hit = true; break; } if (hit) break; }
       if (!hit) for (const P of PORTS3) { if (P.razed || dist(P.x, P.z, x, z) > 120) continue; for (const t of P.turrets) if (!t.dead && segHit(px, pz, x, z, t.x, t.z, 5)) { damageTurret(P, t, b.dmg, x, z); hit = true; break; } if (!hit && dist(P.x, P.z, x, z) < 46) { damagePort(P, b.dmg * 0.6, x, z); hit = true; } }
       if (!hit) for (const n of NEUTRAL) if (n.kind === 'cruiser' && dist(n.x, n.z, x, z) < 30) { flash(x, 0, z, 0xffd38a, 6, 0.2); hit = true; if (!n.shotWarn) { n.shotWarn = true; logLine('The machines ignore you. This time.', true); } break; }
       if (!hit) for (const r of rocksNear(x, z)) { if (Math.abs(r.y) > r.s + 2) continue; if (dist(r.x, r.z, x, z) < r.s + 1) { hitRock(r, b.dmg, x, z); hit = true; break; } } }
@@ -303,7 +409,8 @@ function step(dtO) {
   for (let i = MISS.length - 1; i >= 0; i--) { const m = MISS[i]; m.t -= dt; m.v = Math.min(360, m.v + dt * 200); const t = m.tgt && !m.tgt.dead && !(m.tgt.razed) ? m.tgt : null; if (t) { const lp = leadPoint(m.x, m.z, t, m.v); const want = Math.atan2(lp.x - m.x, lp.z - m.z); m.yaw += clamp(wrapA(want - m.yaw), -3.2 * dt, 3.2 * dt); }
     m.x += Math.sin(m.yaw) * m.v * dt; m.z += Math.cos(m.yaw) * m.v * dt; m.m.position.set(m.x, 0, m.z); m.m.rotation.set(0, m.yaw, T * 8); m.m.updateMatrixWorld(); V.set(0, 0, -1.6).applyMatrix4(m.m.matrixWorld); m.tr.push(V, V2.set(Math.cos(m.yaw), 0, -Math.sin(m.yaw)), 1);
     let boom = m.t <= 0; if (t && dist(m.x, m.z, t.x, t.z) < (t.kind === 'port' ? 46 : 7)) boom = true; for (const r of rocksNear(m.x, m.z)) if (dist(r.x, r.z, m.x, m.z) < r.s + 1) { boom = true; break; }
-    if (boom) { explode(m.x, m.z, 0.8, '#e8ecf2'); for (const f of FOES) if (!f.dead && dist(f.x, f.z, m.x, m.z) < 22) damageFoe(f, 26 * (f === t ? 1 : 0.5), m.x, m.z); for (const P of PORTS3) { if (P.razed) continue; for (const tu of P.turrets) if (!tu.dead && dist(tu.x, tu.z, m.x, m.z) < 18) damageTurret(P, tu, 30, m.x, m.z); if (dist(P.x, P.z, m.x, m.z) < 60) damagePort(P, 34, m.x, m.z); } for (const r of rocksNear(m.x, m.z)) if (dist(r.x, r.z, m.x, m.z) < r.s + 14) hitRock(r, 20, m.x, m.z); scene.remove(m.m); m.tr.dispose(); MISS.splice(i, 1); } }
+    if (!boom) for (const B of BEASTS) { if (B.dead) continue; for (const q of beastBodies(B)) if (dist(q.x, q.z, m.x, m.z) < q.r + 2) { boom = true; break; } if (boom) break; }
+    if (boom) { for (const B of BEASTS) if (!B.dead && beastBodies(B).some(q => dist(q.x, q.z, m.x, m.z) < q.r + 16)) B.hit(26, m.x, m.z); explode(m.x, m.z, 0.8, '#e8ecf2'); for (const f of FOES) if (!f.dead && dist(f.x, f.z, m.x, m.z) < 22) damageFoe(f, 26 * (f === t ? 1 : 0.5), m.x, m.z); for (const P of PORTS3) { if (P.razed) continue; for (const tu of P.turrets) if (!tu.dead && dist(tu.x, tu.z, m.x, m.z) < 18) damageTurret(P, tu, 30, m.x, m.z); if (dist(P.x, P.z, m.x, m.z) < 60) damagePort(P, 34, m.x, m.z); } for (const r of rocksNear(m.x, m.z)) if (dist(r.x, r.z, m.x, m.z) < r.s + 14) hitRock(r, 20, m.x, m.z); scene.remove(m.m); m.tr.dispose(); MISS.splice(i, 1); } }
   // ---- loot
   for (let i = LOOT.length - 1; i >= 0; i--) { const l = LOOT[i]; l.t -= dt; const d = dist(l.m.position.x, l.m.position.z, S.x, S.z); if (d < 55 && !S.dead) { const k = (1 - d / 55) * 260; l.vx += (S.x - l.m.position.x) / d * k * dt; l.vz += (S.z - l.m.position.z) / d * k * dt; } l.vx *= Math.exp(-dt * 1.5); l.vz *= Math.exp(-dt * 1.5); l.m.position.x += l.vx * dt; l.m.position.z += l.vz * dt; l.m.rotation.y += dt * 2; l.m.rotation.x += dt; l.m.position.y = Math.sin(T * 3 + i) * 0.6;
     if (d < 7 && !S.dead) { if (l.kind === 'ore') { addOre(l.val); } else { save.addGold(l.val); } sfx.pickup(); flash(l.m.position.x, 0, l.m.position.z, l.kind === 'ore' ? 0xffd23a : 0x7fffb0, 6, 0.25); scene.remove(l.m); LOOT.splice(i, 1); continue; }
@@ -317,16 +424,22 @@ function step(dtO) {
   if (!S.tgt && live) { const b = bestTarget(0.5); if (b) { S.tgt = b; sfx.lock(); } }
   // ---- camera: chase, looking a little ahead; FOV opens up on boost
   camYaw += wrapA(S.yaw - camYaw) * Math.min(1, dt * 3.2);
-  const port = innerWidth < innerHeight, back = (34 + spd * 0.075) * (port ? 1.45 : 1), up2 = (15 + spd * 0.028) * (port ? 1.35 : 1);
+  const port = innerWidth < innerHeight, back = (28 + spd * 0.07) * (port ? 1.4 : 1), up2 = (25 + spd * 0.035) * (port ? 1.35 : 1);
   V.set(S.x - Math.sin(camYaw) * back, up2, S.z - Math.cos(camYaw) * back); camPos.lerp(V, Math.min(1, dt * 6));
   V.set(S.x + Math.sin(S.yaw) * (24 + spd * 0.1), 0, S.z + Math.cos(S.yaw) * (24 + spd * 0.1)); camLook.lerp(V, Math.min(1, dt * 7));
   if (!started && !S.warpT) { const a = T * 0.04 + 0.6, w = WORLDS[4]; camPos.set(w.x + Math.cos(a) * 520, 190, w.z + Math.sin(a) * 520); camLook.set(w.x, 0, w.z); }
+  if (S.hold) { const [a, el, d] = S.hold; camPos.set(S.x + Math.sin(S.yaw + a) * d * Math.cos(el), d * Math.sin(el), S.z + Math.cos(S.yaw + a) * d * Math.cos(el)); camLook.set(S.x, 0, S.z); }
   camera.position.copy(camPos); if (shakeK > 0) { camera.position.x += rr(-1, 1) * shakeK * 2; camera.position.y += rr(-1, 1) * shakeK * 2; shakeK = Math.max(0, shakeK - dt * 2.5); } camera.lookAt(camLook);
   fov = damp(fov, (boosting ? 72 : 60) + (port ? 12 : 0), 4, dt); camera.fov = fov; camera.updateProjectionMatrix();
   if (window.__dome) window.__dome.position.copy(camera.position); for (const s of window.__stars || []) s.position.copy(camera.position);
   // ---- context: what is near
   near = null; { let bd = 1e9; for (const s of STRUCTS) { const d = dist(S.x, S.z, s.x, s.z) - s.r; if (d < 34 && d < bd) { bd = d; near = s; } } const e = EARTH; if (!near && dist(S.x, S.z, e.x, e.z) - e.r < 70) near = { kind: 'earth', w: e, x: e.x, z: e.z, name: 'Earth', label: 'EARTH' }; }
   if (dtO) return;
+  // rocks between the lens and the ship step aside (scaled to nothing) until the view is clear again
+  { const cx = camera.position.x, cz = camera.position.z, touched = new Set(), now = new Set(); for (const q of [[cx, cz], [(cx + S.x) / 2, (cz + S.z) / 2]]) for (const r of rocksNear(q[0], q[1])) if (r.alive && segHit(cx, cz, S.x, S.z, r.x, r.z, r.s + 2.5) && Math.abs(r.y - camera.position.y * 0.5) < r.s + 12) now.add(r);
+    for (const r of HIDDEN) if (!now.has(r)) { r.alive = true; writeRock(r); touched.add(r.im); touched.add(r.ol); if (r.gl) touched.add(r.gl); HIDDEN.delete(r); }
+    for (const r of now) if (!HIDDEN.has(r)) { r.alive = false; writeRock(r); r.alive = true; r.camHid = true; touched.add(r.im); touched.add(r.ol); if (r.gl) touched.add(r.gl); HIDDEN.add(r); }
+    touched.forEach(m => m.instanceMatrix.needsUpdate = true); }
   tickDust(); if ((cullT -= dt) <= 0) { cullT = 0.5; cull(); }
   hud(dt, spd);
   renderer.render(scene, camera);
@@ -335,7 +448,7 @@ let camYaw = S.yaw;
 function segHit(ax, az, bx, bz, cx, cz, r) { const dx = bx - ax, dz = bz - az, L2 = dx * dx + dz * dz || 1; const t = clamp(((cx - ax) * dx + (cz - az) * dz) / L2, 0, 1); return Math.hypot(ax + dx * t - cx, az + dz * t - cz) < r; }
 
 // ================================================================ DAMAGE
-function flashFoe(f) { f.flashT = 0.12; f.g.traverse(o => { if (o.isMesh && o.material.userData.own) { o.material.emissive.setHex(0xffffff); o.material.emissiveIntensity = 0.9; } }); }
+function flashFoe(f) { f.flashT = 0.12; f.g.traverse(o => { if (o.isMesh && Array.isArray(o.material)) o.material[0].emissiveIntensity = 1.4; }); if (f.g.userData.halo) f.g.userData.halo.material.opacity = 0.9; }
 function damageFoe(f, dmg, x, z) { if (f.dead) return; if (f.sh > 0) { f.sh = Math.max(0, f.sh - dmg); flash(x, 0, z, 0x7fd8ff, 6, 0.2); } else { f.hp -= dmg; flash(x, 0, z, 0xffb04a, 5, 0.2); flashFoe(f); }
   f.hurtT = 1.0; if (f.state === 'transit' || f.state === 'patrol') f.state = 'attack'; if (f.hp < f.max * 0.45 && f.state === 'attack' && Math.random() < 0.5) { f.state = 'evade'; f.st = 0; }
   if (f.hp <= 0) { f.dead = true; f.deadT = S.t; explode(f.x, f.z, f.kind === 'ace' ? 2.4 : f.kind === 'gunship' ? 1.6 : 1.1, '#24202c'); save.addGold(Math.round(f.K.cr / 2)); loot(f.x, f.z, 'cr', Math.ceil(f.K.cr / 10)); if (Math.random() < 0.5) loot(f.x, f.z, 'ore', 2); S.kills++; logLine((f.kind === 'ace' ? f.name + ' down' : 'Corsair down') + ' · +' + Math.round(f.K.cr / 2) + ' cr', false); } }
@@ -348,7 +461,7 @@ function hitRock(r, dmg, x, z) { r.hp -= dmg; flash(x, r.y, z, 0xffcf8a, 4, 0.18
 // ================================================================ CORSAIR AI — transit in formation, attack runs with lead, break off, jink, flee
 function foeAI(f, dt, T) {
   const K = f.K; f.st += dt; f.cd -= dt;
-  if (f.flashT > 0) { f.flashT -= dt; if (f.flashT <= 0) f.g.traverse(o => { if (o.isMesh && o.material.userData.own) o.material.emissiveIntensity = 0; }); }
+  if (f.flashT > 0) { f.flashT -= dt; if (f.flashT <= 0) { f.g.traverse(o => { if (o.isMesh && Array.isArray(o.material)) o.material[0].emissiveIntensity = 0.18; }); if (f.g.userData.halo) f.g.userData.halo.material.opacity = 0.25; } }
   if (f.sh < (K.shield || 0) && (f.hurtT -= dt) < -2) f.sh = Math.min(K.shield, f.sh + dt * 8);
   const dx = S.x - f.x, dz = S.z - f.z, d = Math.hypot(dx, dz), toP = Math.atan2(dx, dz);
   let want = f.yaw, sp = K.sp, fire = false;
@@ -387,7 +500,7 @@ function hud(dt, spd) {
   const actTxt = ins ? (ins.kind === 'dock' ? 'LAND · ' + ins.w.n : ins.kind === 'dsf' ? 'DOCK · Deep Space Fox' : ins.kind === 'earth' ? 'LAND · Earth' : ins.kind === 'mine' ? 'TRADE ORE' : ins.kind === 'yard' ? 'SHIPYARD' : ins.kind === 'fuel' ? 'REFIT' : ins.kind === 'gate' ? 'STAR GATE' : '') : '';
   const showAct = !!ins && started && !panelOpen && !chartOpen && !S.dead;
   show($('prompt'), showAct && !touch); $('ptx').textContent = actTxt; show($('bAct'), showAct, 'flex'); $('bAct').textContent = actTxt;
-  const t = S.tgt; show($('target'), !!t && started); if (t) { $('tk').textContent = t.kind === 'ace' ? 'ACE' : t.kind === 'port' ? 'CORSAIR PORT' : 'TARGET · ' + Math.round(dist(S.x, S.z, t.x, t.z) * 10) + ' km'; $('tn').textContent = t.name || 'Turret'; $('tb').style.width = Math.max(0, (t.hp / (t.max || t.hpMax || 30)) * 100) + '%'; }
+  const t = S.tgt; show($('target'), !!t && started); if (t) { $('tk').textContent = t.kind === 'ace' ? 'ACE' : t.kind === 'serpent' ? 'BEAST' : t.kind === 'nest' ? 'NEST' : t.kind === 'port' ? 'CORSAIR PORT' : 'TARGET · ' + Math.round(dist(S.x, S.z, t.x, t.z) * 10) + ' km'; $('tn').textContent = t.name || 'Turret'; $('tb').style.width = Math.max(0, (t.hp / (t.max || t.hpMax || 30)) * 100) + '%'; }
   if (toastT > 0) { toastT -= dt; if (toastT <= 0) show($('toast'), false); }
   hurtA = Math.max(0, hurtA - dt * 2); shieldA = Math.max(0, shieldA - dt * 2); $('hurt').style.opacity = hurtA; $('shieldfx').style.opacity = shieldA;
   drawMarks(); drawRadar();
@@ -411,6 +524,7 @@ function drawRadar() { const c = radar, Wd = 300, R = 140, sc = R / 1600; c.clea
   for (const p of PORTS3) dot(p.x, p.z, p.razed ? '#5a5560' : '#ec3013', 5);
   for (const n of NEUTRAL) dot(n.x, n.z, n.kind === 'cruiser' ? '#e6b45a' : '#7fd8ff', n.kind === 'cruiser' ? 4 : 2, false);
   for (const f of FOES) if (!f.dead) dot(f.x, f.z, '#ff3a2a', f.kind === 'ace' ? 5 : 3.4);
+  for (const B of BEASTS) if (!B.dead) dot(B.x, B.z, B.kind === 'serpent' ? '#5fe1c0' : '#d8a8ff', B.kind === 'serpent' ? 6 : B.kind === 'nest' ? 5 : 2, B.kind !== 'moth');
   for (const l of LOOT) dot(l.m.position.x, l.m.position.z, l.kind === 'ore' ? '#ffd23a' : '#7fffb0', 1.8, false);
   if (S.wp) dot(S.wp.x, S.wp.z, '#ffffff', 4);
   c.restore(); c.fillStyle = '#f3f2f2'; c.strokeStyle = '#201e1d'; c.lineWidth = 2; c.beginPath(); c.moveTo(Wd / 2, Wd / 2 - 11); c.lineTo(Wd / 2 - 8, Wd / 2 + 9); c.lineTo(Wd / 2 + 8, Wd / 2 + 9); c.closePath(); c.fill(); c.stroke(); }
@@ -430,6 +544,8 @@ window.__8G_SPACE = {
   cam: (x, y, z, lx, ly, lz) => { camPos.set(x, y, z); camLook.set(lx, ly, lz); },
   stats: () => ({ calls: renderer.info.render.calls, tris: renderer.info.render.triangles, cam: camera.position.toArray().map(Math.round), started, warpT: S.warpT }),
   grace: v => { S.grace = v; },
+  hold: (a, el, d) => { S.hold = a == null ? null : [a, el, d]; },
+  beasts: () => BEASTS.filter(b => !b.dead).map(b => ({ k: b.kind, st: b.state, x: Math.round(b.x), z: Math.round(b.z), hp: Math.round(b.hp) })),
   sim: (sec, dt = 1 / 30) => { const n = Math.round(sec / dt); for (let i = 0; i < n; i++) step(dt); clock.getDelta(); return n; },
 };
 frame();

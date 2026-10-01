@@ -53,13 +53,14 @@ const W = [
   ['player', 'Home', 'Your own planet: the clubhouse, pizza runs, the rink and the slopes.', '#e8eef7'],
   ['earth', 'Earth', 'The far away world. The Strip after dark, and a gate in the desert.', '#ffd23a'],
   ['station', 'Deep Space Fox', 'The station on the edge of the Nine. You are its new Steward.', '#9aa4b5'],
+  ['gallery', 'Blind Canvas', 'The Blind Canvas Project gallery: art, stories and music by blind artists. Walk it as your fox.', '#22b8b0', 'gallery.html'],
 ];
 let seen = {}; try { const s = JSON.parse(localStorage.getItem('8gates.save.v1') || '{}'); seen = (s && s.flags) || {}; } catch (e) {}
 const g = document.getElementById('grid');
 for (const [k, n, t, c, href] of W) {
   const a = document.createElement('a'); a.className = 'w' + (k === 'meru' ? ' meru' : ''); a.href = href || ('world.html?w=' + k);
   const cnt = Object.keys(seen).filter(f => f.startsWith(k + '.seen.')).length;
-  a.innerHTML = '<div class="orb" style="background:radial-gradient(circle at 35% 35%, #fff8, transparent 45%), ' + c + '"></div><div><div class="nm">' + n + '</div><div class="tg">' + t + '</div></div><div class="ft"><span>' + (k === 'meru' ? 'Hand-built' : cnt ? cnt + ' places found' : 'Unexplored') + '</span><span>Land →</span></div>';
+  a.innerHTML = '<div class="orb" style="background:radial-gradient(circle at 35% 35%, #fff8, transparent 45%), ' + c + '"></div><div><div class="nm">' + n + '</div><div class="tg">' + t + '</div></div><div class="ft"><span>' + (k === 'meru' ? 'Hand-built' : k === 'gallery' ? 'Art gallery' : cnt ? cnt + ' places found' : 'Unexplored') + '</span><span>Land →</span></div>';
   g.appendChild(a);
 }
 const GAMES = [['surf', 'Surf Contest', 'Jidda', 'Ride the face, launch off the lip, tuck into the barrel.', '#3fb7a0'], ['trucks', 'Monster Crush', 'Zion', 'Ramps, flips and a lot of flat cars.', '#ff8a3a'], ['tennis', 'The Gaya Open', 'Gaya', 'First to seven against the house champion.', '#a97bdd'], ['archery', 'Kyoto Archery', 'Kyoto', 'Ten arrows, the wind, and a bullseye.', '#c8322a'], ['glider', 'Nebo Glider', 'Nebo', 'Off the giant tree, through the lantern rings.', '#4f9ee0'], ['gold', 'Gold Panning', 'Zion', 'Swirl the pan until only gold is left.', '#e3c34a'], ['speedway', 'Eight Mile Speedway', 'Earth', 'Three laps under a desert sunset.', '#ffd23a'], ['fishing', 'Fishing', 'Kufa · Ur · Gaya · Home', 'Cast, strike, reel — and do not snap the line.', '#3fb7c8']];
