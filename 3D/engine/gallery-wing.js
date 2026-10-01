@@ -87,7 +87,8 @@ export function buildWing({ scene, wing, O, wood, resolveImg }) {
   box(L, 0.05, 0.03, new THREE.MeshBasicMaterial({ color: 0xec3013 }), -L / 2, 4.9, -HW + 0.02, false); box(L, 0.05, 0.03, new THREE.MeshBasicMaterial({ color: 0xec3013 }), -L / 2, 4.9, HW - 0.02, false);
   // ceiling light strips + bench seats down the middle
   for (let x = -5; x > -L; x -= 7.5) { box(5.5, 0.06, 0.5, lightM, x, Hh - 0.02, -4, false); box(5.5, 0.06, 0.5, lightM, x, Hh - 0.02, 4, false); }
-  for (let x = -12; x > -L + 6; x -= 15) { box(3.2, 0.45, 0.9, greyM, x, 0.225, 0); }
+  for (let x = -14; x > -L + 6; x -= 15) { box(3.2, 0.45, 0.9, greyM, x, 0.225, 0); }
+  const screens = [];
   const lamp = new THREE.PointLight(0xfff2dc, 0, 0); g.add(lamp);   // (ambient/hemi do the lighting; no extra cost)
 
   // title wall at the far end
@@ -105,8 +106,25 @@ export function buildWing({ scene, wing, O, wood, resolveImg }) {
   const bayW = 15, slots = [];
   for (let i = 0; i < 4; i++) slots.push({ x: -8.5 - i * bayW, side: -1 });
   for (let i = 0; i < 4; i++) slots.push({ x: -8.5 - i * bayW, side: 1 });
+  // interview totems: one per pair of bays, the -z face for the left artist, +z for the right
+  const totems = {};
+  const totemAt = x => {
+    if (totems[x]) return totems[x];
+    const dark = new THREE.MeshBasicMaterial({ color: 0x151515 });
+    const tv = new THREE.Mesh(new THREE.BoxGeometry(3.6, 2.03, 0.14), [dark, dark, dark, dark, dark, dark]); tv.position.set(x, 2.35, 0); g.add(tv); col.push(tv);
+    box(0.25, 1.4, 0.25, inkM, x, 0.7, 0); box(1.4, 0.08, 0.8, inkM, x, 0.04, 0);
+    return (totems[x] = tv);
+  };
   wing.artists.forEach((A, ai) => {
     const s = slots[ai]; if (!s) return;
+    if (A.video) {
+      const tv = totemAt(s.x), face = s.side < 0 ? 5 : 4;
+      const posterT = panelTex(640, 360, (c, w, h) => { c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, 0, w, 8); c.fillStyle = '#ff9783'; c.font = `800 22px ${FONT}`; c.fillText('BLINDNESS · AN INTERVIEW WITH', 34, 150); c.fillStyle = '#fff'; c.font = `800 46px ${FONT}`; wrap(c, A.name.toUpperCase(), w - 68).forEach((l, i) => c.fillText(l, 34, 205 + i * 50)); });
+      const posterMat = new THREE.MeshBasicMaterial({ map: posterT }); tv.material[face] = posterMat;
+      const z0 = s.side < 0 ? -HW : 0, z1 = s.side < 0 ? 0 : HW;
+      screens.push({ u: A.video, local: A.video, box: tv, faces: [face], posterMat, vol: 0.8, dist: 16, p: [O.x + s.x, O.y + 2.35, O.z],
+        zone: new THREE.Box3(new THREE.Vector3(O.x + s.x - 7.4, O.y - 1, O.z + z0), new THREE.Vector3(O.x + s.x + 7.4, O.y + 6, O.z + z1)) });
+    }
     const zf = s.side * (HW - 0.05);   // wall face
     const rotY = s.side < 0 ? 0 : Math.PI;   // plane faces +z on the left wall, -z on the right
     const dirX = s.side < 0 ? 1 : -1;        // walking along the wall, "to the right" as you face it
@@ -146,7 +164,7 @@ export function buildWing({ scene, wing, O, wood, resolveImg }) {
   });
   g.updateMatrixWorld(true);
   let loaded = false;
-  return { group: g, col, arts, load() { if (loaded) return; loaded = true; loaders.forEach(f => f()); }, length: L };
+  return { group: g, col, arts, screens, load() { if (loaded) return; loaded = true; loaders.forEach(f => f()); }, length: L };
 }
 
 // ------------------------------------------------------------ a doorway (freestanding arch with a glowing teal opening)

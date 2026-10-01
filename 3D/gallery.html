@@ -6,7 +6,7 @@
 <title>Blind Canvas Gallery · 8 GATES 3D</title>
 <link rel="stylesheet" href="vendor/fonts/archivo.css">
 <style>
-  :root { --bg:#f3f2f2; --ink:#201e1d; --accent:#ec3013; --teal:#22b8b0; --font:"Archivo",system-ui,sans-serif; }
+  :root { --bg:#141312; --ink:#f3f2f2; --card:#232120; --accent:#ec3013; --teal:#22b8b0; --font:"Archivo",system-ui,sans-serif; }
   * { box-sizing:border-box; }
   html,body { margin:0; height:100%; background:#0b0a12; color:var(--ink); font-family:var(--font); overflow:hidden; -webkit-user-select:none; user-select:none; touch-action:none; }
   #stage { position:fixed; inset:0; }
@@ -17,10 +17,9 @@
   #place .w { font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); }
   #place .c { font:800 22px var(--font); line-height:1.05; }
   #menuBtn { width:48px; border:2px solid var(--ink); border-left:0; background:var(--bg); font-size:20px; text-align:center; }
-  #act { position:fixed; right:calc(12px + env(safe-area-inset-right)); bottom:calc(84px + env(safe-area-inset-bottom)); z-index:10; display:none; max-width:min(320px,52vw); min-height:52px; padding:10px 14px; background:var(--accent); color:var(--bg); border:2px solid var(--ink); font:800 13px/1.25 var(--font); letter-spacing:.06em; text-transform:uppercase; }
+  #act { position:fixed; right:calc(12px + env(safe-area-inset-right)); bottom:calc(24px + env(safe-area-inset-bottom)); z-index:10; display:none; max-width:min(320px,52vw); min-height:52px; padding:10px 14px; background:var(--accent); color:#fff; border:2px solid var(--ink); font:800 13px/1.25 var(--font); letter-spacing:.06em; text-transform:uppercase; }
   #act small { display:block; font-size:10px; letter-spacing:.14em; opacity:.85; }
-  #jump { position:fixed; right:calc(12px + env(safe-area-inset-right)); bottom:calc(16px + env(safe-area-inset-bottom)); z-index:10; width:60px; height:56px; text-align:center; font:800 12px var(--font); letter-spacing:.1em; }
-  #hint { position:fixed; left:50%; transform:translateX(-50%); bottom:calc(16px + env(safe-area-inset-bottom)); z-index:9; padding:6px 10px; font-size:12px; font-weight:600; max-width:calc(100vw - 180px); text-align:center; }
+  #hint { position:fixed; left:50%; transform:translateX(-50%); top:calc(74px + env(safe-area-inset-top)); z-index:9; padding:6px 10px; font-size:12px; font-weight:600; max-width:calc(100vw - 24px); text-align:center; }
   #panel { position:fixed; z-index:20; left:50%; top:50%; transform:translate(-50%,-50%); width:min(720px,calc(100vw - 24px)); max-height:calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); display:none; flex-direction:column; user-select:text; -webkit-user-select:text; touch-action:pan-y; }
   #panel header { display:flex; align-items:stretch; border-bottom:2px solid var(--ink); }
   #panel header .h { flex:1; padding:10px 14px; }
@@ -30,10 +29,10 @@
   #panel .body { overflow:auto; padding:14px; font-size:16px; line-height:1.5; -webkit-overflow-scrolling:touch; }
   #panel .art { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.1fr); gap:14px; }
   @media (max-width:640px) { #panel .art { grid-template-columns:1fr; } }
-  #panel .art img { width:100%; max-height:62dvh; object-fit:contain; border:2px solid var(--ink); background:#ddd; display:block; }
+  #panel .art img { width:100%; max-height:62dvh; object-fit:contain; border:2px solid var(--ink); background:#2b2928; display:block; }
   #panel .lab { font-size:11px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; margin:12px 0 4px; }
   #panel .row { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
-  #panel .row button, #panel .row a { min-height:44px; padding:10px 14px; border:2px solid var(--ink); background:#fff; font:800 12px var(--font); letter-spacing:.08em; text-transform:uppercase; text-decoration:none; color:var(--ink); display:inline-flex; align-items:center; }
+  #panel .row button, #panel .row a { min-height:44px; padding:10px 14px; border:2px solid var(--ink); background:var(--card); font:800 12px var(--font); letter-spacing:.08em; text-transform:uppercase; text-decoration:none; color:var(--ink); display:inline-flex; align-items:center; }
   #panel .row .on { background:var(--ink); color:var(--bg); }
   #panel details { border-top:2px solid var(--ink); }
   #panel details:last-child { border-bottom:2px solid var(--ink); }
@@ -42,19 +41,19 @@
   #panel details .a { padding:0 4px 12px; }
   #panel video { width:100%; border:2px solid var(--ink); background:#000; margin-top:8px; }
   .people { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px; }
-  .people .p { border:2px solid var(--ink); background:#fff; }
+  .people .p { border:2px solid var(--ink); background:var(--card); }
   .people img { width:100%; aspect-ratio:1; object-fit:cover; display:block; border-bottom:2px solid var(--ink); }
   .people .p div { padding:8px; font-size:13px; } .people .p b { display:block; font-size:14px; }
   #menu { position:fixed; z-index:21; left:12px; top:calc(70px + env(safe-area-inset-top)); width:min(340px,calc(100vw - 24px)); display:none; padding:12px; max-height:calc(100dvh - 90px); overflow:auto; }
   #menu .lab { font-size:11px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; margin:10px 0 6px; color:var(--accent); }
   #menu .opts { display:flex; flex-wrap:wrap; gap:6px; }
-  #menu button { min-height:44px; padding:8px 12px; border:2px solid var(--ink); background:#fff; font:800 12px var(--font); letter-spacing:.06em; text-transform:uppercase; }
+  #menu button { min-height:44px; padding:8px 12px; border:2px solid var(--ink); background:var(--card); font:800 12px var(--font); letter-spacing:.06em; text-transform:uppercase; }
   #menu button.on { background:var(--ink); color:var(--bg); }
-  #menu a { display:block; margin-top:12px; padding:12px; border:2px solid var(--ink); background:var(--accent); color:var(--bg); font-weight:800; text-decoration:none; letter-spacing:.06em; text-transform:uppercase; font-size:13px; }
-  #load { position:fixed; inset:0; z-index:30; background:#0b0a12; color:var(--bg); display:flex; flex-direction:column; justify-content:center; padding:24px; }
+  #menu a { display:block; margin-top:12px; padding:12px; border:2px solid var(--ink); background:var(--accent); color:#fff; font-weight:800; text-decoration:none; letter-spacing:.06em; text-transform:uppercase; font-size:13px; }
+  #load { position:fixed; inset:0; z-index:30; background:#0b0a12; color:#f3f2f2; display:flex; flex-direction:column; justify-content:center; padding:24px; }
   #load .k { font-size:12px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:#ff9783; }
   #load h1 { font:800 clamp(40px,10vw,88px)/0.9 var(--font); letter-spacing:-0.04em; margin:8px 0 18px; }
-  #load .bar { height:12px; border:2px solid var(--bg); max-width:420px; } #load .bar i { display:block; height:100%; width:0; background:var(--accent); }
+  #load .bar { height:12px; border:2px solid #f3f2f2; max-width:420px; } #load .bar i { display:block; height:100%; width:0; background:var(--accent); }
   #load p { max-width:520px; color:#cfcaca; line-height:1.5; }
   .sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
 </style>
@@ -64,8 +63,7 @@
 <div id="load"><div class="k">8 GATES · 3D · Ben Fox</div><h1>Blind Canvas<br>Project</h1><div class="bar"><i id="lb"></i></div><p id="lt">Opening the gallery…</p></div>
 <div id="place"><div class="t box"><div class="w">Blind Canvas Project</div><div class="c">The Gallery</div></div><button id="menuBtn" aria-label="Menu">☰</button></div>
 <button id="act" aria-live="polite"></button>
-<button id="jump" class="box" aria-label="Jump">JUMP</button>
-<div id="hint" class="box">Drag the left side to walk · drag the right side to look</div>
+<div id="hint" class="box">Use the joystick to walk · drag the screen to look</div>
 <div id="panel" class="box" role="dialog" aria-modal="true" aria-labelledby="pt"><header><div class="h"><div class="k" id="pk"></div><h2 id="pt"></h2></div><button id="px" aria-label="Close">✕</button></header><div class="body" id="pb"></div></div>
 <div id="menu" class="box" role="dialog" aria-label="Menu">
   <div class="lab">Your fox</div>
@@ -92,10 +90,8 @@ window.G = G;
 $('load').style.display = 'none';
 if (pref.look || pref.extra) G.setLook(pref.look || 'male', pref.extra || 'none');
 const touch = matchMedia('(pointer:coarse)').matches;
-$('hint').textContent = touch ? 'Drag the left side to walk · drag the right side to look' : 'W A S D to walk · Shift to run · drag to look · E to view';
+$('hint').textContent = touch ? 'Use the joystick to walk · drag the screen to look' : 'W A S D to walk · Shift to run · drag to look · E to view';
 setTimeout(() => $('hint').style.display = 'none', 9000);
-if (!touch) $('jump').style.display = 'none';
-$('jump').addEventListener('pointerdown', e => { e.preventDefault(); G.jump(); });
 
 // ------------------------------------------------ near things
 let near = null;

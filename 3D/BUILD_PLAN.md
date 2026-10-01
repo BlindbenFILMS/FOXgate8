@@ -70,3 +70,8 @@ Ben's PlayCanvas project (BCP export) was exported with PlayCanvas's own GltfExp
   - The Wall of Why portraits were mislabelled "Roots of Kinship" in the source; that's fixed.
   - The New Artists Wing (`engine/gallery-wing.js`) holds 7 artists × 3 canvases plus bio boards. It is built at (-100,-150,0) and you enter it through the teal doorway in the main hall at (-96,-3.35,12).
   - White floors are now honey oak. The shader swaps white, upward-facing pixels, including palette-textured materials.
+- **Videos (1 Oct, evening).**
+  - 23 interview videos were re-encoded to 480p H.264/AAC with faststart, about 255 MB in total, in `gallery/video/`.
+  - 16 of them replace the Vimeo streams on the gallery's screens (`vids[].local`). The 7 wing artists' interviews play on two-sided totems in the middle of each pair of bays.
+  - Playback tries the local file first and falls back to Vimeo. Six screens still stream from Vimeo only: Artists of the Year, Stevie Wonder, the main BCP screen, the blindness simulator, Goalball and Ora.
+  - Each file must stay under 20 MB for the folder bridge.

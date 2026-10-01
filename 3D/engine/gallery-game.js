@@ -138,17 +138,26 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     const zone = v.tmin ? new THREE.Box3(new THREE.Vector3(...v.tmin), new THREE.Vector3(...v.tmax)).expandByScalar(0.6) : null;
     return { ...v, box, posterMat, zone };
   });
+  if (wing) vids.push(...wing.screens);   // a two-sided interview screen in the middle of each bay of the New Artists Wing
+  const localFail = new Set();
   const video = document.createElement('video'); video.crossOrigin = 'anonymous'; video.playsInline = true; video.setAttribute('playsinline', ''); video.loop = true; video.muted = true; video.preload = 'auto';
   const vidTex = new THREE.VideoTexture(video); vidTex.colorSpace = THREE.SRGBColorSpace;
   const vidMat = new THREE.MeshBasicMaterial({ map: vidTex });
   let hls = null, curUrl = null, soundOK = false, vidFail = new Set();
   async function playUrl(url) {
     if (url === curUrl) return; curUrl = url;
-    for (const v of vids) v.box.material[0] = v.box.material[1] = (url && v.u === url && !vidFail.has(url)) ? vidMat : v.posterMat;
+    for (const v of vids) for (const f of (v.faces || [0, 1])) v.box.material[f] = (url && v.u === url && !vidFail.has(url)) ? vidMat : v.posterMat;
     if (hls) { hls.destroy(); hls = null; }
     video.pause(); video.removeAttribute('src'); video.load();
     if (!url || vidFail.has(url)) return;
     const fail = () => { vidFail.add(url); if (curUrl === url) { curUrl = null; playUrl(url); } };
+    // the gallery's own copy (in the site, 3D/gallery/video/) first; the original Vimeo stream if that fails
+    const loc = (vids.find(v => v.u === url && v.local) || {}).local;
+    if (loc && !localFail.has(url)) {
+      video.onerror = () => { localFail.add(url); if (curUrl === url) { curUrl = null; if (/^https?:/.test(url)) playUrl(url); else fail(); } };
+      video.src = loc; video.muted = !soundOK; video.play().catch(() => {}); return;
+    }
+    if (!/^https?:/.test(url)) return fail();
     try {
       if (video.canPlayType('application/vnd.apple.mpegurl')) video.src = url;
       else {
@@ -230,15 +239,32 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   function respawn() { Pl.x = SPAWN.x; Pl.z = SPAWN.z; Pl.y = groundAt(SPAWN.x, 1.5, SPAWN.z); Pl.vy = 0; Pl.face = SPAWN.face; St.yaw = SPAWN.face + Math.PI; }
 
   const DBG = { freeCam: false };
+  St.lastLook = 0;
+  const camRay = new THREE.Vector3(), camSide = new THREE.Vector3(), camUp = new THREE.Vector3();
   function updateCamera(dt) {
+    // follow: while walking, swing the camera round behind the fox (not when you just dragged to look, and not when walking toward the camera)
+    const moving = Pl.speed > 0.6 && (Math.abs(input.jx) + Math.abs(input.jy) + input.f + input.b + input.l + input.r) > 0.1;
+    if (moving && performance.now() - St.lastLook > 900) {
+      const behind = Pl.face + Math.PI; let d = behind - St.yaw; d = Math.atan2(Math.sin(d), Math.cos(d));
+      const w = clamp((Math.cos(d) + 0.6) / 1.2, 0, 1);
+      St.yaw += d * Math.min(1, dt * 2.4 * w);
+    }
     const head = new THREE.Vector3(Pl.x, Pl.y + 1.35, Pl.z);
     const cp = Math.cos(St.pitch), dir = new THREE.Vector3(Math.sin(St.yaw) * cp, Math.sin(St.pitch), Math.cos(St.yaw) * cp);
-    const h = cast(head.x, head.y, head.z, dir.x, dir.y, dir.z, St.dist + 0.3);
-    const want = h ? Math.max(0.6, h.distance - 0.3) : St.dist;
-    St.camDist = want < St.camDist ? want : damp(St.camDist, want, 4, dt);
+    // walls never come between you and the fox: a small fan of rays (centre, left, right, up, down) and the camera sits in front of the nearest hit
+    camSide.set(Math.cos(St.yaw), 0, -Math.sin(St.yaw)); camUp.crossVectors(dir, camSide).normalize();
+    let near = St.dist;
+    for (const [sx, sy] of [[0, 0], [0.35, 0], [-0.35, 0], [0, 0.28], [0, -0.22]]) {
+      camRay.copy(dir).multiplyScalar(St.dist).addScaledVector(camSide, sx).addScaledVector(camUp, sy);
+      const len = camRay.length(); camRay.divideScalar(len);
+      const h = cast(head.x, head.y, head.z, camRay.x, camRay.y, camRay.z, len + 0.35);
+      if (h) near = Math.min(near, (h.distance - 0.35) * (St.dist / len));
+    }
+    const want = Math.max(0.55, near);
+    St.camDist = want < St.camDist ? want : damp(St.camDist, want, 3, dt);
     camera.position.copy(head).addScaledVector(dir, St.camDist);
     camera.lookAt(head);
-    player.visible = St.camDist > 0.75;
+    player.visible = St.camDist > 1.1;   // squeezed against a wall: go first-person rather than fill the screen with fox
   }
 
   // ---------------------------------------------------------------- input: keys, mouse drag, touch joystick (left) + drag look (right)
@@ -248,25 +274,37 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const onKeyUp = e => { const k = keyMap[e.code]; if (k) input[k] = 0; };
   addEventListener('keydown', onKeyDown); addEventListener('keyup', onKeyUp);
   addEventListener('blur', () => { for (const k in input) input[k] = 0; });
+  // phones/tablets: an always-visible joystick, bottom left (touch anywhere in the lower-left quarter to grab it)
+  const touchUI = matchMedia('(pointer:coarse)').matches || 'ontouchstart' in window;
+  const JR = 56;   // knob travel
   const joyBase = document.createElement('div'), joyKnob = document.createElement('div');
-  joyBase.style.cssText = 'position:absolute;width:112px;height:112px;border:2px solid #f3f2f2;background:rgba(32,30,29,.25);transform:translate(-50%,-50%);display:none;pointer-events:none;z-index:5';
-  joyKnob.style.cssText = 'position:absolute;width:44px;height:44px;background:#ec3013;transform:translate(-50%,-50%);display:none;pointer-events:none;z-index:5';
+  joyBase.style.cssText = 'position:absolute;width:132px;height:132px;border:2px solid #f3f2f2;background:rgba(20,19,18,.45);transform:translate(-50%,-50%);pointer-events:none;z-index:5;display:' + (touchUI ? 'block' : 'none');
+  joyKnob.style.cssText = 'position:absolute;width:52px;height:52px;background:#ec3013;border:2px solid #f3f2f2;transform:translate(-50%,-50%);pointer-events:none;z-index:5;transition:left .12s,top .12s;display:' + (touchUI ? 'block' : 'none');
   container.append(joyBase, joyKnob);
+  const safe = document.createElement('div'); safe.style.cssText = 'position:fixed;left:0;bottom:0;width:0;height:env(safe-area-inset-bottom);padding-left:env(safe-area-inset-left);visibility:hidden;pointer-events:none'; document.body.appendChild(safe);
+  const joyHome = () => { const r = el.getBoundingClientRect(); return { x: 26 + 66 + safe.offsetWidth, y: r.height - 26 - 66 - safe.offsetHeight }; };
+  const placeJoy = (x, y, kx = x, ky = y) => { joyBase.style.left = x + 'px'; joyBase.style.top = y + 'px'; joyKnob.style.left = kx + 'px'; joyKnob.style.top = ky + 'px'; };
+  const resetJoy = () => { const h = joyHome(); placeJoy(h.x, h.y); };
+  resetJoy(); addEventListener('resize', resetJoy);
   const ptrs = new Map();
   el.addEventListener('pointerdown', e => {
     const r = el.getBoundingClientRect(), lx = e.clientX - r.left, ly = e.clientY - r.top;
-    const joy = e.pointerType === 'touch' && lx < r.width * 0.45 && ![...ptrs.values()].some(p => p.joy);
-    ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY, ox: lx, oy: ly, joy });
-    if (joy) { joyBase.style.display = joyKnob.style.display = 'block'; joyBase.style.left = joyKnob.style.left = lx + 'px'; joyBase.style.top = joyKnob.style.top = ly + 'px'; }
+    const hm = joyHome();
+    const joy = e.pointerType === 'touch' && lx < r.width * 0.5 && ly > r.height * 0.45 && ![...ptrs.values()].some(p => p.joy);
+    // grabbing inside the base keeps it put; touching elsewhere in the corner moves the base under your thumb
+    const inBase = Math.abs(lx - hm.x) < 80 && Math.abs(ly - hm.y) < 80;
+    const ox = joy && inBase ? hm.x : lx, oy = joy && inBase ? hm.y : ly;
+    ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY, ox, oy, joy });
+    if (joy) { joyKnob.style.transition = 'none'; placeJoy(ox, oy, lx, ly); const dx = lx - ox, dy = ly - oy; input.jx = clamp(dx / JR, -1, 1); input.jy = clamp(-dy / JR, -1, 1); }
     el.setPointerCapture(e.pointerId);
   });
   el.addEventListener('pointermove', e => {
     const p = ptrs.get(e.pointerId); if (!p) return;
-    if (p.joy) { const r = el.getBoundingClientRect(); let dx = e.clientX - r.left - p.ox, dy = e.clientY - r.top - p.oy; const l = Math.hypot(dx, dy); if (l > 50) { dx *= 50 / l; dy *= 50 / l; } input.jx = dx / 50; input.jy = -dy / 50; joyKnob.style.left = p.ox + dx + 'px'; joyKnob.style.top = p.oy + dy + 'px'; }
-    else { const k = e.pointerType === 'touch' ? 0.008 : 0.005; St.yaw -= (e.clientX - p.x) * k; St.pitch = clamp(St.pitch + (e.clientY - p.y) * k * 0.8, -0.35, 1.2); }
+    if (p.joy) { const r = el.getBoundingClientRect(); let dx = e.clientX - r.left - p.ox, dy = e.clientY - r.top - p.oy; const l = Math.hypot(dx, dy); if (l > JR) { dx *= JR / l; dy *= JR / l; } input.jx = dx / JR; input.jy = -dy / JR; joyKnob.style.left = p.ox + dx + 'px'; joyKnob.style.top = p.oy + dy + 'px'; }
+    else { St.lastLook = performance.now(); const k = e.pointerType === 'touch' ? 0.008 : 0.005; St.yaw -= (e.clientX - p.x) * k; St.pitch = clamp(St.pitch + (e.clientY - p.y) * k * 0.8, -0.35, 1.2); }
     p.x = e.clientX; p.y = e.clientY;
   });
-  const endPtr = e => { const p = ptrs.get(e.pointerId); if (p && p.joy) { input.jx = input.jy = 0; joyBase.style.display = joyKnob.style.display = 'none'; } ptrs.delete(e.pointerId); };
+  const endPtr = e => { const p = ptrs.get(e.pointerId); if (p && p.joy) { input.jx = input.jy = 0; joyKnob.style.transition = 'left .12s,top .12s'; resetJoy(); } ptrs.delete(e.pointerId); };
   el.addEventListener('pointerup', endPtr); el.addEventListener('pointercancel', endPtr);
   el.addEventListener('wheel', e => { St.dist = clamp(St.dist + e.deltaY * 0.004, 1.6, 9); e.preventDefault(); }, { passive: false });
 
@@ -310,7 +348,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       let zUrl = null; const pp = new THREE.Vector3(Pl.x, Pl.y + 0.5, Pl.z);
       for (const v of vids) if (v.zone && v.zone.containsPoint(pp)) { zUrl = v.u; break; }
       playUrl(zUrl);
-      if (zUrl) { let dmin = 1e9; for (const v of vids) if (v.u === zUrl) dmin = Math.min(dmin, v.box.position.distanceTo(pp)); const vv = vids.find(v => v.u === zUrl); video.volume = clamp((vv.vol ?? 0.8) * (1 - dmin / (vv.dist || 20)), 0, 1); }
+      if (zUrl) { let dmin = 1e9; for (const v of vids) if (v.u === zUrl) dmin = Math.min(dmin, (v.wp ||= v.box.getWorldPosition(new THREE.Vector3())).distanceTo(pp)); const vv = vids.find(v => v.u === zUrl); video.volume = clamp((vv.vol ?? 0.8) * (1 - dmin / (vv.dist || 20)), 0, 1); }
       const n = nearest(); const key = n ? n.kind + n.label : null; if (key !== nearKey) { nearKey = key; onNear(n); }
     }
     renderer.render(scene, camera);
@@ -331,7 +369,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     setRun(v) { input.run = v ? 1 : 0; },
     respawn,
     goWing() { const d = doors.find(x => x.wing); if (d) travel(d); },
-    debug: { THREE, DBG, Pl, St, input, scene, camera, renderer, vids, signs, teleport(x, y, z, face) { Pl.x = x; Pl.z = z; Pl.y = y ?? groundAt(x, 30, z); Pl.vy = 0; if (face != null) { Pl.face = face; St.yaw = face + Math.PI; } }, groundAt, cast, info: () => ({ calls: renderer.info.render.calls, tris: renderer.info.render.triangles, tex: renderer.info.memory.textures, geo: renderer.info.memory.geometries }) },
+    debug: { THREE, DBG, video, Pl, St, input, scene, camera, renderer, vids, signs, teleport(x, y, z, face) { Pl.x = x; Pl.z = z; Pl.y = y ?? groundAt(x, 30, z); Pl.vy = 0; if (face != null) { Pl.face = face; St.yaw = face + Math.PI; } }, groundAt, cast, info: () => ({ calls: renderer.info.render.calls, tris: renderer.info.render.triangles, tex: renderer.info.memory.textures, geo: renderer.info.memory.geometries }) },
     destroy() { cancelAnimationFrame(raf); ro.disconnect(); removeEventListener('keydown', onKeyDown); removeEventListener('keyup', onKeyUp); if (hls) hls.destroy(); video.pause(); renderer.dispose(); el.remove(); joyBase.remove(); joyKnob.remove(); },
   };
 }
