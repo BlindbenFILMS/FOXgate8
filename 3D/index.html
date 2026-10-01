@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>8 GATES 3D · Galaxy</title>
+<link rel="stylesheet" href="vendor/fonts/archivo.css">
+<style>
+  :root { --bg:#f3f2f2; --ink:#201e1d; --accent:#ec3013; --font:"Archivo",system-ui,sans-serif; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; min-height:100%; background:#070812; color:var(--bg); font-family:var(--font); }
+  canvas#sky { position:fixed; inset:0; width:100%; height:100%; z-index:0; }
+  main { position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:calc(24px + env(safe-area-inset-top)) 16px 48px; }
+  header { display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:16px; border-bottom:2px solid var(--bg); padding-bottom:16px; margin-bottom:24px; }
+  h1 { font:800 clamp(44px,9vw,96px)/0.9 var(--font); letter-spacing:-0.04em; margin:0; }
+  header p { margin:0; max-width:420px; font-size:15px; line-height:1.5; color:#d7d3d3; }
+  .k { font-size:12px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:#ff9783; margin-bottom:8px; }
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  @media (max-width:720px) { .grid { grid-template-columns:repeat(2,1fr); } }
+  a.w { position:relative; display:flex; flex-direction:column; justify-content:space-between; min-height:200px; padding:14px; background:var(--bg); color:var(--ink); border:2px solid var(--ink); text-decoration:none; overflow:hidden; }
+  a.w:hover { background:#fff; } a.w:hover .orb { transform:scale(1.06) rotate(8deg); }
+  a.w .orb { position:absolute; right:-28px; top:-28px; width:140px; height:140px; border-radius:50%; transition:transform .3s; border:2px solid var(--ink); }
+  a.w .nm { font:800 30px/1 var(--font); letter-spacing:-0.02em; position:relative; }
+  a.w .tg { font-size:13px; line-height:1.4; max-width:62%; position:relative; margin-top:8px; }
+  a.w .ft { display:flex; justify-content:space-between; align-items:center; border-top:2px solid var(--ink); padding-top:8px; margin-top:14px; font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; position:relative; }
+  a.w.meru { background:var(--accent); color:var(--bg); } a.w.meru .ft { border-color:var(--bg); }
+  .note { margin-top:24px; font-size:13px; color:#bab6b6; line-height:1.5; border-top:2px solid #444141; padding-top:12px; }
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<main>
+  <header>
+    <div><div class="k">8 GATES · 3D</div><h1>The Nine<br>Known Worlds</h1></div>
+    <p>Pick a world and land. Every place, person and line comes from the game itself. Your progress on each world is saved on this device.</p>
+  </header>
+  <a class="w fly" href="space.html" style="min-height:120px;margin-bottom:12px;background:#0b0a12;color:#f3f2f2;border-color:#f3f2f2"><div><div class="nm">Fly the Nine →</div><div class="tg" style="max-width:80%">Take your ship out among the worlds in 3D: land on any of them, fight corsairs in the belts, and go through the Star Gate to Earth.</div></div></a>
+  <div class="grid" id="grid"></div>
+  <div class="k" style="margin-top:28px">The 3D minigames</div>
+  <div class="grid" id="games"></div>
+  <div class="note">Meru is the hand-built world from Claude Design (town square, tavern, casino and the arena). The other worlds are built by the shared world kit from each planet's own maps and people. Back to the 2D game: <a href="../index.html" style="color:#ff9783">8 GATES</a>.</div>
+</main>
+<script>
+const W = [
+  ['meru', 'Meru', 'The centre of the Nine. King Might’s birthday tournament, and the Machine Fleet.', '#b9bec7', 'Meru Town Square.dc.html'],
+  ['gaya', 'Gaya', 'The crystal church, the mountain vein, the gorge’s glass, and Kyoto.', '#a97bdd'],
+  ['jidda', 'Jidda', 'A lagoon of islands where the water is the road, and it is draining.', '#5ec97e'],
+  ['kufa', 'Kufa', 'A caravan town at the edge of the dry, where water is currency.', '#b08355'],
+  ['luxor', 'Luxor', 'Red stone, bike tracks, the boxing pit and a missing crystal.', '#e0574a'],
+  ['nebo', 'Nebo', 'A forest town under Elder Nova. Dead lanterns and a ring in the canopy.', '#5aa6e8'],
+  ['ur', 'Ur', 'Terracotta streets, a stepped pyramid and a poisoned lake.', '#e8963a'],
+  ['zion', 'Zion', 'Gold panning, monster trucks and an oil derrick in the river.', '#e8cf4a'],
+  ['player', 'Home', 'Your own planet: the clubhouse, pizza runs, the rink and the slopes.', '#e8eef7'],
+  ['earth', 'Earth', 'The far away world. The Strip after dark, and a gate in the desert.', '#ffd23a'],
+  ['station', 'Deep Space Fox', 'The station on the edge of the Nine. You are its new Steward.', '#9aa4b5'],
+];
+let seen = {}; try { const s = JSON.parse(localStorage.getItem('8gates.save.v1') || '{}'); seen = (s && s.flags) || {}; } catch (e) {}
+const g = document.getElementById('grid');
+for (const [k, n, t, c, href] of W) {
+  const a = document.createElement('a'); a.className = 'w' + (k === 'meru' ? ' meru' : ''); a.href = href || ('world.html?w=' + k);
+  const cnt = Object.keys(seen).filter(f => f.startsWith(k + '.seen.')).length;
+  a.innerHTML = '<div class="orb" style="background:radial-gradient(circle at 35% 35%, #fff8, transparent 45%), ' + c + '"></div><div><div class="nm">' + n + '</div><div class="tg">' + t + '</div></div><div class="ft"><span>' + (k === 'meru' ? 'Hand-built' : cnt ? cnt + ' places found' : 'Unexplored') + '</span><span>Land →</span></div>';
+  g.appendChild(a);
+}
+const GAMES = [['surf', 'Surf Contest', 'Jidda', 'Ride the face, launch off the lip, tuck into the barrel.', '#3fb7a0'], ['trucks', 'Monster Crush', 'Zion', 'Ramps, flips and a lot of flat cars.', '#ff8a3a'], ['tennis', 'The Gaya Open', 'Gaya', 'First to seven against the house champion.', '#a97bdd'], ['archery', 'Kyoto Archery', 'Kyoto', 'Ten arrows, the wind, and a bullseye.', '#c8322a'], ['glider', 'Nebo Glider', 'Nebo', 'Off the giant tree, through the lantern rings.', '#4f9ee0'], ['gold', 'Gold Panning', 'Zion', 'Swirl the pan until only gold is left.', '#e3c34a'], ['speedway', 'Eight Mile Speedway', 'Earth', 'Three laps under a desert sunset.', '#ffd23a'], ['fishing', 'Fishing', 'Kufa · Ur · Gaya · Home', 'Cast, strike, reel — and do not snap the line.', '#3fb7c8']];
+const gg = document.getElementById('games');
+for (const [k, n, w, t, c] of GAMES) { const a = document.createElement('a'); a.className = 'w'; a.href = 'minigames3d/' + k + '.html'; a.style.minHeight = '150px'; a.innerHTML = '<div class="orb" style="background:' + c + ';width:110px;height:110px;right:-22px;top:-22px"></div><div><div class="nm" style="font-size:24px">' + n + '</div><div class="tg">' + t + '</div></div><div class="ft"><span>' + w + '</span><span>Play →</span></div>'; gg.appendChild(a); }
+const cv = document.getElementById('sky'), cx = cv.getContext('2d'); let st = [];
+function rs() { cv.width = innerWidth * devicePixelRatio; cv.height = innerHeight * devicePixelRatio; st = Array.from({ length: 260 }, () => [Math.random() * cv.width, Math.random() * cv.height, Math.random() * 1.6 + 0.3, Math.random() * 6]); }
+addEventListener('resize', rs); rs();
+(function f(t) { cx.fillStyle = '#070812'; cx.fillRect(0, 0, cv.width, cv.height); for (const s of st) { cx.globalAlpha = 0.4 + 0.6 * Math.abs(Math.sin(t / 900 + s[3])); cx.fillStyle = '#fff'; cx.fillRect(s[0], s[1], s[2] * devicePixelRatio, s[2] * devicePixelRatio); } cx.globalAlpha = 1; requestAnimationFrame(f); })(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#201e1d}a{color:var(--color-accent-700)}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;overflow:hidden;background:var(--color-text);font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none">
+  <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+
+  <sc-if value="{{ started }}" hint-placeholder-val="{{ false }}">
+    <sc-if value="{{ showTopHud }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;top:16px;left:16px;display:flex;flex-direction:column;gap:8px">
+      <div style="background:var(--color-bg);border:2px solid var(--color-text);padding:12px 16px 14px;min-width:200px;display:flex;flex-direction:column;gap:4px;pointer-events:none">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700)">{{ placeLabel }}</div>
+        <div style="font-family:var(--font-heading);font-size:40px;font-weight:800;line-height:1;letter-spacing:-0.02em;color:var(--color-text);font-variant-numeric:tabular-nums">{{ hud.clock }}</div>
+        <div style="font-size:13px;color:var(--color-text)">{{ hud.period }} · {{ hud.weather }}</div>
+      </div>
+      <div style="display:flex">
+        <button class="btn btn-secondary" onClick="{{ cycleWeather }}" style="background:var(--color-bg);border:2px solid var(--color-text);justify-content:flex-start;min-width:96px">Weather</button>
+        <button class="btn btn-secondary" onClick="{{ skipTime }}" style="background:var(--color-bg);border:2px solid var(--color-text);border-left:0;justify-content:flex-start">+3 h</button>
+        <button class="btn btn-secondary" onClick="{{ toggleSound }}" style="background:var(--color-bg);border:2px solid var(--color-text);border-left:0;justify-content:flex-start;min-width:92px">{{ soundLabel }}</button>
+      </div>
+    </div>
+
+
+    </sc-if>
+
+    <sc-if value="{{ showHint }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute;left:16px;bottom:16px;display:flex;flex-wrap:wrap;gap:0;pointer-events:none;font-size:12px;color:var(--color-text)">
+        <div style="background:var(--color-bg);border:2px solid var(--color-text);padding:6px 10px"><b>WASD</b> move</div>
+        <div style="background:var(--color-bg);border:2px solid var(--color-text);border-left:0;padding:6px 10px"><b>Shift</b> run</div>
+        <div style="background:var(--color-bg);border:2px solid var(--color-text);border-left:0;padding:6px 10px"><b>Space</b> jump</div>
+        <div style="background:var(--color-bg);border:2px solid var(--color-text);border-left:0;padding:6px 10px"><b>Drag</b> look</div>
+        <div style="background:var(--color-bg);border:2px solid var(--color-text);border-left:0;padding:6px 10px"><b>E</b> talk / enter</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showJuke }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;right:16px;top:16px;width:min(380px,calc(100% - 32px));background:var(--color-bg);border:2px solid var(--color-text);display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:2px solid var(--color-text);background:var(--color-text);color:var(--color-bg)">
+          <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#ff8ae6">Meru Tavern</span><span style="font:800 22px var(--font-heading);line-height:1">Jukebox</span></div>
+          <button onClick="{{ jukeClose }}" style="height:32px;padding:0 12px;border:2px solid var(--color-bg);border-radius:0;background:transparent;color:var(--color-bg);font:700 12px var(--font-body);cursor:pointer">Close</button>
+        </div>
+        <sc-for list="{{ songList }}" as="s" hint-placeholder-count="5">
+          <button onClick="{{ s.pick }}" style="display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:12px;padding:12px 16px;border:0;border-bottom:2px solid var(--color-text);border-radius:0;background:{{ s.bg }};color:{{ s.fg }};text-align:left;cursor:pointer" style-hover="background:var(--color-neutral-200)">
+            <span style="font:800 18px var(--font-heading)">{{ s.n }}</span>
+            <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:800 15px var(--font-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.title }}</span><span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;opacity:0.8">{{ s.genre }}</span></span>
+            <span style="font-size:12px;font-weight:700;white-space:nowrap">{{ s.state }}</span>
+          </button>
+        </sc-for>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;gap:10px">
+          <span style="font-size:12px;color:var(--color-neutral-700)">{{ jukeFoot }}</span>
+          <button onClick="{{ jukeStop }}" style="height:32px;padding:0 12px;border:2px solid var(--color-text);border-radius:0;background:var(--color-bg);color:var(--color-text);font:700 12px var(--font-body);cursor:pointer;white-space:nowrap">Stop</button>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ showNowPlaying }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;right:16px;top:16px;display:flex;align-items:stretch;background:var(--color-bg);border:2px solid var(--color-text);pointer-events:none;max-width:calc(100% - 32px)">
+        <div style="background:#ff3bd4;color:var(--color-text);font:800 16px var(--font-heading);padding:8px 10px;display:flex;align-items:center">♪</div>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-neutral-700)">Now playing</span><span style="font:800 14px var(--font-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--color-text)">{{ hud.juke.title }}</span></div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ showDarts }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;right:16px;top:50%;transform:translateY(-50%);display:flex;align-items:stretch;gap:0;pointer-events:none">
+        <div style="background:var(--color-bg);border:2px solid var(--color-text);border-right:0;padding:12px 14px;display:flex;flex-direction:column;justify-content:space-between;gap:10px;min-width:118px">
+          <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700)">Darts</span><span style="font:800 26px var(--font-heading);line-height:1;color:var(--color-text)">{{ dartsN }}</span></div>
+          <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-text)">Score</span><span style="font:800 22px var(--font-heading);line-height:1;font-variant-numeric:tabular-nums;color:var(--color-text)">{{ hud.darts.score }}</span></div>
+          <div style="font-size:11px;color:var(--color-neutral-700)">Best {{ hud.darts.best }}</div>
+          <div style="font-size:12px;font-weight:700;color:var(--color-text);white-space:nowrap">{{ dartsHint }}</div>
+        </div>
+        <div style="position:relative;width:34px;height:240px;border:2px solid var(--color-text);background:var(--color-neutral-200)">
+          <div style="position:absolute;left:0;right:0;bottom:0;height:{{ dartsPowerH }};background:var(--color-accent)"></div>
+          <div style="position:absolute;left:-8px;right:-8px;bottom:{{ dartsPerfectB }};height:4px;background:var(--color-bg);border-top:2px solid var(--color-text);border-bottom:2px solid var(--color-text)"></div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showPrompt }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:50%;bottom:96px;transform:translateX(-50%);width:max-content;max-width:calc(100% - 32px);white-space:nowrap;display:flex;align-items:stretch;background:var(--color-bg);border:2px solid var(--color-text);pointer-events:none">
+        <div style="background:var(--color-accent);color:var(--color-bg);font-weight:800;font-size:15px;padding:8px 12px">{{ promptKey }}</div>
+        <div style="padding:8px 14px;font-size:15px;color:var(--color-text)"><b>{{ hud.prompt }}</b></div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showDialog }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ talk }}" style="position:absolute;left:16px;right:16px;bottom:16px;max-width:680px;background:var(--color-bg);border:2px solid var(--color-text);cursor:pointer;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:baseline;gap:10px;padding:12px 18px 10px;border-bottom:2px solid var(--color-text)">
+          <div style="font-family:var(--font-heading);font-size:20px;font-weight:800;color:var(--color-text)">{{ hud.dialog.name }}</div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700);white-space:nowrap">{{ hud.dialog.role }}</div>
+        </div>
+        <div style="padding:14px 18px;font-size:19px;line-height:1.45;color:var(--color-text);min-height:56px;text-wrap:pretty">{{ hud.dialog.text }}</div>
+        <div style="display:flex;justify-content:space-between;padding:8px 18px;border-top:2px solid var(--color-text);font-size:12px;color:var(--color-neutral-700)">
+          <span>{{ hud.dialog.step }} / {{ hud.dialog.total }}</span>
+          <span>{{ continueLabel }}</span>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isTouch }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;right:16px;bottom:16px;display:flex;gap:0">
+        <button onClick="{{ talk }}" style="width:72px;height:72px;border:2px solid var(--color-text);background:var(--color-bg);color:var(--color-text);font:800 14px var(--font-heading);text-align:left;padding:8px;display:flex;align-items:flex-end;border-radius:0">Talk</button>
+        <button onPointerDown="{{ jump }}" hidden="{{ dartsOn }}" style="width:72px;height:72px;border:2px solid var(--color-text);border-left:0;background:var(--color-accent);color:var(--color-bg);font:800 14px var(--font-heading);text-align:left;padding:8px;display:flex;align-items:flex-end;border-radius:0">Jump</button>
+      </div>
+    </sc-if>
+  </sc-if>
+
+  <sc-if value="{{ showGame }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:rgba(10,8,14,0.72);display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;z-index:20">
+      <div style="width:min(1100px,100%);height:min(760px,100%);background:var(--color-bg);border:2px solid var(--color-text);display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:2px solid var(--color-text);background:var(--color-text);color:var(--color-bg)">
+          <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#ffd23a">Meru Casino</span><span style="font:800 20px var(--font-heading);line-height:1">{{ gameLabel }}</span></div>
+          <button onClick="{{ closeGameBtn }}" style="height:34px;padding:0 14px;border:2px solid var(--color-bg);border-radius:0;background:transparent;color:var(--color-bg);font:700 13px var(--font-body);cursor:pointer">Leave table</button>
+        </div>
+        <iframe src="{{ gameSrc }}" style="flex:1;width:100%;border:0;background:#000"></iframe>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ showIntro }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;top:0;left:0;bottom:0;width:min(520px,100%);background:var(--color-accent);color:var(--color-bg);display:flex;flex-direction:column;justify-content:space-between;padding:40px;box-sizing:border-box;border-right:2px solid var(--color-text)">
+      <div style="font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase">Planet Gaya · Meru</div>
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <h1 style="font-family:var(--font-heading);font-weight:800;font-size:clamp(56px,11vw,104px);line-height:0.9;letter-spacing:-0.04em;margin:0;color:var(--color-bg)">Meru<br>Town Square</h1>
+        <p style="font-size:17px;line-height:1.5;margin:0;max-width:360px;text-wrap:pretty">The square from the 2D map, rebuilt in 3D: casino, tavern, item shop, fortune teller, Meru Lanes and the armory, with seven foxes walking their usual routes.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <button onClick="{{ enter }}" style="display:flex;justify-content:space-between;align-items:center;width:100%;padding:18px 20px;background:var(--color-bg);color:var(--color-text);border:2px solid var(--color-text);border-radius:0;font:800 18px var(--font-heading);text-align:left;cursor:pointer" style-hover="background:var(--color-neutral-200)"><span>{{ enterLabel }}</span><span>→</span></button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;border-top:2px solid var(--color-bg);font-size:13px">
+          <div style="padding-top:10px;display:flex;flex-direction:column;gap:2px"><b>Desktop</b><span>WASD, drag to look, E to talk</span></div>
+          <div style="padding-top:10px;display:flex;flex-direction:column;gap:2px"><b>Touch</b><span>Left thumb moves, right drags the camera</span></div>
+        </div>
+        <sc-if value="{{ error }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:13px;background:var(--color-text);color:var(--color-bg);padding:8px 10px">{{ error }}</div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;followCam&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Camera&quot;},&quot;timeScale&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:30,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;min/s&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;World&quot;},&quot;startHour&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:19.5,&quot;min&quot;:0,&quot;max&quot;:23.5,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;h&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;World&quot;},&quot;outlines&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;quality&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;high&quot;,&quot;options&quot;:[&quot;high&quot;,&quot;low&quot;],&quot;tsType&quot;:&quot;'high'|'low'&quot;,&quot;section&quot;:&quot;Look&quot;}}">
+class Component extends DCLogic {
+  state = { game: null, started: false, ready: false, error: null, isTouch: false, hud: { clock: '--:--', period: '', weather: 'Clear', muted: false, prompt: null, dialog: null } };
+  stageRef = React.createRef();
+  mapRef = el => { this.mapEl = el; if (this.game) this.game.setMinimap(el); };
+  opts() {
+    const p = this.props;
+    return { timeScale: p.timeScale ?? 2, startHour: p.startHour ?? 19.5, outlines: p.outlines ?? true, quality: p.quality ?? 'high', followCam: p.followCam ?? true };
+  }
+  async componentDidMount() {
+    window.addEventListener('message', this.onMsg);
+    this.setState({ isTouch: window.matchMedia && matchMedia('(pointer: coarse)').matches });
+    try {
+      const mod = await import(new URL('meru-game.js', document.baseURI).href);
+      if (this.unmounted) return;
+      this.game = await mod.createGame({ container: this.stageRef.current, minimap: this.mapEl, options: this.opts(), onState: hud => this.setState({ hud }), onNavigate: url => { window.location.href = encodeURI(url); }, onPlayGame: (key, label) => this.setState({ game: { key, label } }) });
+      this.setState({ ready: true });
+    } catch (e) { console.error(e); this.setState({ error: 'Could not start 3D: ' + (e && e.message || e) }); }
+  }
+  componentDidUpdate() { if (this.game) this.game.setOptions(this.opts()); }
+  onMsg = e => { const m = e.data; if (m === 'backToCasino' || m === 'backToTavern') this.closeGame(); };
+  closeGame = () => { this.setState({ game: null }); this.game && this.game.gameClosed(); };
+  componentWillUnmount() { window.removeEventListener('message', this.onMsg); this.unmounted = true; if (this.game) this.game.destroy(); }
+  renderVals() {
+    const { started, ready, hud, isTouch, error } = this.state;
+    const d = hud.dialog;
+    return {
+      stageRef: this.stageRef, mapRef: this.mapRef,
+      started, showIntro: !started, error,
+      enterLabel: ready ? 'Enter the square' : 'Landing on Meru…',
+      enter: () => { if (!this.game) return; this.game.start(); this.setState({ started: true }); },
+      hud, isTouch,
+      showHint: !isTouch && !d,
+      showPrompt: !!hud.prompt && !d,
+      promptKey: isTouch ? 'Talk' : 'E',
+      showDialog: !!d,
+      continueLabel: d ? (!d.done ? 'Skip' : d.step < d.total ? (isTouch ? 'Tap to continue' : 'E to continue') : (isTouch ? 'Tap to close' : 'E to close')) : '',
+      soundLabel: hud.muted ? 'Sound off' : 'Sound on',
+      placeLabel: hud.place || 'Meru · Town Square',
+      showGame: !!this.state.game, gameSrc: this.state.game ? 'casino/' + this.state.game.key + '.html' : 'about:blank', gameLabel: this.state.game ? this.state.game.label : '', closeGameBtn: () => this.closeGame(),
+      showJuke: !!(hud.juke && hud.juke.open) && !d, showNowPlaying: !!(hud.juke && hud.juke.title && hud.juke.here && !hud.juke.open),
+      songList: (this.game ? this.game.songs : []).map((s, i) => { const on = hud.juke && hud.juke.playing === i; return { n: s.n, title: s.title, genre: s.genre, bg: on ? 'var(--color-text)' : 'var(--color-bg)', fg: on ? 'var(--color-bg)' : 'var(--color-text)', state: on ? '♪ Playing' : (isTouch ? 'Tap' : 'Key ' + (i + 1)), pick: e => { e.currentTarget.blur(); this.game && this.game.playSong(i); } }; }),
+      jukeClose: e => { e.currentTarget.blur(); this.game && this.game.closeJuke(); }, jukeStop: e => { e.currentTarget.blur(); this.game && this.game.stopSong(); },
+      jukeFoot: hud.juke && hud.juke.synth ? 'Tavern MP3s not found here, so a stand-in groove plays' : (hud.juke && hud.juke.playing >= 0 ? 'Plays on until you leave the tavern' : 'Pick a record'),
+      showDarts: !!hud.darts && !d, dartsN: hud.darts ? hud.darts.n + ' / 3' : '', dartsPowerH: (hud.darts ? hud.darts.power : 0) + '%', dartsPerfectB: 'calc(' + (hud.darts ? hud.darts.perfect : 72) + '% - 4px)', dartsHint: isTouch ? 'Tap anywhere to throw' : 'Click or E to throw',
+      showTopHud: !(hud.darts && isTouch), dartsOn: !!hud.darts,
+      cycleWeather: e => { e.currentTarget.blur(); this.game && this.game.cycleWeather(); },
+      skipTime: e => { e.currentTarget.blur(); this.game && this.game.skipTime(3); },
+      toggleSound: e => { e.currentTarget.blur(); this.game && this.game.toggleSound(); },
+      talk: () => this.game && this.game.talk(),
+      jump: e => { e.preventDefault(); this.game && this.game.jump(); },
+    };
+  }
+}
+</script>
+</body>
+</html>

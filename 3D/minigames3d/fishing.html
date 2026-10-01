@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"><title>Fishing</title></head>
+<body>
+<script type="module">
+import { shell, THREE, rr, clamp, damp } from './shell.js';
+const W = (new URLSearchParams(location.search).get('w') || 'kufa').toLowerCase();
+const PLACE = { kufa: ['KUFA', 'The Oasis', '#3fb7c8', '#e8d0a0', 'palm'], ur: ['UR', 'Hunters Pond', '#3f9ab8', '#c8a070', 'reed'], gaya: ['GAYA', 'Mountain River', '#3fa9c8', '#7d9a5e', 'pine'], player: ['HOME', 'The Lake', '#4fa9d8', '#8ab070', 'pine'], jidda: ['JIDDA', 'The Lagoon', '#2bb6c8', '#ead9ab', 'palm'], meru: ['MERU', 'The Lake', '#4a9ac8', '#7a9a5e', 'pine'] }[W] || ['KUFA', 'The Oasis', '#3fb7c8', '#e8d0a0', 'palm'];
+const G = await shell({ title: 'Fishing · ' + PLACE[1], world: PLACE[0], bestKey: 'fishing_' + W, sky: ['#7fb8f0', '#ffe1c0'], fog: 0.008,
+  intro: 'Two minutes at the water. Cast, wait for the bobber to dip, then strike. Reel while the line is slack and ease off when it pulls tight, or it snaps. Bigger fish fight harder.',
+  how: ['Hold Space to cast (longer = further) · Space to strike · hold J to reel', 'Hold CAST · STRIKE when it dips · hold REEL'],
+  buttons: [{ id: 'act', label: 'CAST', keys: ['Space'], hot: true }, { id: 'reel', label: 'REEL', keys: ['KeyJ', 'KeyK'] }],
+  keysHelp: ['<b>hold Space</b> cast · strike', '<b>hold J</b> reel'], stats: ['CATCH', 'TIME', 'BEST'] });
+const { scene, camera, M, BOX, toon, glowing, glow, input, popup, msg, audio } = G;
+// shore, water, trees, a jetty
+const water = new THREE.Mesh(new THREE.PlaneGeometry(300, 300, 60, 60), new THREE.MeshToonMaterial({ color: PLACE[2], gradientMap: G.grad, transparent: true, opacity: 0.9 })); water.rotation.x = -Math.PI / 2; water.position.set(0, 0, -150); scene.add(water);
+const shore = new THREE.Mesh(new THREE.PlaneGeometry(300, 80), toon(PLACE[3])); shore.rotation.x = -Math.PI / 2; shore.position.set(0, 0.25, 40); scene.add(shore);
+for (let i = 0; i < 24; i++) { const x = rr(-80, 80), z = rr(6, 50); const g = new THREE.Group(); g.position.set(x, 0, z); scene.add(g);
+  if (PLACE[4] === 'palm') { for (let k = 0; k < 5; k++) M(new THREE.CylinderGeometry(0.2 - k * 0.02, 0.26 - k * 0.02, 1.2, 7), toon('#9a7650'), k * 0.2, 0.6 + k * 1.1, 0, g, 0.03).rotation.z = -0.15; for (let k = 0; k < 7; k++) { const a = k / 7 * 6.28, f = M(new THREE.ConeGeometry(0.5, 3, 4), toon('#3f9a4e'), 1 + Math.cos(a) * 1.2, 5.8, Math.sin(a) * 1.2, g, 0); f.rotation.set(Math.sin(a) * 1.2, 0, -Math.cos(a) * 1.2); f.scale.z = 0.3; } }
+  else if (PLACE[4] === 'reed') { for (let k = 0; k < 8; k++) M(new THREE.ConeGeometry(0.08, 2.4, 4), toon('#7a8a3a'), rr(-1, 1), 1.2, rr(-1, 1), g, 0); }
+  else { M(new THREE.ConeGeometry(1.6, 4, 7), toon('#2f6e4a'), 0, 3, 0, g, 0.04); M(new THREE.ConeGeometry(1.1, 3, 7), toon('#3a7f52'), 0, 4.6, 0, g, 0.04); M(new THREE.CylinderGeometry(0.2, 0.3, 1.2, 6), toon('#5a3d2c'), 0, 0.6, 0, g, 0); } }
+for (let i = 0; i < 6; i++) { const g = new THREE.Group(); g.position.set(rr(-120, 120), -1, -rr(120, 200)); scene.add(g); M(new THREE.SphereGeometry(rr(20, 40), 20, 10, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshToonMaterial({ color: '#3f6a4a', gradientMap: G.grad, fog: false }), 0, 0, 0, g, 0).scale.y = 0.45; }
+for (let i = 0; i < 10; i++) M(BOX(1.4, 0.18, 2.6), toon(i % 2 ? '#8a6a46' : '#7a5a3a'), 0, 0.6, 4 - i * 2.6, null, 0.02); for (let i = 0; i < 6; i++) for (const s of [-1, 1]) M(new THREE.CylinderGeometry(0.12, 0.12, 1.6, 6), toon('#5a3d2c'), s * 0.65, 0, 4 - i * 5, null, 0);
+const lilies = []; for (let i = 0; i < 18; i++) { const m = M(new THREE.CircleGeometry(rr(0.5, 1.1), 10), toon('#4f8a3a'), rr(-20, 20), 0.06, -rr(8, 40), null, 0); m.rotation.x = -Math.PI / 2; lilies.push(m); }
+// the angler on the jetty end
+const fox = G.makeFox({ torso: ['#e9e1d2', '#2f6e8a', '#1b1830'], crest: '8', mood: 'warm', look: G.PLAYER_MALE, outfit: 'vest' }); fox.position.set(0, 0.7, -21); fox.rotation.y = Math.PI;
+const rod = new THREE.Group(); scene.add(rod); M(new THREE.CylinderGeometry(0.025, 0.05, 3.4, 6), toon('#5a3d2c'), 0, 1.7, 0, rod, 0.01);
+const tip = new THREE.Object3D(); tip.position.y = 3.4; rod.add(tip);
+const bob = new THREE.Group(); scene.add(bob); M(new THREE.SphereGeometry(0.14, 10, 8), toon('#c42d3c'), 0, 0.05, 0, bob, 0.01, 0.14); M(new THREE.SphereGeometry(0.13, 10, 8), toon('#f4f1ea'), 0, -0.07, 0, bob, 0, 0.13);
+const lineGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]); const line = new THREE.Line(lineGeo, new THREE.LineBasicMaterial({ color: 0xf4f1ea })); scene.add(line);
+const fishMesh = new THREE.Group(); scene.add(fishMesh); const fbody = M(new THREE.SphereGeometry(0.5, 14, 10), toon('#c8a050'), 0, 0, 0, fishMesh, 0.02, 0.5); fbody.scale.set(0.5, 0.6, 1.4); M(new THREE.ConeGeometry(0.35, 0.6, 4), toon('#a88040'), 0, 0, -0.85, fishMesh, 0.01).rotation.x = Math.PI / 2; fishMesh.visible = false;
+const ripple = new THREE.Mesh(new THREE.RingGeometry(0.3, 0.4, 24), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, side: THREE.DoubleSide })); ripple.rotation.x = -Math.PI / 2; scene.add(ripple);
+// gauge
+const gauge = document.createElement('div'); gauge.style.cssText = 'position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(360px,70vw);height:22px;border:2px solid #201e1d;background:#f3f2f2;z-index:10;display:none'; gauge.innerHTML = '<div style="position:absolute;left:62%;width:26%;top:0;bottom:0;background:#ffd6cf"></div><i style="position:absolute;top:0;bottom:0;width:6px;background:#ec3013;left:0"></i><b style="position:absolute;left:0;top:0;height:100%;background:#3fb7a0;opacity:.5;width:0"></b>'; document.body.appendChild(gauge);
+const FISH = [['Minnow', '#c8c8b0', 0.5, 1], ['Perch', '#c8a050', 0.8, 3], ['Silver Carp', '#c8d4e0', 1.1, 5], ['Rainbow Trout', '#e88aa0', 1.2, 8], ['Golden Koi', '#ffb030', 1.4, 15], ['Old Whiskers', '#6a6a5a', 2.0, 30]];
+const S = {};
+function reset() { Object.assign(S, { time: 120, catch: 0, best: '—', phase: 'idle', power: 0, bx: 0, bz: -24, wait: 0, bite: 0, tension: 0.3, prog: 0, fish: null, held: false }); }
+reset(); G.onStart(() => { reset(); msg('Hold CAST, then let go.', 2); });
+const btn = document.getElementById('btn_act');
+G.onFrame((dt, t, running) => {
+  if (running) {
+    S.time -= dt; const held = input.held.act; const pressed = input.pressed('act');
+    if (S.phase === 'idle') { btn.textContent = 'CAST'; if (held) { S.phase = 'charge'; S.power = 0; } }
+    else if (S.phase === 'charge') { S.power = Math.min(1, S.power + dt * 0.8); if (!held) { S.phase = 'flying'; S.fly = 0; S.tx = rr(-6, 6); S.tz = -24 - 6 - S.power * 24; audio.tone(500, 0.15, 0.04, 'triangle', 2); } }
+    else if (S.phase === 'flying') { S.fly += dt * 1.6; const k = Math.min(1, S.fly); S.bx = S.tx * k; S.bz = -24 + (S.tz + 24) * k; if (k >= 1) { S.phase = 'wait'; S.wait = rr(2.5, 7) * (S.power > 0.6 ? 0.8 : 1.1); ripple.material.opacity = 0.8; ripple.scale.setScalar(1); audio.burst(0.15, 600, 0.2); } }
+    else if (S.phase === 'wait') { btn.textContent = 'STRIKE'; S.wait -= dt; if (pressed) { popup('TOO EARLY', '#ff8a7a'); S.phase = 'idle'; } if (S.wait <= 0) { S.phase = 'bite'; S.bite = 0.9; const far = clamp((-S.bz - 24) / 24, 0, 1); const r = Math.random() + far * 0.35; S.fish = FISH[r > 1.25 ? 5 : r > 1.05 ? 4 : r > 0.85 ? 3 : r > 0.6 ? 2 : r > 0.3 ? 1 : 0]; audio.tone(300, 0.08, 0.05, 'square', 1); } }
+    else if (S.phase === 'bite') { S.bite -= dt; if (pressed) { S.phase = 'fight'; S.tension = 0.35; S.prog = 0.15; gauge.style.display = 'block'; popup('HOOKED!', '#ffd23a'); audio.tone(700, 0.1, 0.05, 'triangle', 1.6); } else if (S.bite <= 0) { popup('IT GOT AWAY', '#ff8a7a'); S.phase = 'idle'; } }
+    else if (S.phase === 'fight') { btn.textContent = 'CAST'; const f = S.fish, pull = (0.5 + 0.5 * Math.sin(t * (2 + f[2]) + Math.sin(t * 1.3) * 2)) * f[2];
+      const reel = input.held.reel || input.held.act; S.tension = clamp(S.tension + (reel ? 0.55 : -0.45) * dt + pull * 0.28 * dt - 0.12 * dt, 0, 1.05);
+      if (reel && S.tension < 0.88) S.prog += dt * 0.22 / Math.sqrt(f[2]); S.prog -= pull * dt * 0.05; S.prog = clamp(S.prog, 0, 1);
+      if (S.tension >= 1) { popup('SNAP! The line broke', '#ff8a7a'); audio.burst(0.3, 900, 0.3); S.phase = 'idle'; gauge.style.display = 'none'; }
+      else if (S.prog <= 0 && S.tension < 0.05) { popup('IT SLIPPED OFF', '#ff8a7a'); S.phase = 'idle'; gauge.style.display = 'none'; }
+      else if (S.prog >= 1) { S.phase = 'show'; S.show = 2.2; gauge.style.display = 'none'; S.catch += f[3]; const kg = (f[2] * rr(0.6, 1.4)).toFixed(1); popup(f[0] + ' · ' + kg + ' kg', '#ffd23a'); if (FISH.indexOf(f) > FISH.findIndex(x => x[0] === S.best)) S.best = f[0]; fbody.material = toon(f[1]); fishMesh.scale.setScalar(0.7 + f[2] * 0.5); audio.tone(880, 0.25, 0.06, 'triangle', 1.6); }
+      S.bx = damp(S.bx, Math.sin(t * 1.7) * 3, 1, dt); S.bz = damp(S.bz, -24 - 4 - (1 - S.prog) * 18, 2, dt);
+      gauge.children[1].style.left = (S.tension * 94) + '%'; gauge.children[1].style.background = S.tension > 0.88 ? '#ec3013' : '#201e1d'; gauge.children[2].style.width = (S.prog * 100) + '%'; }
+    else if (S.phase === 'show') { S.show -= dt; if (S.show <= 0) { S.phase = 'idle'; fishMesh.visible = false; } }
+    if (S.time <= 0) { S.time = 0; gauge.style.display = 'none'; G.end({ score: S.catch, unit: 'POINTS', lines: ['Best fish: ' + S.best, PLACE[1]], credits: S.catch }); }
+  }
+  // rod, line, bobber, ripple
+  G.animFox(fox, dt, 0); const P = fox.userData.P; P.arms.forEach((a, i) => { a.rotation.x = -1.1 - (S.phase === 'charge' ? S.power * 1.4 : 0); a.rotation.z = (i ? 0.3 : -0.3); });
+  const bend = S.phase === 'fight' ? S.tension * 0.6 : S.phase === 'charge' ? -S.power * 0.9 : 0; rod.position.set(0.15, 1.6, -21.6); rod.rotation.set(-0.9 + bend, 0, 0);
+  const bobY = S.phase === 'bite' ? -0.25 + Math.sin(t * 30) * 0.08 : S.phase === 'wait' ? Math.sin(t * 2) * 0.04 : S.phase === 'fight' ? -0.15 + Math.sin(t * 12) * 0.1 : 0.05;
+  if (S.phase === 'idle' || S.phase === 'charge') { const tp = new THREE.Vector3(); tip.getWorldPosition(tp); S.bx = tp.x; S.bz = tp.z; bob.position.set(tp.x, tp.y - 1, tp.z); }
+  else if (S.phase === 'flying') bob.position.set(S.bx, 0.05 + Math.sin(Math.min(1, S.fly) * Math.PI) * 6, S.bz); else bob.position.set(S.bx, bobY, S.bz);
+  const tp = new THREE.Vector3(); tip.getWorldPosition(tp); lineGeo.setFromPoints([tp, bob.position]);
+  if (S.phase === 'show') { fishMesh.visible = true; fishMesh.position.set(0.8, 2.2 + Math.sin(t * 6) * 0.1, -22); fishMesh.rotation.set(0, t * 2, Math.sin(t * 9) * 0.3); }
+  if (ripple.material.opacity > 0) { ripple.position.set(S.bx, 0.04, S.bz); ripple.scale.multiplyScalar(1 + dt * 2.5); ripple.material.opacity -= dt * 0.5; }
+  const p = water.geometry.attributes.position; for (let i = 0; i < p.count; i++) p.setZ(i, Math.sin(p.getX(i) * 0.15 + t) * 0.1 + Math.cos(p.getY(i) * 0.2 + t * 0.8) * 0.08); p.needsUpdate = true;
+  const port = innerWidth < innerHeight; camera.position.set(2.6, port ? 5.5 : 4.2, port ? -12 : -14.5); camera.lookAt(0, 0.5, -30); camera.fov = port ? 70 : 55; camera.updateProjectionMatrix();
+  G.hud.set(S.catch, Math.ceil(S.time) + 's', S.best);
+});
+</script>
+</body></html>

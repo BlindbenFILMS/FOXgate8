@@ -601,7 +601,7 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: #0916
 </style><script>
 (function(){
  var L=document.getElementById('g8-load');if(!L)return;
- var W="earth",MARKS=[0.0055, 0.81, 0.8103, 0.8105, 0.9945, 0.9979, 1.0],T={"lore": ["Earth: the far away world. The first crystals came from here, or so the myth says.", "The Strip never sleeps. Somebody at Casino 8 is always one card away from lucky.", "The Eight Mile Speedway was paved before anyone on the Nine had seen a wheel."], "monks": ["The crystal does not hurry, and yet it grows.", "A gate is only a door until you choose to walk through it.", "Stillness is not the absence of motion. It is motion that has found its home.", "The traveller who carries the least sees the most.", "Every world is far away until you land on it.", "Listen to the light. It has crossed a long dark to reach you.", "The fox who waits at the right moment outruns the fox who runs at the wrong one.", "What you plant in a world, the world plants in you."], "monksBy": "Sayings of the Gaya Monks", "tips": ["Tap an NPC to talk to them.", "Walk into a yellow ring to start a minigame.", "Follow the glowing way markers to find doors and exits.", "Open ACTIONS to change the game speed at any time.", "SAVE often. You have one autosave and three slots.", "On a phone, the joystick moves you and the two round buttons fight.", "In a minigame on a phone, tap the ✕ twice to leave.", "RETURN TO ORBIT takes you back to your ship."]},TOTAL=8443919;
+ var W="earth",MARKS=[0.0055, 0.8105, 0.8109, 0.8111, 0.9946, 0.9979, 1.0],T={"lore": ["Earth: the far away world. The first crystals came from here, or so the myth says.", "The Strip never sleeps. Somebody at Casino 8 is always one card away from lucky.", "The Eight Mile Speedway was paved before anyone on the Nine had seen a wheel."], "monks": ["The crystal does not hurry, and yet it grows.", "A gate is only a door until you choose to walk through it.", "Stillness is not the absence of motion. It is motion that has found its home.", "The traveller who carries the least sees the most.", "Every world is far away until you land on it.", "Listen to the light. It has crossed a long dark to reach you.", "The fox who waits at the right moment outruns the fox who runs at the wrong one.", "What you plant in a world, the world plants in you."], "monksBy": "Sayings of the Gaya Monks", "tips": ["Tap an NPC to talk to them.", "Walk into a yellow ring to start a minigame.", "Follow the glowing way markers to find doors and exits.", "Open ACTIONS to change the game speed at any time.", "SAVE often. You have one autosave and three slots.", "On a phone, the joystick moves you and the two round buttons fight.", "In a minigame on a phone, tap the ✕ twice to leave.", "RETURN TO ORBIT takes you back to your ship."]},TOTAL=8468786;
  var bar=L.querySelector('.g8l-bar i'),pct=L.querySelector('.g8l-pct'),line=L.querySelector('.g8l-line'),txt=L.querySelector('.g8l-text'),by=L.querySelector('.g8l-by');
  // the home world's own name, if the player has given it one
  var home='YOUR WORLD';
@@ -12623,17 +12623,18 @@ if (this.shieldsActive) {
     return {
       // Two fox-heights deep, and about three screens end to end: you step
       // down from the ship in the east and walk west to the pad.
-      deck:  { x0: 0.176, x1: 0.762, y0: 0.507, y1: 0.545 },
+      // TWICE AS WIDE a walk as it was (Ben, 30 Sep): the same centre line, 0.526
+      deck:  { x0: 0.176, x1: 0.762, y0: 0.488, y1: 0.564 },
       // The junction. A spur off each side of the walk, with a guard on each,
       // and the lane running straight through between them. Two foxes flanking
       // a road is a checkpoint; two on one verge is a queue.
-      landing: { x0: 0.440, x1: 0.520, y0: 0.507, y1: 0.545 },
-      spur:    { x0: 0.462, x1: 0.498, y0: 0.446, y1: 0.507 },   // north
-      spurS:   { x0: 0.462, x1: 0.498, y0: 0.545, y1: 0.606 },   // south
+      landing: { x0: 0.422, x1: 0.538, y0: 0.488, y1: 0.564 },
+      spur:    { x0: 0.444, x1: 0.516, y0: 0.427, y1: 0.488 },   // north
+      spurS:   { x0: 0.444, x1: 0.516, y0: 0.564, y1: 0.625 },   // south
       berth: { x: 0.868, y: 0.512 },        // nose against the east end of the gantry
       hatch: { x: 0.735, y: 0.528 },        // step down onto the east end of the deck
       pad:   { x: 0.222, y: 0.526, r: 0.022 },   // the teleporter, west end
-      guards: [ { x: 0.480, y: 0.472 }, { x: 0.480, y: 0.580 } ],   // one on each spur
+      guards: [ { x: 0.480, y: 0.452 }, { x: 0.480, y: 0.600 } ],   // one on each spur
       // Nose up, so she rises from BELOW — clear of the gantry on its east
       // side, never crossing the walk you are about to make.
       approach: { x: 0.868, y: 1.34 },
@@ -32303,6 +32304,9 @@ if (this.shieldsActive) {
     const ctx = this.ctx, W = this.worldWidth, H = this.worldHeight;
     const t = this.tick || 0;
     const L = this.dockLayout();
+    /* THE PLANET UNDER THE DOCK IS THE PLANET YOU ARE OVER (Ben, 30 Sep). */
+    const TH = (typeof this.dockTheme === 'function' && this.dockTheme()) ||
+      { halo: 'rgba(125,211,252,', body: ['#454b52', '#2f343a', '#171a1e'], rim: 'rgba(150,220,255,0.40)', name: 'MERU' };
 
     // ---- THE BACKDROP, in SCREEN space -------------------------------------
     // Space and a planet are the one thing here that must not scroll with the
@@ -32331,12 +32335,12 @@ if (this.shieldsActive) {
     const pcx = CW * 0.5 + par, pcy = CH * 1.62, pr = CH * 1.06;   // limb at ~0.56 CH
     ctx.save();
     const halo = ctx.createRadialGradient(pcx, pcy, pr * 0.985, pcx, pcy, pr * 1.06);
-    halo.addColorStop(0, 'rgba(125,211,252,0.26)'); halo.addColorStop(1, 'rgba(125,211,252,0)');
+    halo.addColorStop(0, TH.halo + '0.26)'); halo.addColorStop(1, TH.halo + '0)');
     ctx.fillStyle = halo;
     ctx.beginPath(); ctx.arc(pcx, pcy, pr * 1.07, 0, Math.PI * 2); ctx.fill();
     ctx.beginPath(); ctx.arc(pcx, pcy, pr, 0, Math.PI * 2); ctx.clip();
     const body = ctx.createLinearGradient(0, pcy - pr, 0, pcy - pr * 0.45);
-    body.addColorStop(0, '#454b52'); body.addColorStop(0.4, '#2f343a'); body.addColorStop(1, '#171a1e');
+    body.addColorStop(0, TH.body[0]); body.addColorStop(0.4, TH.body[1]); body.addColorStop(1, TH.body[2]);
     ctx.fillStyle = body; ctx.fillRect(0, pcy - pr, CW, pr);
     // land masses, a shade darker
     ctx.fillStyle = 'rgba(12,14,17,0.5)';
@@ -32379,7 +32383,7 @@ if (this.shieldsActive) {
     ctx.restore();
     // atmosphere, along the limb
     const rim = ctx.createRadialGradient(pcx, pcy, pr * 0.965, pcx, pcy, pr);
-    rim.addColorStop(0, 'rgba(125,211,252,0)'); rim.addColorStop(1, 'rgba(150,220,255,0.40)');
+    rim.addColorStop(0, TH.halo + '0)'); rim.addColorStop(1, TH.rim);
     ctx.fillStyle = rim;
     ctx.beginPath(); ctx.arc(pcx, pcy, pr, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
@@ -32388,7 +32392,7 @@ if (this.shieldsActive) {
     // ---- THE GANTRY, in world space ----------------------------------------
     const d = L.deck;
     const dx0 = d.x0 * W, dx1 = d.x1 * W, dy0 = d.y0 * H, dy1 = d.y1 * H;
-    const dh = dy1 - dy0;
+    const dh = (dy1 - dy0) * 0.5;   // the trim's old scale; the walk itself is twice as wide (Ben, 30 Sep)
     // Called rect, deliberately not px: this function already declares a px
     // for the pad's centre further down, and two const px in one scope is a
     // fatal redeclaration that would take the whole file with it.
@@ -32505,7 +32509,7 @@ if (this.shieldsActive) {
     ctx.fillStyle = '#bae6fd';
     ctx.font = 'bold ' + Math.round(prr * 0.36) + 'px Arial, Helvetica, sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText('TELEPORT to MERU', px, py - prr * 1.15);
+    ctx.fillText('TELEPORT to ' + TH.name, px, py - prr * 1.15);
     ctx.restore();
 
     // ---- and the ship ----
@@ -39960,13 +39964,215 @@ g._party = function () {
     }
     if (g.currentScene) g.spawnTownsfolk(g.currentScene);
   }
+  /* ===== THE PARTY FIGHTS; THE ARENA IS THE FOX'S; HOPE'S CANE (Ben, 30 Sep) =====
+     Whoever follows you strikes hostiles near you: Hope (or the fox, when you
+     are playing as a friend) steps in and strikes, Noble throws a shoe from his
+     chair. Only things already hostile, only near the player, never in the
+     arena -- where whoever follows waits at the ring side while you fight. */
+  function allies(g, tries) {
+    if (g._allies) return;
+    if (typeof g.updatePartyFollow !== 'function' || typeof g.partyFollower !== 'function') {
+      if (tries < 200) setTimeout(function () { allies(g, tries + 1); }, 100);
+      return;
+    }
+    g._allies = true;
+    var SEE = 560, LEASH = 640, REACH = 125, HIT = 10, RATE = 48, THROW = 400, THROW_RATE = 84, SHOE_HIT = 9;
+    var shoes = [];
+    function here(key) {
+      var r = g.npcRoster || [];
+      for (var i = 0; i < r.length; i++) if (r[i] && r[i].key === key && r[i].scene === g.currentScene) return r[i];
+      return null;
+    }
+    function canStand(x, y) {
+      try { if (g.walk && g.walk.canStand) return g.walk.canStand(x, y, 30); } catch (e) {}
+      return x > 40 && y > 40 && x < (g.worldWidth || 3000) - 40 && y < (g.worldHeight || 3000) - 40;
+    }
+    function face(n, tx, ty) {
+      var dx = tx - n.worldX, dy = ty - n.worldY;
+      if (Math.abs(dx) > 2) n.faceDir = dx > 0 ? 1 : -1;
+      if (n.state) n.state.viewFacing = (dy < 0 && Math.abs(dy) > Math.abs(dx)) ? 'BACK' : 'FRONT';
+    }
+    function stepTo(n, tx, ty, sp) {
+      var dx = tx - n.worldX, dy = ty - n.worldY, d = Math.hypot(dx, dy);
+      if (d < 2) { n.moving = false; return true; }
+      var k = Math.min(1, sp / d), nx = n.worldX + dx * k, ny = n.worldY + dy * k;
+      if (canStand(nx, ny)) { n.worldX = nx; n.worldY = ny; }
+      else if (canStand(nx, n.worldY)) n.worldX = nx;
+      else if (canStand(n.worldX, ny)) n.worldY = ny;
+      n.moving = true; face(n, tx, ty);
+      return d <= sp;
+    }
+    // a friend's blow, not yours: the screen does not shake for it
+    function hit(foe, amt, sx, sy) {
+      if (!foe || foe.defeated) return;
+      var sh = g.triggerShake; g.triggerShake = function () {};
+      try { g.applyDamage(foe, amt, sx, sy, 1.2); } catch (e) {} finally { g.triggerShake = sh; }
+    }
+    function inArena() {
+      try { return !!g.roomIs('arenaInterior'); } catch (e) { return /arenaInterior/i.test(g.currentScene || ''); }
+    }
+    function bout() {
+      return inArena() && g.tournPhase !== 'done' &&
+        (!!g.tournamentEntered || !!(g.arenaFoes && g.arenaFoes.length) || !!g.tournCard);
+    }
+    /* THE RING SIDE: walk out from the middle of the ring towards the gate's left
+       until the floor ends, and stand a body's width inside it. */
+    function sideSpot() {
+      var c = g.arenaRingCentre ? g.arenaRingCentre() : { x: g.worldWidth / 2, y: g.worldHeight / 2 };
+      var a = Math.PI * 0.68, ux = Math.cos(a), uy = Math.sin(a), r = 200;
+      while (r < 1400 && canStand(c.x + ux * (r + 20), c.y + uy * (r + 20))) r += 20;
+      r = Math.max(200, r - 80);
+      return { x: c.x + ux * r, y: c.y + uy * r, cx: c.x, cy: c.y, scene: g.currentScene };
+    }
+    function sideline(who, x0, y0, settled) {
+      var s = g._allySideSpot;
+      if (!s || s.scene !== g.currentScene) s = g._allySideSpot = sideSpot();
+      if (settled) { who.worldX = x0; who.worldY = y0; }        // the trail does not pull them into the ring
+      var dx = s.x - who.worldX, dy = s.y - who.worldY, d = Math.hypot(dx, dy);
+      if (d > 8) {
+        var sp = Math.min(d, 5.5);
+        who.worldX += dx / d * sp; who.worldY += dy / d * sp;
+        who.moving = true; face(who, s.x, s.y);
+      } else {
+        who.moving = false;
+        who.faceDir = s.cx > who.worldX ? 1 : -1;
+        if (who.state) who.state.viewFacing = 'FRONT';
+      }
+      who._allySide = true;
+      g._partyTrail = null;                                    // a fresh trail when the bout is over
+    }
+    function nearestFoe(who) {
+      var foe = null, best = SEE, r = g.npcRoster || [];
+      for (var i = 0; i < r.length; i++) {
+        var n = r[i];
+        if (!n || n === who || n.defeated || !n.hostile || n.companion || n.scene !== g.currentScene) continue;
+        if (n.hp != null && n.hp <= 0) continue;
+        if (Math.hypot(n.worldX - g.pX, n.worldY - g.pY) > LEASH) continue;   // only the fight YOU are in
+        var d = Math.hypot(n.worldX - who.worldX, n.worldY - who.worldY);
+        if (d < best) { best = d; foe = n; }
+      }
+      return foe;
+    }
+    function fight(who, key, x0, y0, settled) {
+      if (who._allyCd > 0) who._allyCd--;
+      if (g.gamePaused || g.caveDialogueOpen || g.miniGameOpen || g.sparring || g.vehicle || g.boating ||
+          g.missionPromptOpen || g.film || inArena()) { who._allyFoe = null; who._allyFoeObj = null; return; }
+      var foe = who._allyFoeObj;                              // keep the one she went for while it lasts
+      if (!foe || foe.defeated || !foe.hostile || foe.scene !== g.currentScene || (foe.hp != null && foe.hp <= 0) ||
+          Math.hypot(foe.worldX - g.pX, foe.worldY - g.pY) > LEASH ||
+          Math.hypot(foe.worldX - who.worldX, foe.worldY - who.worldY) > SEE) foe = nearestFoe(who);
+      who._allyFoeObj = foe;
+      who._allyFoe = foe ? foe.key : null;
+      if (!foe) return;
+      var d = Math.hypot(foe.worldX - who.worldX, foe.worldY - who.worldY);
+      if (key === 'noble') {
+        // he throws from his chair, from wherever the party has him
+        if (d <= THROW) {
+          if (!(who._allyCd > 0)) {
+            who._allyCd = THROW_RATE;
+            shoes.push({ o: who, f: foe, sx: who.worldX, sy: who.worldY, x: who.worldX, y: who.worldY, t: 0, back: false, spin: 0 });
+            try { sfx.swordSwing(); } catch (e) {}
+          }
+          if (!who.moving) face(who, foe.worldX, foe.worldY);
+        }
+        return;
+      }
+      if (!settled) return;
+      who.worldX = x0; who.worldY = y0;                        // the fight has her, not the trail
+      if (d > REACH) { stepTo(who, foe.worldX, foe.worldY, 4.2); return; }
+      who.moving = false;
+      face(who, foe.worldX, foe.worldY);
+      if (who._allyCd > 0) return;
+      who._allyCd = RATE;
+      hit(foe, HIT, who.worldX, who.worldY);
+      try { g.spawnSlash((who.worldX + foe.worldX) / 2, (who.worldY + foe.worldY) / 2 - 40,
+                         Math.atan2(foe.worldY - who.worldY, foe.worldX - who.worldX)); } catch (e) {}
+      try { g.spawnBurst((who.worldX + foe.worldX) / 2, (who.worldY + foe.worldY) / 2 - 50, key === 'hope' ? '#e0f2fe' : '#fdba74'); } catch (e) {}
+      try { sfx.swordSwing(); } catch (e) {}
+      if (key === 'hope' && Math.random() < 0.3) try { g.spawnText(who.worldX, who.worldY - 150, 'CANE!', '#bae6fd'); } catch (e) {}
+    }
+    /* HOPE'S CANE ON THE BATTLE MAP: the guard copy of her was made before (or
+       without) the cast that carries her cane, so she is given it here. */
+    function caneForTheGuard() {
+      var h = g._hopeGuard;
+      if (!h || (h.drawUnder && h.drawRobe)) return;
+      var c = [].concat(g._companionCast || [], g._meruCast || []);
+      for (var i = 0; i < c.length; i++) {
+        if (c[i] && c[i].key === 'hope' && c[i].drawUnder) {
+          h.drawUnder = c[i].drawUnder; h.drawRobe = c[i].drawRobe;
+          if (!h.drawFace && c[i].drawFace) h.drawFace = c[i].drawFace;
+          return;
+        }
+      }
+    }
+    var realFollow = g.updatePartyFollow;
+    g.updatePartyFollow = function () {
+      var key = g.partyFollower();
+      var before = key ? here(key) : null;
+      var x0 = before ? before.worldX : 0, y0 = before ? before.worldY : 0;
+      var room0 = before ? before._partyRoom : null;
+      var out = realFollow.apply(this, arguments);
+      try { caneForTheGuard(); } catch (e) {}
+      if (!key || g.partyWaiting) return out;
+      var who = here(key);
+      if (!who) return out;
+      var settled = who === before && room0 === g.currentScene;
+      try {
+        if (bout()) sideline(who, x0, y0, settled);
+        else { who._allySide = false; fight(who, key, x0, y0, settled); }
+      } catch (e) { g._allyErr = String(e); }
+      return out;
+    };
+    // Noble's thrown shoe: out to the foe, a knock, and home to the chair
+    function shoeTick(ctx) {
+      for (var i = shoes.length - 1; i >= 0; i--) {
+        var s = shoes[i], o = s.o;
+        if (!o || o.scene !== g.currentScene || o.defeated) { shoes.splice(i, 1); continue; }
+        if (!g.gamePaused) {
+          s.spin += 0.55;
+          if (!s.back) {
+            s.t = Math.min(1, s.t + 1 / 20);
+            var tx = s.f.worldX, ty = s.f.worldY - 30, k = Math.sin(s.t * Math.PI / 2);
+            s.x = s.sx + (tx - s.sx) * k; s.y = (s.sy - 30) + (ty - s.sy + 30) * k - Math.sin(s.t * Math.PI) * 40;
+            if (s.t >= 1) {
+              s.back = true;
+              if (!s.f.defeated && Math.hypot(s.f.worldX - s.x, s.f.worldY - 30 - s.y) < 110) hit(s.f, SHOE_HIT, o.worldX, o.worldY);
+            }
+          } else {
+            var hx = o.worldX - s.x, hy = (o.worldY - 30) - s.y, hd = Math.hypot(hx, hy) || 1;
+            if (hd < 30) { shoes.splice(i, 1); continue; }
+            var sp = Math.min(hd, 18);
+            s.x += hx / hd * sp; s.y += hy / hd * sp;
+          }
+        }
+        if (!ctx) continue;
+        ctx.save();
+        ctx.globalAlpha = 0.3; ctx.fillStyle = '#0b1120';
+        ctx.beginPath(); ctx.ellipse(s.x, s.y + 56, 18, 6.5, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.globalAlpha = 1;
+        ctx.translate(s.x, s.y); ctx.scale(1, 0.62); ctx.rotate(s.spin); ctx.scale(2.1, 2.1);
+        if (g.shoeArt) { try { g.shoeArt(true); } catch (e) {} }
+        else { ctx.fillStyle = '#cbd5e1'; ctx.beginPath(); ctx.roundRect(-10, -5, 20, 10, 4); ctx.fill(); }
+        ctx.restore();
+      }
+    }
+    if (typeof g.updateWeaponFx === 'function') {
+      var realFx = g.updateWeaponFx.bind(g);
+      g.updateWeaponFx = function () {
+        realFx.apply(null, arguments);
+        try { shoeTick(g.ctx); } catch (e) {}
+      };
+    }
+    g._allyShoes = function () { return shoes.length; };
+  }
   var tries = 0;
   (function wait() {
     var g = window.game;
     /* After the world's own installers: a short grace so a world that fills
        its cast at boot (the station) has done so before this looks. */
     if (g && g.layoutReady && typeof g.spawnTownsfolk === 'function') {
-      setTimeout(function () { try { install(g); } catch (e) { console.warn('[companions]', e); g._companionErr = String(e); } }, 400);
+      setTimeout(function () { try { install(g); } catch (e) { console.warn('[companions]', e); g._companionErr = String(e); }
+        try { allies(g, 0); } catch (e) { console.warn('[allies]', e); } }, 400);   // the party fights, the arena is the fox's (Ben, 30 Sep)
       return;
     }
     if (++tries < 600) setTimeout(wait, 50);
@@ -40150,20 +40356,22 @@ g._party = function () {
         }
       }, 150);
     }
-    /* ===== AN iPHONE ONLY STARTS SOUND FROM A TOUCH (Ben, 30 Sep: "in luxor
-       the music is not reliably changing per map"). A new room's track asked to
+    /* ===== SOUND STARTS FROM ANY TOUCH (Ben, 30 Sep: "in luxor the music is
+       not reliably changing per map" · "touching the joystick or weapons
+       buttons does not trigger the sound"). A phone only starts sound from a
+       touch, and the stick and the buttons kept their touches to themselves. A new room's track asked to
        play by the game itself, with no finger on the glass, is refused — so the
        old one stopped and the new one never started. Every touch now starts
        the room's track if it is not playing, and the first touch primes every
        track of the world (silently), which lets the game start them itself
        from then on. ===== */
-    if (IOS && !g._g8Bless) {
+    if (!g._g8Bless) {
       g._g8Bless = true;
       var primed = false;
       var bless = function () {
         try {
           var M = (typeof GAYA !== 'undefined' && GAYA.music) || null;
-          if (!primed && M && M.tracks && typeof g.musicEl === 'function') {
+          if (IOS && !primed && M && M.tracks && typeof g.musicEl === 'function') {
             primed = true;
             M.tracks.forEach(function (t) {
               var el = g.musicEl(t);
@@ -40182,12 +40390,15 @@ g._party = function () {
             var want = g.musicWant(), k = want && g._mus[want];
             if (k && k.paused) { var r = k.play(); if (r && r.catch) r.catch(function () {}); }
           }
-          // Meru's own player
+          // Meru's own player: it starts on the first touch it hears, and the
+          // stick and the buttons used to keep theirs from it
+          if (typeof g.startBgMusic === 'function' && !g.bgMusicStarted && !g._cutsceneOpen) g.startBgMusic();
           var act = g.activeMusicEl ? g.activeMusicEl() : null;
           if (act && act.paused && act.src && g.currentMusicKey && !g._cutsceneOpen && !g.film && g.bgMusicStarted) { var u = act.play(); if (u && u.catch) u.catch(function () {}); }
         } catch (e) {}
       };
-      ['touchend', 'pointerup', 'click', 'keydown'].forEach(function (t) { window.addEventListener(t, bless, true); });
+      // heard on the way DOWN (capture), before the stick or a button keeps the touch
+      ['touchstart', 'touchend', 'pointerdown', 'pointerup', 'mousedown', 'click', 'keydown'].forEach(function (t) { window.addEventListener(t, bless, true); });
     }
     /* ===== MUSIC ON A PHONE ===== */
     if (typeof g.musicTick === 'function' && !g._iosMusicWrapped) {
@@ -40484,6 +40695,12 @@ g._party = function () {
        fight is waiting there as before, and the square's film after it. */
     var first = st.key, at = 'spawn';
     if (B.meru && g.scenes.meruSpacedock && !window.__8G_MERU_SKIP_DOCK) { first = 'meruSpacedock'; at = 'entrance'; }
+    /* AND SO DOES EVERY POPULATED PLANET NOW (Ben, 30 Sep), its dock's pad
+       being the transport that is interrupted onto this map (80-spacedocks.js). */
+    else if (!B.meru && window.__8G_DOCK_KEY && g.scenes[window.__8G_DOCK_KEY] && !window.__8G_NO_DOCK) {
+      g._dockNext = { scene: st.key, at: 'spawn', battle: true };
+      first = window.__8G_DOCK_KEY; at = 'entrance';
+    }
     Promise.resolve(g.changeScene(first, at)).then(function () {
       g.playerHp = g.playerMaxHp || g.playerHp;
     });
@@ -40553,6 +40770,9 @@ g._party = function () {
     '  font: 900 7.5px/1 Orbitron, system-ui, sans-serif; letter-spacing: .4px; border: 2px solid rgba(255,255,255,.55);',
     '  box-shadow: 0 3px 0 rgba(0,0,0,.45), 0 0 12px rgba(0,0,0,.35); -webkit-tap-highlight-color: transparent; }',
     '.pc-btn b { font-size: 19px; line-height: 1; margin-bottom: 2px; }',
+    /* THE WEAPON BUTTONS ARE 1 AND 2 (Ben, 30 Sep): big, thick numbers with room round them */
+    '.pc-btn b.pc-num { font: 900 27px/1 "Arial Black", Archivo, system-ui, sans-serif; margin: 0; padding-top: 1px;',
+    '  -webkit-text-stroke: 1.2px currentColor; text-shadow: 0 2px 0 rgba(0,0,0,.35); letter-spacing: 0; }',
     '.pc-btn.down { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,.45); filter: brightness(1.25); }',
     '#pc-melee { background: radial-gradient(circle at 40% 35%, #ff9a8a, #d9463b 60%, #8e1f19); }',
     '#pc-ranged { background: radial-gradient(circle at 40% 35%, #9fe8ff, #2f9fd6 60%, #145b86); }',
@@ -40605,8 +40825,8 @@ g._party = function () {
     '<div id="pc-racekey">▲ ▼ &nbsp;CHANGE LANE</div>' +
     '<div id="pc-ringkey">◀ ▶ SLIP &nbsp;·&nbsp; ▼ GUARD &nbsp;·&nbsp; ▲ SUPER</div>' +
     '<div id="pc-btns">' +
-      '<div class="pc-btn" id="pc-melee" role="button" aria-label="Melee attack"><b>⚔</b>MELEE</div>' +
-      '<div class="pc-btn" id="pc-ranged" role="button" aria-label="Ranged attack"><b>◎</b>RANGED</div>' +
+      '<div class="pc-btn" id="pc-melee" role="button" aria-label="Melee attack"><b class="pc-num">1</b></div>' +
+      '<div class="pc-btn" id="pc-ranged" role="button" aria-label="Ranged attack"><b class="pc-num">2</b></div>' +
     '</div>';
   function mount() { if (!document.body) return setTimeout(mount, 30); document.body.appendChild(root); layout(); }
   mount();
@@ -41179,8 +41399,8 @@ g._party = function () {
           if (mb1) { mb1.innerHTML = '<b>▶</b>GAS'; mb1.setAttribute('aria-label', 'Gas'); }
           if (rb1) { rb1.innerHTML = '<b>🔥</b>TURBO'; rb1.setAttribute('aria-label', 'Turbo'); }
         } else {
-          if (mb1) { mb1.innerHTML = '<b>⚔</b>MELEE'; mb1.setAttribute('aria-label', 'Melee attack'); }
-          if (rb1) { rb1.innerHTML = '<b>◎</b>RANGED'; rb1.setAttribute('aria-label', 'Ranged attack'); }
+          if (mb1) { mb1.innerHTML = '<b class="pc-num">1</b>'; mb1.setAttribute('aria-label', 'Melee attack'); }
+          if (rb1) { rb1.innerHTML = '<b class="pc-num">2</b>'; rb1.setAttribute('aria-label', 'Ranged attack'); }
           if (g && g.race) { ['pc-stick', 'pc-gas', 'pc-turbo'].forEach(function (k) { g.race.ptr.delete(k); }); g.race._padTurbo = g.race._padGas = false; }
         }
       }
@@ -41189,8 +41409,8 @@ g._party = function () {
       if (ring !== root.classList.contains('ring')) {
         root.classList.toggle('ring', ring);
         var mb0 = document.getElementById('pc-melee'), rb0 = document.getElementById('pc-ranged');
-        if (mb0) { mb0.innerHTML = ring ? '<b>👊</b>HEAD' : '<b>⚔</b>MELEE'; mb0.setAttribute('aria-label', ring ? 'Punch to the head' : 'Melee attack'); }
-        if (rb0) { rb0.innerHTML = ring ? '<b>🥊</b>BODY' : '<b>◎</b>RANGED'; rb0.setAttribute('aria-label', ring ? 'Punch to the body' : 'Ranged attack'); }
+        if (mb0) { mb0.innerHTML = ring ? '<b>👊</b>HEAD' : '<b class="pc-num">1</b>'; mb0.setAttribute('aria-label', ring ? 'Punch to the head' : 'Melee attack'); }
+        if (rb0) { rb0.innerHTML = ring ? '<b>🥊</b>BODY' : '<b class="pc-num">2</b>'; rb0.setAttribute('aria-label', ring ? 'Punch to the body' : 'Ranged attack'); }
         if (!ring && g && g.keys) { g.keys.space = false; g.keys.q = false; }
         ringPress.head = ringPress.body = false;
       }
@@ -41202,8 +41422,8 @@ g._party = function () {
       if (riding !== root.classList.contains('riding')) {
         root.classList.toggle('riding', riding);
         var mb = document.getElementById('pc-melee'), rb = document.getElementById('pc-ranged');
-        if (mb) mb.innerHTML = riding ? '<b>✹</b>FIRE' : '<b>⚔</b>MELEE';
-        if (rb) rb.innerHTML = riding ? '<b>⏏</b>EXIT' : '<b>◎</b>RANGED';
+        if (mb) mb.innerHTML = riding ? '<b>✹</b>FIRE' : '<b class="pc-num">1</b>';
+        if (rb) rb.innerHTML = riding ? '<b>⏏</b>EXIT' : '<b class="pc-num">2</b>';
         if (mb) mb.setAttribute('aria-label', riding ? 'Fire' : 'Melee attack');
         if (rb) rb.setAttribute('aria-label', riding ? 'Exit' : 'Ranged attack');
         if (!riding) g._vehTrigger = false;
@@ -42805,14 +43025,22 @@ g._party = function () {
     // … and pushed in, on every world that does not already do it (Meru does)
     if (!g._talkZoom && typeof g.updateCamera === 'function') {
       var realCam = g.updateCamera, K = 0, base = null, baseScene = null, want = 1;
+      // a shop counter is not contested: it eases the push back out like Meru does.
+      // Dropping it mid-push left the camera stuck pushed in after the shop (Ben, 30 Sep)
       var contested = function () {
-        return !!(g.turret || g.vehicle || g.laneShow || g._beamZoomTo || g.beamIn || g.shopOpenWith ||
+        return !!(g.turret || g.vehicle || g.laneShow || g._beamZoomTo || g.beamIn ||
                   (g._portalSettling && g._portalSettling() > 0));
       };
+      var normalZ = function () { return (g.interiorFitsOnScreen && g._fitZoom) ? g._fitZoom : g.baseZoom; }, ref = null;
       g.updateCamera = function () {
         var sp = g.caveDialogueOpen && g.dialogueCameraSubject ? g.dialogueCameraSubject() : null;
-        var on = !!(g.caveDialogueOpen && sp && sp.worldX != null && !contested()) && !window.__8G_NO_TALK_ZOOM;
+        var on = !!(g.caveDialogueOpen && sp && sp.worldX != null && !g.shopOpenWith && !contested()) && !window.__8G_NO_TALK_ZOOM;
         if (contested()) { K = 0; base = null; baseScene = null; return realCam.apply(g, arguments); }
+        // a resize while held (the quality governor re-pinning the pixel ratio, a toolbar, a rotation)
+        // rescales the room's zoom, so the remembered one is rescaled with it (Ben, 30 Sep)
+        var nz = normalZ();
+        if (base !== null && ref && nz && nz !== ref) base *= nz / ref;
+        ref = nz;
         if (on) {
           if (base === null || baseScene !== g.currentScene) { base = g.zoom; baseScene = g.currentScene; }
           var Hc = g.canvas.height;
@@ -44767,8 +44995,8 @@ g._party = function () {
         if (rb && M.b) rb.innerHTML = '<b>' + M.b.icon + '</b>' + M.b.label;
         key.textContent = M.hint || '';
       } else {
-        if (mb) { mb.style.visibility = ''; mb.innerHTML = saved ? saved.m : '<b>⚔</b>MELEE'; }
-        if (rb) rb.innerHTML = saved ? saved.r : '<b>◎</b>RANGED';
+        if (mb) { mb.style.visibility = ''; mb.innerHTML = saved ? saved.m : '<b class="pc-num">1</b>'; }
+        if (rb) rb.innerHTML = saved ? saved.r : '<b class="pc-num">2</b>';
         saved = null; release('a'); release('b'); stickUp();
         if (g.keys) { g.keys.space = false; g.keys.shift = false; }
       }
@@ -45432,6 +45660,239 @@ g._party = function () {
       'errors: ' + (errs.length ? '\n  ' + errs.join('\n  ') : 'none')
     ].join('\n');
   }, 500);
+})();
+
+/* 80 · A SPACE DOCK ABOVE EVERY POPULATED PLANET BUT EARTH (Ben, 30 Sep)
+
+   "ADD SPACEdock to all populated planet BUT not EARTH (I will supply unique
+    music for each one, PLAY meru SPACEdock music for now, PLEASE update the
+    color of the planet under spacedocks to match the planet they are over"
+
+   Each world's map list carries <world>Spacedock (tools/spacedocks.py), a copy
+   of Meru's dock, which the engine draws and walks as its own. This module:
+
+     THE ARRIVAL. Coming down from space you arrive at the dock, as on Meru: the
+     ship flies in and berths and you step out onto the gantry. The first time,
+     the TELEPORT pad is the transport that is interrupted onto the battle map
+     (62-opening.js sends you here first and the fight is where the pad goes).
+     After that the pad puts you down where the planet itself would have.
+     A game picked up again in a room goes straight back to that room.
+
+     THE PAD and THE SHIP. The pad asks "TELEPORT to <PLANET>?"; your ship at
+     the end of the gantry asks "BACK to SPACE".
+
+     THE COLOURS. dockTheme() gives the planet under the dock that planet's own
+     colour (the space map's tint for it). Meru's is the grey it always was.
+
+     THE MUSIC. Meru's dock track, on every dock, until each world has its own:
+     set DOCK_MUSIC below. While you are on a dock the world's own music waits.
+
+   window.__8G_NO_DOCK = true (or __8G_NO_OPENING) skips the arrival. */
+(function () {
+  var WORLD = window.__8G_WORLD || '';
+  var NAME = { meru: 'MERU', gaya: 'GAYA', jidda: 'JIDDA', kufa: 'KUFA', luxor: 'LUXOR', nebo: 'NEBO',
+               ur: 'UR', zion: 'ZION', player: 'HOME' };
+  /* the space map's own tint for each planet (WORLD_TINT) */
+  var TINT = { meru: null, luxor: '#e0574a', ur: '#e8963a', gaya: '#a97bdd', zion: '#e8cf4a',
+               nebo: '#5aa6e8', kufa: '#b08355', jidda: '#5ec97e', player: '#e8eef7' };
+  /* EACH DOCK'S MUSIC. Meru's for now; give a world its own file here. */
+  var DOCK_MUSIC = {
+    gaya: 'MERU/MUSIC/MERU-spacedock.mp3', jidda: 'MERU/MUSIC/MERU-spacedock.mp3',
+    kufa: 'MERU/MUSIC/MERU-spacedock.mp3', luxor: 'MERU/MUSIC/MERU-spacedock.mp3',
+    nebo: 'MERU/MUSIC/MERU-spacedock.mp3', ur: 'MERU/MUSIC/MERU-spacedock.mp3',
+    zion: 'MERU/MUSIC/MERU-spacedock.mp3', player: 'MERU/MUSIC/MERU-spacedock.mp3'
+  };
+  var KEY = WORLD + 'Spacedock';
+  var HAS = WORLD !== 'meru' && WORLD !== 'earth' && WORLD !== 'station' && !!NAME[WORLD];
+  if (HAS) window.__8G_DOCK_KEY = KEY;          // 62-opening.js starts the landing here
+
+  function G() { return window.game || null; }
+  function hex(h) { h = h.replace('#', ''); return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)]; }
+  function rgb(c, k) { return 'rgb(' + Math.round(c[0] * k) + ',' + Math.round(c[1] * k) + ',' + Math.round(c[2] * k) + ')'; }
+  function planetName() {
+    if (WORLD === 'player') {
+      try { if (typeof window.planetName === 'function') { var n = String(window.planetName() || ''); if (n) return n.toUpperCase(); } } catch (e) {}
+    }
+    return NAME[WORLD] || 'THE PLANET';
+  }
+  function theme() {
+    var t = TINT[WORLD];
+    if (!t) return { halo: 'rgba(125,211,252,', body: ['#454b52', '#2f343a', '#171a1e'], rim: 'rgba(150,220,255,0.40)', name: NAME[WORLD] || 'MERU' };
+    var c = hex(t);
+    // Meru's own grey is its tint at these three depths; every planet gets the same
+    var a = [Math.round(c[0] * 0.65 + 255 * 0.35), Math.round(c[1] * 0.65 + 255 * 0.35), Math.round(c[2] * 0.65 + 255 * 0.35)];
+    return { halo: 'rgba(' + a.join(',') + ',', body: [rgb(c, 0.40), rgb(c, 0.27), rgb(c, 0.12)],
+             rim: 'rgba(' + a.join(',') + ',0.45)', name: planetName() };
+  }
+
+  function inDock(g) { return !!(g && typeof g.roomIs === 'function' && g.roomIs('spacedock')); }
+
+  /* ---------------------------------------------------------------- music */
+  var dockAudio = null, blocked = [], seen = new Set(), wasIn = false;
+  if (HAS && typeof HTMLMediaElement !== 'undefined') {
+    var realPlay = HTMLMediaElement.prototype.play;
+    HTMLMediaElement.prototype.play = function () {
+      try {
+        seen.add(this);
+        var g = G();
+        if (this !== dockAudio && this.loop && !(this instanceof HTMLVideoElement) && inDock(g)) {
+          if (blocked.indexOf(this) < 0) blocked.push(this);
+          try { this.pause(); } catch (e) {}
+          return Promise.resolve();
+        }
+      } catch (e) {}
+      return realPlay.apply(this, arguments);
+    };
+  }
+  function musicTick(g) {
+    var on = inDock(g) && !document.hidden && !(g.film || g._cutsceneOpen || document.querySelector('#g8-film.on'));
+    if (on) {
+      if (!dockAudio) {
+        dockAudio = new Audio(DOCK_MUSIC[WORLD] || 'MERU/MUSIC/MERU-spacedock.mp3');
+        dockAudio.loop = true; dockAudio.preload = 'auto';
+        try { dockAudio.volume = Math.min(1, (g.musicVolume || 0.27) * 1.6); } catch (e) {}
+      }
+      seen.forEach(function (a) {
+        if (a !== dockAudio && a.loop && !(a instanceof HTMLVideoElement) && !a.paused) {
+          if (blocked.indexOf(a) < 0) blocked.push(a);
+          try { a.pause(); } catch (e) {}
+        }
+      });
+      if (dockAudio.paused) { try { var p = dockAudio.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {} }
+    } else if (dockAudio && !dockAudio.paused) {
+      try { dockAudio.pause(); } catch (e) {}
+    }
+    if (wasIn && !inDock(g)) {
+      // off the dock: if the planet's own music has not picked itself up, the
+      // last track it asked for is started again
+      var last = blocked[blocked.length - 1];
+      blocked = [];
+      setTimeout(function () {
+        var any = false;
+        seen.forEach(function (a) { if (a !== dockAudio && a.loop && !a.paused) any = true; });
+        if (!any && last && !inDock(G())) { try { var q = last.play(); if (q && q.catch) q.catch(function () {}); } catch (e) {} }
+      }, 700);
+    }
+    wasIn = inDock(g);
+  }
+  // a phone starts sound only from a touch
+  ['touchstart', 'touchend', 'pointerdown', 'pointerup', 'mousedown', 'click', 'keydown'].forEach(function (t) {
+    window.addEventListener(t, function () {
+      var g = G();
+      if (dockAudio && dockAudio.paused && inDock(g) && !(g.film || g._cutsceneOpen)) {
+        try { var p = dockAudio.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {}
+      }
+    }, true);
+  });
+
+  /* ---------------------------------------------------------------- the pad and the ship */
+  function install(g) {
+    g.dockTheme = theme;
+    if (!HAS || !g.scenes || !g.scenes[KEY]) return;
+    var realGuards = g.updateDockGuards;
+    g.updateDockGuards = function () {
+      if (!inDock(g)) return;
+      if (g.dockArrivalRunning && g.dockArrivalRunning()) return;
+      if (g.gamePaused || g.caveDialogueOpen || g.pendingChoice || g.missionPromptOpen ||
+          (g.state && g.state.phoneMenuOpen) || g.miniGameOpen) return;
+      var L = g.dockLayout(), W = g.worldWidth, H = g.worldHeight;
+      // HER BERTH: the ship you came in on takes you back up
+      var sx = L.berth.x * W, sy = L.berth.y * H;
+      var atShip = Math.hypot(g.pX - sx, g.pY - sy) < W * 0.075;
+      if (g.suppressShipBoard) { if (!atShip) g.suppressShipBoard = false; }
+      else if (atShip && (window.__8G_TO_ORBIT || typeof g.backToSpace === 'function')) {
+        g.suppressShipBoard = true;
+        g.askConfirm('BACK to SPACE', function () {
+          g.spawnText(g.pX, g.pY - 150, 'BOARDING', '#7dd3fc');
+          try { if (sfx.menuSelect) sfx.menuSelect(); } catch (e) {}
+          if (window.__8G_TO_ORBIT) window.__8G_TO_ORBIT(); else g.backToSpace();
+        });
+        return;
+      }
+      // THE PAD, once you are standing on it
+      var px = L.pad.x * W, py = L.pad.y * H;
+      var near = Math.hypot(g.pX - px, g.pY - py) < L.pad.r * W * 0.72;
+      if (g.suppressDockPad) { if (!near) g.suppressDockPad = false; return; }
+      if (!near) return;
+      g.suppressDockPad = true;
+      g.askConfirm('TELEPORT to ' + planetName() + '?', function () {
+        g.spawnText(g.pX, g.pY - 150, 'TELEPORTING', '#7dd3fc');
+        try { if (sfx.menuSelect) sfx.menuSelect(); } catch (e) {}
+        var to = g._dockNext || { scene: (typeof GAYA !== 'undefined' && GAYA.startScene) || g.sceneOrder[0], at: 'spawn' };
+        g.beamOut(function () {
+          g.teleportJump = true;
+          Promise.resolve(g.changeScene(to.scene, to.at || 'spawn')).then(function () {
+            g.teleportJump = false;
+            g.suppressDockPad = true;
+            if (to.spot) {
+              var q = (typeof g.walkQuery === 'function') ? g.walkQuery() : null;
+              if (!q || q.at(to.spot.x, to.spot.y)) { g.pX = to.spot.x; g.pY = to.spot.y; }
+              g.vX = 0; g.vY = 0; g.moveTarget = null;
+              g.cameraCenterX = g.pX; g.cameraCenterY = g.pY;
+            }
+            if (!to.battle && typeof g.materialise === 'function') { try { g.materialise(function () {}); } catch (e) {} }
+          });
+        });
+      });
+    };
+    g._dockGuardsReal = realGuards;
+    /* THE ARRIVAL IS STAGED ON THE WAY IN, as Meru's engine does in its own
+       changeScene; the worlds that bring their own changeScene never ask. */
+    if (!g.MERU_SYSTEMS) {
+      var realChange = g.changeScene;
+      g.changeScene = function () {
+        var r = realChange.apply(this, arguments);
+        Promise.resolve(r).then(function () {
+          if (!inDock(g)) g._dockOpened = false;      // the next visit stages its own arrival
+        });
+        return r;
+      };
+    }
+    /* MERU DRIVES ITS DOCK FROM ITS OWN LIST OF SYSTEMS; the other worlds have
+       no such list, so the dock is driven here, once a frame, at the point in
+       the frame where Meru would have (straight after the camera). */
+    if (!g.MERU_SYSTEMS && typeof g.checkSceneTransitionZones === 'function') {
+      var realZones = g.checkSceneTransitionZones;
+      g.checkSceneTransitionZones = function () {
+        var out = realZones.apply(this, arguments);
+        if (inDock(g)) {
+          // (62 may have brought you here before this module was listening)
+          if (!g._dockOpened && typeof g.openOnTheDock === 'function') { try { g.openOnTheDock(); } catch (e) { g._dockErr = String(e); } }
+          try { if (g.updateDockArrival) g.updateDockArrival(); } catch (e) { g._dockErr = String(e); }
+          try { g.updateDockGuards(); } catch (e) { g._dockErr = String(e); }
+        }
+        return out;
+      };
+    }
+    setInterval(function () { try { musicTick(g); } catch (e) {} }, 200);
+
+    /* A LANDING THAT IS NOT THE OPENING. 62 sends the first landing here
+       itself; every later one is moved up here once the planet has put you
+       down, unless the save was in a room. */
+    var resume = false;
+    try { var u = UNIVERSE.read(); resume = !!(u && u.at && u.at.layer === 'surface' && u.at.scene); } catch (e) {}
+    if (window.__8G_NO_DOCK || window.__8G_NO_OPENING || resume) return;
+    setTimeout(function () {
+      if (g._opening || inDock(g) || g._dockNext) return;      // the opening has it
+      var here = g.currentScene;
+      var spot = { x: g.pX, y: g.pY };
+      try { if (g.film && g.closeFilm) g.closeFilm(); } catch (e) {}
+      try { for (var k = 0; k < 10 && g.caveDialogueOpen; k++) { g.caveDialogueOnClose = null; g.caveDialogueChoices = null; g.closeCaveDialogue(); } } catch (e) {}
+      g._dockNext = { scene: here, spot: spot };
+      g.changeScene(KEY, 'entrance');
+    }, 400);
+  }
+
+  var tries = 0;
+  (function wait() {
+    var g = G();
+    if (g && g._bridgeLanded && g.layoutReady && g.scenes) {
+      try { install(g); } catch (e) { g._dockErr = String(e); console.warn('[docks]', e); }
+      return;
+    }
+    if (++tries < 1200) setTimeout(wait, 50);
+  })();
+  window.__8G_DOCK = function () { var g = G(); return { key: KEY, has: HAS, in: inDock(g), next: g && g._dockNext, phase: g && g.dockPhase, music: !!(dockAudio && !dockAudio.paused) }; };
 })();
 
 /* EARTH — generated by tools/split.js from the planet's own surface.
@@ -46430,7 +46891,7 @@ __8gOverride(Game, class {
        is still there, Vito is still on at twenty past, and you can go again. */
     if (this._act) {
       e.preventDefault();
-      if (e.key === 'Escape') { this._act = null; if (this._camWas) this.zoom = this._camWas; }
+      if (e.key === 'Escape') { this._act = null; this.zoom = (this.interiorFitsOnScreen && this._fitZoom) ? this._fitZoom : this.baseZoom; /* back to the room framing, not a zoom remembered before a resize (Ben, 30 Sep) */ }
       else this.actPress();
       return;
     }
@@ -51038,7 +51499,7 @@ if (this.swordSwingTimer > 0 && (this.state.weapon === 'SWORD' || this.dualWield
   endAct() {
     const A = this.actSpec(), st = this._act;
     this._act = null;
-    if (this._camWas) this.zoom = this._camWas;
+    this.zoom = (this.interiorFitsOnScreen && this._fitZoom) ? this._fitZoom : this.baseZoom; /* back to the room framing, not a zoom remembered before a resize (Ben, 30 Sep) */
     if (!A || !st) return;
     const n = st.score.filter(v => v >= 0.999).length;
     const say = A.say || {};
@@ -59388,7 +59849,7 @@ if (this.swordSwingTimer > 0 && (this.state.weapon === 'SWORD' || this.dualWield
     }
   }
 });
-__8gRemove(Game, ["drawSeaMonsters","drawLakeRipples","publishLakeWater","applyItemEffect","LANE_SWING","settleBankedLevels","CAVE_BANDIT_WAKE","buildCaveBandits","CAVE_BANDIT_SIGHT","CAVE_BANDIT_HEAR","CAVE_BANDIT_SHOUT","CAVE_BANDIT_CONE","CAVE_SUSP_FULL","wakeCaveBandit","updateCaveBandits","drawCaveBanditVision","initCaveCreatures","caveDressingPoints","buildCaveDressing","drawCaveFloorDressing","updateCaveCombat","drawCaveCreatures","drawCaveRat","drawCaveBat","drawMikeFace","drawMaxFace","drawLoxFace","drawUnaFace","drawNovaFace","drawLyraFace","drawKaneFace","drawKiaFace","drawKasparFace","drawMichelleFace","drawJessFace","drawJonFace","drawJamesFace","drawNashFace","drawNixFace","drawOraFace","drawUlricFace","drawUthaFace","drawLuciusFace","drawZadeFace","drawZalaFace","drawZiggyFace","drawMikeWeaponLayer","drawMaxWeaponLayer","drawMichelleWeaponLayer","drawBarkeepWeaponLayer","drawBowlingBallLayer","drawShovelWeaponLayer","drawSeerHandsLayer","drawFoxFamilyWeaponLayer","drawJFamilyWeaponLayer","drawKFamilyWeaponLayer","drawLFamilyWeaponLayer","drawNFamilyWeaponLayer","drawUFamilyWeaponLayer","drawZFamilyWeaponLayer","desertLayout","DUEL_MAX_AT_ONCE","isDuelMachine","updateMachineDuel","caveRubbleArtRect","sampleArtColour","primeCaveClearPlate","caveRubblePatch","drawCaveRubble","takeTheRing","ARENA_GATE_LINE","ARENA_GATE_REARM","_roundRectSub","afterArenaWave","askSpar","paintMachine","drawMachineGolem","drawArenaFoes","drawArenaTip","finishTournament","stepOutOfArena","updateArenaCombat","updateArenaGate","updateArenaPathGuard","updateSpar","unlockStaff","MAX_FOLLOW_DIST","_maxTrailTarget","_maxFollowBehind","maxStepTo","maxWalkKeys","maxFightsCreatures","updateMaxFollow","castleDoorHeld","restoreEscortGuards","updateKingEscort","finishKingEscort","startCastleAudience","grantCastleGifts","drawBanditCamp","drawCage","drawMaxShout","drawRelicCard","closeSparCard","sparSpacedWidth","sparSpaced","sparFit","drawTournCard","drawSparCard","drawChestCard","drawLockPick","lakeWayAshore","stepOnLand","updateFisherwoman","drawBridgeExits","drawGameDots","lakeBoatSign","drawLakeSign","DECOR_MAX","fillDecorHoles","walkRowsFor","beginBridgeArrival","bridgeTransportIn","bridgeExitAsk","inBridgeExit","updateBridgeMission","openJukebox","wireMiniGameMessages","JUKEBOX_ROOMS","stopJukebox","closeJukebox","loadJukeboxFrame","onDefenceOver","askOkay","cancelMiniGameWatch","finishTheFall","indexMusic","musicSilence","primeMusicElements","musicSrcMatches","nudgeMusic","startMusicWatchdog","startBgMusic","checkBarracksGameDots","checkBowlingGameDots","checkCasinoGameDots","checkLakeDiveSpots","checkLakeFishDot","checkTavernGameDots","keepBoatOffDock","keepOffLakeWater","keepOutOfCaveRubble","keepOutOfDesertBuildings","updateBanditCamp","updateBruteApproach","updateCastleGateApproach","updateCaveChests","updateCaveRubblePrompt","SPACE_GAME_URL","backToSpace","boardFlagship","updateDockArrival","updateDockGuards","updateFenceCounter","updateGaleBowling","updateMaxRescue","updateNellyMusic","updatePermitOffice","RELIC_REACH","updateRelicDisplays","updateRingHandover","NELLY_HP","nellyPhase","updateSeaMonsters","updateSeerTable","updateShopCounters","updateTavernBrawl","updateTavernFavour","updateTownPad","askBarracksRest","banditCallOut","beginTheFall","bruteTakesOffence","castleWelcome","galeNpc","introduceNelly","isShorePoint","isWaterPoint","openCaveChest","openDefence","beamOffTheCrest","openDivingGame","openRelicCard","openRingHandover","LANE_SHOW_MAX","openOnTheLanes","updateLaneOpening","maybeStartLaneShow","endLaneShow","laneShowAim","updateLaneShow","laneDeckColour","drawLanePin","drawLaneBall","drawLaneOne","resetGaleRack","reviveTavernBrute","seaFightHeld","spawnSeaMonster","throwMonsterRock","townPadActive","hopeShipCall","townPadPos","updateDockTrail","briefFromKing","bruteAttacks","caveChestHaul","escortToKing","marchToLeader","openDivingGameNow","takeBarracksRest","awardXpOnce","miniViewFrag","openParley","answerDiveIntro","wireDivingMessages","banditsAttack","closeDivingGame","releaseCamp","surfaceFromDive","MERU_SYSTEMS","openOnTheDock","beginDockArrival","stepOntoDock","drawHeatShimmer","mountSceneLighting"], []);
+__8gRemove(Game, ["drawSeaMonsters","drawLakeRipples","publishLakeWater","applyItemEffect","LANE_SWING","settleBankedLevels","CAVE_BANDIT_WAKE","buildCaveBandits","CAVE_BANDIT_SIGHT","CAVE_BANDIT_HEAR","CAVE_BANDIT_SHOUT","CAVE_BANDIT_CONE","CAVE_SUSP_FULL","wakeCaveBandit","updateCaveBandits","drawCaveBanditVision","initCaveCreatures","caveDressingPoints","buildCaveDressing","drawCaveFloorDressing","updateCaveCombat","drawCaveCreatures","drawCaveRat","drawCaveBat","drawMikeFace","drawMaxFace","drawLoxFace","drawUnaFace","drawNovaFace","drawLyraFace","drawKaneFace","drawKiaFace","drawKasparFace","drawMichelleFace","drawJessFace","drawJonFace","drawJamesFace","drawNashFace","drawNixFace","drawOraFace","drawUlricFace","drawUthaFace","drawLuciusFace","drawZadeFace","drawZalaFace","drawZiggyFace","drawMikeWeaponLayer","drawMaxWeaponLayer","drawMichelleWeaponLayer","drawBarkeepWeaponLayer","drawBowlingBallLayer","drawShovelWeaponLayer","drawSeerHandsLayer","drawFoxFamilyWeaponLayer","drawJFamilyWeaponLayer","drawKFamilyWeaponLayer","drawLFamilyWeaponLayer","drawNFamilyWeaponLayer","drawUFamilyWeaponLayer","drawZFamilyWeaponLayer","desertLayout","DUEL_MAX_AT_ONCE","isDuelMachine","updateMachineDuel","caveRubbleArtRect","sampleArtColour","primeCaveClearPlate","caveRubblePatch","drawCaveRubble","takeTheRing","ARENA_GATE_LINE","ARENA_GATE_REARM","_roundRectSub","afterArenaWave","askSpar","paintMachine","drawMachineGolem","drawArenaFoes","drawArenaTip","finishTournament","stepOutOfArena","updateArenaCombat","updateArenaGate","updateArenaPathGuard","updateSpar","unlockStaff","MAX_FOLLOW_DIST","_maxTrailTarget","_maxFollowBehind","maxStepTo","maxWalkKeys","maxFightsCreatures","updateMaxFollow","castleDoorHeld","restoreEscortGuards","updateKingEscort","finishKingEscort","startCastleAudience","grantCastleGifts","drawBanditCamp","drawCage","drawMaxShout","drawRelicCard","closeSparCard","sparSpacedWidth","sparSpaced","sparFit","drawTournCard","drawSparCard","drawChestCard","drawLockPick","lakeWayAshore","stepOnLand","updateFisherwoman","drawBridgeExits","drawGameDots","lakeBoatSign","drawLakeSign","DECOR_MAX","fillDecorHoles","walkRowsFor","beginBridgeArrival","bridgeTransportIn","bridgeExitAsk","inBridgeExit","updateBridgeMission","openJukebox","wireMiniGameMessages","JUKEBOX_ROOMS","stopJukebox","closeJukebox","loadJukeboxFrame","onDefenceOver","askOkay","cancelMiniGameWatch","finishTheFall","indexMusic","musicSilence","primeMusicElements","musicSrcMatches","nudgeMusic","startMusicWatchdog","startBgMusic","checkBarracksGameDots","checkBowlingGameDots","checkCasinoGameDots","checkLakeDiveSpots","checkLakeFishDot","checkTavernGameDots","keepBoatOffDock","keepOffLakeWater","keepOutOfCaveRubble","keepOutOfDesertBuildings","updateBanditCamp","updateBruteApproach","updateCastleGateApproach","updateCaveChests","updateCaveRubblePrompt","SPACE_GAME_URL","backToSpace","boardFlagship","updateDockGuards","updateFenceCounter","updateGaleBowling","updateMaxRescue","updateNellyMusic","updatePermitOffice","RELIC_REACH","updateRelicDisplays","updateRingHandover","NELLY_HP","nellyPhase","updateSeaMonsters","updateSeerTable","updateShopCounters","updateTavernBrawl","updateTavernFavour","updateTownPad","askBarracksRest","banditCallOut","beginTheFall","bruteTakesOffence","castleWelcome","galeNpc","introduceNelly","isShorePoint","isWaterPoint","openCaveChest","openDefence","beamOffTheCrest","openDivingGame","openRelicCard","openRingHandover","LANE_SHOW_MAX","openOnTheLanes","updateLaneOpening","maybeStartLaneShow","endLaneShow","laneShowAim","updateLaneShow","laneDeckColour","drawLanePin","drawLaneBall","drawLaneOne","resetGaleRack","reviveTavernBrute","seaFightHeld","spawnSeaMonster","throwMonsterRock","townPadActive","hopeShipCall","townPadPos","briefFromKing","bruteAttacks","caveChestHaul","escortToKing","marchToLeader","openDivingGameNow","takeBarracksRest","awardXpOnce","miniViewFrag","openParley","answerDiveIntro","wireDivingMessages","banditsAttack","closeDivingGame","releaseCamp","surfaceFromDive","MERU_SYSTEMS","drawHeatShimmer","mountSceneLighting"], []);
 
 
 
@@ -59415,7 +59876,7 @@ window.addEventListener('DOMContentLoaded', () => {
     </div>
   </div>
 </div>
-<script>window.__g8L&&__g8L(0.81)</script><script>
+<script>window.__g8L&&__g8L(0.8105)</script><script>
 (function () {
   const wire = () => {
     const inp = document.getElementById('storeNameInput');
@@ -59450,7 +59911,7 @@ window.addEventListener('DOMContentLoaded', () => {
       style="flex:1;width:100%;border:0;background:#000;"></iframe>
   </div>
 </div>
-<script>window.__g8L&&__g8L(0.8103)</script><script>
+<script>window.__g8L&&__g8L(0.8109)</script><script>
 (function () {
   /* THE ONE MESSAGE THE FIVE GAMES SEND, and the only thing this page has to
      do about them. They post `backToCasino` to their parent and nothing else —
@@ -59483,7 +59944,7 @@ window.addEventListener('DOMContentLoaded', () => {
   else wire();
 })();
 </script>
-<script>window.__g8L&&__g8L(0.8105)</script><script>
+<script>window.__g8L&&__g8L(0.8111)</script><script>
 /* ============================================================================
    THE FIVE THAT CAME FROM MERU
 
@@ -59509,7 +59970,7 @@ root.EARTH_MINIGAMES = {
 };
 })(typeof window !== 'undefined' ? window : this);
 </script>
-<script>window.__g8L&&__g8L(0.9945)</script><script>
+<script>window.__g8L&&__g8L(0.9946)</script><script>
 const UNIVERSE = (function () {
   const VERSION = 1;
 
@@ -60366,6 +60827,7 @@ const UNIVERSE = (function () {
     return p;
   }
 
+  window.__8G_TO_ORBIT = function () { toOrbit(); };   // the ship at a space dock (80-spacedocks.js)
   function toOrbit() {
     try { if (W.beforeOrbit) W.beforeOrbit(G()); } catch (e) {}
     universe = UNIVERSE.apply(universe, patch());

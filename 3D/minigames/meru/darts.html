@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+(function(){
+  // Everything this page plays ends up connected to ctx.destination. Put a
+  // gain node in the way of that connection and it becomes a master volume,
+  // without needing to know how any individual sound was made.
+  var BOOST = 1.25;
+  if (typeof AudioNode === 'undefined' || !AudioNode.prototype.connect) return;
+  var connect = AudioNode.prototype.connect;
+  AudioNode.prototype.connect = function(dest){
+    try {
+      if (dest && dest.context && dest === dest.context.destination) {
+        var ctx = dest.context;
+        if (!ctx.__boost) {
+          var g = ctx.createGain();
+          g.gain.value = BOOST;
+          connect.call(g, ctx.destination);   // the raw connect: no recursion
+          ctx.__boost = g;
+        }
+        return connect.call(this, ctx.__boost);
+      }
+    } catch (e) {}
+    return connect.apply(this, arguments);
+  };
+})();
+</script>
+<script>
+(function(){
+  function rr(x, y, w, h, radii){
+    var r = radii;
+    if (r == null) r = 0;
+    if (typeof r === 'number') r = [r, r, r, r];
+    else if (Array.isArray(r)) {
+      if (r.length === 1) r = [r[0], r[0], r[0], r[0]];
+      else if (r.length === 2) r = [r[0], r[1], r[0], r[1]];
+      else if (r.length === 3) r = [r[0], r[1], r[2], r[1]];
+    } else r = [0, 0, 0, 0];
+    var tl = +r[0] || 0, tr = +r[1] || 0, br = +r[2] || 0, bl = +r[3] || 0;
+    // Negative width/height mean the rectangle is drawn the other way round.
+    if (w < 0) { x += w; w = -w; }
+    if (h < 0) { y += h; h = -h; }
+    var m = Math.min(w, h) / 2;
+    tl = Math.min(tl, m); tr = Math.min(tr, m); br = Math.min(br, m); bl = Math.min(bl, m);
+    this.moveTo(x + tl, y);
+    this.lineTo(x + w - tr, y);
+    if (tr) this.arcTo(x + w, y, x + w, y + tr, tr);
+    this.lineTo(x + w, y + h - br);
+    if (br) this.arcTo(x + w, y + h, x + w - br, y + h, br);
+    this.lineTo(x + bl, y + h);
+    if (bl) this.arcTo(x, y + h, x, y + h - bl, bl);
+    this.lineTo(x, y + tl);
+    if (tl) this.arcTo(x, y, x + tl, y, tl);
+    this.closePath();
+  }
+  try {
+    if (typeof CanvasRenderingContext2D !== 'undefined' &&
+        !CanvasRenderingContext2D.prototype.roundRect) {
+      CanvasRenderingContext2D.prototype.roundRect = rr;
+    }
+    if (typeof Path2D !== 'undefined' && !Path2D.prototype.roundRect) {
+      Path2D.prototype.roundRect = rr;
+    }
+  } catch (e) {}
+})();
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ye Olde Tavern Darts</title>
+    <style>
+        html, body { height: 100%; }
+        :root { --board: min(520px, 66vh, 78vw); }
+        body {
+            background: radial-gradient(ellipse at 50% 0%, #40260a 0%, #2c1a04 60%, #1b1002 100%);
+            color: #f4ecd8;
+            font-family: 'Georgia', serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            height: 100vh;
+            margin: 0;
+            padding: 8px;
+            box-sizing: border-box;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+        h1 { display: none; }
+        #game-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        canvas {
+            width: var(--board);
+            height: var(--board);
+            border: 6px double #d4af37;
+            background: #e6dfc3;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+            cursor: crosshair;
+            border-radius: 50%;
+        }
+        #power-container {
+            width: 26px;
+            height: var(--board);
+            background: #1a0f02;
+            border: 2px solid #d4af37;
+            border-radius: 13px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: flex-end;   /* the fill grows UP from the bottom */
+            flex: 0 0 auto;
+        }
+        #power-bar {
+            width: 100%;
+            height: 0%;
+            /* Gradient pinned to the CONTAINER, not the fill — otherwise the
+               green band stretches with the bar and never sits under the
+               marker except at full power. */
+            background-image: linear-gradient(0deg, #ff0000, #00ff00 50%, #ff0000);
+            background-size: 100% var(--board);
+            background-position: left bottom;
+            background-repeat: no-repeat;
+            transition: none;
+        }
+        #perfect-marker {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            height: 4px;
+            width: 100%;
+            background: #ffffff;
+            /* z-index + dark edges: the fill's own green tops out exactly here,
+               so a plain white line vanishes into it at the moment it matters */
+            z-index: 2;
+            box-shadow: 0 0 8px #fff, 0 -2px 0 rgba(0,0,0,0.6), 0 2px 0 rgba(0,0,0,0.6);
+        }
+        #ui {
+            margin-top: 0;
+            font-size: clamp(12px, 2.1vh, 19px);
+            background: #4a321a;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid #d4af37;
+            min-width: min(460px, 90vw);
+            text-align: center;
+        }
+        #reset-btn {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            margin: 0 !important;
+            z-index: 5;
+        }
+        .btn {
+            background: #8b0000;
+            color: white;
+            border: 2px solid #d4af37;
+            padding: 8px 15px;
+            font-family: 'Georgia', serif;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+        .btn:hover { background: #a30000; }
+    </style>
+</head>
+<body>
+
+    <!-- Opening instructions, in the same shape and colours the fishing pond
+         uses, so the two mini-games read as one game. Shown once: the host
+         remembers and tells us in the fragment (#tut=1 means "already seen"). -->
+    <div id="dartTut" style="position:fixed;inset:0;background:rgba(20,12,6,0.6);display:none;align-items:center;justify-content:center;z-index:50;">
+      <div style="background:#fff8ec;border:3px solid #e8862f;border-radius:16px;padding:22px 26px;max-width:min(86vw,320px);text-align:center;box-shadow:0 12px 34px rgba(0,0,0,0.4);">
+        <div id="dartTutIcon" style="font-size:2.2rem;margin-bottom:6px;">🎯</div>
+        <div id="dartTutTitle" style="font-family:'Georgia',serif;font-weight:800;font-size:1.15rem;color:#c25b0f;margin-bottom:8px;"></div>
+        <div id="dartTutBody" style="font-size:0.9rem;color:#2b3a44;margin-bottom:16px;line-height:1.45;"></div>
+        <button id="dartTutBtn" style="padding:11px 28px;border-radius:10px;border:none;background:#e8862f;color:#fff;font-family:'Georgia',serif;font-weight:800;font-size:1rem;cursor:pointer;">Got it!</button>
+      </div>
+    </div>
+
+    <div id="game-container">
+        <canvas id="dartboard" width="400" height="400"></canvas>
+        <div id="power-container">
+            <div id="power-bar"></div>
+            <div id="perfect-marker"></div>
+        </div>
+        <button id="reset-btn" class="btn" style="display:none;" onclick="resetGame()">Play Again</button>
+    </div>
+
+    <!-- ===================================================== the title card
+         Plain markup, because this page is plain: no bundler, no template
+         string, no escaping. It sits over everything at the top of the stack
+         and is taken down by the first press.
+
+         `dartCardRoom` and `dartCardBest` are filled in by the parent — see the
+         script at the foot of the page — and read THE TAVERN and — until it
+         answers, which is never when the page is opened on its own. -->
+    <div id="dartCard">
+      <div id="dartMark">8 GATES</div>
+      <div id="dartKick">THE TAVERN PRESENTS</div>
+      <div id="dartTitle">DARTS</div>
+      <div id="dartSub">THREE DARTS &middot; A PERFECT 180</div>
+      <div id="dartGo">TAP <i>or</i> SPACE <i>to</i> STEP TO THE OCHE</div>
+      <div id="dartFoot">
+        <div class="dartCell"><span>DOUBLE BULL</span><b>50</b></div>
+        <div class="dartHint">watch the sight &middot; lock the power bar &middot; three throws</div>
+        <div class="dartCell dartRight"><span>YOUR BEST</span><b id="dartBest">&mdash;</b></div>
+      </div>
+    </div>
+
+    <div id="ui">
+        <div id="status">TAP ANYWHERE to lock the power bar and throw!</div>
+        <div id="score-board" style="margin-top: 8px; font-weight: bold;">
+            Darts Left: <span id="darts-count">3</span> | Total Score: <span id="total-score">0</span>
+        </div>
+    </div>
+
+    <style>
+      /* THE CARD, in the board's own colours: the gold of the back button and
+         the wire, and the red of the inner rim. */
+      #dartCard{position:fixed;inset:0;z-index:2147483000;display:flex;flex-direction:column;
+        align-items:center;justify-content:center;gap:20px;
+        background:radial-gradient(ellipse at 50% 42%, rgba(12,7,2,0.60) 0%, rgba(8,5,1,0.92) 78%);
+        font-family:Georgia,'Times New Roman',serif;cursor:pointer;-webkit-tap-highlight-color:transparent}
+      #dartMark{position:absolute;top:18px;right:22px;font:bold 11px/1 Georgia,serif;
+        letter-spacing:3px;color:rgba(240,211,138,0.55)}
+      #dartKick{font:bold 14px/1 Georgia,serif;letter-spacing:8px;color:#c9a24a}
+      /* THE FRINGE IS THE BOARD'S. Gold pulled left, the rim's #ff3b2f pushed
+         right, over a warm bloom — the same trick as the other six cards, in
+         the two colours this page already paints with. */
+      #dartTitle{font:bold clamp(42px,9vw,96px)/1 Georgia,serif;letter-spacing:10px;color:#fff6e2;
+        text-shadow:-3px 0 rgba(212,175,55,0.85), 3px 0 rgba(255,59,47,0.75),
+                    0 0 34px rgba(212,175,55,0.45), 0 0 70px rgba(212,175,55,0.18)}
+      #dartSub{font:bold 15px/1 Georgia,serif;letter-spacing:6px;color:#e8b06a}
+      #dartGo{font:bold 17px/1 Georgia,serif;letter-spacing:4px;color:#f0d38a;
+        animation:dartBlink 1.7s ease-in-out infinite;margin-top:6px}
+      /* Never all the way out — the one line telling you how to start should
+         not be invisible for half of every cycle. */
+      @keyframes dartBlink{0%,100%{opacity:1}50%{opacity:0.45}}
+      #dartGo i{font-style:normal;color:rgba(240,211,138,0.45);letter-spacing:2px}
+      /* 44px UP, NOT 30. The parent draws its build badge in the bottom right
+         corner of the frame and YOUR BEST printed through GAYA BUILD 059. That
+         is the third card to land on it — the bout in the barracks and the
+         defence were the other two — so the corner is spoken for. */
+      #dartFoot{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:flex-end;
+        justify-content:space-between;padding:0 26px 44px;gap:16px;pointer-events:none}
+      .dartCell{display:flex;flex-direction:column;gap:3px}
+      .dartCell span{font:bold 9px/1 Georgia,serif;letter-spacing:4px;color:rgba(200,178,140,0.7)}
+      .dartCell b{font:bold 17px/1 Georgia,serif;letter-spacing:3px;color:#e8b06a}
+      .dartRight{align-items:flex-end}
+      .dartHint{font:12px/1 Georgia,serif;letter-spacing:1px;color:rgba(200,178,140,0.45);
+        text-align:center;padding-bottom:3px}
+    </style>
+
+    <script>
+        const canvas = document.getElementById("dartboard");
+        const ctx = canvas.getContext("2d");
+
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+
+        let totalScore = 0;
+        let dartsThrown = 0;
+        const maxDarts = 3;
+        let gameOver = false;
+        let thrownDartsList = [];
+
+        let aimX = centerX, aimY = centerY;
+        let angleX = 0, angleY = 0;
+
+        let throwPower = 0;
+        let powerDirection = 1;
+        const powerSpeed = 2.5; 
+
+        const sectors = [20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5];
+
+        const rInnerBull = 10, rOuterBull = 22, rTripleInner = 95, rTripleOuter = 110, rDoubleInner = 165, rDoubleOuter = 180;
+        const cDark = "#1e1e1e", cLight = "#f2ebd3", cRed = "#b22222", cGreen = "#228b22";
+
+        let audioCtx = null;
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            initAudio();
+            if (!audioCtx) return;
+
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === "hit") {
+                osc.type = "triangle";
+                osc.frequency.setValueAtTime(140, now);
+                osc.frequency.exponentialRampToValueAtTime(40, now + 0.1);
+                gainNode.gain.setValueAtTime(0.6, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                osc.start(now);
+                osc.stop(now + 0.12);
+            } else if (type === "bullseye") {
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(587.33, now);
+                osc.frequency.setValueAtTime(880, now + 0.08);
+                gainNode.gain.setValueAtTime(0.4, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            } else if (type === "miss") {
+                osc.type = "sawtooth";
+                osc.frequency.setValueAtTime(100, now);
+                osc.frequency.linearRampToValueAtTime(120, now + 0.15);
+                gainNode.gain.setValueAtTime(0.3, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
+                osc.start(now);
+                osc.stop(now + 0.18);
+            }
+        }
+
+        function drawBoard() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, rDoubleOuter, 0, 2 * Math.PI);
+            ctx.fillStyle = cDark;
+            ctx.fill();
+
+            const anglePerSector = (2 * Math.PI) / 20;
+            const offset = -Math.PI / 2 - anglePerSector / 2;
+
+            for (let i = 0; i < 20; i++) {
+                const startAngle = offset + i * anglePerSector;
+                const endAngle = startAngle + anglePerSector;
+                const isEven = i % 2 === 0;
+
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, rDoubleOuter, startAngle, endAngle);
+                ctx.closePath();
+                ctx.fillStyle = isEven ? cDark : cLight;
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, rDoubleOuter, startAngle, endAngle);
+                ctx.arc(centerX, centerY, rDoubleInner, endAngle, startAngle, true);
+                ctx.closePath();
+                ctx.fillStyle = isEven ? cRed : cGreen;
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, rTripleOuter, startAngle, endAngle);
+                ctx.closePath();
+                ctx.fillStyle = isEven ? cDark : cLight;
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, rTripleOuter, startAngle, endAngle);
+                ctx.arc(centerX, centerY, rTripleInner, endAngle, startAngle, true);
+                ctx.closePath();
+                ctx.fillStyle = isEven ? cRed : cGreen;
+                ctx.fill();
+            }
+
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, rOuterBull, 0, 2 * Math.PI);
+            ctx.fillStyle = cGreen;
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, rInnerBull, 0, 2 * Math.PI);
+            ctx.fillStyle = cRed;
+            ctx.fill();
+
+            thrownDartsList.forEach(dart => {
+                ctx.beginPath();
+                ctx.arc(dart.x, dart.y, 5, 0, 2 * Math.PI);
+                ctx.fillStyle = "#ffffff";
+                ctx.fill();
+                ctx.strokeStyle = "#000000";
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(dart.x, dart.y, 2, 0, 2 * Math.PI);
+                ctx.fillStyle = "#8b0000";
+                ctx.fill();
+            });
+        }
+
+        // ---- the cards -------------------------------------------------
+        const DART_TUT = [
+          { icon: '🎯', title: 'Follow the sight',
+            body: 'The red sight drifts across the board on its own. Wherever it is when you throw is where the dart goes \u2014 so watch it, and pick your moment.' },
+          { icon: '⚡', title: 'Time the power',
+            body: 'The bar on the right rises and falls. TAP ANYWHERE to lock it and throw. Stop it near the white line for a clean throw \u2014 too little and the dart drops low.' },
+        ];
+        let dartTutStep = 0;
+        function showDartTut() {
+          const seen = /(^|[#&])tut=1/.test(location.hash || '');
+          if (seen) return;
+          const box = document.getElementById('dartTut');
+          const paint = () => {
+            const c = DART_TUT[dartTutStep];
+            document.getElementById('dartTutIcon').textContent = c.icon;
+            document.getElementById('dartTutTitle').textContent = c.title;
+            document.getElementById('dartTutBody').textContent = c.body;
+          };
+          paint();
+          box.style.display = 'flex';
+          document.getElementById('dartTutBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            dartTutStep++;
+            if (dartTutStep >= DART_TUT.length) {
+              box.style.display = 'none';
+              // Tell the game, so it does not show these again.
+              try { parent.postMessage({ darts: 'tutdone' }, '*'); } catch (err) {}
+            } else paint();
+          });
+          // While a card is up, a tap must not also throw a dart — but on the
+          // BUBBLE phase, so the button inside gets its own click first. With
+          // capture:true this swallowed the button's click and the card became
+          // impossible to dismiss.
+          box.addEventListener('pointerdown', e => e.stopPropagation());
+          box.addEventListener('click', e => e.stopPropagation());
+        }
+        /* HELD IF THERE IS A CARD IN FRONT. The title card is taken down by the
+           first press and releases this then; with no card (an older build, or
+           the page opened on its own) it runs exactly as it always did. */
+        window.__dartTutGo = showDartTut;
+        setTimeout(function () {
+          if (document.getElementById('dartCard')) return;
+          window.__dartTutGo = null;
+          showDartTut();
+        }, 250);
+
+        function drawCrosshair() {
+            if (gameOver) return;
+            // The board is cream, black, red and green, so a single-colour
+            // reticle vanishes over at least one of them. Everything below is
+            // drawn twice: a dark stroke first as a halo, then the bright line
+            // on top of it, which reads over every wedge on the board.
+            const t = Date.now() * 0.006;
+            const pulse = 1 + Math.sin(t) * 0.12;
+            const R = 17 * pulse;
+            const ARM = 30 * pulse;
+            ctx.save();
+            ctx.lineCap = "round";
+
+            // outer glow, so the eye catches it moving even in peripheral vision
+            ctx.shadowColor = "rgba(255, 60, 40, 0.9)";
+            ctx.shadowBlur = 14;
+
+            const ring = (r, w, colour) => {
+                ctx.strokeStyle = colour; ctx.lineWidth = w;
+                ctx.beginPath(); ctx.arc(aimX, aimY, r, 0, 2 * Math.PI); ctx.stroke();
+            };
+            ring(R, 7, "rgba(10,6,4,0.85)");        // halo
+            ring(R, 3.5, "#ffffff");                 // the ring itself
+            ring(R - 4.5, 2, "#ff3b2f");             // a red inner rim
+
+            // arms, each with a dark backing stroke
+            const arms = () => {
+                ctx.beginPath();
+                ctx.moveTo(aimX - ARM, aimY); ctx.lineTo(aimX - R - 3, aimY);
+                ctx.moveTo(aimX + R + 3, aimY); ctx.lineTo(aimX + ARM, aimY);
+                ctx.moveTo(aimX, aimY - ARM); ctx.lineTo(aimX, aimY - R - 3);
+                ctx.moveTo(aimX, aimY + R + 3); ctx.lineTo(aimX, aimY + ARM);
+                ctx.stroke();
+            };
+            ctx.strokeStyle = "rgba(10,6,4,0.85)"; ctx.lineWidth = 7; arms();
+            ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 3; arms();
+
+            // the bead: the exact point the dart is aimed at
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = "rgba(10,6,4,0.85)";
+            ctx.beginPath(); ctx.arc(aimX, aimY, 5, 0, 2 * Math.PI); ctx.fill();
+            ctx.fillStyle = "#ff3b2f";
+            ctx.beginPath(); ctx.arc(aimX, aimY, 3, 0, 2 * Math.PI); ctx.fill();
+            ctx.restore();
+        }
+
+        function updateGameData() {
+            if (gameOver) return;
+            angleX += 0.04; angleY += 0.03;
+            aimX = centerX + Math.sin(angleX) * 75 + Math.cos(angleY * 0.5) * 15;
+            aimY = centerY + Math.cos(angleY) * 75 + Math.sin(angleX * 0.5) * 15;
+
+            throwPower += powerSpeed * powerDirection;
+            if (throwPower >= 100 || throwPower <= 0) {
+                powerDirection *= -1; 
+            }
+            document.getElementById("power-bar").style.height = throwPower + "%";
+        }
+
+        function getScore(x, y) {
+            const dx = x - centerX;
+            const dy = y - centerY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance > rDoubleOuter) return { points: 0, label: "Miss!", audio: "miss" };
+            if (distance <= rInnerBull) return { points: 50, label: "Double Bullseye! (50 pts)", audio: "bullseye" };
+            if (distance <= rOuterBull) return { points: 25, label: "Bullseye! (25 pts)", audio: "bullseye" };
+
+            let angle = Math.atan2(dy, dx) + Math.PI / 2;
+            if (angle < 0) angle += 2 * Math.PI;
+
+            const anglePerSector = (2 * Math.PI) / 20;
+            let sectorIndex = Math.floor((angle + anglePerSector / 2) / anglePerSector);
+            if (sectorIndex >= 20) sectorIndex = 0;
+
+            const basePoints = sectors[sectorIndex];
+
+            if (distance >= rTripleInner && distance <= rTripleOuter) {
+                return { points: basePoints * 3, label: `Triple ${basePoints}! (${basePoints * 3} pts)`, audio: "hit" };
+            }
+            if (distance >= rDoubleInner && distance <= rDoubleOuter) {
+                return { points: basePoints * 2, label: `Double ${basePoints}! (${basePoints * 2} pts)`, audio: "hit" };
+            }
+            return { points: basePoints, label: `Single ${basePoints} (${basePoints} pts)`, audio: "hit" };
+        }
+
+        function executeThrow() {
+            if (gameOver) return;
+            dartsThrown++;
+            
+            const accuracyError = throwPower - 50; 
+            const gravityImpactY = accuracyError * 1.4; 
+
+            const finalHitX = aimX;
+            const finalHitY = aimY + gravityImpactY; 
+
+            const result = getScore(finalHitX, finalHitY);
+            totalScore += result.points;
+            
+            thrownDartsList.push({ x: finalHitX, y: finalHitY });
+            playSound(result.audio);
+
+            document.getElementById("darts-count").innerText = maxDarts - dartsThrown;
+            document.getElementById("total-score").innerText = totalScore;
+            document.getElementById("status").innerText = `🎯 Thrown (Power: ${Math.round(throwPower)}%)! Hit: ${result.label}`;
+
+            if (dartsThrown >= maxDarts) {
+                gameOver = true;
+                document.getElementById("status").innerText = `🍻 Match Over! Your Total Tavern Score: ${totalScore}`;
+                // AND IT IS TOLD TO SOMEBODY. Every match has ended with this
+                // number and thrown it away since the day the page shipped.
+                try { parent.postMessage({ darts: 'score', score: totalScore }, '*'); } catch (err) {}
+                document.getElementById("reset-btn").style.display = "inline-block";
+            }
+        }
+
+        // Tap anywhere on the board area (not the back button) to throw.
+        document.addEventListener('pointerdown', function (e) {
+            /* AND THE TITLE CARD. This list is why the tutorial's Got it! does not
+               also throw a dart, and the card needs the same seat at it — the
+               press that takes the card down must not be a throw as well. */
+            if (e.target && e.target.closest && e.target.closest('#__tavernBack,#reset-btn,#dartTut,#dartCard')) return;
+            executeThrow();
+        });
+        window.addEventListener("keydown", (e) => {
+            if (e.code === "Space") {
+                e.preventDefault(); 
+                executeThrow();
+            }
+        });
+
+        function resetGame() {
+            totalScore = 0;
+            dartsThrown = 0;
+            gameOver = false;
+            thrownDartsList = [];
+            document.getElementById("darts-count").innerText = maxDarts;
+            document.getElementById("total-score").innerText = totalScore;
+            document.getElementById("status").innerText = "TAP ANYWHERE to lock the power bar and throw!";
+            document.getElementById("reset-btn").style.display = "none";
+        }
+
+        function gameLoop() {
+            updateGameData();
+            drawBoard();
+            drawCrosshair();
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+    </script>
+
+<script>
+(function(){
+  /* ------------------------------------------------- the title card's four jobs
+     Take it down on the first press, ask the room outside who it is and what
+     you have thrown, and keep the keyboard off the board while it is up. */
+  function card(){ return document.getElementById('dartCard'); }
+  /* THE TUTORIAL WAITS ITS TURN, AND IT IS HELD AT THE CALL, NOT WITH CSS.
+     `Follow the sight` opens 250ms after the page and sits above the card — its
+     text printed straight through DARTS in the first shot. The obvious fix is
+     to set its display to none while the card is up, and that does not work:
+     showDartTut() sets `display = 'flex'` itself, a quarter of a second later,
+     so it simply undoes you. Held at the call site instead, and released when
+     the card closes — which is the right order anyway. The card, then the
+     coaching, then the board. */
+  function closeCard(){
+    var c = card(); if (!c) return false;
+    c.parentNode.removeChild(c);
+    if (window.__dartTutGo) { var f = window.__dartTutGo; window.__dartTutGo = null; setTimeout(f, 120); }
+    return true;
+  }
+  // CAPTURE, so it runs before the page's own pointerdown throws a dart. The
+  // guard in the throw handler covers a press that lands ON the card; this
+  // covers the rest of the window, which the card fills anyway.
+  window.addEventListener('pointerdown', function(){ closeCard(); }, true);
+  window.addEventListener('keydown', function(e){
+    if (!card()) return;
+    if (e.key === 'Escape') return;          // Escape still leaves the room
+    e.preventDefault(); e.stopPropagation();
+    closeCard();
+  }, true);
+
+  /* WHICH ROOM, AND WHAT YOU HAVE THROWN. This is the only minigame on the
+     planet opened from more than one — two boards in the tavern and the range
+     in the barracks — so the card is told rather than guessing. Asked three
+     times because the parent wires its listener around the time the frame
+     loads; a page opened on its own never hears back and keeps the defaults,
+     which say THE TAVERN and nothing. */
+  window.addEventListener('message', function(e){
+    if (!e || !e.data || e.data.__darts !== 'intro') return;
+    var k = document.getElementById('dartKick'), b = document.getElementById('dartBest');
+    if (k && e.data.room) k.textContent = 'THE ' + String(e.data.room).toUpperCase() + ' PRESENTS';
+    if (b && e.data.best) b.textContent = String(e.data.best);
+  });
+  function askDarts(){ try { parent.postMessage({ __darts: 'wantIntro' }, '*'); } catch (err) {} }
+  askDarts(); setTimeout(askDarts, 1200); setTimeout(askDarts, 3000);
+
+  function goBack(e){ if (e) e.preventDefault(); try { parent.postMessage('backToTavern', '*'); } catch (err) {} }
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') goBack(); });
+  var b = document.createElement('button');
+  b.id = '__tavernBack';
+  b.textContent = '\u25C0 BACK';
+  b.style.cssText = 'position:fixed;top:12px;left:12px;z-index:2147483647;padding:7px 12px;' +
+    'border-radius:6px;border:2px solid #d4af37;background:rgba(26,15,2,0.9);color:#f0d38a;' +
+    "font:bold 12px/1 Georgia,serif;letter-spacing:0.5px;cursor:pointer;" +
+    'box-shadow:0 3px 10px rgba(0,0,0,0.6)';
+  b.addEventListener('click', goBack);
+  document.body.appendChild(b);
+})();
+</script>
+</body>
+</html>

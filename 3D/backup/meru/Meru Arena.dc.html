@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#201e1d}a{color:var(--color-accent-700)}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;overflow:hidden;background:var(--color-text);font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none">
+  <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+
+  <sc-if value="{{ started }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;top:16px;left:16px;display:flex;flex-direction:column;gap:8px;pointer-events:none">
+      <div style="background:var(--color-bg);border:2px solid var(--color-text);padding:12px 16px 14px;width:268px;box-sizing:border-box;display:flex;flex-direction:column;gap:4px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700);white-space:nowrap">Meru Arena · {{ roundLabel }}</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px"><div style="font-family:var(--font-heading);font-size:32px;font-weight:800;line-height:1;letter-spacing:-0.02em;color:var(--color-text)">{{ hud.roundName }}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><span style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-neutral-700)">Score</span><span style="font:800 18px var(--font-heading);font-variant-numeric:tabular-nums;color:var(--color-text)">{{ hud.score }}</span></div></div>
+        <div style="display:flex;justify-content:space-between;gap:16px;font-size:13px;color:var(--color-text);font-variant-numeric:tabular-nums"><span style="white-space:nowrap">{{ hud.foeLabel }}{{ lockTag }}</span><span style="flex-shrink:0">{{ hud.time }}</span></div>
+      </div>
+      <sc-if value="{{ showHint }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-wrap:wrap;max-width:300px;pointer-events:none;font-size:12px;color:var(--color-text);white-space:nowrap">
+          <div style="background:var(--color-bg);border:2px solid var(--color-text);margin:0 -2px -2px 0;padding:5px 9px"><b>WASD</b> move</div>
+          <div style="background:var(--color-bg);border:2px solid var(--color-text);margin:0 -2px -2px 0;padding:5px 9px"><b>Click / F</b> attack</div>
+          <div style="background:var(--color-bg);border:2px solid var(--color-text);margin:0 -2px -2px 0;padding:5px 9px"><b>Shift</b> dodge</div>
+          <div style="background:var(--color-bg);border:2px solid var(--color-text);margin:0 -2px -2px 0;padding:5px 9px"><b>Q</b> swap</div>
+        <div style="background:var(--color-bg);border:2px solid var(--color-text);margin:0 -2px -2px 0;padding:5px 9px"><b>C</b> lock on · <b>Tab</b> next</div>
+          <div style="background:var(--color-bg);border:2px solid var(--color-text);margin:0 -2px -2px 0;padding:5px 9px"><b>Space</b> jump</div>
+        <div style="background:var(--color-bg);border:2px solid var(--color-text);margin:0 -2px -2px 0;padding:5px 9px"><b>R</b> burst</div>
+        </div>
+      </sc-if>
+    </div>
+    <div style="position:absolute;top:16px;right:16px;display:flex">
+      <button class="btn btn-secondary" onClick="{{ toTown }}" style="background:var(--color-bg);border:2px solid var(--color-text);border-right:0;justify-content:flex-start">← Town square</button>
+      <button class="btn btn-secondary" onClick="{{ toggleSound }}" style="background:var(--color-bg);border:2px solid var(--color-text);justify-content:flex-start;min-width:100px">{{ soundLabel }}</button>
+    </div>
+
+    <sc-if value="{{ hud.styleOn }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:flex-end;pointer-events:none">
+        <div style="background:{{ rankBg }};color:{{ rankFg }};border:2px solid var(--color-text);width:84px;height:84px;display:flex;align-items:center;justify-content:center;font:800 64px var(--font-heading);line-height:1">{{ hud.rank }}</div>
+        <div style="width:84px;height:10px;border:2px solid var(--color-text);border-top:0;background:var(--color-bg)"><div style="height:100%;background:var(--color-text);width:{{ styleW }}"></div></div>
+        <div style="margin-top:4px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-bg);background:var(--color-text);padding:2px 6px">Style</div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ showBoss }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:50%;transform:translateX(-50%);top:16px;width:min(560px,calc(100% - 640px));min-width:260px;background:var(--color-bg);border:2px solid var(--color-text);pointer-events:none">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:6px 12px;border-bottom:2px solid var(--color-text)"><span style="font:800 16px var(--font-heading);color:var(--color-text)">The Iron Warden</span><span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700)">{{ bossState }}</span></div>
+        <div style="height:16px;background:var(--color-neutral-200)"><div style="height:100%;background:var(--color-accent);width:{{ bossW }}"></div></div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ showTip }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;top:16px;left:300px;right:260px;display:flex;justify-content:center;pointer-events:none"><div style="max-width:100%;background:var(--color-accent);color:var(--color-bg);border:2px solid var(--color-text);padding:12px 20px 14px;display:flex;flex-direction:column;gap:4px;pointer-events:none">
+        <div style="font-family:var(--font-heading);font-size:28px;font-weight:800;line-height:1.05;letter-spacing:-0.01em">{{ hud.tip.text }}</div>
+        <div style="font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase">{{ hud.tip.sub }}</div>
+      </div></div>
+    </sc-if>
+
+    <div style="position:absolute;left:16px;bottom:16px;width:min(300px,calc(100% - 32px));background:var(--color-bg);border:2px solid var(--color-text);display:flex;flex-direction:column;pointer-events:none">
+      <div style="display:grid;grid-template-columns:64px 1fr 40px;align-items:center;gap:10px;padding:10px 12px;border-bottom:2px solid var(--color-text)">
+        <span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-text)">Health</span>
+        <div style="height:12px;border:2px solid var(--color-text);background:var(--color-neutral-200)"><div style="height:100%;background:var(--color-accent);width:{{ hpW }}"></div></div>
+        <span style="font-size:13px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums;color:var(--color-text)">{{ hud.hp }}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:64px 1fr 40px;align-items:center;gap:10px;padding:10px 12px;border-bottom:2px solid var(--color-text)">
+        <span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-text)">Energy</span>
+        <div style="height:12px;border:2px solid var(--color-text);background:var(--color-neutral-200)"><div style="height:100%;background:var(--color-text);width:{{ enW }}"></div></div>
+        <span style="font-size:13px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums;color:var(--color-text)">{{ hud.en }}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:64px 1fr 40px;align-items:center;gap:10px;padding:10px 12px;background:{{ burstRowBg }}">
+        <span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:{{ burstRowFg }}">Burst</span>
+        <div style="height:12px;border:2px solid var(--color-text);background:var(--color-neutral-200)"><div style="height:100%;background:#38bdf8;width:{{ superW }}"></div></div>
+        <span style="font-size:12px;font-weight:800;text-align:right;color:{{ burstRowFg }}">{{ burstKey }}</span>
+      </div>
+    </div>
+
+    <div style="position:absolute;right:16px;bottom:16px;display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+      <div style="display:flex">
+        <button onClick="{{ pickLaser }}" style="width:112px;height:56px;border:2px solid var(--color-text);border-radius:0;padding:6px 10px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;cursor:pointer;background:{{ laserBg }};color:{{ laserFg }}"><span style="font-size:10px;font-weight:700;letter-spacing:0.1em">1</span><span style="font:800 15px var(--font-heading)">Laser</span></button>
+        <button onClick="{{ pickSword }}" style="width:112px;height:56px;border:2px solid var(--color-text);border-left:0;border-radius:0;padding:6px 10px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;cursor:pointer;background:{{ swordBg }};color:{{ swordFg }};opacity:{{ swordOp }}"><span style="font-size:10px;font-weight:700;letter-spacing:0.1em">{{ swordKey }}</span><span style="font:800 15px var(--font-heading)">Sword</span></button>
+      </div>
+      <sc-if value="{{ isTouch }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex">
+          <button onPointerDown="{{ lock }}" style="width:64px;height:64px;border:2px solid var(--color-text);border-right:0;border-radius:0;background:{{ lockBg }};color:{{ lockFg }};font:800 13px var(--font-heading);text-align:left;padding:8px;display:flex;align-items:flex-end">Lock</button>
+          <button onPointerDown="{{ dodge }}" style="width:64px;height:64px;border:2px solid var(--color-text);border-radius:0;background:var(--color-bg);color:var(--color-text);font:800 13px var(--font-heading);text-align:left;padding:8px;display:flex;align-items:flex-end">Dodge</button>
+          <button onPointerDown="{{ jump }}" style="width:64px;height:64px;border:2px solid var(--color-text);border-left:0;border-radius:0;background:var(--color-bg);color:var(--color-text);font:800 13px var(--font-heading);text-align:left;padding:8px;display:flex;align-items:flex-end">Jump</button>
+          <button onPointerDown="{{ burst }}" style="width:64px;height:64px;border:2px solid var(--color-text);border-left:0;border-radius:0;background:#38bdf8;color:var(--color-text);font:800 13px var(--font-heading);text-align:left;padding:8px;display:flex;align-items:flex-end">Burst</button>
+          <button onPointerDown="{{ attack }}" style="width:96px;height:64px;border:2px solid var(--color-text);border-left:0;border-radius:0;background:var(--color-accent);color:var(--color-bg);font:800 15px var(--font-heading);text-align:left;padding:8px;display:flex;align-items:flex-end">Attack</button>
+        </div>
+      </sc-if>
+    </div>
+
+
+
+    <sc-if value="{{ showDialog }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ advance }}" style="position:absolute;left:50%;transform:translateX(-50%);bottom:110px;width:min(680px,calc(100% - 32px));background:var(--color-bg);border:2px solid var(--color-text);cursor:pointer;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:baseline;gap:10px;padding:12px 18px 10px;border-bottom:2px solid var(--color-text)">
+          <div style="font-family:var(--font-heading);font-size:20px;font-weight:800;color:var(--color-text)">{{ hud.dialog.name }}</div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700);white-space:nowrap">{{ hud.dialog.role }}</div>
+        </div>
+        <div style="padding:14px 18px;font-size:19px;line-height:1.45;color:var(--color-text);min-height:56px;text-wrap:pretty">{{ hud.dialog.text }}</div>
+        <div style="display:flex;justify-content:space-between;padding:8px 18px;border-top:2px solid var(--color-text);font-size:12px;color:var(--color-neutral-700)">
+          <span>{{ hud.dialog.step }} / {{ hud.dialog.total }}</span><span>{{ continueLabel }}</span>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showResults }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:flex-start;padding:24px;background:rgba(32,30,29,0.45)">
+        <div style="width:min(460px,100%);background:var(--color-accent);color:var(--color-bg);border:2px solid var(--color-text);padding:32px;display:flex;flex-direction:column;gap:18px">
+          <div style="font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase">{{ resultKicker }}</div>
+          <h2 style="font-family:var(--font-heading);font-weight:800;font-size:64px;line-height:0.92;letter-spacing:-0.03em;margin:0;color:var(--color-bg)">{{ resultTitle }}</h2>
+          <div style="display:grid;grid-template-columns:1fr 1fr;border-top:2px solid var(--color-bg);font-size:14px">
+            <div style="padding-top:10px;display:flex;flex-direction:column;gap:2px"><b>{{ statA }}</b><span>{{ statAv }}</span></div>
+            <div style="padding-top:10px;display:flex;flex-direction:column;gap:2px"><b>{{ statB }}</b><span>{{ statBv }}</span></div>
+          </div>
+          <div style="display:flex;align-items:stretch;border:2px solid var(--color-bg)"><div style="padding:10px 14px;font:800 44px var(--font-heading);line-height:1;border-right:2px solid var(--color-bg)">{{ resultRank }}</div><div style="padding:10px 14px;display:flex;flex-direction:column;justify-content:center;gap:2px"><b style="font-size:12px;letter-spacing:0.1em;text-transform:uppercase">Score</b><span style="font:800 22px var(--font-heading)">{{ resultScore }}</span></div></div>
+          <button onClick="{{ toTown }}" style="display:flex;justify-content:space-between;align-items:center;width:100%;padding:14px 20px;background:var(--color-accent);color:var(--color-bg);border:2px solid var(--color-bg);border-radius:0;font:800 16px var(--font-heading);text-align:left;cursor:pointer"><span style="white-space:nowrap">Back to the town square</span><span>←</span></button>
+          <button onClick="{{ retry }}" style="display:flex;justify-content:space-between;align-items:center;width:100%;padding:16px 20px;background:var(--color-bg);color:var(--color-text);border:2px solid var(--color-text);border-radius:0;font:800 18px var(--font-heading);text-align:left;cursor:pointer" style-hover="background:var(--color-neutral-200)"><span>{{ retryLabel }}</span><span>→</span></button>
+        </div>
+      </div>
+    </sc-if>
+  </sc-if>
+
+  <sc-if value="{{ showIntro }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;top:0;left:0;bottom:0;width:min(520px,100%);background:var(--color-accent);color:var(--color-bg);display:flex;flex-direction:column;justify-content:space-between;padding:40px;box-sizing:border-box;border-right:2px solid var(--color-text)">
+      <div style="font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase">Planet Gaya · Meru</div>
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <h1 style="font-family:var(--font-heading);font-weight:800;font-size:clamp(56px,11vw,104px);line-height:0.9;letter-spacing:-0.04em;margin:0;color:var(--color-bg)">Meru<br>Arena</h1>
+        <p style="font-size:17px;line-height:1.5;margin:0;max-width:380px;text-wrap:pretty">King Might's tournament in 3D. Drones and the laser, shielded robots and the sword, then the Iron Warden. Jump the floor lasers and shockwaves, mix weapons to raise your style rank, and unleash the 8-Gate Burst with R when the meter fills.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <button onClick="{{ enter }}" style="display:flex;justify-content:space-between;align-items:center;width:100%;padding:18px 20px;background:var(--color-bg);color:var(--color-text);border:2px solid var(--color-text);border-radius:0;font:800 18px var(--font-heading);text-align:left;cursor:pointer" style-hover="background:var(--color-neutral-200)"><span>{{ enterLabel }}</span><span>→</span></button>
+        <button onClick="{{ toTown }}" style="display:flex;justify-content:space-between;align-items:center;width:100%;padding:12px 20px;background:var(--color-accent);color:var(--color-bg);border:2px solid var(--color-bg);border-radius:0;font:800 15px var(--font-heading);text-align:left;cursor:pointer"><span style="white-space:nowrap">Back to the town square</span><span>←</span></button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;border-top:2px solid var(--color-bg);font-size:13px">
+          <div style="padding-top:10px;display:flex;flex-direction:column;gap:2px"><b>Desktop</b><span>WASD, click to attack, Shift to dodge, C to lock on, Q to swap</span></div>
+          <div style="padding-top:10px;display:flex;flex-direction:column;gap:2px"><b>Touch</b><span>Left thumb moves, tap or Attack to fire</span></div>
+        </div>
+        <sc-if value="{{ error }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:13px;background:var(--color-text);color:var(--color-bg);padding:8px 10px">{{ error }}</div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;followCam&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Camera&quot;},&quot;outlines&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;quality&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;high&quot;,&quot;options&quot;:[&quot;high&quot;,&quot;low&quot;],&quot;tsType&quot;:&quot;'high'|'low'&quot;,&quot;section&quot;:&quot;Look&quot;}}">
+class Component extends DCLogic {
+  state = { started: false, ready: false, error: null, isTouch: false, hud: { score: 0, rank: 'D', style: 0, styleOn: false, super: 0, superReady: false, boss: null, round: 0, roundName: 'Briefing', foeLabel: '', time: '0:00.0', hp: 100, en: 100, weapon: 'RAYGUN', unlocked: 'RAYGUN', muted: false, tip: null, dialog: null, results: null } };
+  stageRef = React.createRef();
+  opts() { return { outlines: this.props.outlines ?? true, followCam: this.props.followCam ?? true, quality: this.props.quality ?? 'high' }; }
+  async componentDidMount() {
+    this.setState({ isTouch: window.matchMedia && matchMedia('(pointer: coarse)').matches });
+    try {
+      const mod = await import(new URL('meru-arena.js', document.baseURI).href);
+      if (this.unmounted) return;
+      this.game = await mod.createArena({ container: this.stageRef.current, options: this.opts(), onState: hud => this.setState({ hud }), onNavigate: url => { window.location.href = encodeURI(url); } });
+      this.setState({ ready: true });
+    } catch (e) { console.error(e); this.setState({ error: 'Could not start 3D: ' + (e && e.message || e) }); }
+  }
+  componentDidUpdate() { if (this.game) this.game.setOptions(this.opts()); }
+  componentWillUnmount() { this.unmounted = true; if (this.game) this.game.destroy(); }
+  renderVals() {
+    const { started, ready, hud, isTouch, error } = this.state, d = hud.dialog, r = hud.results;
+    const sw = hud.unlocked.includes('SWORD'), g = this.game, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const on = 'var(--color-text)', off = 'var(--color-bg)';
+    const sp = r && r.splits || {};
+    return {
+      stageRef: this.stageRef, started, showIntro: !started, error, isTouch, hud,
+      enterLabel: ready ? 'Enter the arena' : 'Opening the gates…',
+      enter: () => { if (!g) return; g.start(); this.setState({ started: true }); },
+      roundLabel: hud.round ? 'Round ' + hud.round + ' of 3' : 'The tournament',
+      rankBg: hud.rank === 'S' ? 'var(--color-accent)' : hud.rank === 'A' ? '#38bdf8' : 'var(--color-bg)', rankFg: hud.rank === 'S' ? 'var(--color-bg)' : 'var(--color-text)', styleW: (hud.style || 0) + '%',
+      showBoss: !!hud.boss && !d, bossW: (hud.boss ? hud.boss.hp : 0) + '%', bossState: hud.boss && hud.boss.stunned ? 'Stunned — strike now' : 'Shielded front',
+      superW: (hud.super || 0) + '%', burstKey: hud.superReady ? (isTouch ? 'READY' : 'R') : (hud.super || 0) + '%', burstRowBg: hud.superReady ? '#38bdf8' : 'transparent', burstRowFg: 'var(--color-text)',
+      burst: e => { e.preventDefault(); g && g.burst(); },
+      lock: e => { e.preventDefault(); g && g.toggleLock(); }, lockBg: hud.locked ? 'var(--color-accent)' : 'var(--color-bg)', lockFg: hud.locked ? 'var(--color-bg)' : 'var(--color-text)', lockTag: hud.locked ? ' · LOCKED' : '',
+      resultRank: r ? (r.rank || 'D') : '', resultScore: r ? String(r.score || 0) : '',
+      hpW: hud.hp + '%', enW: hud.en + '%',
+      showTip: !!hud.tip && !d, showDialog: !!d, showHint: !isTouch && !d && !r, showResults: !!r,
+      continueLabel: d ? (!d.done ? 'Skip' : d.step < d.total ? (isTouch ? 'Tap to continue' : 'Space or click to continue') : (isTouch ? 'Tap to close' : 'Space or click to close')) : '',
+      laserBg: hud.weapon === 'RAYGUN' ? on : off, laserFg: hud.weapon === 'RAYGUN' ? off : on,
+      swordBg: hud.weapon === 'SWORD' ? on : off, swordFg: hud.weapon === 'SWORD' ? off : on, swordOp: sw ? 1 : 0.45, swordKey: sw ? '2' : 'Round 2',
+      pickLaser: e => { blur(e); g && g.select('RAYGUN'); }, pickSword: e => { blur(e); g && g.select('SWORD'); },
+      attack: e => { e.preventDefault(); g && g.attack(); }, dodge: e => { e.preventDefault(); g && g.dodge(); }, jump: e => { e.preventDefault(); g && g.jump(); },
+      advance: () => g && g.advance(),
+      soundLabel: hud.muted ? 'Sound off' : 'Sound on', toggleSound: e => { blur(e); g && g.toggleSound(); },
+      resultKicker: r ? (r.win ? 'Tournament won' : 'Knocked down') : '',
+      resultTitle: r ? (r.win ? 'Champion of Meru' : 'Back on your feet') : '',
+      statA: r && r.win ? 'Laser round' : 'Round', statAv: r && r.win ? fmt(sp.laser) : (r && r.round === 'sword' ? 'The sword' : 'The laser'),
+      statB: r && r.win ? 'Sword round' : 'Tip', statBv: r && r.win ? fmt(sp.sword) : 'Dodge with Shift when you see a red line or a glowing blade.',
+      retryLabel: r && r.win ? 'Fight the tournament again' : 'Retry the round',
+      retry: e => { blur(e); g && g.retry(); },
+      toTown: e => { blur(e); if (g) g.toTown(); else { try { sessionStorage.setItem('meru.spawn', 'east'); } catch (x) {} window.location.href = encodeURI('Meru Town Square.dc.html'); } },
+    };
+    function fmt(t) { if (t == null) return '—'; return Math.floor(t / 60) + ':' + String(Math.floor(t % 60)).padStart(2, '0') + '.' + Math.floor((t % 1) * 10); }
+  }
+}
+</script>
+</body>
+</html>

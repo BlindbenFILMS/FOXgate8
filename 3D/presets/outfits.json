@@ -1,0 +1,146 @@
+{
+  "note": "Outfit presets, copied from fox-workshop.js OUTFITS. outfit = armor|robe|coat|dress|vest|suit|royal; torso = [light, mid, dark]; crest letter on the chest; eyes = [left, right] iris colours.",
+  "outfits": {
+    "playerFemale": {
+      "label": "PLAYER FEMALE",
+      "outfit": "armor",
+      "look": "female",
+      "torso": [
+        "#ffffff",
+        "#e7edf4",
+        "#6b7d93"
+      ],
+      "crest": "8",
+      "bow": false,
+      "eyes": [
+        "#f472b6",
+        "#2dd4bf"
+      ]
+    },
+    "playerMale": {
+      "label": "PLAYER MALE",
+      "outfit": "armor",
+      "look": "male",
+      "torso": [
+        "#ffffff",
+        "#e7edf4",
+        "#6b7d93"
+      ],
+      "crest": "8",
+      "bow": false,
+      "eyes": [
+        "#f472b6",
+        "#2dd4bf"
+      ]
+    },
+    "player": {
+      "label": "Your fox",
+      "outfit": "armor",
+      "look": "male",
+      "torso": [
+        "#ffffff",
+        "#e7edf4",
+        "#6b7d93"
+      ],
+      "crest": "8",
+      "bow": false,
+      "eyes": [
+        "#f472b6",
+        "#2dd4bf"
+      ]
+    },
+    "hope": {
+      "label": "Hope",
+      "outfit": "dress",
+      "look": "female",
+      "torso": [
+        "#ffffff",
+        "#e7edf4",
+        "#6b7d93"
+      ],
+      "crest": "8",
+      "glasses": true,
+      "eyes": [
+        "#f472b6",
+        "#2dd4bf"
+      ]
+    },
+    "grand": {
+      "label": "Grand",
+      "outfit": "coat",
+      "look": "male",
+      "torso": [
+        "#a78bfa",
+        "#5b21b6",
+        "#2e1065"
+      ],
+      "crest": "G",
+      "eyes": [
+        "#a78bfa",
+        "#a78bfa"
+      ]
+    },
+    "ulric": {
+      "label": "Ulric",
+      "outfit": "robe",
+      "look": "male",
+      "torso": [
+        "#fdba74",
+        "#b45309",
+        "#7c2d12"
+      ],
+      "crest": "U",
+      "eyes": [
+        "#65a30d",
+        "#65a30d"
+      ]
+    },
+    "lucius": {
+      "label": "Lucius",
+      "outfit": "suit",
+      "look": "male",
+      "torso": [
+        "#fca5a5",
+        "#991b1b",
+        "#450a0a"
+      ],
+      "crest": "L",
+      "eyes": [
+        "#eab308",
+        "#eab308"
+      ]
+    },
+    "jamos": {
+      "label": "Jamos",
+      "outfit": "coat",
+      "look": "male",
+      "torso": [
+        "#93c5fd",
+        "#1e3a8a",
+        "#0f172a"
+      ],
+      "crest": "J",
+      "eyes": [
+        "#16a34a",
+        "#16a34a"
+      ]
+    },
+    "king": {
+      "label": "King Might",
+      "outfit": "armor",
+      "look": "king",
+      "torso": [
+        "#7a808c",
+        "#474d59",
+        "#23272f"
+      ],
+      "crest": "M",
+      "crown": true,
+      "eyes": [
+        "#e6b45a",
+        "#e6b45a"
+      ]
+    }
+  },
+  "townFoxes": "worlds/meru.js FOXES carries each town NPC outfit inline."
+}

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#201e1d}a{color:var(--color-accent-700)}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;overflow:hidden;background:var(--color-text);font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none">
+  <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+
+  <sc-if value="{{ started }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;top:16px;left:16px;display:flex;flex-direction:column;gap:8px">
+      <div style="background:var(--color-bg);border:2px solid var(--color-text);padding:12px 16px 14px;min-width:200px;display:flex;flex-direction:column;gap:4px;pointer-events:none">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700)">Hollow Vale</div>
+        <div style="font-family:var(--font-heading);font-size:40px;font-weight:800;line-height:1;letter-spacing:-0.02em;color:var(--color-text);font-variant-numeric:tabular-nums">{{ hud.clock }}</div>
+        <div style="font-size:13px;color:var(--color-text)">{{ hud.period }} · {{ hud.weather }}</div>
+      </div>
+      <div style="display:flex">
+        <button class="btn btn-secondary" onClick="{{ cycleWeather }}" style="background:var(--color-bg);border:2px solid var(--color-text);justify-content:flex-start;min-width:96px">Weather</button>
+        <button class="btn btn-secondary" onClick="{{ skipTime }}" style="background:var(--color-bg);border:2px solid var(--color-text);border-left:0;justify-content:flex-start">+3 h</button>
+        <button class="btn btn-secondary" onClick="{{ toggleSound }}" style="background:var(--color-bg);border:2px solid var(--color-text);border-left:0;justify-content:flex-start;min-width:92px">{{ soundLabel }}</button>
+      </div>
+    </div>
+
+    <div style="position:absolute;top:16px;right:16px;width:168px;background:var(--color-bg);border:2px solid var(--color-text);pointer-events:none">
+      <canvas ref="{{ mapRef }}" style="display:block;width:168px;height:168px"></canvas>
+      <div style="display:flex;justify-content:space-between;border-top:2px solid var(--color-text);padding:4px 8px;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-text)"><span>Map</span><span>N ↑</span></div>
+    </div>
+
+    <sc-if value="{{ showHint }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute;left:16px;bottom:16px;display:flex;flex-wrap:wrap;gap:0;pointer-events:none;font-size:12px;color:var(--color-text)">
+        <div style="background:var(--color-bg);border:2px solid var(--color-text);padding:6px 10px"><b>WASD</b> move</div>
+        <div style="background:var(--color-bg);border:2px solid var(--color-text);border-left:0;padding:6px 10px"><b>Shift</b> run</div>
+        <div style="background:var(--color-bg);border:2px solid var(--color-text);border-left:0;padding:6px 10px"><b>Space</b> jump</div>
+        <div style="background:var(--color-bg);border:2px solid var(--color-text);border-left:0;padding:6px 10px"><b>Drag</b> look</div>
+        <div style="background:var(--color-bg);border:2px solid var(--color-text);border-left:0;padding:6px 10px"><b>E</b> talk</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showPrompt }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:50%;bottom:96px;transform:translateX(-50%);display:flex;align-items:stretch;background:var(--color-bg);border:2px solid var(--color-text);pointer-events:none">
+        <div style="background:var(--color-accent);color:var(--color-bg);font-weight:800;font-size:15px;padding:8px 12px">{{ promptKey }}</div>
+        <div style="padding:8px 14px;font-size:15px;color:var(--color-text)">Talk to <b>{{ hud.prompt }}</b></div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showDialog }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ talk }}" style="position:absolute;left:16px;right:16px;bottom:16px;max-width:680px;background:var(--color-bg);border:2px solid var(--color-text);cursor:pointer;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:baseline;gap:10px;padding:12px 18px 10px;border-bottom:2px solid var(--color-text)">
+          <div style="font-family:var(--font-heading);font-size:20px;font-weight:800;color:var(--color-text)">{{ hud.dialog.name }}</div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700)">{{ hud.dialog.role }}</div>
+        </div>
+        <div style="padding:14px 18px;font-size:19px;line-height:1.45;color:var(--color-text);min-height:56px;text-wrap:pretty">{{ hud.dialog.text }}</div>
+        <div style="display:flex;justify-content:space-between;padding:8px 18px;border-top:2px solid var(--color-text);font-size:12px;color:var(--color-neutral-700)">
+          <span>{{ hud.dialog.step }} / {{ hud.dialog.total }}</span>
+          <span>{{ continueLabel }}</span>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isTouch }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;right:16px;bottom:16px;display:flex;gap:0">
+        <button onClick="{{ talk }}" style="width:72px;height:72px;border:2px solid var(--color-text);background:var(--color-bg);color:var(--color-text);font:800 14px var(--font-heading);text-align:left;padding:8px;display:flex;align-items:flex-end;border-radius:0">Talk</button>
+        <button onPointerDown="{{ jump }}" style="width:72px;height:72px;border:2px solid var(--color-text);border-left:0;background:var(--color-accent);color:var(--color-bg);font:800 14px var(--font-heading);text-align:left;padding:8px;display:flex;align-items:flex-end;border-radius:0">Jump</button>
+      </div>
+    </sc-if>
+  </sc-if>
+
+  <sc-if value="{{ showIntro }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;top:0;left:0;bottom:0;width:min(520px,100%);background:var(--color-accent);color:var(--color-bg);display:flex;flex-direction:column;justify-content:space-between;padding:40px;box-sizing:border-box;border-right:2px solid var(--color-text)">
+      <div style="font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase">A small 3D village</div>
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <h1 style="font-family:var(--font-heading);font-weight:800;font-size:clamp(56px,11vw,104px);line-height:0.9;letter-spacing:-0.04em;margin:0;color:var(--color-bg)">Hollow<br>Vale</h1>
+        <p style="font-size:17px;line-height:1.5;margin:0;max-width:360px;text-wrap:pretty">Twelve houses, a fountain, a pond and a windmill on the hill. Wander around, watch the day turn, and talk to the five people who live here.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <button onClick="{{ enter }}" style="display:flex;justify-content:space-between;align-items:center;width:100%;padding:18px 20px;background:var(--color-bg);color:var(--color-text);border:2px solid var(--color-text);border-radius:0;font:800 18px var(--font-heading);text-align:left;cursor:pointer" style-hover="background:var(--color-neutral-200)"><span>{{ enterLabel }}</span><span>→</span></button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;border-top:2px solid var(--color-bg);font-size:13px">
+          <div style="padding-top:10px;display:flex;flex-direction:column;gap:2px"><b>Desktop</b><span>WASD, drag to look, E to talk</span></div>
+          <div style="padding-top:10px;display:flex;flex-direction:column;gap:2px"><b>Touch</b><span>Left thumb moves, right drags the camera</span></div>
+        </div>
+        <sc-if value="{{ error }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:13px;background:var(--color-text);color:var(--color-bg);padding:8px 10px">{{ error }}</div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;timeScale&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:30,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;min/s&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;World&quot;},&quot;startHour&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:17.5,&quot;min&quot;:0,&quot;max&quot;:23.5,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;h&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;World&quot;},&quot;outlines&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;quality&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;high&quot;,&quot;options&quot;:[&quot;high&quot;,&quot;low&quot;],&quot;tsType&quot;:&quot;'high'|'low'&quot;,&quot;section&quot;:&quot;Look&quot;}}">
+class Component extends DCLogic {
+  state = { started: false, ready: false, error: null, isTouch: false, hud: { clock: '--:--', period: '', weather: 'Clear', muted: false, prompt: null, dialog: null } };
+  stageRef = React.createRef();
+  mapRef = el => { this.mapEl = el; if (this.game) this.game.setMinimap(el); };
+  opts() {
+    const p = this.props;
+    return { timeScale: p.timeScale ?? 2, startHour: p.startHour ?? 17.5, outlines: p.outlines ?? true, quality: p.quality ?? 'high' };
+  }
+  async componentDidMount() {
+    this.setState({ isTouch: window.matchMedia && matchMedia('(pointer: coarse)').matches });
+    try {
+      const mod = await import(new URL('village-game.js', document.baseURI).href);
+      if (this.unmounted) return;
+      this.game = await mod.createGame({ container: this.stageRef.current, minimap: this.mapEl, options: this.opts(), onState: hud => this.setState({ hud }) });
+      this.setState({ ready: true });
+    } catch (e) { console.error(e); this.setState({ error: 'Could not start 3D: ' + (e && e.message || e) }); }
+  }
+  componentDidUpdate() { if (this.game) this.game.setOptions(this.opts()); }
+  componentWillUnmount() { this.unmounted = true; if (this.game) this.game.destroy(); }
+  renderVals() {
+    const { started, ready, hud, isTouch, error } = this.state;
+    const d = hud.dialog;
+    return {
+      stageRef: this.stageRef, mapRef: this.mapRef,
+      started, showIntro: !started, error,
+      enterLabel: ready ? 'Enter the village' : 'Loading the village…',
+      enter: () => { if (!this.game) return; this.game.start(); this.setState({ started: true }); },
+      hud, isTouch,
+      showHint: !isTouch && !d,
+      showPrompt: !!hud.prompt && !d,
+      promptKey: isTouch ? 'Talk' : 'E',
+      showDialog: !!d,
+      continueLabel: d ? (!d.done ? 'Skip' : d.step < d.total ? (isTouch ? 'Tap to continue' : 'E to continue') : (isTouch ? 'Tap to close' : 'E to close')) : '',
+      soundLabel: hud.muted ? 'Sound off' : 'Sound on',
+      cycleWeather: e => { e.currentTarget.blur(); this.game && this.game.cycleWeather(); },
+      skipTime: e => { e.currentTarget.blur(); this.game && this.game.skipTime(3); },
+      toggleSound: e => { e.currentTarget.blur(); this.game && this.game.toggleSound(); },
+      talk: () => this.game && this.game.talk(),
+      jump: e => { e.preventDefault(); this.game && this.game.jump(); },
+    };
+  }
+}
+</script>
+</body>
+</html>

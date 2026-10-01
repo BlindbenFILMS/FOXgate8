@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"><title>Jidda Surf Contest</title></head>
+<body>
+<script type="module">
+import { shell, THREE, rr, clamp, damp, smooth, fbm } from './shell.js';
+const G = await shell({ title: 'Surf Contest', world: 'JIDDA', bestKey: 'surf', sky: ['#4fa8e8', '#ffe1b8'], fog: 0.0035,
+  intro: 'One sixty-second heat on the Jidda break. Ride the face, drop for speed, hit the lip to launch and spin before you land. Stay ahead of the curl, or tuck into the barrel for big points.',
+  how: ['W/S or ↑/↓ climb and drop · Space: pump · hold J in the air to spin', 'Thumb up/down to climb and drop · PUMP · hold SPIN in the air'],
+  buttons: [{ id: 'spin', label: 'SPIN', keys: ['KeyJ', 'KeyK'], hot: true }, { id: 'pump', label: 'PUMP', keys: ['Space'] }],
+  keysHelp: ['<b>W/S</b> climb / drop', '<b>Space</b> pump', '<b>J</b> spin (air)'], stats: ['SCORE', 'TIME', 'COMBO'] });
+const { scene, camera, M, BOX, toon, glowing, glow, input, hud, popup, msg, audio } = G;
+
+// ---------------------------------------------------------------- the break
+const ZC = 0, A = 4.2;
+const H = (d) => d < 0 ? A * Math.exp(-(d / 9) * (d / 9)) : A * Math.exp(-(d / 3.6) * (d / 3.6));
+const WX = 140, WZ = 70, NX = 140, NZ = 70;
+const wg = new THREE.PlaneGeometry(WX, WZ, NX, NZ); wg.rotateX(-Math.PI / 2);
+const wcol = new Float32Array(wg.attributes.position.count * 3); wg.setAttribute('color', new THREE.BufferAttribute(wcol, 3));
+const water = new THREE.Mesh(wg, new THREE.MeshToonMaterial({ vertexColors: true, gradientMap: G.grad })); scene.add(water);
+const deep = new THREE.Mesh(new THREE.PlaneGeometry(3000, 3000), toon('#1f7fa8')); deep.rotation.x = -Math.PI / 2; deep.position.y = -0.3; scene.add(deep);
+// the shore, palms, the judges' tower and the crowd
+const sand = new THREE.Mesh(new THREE.PlaneGeometry(3000, 200), toon('#ead9ab')); sand.rotation.x = -Math.PI / 2; sand.position.set(0, 0.2, 120); scene.add(sand);
+const shore = new THREE.Group(); scene.add(shore);
+for (let i = 0; i < 40; i++) { const x = -400 + i * 20 + rr(-6, 6), z = 70 + rr(0, 30); const g = new THREE.Group(); g.position.set(x, 0, z); shore.add(g); for (let k = 0; k < 5; k++) M(new THREE.CylinderGeometry(0.22 - k * 0.02, 0.28 - k * 0.02, 1.3, 7), toon('#9a7650'), k * 0.25, 0.6 + k * 1.2, 0, g, 0.03).rotation.z = -0.15 - k * 0.04; for (let k = 0; k < 7; k++) { const a = k / 7 * 6.28; const f = M(new THREE.ConeGeometry(0.5, 3.2, 4), toon('#3f9a4e'), 1.2 + Math.cos(a) * 1.3, 6.2, Math.sin(a) * 1.3, g, 0); f.rotation.set(Math.sin(a) * 1.2, 0, -Math.cos(a) * 1.2); f.scale.z = 0.3; } }
+{ const g = new THREE.Group(); g.position.set(30, 0, 66); shore.add(g); for (const [x, z] of [[-2, -2], [2, -2], [-2, 2], [2, 2]]) M(BOX(0.4, 8, 0.4), toon('#8a6a46'), x, 4, z, g, 0.03); M(BOX(6, 3, 6), toon('#e9e1d2'), 0, 9.5, 0, g, 0.05); M(new THREE.ConeGeometry(5, 2.4, 4), toon('#2f8a7a'), 0, 12.2, 0, g, 0.04).rotation.y = Math.PI / 4; const t = G.signTex('JUDGES', null, '#ffd23a'); M(BOX(5, 1.2, 0.2), [toon('#1b1830'), toon('#1b1830'), toon('#1b1830'), toon('#1b1830'), new THREE.MeshBasicMaterial({ map: t }), toon('#1b1830')], 0, 9.5, -3.1, g, 0.02).rotation.y = Math.PI; }
+{ const cols = ['#c42d3c', '#2f5f9e', '#e8cf4a', '#3f8a46', '#f2f0ea', '#ff8a3a', '#c084fc'].map(c => new THREE.Color(c)); const n = 160, im = new THREE.InstancedMesh(new THREE.CapsuleGeometry(0.3, 0.8, 3, 6), toon('#ffffff'), n); const m4 = new THREE.Matrix4(); for (let i = 0; i < n; i++) { m4.makeTranslation(-60 + rr(0, 160), 0.8, 60 + rr(0, 8)); im.setMatrixAt(i, m4); im.setColorAt(i, cols[i % cols.length]); } shore.add(im); window.__crowd = im; }
+for (let i = 0; i < 4; i++) { const g = new THREE.Group(); g.position.set(-500 + i * 350, -2, -500 - rr(0, 200)); scene.add(g); M(new THREE.SphereGeometry(rr(40, 70), 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshToonMaterial({ color: '#2f6e5a', gradientMap: G.grad, fog: false }), 0, 0, 0, g, 0); g.scale.y = 0.45; }
+glow(-300, 220, -900, 0xfff1d0, 260, null, 1);
+
+// ---------------------------------------------------------------- the lip and the barrel
+const lip = new THREE.Group(); scene.add(lip);
+// the lip: a curling sheet thrown forward off the crest, with whitewater under it
+function lipGeo(L, n = 18) { const pos = [], idx = []; for (let i = 0; i <= 1; i++) for (let j = 0; j <= n; j++) { const t = j / n, a = t * Math.PI * 1.15; pos.push(i * L - L, A + 0.2 + Math.sin(a) * 1.6 - t * t * 1.4, Math.sin(a * 0.75) * 3.4 + t * 0.4); } for (let j = 0; j < n; j++) { const a0 = j, b0 = n + 1 + j; idx.push(a0, b0, a0 + 1, b0, b0 + 1, a0 + 1); } const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setIndex(idx); g.computeVertexNormals(); return g; }
+const tube = new THREE.Mesh(lipGeo(18), new THREE.MeshToonMaterial({ color: '#3fb7c8', gradientMap: G.grad, side: THREE.DoubleSide })); lip.add(tube);
+const foamLip = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 18, 8), toon('#ffffff')); foamLip.rotation.z = Math.PI / 2; foamLip.position.set(-9, A + 0.55, 0.2); lip.add(foamLip);
+const white = new THREE.Mesh(new THREE.CapsuleGeometry(1.4, 50, 4, 10), toon('#f4fbff')); white.rotation.z = Math.PI / 2; white.position.set(-34, 0.6, 3.2); white.scale.set(1, 1, 2.4); lip.add(white);
+
+// spray
+const SN = 220, sg = new THREE.BufferGeometry(), sa = new Float32Array(SN * 3), sv = Array.from({ length: SN }, () => ({ v: new THREE.Vector3(), life: 0 })); sg.setAttribute('position', new THREE.BufferAttribute(sa, 3)); for (let i = 0; i < SN; i++) sa[i * 3 + 1] = -99;
+scene.add(new THREE.Points(sg, new THREE.PointsMaterial({ color: 0xffffff, size: 0.25, transparent: true, opacity: 0.85, depthWrite: false }))); let si = 0;
+const spray = (x, y, z, n, s = 4) => { for (let k = 0; k < n; k++) { const i = si = (si + 1) % SN; sv[i].life = rr(0.3, 0.8); sv[i].v.set(rr(-1, 0.4) * s, rr(0.5, 1.6) * s, rr(-0.6, 0.6) * s); sa.set([x, y, z], i * 3); } };
+
+// ---------------------------------------------------------------- the surfer
+const rider = new THREE.Group(); scene.add(rider);
+const board = M(new THREE.CapsuleGeometry(0.32, 2.0, 4, 12), toon('#ffd23a'), 0, 0.1, 0, rider, 0.03, 0.32); board.rotation.z = Math.PI / 2; board.scale.set(1, 1, 0.35);
+M(BOX(2.2, 0.04, 0.12), toon('#c42d3c'), 0, 0.22, 0, rider, 0);
+const fox = G.makeFox({ torso: ['#3fb7a0', '#2a6a8a', '#1b1830'], crest: '8', mood: 'happy', look: G.PLAYER_MALE, outfit: 'vest', gear: 'none' });
+scene.remove(fox); rider.add(fox); fox.position.y = 0.18; fox.rotation.y = 0; fox.scale.setScalar(0.95);
+
+// ---------------------------------------------------------------- state
+const S = {};
+function reset() { Object.assign(S, { x: 0, u: 0.5, uv: 0, v: 9, air: false, y: 0, vy: 0, spin: 0, xc: -14, time: 60, score: 0, combo: 1, wipe: 0, tube: 0, pumpT: 0, best: 0, airs: 0, tubes: 0 }); }
+reset();
+G.onStart(() => { reset(); msg('Drop in!', 1.5); });
+const dOf = u => (1 - u) * 8.2 - 0.4;   // face position -> distance in front of the crest
+function updWater(t) {
+  water.position.x = Math.round(S.x / 2) * 2; const p = wg.attributes.position, base = new THREE.Color('#2fa8c8'), face = new THREE.Color('#4fc8d8'), foam = new THREE.Color('#ffffff'), c = new THREE.Color();
+  for (let i = 0; i < p.count; i++) { const lx = p.getX(i), z = p.getZ(i), x = lx + water.position.x, d = z - ZC; const broken = smooth(S.xc + 2, S.xc - 10, x);
+    let h = H(d) * (1 - broken * 0.55) + Math.sin(x * 0.35 + t * 1.3) * 0.12 + Math.sin(z * 0.5 - t * 1.8) * 0.1 + fbm(x * 0.08 + t * 0.2, z * 0.08) * 0.4;
+    p.setY(i, h); c.copy(base).lerp(face, smooth(0.5, 3.5, h)); if (d > -0.6 && d < 1.0 && h > A * 0.8) c.lerp(foam, 0.75); c.lerp(foam, broken * smooth(-6, 2, d) * 0.85); wcol.set([c.r, c.g, c.b], i * 3); }
+  p.needsUpdate = true; wg.attributes.color.needsUpdate = true; wg.computeVertexNormals();
+}
+// ---------------------------------------------------------------- the ride
+G.onFrame((dt, t, running) => {
+  if (running) {
+    S.time -= dt; S.xc += dt * 10.5;
+    if (S.wipe > 0) { S.wipe -= dt; if (S.wipe <= 0) { S.xc = S.x - 14; S.u = 0.45; S.uv = 0; S.v = 9; S.air = false; S.y = 0; S.spin = 0; } }
+    else if (!S.air) {
+      S.uv = damp(S.uv, G.input.y * 1.4, 4, dt); S.u = clamp(S.u + S.uv * dt, 0, 1);
+      S.v += -S.uv * 9 * dt - (S.v - 8) * 0.12 * dt; if (S.u < 0.08) S.v -= 4 * dt;
+      if (G.input.pressed('pump')) { if (S.u < 0.45 && S.uv < 0.2) { S.v += 2.2; popup('PUMP', '#ffd23a'); audio.tone(520, 0.06, 0.03, 'triangle', 1.2); } else S.v += 0.6; }
+      S.v = clamp(S.v, 5, 22);
+      if (S.u >= 0.97 && S.uv > 0.55 && S.v > 10) { S.air = true; S.vy = 4 + S.uv * 3 + S.v * 0.18; S.y = 0; S.spin = 0; audio.tone(300, 0.15, 0.05, 'sawtooth', 1.8); spray(S.x, H(dOf(S.u)) + 0.3, dOf(S.u), 30, 5); }
+      const gap = S.x - S.xc; if (gap < 4.5 && gap > 0 && S.u > 0.3 && S.u < 0.75) { S.tube += dt; S.score += Math.round(60 * dt * S.combo); if (S.tube > 0.5 && S.tube - dt <= 0.5) { popup('IN THE BARREL!', '#5fe1ff'); S.tubes++; } } else { if (S.tube > 1.2) { const pts = Math.round(S.tube * 120 * S.combo); S.score += pts; popup('TUBE · +' + pts, '#5fe1ff'); S.combo = Math.min(5, S.combo + 1); } S.tube = 0; }
+      S.score += Math.round(S.v * dt * 2);
+      if (gap < -0.5) wipeout('CAUGHT BY THE CURL');
+    } else {
+      S.vy -= 16 * dt; S.y += S.vy * dt; if (G.input.held.spin) S.spin += dt * 9.5;
+      S.u = clamp(S.u + 0.0 * dt, 0, 1);
+      if (S.y <= 0 && S.vy < 0) { S.air = false; S.y = 0; const turns = S.spin / (Math.PI * 2), frac = Math.abs(turns - Math.round(turns));
+        if (frac < 0.16) { const n = Math.round(turns), pts = Math.round((150 + n * 350) * S.combo); S.score += pts; S.airs++; popup(n === 0 ? 'AIR! +' + pts : (n * 360) + '! +' + pts, '#ffd23a'); S.combo = Math.min(5, S.combo + (n > 0 ? 1 : 0)); S.uv = -1.0; spray(S.x, H(dOf(S.u)), dOf(S.u), 40, 5); audio.tone(880, 0.12, 0.05, 'triangle', 1.6); }
+        else wipeout('BAD LANDING'); S.spin = 0; }
+    }
+    S.x += S.v * dt;
+    if (!S.air && S.wipe <= 0 && Math.random() < S.v * dt * 0.8) spray(S.x - 0.8, H(dOf(S.u)) + 0.15, dOf(S.u) + 0.4, 2, 3);
+    if (S.time <= 0) { S.time = 0; G.end({ score: S.score, lines: ['Airs landed: ' + S.airs, 'Barrels: ' + S.tubes], credits: Math.round(S.score / 100) }); }
+  }
+  // place the rider
+  const d = dOf(S.u), hy = H(d) * (S.wipe > 0 ? 0.3 : 1);
+  rider.position.set(S.x, hy + S.y + (S.wipe > 0 ? -0.6 : 0.05), d);
+  const slope = (H(d - 0.3) - H(d + 0.3)) / 0.6; rider.rotation.set(Math.atan(slope) * 0.9, S.air ? S.spin : 0, -S.uv * 0.25 + (S.wipe > 0 ? 1.4 : 0));
+  const P = fox.userData.P; if (P) { P.body.position.y = -0.18; P.arms.forEach((a, i) => { a.rotation.z = (i ? 1 : -1) * (1.1 + Math.sin(t * 3) * 0.1); a.rotation.x = -0.2; }); P.legs.forEach((l, i) => l.rotation.x = i ? 0.35 : -0.35); fox.userData.mood = S.wipe > 0 ? 'surprised' : S.air ? 'excited' : 'happy'; }
+  G.animFox(fox, dt, 0, false); if (P) { P.legs.forEach((l, i) => l.rotation.x = i ? 0.35 : -0.35); }
+  lip.position.x = S.xc; updWater(t);
+  for (let i = 0; i < SN; i++) { const s = sv[i]; if (s.life <= 0) continue; s.life -= dt; s.v.y -= 12 * dt; sa[i * 3] += s.v.x * dt; sa[i * 3 + 1] += s.v.y * dt; sa[i * 3 + 2] += s.v.z * dt; if (s.life <= 0) sa[i * 3 + 1] = -99; } sg.attributes.position.needsUpdate = true;
+  // camera: from the shoulder of the wave, looking along the face
+  const port = innerWidth < innerHeight, cx = S.x - (port ? 16 : 13), cy = port ? 10 : 7, cz = port ? 21 : 14; camera.position.lerp(new THREE.Vector3(cx, cy, cz), Math.min(1, dt * 4)); camera.lookAt(S.x + 2, 2.4, -1.5);
+  shore.position.x = Math.round(S.x / 400) * 400 * 0;
+  G.hud.set(S.score, Math.ceil(S.time) + 's', '×' + S.combo);
+});
+function wipeout(why) { if (S.wipe > 0) return; S.wipe = 1.6; S.combo = 1; S.air = false; popup(why, '#ff8a7a'); spray(S.x, H(dOf(S.u)), dOf(S.u), 60, 6); audio.burst(0.4, 180, 0.5); }
+</script>
+</body></html>

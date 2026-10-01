@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#201e1d}a{color:var(--color-accent-700)}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:var(--color-text);font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none">
+  <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+
+  <sc-if value="{{ started }}" hint-placeholder-val="{{ false }}">
+    <sc-if value="{{ showTopHud }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;top:max(12px, env(safe-area-inset-top));left:max(12px, env(safe-area-inset-left));display:flex;flex-direction:column;gap:8px;max-width:calc(100% - 24px)">
+      <div style="display:flex;align-items:stretch">
+        <div style="background:var(--color-bg);border:2px solid var(--color-text);padding:8px 12px 10px;display:flex;flex-direction:column;gap:2px;pointer-events:none">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700);white-space:nowrap">{{ placeLabel }}</div>
+          <div style="display:flex;align-items:baseline;gap:8px">
+            <div style="font-family:var(--font-heading);font-size:{{ clockSize }};font-weight:800;line-height:1;letter-spacing:-0.02em;color:var(--color-text);font-variant-numeric:tabular-nums">{{ hud.clock }}</div>
+            <div style="font-size:12px;color:var(--color-text);white-space:nowrap">{{ hud.period }} · {{ hud.weather }}</div>
+          </div>
+        </div>
+        <button onClick="{{ toggleTools }}" aria-label="World settings" style="width:44px;min-height:44px;border:2px solid var(--color-text);border-left:0;border-radius:0;background:var(--color-bg);color:var(--color-text);font:800 18px var(--font-heading);cursor:pointer;display:flex;align-items:flex-start;justify-content:flex-start;padding:8px" style-hover="background:var(--color-neutral-200)">{{ toolsGlyph }}</button>
+      </div>
+      <sc-if value="{{ toolsOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex">
+          <button class="btn btn-secondary" onClick="{{ cycleWeather }}" style="min-height:44px;background:var(--color-bg);border:2px solid var(--color-text);justify-content:flex-start;min-width:92px">Weather</button>
+          <button class="btn btn-secondary" onClick="{{ skipTime }}" style="min-height:44px;background:var(--color-bg);border:2px solid var(--color-text);border-left:0;justify-content:flex-start">+3 h</button>
+          <button class="btn btn-secondary" onClick="{{ toggleSound }}" style="min-height:44px;background:var(--color-bg);border:2px solid var(--color-text);border-left:0;justify-content:flex-start;min-width:92px">{{ soundLabel }}</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ showQuest }}" hint-placeholder-val="{{ true }}">
+        <div style="background:var(--color-bg);border:2px solid var(--color-text);display:flex;align-items:stretch;max-width:{{ questW }};pointer-events:none">
+          <div style="background:var(--color-accent);color:var(--color-bg);font:800 11px var(--font-heading);letter-spacing:0.12em;padding:8px 8px;writing-mode:vertical-rl;transform:rotate(180deg);text-transform:uppercase">{{ hud.quest.title }}</div>
+          <div style="padding:8px 12px;font:700 14px var(--font-body);line-height:1.3;color:var(--color-text);text-wrap:pretty">{{ hud.quest.text }}</div>
+        </div>
+      </sc-if>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ showToast }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;top:max(12px, env(safe-area-inset-top));left:50%;transform:translateX(-50%);max-width:calc(100% - 24px);background:var(--color-text);color:var(--color-bg);border:2px solid var(--color-text);padding:10px 14px;font:700 14px var(--font-body);pointer-events:none;z-index:4">{{ hud.toast }}</div>
+    </sc-if>
+
+    <sc-if value="{{ showHint }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute;left:16px;bottom:16px;display:flex;flex-wrap:wrap;gap:0;pointer-events:none;font-size:12px;color:var(--color-text)">
+        <div style="background:var(--color-bg);border:2px solid var(--color-text);padding:6px 10px"><b>WASD</b> move</div>
+        <div style="background:var(--color-bg);border:2px solid var(--color-text);border-left:0;padding:6px 10px"><b>Shift</b> run</div>
+        <div style="background:var(--color-bg);border:2px solid var(--color-text);border-left:0;padding:6px 10px"><b>Drag</b> look</div>
+        <div style="background:var(--color-bg);border:2px solid var(--color-text);border-left:0;padding:6px 10px"><b>E</b> talk / enter</div>
+        <div style="background:var(--color-bg);border:2px solid var(--color-text);border-left:0;padding:6px 10px"><b>1</b> melee <b>2</b> range <b>3</b> jump <b>4</b> items</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showJuke }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;right:max(12px, env(safe-area-inset-right));top:12px;width:min(380px,calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;background:var(--color-bg);border:2px solid var(--color-text);display:flex;flex-direction:column;z-index:6">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:2px solid var(--color-text);background:var(--color-text);color:var(--color-bg)">
+          <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#ff8ae6">Meru Tavern</span><span style="font:800 22px var(--font-heading);line-height:1">Jukebox</span></div>
+          <button onClick="{{ jukeClose }}" style="height:44px;padding:0 14px;border:2px solid var(--color-bg);border-radius:0;background:transparent;color:var(--color-bg);font:700 13px var(--font-body);cursor:pointer">Close</button>
+        </div>
+        <sc-for list="{{ songList }}" as="s" hint-placeholder-count="5">
+          <button onClick="{{ s.pick }}" style="display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:12px;padding:12px 16px;min-height:56px;border:0;border-bottom:2px solid var(--color-text);border-radius:0;background:{{ s.bg }};color:{{ s.fg }};text-align:left;cursor:pointer" style-hover="background:var(--color-neutral-200)">
+            <span style="font:800 18px var(--font-heading)">{{ s.n }}</span>
+            <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:800 15px var(--font-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.title }}</span><span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;opacity:0.8">{{ s.genre }}</span></span>
+            <span style="font-size:12px;font-weight:700;white-space:nowrap">{{ s.state }}</span>
+          </button>
+        </sc-for>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;gap:10px">
+          <span style="font-size:12px;color:var(--color-neutral-700)">{{ jukeFoot }}</span>
+          <button onClick="{{ jukeStop }}" style="height:44px;padding:0 14px;border:2px solid var(--color-text);border-radius:0;background:var(--color-bg);color:var(--color-text);font:700 13px var(--font-body);cursor:pointer;white-space:nowrap">Stop</button>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ showNowPlaying }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;right:max(12px, env(safe-area-inset-right));top:12px;display:flex;align-items:stretch;background:var(--color-bg);border:2px solid var(--color-text);pointer-events:none;max-width:min(260px, calc(100% - 24px))">
+        <div style="background:#ff3bd4;color:var(--color-text);font:800 16px var(--font-heading);padding:8px 10px;display:flex;align-items:center">♪</div>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-neutral-700)">Now playing</span><span style="font:800 14px var(--font-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--color-text)">{{ hud.juke.title }}</span></div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ showDarts }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;right:max(12px, env(safe-area-inset-right));top:50%;transform:translateY(-50%);display:flex;align-items:stretch;gap:0;pointer-events:none">
+        <div style="background:var(--color-bg);border:2px solid var(--color-text);border-right:0;padding:10px 12px;display:flex;flex-direction:column;justify-content:space-between;gap:8px;min-width:110px">
+          <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700)">Darts</span><span style="font:800 26px var(--font-heading);line-height:1;color:var(--color-text)">{{ dartsN }}</span></div>
+          <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-text)">Score</span><span style="font:800 22px var(--font-heading);line-height:1;font-variant-numeric:tabular-nums;color:var(--color-text)">{{ hud.darts.score }}</span></div>
+          <div style="font-size:11px;color:var(--color-neutral-700)">Best {{ hud.darts.best }}</div>
+          <div style="font-size:12px;font-weight:700;color:var(--color-text)">{{ dartsHint }}</div>
+        </div>
+        <div style="position:relative;width:34px;height:min(240px, 52vh);border:2px solid var(--color-text);background:var(--color-neutral-200)">
+          <div style="position:absolute;left:0;right:0;bottom:0;height:{{ dartsPowerH }};background:var(--color-accent)"></div>
+          <div style="position:absolute;left:-8px;right:-8px;bottom:{{ dartsPerfectB }};height:4px;background:var(--color-bg);border-top:2px solid var(--color-text);border-bottom:2px solid var(--color-text)"></div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showPrompt }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:50%;bottom:{{ promptB }};transform:translateX(-50%);width:max-content;max-width:calc(100% - 200px);display:flex;align-items:stretch;background:var(--color-bg);border:2px solid var(--color-text);pointer-events:none">
+        <sc-if value="{{ showPromptKey }}" hint-placeholder-val="{{ true }}"><div style="background:var(--color-accent);color:var(--color-bg);font-weight:800;font-size:15px;padding:8px 12px">E</div></sc-if>
+        <div style="padding:8px 14px;font-size:15px;color:var(--color-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><b>{{ hud.prompt }}</b></div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showDialog }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:max(12px, env(safe-area-inset-bottom));width:{{ dialogW }};max-height:{{ dialogMaxH }};overflow:auto;background:var(--color-bg);border:2px solid var(--color-text);display:flex;flex-direction:column;z-index:3">
+        <div onClick="{{ talk }}" style="cursor:pointer;display:flex;flex-direction:column">
+          <div style="display:flex;align-items:baseline;gap:10px;padding:10px 16px 8px;border-bottom:2px solid var(--color-text)">
+            <div style="font-family:var(--font-heading);font-size:19px;font-weight:800;color:var(--color-text)">{{ hud.dialog.name }}</div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700);white-space:nowrap">{{ hud.dialog.role }}</div>
+          </div>
+          <sc-if value="{{ showDialogText }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:12px 16px;font-size:{{ dialogFont }};line-height:1.45;color:var(--color-text);min-height:48px;text-wrap:pretty">{{ hud.dialog.text }}</div>
+          </sc-if>
+        </div>
+        <sc-if value="{{ showChoices }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;border-top:{{ choicesTop }}">
+            <sc-for list="{{ choiceList }}" as="c" hint-placeholder-count="3">
+              <button onClick="{{ c.pick }}" style="display:grid;grid-template-columns:28px 1fr;align-items:start;gap:10px;min-height:48px;padding:12px 16px;border:0;border-bottom:2px solid var(--color-text);border-radius:0;background:var(--color-bg);color:{{ c.fg }};text-align:left;font:{{ c.weight }} 15px/1.35 var(--font-body);cursor:pointer;text-wrap:pretty" style-hover="background:var(--color-neutral-200)" style-active="background:var(--color-accent-200)">
+                <span style="font:800 15px var(--font-heading);color:var(--color-accent-700)">{{ c.n }}</span>
+                <span>{{ c.text }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ showDialogFoot }}" hint-placeholder-val="{{ true }}">
+          <div onClick="{{ talk }}" style="cursor:pointer;display:flex;justify-content:space-between;padding:8px 16px;border-top:2px solid var(--color-text);font-size:12px;color:var(--color-neutral-700)">
+            <span>{{ dialogStep }}</span>
+            <span style="font-weight:700;color:var(--color-text)">{{ continueLabel }}</span>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showPad }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;right:max(12px, env(safe-area-inset-right));bottom:max(12px, env(safe-area-inset-bottom));display:flex;align-items:flex-end;gap:10px">
+        <sc-if value="{{ showTalkBtn }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ talk }}" style="width:88px;height:88px;border:2px solid var(--color-text);background:var(--color-accent);color:var(--color-bg);font:800 16px var(--font-heading);text-align:left;padding:10px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;border-radius:0;cursor:pointer" style-active="background:var(--color-accent-600)"><span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase">{{ talkKind }}</span><span>Talk</span></button>
+        </sc-if>
+        <div style="display:flex;flex-direction:column">
+          <button onPointerDown="{{ melee }}" style="width:{{ padSize }};height:{{ padSize }};border:2px solid var(--color-text);background:var(--color-bg);color:var(--color-text);font:800 13px var(--font-heading);text-align:left;padding:7px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;border-radius:0;cursor:pointer" style-active="background:var(--color-accent-200)"><span style="color:var(--color-accent-700)">1</span><span>Melee</span></button>
+          <button onPointerDown="{{ range }}" style="width:{{ padSize }};height:{{ padSize }};border:2px solid var(--color-text);border-top:0;background:var(--color-bg);color:var(--color-text);font:800 13px var(--font-heading);text-align:left;padding:7px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;border-radius:0;cursor:pointer" style-active="background:var(--color-accent-200)"><span style="color:var(--color-accent-700)">2</span><span>Range</span></button>
+          <button onPointerDown="{{ jump }}" style="width:{{ padSize }};height:{{ padSize }};border:2px solid var(--color-text);border-top:0;background:var(--color-text);color:var(--color-bg);font:800 13px var(--font-heading);text-align:left;padding:7px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;border-radius:0;cursor:pointer" style-active="background:var(--color-neutral-700)"><span style="color:var(--color-accent-300)">3</span><span>Jump</span></button>
+          <button onPointerDown="{{ item }}" style="width:{{ padSize }};height:{{ padSize }};border:2px solid var(--color-text);border-top:0;background:var(--color-bg);color:var(--color-text);font:800 13px var(--font-heading);text-align:left;padding:7px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;border-radius:0;cursor:pointer" style-active="background:var(--color-accent-200)"><span style="color:var(--color-accent-700)">4</span><span>Item</span></button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showWheel }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeWheel }}" style="position:absolute;inset:0;background:rgba(10,8,14,0.45);z-index:8">
+        <div style="position:absolute;left:50%;top:50%;width:264px;height:264px;transform:translate(-50%,-50%)">
+          <sc-for list="{{ wheelSlots }}" as="w" hint-placeholder-count="8">
+            <button onClick="{{ w.pick }}" disabled="{{ w.empty }}" style="position:absolute;left:{{ w.x }};top:{{ w.y }};width:72px;height:72px;transform:translate(-50%,-50%);border:2px solid var(--color-text);border-radius:0;background:var(--color-bg);color:var(--color-text);font:700 11px/1.2 var(--font-body);text-align:left;padding:6px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;cursor:pointer" style-hover="background:var(--color-neutral-200)">
+              <span style="font:800 13px var(--font-heading);color:var(--color-accent-700)">{{ w.n }}</span>
+              <span>{{ w.label }}</span>
+            </button>
+          </sc-for>
+          <button onClick="{{ closeWheel }}" style="position:absolute;left:50%;top:50%;width:88px;height:88px;transform:translate(-50%,-50%);border:2px solid var(--color-text);border-radius:0;background:var(--color-text);color:var(--color-bg);font:800 14px var(--font-heading);text-align:left;padding:10px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;cursor:pointer"><span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-accent-300)">Items</span><span>{{ wheelCenter }}</span></button>
+        </div>
+      </div>
+    </sc-if>
+  </sc-if>
+
+  <sc-if value="{{ showGame }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:rgba(10,8,14,0.72);display:flex;align-items:center;justify-content:center;padding:{{ gamePad }};box-sizing:border-box;z-index:20">
+      <div style="width:min(1100px,100%);height:min(760px,100%);background:var(--color-bg);border:2px solid var(--color-text);display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:6px 6px 6px 14px;border-bottom:2px solid var(--color-text);background:var(--color-text);color:var(--color-bg)">
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#ffd23a">Meru Casino</span><span style="font:800 18px var(--font-heading);line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ gameLabel }}</span></div>
+          <button onClick="{{ closeGameBtn }}" style="height:48px;min-width:120px;padding:0 16px;border:2px solid var(--color-bg);border-radius:0;background:var(--color-accent);color:var(--color-bg);font:800 15px var(--font-heading);cursor:pointer;text-align:left;flex:none">Leave table</button>
+        </div>
+        <iframe src="{{ gameSrc }}" style="flex:1;width:100%;border:0;background:#000"></iframe>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ showIntro }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;top:0;left:0;bottom:0;width:min(520px,100%);overflow:auto;background:var(--color-accent);color:var(--color-bg);display:flex;flex-direction:column;justify-content:space-between;gap:20px;padding:clamp(20px, 5vh, 40px) clamp(20px, 5vw, 40px);box-sizing:border-box;border-right:2px solid var(--color-text)">
+      <div style="font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase">Planet Gaya · Meru</div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <h1 style="font-family:var(--font-heading);font-weight:800;font-size:clamp(40px, min(11vw, 13vh), 104px);line-height:0.9;letter-spacing:-0.04em;margin:0;color:var(--color-bg)">Meru<br>Town Square</h1>
+        <p style="font-size:16px;line-height:1.5;margin:0;max-width:360px;text-wrap:pretty">The square from the 2D map, rebuilt in 3D: casino, tavern, item shop, fortune teller, Meru Lanes and the armory, with seven foxes walking their usual routes.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <button onClick="{{ enter }}" style="display:flex;justify-content:space-between;align-items:center;width:100%;min-height:56px;padding:16px 20px;background:var(--color-bg);color:var(--color-text);border:2px solid var(--color-text);border-radius:0;font:800 18px var(--font-heading);text-align:left;cursor:pointer" style-hover="background:var(--color-neutral-200)"><span>{{ enterLabel }}</span><span>→</span></button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;border-top:2px solid var(--color-bg);font-size:13px">
+          <div style="padding-top:10px;display:flex;flex-direction:column;gap:2px"><b>Desktop</b><span>WASD, drag to look, E to talk, 1–4 actions</span></div>
+          <div style="padding-top:10px;display:flex;flex-direction:column;gap:2px"><b>Touch</b><span>Left thumb moves, right drags the camera</span></div>
+        </div>
+        <sc-if value="{{ error }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:13px;background:var(--color-text);color:var(--color-bg);padding:8px 10px">{{ error }}</div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;followCam&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Camera&quot;},&quot;timeScale&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:30,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;min/s&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;World&quot;},&quot;startHour&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:19.5,&quot;min&quot;:0,&quot;max&quot;:23.5,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;h&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;World&quot;},&quot;outlines&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;quality&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;high&quot;,&quot;options&quot;:[&quot;high&quot;,&quot;low&quot;],&quot;tsType&quot;:&quot;'high'|'low'&quot;,&quot;section&quot;:&quot;Look&quot;}}">
+class Component extends DCLogic {
+  state = { game: null, started: false, ready: false, error: null, isTouch: false, tools: false, vw: 1200, vh: 800, hud: { clock: '--:--', period: '', weather: 'Clear', muted: false, prompt: null, dialog: null } };
+  stageRef = React.createRef();
+  opts() {
+    const p = this.props;
+    return { timeScale: p.timeScale ?? 2, startHour: p.startHour ?? 19.5, outlines: p.outlines ?? true, quality: p.quality ?? (window.matchMedia && matchMedia('(pointer: coarse)').matches ? 'low' : 'high'), followCam: p.followCam ?? true };
+  }
+  onResize = () => this.setState({ vw: window.innerWidth, vh: window.innerHeight });
+  async componentDidMount() {
+    window.addEventListener('message', this.onMsg); window.addEventListener('resize', this.onResize); this.onResize();
+    this.setState({ isTouch: window.matchMedia && matchMedia('(pointer: coarse)').matches });
+    try {
+      const mod = await import(new URL('meru-game.js', document.baseURI).href);
+      if (this.unmounted) return;
+      this.game = await mod.createGame({ container: this.stageRef.current, options: this.opts(), onState: hud => this.setState({ hud }), onNavigate: url => { window.location.href = encodeURI(url); }, onPlayGame: (key, label) => this.setState({ game: { key, label } }) });
+      this.setState({ ready: true });
+    } catch (e) { console.error(e); this.setState({ error: 'Could not start 3D: ' + (e && e.message || e) }); }
+  }
+  componentDidUpdate() { if (this.game) this.game.setOptions(this.opts()); }
+  onMsg = e => { const m = e.data; if (m === 'backToCasino' || m === 'backToTavern') this.closeGame(); };
+  closeGame = () => { this.setState({ game: null }); this.game && this.game.gameClosed(); };
+  componentWillUnmount() { window.removeEventListener('message', this.onMsg); window.removeEventListener('resize', this.onResize); this.unmounted = true; if (this.game) this.game.destroy(); }
+  renderVals() {
+    const { started, ready, hud, isTouch, error, vw, vh } = this.state;
+    const d = hud.dialog, G = () => this.game;
+    const phone = Math.min(vw, vh) < 520, land = phone && vw > vh, pad = isTouch || phone;
+    const blur = f => e => { if (e && e.currentTarget) e.currentTarget.blur(); f(); };
+    const ch = d && d.choices;
+    const wheel = hud.wheel, items = wheel ? wheel.items : [];
+    const wheelSlots = Array.from({ length: 8 }, (_, i) => { const a = -Math.PI / 2 + i * Math.PI / 4, it = items[i]; return { x: (132 + Math.cos(a) * 100) + 'px', y: (132 + Math.sin(a) * 100) + 'px', n: i + 1, label: it ? it.label + (it.n > 1 ? ' ×' + it.n : '') : '—', empty: !it, pick: e => { e.stopPropagation(); it && G() && G().useItem(it.id); } }; });
+    const busy = !!(hud.darts || hud.juke && hud.juke.open || wheel);
+    return {
+      stageRef: this.stageRef,
+      started, showIntro: !started, error,
+      enterLabel: ready ? 'Enter the square' : 'Landing on Meru…',
+      enter: () => { if (!this.game) return; this.game.start(); this.setState({ started: true }); },
+      hud,
+      clockSize: phone ? '26px' : '36px',
+      toolsOpen: this.state.tools, toolsGlyph: this.state.tools ? '×' : '☰', toggleTools: blur(() => this.setState(s => ({ tools: !s.tools }))),
+      showQuest: !!(hud.quest && hud.quest.text) && !(phone && d), questW: phone ? 'min(260px, calc(100vw - 140px))' : '320px',
+      showToast: !!hud.toast,
+      showHint: !pad && !d,
+      showPrompt: !!hud.prompt && !d && !wheel, showPromptKey: !pad, promptB: pad ? (land ? '16px' : '300px') : '96px',
+      showDialog: !!d,
+      dialogW: land ? 'min(46vw, 460px)' : phone ? 'calc(100% - 24px)' : 'min(680px, calc(100% - 32px))',
+      dialogMaxH: land ? 'calc(100% - 24px)' : phone ? '52%' : '60%',
+      dialogFont: phone ? '16px' : '19px',
+      showDialogText: !!(d && d.text), showChoices: !!ch, choicesTop: d && d.text ? '0' : '0',
+      choiceList: (ch || []).map((c, i) => ({ n: i + 1, text: c.text, fg: c.asked ? 'var(--color-neutral-700)' : 'var(--color-text)', weight: c.asked || c.bye ? '500' : '700', pick: blur(() => G() && G().choose(i)) })),
+      showDialogFoot: !!d && !ch, dialogStep: d ? (d.more ? '' : d.step + ' / ' + d.total) : '',
+      continueLabel: d ? (!d.done ? 'Skip' : (pad ? 'Tap to continue' : 'E to continue')) : '',
+      soundLabel: hud.muted ? 'Sound off' : 'Sound on',
+      placeLabel: hud.place || 'Meru · Town Square',
+      gamePad: phone ? '0' : '16px',
+      showGame: !!this.state.game, gameSrc: this.state.game ? 'casino/' + this.state.game.key + '.html' : 'about:blank', gameLabel: this.state.game ? this.state.game.label : '', closeGameBtn: () => this.closeGame(),
+      showJuke: !!(hud.juke && hud.juke.open) && !d, showNowPlaying: !!(hud.juke && hud.juke.title && hud.juke.here && !hud.juke.open) && !phone,
+      songList: (this.game ? this.game.songs : []).map((s, i) => { const on = hud.juke && hud.juke.playing === i; return { n: s.n, title: s.title, genre: s.genre, bg: on ? 'var(--color-text)' : 'var(--color-bg)', fg: on ? 'var(--color-bg)' : 'var(--color-text)', state: on ? '♪ Playing' : (pad ? 'Tap' : 'Key ' + (i + 1)), pick: e => { e.currentTarget.blur(); G() && G().playSong(i); } }; }),
+      jukeClose: e => { e.currentTarget.blur(); G() && G().closeJuke(); }, jukeStop: e => { e.currentTarget.blur(); G() && G().stopSong(); },
+      jukeFoot: hud.juke && hud.juke.synth ? 'Tavern MP3s not found here, so a stand-in groove plays' : (hud.juke && hud.juke.playing >= 0 ? 'Plays on until you leave the tavern' : 'Pick a record'),
+      showDarts: !!hud.darts && !d, dartsN: hud.darts ? hud.darts.n + ' / 3' : '', dartsPowerH: (hud.darts ? hud.darts.power : 0) + '%', dartsPerfectB: 'calc(' + (hud.darts ? hud.darts.perfect : 72) + '% - 4px)', dartsHint: pad ? 'Tap anywhere to throw' : 'Click or E to throw',
+      showTopHud: !(hud.darts && phone) && !(land && d),
+      showPad: pad && !d && !busy, padSize: land ? '60px' : '64px',
+      showTalkBtn: !!hud.prompt, talkKind: hud.prompt && /^Talk/.test(hud.prompt) ? 'Near' : 'Here',
+      melee: e => { e.preventDefault(); G() && G().melee(); }, range: e => { e.preventDefault(); G() && G().range(); },
+      item: e => { e.preventDefault(); G() && G().item(); },
+      showWheel: !!wheel, wheelSlots, wheelCenter: items.length ? 'Close' : 'None yet', closeWheel: () => G() && G().closeWheel(),
+      cycleWeather: blur(() => G() && G().cycleWeather()),
+      skipTime: blur(() => G() && G().skipTime(3)),
+      toggleSound: blur(() => G() && G().toggleSound()),
+      talk: () => G() && G().talk(),
+      jump: e => { e.preventDefault(); G() && G().jump(); },
+    };
+  }
+}
+</script>
+</body>
+</html>

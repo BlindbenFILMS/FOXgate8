@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"><title>Eight Mile Speedway</title></head>
+<body>
+<script type="module">
+import { shell, THREE, rr, clamp, damp } from './shell.js';
+const G = await shell({ title: 'Eight Mile Speedway', world: 'EARTH', bestKey: 'speedway', sky: ['#1a2a5a', '#ff9a6a'], fog: 0.0025,
+  intro: 'Three laps under the desert sunset against five Earth drivers. Draft behind a car for a slingshot, hold the inside line through the turns, and save your boost for the final straight.',
+  how: ['W gas · S brake · A/D steer · Space boost', 'Thumb to steer and throttle · BOOST'],
+  buttons: [{ id: 'boost', label: 'BOOST', keys: ['Space', 'ShiftLeft'], hot: true }],
+  keysHelp: ['<b>W/S</b> gas / brake', '<b>A/D</b> steer', '<b>Space</b> boost'], stats: ['POS', 'LAP', 'SPEED'] });
+const { scene, camera, M, BOX, toon, glowing, glow, input, popup, msg, audio } = G;
+// ---------------------------------------------------------------- the oval
+const RX = 120, RZ = 60, TW = 16;
+const pathAt = (u) => { const a = u * Math.PI * 2; return new THREE.Vector3(Math.cos(a) * RX, 0, Math.sin(a) * RZ); };
+const tangAt = (u) => { const a = u * Math.PI * 2; return new THREE.Vector3(-Math.sin(a) * RX, 0, Math.cos(a) * RZ).normalize(); };
+{ const N = 240, pos = [], idx = []; for (let i = 0; i <= N; i++) { const u = i / N, p = pathAt(u), t = tangAt(u), n = new THREE.Vector3(t.z, 0, -t.x); for (const s of [-1, 1]) { const q = p.clone().addScaledVector(n, s * TW / 2); pos.push(q.x, 0.05 + Math.max(0, s) * 1.2 * Math.abs(Math.cos(u * Math.PI * 2)), q.z); } if (i < N) { const k = i * 2; idx.push(k, k + 2, k + 1, k + 1, k + 2, k + 3); } }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setIndex(idx); g.computeVertexNormals(); const tex = G.canvasTex(64, 64, c => { c.fillStyle = '#3a3d4a'; c.fillRect(0, 0, 64, 64); for (let i = 0; i < 120; i++) { c.fillStyle = Math.random() < 0.5 ? 'rgba(255,255,255,.05)' : 'rgba(0,0,0,.1)'; c.fillRect(Math.random() * 64, Math.random() * 64, 2, 2); } });
+  scene.add(new THREE.Mesh(g, new THREE.MeshToonMaterial({ map: tex, gradientMap: G.grad, side: THREE.DoubleSide })));
+  for (let i = 0; i < N; i += 2) { const u = i / N, p = pathAt(u), t = tangAt(u), n = new THREE.Vector3(t.z, 0, -t.x); for (const s of [-1, 1]) M(BOX(0.6, 0.06, 2.6), toon(i % 4 ? '#f2f0ea' : '#c42d3c'), p.x + n.x * s * (TW / 2 + 0.2), 0.08 + Math.max(0, s) * 1.2 * Math.abs(Math.cos(u * Math.PI * 2)), p.z + n.z * s * (TW / 2 + 0.2), null, 0).rotation.y = Math.atan2(t.x, t.z); }
+  // outer wall + catch fence
+  for (let i = 0; i < N; i += 1) { const u = (i + 0.5) / N, p = pathAt(u), t = tangAt(u), n = new THREE.Vector3(t.z, 0, -t.x), q = p.clone().addScaledVector(n, TW / 2 + 1.2); M(BOX(0.6, 1.6, (Math.PI * 2 * Math.sqrt((RX * RX + RZ * RZ) / 2)) / N + 0.4), toon(i % 8 < 4 ? '#f2f0ea' : '#2f5f9e'), q.x, 0.8 + 1.2 * Math.abs(Math.cos(u * Math.PI * 2)), q.z, null, 0).rotation.y = Math.atan2(t.x, t.z); }
+  // start/finish line
+  { const p = pathAt(0), sf = G.canvasTex(64, 16, c => { for (let i = 0; i < 16; i++) for (let j = 0; j < 4; j++) { c.fillStyle = (i + j) % 2 ? '#111' : '#fff'; c.fillRect(i * 4, j * 4, 4, 4); } }); const m = new THREE.Mesh(new THREE.PlaneGeometry(TW, 2), new THREE.MeshBasicMaterial({ map: sf })); m.rotation.x = -Math.PI / 2; m.rotation.z = Math.PI / 2; m.position.set(p.x, 0.07, p.z); scene.add(m); const g = new THREE.Group(); g.position.copy(p); scene.add(g); for (const s of [-1, 1]) M(BOX(0.5, 8, 0.5), toon('#cbd5e1'), 0, 4, s * (TW / 2 + 1), g, 0.02); const t = G.signTex('EIGHT MILE', null, '#ffd23a'); M(BOX(0.4, 2, TW + 2), [new THREE.MeshBasicMaterial({ map: t }), new THREE.MeshBasicMaterial({ map: t }), toon('#1b1830'), toon('#1b1830'), toon('#1b1830'), toon('#1b1830')], 0, 8, 0, g, 0.03); }
+}
+const infield = new THREE.Mesh(new THREE.CircleGeometry(1, 64), toon('#4f8a3a')); infield.scale.set(RX - TW / 2 - 1, RZ - TW / 2 - 1, 1); infield.rotation.x = -Math.PI / 2; infield.position.y = 0.03; scene.add(infield);
+const desert = new THREE.Mesh(new THREE.PlaneGeometry(1600, 1600), toon('#c8925a')); desert.rotation.x = -Math.PI / 2; scene.add(desert);
+for (let i = 0; i < 40; i++) { const a = rr(0, 6.28), r = rr(260, 600); M(new THREE.ConeGeometry(rr(30, 80), rr(30, 80), 5), toon(['#b0643a', '#9a5a3a', '#c8805a'][i % 3]), Math.cos(a) * r, 15, Math.sin(a) * r, null, 0.3); }
+for (let i = 0; i < 30; i++) { const a = rr(0, 6.28), r = rr(160, 240); const g = new THREE.Group(); g.position.set(Math.cos(a) * r, 0, Math.sin(a) * r * 0.7); scene.add(g); M(new THREE.CapsuleGeometry(0.5, 3, 4, 8), toon('#4f8a45'), 0, 2, 0, g, 0.04); M(new THREE.CapsuleGeometry(0.3, 1.2, 4, 8), toon('#4f8a45'), 0.8, 2.4, 0, g, 0.03).rotation.z = Math.PI / 2; }
+// grandstand with the crowd
+{ const g = new THREE.Group(); g.position.set(0, 0, RZ + TW / 2 + 6); scene.add(g); for (let r = 0; r < 9; r++) M(BOX(110, 0.7, 1.4), toon(r % 2 ? '#5a6276' : '#4a5262'), 0, 0.4 + r * 0.7, r * 1.4, g, 0.03); const cols = ['#c42d3c', '#2f5f9e', '#e8cf4a', '#3f8a46', '#f2f0ea', '#ff8a3a'].map(c => new THREE.Color(c)); const n = 9 * 120, im = new THREE.InstancedMesh(new THREE.CapsuleGeometry(0.25, 0.4, 3, 6), toon('#ffffff'), n); const m4 = new THREE.Matrix4(); let k = 0; for (let r = 0; r < 9; r++) for (let i = 0; i < 120; i++) { m4.makeTranslation(-54 + i * 0.9, 1.2 + r * 0.7, r * 1.4); im.setMatrixAt(k, m4); im.setColorAt(k, cols[(k * 7) % 6]); k++; } g.add(im); window.__crowd = im; M(BOX(112, 1, 14), toon('#3a3a42'), 0, 9, 6, g, 0.03); }
+for (const [x, z] of [[-RX - 14, 0], [RX + 14, 0], [0, -RZ - 14]]) { M(BOX(0.6, 22, 0.6), toon('#5a5560'), x, 11, z, null, 0.02); glow(x, 22, z, 0xfff6d8, 18); }
+G.sun.color.set('#ffb08a'); G.sun.position.set(-80, 40, -60);
+glow(-600, 60, -500, 0xffb070, 300, null, 1);
+// ---------------------------------------------------------------- the cars
+const COLS = ['#ff8a3a', '#c42d3c', '#2f5f9e', '#e8cf4a', '#3f8a46', '#7a3fb0'];
+function racer(col, num) { const g = new THREE.Group(); scene.add(g); const c = toon(col); M(BOX(2.2, 0.7, 4.6), c, 0, 0.75, 0, g, 0.05); M(BOX(1.6, 0.7, 2.0), c, 0, 1.4, -0.4, g, 0.04); M(BOX(1.5, 0.55, 0.06), toon('#8ac8e8'), 0, 1.45, 0.62, g, 0); M(BOX(2.6, 0.12, 0.8), toon('#1b1830'), 0, 1.6, -2.3, g, 0.02); for (const s of [-1, 1]) M(BOX(0.12, 0.5, 0.12), toon('#1b1830'), s, 1.3, -2.3, g, 0);
+  const t = G.canvasTex(64, 64, k => { k.fillStyle = '#fff'; k.beginPath(); k.arc(32, 32, 30, 0, 7); k.fill(); k.fillStyle = '#111'; k.font = '900 40px Archivo, Arial'; k.textAlign = 'center'; k.textBaseline = 'middle'; k.fillText(num, 32, 34); }); for (const s of [-1, 1]) { const d = new THREE.Mesh(new THREE.CircleGeometry(0.42, 20), new THREE.MeshBasicMaterial({ map: t })); d.position.set(s * 1.11, 0.85, 0); d.rotation.y = s * Math.PI / 2; g.add(d); }
+  for (const [x, z] of [[-1.1, -1.5], [1.1, -1.5], [-1.1, 1.5], [1.1, 1.5]]) M(new THREE.CylinderGeometry(0.45, 0.45, 0.4, 14), toon('#1b1830'), x, 0.45, z, g, 0).rotation.z = Math.PI / 2;
+  const fl = glow(0, 0.7, -2.6, 0x7fd8ff, 0.1, g); g.userData.fl = fl; return g; }
+const me = racer(COLS[0], '8'); const fox = G.makeFox({ torso: ['#ffffff', '#e7edf4', '#6b7d93'], crest: '8', mood: 'determined', look: G.PLAYER_MALE, outfit: 'armor' }); scene.remove(fox); me.add(fox); fox.position.set(0, 0.6, -0.4); fox.scale.setScalar(0.6);
+const AI = []; for (let i = 0; i < 5; i++) AI.push({ g: racer(COLS[i + 1], String(i + 2)), u: 0.006 + 0.0045 * i, lane: (i % 2 ? 1 : -1) * 3.5, skill: rr(0.92, 1.02), v: 0 });
+// ---------------------------------------------------------------- state
+const S = {}; const LAPS = 3;
+function reset() { Object.assign(S, { u: 0.001, off: 0, v: 0, yaw: 0, boost: 1, laps: 0, prevU: 0.001, count: 3, finished: false, draft: 0, time: 0 }); AI.forEach((a, i) => { a.u = 0.006 + 0.0045 * i; a.lane = (i % 2 ? 1 : -1) * 3.5; a.v = 0; a.lap = 0; a.done = false; }); S.shown = 4; }
+reset(); G.onStart(() => { reset(); S.count = 3; });
+const totalOf = (lap, u) => lap + u;
+G.onFrame((dt, t, running) => {
+  if (running && !S.finished) {
+    if (S.count > 0) { S.count -= dt; const c1 = Math.max(0, Math.ceil(S.count)); if (c1 !== S.shown) { S.shown = c1; popup(c1 > 0 ? String(c1) : 'GO!', c1 > 0 ? '#f3f2f2' : '#7dff9a'); audio.tone(c1 > 0 ? 440 : 880, 0.2, 0.06, 'square', 1); } }
+    else {
+      S.time += dt; const boosting = input.held.boost && S.boost > 0; S.boost = boosting ? Math.max(0, S.boost - dt * 0.35) : Math.min(1, S.boost + dt * 0.05);
+      // drafting: right behind another car
+      S.draft = 0; for (const a of AI) { const du = (a.u + a.lap) - (S.u + S.laps); if (du > 0 && du < 0.02 && Math.abs(a.lane - S.off) < 2.2) S.draft = 1; }
+      const top = 62 + (boosting ? 22 : 0) + S.draft * 8, curve = Math.abs(Math.cos(S.u * Math.PI * 2)); const grip = top - curve * (Math.abs(S.off - -TW / 2 + 1) < 4 ? 4 : 10);
+      S.v += ((input.y > 0 ? 1 : input.y < 0 ? -1.6 : -0.3) * 26 - (S.v > grip ? (S.v - grip) * 2 : 0)) * dt; S.v = clamp(S.v, 0, top);
+      S.off = clamp(S.off - input.x * dt * 9 * Math.min(1, S.v / 30), -TW / 2 + 1.4, TW / 2 - 1.4);
+      if (Math.abs(S.off) > TW / 2 - 1.6 && S.v > 40) { S.v *= 0.985; if (Math.random() < 0.2) audio.burst(0.05, 300, 0.1); }
+      const circ = Math.PI * 2 * Math.sqrt((RX * RX + RZ * RZ) / 2); S.prevU = S.u; S.u += S.v * dt / circ; if (S.u >= 1) { S.u -= 1; S.laps++; if (S.laps < LAPS) popup(S.laps === LAPS - 1 ? 'FINAL LAP!' : 'LAP ' + (S.laps + 1), '#ffd23a'); }
+      // AI
+      for (const a of AI) { if (a.done) continue; const ac = Math.abs(Math.cos(a.u * Math.PI * 2)); const want = (60 - ac * 7) * a.skill + (a.lap === LAPS - 1 && a.u > 0.75 ? 6 : 0); a.v = damp(a.v, want, 1.2, dt); a.u += a.v * dt / circ; if (a.u >= 1) { a.u -= 1; a.lap++; if (a.lap >= LAPS) a.done = true; } a.lane = damp(a.lane, Math.sin(a.u * 9 + a.skill * 10) * 4, 0.6, dt);
+        const du = (a.u + a.lap) - (S.u + S.laps); if (Math.abs(du) < 0.004 && Math.abs(a.lane - S.off) < 2.0) { S.off += Math.sign(S.off - a.lane || 1) * 0.4; S.v *= 0.97; audio.burst(0.08, 200, 0.2); } }
+      if (S.laps >= LAPS) { S.finished = true; const pos = 1 + AI.filter(a => a.done).length; popup(pos === 1 ? 'YOU WIN!' : 'P' + pos, pos === 1 ? '#ffd23a' : '#f3f2f2'); cheer = 3; setTimeout(() => G.end({ score: [0, 1000, 700, 500, 350, 250, 150][pos], unit: 'POINTS', lines: ['Finished P' + pos + ' of 6', 'Time ' + S.time.toFixed(1) + 's'], credits: [0, 60, 40, 25, 15, 10, 5][pos] }), 1500); }
+    }
+  }
+  // place cars
+  const put = (g, u, off) => { const p = pathAt(u), t = tangAt(u), n = new THREE.Vector3(t.z, 0, -t.x); const bankY = Math.max(0, off / (TW / 2)) * 1.2 * Math.abs(Math.cos(u * Math.PI * 2)); g.position.set(p.x + n.x * off, bankY, p.z + n.z * off); g.rotation.set(0, Math.atan2(t.x, t.z), 0); };
+  put(me, S.u, S.off); me.rotateZ(input.x * 0.06); AI.forEach(a => put(a.g, ((a.u % 1) + 1) % 1, a.lane));
+  me.userData.fl.scale.setScalar(input.held.boost && S.boost > 0 ? 2.2 + Math.sin(t * 40) * 0.4 : 0.01);
+  G.animFox(fox, dt, 0);
+  if (cheer > 0 && window.__crowd) { cheer -= dt; window.__crowd.position.y = Math.abs(Math.sin(t * 14)) * 0.3; }
+  const tg = tangAt(S.u), port = innerWidth < innerHeight, back = port ? 14 : 10; camera.position.lerp(new THREE.Vector3(me.position.x - tg.x * back, me.position.y + (port ? 6 : 4.2), me.position.z - tg.z * back), Math.min(1, dt * 5)); camera.lookAt(me.position.x + tg.x * 8, me.position.y + 1.2, me.position.z + tg.z * 8);
+  const pos = 1 + AI.filter(a => totalOf(a.lap || 0, a.u) > totalOf(S.laps, S.u)).length;
+  G.hud.set('P' + pos + '/6', Math.min(LAPS, S.laps + 1) + '/' + LAPS, Math.round(S.v * 2.2) + (S.draft ? ' DRAFT' : ''));
+});
+let cheer = 0;
+</script>
+</body></html>

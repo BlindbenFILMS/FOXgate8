@@ -9781,7 +9781,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
     const el = document.getElementById('surface-prompt');
     if (!el) return;
     const w = surfaceTarget();
-    const ok = !!(w && UNIVERSE.FILES && UNIVERSE.FILES.surface && UNIVERSE.FILES.surface[w.prefix]) && (tradeRun.meruDone || w.prefix === 'meru');   // Meru first, and Meru is reachable (Ben, 30 Sep)
+    const ok = !!(w && UNIVERSE.FILES && UNIVERSE.FILES.surface && UNIVERSE.FILES.surface[w.prefix]);   // every planet shows LAND; until Meru the others send you on (Ben, 30 Sep)
     surfaceFor = ok ? w.prefix : null;
     const want = ok ? 'block' : 'none';
     if (el.style.display !== want) el.style.display = want;
@@ -9793,6 +9793,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
     if (at === 'meru' && !tradeRun.meruDone && !window.__8G_NO_MERU_INTRO) {   // they come as you go to land (Ben, 30 Sep)
       g8BlessMf(); G8M.armed = false; g8MachineFilm(); return;
     }
+    if (g8MeruBlocked(at)) { g8Expected(); return; }   // the King is waiting (Ben, 30 Sep)
     descendToSurface(at);
   });
   window.__8G_SURFACE_FOR = function () { return surfaceFor; };
@@ -14966,7 +14967,10 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
   /* BEGIN: the opening film, then the sky. */
   function g8AfterNaming() {
     g8BlessMf();
-    if (!tradeRun.meruDone) g8MeruPlace();      // (the start can be moved after load; put it back)
+    /* THE SPACE MUSIC IS READIED ON THE BEGIN TAP (Ben, 30 Sep), silently, so
+       an iPhone lets it start by itself when the opening film ends. */
+    try { bgMusic.muted = true; const p0 = bgMusic.play(); const b0 = () => { if (window.__g8FilmOn) bgMusic.pause(); bgMusic.muted = false; }; if (p0 && p0.then) p0.then(b0, b0); else b0(); } catch (e) {}
+    /* START AT HOME (Ben, 30 Sep: "start the PLAYER by PLAYER PLANET, ALLOW pirates and regular play"). */
     g8VOpen = g8Video();
     gamePaused = true;
     g8Film(g8VOpen, G8_OPEN, () => {
@@ -14989,15 +14993,14 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
   }
   function g8MeruInit() {
     if (tradeRun.meruDone) return;
-    g8MeruPlace();
-    setStoryLock(true);                     // nothing else in the sky until they have you
+    /* you start at home now, with the sky open; the course line points to Meru */
     if (homeNamed || arrivedFromElsewhere) {
       // a game picked up again: the clock starts when the pilot touches something
       const go = () => {
         window.removeEventListener('keydown', go, true);
         window.removeEventListener('pointerdown', go, true);
         g8BlessMf();
-        if (!tradeRun.meruDone && !G8M.armed && !meruAct) { g8MeruPlace(); g8Arm(); }
+        if (!tradeRun.meruDone && !G8M.armed && !meruAct) g8Arm();
       };
       window.addEventListener('keydown', go, true);
       window.addEventListener('pointerdown', go, true);
@@ -15006,7 +15009,6 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
   function g8Arm() {
     if (window.__8G_NO_MERU_INTRO) return;           // (the control checks fly without the scene)
     G8M.armed = true; G8M.t0 = performance.now(); G8M.x = pX; G8M.y = pY;
-    setStoryLock(true);
   }
   window.__G8_INTRO = function () { return { armed: G8M.armed, meruAct: meruAct, hits: g8Hits, fight: g8Fight, ships: meruShips.length, paused: gamePaused, film: !!window.__g8FilmOn, lock: storyLock, meruDone: !!tradeRun.meruDone, p: [Math.round(pX), Math.round(pY)], meru: meruWorldAt() }; };
   window.__G8_FIRE = function () { if (!meruAct) g8MachineFilm(); };
@@ -15138,6 +15140,51 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
       pCtx.beginPath(); pCtx.moveTo(sx, sy); pCtx.lineTo(tx, ty); pCtx.stroke();
       pCtx.restore();
     }
+  }
+  /* ANY TOUCH STARTS THE MUSIC (Ben, 30 Sep: "touching the joystick or weapons
+     buttons does not trigger the sound"). The sound used to be switched on only
+     by a tap on the map itself; the stick and the buttons keep their touches to
+     themselves, so a pilot who only ever flew with them never heard a note.
+     Heard first here, on the way down, before anything keeps it. */
+  ['touchstart', 'touchend', 'pointerdown', 'pointerup', 'mousedown', 'click', 'keydown'].forEach(t => window.addEventListener(t, () => {
+    try {
+      if (window.__g8FilmOn || document.querySelector('#opening.on, #g8-film.on')) return;   // not on the title card, not over a film
+      ensureAudio();
+      if (bgMusic.paused) bgMusic.play().catch(() => {});
+    } catch (e) {}
+  }, true));
+  /* "You are expected on MERU, by order of KING MIGHT." (Ben, 30 Sep) — any
+     other planet or station before Meru says so, and nothing else happens. */
+  function g8Expected() {
+    let el = document.getElementById('g8-expected');
+    if (!el) {
+      el = document.createElement('div'); el.id = 'g8-expected';
+      el.style.cssText = 'position:fixed;inset:0;z-index:2147483000;display:none;align-items:center;justify-content:center;background:rgba(2,6,14,.55)';
+      el.innerHTML = '<div style="max-width:min(86vw,420px);padding:22px 24px 18px;border:2px solid #f5c76b;border-radius:12px;background:linear-gradient(#141c2e,#0a1020);color:#fbe7b5;font:600 17px/1.45 system-ui,sans-serif;text-align:center;box-shadow:0 0 34px rgba(245,199,107,.35)">'
+        + '<div style="font-size:12px;letter-spacing:.18em;color:#f5c76b;margin-bottom:8px">A ROYAL SUMMONS</div>'
+        + 'You are expected on MERU, by order of KING MIGHT.'
+        + '<div><button type="button" style="margin-top:16px;padding:9px 28px;border-radius:8px;border:1px solid #f5c76b;background:#2a2410;color:#fbe7b5;font:700 15px system-ui,sans-serif;letter-spacing:.1em">OK</button></div></div>';
+      const close = e => { e.stopPropagation(); e.preventDefault(); el.style.display = 'none'; };
+      el.addEventListener('click', close); el.addEventListener('touchend', close);
+      ['pointerdown', 'touchstart', 'mousedown'].forEach(t => el.addEventListener(t, e => e.stopPropagation()));
+      document.body.appendChild(el);
+    }
+    el.style.display = 'flex';
+    try { sfx.alert && sfx.alert(); } catch (e) {}
+  }
+  function g8MeruBlocked(prefix) {
+    return !tradeRun.meruDone && prefix !== 'meru' && !window.__8G_NO_MERU_INTRO;
+  }
+  window.__G8_WORLD = function (pf) { const q = FLEET_WORLDS.find(w => w.prefix === pf); return q ? { x: (q.col - 1) * WORLD_CELL, y: (q.row - 1) * WORLD_CELL } : null; };   // (for the tests)
+  window.__G8_EXPECTED = function () { const el = document.getElementById('g8-expected'); return !!(el && el.style.display === 'flex'); };
+  /* THE COURSE TO MERU: a dashed line from the ship until Meru is done (Ben, 30 Sep). */
+  function g8DrawMeruCourse(midX, midY) {
+    if (tradeRun.meruDone || meruAct || window.__8G_NO_MERU_INTRO) return;
+    const w = meruWorldAt(); if (!w) return;
+    const d = Math.hypot(w.x - pX, w.y - pY);
+    if (d < 260) return;
+    if (courseShown) { try { const ct = compassTarget(); if (ct && ct.story && Math.hypot(ct.x - w.x, ct.y - w.y) < 500) return; } catch (e) {} }   // already drawn
+    drawGuideLine(midX, midY, w.x, w.y, 'MERU', Math.round(d).toLocaleString() + 'u  \u00b7  KING MIGHT AWAITS', 'quest', [16, 12]);
   }
   window.__G8_PUSH = function (dx, dy) { pX += dx; pY += dy; camX = pX; camY = pY; };   // (for the tests)
 
@@ -16901,7 +16948,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
   const OPENING_RANGE    = 760;
   let openingAtMs = 0, openingDone = false;
   function armOpeningAmbush() {
-    if (openingDone || !tradeRun.meruDone) return;   // Meru first (Ben, 30 Sep)
+    if (openingDone) return;
     openingAtMs = performance.now() + OPENING_DELAY_MS;
   }
   function checkOpeningAmbush() {
@@ -18935,6 +18982,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
   }
 
   function enterDock(prefix) {
+    if (g8MeruBlocked(prefix)) { g8Expected(); return; }   // "You are expected on MERU" (Ben, 30 Sep)
     const art = DOCK_ART[DOCK_KEY[prefix]];
     if (!art) return;
     // base art goes in as an <img>; the lighting layer MUST be inlined or the
@@ -23678,6 +23726,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
     beastRespawnTick();
     paintCellFlash();
     drawLowFuelLine(midX, midY);
+    g8DrawMeruCourse(midX, midY);
     if (courseShown && !storyLock) {
       const ct = compassTarget();
       if (ct && (ct.home || ct.story)) {
@@ -23819,6 +23868,7 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
     '  font: 900 7.5px/1 Orbitron, system-ui, sans-serif; letter-spacing: .4px; border: 2px solid rgba(255,255,255,.55);',
     '  box-shadow: 0 3px 0 rgba(0,0,0,.45), 0 0 12px rgba(0,0,0,.35); -webkit-tap-highlight-color: transparent; }',
     '.pc-btn b { font-size: 19px; line-height: 1; margin-bottom: 2px; }',
+    '.pc-btn b.pc-num { font: 900 27px/1 "Arial Black", Archivo, system-ui, sans-serif; margin: 0; padding-top: 1px; -webkit-text-stroke: 1.2px currentColor; text-shadow: 0 2px 0 rgba(0,0,0,.35); letter-spacing: 0; }',
     '.pc-btn.down { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,.45); filter: brightness(1.25); }',
     '#pc-fire { background: radial-gradient(circle at 40% 35%, #ff9a8a, #d9463b 60%, #8e1f19); }',
     '#pc-next { background: radial-gradient(circle at 40% 35%, #ffe08a, #e0a526 60%, #8a5a0e); }',
@@ -23863,8 +23913,8 @@ function wakesTheMachines(shipCount) { return shipCount > MACHINE_LIMIT; }
   var root = document.createElement('div');
   root.id = 'pc-root';
   root.innerHTML = '<div id="pc-stick" aria-label="Fly"><i class="pc-arr u"></i><i class="pc-arr d"></i><i class="pc-arr l"></i><i class="pc-arr r"></i><div id="pc-knob"></div></div>' +
-    '<div id="pc-btns"><div class="pc-btn" id="pc-fire" role="button" aria-label="Twin lasers"><b>✹</b>LASERS</div>' +
-    '<div class="pc-btn" id="pc-next" role="button" aria-label="Specialty weapon"><b>☄</b><span id="pc-wname">SPECIAL</span></div></div>';
+    '<div id="pc-btns"><div class="pc-btn" id="pc-fire" role="button" aria-label="Weapon 1, twin lasers"><b class="pc-num">1</b></div>' +
+    '<div class="pc-btn" id="pc-next" role="button" aria-label="Weapon 2, specialty weapon"><b class="pc-num">2</b><span id="pc-wname" style="display:none">SPECIAL</span></div></div>';
   document.body.appendChild(root);
 
   /* SAVE / LOAD in ACTIONS: a third button on the bridge's foot, beside the

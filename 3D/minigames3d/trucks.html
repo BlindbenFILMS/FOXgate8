@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"><title>Zion Monster Truck Crush</title></head>
+<body>
+<script type="module">
+import { shell, THREE, rr, clamp, damp, smooth, fbm } from './shell.js';
+const G = await shell({ title: 'Monster Crush', world: 'ZION', bestKey: 'trucks', sky: ['#1a1e3a', '#5a4a6a'], fog: 0.006,
+  intro: 'Sixty seconds in the Zion arena. Hit the ramps, fly, and land on the cars to crush them. Chain crushes for a combo, flip in the air for style, and smash the crate stacks.',
+  how: ['W/S gas and brake · A/D steer · Space nitro', 'Thumb to drive and steer · NITRO'],
+  buttons: [{ id: 'nitro', label: 'NITRO', keys: ['Space', 'ShiftLeft'], hot: true }],
+  keysHelp: ['<b>W/S</b> gas / brake', '<b>A/D</b> steer', '<b>Space</b> nitro'], stats: ['SCORE', 'TIME', 'CRUSHED'] });
+const { scene, camera, M, BOX, toon, glowing, glow, input, popup, msg, audio } = G;
+scene.fog.color.set('#2a2440');
+// ---------------------------------------------------------------- the arena
+const AW = 70, AD = 46;
+const dirt = G.canvasTex(256, 256, c => { c.fillStyle = '#8a5a32'; c.fillRect(0, 0, 256, 256); for (let i = 0; i < 900; i++) { c.fillStyle = 'rgba(' + (60 + Math.random() * 80 | 0) + ',' + (30 + Math.random() * 50 | 0) + ',10,' + rr(0.1, 0.4) + ')'; c.beginPath(); c.arc(rr(0, 256), rr(0, 256), rr(1, 5), 0, 7); c.fill(); } for (let i = 0; i < 12; i++) { c.strokeStyle = 'rgba(40,24,10,.35)'; c.lineWidth = 6; c.beginPath(); c.moveTo(0, rr(0, 256)); c.bezierCurveTo(80, rr(0, 256), 160, rr(0, 256), 256, rr(0, 256)); c.stroke(); } });
+dirt.wrapS = dirt.wrapT = THREE.RepeatWrapping; dirt.repeat.set(8, 6);
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(AW * 2, AD * 2), new THREE.MeshToonMaterial({ map: dirt, gradientMap: G.grad })); floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+const out = new THREE.Mesh(new THREE.PlaneGeometry(800, 800), toon('#3a2a24')); out.rotation.x = -Math.PI / 2; out.position.y = -0.05; scene.add(out);
+// walls + tyres + stands + floodlights
+for (const [x, z, w, d] of [[0, -AD - 1, AW * 2 + 4, 2], [0, AD + 1, AW * 2 + 4, 2], [-AW - 1, 0, 2, AD * 2], [AW + 1, 0, 2, AD * 2]]) M(BOX(w, 2.2, d), toon('#c42d3c'), x, 1.1, z, null, 0.05);
+for (let i = 0; i < 70; i++) { const side = i % 4, t = (Math.floor(i / 4) + 0.5) / 18; const [x, z] = side === 0 ? [-AW + t * AW * 2, -AD + 1.4] : side === 1 ? [-AW + t * AW * 2, AD - 1.4] : side === 2 ? [-AW + 1.4, -AD + t * AD * 2] : [AW - 1.4, -AD + t * AD * 2]; M(new THREE.TorusGeometry(0.7, 0.35, 8, 14), toon('#1b1830'), x, 0.35, z, null, 0).rotation.x = Math.PI / 2; }
+function stand(x, z, ry, w) { const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = ry; scene.add(g); for (let r = 0; r < 7; r++) M(BOX(w, 0.6, 1.2), toon(r % 2 ? '#4a4f62' : '#5a6276'), 0, 2.6 + r * 0.6, -r * 1.2, g, 0.02); const cols = ['#c42d3c', '#2f5f9e', '#e8cf4a', '#3f8a46', '#f2f0ea', '#ff8a3a'].map(c => new THREE.Color(c)); const n = Math.floor(w / 0.9) * 7, im = new THREE.InstancedMesh(new THREE.CapsuleGeometry(0.22, 0.4, 3, 6), toon('#ffffff'), n); const m4 = new THREE.Matrix4(); let k = 0; for (let r = 0; r < 7; r++) for (let i = 0; i < Math.floor(w / 0.9); i++) { m4.makeTranslation(-w / 2 + 0.45 + i * 0.9, 3.3 + r * 0.6, -r * 1.2); im.setMatrixAt(k, m4); im.setColorAt(k, cols[(k * 7) % cols.length]); k++; } g.add(im); return im; }
+const crowds = [stand(0, -AD - 4, 0, AW * 2), stand(0, AD + 4, Math.PI, AW * 2)];
+for (const [x, z] of [[-AW, -AD], [AW, -AD], [-AW, AD], [AW, AD]]) { M(BOX(0.6, 18, 0.6), toon('#5a5560'), x * 1.08, 9, z * 1.1, null, 0.03); M(BOX(4, 2, 0.6), toon('#3a3a42'), x * 1.08, 18, z * 1.1, null, 0.03); glow(x * 1.08, 18, z * 1.1, 0xfff6d8, 14); }
+const flood = new THREE.SpotLight(0xfff1d8, 900, 220, 0.9, 0.5, 1.4); flood.position.set(0, 50, 30); flood.target.position.set(0, 0, 0); scene.add(flood, flood.target);
+G.sun.intensity = 1.2; G.sun.color.set('#c8d0ff');
+// ramps and crate stacks
+const RAMPS = [[-36, -10, 0], [34, 12, Math.PI], [0, -28, Math.PI / 2], [-6, 28, -Math.PI / 2]].map(([x, z, ry]) => { const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = ry; scene.add(g); const s = new THREE.Shape(); s.moveTo(-6, 0); s.lineTo(4, 0); s.lineTo(4, 2.6); s.closePath(); const m = M(new THREE.ExtrudeGeometry(s, { depth: 7, bevelEnabled: false }), toon('#6a4a2a'), 0, 0, -3.5, g, 0.05); for (let i = 0; i < 6; i++) M(BOX(1.2, 0.05, 7.1), toon(i % 2 ? '#ffd23a' : '#1b1830'), -5 + i * 1.7, 0.02 + (i * 1.7 + 1) * 0.26, 0, g, 0); return { x, z, ry }; });
+const CRATES = [];
+function crateStack(x, z) { for (let i = 0; i < 6; i++) { const m = M(BOX(1.6, 1.6, 1.6), toon('#c8a46a'), x + (i % 3) * 1.7 - 1.7, 0.8 + Math.floor(i / 3) * 1.6, z, null, 0.04); CRATES.push({ m, v: new THREE.Vector3(), hit: false, home: m.position.clone() }); } }
+crateStack(20, -20); crateStack(-24, 22); crateStack(40, -34);
+// cars to crush
+const CARS = []; const carCols = ['#c42d3c', '#2f5f9e', '#3f8a46', '#e8cf4a', '#f2f0ea', '#7a3fb0'];
+function car(x, z, ry) { const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = ry; scene.add(g); const body = new THREE.Group(); g.add(body); const c = toon(carCols[CARS.length % carCols.length]);
+  M(BOX(4.2, 1.0, 1.9), c, 0, 0.75, 0, body, 0.04); M(BOX(2.2, 0.8, 1.7), c, -0.2, 1.6, 0, body, 0.04); M(BOX(2.1, 0.6, 1.72), toon('#8ac8e8'), -0.2, 1.6, 0, body, 0); for (const [wx, wz] of [[-1.4, -0.95], [1.4, -0.95], [-1.4, 0.95], [1.4, 0.95]]) M(new THREE.CylinderGeometry(0.42, 0.42, 0.3, 12), toon('#1b1830'), wx, 0.42, wz, body, 0).rotation.x = Math.PI / 2;
+  CARS.push({ g, body, x, z, crushed: false }); }
+function placeCars() { for (const c of CARS) scene.remove(c.g); CARS.length = 0; for (let i = 0; i < 5; i++) car(-12 + i * 2.2 * 1.1, -4, Math.PI / 2); for (let i = 0; i < 4; i++) car(18 + i * 2.3, 30, Math.PI / 2); for (let i = 0; i < 4; i++) car(-48 + i * 2.3, 26, Math.PI / 2); for (let i = 0; i < 4; i++) car(46, -14 + i * 2.3 * 1.0, 0); }
+placeCars();
+// ---------------------------------------------------------------- the truck
+const truck = new THREE.Group(); scene.add(truck); const chassis = new THREE.Group(); truck.add(chassis);
+const paint = toon('#ff8a3a'); M(BOX(2.8, 0.9, 4.6), paint, 0, 2.5, 0, chassis, 0.05); M(BOX(2.4, 0.9, 2.0), paint, 0, 3.3, -0.4, chassis, 0.04); M(BOX(2.2, 0.6, 0.06), toon('#8ac8e8'), 0, 3.35, 0.62, chassis, 0); M(BOX(2.9, 0.18, 0.3), toon('#cbd5e1'), 0, 2.2, 2.35, chassis, 0.02);
+for (let i = 0; i < 3; i++) M(new THREE.ConeGeometry(0.25, 0.7, 6), toon('#e8cf4a'), -0.8 + i * 0.8, 3.95, -0.4, chassis, 0.02);
+const WHEELS = []; for (const [x, z] of [[-1.6, -1.8], [1.6, -1.8], [-1.6, 1.8], [1.6, 1.8]]) { const w = new THREE.Group(); w.position.set(x, 1.15, z); truck.add(w); const t = M(new THREE.CylinderGeometry(1.15, 1.15, 0.9, 18), toon('#1b1830'), 0, 0, 0, w, 0.04, 1.15); t.rotation.z = Math.PI / 2; const hub = M(new THREE.CylinderGeometry(0.5, 0.5, 0.95, 10), toon('#cbd5e1'), 0, 0, 0, w, 0); hub.rotation.z = Math.PI / 2; for (let k = 0; k < 8; k++) { const tr = M(BOX(0.95, 0.18, 0.3), toon('#2a2a3a'), 0, Math.cos(k / 8 * 6.28) * 1.15, Math.sin(k / 8 * 6.28) * 1.15, w, 0); tr.rotation.x = k / 8 * 6.28; } WHEELS.push(w); }
+const fox = G.makeFox({ torso: ['#e8cf4a', '#c42d3c', '#1b1830'], crest: '8', mood: 'excited', look: G.PLAYER_MALE, outfit: 'armor' }); scene.remove(fox); chassis.add(fox); fox.position.set(0, 2.55, -0.3); fox.scale.setScalar(0.7);
+const flames = [-1, 1].map(s => glow(s * 0.7, 2.6, -2.5, 0x7fd8ff, 0.1, truck));
+// dust
+const DN = 200, dg = new THREE.BufferGeometry(), da = new Float32Array(DN * 3), dv = Array.from({ length: DN }, () => ({ v: new THREE.Vector3(), life: 0 })); dg.setAttribute('position', new THREE.BufferAttribute(da, 3)); for (let i = 0; i < DN; i++) da[i * 3 + 1] = -99;
+scene.add(new THREE.Points(dg, new THREE.PointsMaterial({ color: 0xb08a5a, size: 0.6, transparent: true, opacity: 0.6, depthWrite: false }))); let di = 0;
+const dust = (x, y, z, n, s = 3) => { for (let k = 0; k < n; k++) { const i = di = (di + 1) % DN; dv[i].life = rr(0.4, 1.0); dv[i].v.set(rr(-1, 1) * s, rr(0.4, 1.4) * s, rr(-1, 1) * s); da.set([x, y, z], i * 3); } };
+// ---------------------------------------------------------------- state
+const S = {};
+function reset() { Object.assign(S, { x: -50, z: 0, yaw: Math.PI / 2, v: 0, y: 0, vy: 0, air: false, pitch: 0, roll: 0, flip: 0, time: 60, score: 0, crushed: 0, combo: 0, comboT: 0, nitro: 1 }); placeCars(); for (const c of CRATES) { c.m.position.copy(c.home); c.m.rotation.set(0, 0, 0); c.hit = false; c.v.set(0, 0, 0); } }
+reset(); G.onStart(() => { reset(); msg('GO!', 1.2); audio.tone(220, 0.3, 0.06, 'sawtooth', 2); });
+function crushCar(c) { if (c.crushed) return; c.crushed = true; c.body.scale.y = 0.32; c.body.position.y = -0.2; S.crushed++; S.combo++; S.comboT = 2.5; const pts = 250 * S.combo; S.score += pts; popup((S.combo > 1 ? S.combo + '× ' : '') + 'CRUSH! +' + pts, '#ffd23a'); dust(c.g.position.x, 1, c.g.position.z, 30, 5); audio.burst(0.3, 90, 0.5); crowdCheer(); if (CARS.every(k => k.crushed)) { setTimeout(placeCars, 1500); msg('New cars rolling in!', 1.5); } }
+let cheer = 0; function crowdCheer() { cheer = 1.2; }
+G.onFrame((dt, t, running) => {
+  if (running) {
+    S.time -= dt; const gas = G.input.y, steer = -G.input.x, nitro = G.input.held.nitro && S.nitro > 0;
+    if (nitro) S.nitro = Math.max(0, S.nitro - dt * 0.45); else S.nitro = Math.min(1, S.nitro + dt * 0.12);
+    if (!S.air) { S.v += (gas * (nitro ? 34 : 18) - S.v * 0.9) * dt; S.yaw += steer * dt * clamp(Math.abs(S.v) / 8, 0, 1.6) * Math.sign(S.v || 1); S.roll = damp(S.roll, -steer * Math.min(1, Math.abs(S.v) / 18) * 0.12, 6, dt); S.pitch = damp(S.pitch, 0, 8, dt); }
+    else { S.vy -= 22 * dt; S.y += S.vy * dt; S.flip += G.input.y * dt * 5; S.pitch = S.flip; }
+    S.x += Math.sin(S.yaw) * S.v * dt; S.z += Math.cos(S.yaw) * S.v * dt;
+    // walls
+    if (Math.abs(S.x) > AW - 2.5) { S.x = Math.sign(S.x) * (AW - 2.5); S.v *= -0.4; dust(S.x, 1, S.z, 12); audio.burst(0.15, 160, 0.3); }
+    if (Math.abs(S.z) > AD - 2.5) { S.z = Math.sign(S.z) * (AD - 2.5); S.v *= -0.4; dust(S.x, 1, S.z, 12); audio.burst(0.15, 160, 0.3); }
+    // ramps launch you
+    if (!S.air) for (const r of RAMPS) { const dx = S.x - r.x, dz = S.z - r.z, lx = dx * Math.cos(r.ry) - dz * Math.sin(r.ry), lz = dx * Math.sin(r.ry) + dz * Math.cos(r.ry); const fwd = Math.sin(S.yaw - r.ry - Math.PI / 2 + Math.PI / 2); if (Math.abs(lz) < 3.4 && lx > 2 && lx < 4.6 && S.v > 8) { S.air = true; S.vy = 8 + S.v * 0.35; S.y = 2.4; S.flip = 0; popup('AIR!', '#5fe1ff'); audio.tone(260, 0.2, 0.05, 'sawtooth', 2); } }
+    // landing: on a car? clean? flipped?
+    if (S.air && S.y <= 0 && S.vy < 0) { S.air = false; S.y = 0; const turns = S.flip / (Math.PI * 2), fr = Math.abs(turns - Math.round(turns)); if (Math.abs(Math.round(turns)) >= 1 && fr < 0.18) { const pts = 800 * Math.abs(Math.round(turns)); S.score += pts; popup((Math.round(turns) > 0 ? 'FRONT' : 'BACK') + ' FLIP! +' + pts, '#ff8a3a'); crowdCheer(); } else if (fr > 0.3) { popup('WRECK!', '#ff6a6a'); S.v *= 0.2; } S.flip = 0; S.pitch = 0; dust(S.x, 0.5, S.z, 30, 4); audio.burst(0.3, 110, 0.4);
+      for (const c of CARS) if (!c.crushed && Math.hypot(c.g.position.x - S.x, c.g.position.z - S.z) < 3.6) crushCar(c); }
+    // driving over cars also crushes them when fast
+    if (!S.air) for (const c of CARS) if (!c.crushed && Math.hypot(c.g.position.x - S.x, c.g.position.z - S.z) < 2.6) { if (Math.abs(S.v) > 14) crushCar(c); else { S.v *= -0.3; } }
+    for (const c of CRATES) { if (!c.hit && c.m.position.distanceTo(new THREE.Vector3(S.x, 1 + S.y, S.z)) < 2.4) { c.hit = true; c.v.set(Math.sin(S.yaw) * S.v * 0.6 + rr(-3, 3), rr(5, 10), Math.cos(S.yaw) * S.v * 0.6 + rr(-3, 3)); S.score += 50; popup('+50', '#ffffff'); audio.tone(160, 0.08, 0.04, 'square', 0.8); } }
+    if (S.comboT > 0) { S.comboT -= dt; if (S.comboT <= 0) S.combo = 0; }
+    if (Math.abs(S.v) > 6 && !S.air && Math.random() < 0.6) dust(S.x - Math.sin(S.yaw) * 2.4, 0.4, S.z - Math.cos(S.yaw) * 2.4, 1, 1.5);
+    S.score += Math.round(Math.abs(S.v) * dt * 0.5);
+    if (S.time <= 0) { S.time = 0; G.end({ score: S.score, lines: ['Cars crushed: ' + S.crushed], credits: Math.round(S.score / 120) }); }
+  }
+  for (const c of CRATES) if (c.hit) { c.v.y -= 20 * dt; c.m.position.addScaledVector(c.v, dt); c.m.rotation.x += dt * 4; if (c.m.position.y < 0.8) { c.m.position.y = 0.8; c.v.multiplyScalar(0.5); c.v.y *= -0.3; } }
+  truck.position.set(S.x, S.y, S.z); truck.rotation.set(0, S.yaw, 0); chassis.rotation.set(S.pitch, 0, S.roll); chassis.position.y = Math.sin(t * 14) * 0.05 * Math.min(1, Math.abs(S.v) / 10);
+  WHEELS.forEach((w, i) => { w.rotation.x += S.v * dt / 1.15; if (i >= 2) w.rotation.y = -G.input.x * 0.4; });
+  flames.forEach(f => f.scale.setScalar(G.input.held.nitro && S.nitro > 0 ? 2.4 + Math.sin(t * 40) * 0.4 : 0.01));
+  G.animFox(fox, dt, 0, S.air);
+  for (let i = 0; i < DN; i++) { const s = dv[i]; if (s.life <= 0) continue; s.life -= dt; s.v.y -= 6 * dt; da[i * 3] += s.v.x * dt; da[i * 3 + 1] += s.v.y * dt; da[i * 3 + 2] += s.v.z * dt; if (s.life <= 0) da[i * 3 + 1] = -99; } dg.attributes.position.needsUpdate = true;
+  if (cheer > 0) { cheer -= dt; crowds.forEach(im => im.position.y = Math.abs(Math.sin(t * 16)) * 0.3 * cheer); }
+  // camera: chase from behind and above
+  const port = innerWidth < innerHeight, back = port ? 17 : 13, up = port ? 9 : 7;
+  camera.position.lerp(new THREE.Vector3(S.x - Math.sin(S.yaw) * back, up + S.y * 0.6, S.z - Math.cos(S.yaw) * back), Math.min(1, dt * 3)); camera.lookAt(S.x + Math.sin(S.yaw) * 4, 2 + S.y * 0.5, S.z + Math.cos(S.yaw) * 4);
+  G.hud.set(S.score, Math.ceil(S.time) + 's', S.crushed);
+});
+</script>
+</body></html>

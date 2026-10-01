@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<title>8 GATES 3D</title>
+<link rel="stylesheet" href="vendor/fonts/archivo.css">
+<style>
+  :root { --bg:#f3f2f2; --ink:#201e1d; --accent:#ec3013; --font:"Archivo",system-ui,sans-serif; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; background:#0b0a12; color:var(--ink); font-family:var(--font); overflow:hidden; -webkit-user-select:none; user-select:none; touch-action:none; }
+  #stage { position:fixed; inset:0; }
+  .box { background:var(--bg); border:2px solid var(--ink); }
+  button { font-family:var(--font); border-radius:0; cursor:pointer; text-align:left; }
+  #place { position:fixed; left:12px; top:calc(12px + env(safe-area-inset-top)); display:flex; z-index:10; }
+  #place .t { padding:8px 12px; min-width:180px; }
+  #place .w { font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); }
+  #place .c { font:800 26px var(--font); line-height:1; display:flex; align-items:baseline; gap:8px; }
+  #place .c small { font:600 12px var(--font); }
+  #menuBtn { width:44px; border:2px solid var(--ink); border-left:0; background:var(--bg); font-size:20px; text-align:center; }
+  #quest { position:fixed; left:12px; top:calc(84px + env(safe-area-inset-top)); display:flex; max-width:min(420px,calc(100vw - 24px)); z-index:10; }
+  #quest .tag { background:var(--accent); color:var(--bg); writing-mode:vertical-rl; transform:rotate(180deg); font-size:10px; font-weight:800; letter-spacing:.14em; padding:6px 4px; border:2px solid var(--ink); }
+  #quest .q { padding:7px 12px; border-left:0; font-size:13px; line-height:1.3; }
+  #quest .q b { display:block; font-size:12px; letter-spacing:.06em; }
+  #hp { position:fixed; right:12px; top:calc(12px + env(safe-area-inset-top)); width:150px; padding:6px 10px; z-index:10; font-size:11px; font-weight:800; letter-spacing:.1em; }
+  #boss { position:fixed; left:50%; transform:translateX(-50%); top:calc(12px + env(safe-area-inset-top)); width:min(460px,calc(100% - 340px)); min-width:220px; z-index:11; display:none; background:var(--bg); border:2px solid var(--ink); padding:6px 10px; font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+  #boss .bar { height:10px; border:2px solid var(--ink); margin-top:4px; background:#fff; } #boss .bar i { display:block; height:100%; background:#d9a64a; transition:width .2s; }
+  #compass { position:fixed; left:50%; transform:translateX(-50%); top:calc(12px + env(safe-area-inset-top)); width:min(440px,34vw); height:40px; overflow:hidden; z-index:9; border:2px solid var(--ink); background:var(--bg); }
+  #compass .tk { position:absolute; top:0; height:100%; font:800 11px var(--font); letter-spacing:.08em; display:flex; flex-direction:column; align-items:center; transform:translateX(-50%); }
+  #compass .tk i { width:2px; height:8px; background:var(--ink); display:block; } #compass .tk.c i { height:14px; } #compass .tk.c { color:var(--ink); }
+  #compass .mk { position:absolute; top:4px; transform:translateX(-50%); font:800 10px var(--font); white-space:nowrap; padding:1px 5px; border:2px solid var(--ink); background:#fff; }
+  #compass .mk.quest { background:var(--accent); color:var(--bg); } #compass .mk.pad { background:#5fe1ff; } #compass .mk.door { background:#ffd23a; }
+  #compass .mid { position:absolute; left:50%; top:0; bottom:0; width:2px; background:var(--accent); }
+  #banner { position:fixed; left:50%; top:calc(70px + env(safe-area-inset-top)); transform:translateX(-50%); z-index:9; text-align:center; pointer-events:none; opacity:0; transition:opacity .35s; }
+  #banner h2 { font:800 clamp(28px,5vw,54px)/1 var(--font); letter-spacing:-0.03em; margin:0; color:var(--bg); text-shadow:0 2px 0 var(--ink), 0 0 18px rgba(0,0,0,.45); }
+  #banner small { display:inline-block; margin-top:6px; background:var(--accent); color:var(--bg); font:800 11px var(--font); letter-spacing:.14em; text-transform:uppercase; padding:3px 8px; }
+  #pad button .ic { font-size:24px; line-height:1; } #combo { position:fixed; right:calc(160px + env(safe-area-inset-right)); bottom:calc(150px + env(safe-area-inset-bottom)); font:800 28px var(--font); color:var(--bg); text-shadow:0 2px 0 var(--ink); z-index:10; display:none; }
+  @media (max-width:720px) { #compass { top:calc(84px + env(safe-area-inset-top)); left:auto; right:12px; transform:none; width:calc(50vw - 18px); height:36px; } #banner { top:calc(130px + env(safe-area-inset-top)); } }
+  @media (max-width:520px) { #compass { top:calc(206px + env(safe-area-inset-top)); left:12px; right:12px; width:auto; } #quest { max-width:calc(100vw - 24px); } }
+  #note { position:fixed; left:50%; transform:translateX(-50%); top:calc(150px + env(safe-area-inset-top)); width:min(460px,calc(100vw - 24px)); z-index:9; padding:10px 14px; font-size:15px; line-height:1.45; display:none; }
+  #qlog { position:fixed; inset:calc(60px + env(safe-area-inset-top)) 12px auto 12px; max-width:560px; margin:0 auto; max-height:75vh; overflow:auto; z-index:25; display:none; }
+  #qlog h3 { margin:0; padding:10px 14px; background:var(--ink); color:var(--bg); font:800 14px var(--font); letter-spacing:.12em; display:flex; justify-content:space-between; } #qlog h3 button { background:none; border:0; color:var(--bg); font:800 16px var(--font); }
+  #qlog .q { padding:10px 14px; border-top:2px solid var(--ink); } #qlog .q b { display:block; font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); } #qlog .q.done b { color:#3f8a46; } #qlog .q span { font-size:14px; line-height:1.4; }
+  #hurt { position:fixed; inset:0; pointer-events:none; z-index:4; box-shadow:inset 0 0 120px 40px rgba(236,48,19,.9); opacity:0; }
+  @media (max-width:720px) { #boss { top:calc(206px + env(safe-area-inset-top)); width:calc(100% - 24px); } }
+  #hp .bar { height:8px; border:2px solid var(--ink); margin-top:4px; background:#fff; } #hp .bar i { display:block; height:100%; background:var(--accent); }
+  #prompt { position:fixed; left:50%; bottom:calc(150px + env(safe-area-inset-bottom)); transform:translateX(-50%); display:none; z-index:10; }
+  #prompt button { display:flex; align-items:center; gap:10px; min-height:48px; padding:0 16px 0 0; border:2px solid var(--ink); background:var(--bg); font:800 16px var(--font); }
+  #prompt button span { background:var(--accent); color:var(--bg); align-self:stretch; display:flex; align-items:center; padding:0 14px; }
+  #toast { position:fixed; left:50%; top:calc(140px + env(safe-area-inset-top)); transform:translateX(-50%); display:none; padding:8px 14px; font-weight:800; z-index:11; }
+  #dlg { position:fixed; left:50%; bottom:calc(16px + env(safe-area-inset-bottom)); transform:translateX(-50%); width:min(720px,calc(100vw - 24px)); display:none; z-index:12; }
+  #dlg .hd { background:var(--ink); color:var(--bg); padding:6px 12px; font-weight:800; display:flex; gap:10px; align-items:baseline; } #dlg .hd small { color:#ffd23a; font-size:11px; letter-spacing:.1em; text-transform:uppercase; }
+  #dlg .tx { padding:12px 14px; font-size:17px; line-height:1.45; min-height:70px; }
+  #dlg .ch { display:flex; flex-direction:column; border-top:2px solid var(--ink); max-height:40vh; overflow:auto; }
+  #dlg .ch button { min-height:48px; border:0; border-bottom:2px solid var(--ink); background:var(--bg); font:700 15px var(--font); padding:0 14px; }
+  #dlg .ch button.asked { color:#7d7979; } #dlg .ch button.bye { background:#eae7e7; }
+  #pad { position:fixed; right:calc(12px + env(safe-area-inset-right)); bottom:calc(16px + env(safe-area-inset-bottom)); display:grid; grid-template-columns:repeat(2,64px); gap:8px; z-index:10; }
+  #pad button { height:64px; border:2px solid var(--ink); background:var(--bg); font:800 24px var(--font); padding:0 8px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start; }
+  #pad button small { font-size:10px; letter-spacing:.08em; font-weight:800; }
+  #pad button.talk { grid-column:span 2; background:var(--accent); color:var(--bg); font-size:18px; display:none; }
+  #menu { position:fixed; left:12px; top:calc(140px + env(safe-area-inset-top)); display:none; flex-direction:column; z-index:20; width:220px; }
+  #menu button { min-height:48px; border:2px solid var(--ink); border-top:0; background:var(--bg); font:700 15px var(--font); padding:0 14px; }
+  #menu button:first-child { border-top:2px solid var(--ink); }
+  #keys { position:fixed; left:12px; bottom:12px; display:flex; z-index:9; font-size:12px; }
+  #keys div { padding:5px 8px; border:2px solid var(--ink); border-left:0; background:var(--bg); } #keys div:first-child { border-left:2px solid var(--ink); }
+  #intro { position:fixed; top:0; left:0; bottom:0; width:min(520px,100%); overflow:auto; background:var(--accent); color:var(--bg); display:none; flex-direction:column; justify-content:space-between; gap:20px; padding:clamp(20px,5vh,40px) clamp(20px,5vw,40px); border-right:2px solid var(--ink); z-index:30; }
+  #intro .k { font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; }
+  #intro h1 { font:800 clamp(38px,min(10vw,12vh),96px)/0.92 var(--font); letter-spacing:-0.04em; margin:0; }
+  #intro p { font-size:16px; line-height:1.5; margin:0; max-width:380px; }
+  #intro button { display:flex; justify-content:space-between; align-items:center; width:100%; min-height:56px; padding:16px 20px; background:var(--bg); color:var(--ink); border:2px solid var(--ink); font:800 18px var(--font); }
+  #intro .hint { display:grid; grid-template-columns:1fr 1fr; border-top:2px solid var(--bg); font-size:13px; gap:8px; padding-top:10px; }
+  #loading { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:#0b0a12; color:var(--bg); font:800 22px var(--font); z-index:40; letter-spacing:.06em; }
+  #err { position:fixed; left:12px; bottom:60px; right:12px; display:none; background:var(--ink); color:var(--bg); padding:8px; z-index:50; font-size:13px; }
+  @media (max-width:520px) { #hp { left:12px; right:auto; top:calc(150px + env(safe-area-inset-top)); width:150px; } #place .t { min-width:0; } }
+  @media (pointer:fine) { #pad { display:none; } }
+  @media (pointer:coarse) { #prompt { bottom:calc(250px + env(safe-area-inset-bottom)); } #prompt button span { display:none; } #prompt button { padding:0 16px; } }
+  @media (pointer:coarse) { #keys { display:none; } }
+  @media (max-height:500px) { #dlg { left:auto; right:auto; left:12px; transform:none; width:min(460px,55vw); } #dlg .tx { font-size:15px; min-height:0; } #quest { display:none; } #prompt { bottom:calc(16px + env(safe-area-inset-bottom)); } }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="loading">LANDING…</div>
+<div id="place"><div class="t box"><div class="w" id="pw">8 GATES</div><div class="c"><span id="pc">--:--</span><small id="pp"></small></div></div><button id="menuBtn" aria-label="Menu">☰</button></div>
+<div id="quest"><div class="tag" id="qtag">GO</div><div class="q box"><b id="qt"></b><span id="qx"></span></div></div>
+<div id="hp" class="box">HEALTH <span id="hpn">100</span><div class="bar"><i id="hpb" style="width:100%"></i></div><span id="gold">0</span> CREDITS</div>
+<div id="compass"><div class="mid"></div><div id="cmp"></div></div><div id="banner"><h2 id="bt"></h2><small id="bs"></small></div><div id="combo"></div>
+<div id="boss"><span id="bossn"></span><div class="bar"><i id="bossb"></i></div></div><div id="hurt"></div>
+<div id="note" class="box"></div><div id="qlog" class="box"><h3>QUESTS <button id="qx">✕</button></h3><div id="qb"></div></div>
+<div id="menu"><button id="mQuests">Quests</button><button id="mSound">Sound off</button><button id="mWeather">Weather</button><button id="mTime">+3 hours</button><button id="mIntro">Replay intro</button><button id="mOrbit">Return to orbit</button><button id="mGalaxy">Back to the galaxy</button></div>
+<div id="prompt"><button id="pbtn"><span>E</span><b id="ptx"></b></button></div>
+<div id="toast" class="box"></div>
+<div id="dlg" class="box"><div class="hd"><span id="dn"></span><small id="dr"></small></div><div class="tx" id="dt"></div><div class="ch" id="dc"></div></div>
+<div id="pad"><button class="talk" id="bTalk">TALK</button><button id="b1"><span class="ic">⚔</span><small>1 MELEE</small></button><button id="b2"><span class="ic">✦</span><small>2 RANGE</small></button><button id="b3"><span class="ic">⤒</span><small>3 JUMP</small></button><button id="b4"><span class="ic">◈</span><small>4 ITEM</small></button></div>
+<div id="keys"><div><b>WASD</b> move</div><div><b>Shift</b> run</div><div><b>Drag</b> look</div><div><b>E</b> talk / enter</div><div><b>1</b> melee <b>2</b> range <b>3</b> jump <b>4</b> items</div></div>
+<div id="intro"><div class="k" id="ik"></div><div style="display:flex;flex-direction:column;gap:16px"><h1 id="ih"></h1><p id="ip"></p></div><div style="display:flex;flex-direction:column;gap:16px"><button id="ibtn"><span id="ib">Enter</span><span>→</span></button><div class="hint"><div><b>Desktop</b><br>WASD, drag to look, E to talk</div><div><b>Touch</b><br>Left thumb moves, right drags the camera</div></div></div></div>
+<div id="game" style="position:fixed;inset:0;z-index:60;display:none;flex-direction:column;background:#000"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:6px 6px 6px 14px;background:var(--ink);color:var(--bg);padding-top:calc(6px + env(safe-area-inset-top))"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span id="gw" style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#ffd23a"></span><span id="gl" style="font:800 18px var(--font);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></span></div><button id="gx" style="height:48px;min-width:120px;padding:0 16px;border:2px solid var(--bg);background:var(--accent);color:var(--bg);font:800 15px var(--font)">Leave</button></div><iframe id="gf" style="flex:1;width:100%;border:0;background:#000" allow="autoplay"></iframe></div>
+<div id="err"></div>
+<script type="module">
+import { createWorld } from './engine/world-kit.js';
+const $ = id => document.getElementById(id);
+const q = new URLSearchParams(location.search), W = (q.get('w') || document.body.dataset.world || 'gaya').toLowerCase();
+const touch = matchMedia('(pointer: coarse)').matches;
+let game = null, started = false, lastIntro = null;
+function show(el, on, how = 'block') { el.style.display = on ? how : 'none'; }
+window.addEventListener('error', e => { $('err').textContent = 'Error: ' + e.message; show($('err'), true); });
+try {
+  game = await createWorld({ container: $('stage'), world: W, options: { quality: q.get('q') || (touch ? 'low' : 'high'), fromOrbit: q.get('from') === 'orbit' }, onState: hud => render(hud), onNavigate: url => location.href = url, onPlayGame: (file, label) => openGame(file, label) });
+  document.title = game.world.name + ' · 8 GATES 3D';
+  show($('loading'), false);
+  game.showIntro();
+} catch (e) { $('loading').textContent = 'Could not load ' + W + ': ' + e.message; console.error(e); }
+function render(h) {
+  $('pw').textContent = h.world + ' · ' + h.place; $('pc').textContent = h.clock; $('pp').textContent = h.period + ' · ' + h.weather;
+  $('qtag').textContent = h.world.toUpperCase().slice(0, 8); $('qt').textContent = h.quest.title; $('qx').textContent = h.quest.text;
+  $('hpn').textContent = h.hp; $('hpb').style.width = h.hp + '%';
+  $('gold').textContent = h.gold;
+  show($('note'), !!h.note); if (h.note) $('note').textContent = h.note;
+  if (h.quests) { $('qb').innerHTML = h.quests.length ? h.quests.map(q => '<div class="q' + (q.done ? ' done' : '') + '"><b>' + q.title + (q.done ? ' · done' : '') + '</b><span>' + q.text + '</span></div>').join('') : '<div class="q"><span>No quests yet. Talk to people — ask them what is wrong.</span></div>'; }
+  show($('compass'), !!h.compass); if (h.compass) { const W2 = $('compass').clientWidth, half = W2 / 2, k = half / (Math.PI / 2); const out = [];
+    for (const [lab, ang] of [['N', Math.PI], ['E', Math.PI / 2], ['S', 0], ['W', -Math.PI / 2], ['NE', Math.PI * 0.75], ['SE', Math.PI * 0.25], ['SW', -Math.PI * 0.25], ['NW', -Math.PI * 0.75]]) { let a = ang - h.compass.h; a = Math.atan2(Math.sin(a), Math.cos(a)); if (Math.abs(a) > Math.PI / 2) continue; out.push('<div class="tk' + (lab.length === 1 ? ' c' : '') + '" style="left:' + (half - a * k) + 'px"><i></i>' + lab + '</div>'); }
+    const rows = [[], []];
+    for (const m of h.compass.marks.slice(0, 4)) { const a = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, m.a)); const label = (Math.abs(m.a) > Math.PI / 2 && m.a > 0 ? '◀ ' : '') + m.t.slice(0, 14) + ' ' + m.d + 'm' + (Math.abs(m.a) > Math.PI / 2 && m.a < 0 ? ' ▶' : ''); const w = label.length * 6.4 + 14; let x = Math.max(w / 2 + 2, Math.min(W2 - w / 2 - 2, half - a * k));
+      let row = m.k === 'quest' ? 1 : 0; if (rows[row].some(r => Math.abs(r - x) < w)) row = 1 - row; if (rows[row].some(r => Math.abs(r - x) < w)) continue; rows[row].push(x);
+      out.push('<div class="mk ' + m.k + '" style="left:' + x + 'px;top:' + (row ? 19 : 3) + 'px">' + label + '</div>'); }
+    $('cmp').innerHTML = out.join(''); }
+  if (h.banner) { $('bt').textContent = h.banner.title; $('bs').textContent = h.banner.sub; $('banner').style.opacity = 1; } else $('banner').style.opacity = 0;
+  show($('combo'), h.combo > 1); $('combo').textContent = h.combo > 1 ? h.combo + '× COMBO' : '';
+  show($('boss'), !!h.boss); if (h.boss) { $('bossn').textContent = h.boss.name; $('bossb').style.width = h.boss.hp + '%'; }
+  $('hurt').style.opacity = h.hurt || 0;
+  show($('prompt'), !!h.prompt && !h.dialog); $('ptx').textContent = h.prompt || '';
+  show($('bTalk'), !!(h.prompt || h.dialog), 'flex');
+  show($('toast'), !!h.toast); $('toast').textContent = h.toast || '';
+  $('mSound').textContent = h.muted ? 'Sound on' : 'Sound off';
+  if (h.dialog) {
+    show($('dlg'), true); $('dn').textContent = h.dialog.name; $('dr').textContent = h.dialog.role || ''; $('dt').textContent = h.dialog.text;
+    const ch = h.dialog.choices || []; const dc = $('dc'); const sig = JSON.stringify(ch);
+    if (dc.dataset.sig !== sig) { dc.dataset.sig = sig; dc.innerHTML = ''; ch.forEach((c, i) => { const b = document.createElement('button'); b.textContent = (touch ? '' : (i + 1) + '  ') + c.text; if (c.asked) b.className = 'asked'; if (c.bye) b.className = 'bye'; b.onclick = e => { e.stopPropagation(); game.choose(i); }; dc.appendChild(b); }); }
+    show(dc, ch.length > 0, 'flex');
+  } else show($('dlg'), false);
+  if (h.intro) {
+    show($('intro'), true, 'flex'); const k = h.intro.label + h.intro.text;
+    if (lastIntro !== k) { lastIntro = k; $('ik').textContent = 'Planet ' + h.intro.world + (h.intro.first ? '' : ' · Arriving'); $('ih').textContent = h.intro.label; $('ip').textContent = h.intro.text || ''; $('ib').textContent = h.intro.first && !started ? 'Land on ' + h.intro.world : 'Continue'; }
+  } else { show($('intro'), false); lastIntro = null; }
+}
+function openGame(file, label) { $('gw').textContent = (game ? game.world.name : '') + ' · Minigame'; $('gl').textContent = label; $('gf').src = 'minigames/' + file; show($('game'), true, 'flex'); }
+function closeGame() { show($('game'), false); $('gf').src = 'about:blank'; game && game.gameClosed(); }
+$('gx').addEventListener('click', closeGame);
+window.addEventListener('message', e => { const d = e.data; const t = typeof d === 'string' ? d : d && (d.type || d.action || d.msg); if (/^back|close|leave|exit/i.test(String(t || ''))) closeGame(); });
+const tap = (id, fn) => { const b = $(id); b.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); fn(); }); };
+$('ibtn').addEventListener('click', () => { if (!game) return; if (!started) { started = true; game.start(); } game.continueIntro(); });
+tap('bTalk', () => game.talk()); tap('b1', () => game.melee()); tap('b2', () => game.range()); tap('b3', () => game.jump()); tap('b4', () => game.item());
+$('pbtn').addEventListener('click', () => game.talk());
+$('dlg').addEventListener('click', () => game.talk());
+$('menuBtn').addEventListener('click', () => { const m = $('menu'); show(m, m.style.display !== 'flex', 'flex'); });
+$('mSound').onclick = () => game.toggleSound(); $('mWeather').onclick = () => game.cycleWeather(); $('mTime').onclick = () => game.skipTime(3);
+$('mQuests').onclick = () => { show($('menu'), false); show($('qlog'), true); game.questLog(true); };
+$('qx').onclick = () => { show($('qlog'), false); game.questLog(false); };
+$('mIntro').onclick = () => { show($('menu'), false); game.showIntro(); };
+$('mGalaxy').onclick = () => location.href = 'index.html';
+$('mOrbit').onclick = () => location.href = 'space.html?from=' + W;
+</script>
+</body>
+</html>

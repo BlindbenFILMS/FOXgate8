@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"><title>Zion Gold Panning</title></head>
+<body>
+<script type="module">
+import { shell, THREE, rr, clamp, damp } from './shell.js';
+const G = await shell({ title: 'Gold Panning', world: 'ZION', bestKey: 'gold', sky: ['#7fb0e0', '#ffe1b0'], fog: 0.01,
+  intro: 'Ninety seconds on the Gold River. Scoop a pan of gravel, then swirl it in the current: the light stones wash out and the gold sinks. Shake too hard and the flakes go too. Bank the pan when only gold is left.',
+  how: ['Space scoop · A/D swirl in rhythm · E bank', 'SCOOP · thumb left-right to swirl · BANK'],
+  buttons: [{ id: 'scoop', label: 'SCOOP', keys: ['Space'], hot: true }, { id: 'bank', label: 'BANK', keys: ['KeyE', 'Enter'] }],
+  keysHelp: ['<b>Space</b> scoop', '<b>A/D</b> swirl', '<b>E</b> bank the pan'], stats: ['GOLD', 'TIME', 'IN PAN'] });
+const { scene, camera, M, BOX, toon, glowing, glow, input, popup, msg, audio } = G;
+// river bank, water, rocks, the camp
+const bank = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), toon('#b08a5a')); bank.rotation.x = -Math.PI / 2; scene.add(bank);
+const water = new THREE.Mesh(new THREE.PlaneGeometry(200, 14, 80, 8), new THREE.MeshToonMaterial({ color: '#4a9ab8', gradientMap: G.grad, transparent: true, opacity: 0.85 })); water.rotation.x = -Math.PI / 2; water.position.set(0, 0.25, -4); scene.add(water);
+const bed = new THREE.Mesh(new THREE.PlaneGeometry(200, 14), toon('#7a6a4a')); bed.rotation.x = -Math.PI / 2; bed.position.set(0, 0.02, -4); scene.add(bed);
+for (let i = 0; i < 60; i++) M(new THREE.DodecahedronGeometry(rr(0.2, 0.8), 0), toon(['#8a8478', '#a8a090', '#6a6460'][i % 3]), rr(-30, 30), 0.15, -4 + rr(-6, 6), null, 0.02).scale.y = 0.5;
+for (let i = 0; i < 20; i++) { const g = new THREE.Group(); g.position.set(rr(-50, 50), 0, rr(-30, -14)); scene.add(g); M(new THREE.ConeGeometry(1.6, 4.4, 7), toon('#2f6e4a'), 0, 3.2, 0, g, 0.04); M(new THREE.ConeGeometry(1.1, 3.2, 7), toon('#3a7f52'), 0, 5, 0, g, 0.04); M(new THREE.CylinderGeometry(0.2, 0.3, 1.4, 6), toon('#5a3d2c'), 0, 0.7, 0, g, 0); }
+for (const [x, z] of [[-8, 6], [9, 7]]) { const g = new THREE.Group(); g.position.set(x, 0, z); scene.add(g); const t = M(new THREE.ConeGeometry(2.2, 2.8, 4), toon('#e9e1d2'), 0, 1.4, 0, g, 0.04); t.rotation.y = Math.PI / 4; }
+{ const g = new THREE.Group(); g.position.set(4, 0, 4); scene.add(g); for (let i = 0; i < 6; i++) M(new THREE.DodecahedronGeometry(0.3, 0), toon('#6a6460'), Math.cos(i) * 0.8, 0.15, Math.sin(i) * 0.8, g, 0); const fl = M(new THREE.ConeGeometry(0.4, 1, 8), glowing('#ff9a3a', 2.4), 0, 0.5, 0, g, 0); glow(0, 0.8, 0, 0xff9a40, 4, g); window.__fl = fl; }
+const sluice = new THREE.Group(); sluice.position.set(-6, 0, -1); scene.add(sluice); M(BOX(6, 0.3, 1.2), toon('#8a6a46'), 0, 1.0, 0, sluice, 0.03).rotation.z = -0.15; for (const s of [-1, 1]) M(BOX(6, 0.5, 0.1), toon('#6b4a35'), 0, 1.25, s * 0.6, sluice, 0.01).rotation.z = -0.15;
+// the panner and the pan
+const fox = G.makeFox({ torso: ['#c49a62', '#8a5a34', '#1b1830'], crest: '8', mood: 'curious', look: G.PLAYER_MALE, outfit: 'vest' }); fox.position.set(0, 0, 0.6); fox.rotation.y = Math.PI;
+const pan = new THREE.Group(); scene.add(pan);
+const dish = M(new THREE.CylinderGeometry(1.0, 0.55, 0.35, 32, 1, true), new THREE.MeshToonMaterial({ color: '#5a5560', gradientMap: G.grad, side: THREE.DoubleSide }), 0, 0, 0, pan, 0.03, 1); M(new THREE.CircleGeometry(0.55, 32), toon('#4a4550'), 0, -0.17, 0, pan, 0).rotation.x = -Math.PI / 2; M(new THREE.TorusGeometry(1.0, 0.05, 6, 32), toon('#3a3540'), 0, 0.17, 0, pan, 0).rotation.x = Math.PI / 2;
+const panWater = new THREE.Mesh(new THREE.CircleGeometry(0.75, 32), new THREE.MeshToonMaterial({ color: '#6ab0c8', gradientMap: G.grad, transparent: true, opacity: 0.6 })); panWater.rotation.x = -Math.PI / 2; panWater.position.y = -0.02; pan.add(panWater);
+// grains in the pan: gravel (light), sand, gold (heavy)
+const MAXG = 90, gravelGeo = new THREE.DodecahedronGeometry(0.06, 0), goldGeo = new THREE.OctahedronGeometry(0.045, 0);
+const GR = []; for (let i = 0; i < MAXG; i++) { const gold = i < 12; const m = new THREE.Mesh(gold ? goldGeo : gravelGeo, gold ? glowing('#ffd23a', 1.2) : toon(['#8a8478', '#a8a090', '#6a6460', '#c9b48a'][i % 4])); m.visible = false; pan.add(m); GR.push({ m, gold, a: 0, r: 0, on: false, out: 0, v: 0 }); }
+const sparkle = glow(0, 0.1, 0, 0xffe680, 0.6, pan, 0);
+// ---------------------------------------------------------------- state
+const S = {};
+function reset() { Object.assign(S, { time: 90, gold: 0, phase: 'empty', swirl: 0, lastX: 0, rhythm: 0, shake: 0, panDip: 0, total: 0 }); GR.forEach(g => { g.on = false; g.m.visible = false; }); }
+reset(); G.onStart(() => { reset(); msg('SCOOP a pan of gravel.', 2); });
+function scoop() { if (S.phase !== 'empty') return; S.phase = 'full'; S.panDip = 1; const goldN = Math.random() < 0.85 ? Math.floor(rr(2, 9)) : Math.floor(rr(10, 13)); let gi = 0; GR.forEach(g => { if (g.gold) { g.on = gi++ < goldN; } else g.on = Math.random() < 0.95; g.m.visible = g.on; g.a = rr(0, 6.28); g.r = Math.sqrt(Math.random()) * 0.65; g.out = 0; g.v = 0; }); audio.burst(0.3, 400, 0.3); if (goldN >= 10) msg('This one feels heavy…', 1.6); }
+function bankIt() { if (S.phase !== 'full') return; const gold = GR.filter(g => g.on && g.gold).length, gravel = GR.filter(g => g.on && !g.gold).length; if (gravel > 6) { popup('STILL GRAVELLY', '#ff8a7a'); return; } const pts = gold * 10 + (gravel === 0 ? 15 : 0); S.gold += pts; popup(gold ? '+' + pts + ' GOLD' + (gravel === 0 ? ' · CLEAN!' : '') : 'NOTHING…', gold ? '#ffd23a' : '#ff8a7a'); audio.tone(gold ? 1100 : 220, 0.2, 0.05, 'triangle', 1.6); S.phase = 'empty'; GR.forEach(g => { g.on = false; g.m.visible = false; }); }
+G.onFrame((dt, t, running) => {
+  if (running) {
+    S.time -= dt; if (input.pressed('scoop')) scoop(); if (input.pressed('bank')) bankIt();
+    if (S.phase === 'full') {
+      const x = input.x, dx = x - S.lastX; S.lastX = x; const moving = Math.abs(dx) / dt;
+      S.swirl = damp(S.swirl, clamp(moving * 0.18, 0, 3), 6, dt); S.shake = damp(S.shake, moving > 22 ? 1 : 0, 6, dt);
+      for (const g of GR) { if (!g.on) continue; g.a += dt * S.swirl * (g.gold ? 0.6 : 1.4) / Math.max(0.2, g.r + 0.2); const pull = g.gold ? -0.35 : 0.42; g.r = clamp(g.r + S.swirl * pull * dt * (0.7 + Math.random() * 0.6) + (g.gold ? S.shake * 0.5 * dt : 0), 0, 1.2);
+        if (g.r > 0.95) { g.on = false; g.m.visible = false; if (g.gold) popup('a flake washed out', '#ffb0a0'); } }
+      const left = GR.filter(g => g.on && !g.gold).length; if (left === 0 && S.phase === 'full' && GR.some(g => g.on && g.gold)) { if (!S.hinted) { msg('Only gold left — BANK it!', 1.6); S.hinted = true; } } else S.hinted = false;
+    }
+    if (S.time <= 0) { S.time = 0; G.end({ score: S.gold, unit: 'GOLD', lines: ['A morning on the Gold River'], credits: Math.round(S.gold / 4) }); }
+  }
+  // the pan sits in front of the fox, tilting with the swirl
+  S.panDip = Math.max(0, S.panDip - dt * 1.5); pan.position.set(0, 0.95 - S.panDip * 0.6 + Math.sin(t * 9) * 0.02 * S.swirl, -0.6); pan.rotation.set(0.35 + Math.sin(t * 6) * 0.06 * S.swirl, 0, Math.sin(t * 7) * 0.12 * S.swirl + input.x * 0.2);
+  for (const g of GR) if (g.on) { g.m.position.set(Math.cos(g.a) * g.r * 0.7, -0.12 + (g.gold ? -0.02 : 0.01) + g.r * 0.12, Math.sin(g.a) * g.r * 0.7); g.m.rotation.y = g.a; }
+  const gl = GR.filter(g => g.on && g.gold); sparkle.material.opacity = gl.length ? 0.6 + Math.sin(t * 8) * 0.3 : 0; if (gl[0]) sparkle.position.copy(gl[0].m.position);
+  panWater.material.opacity = S.phase === 'full' ? 0.55 : 0.0;
+  G.animFox(fox, dt, 0); const P = fox.userData.P; P.arms.forEach((a, i) => { a.rotation.x = -1.0; a.rotation.z = (i ? 0.4 : -0.4); }); fox.userData.mood = gl.length > 3 ? 'excited' : 'curious';
+  const p = water.geometry.attributes.position; for (let i = 0; i < p.count; i++) p.setZ(i, Math.sin(p.getX(i) * 0.6 + t * 3) * 0.08); p.needsUpdate = true;
+  if (window.__fl) window.__fl.scale.y = 1 + Math.sin(t * 12) * 0.15;
+  const port = innerWidth < innerHeight; camera.position.set(port ? 1.2 : 1.6, port ? 3.4 : 2.7, port ? -3.6 : -2.9); camera.lookAt(0, 0.9, -0.4); camera.fov = port ? 62 : 50; camera.updateProjectionMatrix();
+  G.hud.set(S.gold, Math.ceil(S.time) + 's', S.phase === 'full' ? GR.filter(g => g.on && g.gold).length + ' gold · ' + GR.filter(g => g.on && !g.gold).length + ' stone' : 'empty');
+});
+</script>
+</body></html>

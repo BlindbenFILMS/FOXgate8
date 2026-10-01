@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#f3f2f2}a{color:var(--color-accent-700)}a:hover{color:var(--color-accent)}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}input[type=range]{accent-color:#ec3013}input[type=color]{-webkit-appearance:none;appearance:none;padding:0;border:0;background:none}input[type=color]::-webkit-color-swatch-wrapper{padding:0}input[type=color]::-webkit-color-swatch{border:0;border-radius:0}</style>
+</helmet>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 380px;height:100vh;background:var(--color-bg);font-family:var(--font-body);color:var(--color-text)">
+  <div style="position:relative;min-width:0;border-right:2px solid var(--color-text);display:flex;flex-direction:column">
+    <div style="display:flex;align-items:stretch;border-bottom:2px solid var(--color-text);background:var(--color-bg)">
+      <div style="padding:14px 18px;display:flex;flex-direction:column;gap:2px;border-right:2px solid var(--color-text)">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700)">Planet Gaya</div>
+        <div style="font-family:var(--font-heading);font-size:22px;font-weight:800;line-height:1">Fox Workshop</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:0 14px;flex:1;min-width:0;overflow-x:auto">
+        <sc-for list="{{ outfitList }}" as="o" hint-placeholder-count="7">
+          <button onClick="{{ o.pick }}" style="height:34px;padding:0 12px;border:2px solid var(--color-text);border-radius:0;background:{{ o.bg }};color:{{ o.fg }};font:700 13px var(--font-heading);white-space:nowrap;cursor:pointer">{{ o.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div ref="{{ stageRef }}" style="position:relative;flex:1;min-height:0"></div>
+    <div style="position:absolute;left:16px;right:16px;bottom:16px;display:flex;flex-direction:column;align-items:flex-start;gap:8px">
+      <div style="display:flex;flex-wrap:wrap;max-width:100%">
+        <span style="height:32px;display:flex;align-items:center;padding:0 10px;margin:0 -2px -2px 0;border:2px solid var(--color-text);background:var(--color-accent);color:var(--color-bg);font:800 12px var(--font-heading)">Gear</span>
+        <sc-for list="{{ gearList }}" as="m" hint-placeholder-count="4">
+          <button onClick="{{ m.pick }}" style="height:32px;padding:0 10px;margin:0 -2px -2px 0;border:2px solid var(--color-text);border-radius:0;background:{{ m.bg }};color:{{ m.fg }};font:700 12px var(--font-body);cursor:pointer">{{ m.label }}</button>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;max-width:100%">
+        <sc-for list="{{ moodList }}" as="m" hint-placeholder-count="10">
+          <button onClick="{{ m.pick }}" style="height:32px;padding:0 10px;margin:0 -2px -2px 0;border:2px solid var(--color-text);border-radius:0;background:{{ m.bg }};color:{{ m.fg }};font:700 12px var(--font-body);cursor:pointer;text-transform:capitalize">{{ m.label }}</button>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <div style="display:flex">
+          <sc-for list="{{ viewList }}" as="v" hint-placeholder-count="4">
+            <button onClick="{{ v.pick }}" style="height:32px;padding:0 10px;margin-right:-2px;border:2px solid var(--color-text);border-radius:0;background:var(--color-bg);color:var(--color-text);font:700 12px var(--font-body);cursor:pointer">{{ v.label }}</button>
+          </sc-for>
+        </div>
+        <button onClick="{{ toggleFocus }}" style="height:32px;padding:0 12px;border:2px solid var(--color-text);border-radius:0;background:{{ focusBg }};color:{{ focusFg }};font:700 12px var(--font-body);cursor:pointer">{{ focusLabel }}</button>
+        <button onClick="{{ toggleTalk }}" style="height:32px;padding:0 12px;border:2px solid var(--color-text);border-radius:0;background:{{ talkBg }};color:{{ talkFg }};font:700 12px var(--font-body);cursor:pointer">Talk</button>
+        <button onClick="{{ toggleSpin }}" style="height:32px;padding:0 12px;border:2px solid var(--color-text);border-radius:0;background:{{ spinBg }};color:{{ spinFg }};font:700 12px var(--font-body);cursor:pointer">Turntable</button>
+        <button onClick="{{ hop }}" style="height:32px;padding:0 12px;border:2px solid var(--color-text);border-radius:0;background:var(--color-bg);color:var(--color-text);font:700 12px var(--font-body);cursor:pointer">Hop</button>
+      </div>
+    </div>
+    <div style="position:absolute;right:16px;top:86px;font-size:12px;color:var(--color-neutral-700);pointer-events:none">Drag to turn · scroll to zoom</div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;min-height:0;background:var(--color-bg)">
+    <div style="padding:14px 18px;border-bottom:2px solid var(--color-text);display:flex;flex-direction:column;gap:10px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700)">Start from</div>
+      <div style="display:flex;flex-wrap:wrap">
+        <sc-for list="{{ presetList }}" as="p" hint-placeholder-count="5">
+          <button onClick="{{ p.pick }}" style="height:32px;padding:0 10px;margin:0 -2px -2px 0;border:2px solid var(--color-text);border-radius:0;background:var(--color-bg);color:var(--color-text);font:700 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-neutral-200)">{{ p.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="flex:1;min-height:0;overflow-y:auto">
+      <sc-for list="{{ sections }}" as="sec" hint-placeholder-count="5">
+        <div style="border-bottom:2px solid var(--color-text);padding:14px 18px 16px;display:flex;flex-direction:column;gap:10px">
+          <div style="font-family:var(--font-heading);font-size:16px;font-weight:800">{{ sec.title }}</div>
+          <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">
+            <sc-for list="{{ sec.colors }}" as="c">
+              <label style="display:flex;flex-direction:column;gap:4px;font-size:11px;font-weight:700;cursor:pointer">
+                <input type="color" value="{{ c.value }}" onInput="{{ c.onInput }}" style="width:100%;height:30px;border:2px solid var(--color-text);cursor:pointer">
+                <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.label }}</span>
+              </label>
+            </sc-for>
+          </div>
+          <sc-for list="{{ sec.sliders }}" as="c">
+            <div style="display:grid;grid-template-columns:104px minmax(0,1fr) 40px;align-items:center;gap:10px">
+              <span style="font-size:12px;font-weight:700">{{ c.label }}</span>
+              <input type="range" min="{{ c.min }}" max="{{ c.max }}" step="{{ c.step }}" value="{{ c.value }}" onInput="{{ c.onInput }}" style="width:100%">
+              <span style="font-size:12px;text-align:right;font-variant-numeric:tabular-nums">{{ c.shown }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+    </div>
+    <div style="border-top:2px solid var(--color-text);display:grid;grid-template-columns:1fr 1fr">
+      <button onClick="{{ save }}" style="grid-column:1 / span 2;display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:var(--color-accent);color:var(--color-bg);border:0;border-bottom:2px solid var(--color-text);border-radius:0;font:800 16px var(--font-heading);text-align:left;cursor:pointer" style-hover="background:var(--color-accent-600)"><span>{{ saveLabel }}</span><span>→</span></button>
+      <button onClick="{{ copy }}" style="padding:12px 18px;background:var(--color-bg);color:var(--color-text);border:0;border-right:2px solid var(--color-text);border-radius:0;font:700 13px var(--font-body);text-align:left;cursor:pointer" style-hover="background:var(--color-neutral-200)">{{ copyLabel }}</button>
+      <button onClick="{{ reset }}" style="padding:12px 18px;background:var(--color-bg);color:var(--color-text);border:0;border-radius:0;font:700 13px var(--font-body);text-align:left;cursor:pointer" style-hover="background:var(--color-neutral-200)">Reset to default</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const SECTIONS = [
+  { title: 'Fur colours', colors: [['fur', 'Fur'], ['furDark', 'Dark fur'], ['muzzle', 'Muzzle'], ['snout', 'Snout'], ['chin', 'Chin'], ['ear', 'Ears'], ['earInner', 'Inner ear'], ['fluff', 'Cheek fluff'], ['nose', 'Nose']] },
+  { title: 'Tail, paws and legs', colors: [['tailBase', 'Tail base'], ['tailMid', 'Tail mid'], ['tailTip', 'Tail tip'], ['paw', 'Paws'], ['leg', 'Legs'], ['boot', 'Boots'], ['ink', 'Line ink'], ['armorAccent', 'Armor accent']],
+    sliders: [['tailSize', 'Tail size', 0.5, 1.8, 0.01], ['tailCurl', 'Tail curl', 0, 1, 0.01], ['tailLift', 'Tail angle', 0.3, 1.6, 0.01], ['legLength', 'Leg length', 0.7, 1.5, 0.01], ['bodyScale', 'Overall size', 0.8, 1.25, 0.01]] },
+  { title: 'Head shape', sliders: [['headScale', 'Head size', 0.8, 1.35, 0.01], ['headWidth', 'Width', 0.85, 1.35, 0.01], ['headHeight', 'Height', 0.8, 1.15, 0.01], ['cheeks', 'Cheeks', 0, 2, 0.01], ['chinPoint', 'Chin point', 0, 1.5, 0.01], ['snoutLength', 'Snout length', 0.4, 1.6, 0.01], ['snoutSize', 'Snout size', 0.7, 1.4, 0.01], ['fluffSize', 'Cheek fluff', 0, 1.8, 0.01], ['headTuft', 'Head tuft', 0, 2, 0.01]] },
+  { title: 'Ears', sliders: [['earHeight', 'Height', 0.6, 1.7, 0.01], ['earWidth', 'Width', 0.6, 1.5, 0.01], ['earSpread', 'Spread', 0.7, 1.4, 0.01], ['earTilt', 'Tilt out', 0, 0.8, 0.01], ['earBack', 'Lean back', 0, 1, 0.01]] },
+  { title: 'Eyes and face', sliders: [['eyeSize', 'Eye size', 0.7, 1.5, 0.01], ['eyeSpacing', 'Spacing', 36, 64, 1], ['eyeY', 'Height', 92, 126, 1], ['eyeTilt', 'Tilt', -0.4, 0.4, 0.01], ['irisSize', 'Iris size', 0.6, 1.3, 0.01], ['pupil', 'Pupil size', 0.4, 1.8, 0.01], ['browWeight', 'Brow weight', 2, 10, 0.5], ['blush', 'Blush', 0, 0.8, 0.01], ['lashes', 'Lash flick', 0, 1, 1], ['whiskers', 'Whiskers', 0, 1, 1]] },
+];
+const PRESETS = {
+  current: { label: 'Current' },
+  playerFemale: { label: 'PLAYER FEMALE', look: {"armorAccent":"#38bdf8","snout":"#f9a96a","fur":"#f07a2a","furDark":"#c2410c","muzzle":"#ffb772","chin":"#ffc179","ear":"#1e293b","earInner":"#9d174d","fluff":"#ffffff","leg":"#e2e8f0","boot":"#0f172a","paw":"#f07a2a","nose":"#0b0a12","tailBase":"#c2410c","tailMid":"#fb923c","tailTip":"#ffffff","ink":"#1e293b","headScale":1.14,"headWidth":0.85,"headHeight":0.97,"cheeks":2,"chinPoint":1.5,"snoutLength":0.61,"snoutSize":0.77,"earHeight":0.98,"earWidth":0.75,"earSpread":0.82,"earTilt":0.52,"earBack":0.37,"fluffSize":0.86,"headTuft":0,"eyeSize":1.22,"eyeSpacing":50,"eyeY":92,"irisSize":0.98,"pupil":1,"eyeTilt":0,"lashes":1,"browWeight":10,"blush":0.42,"whiskers":1,"bodyScale":1,"legLength":1.5,"tailSize":1,"tailCurl":0.42,"tailLift":1.53} },
+  playerMale: { label: 'PLAYER MALE', look: {"armorAccent":"#38bdf8","snout":"#f3b26b","fur":"#f07a2a","furDark":"#c2410c","muzzle":"#ffb772","chin":"#ffc179","ear":"#1e293b","earInner":"#9d174d","fluff":"#ffffff","leg":"#e2e8f0","boot":"#0f172a","paw":"#f07a2a","nose":"#0b0a12","tailBase":"#c2410c","tailMid":"#fb923c","tailTip":"#ffffff","ink":"#1e293b","headScale":1.14,"headWidth":0.95,"headHeight":0.97,"cheeks":1.57,"chinPoint":1.01,"snoutLength":0.61,"snoutSize":0.85,"earHeight":0.98,"earWidth":1.5,"earSpread":0.82,"earTilt":0.52,"earBack":1,"fluffSize":1.8,"headTuft":1.14,"eyeSize":1.22,"eyeSpacing":58,"eyeY":92,"irisSize":0.98,"pupil":1,"eyeTilt":0,"lashes":1,"browWeight":10,"blush":0,"whiskers":1,"bodyScale":1,"legLength":1.5,"tailSize":1,"tailCurl":0.42,"tailLift":1.53} },
+  red: { label: 'Red fox', look: { fur: '#d9531e', furDark: '#9a2e10', muzzle: '#f4a46b', ear: '#1a1414', boot: '#1a1414', paw: '#1a1414', tailBase: '#9a2e10', tailMid: '#e0652a', snoutLength: 1.1, earHeight: 1.15, cheeks: 0.8 } },
+  arctic: { label: 'Arctic', look: { fur: '#eef2f7', furDark: '#b9c6d6', muzzle: '#ffffff', ear: '#9aa9bd', earInner: '#f0b6c8', paw: '#cbd5e1', tailBase: '#b9c6d6', tailMid: '#eef2f7', tailTip: '#ffffff', nose: '#33415a', cheeks: 1.4, earHeight: 0.85, snoutLength: 0.65 } },
+  kit: { label: 'Kit', look: { headScale: 1.25, eyeSize: 1.3, irisSize: 1.15, snoutLength: 0.55, earHeight: 1.25, legLength: 0.8, bodyScale: 0.9, blush: 0.6, cheeks: 1.4 } },
+  sly: { label: 'Sly', look: { eyeSize: 0.85, eyeTilt: 0.22, pupil: 0.6, snoutLength: 1.35, chinPoint: 1.4, earHeight: 1.35, earWidth: 0.85, headWidth: 1.0, browWeight: 7, blush: 0.15 } },
+  noble: { label: 'Silver', look: { fur: '#8a8f9e', furDark: '#565b6a', muzzle: '#d7dbe4', ear: '#2a2d38', tailBase: '#565b6a', tailMid: '#a4a9b8', earBack: 0.3, cheeks: 1.2 } },
+};
+class Component extends DCLogic {
+  state = { gear: 'both', look: null, outfit: 'playerMale', mood: 'neutral', focus: 'full', talk: false, spin: false, saved: false, copied: false };
+  stageRef = React.createRef();
+  async componentDidMount() {
+    const mod = await import(new URL('fox-workshop.js', document.baseURI).href);
+    this.mod = mod; this.ws = await mod.createWorkshop({ container: this.stageRef.current });
+    this.setState({ look: mod.loadLook() });
+  }
+  componentWillUnmount() { this.ws && this.ws.destroy(); }
+  set(k, v) { const look = { ...this.state.look, [k]: v }; this.setState({ look, saved: false }); this.ws && this.ws.setLook(look); }
+  renderVals() {
+    const S = this.state, look = S.look || {}, on = 'var(--color-text)', off = 'var(--color-bg)', ws = this.ws, mod = this.mod;
+    const outfits = mod ? mod.OUTFITS : { player: { label: 'Your fox' } };
+    return {
+      stageRef: this.stageRef,
+      outfitList: Object.entries(outfits).map(([k, o]) => ({ label: o.label, bg: S.outfit === k ? on : off, fg: S.outfit === k ? off : on, pick: () => { this.setState({ outfit: k }); ws && ws.setOutfit(k); } })),
+      gearList: [['none', 'None'], ['sword', 'Sword'], ['laser', 'Laser pistol'], ['both', 'Sword + laser']].map(([k, l]) => ({ label: l, bg: S.gear === k ? on : off, fg: S.gear === k ? off : on, pick: () => { this.setState({ gear: k }); ws && ws.setGear(k); } })),
+      moodList: ['neutral', 'happy', 'excited', 'warm', 'curious', 'surprised', 'sad', 'stern', 'smug', 'determined'].map(m => ({ label: m, bg: S.mood === m ? on : off, fg: S.mood === m ? off : on, pick: () => { this.setState({ mood: m }); ws && ws.setMood(m); } })),
+      viewList: [['front', 'Front'], ['three', '3/4'], ['side', 'Side'], ['back', 'Back']].map(([k, l]) => ({ label: l, pick: () => ws && ws.view(k) })),
+      focusLabel: S.focus === 'face' ? 'Full body' : 'Face close-up', focusBg: S.focus === 'face' ? on : off, focusFg: S.focus === 'face' ? off : on,
+      toggleFocus: () => { const f = S.focus === 'face' ? 'full' : 'face'; this.setState({ focus: f }); ws && ws.setFocus(f); },
+      talkBg: S.talk ? on : off, talkFg: S.talk ? off : on, toggleTalk: () => { this.setState({ talk: !S.talk }); ws && ws.setTalking(!S.talk); },
+      spinBg: S.spin ? on : off, spinFg: S.spin ? off : on, toggleSpin: () => { this.setState({ spin: !S.spin }); ws && ws.setSpin(!S.spin); },
+      hop: () => ws && ws.hop(),
+      presetList: Object.entries(PRESETS).map(([k, p]) => ({ label: p.label, pick: () => { if (!mod) return; const look = k === 'current' ? mod.loadLook() : { ...mod.DEFAULT_LOOK, ...p.look }; this.setState({ look, saved: false }); ws.setLook(look); } })),
+      sections: SECTIONS.map(sec => ({ title: sec.title,
+        colors: (sec.colors || []).map(([k, l]) => ({ label: l, value: look[k] || '#000000', onInput: e => this.set(k, e.target.value) })),
+        sliders: (sec.sliders || []).map(([k, l, min, max, step]) => { const v = look[k] ?? min; return { label: l, min, max, step, value: v, shown: step >= 1 ? (max === 1 && min === 0 ? (v ? 'On' : 'Off') : String(Math.round(v))) : Number(v).toFixed(2), onInput: e => this.set(k, parseFloat(e.target.value)) }; }) })),
+      saveLabel: S.saved ? 'Saved — reload the square or arena to see it' : 'Use this look in the square and arena',
+      save: () => { ws && ws.save(S.look); this.setState({ saved: true }); },
+      copyLabel: S.copied ? 'Copied' : 'Copy settings for chat',
+      copy: () => { const txt = JSON.stringify(S.look); (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).catch(() => { const t = document.createElement('textarea'); t.value = txt; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); }); this.setState({ copied: true }); setTimeout(() => this.setState({ copied: false }), 1600); },
+      reset: () => { if (!mod) return; const look = { ...mod.DEFAULT_LOOK }; this.setState({ look, saved: false }); ws.setLook(look); },
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"><title>The Gaya Open</title></head>
+<body>
+<script type="module">
+import { shell, THREE, rr, clamp, damp } from './shell.js';
+const G = await shell({ title: 'The Gaya Open', world: 'GAYA', bestKey: 'tennis', sky: ['#5a8ae0', '#ffe1c8'], fog: 0.006,
+  intro: 'First to seven points against the house champion. Run to the ball and press SWING as it comes to you; the timing sets the pace, your thumb sets the angle. Aim for the lines.',
+  how: ['W/A/S/D run · Space swing (hold a direction to aim)', 'Thumb to run and aim · SWING'],
+  buttons: [{ id: 'swing', label: 'SWING', keys: ['Space', 'KeyJ'], hot: true }],
+  keysHelp: ['<b>WASD</b> run', '<b>Space</b> swing', 'aim with A/D while swinging'], stats: ['YOU', 'CHAMP', 'RALLY'] });
+const { scene, camera, M, BOX, toon, glowing, glow, input, popup, msg, audio } = G;
+const CW = 8.23 / 2, CL = 23.77 / 2, GRAV = 13;
+// ---------------------------------------------------------------- the stadium
+const court = G.canvasTex(256, 512, c => { c.fillStyle = '#3b6fb0'; c.fillRect(0, 0, 256, 512); c.strokeStyle = '#fff'; c.lineWidth = 4; const L = (x0, y0, x1, y1) => { c.beginPath(); c.moveTo(x0, y0); c.lineTo(x1, y1); c.stroke(); }; L(28, 20, 228, 20); L(28, 492, 228, 492); L(28, 20, 28, 492); L(228, 20, 228, 492); L(28, 148, 228, 148); L(28, 364, 228, 364); L(128, 148, 128, 364); });
+const cm = new THREE.Mesh(new THREE.PlaneGeometry(CW * 2 * 1.28, CL * 2 * 1.08), new THREE.MeshToonMaterial({ map: court, gradientMap: G.grad })); cm.rotation.x = -Math.PI / 2; cm.position.y = 0.01; cm.receiveShadow = true; scene.add(cm);
+const apron = new THREE.Mesh(new THREE.PlaneGeometry(40, 50), toon('#4a8a46')); apron.rotation.x = -Math.PI / 2; apron.receiveShadow = true; scene.add(apron);
+const out = new THREE.Mesh(new THREE.PlaneGeometry(600, 600), toon('#5a7a4a')); out.rotation.x = -Math.PI / 2; out.position.y = -0.02; scene.add(out);
+M(BOX(CW * 2 + 1.8, 0.92, 0.05), new THREE.MeshToonMaterial({ color: '#f2f0ea', gradientMap: G.grad, transparent: true, opacity: 0.6 }), 0, 0.5, 0, null, 0); M(BOX(CW * 2 + 1.8, 0.08, 0.08), toon('#ffffff'), 0, 0.96, 0, null, 0); for (const s of [-1, 1]) M(new THREE.CylinderGeometry(0.05, 0.05, 1.07, 8), toon('#1b1830'), s * (CW + 0.9), 0.53, 0, null, 0);
+{ const g = new THREE.Group(); g.position.set(CW + 3, 0, 0); scene.add(g); M(BOX(1, 0.1, 1), toon('#2f6e4a'), 0, 2.2, 0, g, 0.02); for (const [x, z] of [[-.4, -.4], [.4, -.4], [-.4, .4], [.4, .4]]) M(BOX(0.08, 2.2, 0.08), toon('#2f6e4a'), x, 1.1, z, g, 0); const ump = G.makeFox({ torso: ['#f2f0ea', '#5b4386', '#1b1830'], crest: 'G', mood: 'neutral', look: G.PLAYER_MALE, outfit: 'suit' }); scene.remove(ump); g.add(ump); ump.position.y = 2.25; ump.rotation.y = -Math.PI / 2; ump.scale.setScalar(0.85); }
+const crowds = [];
+function stand(x, z, ry, w, rows = 9) { const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = ry; scene.add(g); for (let r = 0; r < rows; r++) M(BOX(w, 0.6, 1.1), toon(r % 2 ? '#8a94a8' : '#a8b2c4'), 0, 0.3 + r * 0.6, -r * 1.1, g, 0.02); const cols = ['#c42d3c', '#5b4386', '#e8cf4a', '#3f8a46', '#f2f0ea', '#58d8ff'].map(c => new THREE.Color(c)); const per = Math.floor(w / 0.85), im = new THREE.InstancedMesh(new THREE.CapsuleGeometry(0.22, 0.4, 3, 6), toon('#ffffff'), per * rows); const m4 = new THREE.Matrix4(); let k = 0; for (let r = 0; r < rows; r++) for (let i = 0; i < per; i++) { m4.makeTranslation(-w / 2 + 0.4 + i * 0.85, 1.0 + r * 0.6, -r * 1.1); im.setMatrixAt(k, m4); im.setColorAt(k, cols[(k * 5 + r) % cols.length]); k++; } g.add(im); crowds.push(im); }
+stand(-CW - 7, 0, Math.PI / 2, 34); stand(CW + 8, 0, -Math.PI / 2, 34); stand(0, -CL - 7, 0, 22, 7);
+{ const g = new THREE.Group(); g.position.set(0, 0, -CL - 6.5); scene.add(g); M(BOX(10, 4, 3), toon('#5b4386'), 0, 2, -1, g, 0.04); M(BOX(10.4, 0.3, 3.4), toon('#e6b45a'), 0, 4.1, -1, g, 0.02); const t = G.signTex('THE GAYA OPEN', null, '#e6b45a'); M(BOX(8, 1.6, 0.2), [toon('#1b1830'), toon('#1b1830'), toon('#1b1830'), toon('#1b1830'), new THREE.MeshBasicMaterial({ map: t }), toon('#1b1830')], 0, 5.4, 0.5, g, 0.02); }
+for (let i = 0; i < 18; i++) { const a = i / 18 * Math.PI * 2; const g = new THREE.Group(); g.position.set(Math.cos(a) * 38, 0, Math.sin(a) * 42); scene.add(g); M(new THREE.ConeGeometry(2.2, 6, 7), toon('#2f6e4a'), 0, 4, 0, g, 0.04); M(new THREE.ConeGeometry(1.5, 4, 7), toon('#3a7f52'), 0, 6.5, 0, g, 0.04); }
+// ---------------------------------------------------------------- players and ball
+function player(col, crest) { const f = G.makeFox({ torso: col, crest, mood: 'determined', look: G.PLAYER_MALE, outfit: 'vest' }); const arm = f.userData.P.arms[1]; const rk = new THREE.Group(); rk.position.set(0, -0.5, 0.1); arm.add(rk); M(new THREE.CylinderGeometry(0.03, 0.03, 0.5, 6), toon('#1b1830'), 0, -0.25, 0, rk, 0); const head = M(new THREE.TorusGeometry(0.22, 0.035, 6, 20), toon('#e6b45a'), 0, -0.68, 0, rk, 0.01); M(new THREE.CircleGeometry(0.2, 16), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.35, side: THREE.DoubleSide }), 0, -0.68, 0, rk, 0); return f; }
+const me = player(['#ffffff', '#e7edf4', '#6b7d93'], '8'), cpu = player(['#5b4386', '#3a2a5a', '#1b1830'], 'G');
+const ball = M(new THREE.SphereGeometry(0.12, 12, 10), glowing('#d8ff3a', 0.6), 0, 1, 0, null, 0.02, 0.12); const shadow = new THREE.Mesh(new THREE.CircleGeometry(0.14, 12), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.35 })); shadow.rotation.x = -Math.PI / 2; scene.add(shadow);
+const trail = Array.from({ length: 8 }, () => { const m = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 6), new THREE.MeshBasicMaterial({ color: 0xf2ff9a, transparent: true, opacity: 0.4 })); scene.add(m); return m; });
+// ---------------------------------------------------------------- state
+const S = {}, B = { p: new THREE.Vector3(), v: new THREE.Vector3(), live: false, bounces: 0, side: 0, last: null };
+function reset() { Object.assign(S, { me: 0, cpu: 0, rally: 0, serve: 'me', px: 0.5, pz: CL + 0.6, cx: 0, cz: -CL - 0.6, swing: 0, cswing: 0, wait: 1, over: false }); }
+reset();
+function serveReady() { B.live = false; S.wait = 1.0; if (S.serve === 'me') { S.px = 1.2; S.pz = CL + 0.6; } else { S.cx = -1.2; S.cz = -CL - 0.6; } }
+G.onStart(() => { reset(); serveReady(); msg('You serve. Press SWING.', 2); });
+function launch(from, to, T) { B.p.copy(from); B.v.set((to.x - from.x) / T, (0 - from.y + 0.5 * GRAV * T * T) / T, (to.z - from.z) / T); B.live = true; B.bounces = 0; }
+function hitBy(who, quality) { const fromMe = who === 'me'; const aim = fromMe ? clamp(input.x * 3.4 + rr(-0.6, 0.6), -CW + 0.3, CW - 0.3) : clamp(rr(-CW + 0.6, CW - 0.6) + (S.px > 0 ? -1 : 1) * 1.2, -CW + 0.4, CW - 0.4);
+  const depth = fromMe ? -rr(6.5, CL - 1) : rr(6.5, CL - 1.5); const T = (fromMe ? 1.25 - quality * 0.45 : rr(0.95, 1.25)); const err = fromMe ? (1 - quality) * rr(-1.2, 1.2) : 0;
+  launch(new THREE.Vector3(B.p.x, Math.max(0.9, B.p.y), B.p.z), new THREE.Vector3(aim + err, 0, depth + err), T); B.last = who; S.rally++; audio.tone(fromMe ? 600 : 500, 0.05, 0.05, 'square', 0.6); if (quality > 0.85 && fromMe) popup('PERFECT!', '#ffd23a'); }
+function point(winner, why) { if (!B.live && why !== 'ace') return; B.live = false; S[winner]++; popup((winner === 'me' ? 'POINT! ' : 'CHAMP · ') + why, winner === 'me' ? '#ffd23a' : '#ff8a7a'); if (winner === 'me') cheer = 1.5; S.rally = 0; audio.tone(winner === 'me' ? 880 : 220, 0.2, 0.05, 'triangle', 1.6);
+  if (S.me >= 7 || S.cpu >= 7) { S.over = true; setTimeout(() => G.end({ score: S.me, unit: '— ' + S.cpu, lines: [S.me > S.cpu ? 'You won the Gaya Open!' : 'The champion holds the cup… this year.'], credits: S.me > S.cpu ? 40 : S.me * 3 }), 1200); return; }
+  S.serve = (S.me + S.cpu) % 4 < 2 ? 'me' : 'cpu'; setTimeout(serveReady, 900); }
+let cheer = 0;
+G.onFrame((dt, t, running) => {
+  if (running && !S.over) {
+    // you run
+    const sp = 6.2; S.px = clamp(S.px + input.x * sp * dt, -CW - 2.5, CW + 2.5); S.pz = clamp(S.pz - input.y * sp * dt, 1.2, CL + 3.5);
+    // serving
+    if (!B.live) { S.wait -= dt; if (S.serve === 'me') { B.p.set(S.px + 0.3, 2.3 + Math.sin(t * 4) * 0.2, S.pz - 0.3); if (input.pressed('swing') && S.wait <= 0) { S.swing = 0.3; hitBy('me', 0.75); } } else { B.p.set(S.cx - 0.3, 2.3, S.cz + 0.3); if (S.wait <= 0) { S.cswing = 0.3; hitBy('cpu', 0.8); } } }
+    else {
+      B.v.y -= GRAV * dt; B.p.addScaledVector(B.v, dt);
+      // the net
+      if (Math.sign(B.p.z) !== Math.sign(B.p.z - B.v.z * dt) && B.p.y < 1.0) { point(B.last === 'me' ? 'cpu' : 'me', 'into the net'); }
+      if (B.p.y <= 0.12 && B.v.y < 0) { B.p.y = 0.12; B.v.y *= -0.72; B.v.x *= 0.85; B.v.z *= 0.85; B.bounces++; audio.tone(180, 0.03, 0.04, 'sine', 0.5);
+        const side = B.p.z > 0 ? 'me' : 'cpu'; if (B.bounces === 1) { const inside = Math.abs(B.p.x) <= CW + 0.05 && Math.abs(B.p.z) <= CL + 0.05 && side !== B.last; if (!inside) point(B.last === 'me' ? 'cpu' : 'me', 'out'); } else if (B.bounces >= 2) point(side === 'me' ? 'cpu' : 'me', side === 'me' ? 'two bounces' : 'winner!'); }
+      // your swing: press as it reaches you
+      const dme = Math.hypot(B.p.x - S.px, B.p.z - S.pz); if (input.pressed('swing')) { S.swing = 0.3; if (B.last === 'cpu' && dme < 2.2 && B.p.y < 2.6 && B.bounces <= 1) { const q = clamp(1 - Math.abs(B.p.y - 1.0) / 1.6 - dme * 0.12, 0.2, 1); hitBy('me', q); } }
+      // the champion
+      if (B.last === 'me') { const tx = B.p.x + B.v.x * 0.6; S.cx = damp(S.cx, clamp(tx, -CW - 1.5, CW + 1.5), 3.2, dt); S.cz = damp(S.cz, -CL + 0.5, 2, dt); const dc = Math.hypot(B.p.x - S.cx, B.p.z - S.cz); if (B.p.z < -2 && dc < 1.8 && B.p.y < 2.4 && B.bounces <= 1) { const fast = Math.hypot(B.v.x, B.v.z) > 22; if (fast && Math.random() < 0.35) { /* misses */ } else { S.cswing = 0.3; hitBy('cpu', 0.8); } } }
+      else S.cx = damp(S.cx, 0, 1, dt);
+      if (Math.abs(B.p.z) > CL + 9 || Math.abs(B.p.x) > CW + 12) point(B.p.z > 0 ? 'cpu' : 'me', B.p.z > 0 ? 'past you' : 'winner!');
+    }
+    S.swing = Math.max(0, S.swing - dt); S.cswing = Math.max(0, S.cswing - dt);
+  }
+  // pose
+  me.position.set(S.px, 0, S.pz); me.rotation.y = Math.PI; cpu.position.set(S.cx, 0, S.cz); cpu.rotation.y = 0;
+  G.animFox(me, dt, Math.abs(input.x) + Math.abs(input.y) > 0.1 ? 4 : 0); G.animFox(cpu, dt, 2);
+  me.userData.P.arms[1].rotation.x = S.swing > 0 ? -2.4 + (0.3 - S.swing) * 10 : -0.4; me.userData.P.arms[1].rotation.z = 0.6;
+  cpu.userData.P.arms[1].rotation.x = S.cswing > 0 ? -2.4 + (0.3 - S.cswing) * 10 : -0.4; cpu.userData.P.arms[1].rotation.z = 0.6;
+  ball.position.copy(B.p); shadow.position.set(B.p.x, 0.02, B.p.z); trail.forEach((m, i) => { m.position.copy(B.p).addScaledVector(B.v, -0.02 * (i + 1)); m.visible = B.live; });
+  if (cheer > 0) { cheer -= dt; crowds.forEach(im => im.position.y = Math.abs(Math.sin(t * 15)) * 0.25 * cheer); }
+  const port = innerWidth < innerHeight; camera.position.lerp(new THREE.Vector3(S.px * 0.4, port ? 9.5 : 6.5, CL + (port ? 14 : 10)), Math.min(1, dt * 3)); camera.lookAt(S.px * 0.2, 0, -2);
+  G.hud.set(S.me, S.cpu, S.rally);
+});
+</script>
+</body></html>

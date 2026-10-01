@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#f3f2f2}a{color:var(--color-accent-700)}a:hover{color:var(--color-accent)}button:focus-visible,input:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}input[type=range]{accent-color:#ec3013}</style>
+</helmet>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 380px;height:100vh;background:var(--color-bg);font-family:var(--font-body);color:var(--color-text)">
+  <div style="position:relative;min-width:0;border-right:2px solid var(--color-text);display:flex;flex-direction:column">
+    <div style="display:flex;align-items:stretch;border-bottom:2px solid var(--color-text)">
+      <div style="padding:14px 18px;display:flex;flex-direction:column;gap:2px;border-right:2px solid var(--color-text)">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700)">Planet Gaya</div>
+        <div style="font-family:var(--font-heading);font-size:22px;font-weight:800;line-height:1">Combat Workshop</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));flex:1;min-width:0">
+        <div style="padding:10px 14px;border-right:2px solid var(--color-text);display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;white-space:nowrap">Energy</span><span style="font:800 22px var(--font-heading);font-variant-numeric:tabular-nums">{{ hud.en }}</span></div>
+        <div style="padding:10px 14px;border-right:2px solid var(--color-text);display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;white-space:nowrap">Combo</span><span style="font:800 22px var(--font-heading);font-variant-numeric:tabular-nums">{{ comboLabel }}</span></div>
+        <div style="padding:10px 14px;border-right:2px solid var(--color-text);display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;white-space:nowrap">DPS</span><span style="font:800 22px var(--font-heading);font-variant-numeric:tabular-nums">{{ hud.dps }}</span></div>
+        <div style="padding:10px 14px;display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;white-space:nowrap">Best · Hits</span><span style="font:800 22px var(--font-heading);font-variant-numeric:tabular-nums">{{ hud.best }} · {{ hud.hits }}</span></div>
+      </div>
+    </div>
+    <div ref="{{ stageRef }}" style="position:relative;flex:1;min-height:0"></div>
+    <div style="position:absolute;left:16px;top:92px;display:flex;flex-wrap:wrap;max-width:360px;pointer-events:none;font-size:12px">
+      <sc-for list="{{ keysList }}" as="k" hint-placeholder-count="8">
+        <div style="background:var(--color-bg);border:2px solid var(--color-text);margin:0 -2px -2px 0;padding:5px 9px;white-space:nowrap"><b>{{ k.key }}</b> {{ k.label }}</div>
+      </sc-for>
+    </div>
+    <div style="position:absolute;left:16px;right:16px;bottom:16px;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end">
+      <div style="display:flex;flex-wrap:wrap">
+        <span style="height:34px;display:flex;align-items:center;padding:0 10px;margin:0 -2px -2px 0;border:2px solid var(--color-text);background:var(--color-accent);color:var(--color-bg);font:800 12px var(--font-heading)">Play</span>
+        <sc-for list="{{ demoList }}" as="m" hint-placeholder-count="5">
+          <button onClick="{{ m.pick }}" style="height:34px;padding:0 12px;margin:0 -2px -2px 0;border:2px solid var(--color-text);border-radius:0;background:var(--color-bg);color:var(--color-text);font:700 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-neutral-200)">{{ m.label }}</button>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-wrap:wrap">
+        <sc-for list="{{ toggleList }}" as="m" hint-placeholder-count="4">
+          <button onClick="{{ m.pick }}" style="height:34px;padding:0 12px;margin:0 -2px -2px 0;border:2px solid var(--color-text);border-radius:0;background:{{ m.bg }};color:{{ m.fg }};font:700 12px var(--font-body);cursor:pointer">{{ m.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;min-height:0">
+    <div style="padding:14px 18px;border-bottom:2px solid var(--color-text);display:flex;flex-direction:column;gap:10px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700)">Feel preset</div>
+      <div style="display:flex;flex-wrap:wrap">
+        <sc-for list="{{ presetList }}" as="p" hint-placeholder-count="5">
+          <button onClick="{{ p.pick }}" style="height:32px;padding:0 10px;margin:0 -2px -2px 0;border:2px solid var(--color-text);border-radius:0;background:var(--color-bg);color:var(--color-text);font:700 12px var(--font-body);cursor:pointer" style-hover="background:var(--color-neutral-200)">{{ p.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="flex:1;min-height:0;overflow-y:auto">
+      <sc-for list="{{ sections }}" as="sec" hint-placeholder-count="5">
+        <div style="border-bottom:2px solid var(--color-text);padding:14px 18px 16px;display:flex;flex-direction:column;gap:10px">
+          <div style="font-family:var(--font-heading);font-size:16px;font-weight:800">{{ sec.title }}</div>
+          <sc-for list="{{ sec.sliders }}" as="c">
+            <div style="display:grid;grid-template-columns:120px minmax(0,1fr) 44px;align-items:center;gap:10px">
+              <span style="font-size:12px;font-weight:700">{{ c.label }}</span>
+              <input type="range" min="{{ c.min }}" max="{{ c.max }}" step="{{ c.step }}" value="{{ c.value }}" onInput="{{ c.onInput }}" style="width:100%">
+              <span style="font-size:12px;text-align:right;font-variant-numeric:tabular-nums">{{ c.shown }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+    </div>
+    <div style="border-top:2px solid var(--color-text);display:grid;grid-template-columns:1fr 1fr">
+      <button onClick="{{ save }}" style="grid-column:1 / span 2;display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:var(--color-accent);color:var(--color-bg);border:0;border-bottom:2px solid var(--color-text);border-radius:0;font:800 16px var(--font-heading);text-align:left;cursor:pointer" style-hover="background:var(--color-accent-600)"><span>{{ saveLabel }}</span><span>→</span></button>
+      <button onClick="{{ copy }}" style="padding:12px 18px;background:var(--color-bg);color:var(--color-text);border:0;border-right:2px solid var(--color-text);border-radius:0;font:700 13px var(--font-body);text-align:left;cursor:pointer" style-hover="background:var(--color-neutral-200)">{{ copyLabel }}</button>
+      <button onClick="{{ reset }}" style="padding:12px 18px;background:var(--color-bg);color:var(--color-text);border:0;border-radius:0;font:700 13px var(--font-body);text-align:left;cursor:pointer" style-hover="background:var(--color-neutral-200)">Reset to default</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const SECTIONS = [
+  { title: 'Movement', sliders: [['walk', 'Walk speed', 2, 12, 0.1], ['run', 'Run speed', 4, 16, 0.1], ['accel', 'Acceleration', 4, 40, 0.5], ['turn', 'Turn speed', 4, 30, 0.5], ['jump', 'Jump height', 4, 14, 0.1], ['gravity', 'Gravity', 10, 50, 0.5]] },
+  { title: 'Dodge roll', sliders: [['dodgeDist', 'Distance', 1.5, 8, 0.1], ['dodgeDur', 'Duration', 0.1, 0.5, 0.01], ['dodgeCd', 'Cooldown', 0, 1.5, 0.05]] },
+  { title: 'Sword', sliders: [['windup', 'Wind-up', 0, 0.4, 0.01], ['swingTime', 'Swing time', 0.1, 0.6, 0.01], ['reach', 'Reach', 1.2, 4.5, 0.1], ['arc', 'Arc width', 0.5, 3, 0.05], ['lunge', 'Lunge distance', 0, 6, 0.1], ['comboWindow', 'Combo window', 0.2, 1.5, 0.05], ['swordDmg', 'Damage', 5, 60, 1], ['finisher', 'Third hit ×', 1, 3, 0.05], ['hitStop', 'Hit freeze', 0, 0.2, 0.01], ['trail', 'Slash trail', 0, 1, 1]] },
+  { title: 'Laser pistol', sliders: [['fireRate', 'Shots / second', 1, 15, 0.5], ['boltSpeed', 'Bolt speed', 15, 120, 1], ['homing', 'Homing', 0, 20, 0.5], ['energyCost', 'Energy / shot', 0, 25, 1], ['energyRegen', 'Energy regen', 0, 60, 1], ['recoil', 'Recoil', 0, 2, 0.05], ['laserDmg', 'Damage', 2, 40, 1]] },
+  { title: 'Camera and feel', sliders: [['camDist', 'Distance', 3, 16, 0.1], ['camPitch', 'Height angle', 0.05, 1.2, 0.01], ['camFollow', 'Follow tightness', 2, 20, 0.5], ['fov', 'Field of view', 40, 80, 1], ['shake', 'Screen shake', 0, 1, 0.05]] },
+];
+const PRESETS = {
+  def: { label: 'Default' },
+  snappy: { label: 'Snappy', t: { accel: 32, turn: 24, windup: 0.08, swingTime: 0.18, comboWindow: 0.55, dodgeDur: 0.18, dodgeDist: 3.6, dodgeCd: 0.3, hitStop: 0.05, fireRate: 9, camFollow: 14 } },
+  heavy: { label: 'Heavy', t: { walk: 5, run: 7.5, accel: 9, turn: 8, windup: 0.32, swingTime: 0.36, reach: 3.2, swordDmg: 45, finisher: 1.8, hitStop: 0.14, shake: 0.6, fireRate: 3.5, laserDmg: 28, recoil: 1.8, camFollow: 6 } },
+  arcade: { label: 'Arcade', t: { walk: 8, run: 12, accel: 26, jump: 11, gravity: 30, lunge: 5, arc: 2.2, homing: 16, energyCost: 2, energyRegen: 45, fireRate: 11, dodgeDist: 5.5 } },
+  souls: { label: 'Deliberate', t: { walk: 4.6, run: 7, accel: 10, windup: 0.26, swingTime: 0.3, lunge: 1.2, comboWindow: 0.45, dodgeDur: 0.32, dodgeDist: 4.5, dodgeCd: 0.7, homing: 3, energyCost: 12, energyRegen: 18 } },
+};
+class Component extends DCLogic {
+  state = { tune: null, hud: { en: 100, combo: 0, hits: 0, dps: 0, best: 0, slow: false, lock: true, moving: false }, saved: false, copied: false };
+  stageRef = React.createRef();
+  async componentDidMount() {
+    const mod = await import(new URL('move-lab.js', document.baseURI).href);
+    this.mod = mod; this.lab = await mod.createLab({ container: this.stageRef.current, onState: hud => this.setState({ hud }) });
+    this.setState({ tune: this.lab.getTune() });
+  }
+  componentWillUnmount() { this.lab && this.lab.destroy(); }
+  set(k, v) { const tune = { ...this.state.tune, [k]: v }; this.setState({ tune, saved: false }); this.lab && this.lab.setTune({ [k]: v }); }
+  renderVals() {
+    const S = this.state, t = S.tune || {}, h = S.hud, lab = this.lab, mod = this.mod, on = 'var(--color-text)', off = 'var(--color-bg)';
+    const blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    return {
+      stageRef: this.stageRef, hud: h, comboLabel: h.combo ? h.combo + ' / 3' : '—',
+      keysList: [['WASD', 'move'], ['E', 'run'], ['Click / J', 'slash'], ['Right-click / K', 'fire'], ['Shift', 'dodge'], ['Space', 'jump'], ['Tab', 'target'], ['Arrows / mid-drag', 'camera'], ['R', 'reset']].map(([key, label]) => ({ key, label })),
+      demoList: [['slash', 'Slash'], ['combo', '3-hit combo'], ['fire', 'Fire burst'], ['dodge', 'Dodge'], ['jump', 'Jump']].map(([k, l]) => ({ label: l, pick: e => { blur(e); lab && lab.demo(k); } })),
+      toggleList: [
+        { label: 'Slow motion 25%', v: h.slow, f: v => lab.setSlow(v) }, { label: 'Lock-on', v: h.lock, f: v => lab.setLock(v) },
+        { label: 'Moving target', v: h.moving, f: v => lab.setMoving(v) },
+      ].map(o => ({ label: o.label, bg: o.v ? on : off, fg: o.v ? off : on, pick: e => { blur(e); lab && o.f(!o.v); } })).concat([{ label: 'Reset dummies', bg: off, fg: on, pick: e => { blur(e); lab && lab.resetDummies(); } }]),
+      presetList: Object.entries(PRESETS).map(([k, p]) => ({ label: p.label, pick: e => { blur(e); if (!mod) return; const tune = { ...mod.DEFAULT_TUNE, ...(p.t || {}) }; this.setState({ tune, saved: false }); lab.setTune(tune); } })),
+      sections: SECTIONS.map(sec => ({ title: sec.title, sliders: sec.sliders.map(([k, l, min, max, step]) => { const v = t[k] ?? min; return { label: l, min, max, step, value: v, shown: (max === 1 && min === 0 && step === 1) ? (v ? 'On' : 'Off') : step >= 1 ? String(Math.round(v)) : Number(v).toFixed(step < 0.1 ? 2 : 1), onInput: e => this.set(k, parseFloat(e.target.value)) }; }) })),
+      saveLabel: S.saved ? 'Saved' : 'Save these settings',
+      save: e => { blur(e); lab && lab.save(S.tune); this.setState({ saved: true }); },
+      copyLabel: S.copied ? 'Copied' : 'Copy settings for chat',
+      copy: e => { blur(e); const txt = JSON.stringify(S.tune); (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).catch(() => { const a = document.createElement('textarea'); a.value = txt; document.body.appendChild(a); a.select(); document.execCommand('copy'); a.remove(); }); this.setState({ copied: true }); setTimeout(() => this.setState({ copied: false }), 1600); },
+      reset: e => { blur(e); if (!mod) return; const tune = { ...mod.DEFAULT_TUNE }; this.setState({ tune, saved: false }); lab.setTune(tune); },
+    };
+  }
+}
+</script>
+</body>
+</html>

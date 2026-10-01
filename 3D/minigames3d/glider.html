@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"><title>Nebo Glider</title></head>
+<body>
+<script type="module">
+import { shell, THREE, rr, clamp, damp, fbm } from './shell.js';
+const G = await shell({ title: 'Nebo Glider', world: 'NEBO', bestKey: 'glider', sky: ['#6aa8e8', '#ffe6c8'], fog: 0.0028,
+  intro: 'Jump off the giant tree and glide over the forest. Fly through the lantern rings, ride the glowing thermals to climb, and land on the meadow pad. Dive for speed; lift the nose to slow down.',
+  how: ['A/D bank · W/S nose down / up · Space dive', 'Thumb banks and pitches · DIVE'],
+  buttons: [{ id: 'dive', label: 'DIVE', keys: ['Space'], hot: true }],
+  keysHelp: ['<b>A/D</b> bank', '<b>W/S</b> nose down / up', '<b>Space</b> dive'], stats: ['SCORE', 'RINGS', 'HEIGHT'] });
+const { scene, camera, M, BOX, toon, glowing, glow, input, popup, msg, audio } = G;
+// ---------------------------------------------------------------- the forest
+const T = 600, N = 160, tg = new THREE.PlaneGeometry(T, T, N, N); tg.rotateX(-Math.PI / 2);
+const hAt = (x, z) => fbm(x * 0.006 + 3, z * 0.006) * 46 - 14 + Math.max(0, Math.hypot(x - 0, z + 300) < 40 ? 0 : 0);
+{ const p = tg.attributes.position, col = new Float32Array(p.count * 3), c = new THREE.Color(); for (let i = 0; i < p.count; i++) { const x = p.getX(i), z = p.getZ(i), h = hAt(x, z); p.setY(i, h); c.set('#4f8a3a').lerp(new THREE.Color('#3a6a2a'), fbm(x * 0.03, z * 0.03)).lerp(new THREE.Color('#8a8478'), clamp((h - 22) / 10, 0, 1)); col.set([c.r, c.g, c.b], i * 3); } tg.setAttribute('color', new THREE.BufferAttribute(col, 3)); tg.computeVertexNormals(); }
+scene.add(new THREE.Mesh(tg, new THREE.MeshToonMaterial({ vertexColors: true, gradientMap: G.grad })));
+{ const n = 2600, im = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(3.2, 0), toon('#ffffff'), n), tr = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.4, 0.6, 5, 5), toon('#5a3d2c'), n), m4 = new THREE.Matrix4(), cols = ['#3f8a46', '#2f7a3e', '#5a9a3a', '#4f9a4a', '#6aa848'].map(c => new THREE.Color(c)); for (let i = 0; i < n; i++) { const x = rr(-T / 2, T / 2), z = rr(-T / 2, T / 2), h = hAt(x, z), s = rr(0.8, 1.6); m4.compose(new THREE.Vector3(x, h + 6 * s, z), new THREE.Quaternion(), new THREE.Vector3(s, s * 1.2, s)); im.setMatrixAt(i, m4); im.setColorAt(i, cols[i % 5]); m4.compose(new THREE.Vector3(x, h + 2.5 * s, z), new THREE.Quaternion(), new THREE.Vector3(s, s, s)); tr.setMatrixAt(i, m4); } scene.add(im, tr); }
+// the giant tree we launch from
+const START = new THREE.Vector3(0, 0, 240); const sh = hAt(START.x, START.z);
+{ const g = new THREE.Group(); g.position.set(START.x, sh, START.z + 46); scene.add(g); M(new THREE.CylinderGeometry(6, 10, 80, 14), toon('#5a3d2c'), 0, 40, 0, g, 0.1); for (const [y, r] of [[62, 22], [74, 17], [84, 12]]) for (let i = 0; i < 5; i++) { const a = i / 5 * 6.28 + y; M(new THREE.IcosahedronGeometry(r * 0.55, 1), toon(['#3f8a46', '#4f9a4a', '#2f7a3e'][i % 3]), Math.cos(a) * r * 0.6, y, Math.sin(a) * r * 0.6, g, 0.08, r * 0.55); } M(BOX(6, 0.6, 30), toon('#8a6a46'), 0, 80, -24, g, 0.05); }
+// the landing pad in the meadow
+const PAD = new THREE.Vector3(30, 0, -220); PAD.y = hAt(PAD.x, PAD.z);
+{ const g = new THREE.Group(); g.position.copy(PAD); scene.add(g); M(new THREE.CylinderGeometry(9, 9, 0.6, 40), toon('#e9e1d2'), 0, 0.3, 0, g, 0); for (let i = 0; i < 3; i++) M(new THREE.TorusGeometry(8 - i * 2.6, 0.25, 6, 40), toon(['#c42d3c', '#f2f0ea', '#c42d3c'][i]), 0, 0.62, 0, g, 0).rotation.x = Math.PI / 2; glow(0, 6, 0, 0xffd23a, 22, g, 0.5); for (let i = 0; i < 6; i++) { const a = i / 6 * 6.28; M(new THREE.CylinderGeometry(0.1, 0.1, 6, 6), toon('#1b1830'), Math.cos(a) * 10, 3, Math.sin(a) * 10, g, 0); M(new THREE.ConeGeometry(0.6, 2, 3), toon('#c42d3c'), Math.cos(a) * 10 + 0.6, 5.5, Math.sin(a) * 10, g, 0).rotation.z = -Math.PI / 2; } }
+// rings: a course from the tree to the pad, and thermals that lift you
+const RINGS = []; for (let i = 0; i < 12; i++) { const t = (i + 1) / 13, x = Math.sin(t * 7) * 70 + (PAD.x * t), z = START.z + (PAD.z - START.z) * t, y = 78 - t * 40 + Math.sin(t * 9) * 8; const g = new THREE.Group(); g.position.set(x, y + sh * 0.2, z); scene.add(g); const r = M(new THREE.TorusGeometry(5, 0.45, 10, 32), glowing('#ffb85a', 1.4), 0, 0, 0, g, 0.06, 5.5); g.lookAt(x + Math.cos(t * 7) * 6, y, z - 20); for (let k = 0; k < 6; k++) { const a = k / 6 * 6.28; M(new THREE.SphereGeometry(0.4, 8, 6), glowing('#ff8a3a', 2), Math.cos(a) * 5, Math.sin(a) * 5, 0, g, 0); } RINGS.push({ g, got: false }); }
+const THERM = []; for (let i = 0; i < 6; i++) { const x = rr(-110, 110), z = rr(-160, 180), h = hAt(x, z); const m = new THREE.Mesh(new THREE.CylinderGeometry(8, 10, 120, 20, 1, true), new THREE.MeshBasicMaterial({ color: 0xbff4ff, transparent: true, opacity: 0.12, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide })); m.position.set(x, h + 60, z); scene.add(m); THERM.push({ x, z, m }); }
+// motes rising in thermals
+const MN = 240, mg = new THREE.BufferGeometry(), ma = new Float32Array(MN * 3), ms = []; for (let i = 0; i < MN; i++) ms.push([i % 6, rr(0, 6.28), rr(0, 8), rr(0, 120)]); mg.setAttribute('position', new THREE.BufferAttribute(ma, 3)); scene.add(new THREE.Points(mg, new THREE.PointsMaterial({ color: 0xfff6d8, size: 0.5, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false })));
+// ---------------------------------------------------------------- the glider and pilot
+const gl = new THREE.Group(); scene.add(gl);
+{ const w = new THREE.Shape(); w.moveTo(0, 2.4); w.lineTo(6, -1.4); w.lineTo(0, -0.4); w.lineTo(-6, -1.4); w.closePath(); const wing = new THREE.Mesh(new THREE.ShapeGeometry(w), new THREE.MeshToonMaterial({ color: '#c42d3c', gradientMap: G.grad, side: THREE.DoubleSide })); wing.rotation.x = -Math.PI / 2; wing.position.y = 2.2; gl.add(wing); const ol = new THREE.Mesh(new THREE.EdgesGeometry(wing.geometry), new THREE.LineBasicMaterial({ color: 0x1b1830 })); wing.add(ol);
+  const stripe = new THREE.Mesh(new THREE.ShapeGeometry(w), new THREE.MeshToonMaterial({ color: '#ffd23a', gradientMap: G.grad, side: THREE.DoubleSide })); stripe.scale.set(0.45, 0.45, 1); stripe.rotation.x = -Math.PI / 2; stripe.position.set(0, 2.22, 0.3); gl.add(stripe);
+  for (const s of [-1, 1]) M(new THREE.CylinderGeometry(0.04, 0.04, 2.4, 5), toon('#1b1830'), s * 0.7, 1.1, 0, gl, 0).rotation.z = s * 0.35; M(new THREE.CylinderGeometry(0.04, 0.04, 1.6, 5), toon('#1b1830'), 0, 0.15, 0, gl, 0).rotation.z = Math.PI / 2; }
+const pilot = G.makeFox({ torso: ['#3f8a46', '#2f6e4a', '#1b1830'], crest: '8', mood: 'excited', look: G.PLAYER_MALE, outfit: 'vest' }); scene.remove(pilot); gl.add(pilot); pilot.rotation.x = Math.PI / 2 - 0.3; pilot.position.set(0, 0.6, 0.7); pilot.scale.setScalar(0.85);
+// ---------------------------------------------------------------- state
+const S = {};
+function reset() { Object.assign(S, { p: new THREE.Vector3(START.x, sh + 82, START.z - 10), yaw: Math.PI, bank: 0, pitch: 0, v: 14, score: 0, rings: 0, done: false, t: 0 }); RINGS.forEach(r => { r.got = false; r.g.visible = true; }); }
+reset(); G.onStart(() => { reset(); msg('Off you go!', 1.6); audio.tone(300, 0.4, 0.05, 'sine', 1.5); });
+G.onFrame((dt, t, running) => {
+  if (running && !S.done) {
+    S.t += dt; S.bank = damp(S.bank, -input.x * 0.8, 3, dt); S.yaw += S.bank * dt * 0.9 * (S.v / 16);
+    const dive = input.held.dive; S.pitch = damp(S.pitch, clamp(-input.y * 0.45 + (dive ? -0.55 : 0), -0.7, 0.4), 2.5, dt);
+    S.v = clamp(S.v + (-Math.sin(S.pitch) * 14 - (S.v - 15) * 0.25) * dt, 8, 38);
+    let sink = 2.4 + Math.sin(-S.pitch) * S.v * 0.8 - (S.v - 12) * 0.05; for (const th of THERM) { const d = Math.hypot(S.p.x - th.x, S.p.z - th.z); if (d < 11) { sink -= 9 * (1 - d / 11); if (Math.random() < dt * 2) popup('THERMAL', '#bff4ff'); } }
+    S.p.x += Math.sin(S.yaw) * Math.cos(S.pitch) * S.v * dt; S.p.z += Math.cos(S.yaw) * Math.cos(S.pitch) * S.v * dt; S.p.y -= sink * dt;
+    for (const r of RINGS) if (!r.got && r.g.position.distanceTo(S.p) < 5.6) { r.got = true; r.g.visible = false; S.rings++; S.score += 200; popup('RING +200', '#ffb85a'); audio.tone(700 + S.rings * 40, 0.12, 0.05, 'triangle', 1.4); }
+    S.score += Math.round(S.v * dt * 0.5);
+    const ground = hAt(S.p.x, S.p.z) + 7;   // tree tops
+    const dPad = Math.hypot(S.p.x - PAD.x, S.p.z - PAD.z);
+    if (S.p.y < (dPad < 14 ? PAD.y + 1.6 : ground)) {
+      S.done = true; let lines = [];
+      if (dPad < 14) { const land = Math.round(600 * (1 - dPad / 14)) + (S.v < 18 ? 300 : 0); S.score += land; popup('LANDED! +' + land, '#ffd23a'); lines.push('Landing bonus +' + land); audio.tone(880, 0.3, 0.05, 'triangle', 1.6); }
+      else { popup('INTO THE TREES', '#ff8a7a'); audio.burst(0.4, 140, 0.4); lines.push('Into the canopy'); }
+      lines.unshift('Rings: ' + S.rings + ' / 12'); setTimeout(() => G.end({ score: S.score, lines, credits: Math.round(S.score / 60) }), 1200);
+    }
+  }
+  gl.position.copy(S.p); gl.rotation.set(0, S.yaw + Math.PI, 0); gl.rotateZ(S.bank); gl.rotateX(-S.pitch);
+  G.animFox(pilot, dt, 0, true);
+  THERM.forEach((th, i) => th.m.material.opacity = 0.1 + Math.sin(t * 2 + i) * 0.04);
+  for (let i = 0; i < MN; i++) { const m = ms[i], th = THERM[m[0]]; const y = (m[3] + t * 8) % 120; ma.set([th.x + Math.cos(m[1] + t) * m[2], hAt(th.x, th.z) + y, th.z + Math.sin(m[1] + t) * m[2]], i * 3); } mg.attributes.position.needsUpdate = true;
+  const back = innerWidth < innerHeight ? 22 : 16; camera.position.lerp(new THREE.Vector3(S.p.x - Math.sin(S.yaw) * back, S.p.y + 5, S.p.z - Math.cos(S.yaw) * back), Math.min(1, dt * 2.5)); camera.lookAt(S.p.x + Math.sin(S.yaw) * 10, S.p.y - 1, S.p.z + Math.cos(S.yaw) * 10);
+  G.hud.set(S.score, S.rings + '/12', Math.max(0, Math.round(S.p.y - hAt(S.p.x, S.p.z))) + 'm');
+});
+</script>
+</body></html>
