@@ -25,10 +25,11 @@ os.makedirs(OUT, exist_ok=True)
 MEDIA = json.load(open(os.path.join(REPO, 'media', 'map.json'))).get('map', {})
 
 WORLDS = ['gaya', 'jidda', 'kufa', 'luxor', 'nebo', 'ur', 'zion', 'player', 'earth', 'station']
-NAMES = {'gaya': 'Gaya', 'jidda': 'Jidda', 'kufa': 'Kufa', 'luxor': 'Luxor', 'nebo': 'Nebo', 'ur': 'Ur',
+NAMES = {'meru': 'Meru', 'gaya': 'Gaya', 'jidda': 'Jidda', 'kufa': 'Kufa', 'luxor': 'Luxor', 'nebo': 'Nebo', 'ur': 'Ur',
          'zion': 'Zion', 'player': 'Home', 'earth': 'Earth', 'station': 'Deep Space Fox'}
 # the space map's own tint for each planet, and a palette for the 3D look
 STYLE = {
+    'meru':    {'tint': '#b9bec7', 'ground': '#7d9a5e', 'path': '#9a9ec5', 'wall': '#d8d4e0', 'roof': '#2f3a6a', 'trim': '#e6b45a', 'accent': '#c42d3c', 'wild': '#5f8048', 'crest': 'M'},
     'gaya':    {'tint': '#a97bdd', 'ground': '#7d9a5e', 'path': '#cbb894', 'wall': '#e9e1d2', 'roof': '#6b4f8f', 'trim': '#c2963f', 'accent': '#a97bdd', 'wild': '#5f8048', 'crest': 'G'},
     'jidda':   {'tint': '#5ec97e', 'ground': '#d9c48e', 'path': '#c9a978', 'wall': '#efe6cf', 'roof': '#2f8fa8', 'trim': '#38bdf8', 'accent': '#5ec97e', 'wild': '#8fb36a', 'crest': 'J', 'water': '#2bb6c8'},
     'kufa':    {'tint': '#b08355', 'ground': '#d8b57a', 'path': '#c49a63', 'wall': '#e3c79a', 'roof': '#8a5a34', 'trim': '#d6a547', 'accent': '#b08355', 'wild': '#c9a36b', 'crest': 'K'},

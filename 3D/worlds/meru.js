@@ -1,6 +1,16 @@
 // MERU — world data. The engine reads this; rooms keep the 2D game's bracket names.
 import { smooth, fbm } from '../village-game.js';
 import { treeFromLinear } from '../engine/story.js';
+import * as CP from './meru-castlepath.js';
+import * as IN from './meru-interiors.js';
+import * as RU from './meru-ruins.js';
+import * as CV from './meru-caves.js';
+import * as LK from './meru-lake.js';
+import * as AP from './meru-arenapath.js';
+import * as SH from './meru-shops.js';
+import * as LN from './meru-lanes.js';
+import * as FT from './meru-fortune.js';
+import * as BG from './meru-burgers.js';
 
 // ---------- the map, in the 2D art's own pixels (2880 x 1620) ----------
 const MW = 80, S = MW / 2880, MH = 1620 * S;            // 80 m x 45 m
@@ -16,10 +26,10 @@ const BUILDINGS = [
   { key: 'armory', label: 'Armory', x0: 2100, x1: 2560, y0: 1190, y1: 1500, face: 'N', door: 2188 },
   { key: 'fortune', label: 'Fortune Teller', cx: 1120, cy: 1360, r: 140, face: 'N', door: 1121 },
 ];
-const ARENA_C = { x: 80, z: 0, r: 24 };
+const ARENA_C = { x: 118, z: 0, r: 24 };
 const EXITS = [
-  { label: 'Castle Path', ax: 1440, ay: 40 }, { label: 'South Gate', ax: 1440, ay: 1580 },
-  { label: 'Ruins Path', ax: 40, ay: 810 }, { label: 'Meru Arena', ax: 2840, ay: 810, go: 'Meru Arena.dc.html' },
+  { label: 'Castle Path', ax: 1440, ay: 40, open: true }, { label: 'Lake', ax: 1440, ay: 1580, open: true },
+  { label: 'Ruins Path', ax: 40, ay: 810, open: true }, { label: 'Meru Arena', ax: 4716, ay: 810, go: 'Meru Arena.dc.html' },
 ];
 const FOXES = [
   { key: 'hope', name: 'Hope', role: 'Best friend', outfit: 'dress', female: true, torso: ['#ffffff', '#e7edf4', '#6b7d93'], crest: '8', glasses: true, cane: true, path: [[1480, 2560], [1480, 390]], speed: 1.5 },
@@ -41,7 +51,7 @@ const DIALOGUE = {
 };
 
 // paved / built areas in art px — kept clear of trees
-const PAVED = [[330, 2550, 430, 1190], [430, 2550, 1190, 1470], [1290, 1590, -3000, 430], [1290, 1590, 1190, 5000], [-5000, 330, 660, 960], [2550, 8000, 660, 960]];
+const PAVED = [[2880, 4900, 270, 1350], [1234, 1638, -1940, 40], [560, 3440, -2880, -1880], [1134, 1758, -1930, -1540], [1638, 3440, -985, -680], [560, 3440, -1500, -1380], [880, 1160, -1300, -1020], [330, 2550, 430, 1190], [430, 2550, 1190, 1470], [1290, 1590, -3000, 430], [1290, 1590, 1190, 5000], [-5000, 330, 660, 960], [2550, 8000, 660, 960], [2520, 2880, 200, 660]];
 function inPaved(ax, ay, m = 0) {
   for (const [x0, x1, y0, y1] of PAVED) if (ax > x0 - m && ax < x1 + m && ay > y0 - m && ay < y1 + m) return true;
   for (const b of BUILDINGS) { if (b.r) { if (Math.hypot(ax - b.cx, ay - b.cy) < b.r + m) return true; } else if (ax > b.x0 - m && ax < b.x1 + m && ay > b.y0 - m && ay < b.y1 + m) return true; }
@@ -49,22 +59,26 @@ function inPaved(ax, ay, m = 0) {
 }
 const outsideDist = (X, Z) => Math.hypot(Math.max(0, Math.abs(X) - MW / 2), Math.max(0, Math.abs(Z) - MH / 2));
 function heightAt(X, Z) {
-  const d = outsideDist(X, Z); if (d <= 0) return 0;
+  const d = outsideDist(X, Z); if (d <= 0) return 0; if (X < -40 && RU.flatMask(X, Z) >= 1) return RU.dune(X, Z);
   let h = smooth(1, 26, d) * (2 + 14 * fbm(X * 0.03 + 4, Z * 0.03 + 9)) + smooth(30, 90, d) * 22 * fbm(X * 0.015 + 2, Z * 0.015);
   h *= smooth(4.6, 11, Math.min(Math.abs(X), Math.abs(Z)));
-  return h * smooth(ARENA_C.r + 2, ARENA_C.r + 14, Math.hypot(X - ARENA_C.x, Z - ARENA_C.z));
+  h *= (1 - CP.flatMask(X, Z)) * (1 - RU.flatMask(X, Z)) * (1 - LK.flatMask(X, Z)) * (1 - AP.flatMask(X, Z));
+  if (LK.flatMask(X, Z) >= 1) return LK.basin(X, Z);
+  return RU.dune(X, Z) + h * smooth(ARENA_C.r + 2, ARENA_C.r + 14, Math.hypot(X - ARENA_C.x, Z - ARENA_C.z));
 }
 
 // Zones of the one outdoor map (art px; the square is 0..2880 x 0..1620). First match wins.
 // Paths from the 2D game become zones here; the label follows the player.
 const ZONES = [
   { key: 'meruTown', label: 'Town Square', x0: 0, x1: 2880, y0: 0, y1: 1620 },
+  { key: 'meruThronePath', label: 'Castle Path', x0: 0, x1: 3500, y0: -99999, y1: 0 },
+  { key: 'meruDesert', label: 'Desert Ruins', x0: -99999, x1: -2880, y0: -99999, y1: 99999 },
   { key: 'meruArena', label: 'Arena Path', x0: 2880, x1: 99999, y0: -99999, y1: 99999 },
   { key: 'meruThronePath', label: 'Castle Path', x0: -99999, x1: 99999, y0: -99999, y1: 0 },
   { key: 'meruRuins', label: 'Ruins Path', x0: -99999, x1: 0, y0: -99999, y1: 99999 },
   { key: 'meruLake', label: 'Lake', x0: -99999, x1: 99999, y0: 1620, y1: 99999 },
 ];
-const INTERIORS = { tavern: { key: 'meruTavern', label: 'Tavern' }, casino: { key: 'meruCasino', label: 'Casino' } };
+const INTERIORS = { tavern: { key: 'meruTavern', label: 'Tavern' }, casino: { key: 'meruCasino', label: 'Casino' }, barracks: { key: 'meruBarracks', label: 'Barracks' }, throneroom: { key: 'meruThroneroom', label: 'Throne Room' }, cave: { key: 'meruRuinsInterior', label: 'Ruins' }, itemshop: { key: 'meruItemshop', label: 'Item Shop' }, armory: { key: 'meruArmory', label: 'Armory' }, bowling: { key: 'meruBowling', label: 'Meru Lanes' }, fortune: { key: 'meruFortune', label: 'Fortune Teller' }, burgers: { key: 'meruBurgers', label: 'Burgers' } };
 function zoneAt(ax, ay) { return ZONES.find(z => ax >= z.x0 && ax < z.x1 && ay >= z.y0 && ay < z.y1) || ZONES[0]; }
 
 // The 2D guide card for Meru, verbatim (surface_meru.html, THE GUIDE)
@@ -80,10 +94,11 @@ const QUEST = {
 };
 
 // Talk trees: each NPC's questions become a choice menu (no lines reworded)
+FOXES.push(...CP.FOXES, ...RU.FOXES, ...LK.FOXES, ...AP.FOXES); Object.assign(DIALOGUE, CP.DIALOGUE, IN.DIALOGUE, RU.DIALOGUE, CV.DIALOGUE, LK.DIALOGUE, SH.DIALOGUE);
 const TALK = Object.fromEntries(Object.entries(DIALOGUE).map(([k, v]) => [k, treeFromLinear(v)]));
 
 // The world's original minigames, extracted to minigames/meru/<key>.html
 const MINIGAMES = { slotFox: 'casino/slotFox.html', slot1: 'casino/slot1.html', slot3: 'casino/slot3.html', wheel: 'casino/wheel.html', poker5: 'casino/poker5.html', pokerTexas: 'casino/pokerTexas.html',
   darts: 'minigames/meru/darts.html', jukebox: 'minigames/meru/jukebox.html', tenpin: 'minigames/meru/tenpin.html', diner: 'minigames/meru/diner.html', duneglass: 'minigames/meru/duneglass.html', defender: 'minigames/meru/defender.html', diving: 'minigames/meru/diving.html', fishing: 'minigames/meru/fishing.html' };
 
-export { MW, S, MH, AX, AZ, SRC_Y, toArt, BUILDINGS, ARENA_C, EXITS, FOXES, DIALOGUE, PAVED, inPaved, outsideDist, heightAt, ZONES, INTERIORS, zoneAt, QUEST, TALK, MINIGAMES };
+export { CP, IN, RU, CV, LK, AP, SH, LN, FT, BG, MW, S, MH, AX, AZ, SRC_Y, toArt, BUILDINGS, ARENA_C, EXITS, FOXES, DIALOGUE, PAVED, inPaved, outsideDist, heightAt, ZONES, INTERIORS, zoneAt, QUEST, TALK, MINIGAMES };

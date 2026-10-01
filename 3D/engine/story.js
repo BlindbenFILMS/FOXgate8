@@ -5,7 +5,8 @@
 // unfinished one after it (so arriving out of order still reads right).
 //
 // CONVERSATION TREE: { start: 'root', nodes: { id: { lines: [{ who:'npc'|'player', text, mood }],
-//   choices: [{ text, go: 'nodeId', end: true, if: flagReq, set: 'flag' | ['a','b'], once: true }], next: 'nodeId' } } }
+//   choices: [{ text, go: 'nodeId', end: true, if: flagReq, set: 'flag' | ['a','b'], do: 'action', once: true }], next: 'nodeId' } } }
+// branch(lines, choices) builds the 2D game's 'lines + [{label, replies, set, do}]' talks.
 // A choice's text is said by the player as the first line of its branch.
 
 const list = v => v == null ? [] : Array.isArray(v) ? v : [v];
@@ -40,8 +41,8 @@ export function treeFromLinear(lines, { bye = 'Goodbye.' } = {}) {
 }
 
 export class Conversation {
-  constructor(tree, { test = () => false, set = () => {}, asked } = {}) {
-    this.tree = tree; this.test = test; this.set = set; this.asked = asked || new Set(); this.node = tree.nodes[tree.start || 'root']; this.ended = false;
+  constructor(tree, { test = () => false, set = () => {}, act = null, asked } = {}) {
+    this.tree = tree; this.test = test; this.set = set; this.act = act; this.asked = asked || new Set(); this.node = tree.nodes[tree.start || 'root']; this.ended = false;
   }
   // lines to play now (for the node just entered)
   lines() { return this.node ? this.node.lines || [] : []; }
@@ -55,9 +56,17 @@ export class Conversation {
   // returns the new lines (player's question first), or null when the choice ends the talk
   choose(i) {
     const c = (this.node.choices || [])[i]; if (!c) return null;
-    list(c.set).forEach(f => this.set(f));
+    list(c.set).forEach(f => this.set(f)); if (c.do && this.act) this.act(c.do);
     if (c.end) { this.ended = true; return null; }
     this.asked.add(c.go); this.node = this.tree.nodes[c.go];
     return [{ who: 'player', text: c.text }, ...this.lines()];
   }
+}
+
+// The 2D game's openCaveDialogue(npc, lines, onClose, [{ label, replies, action }]) as a tree.
+export function branch(lines, choices = []) {
+  const nodes = { root: { lines, choices: [] } };
+  choices.forEach((c, i) => { const id = 'b' + i; nodes[id] = { lines: (c.replies || []).map(t => ({ who: 'npc', text: t })) }; nodes.root.choices.push({ text: c.label, go: id, set: c.set, do: c.do }); });
+  if (!choices.length) delete nodes.root.choices;
+  return { start: 'root', nodes };
 }

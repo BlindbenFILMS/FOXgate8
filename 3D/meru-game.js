@@ -1,81 +1,47 @@
 import * as THREE from './vendor/three/three.module.js';
 import { rnd, rr, pick, clamp, smooth, lerp, damp, vnoise, fbm, paletteAt, makeGradient, glowTexture, dotTexture, Ambience } from './village-game.js';
-import { foxKit, PLAYER_MALE, PLAYER_FEMALE } from './fox-kit.js';
+import { foxKit, PLAYER_MALE, PLAYER_FEMALE, KING_MIGHT } from './fox-kit.js';
 import { canvasTex, FONT, emblemTex, crestTex, signTex, bannerTex, cobbleTex, plazaTex, asphaltTex } from './engine/textures.js';
-import { MW, S, MH, AX, AZ, SRC_Y, toArt, BUILDINGS, ARENA_C, EXITS, FOXES, DIALOGUE, PAVED, inPaved, outsideDist, heightAt, ZONES, INTERIORS, zoneAt, QUEST, TALK } from './worlds/meru.js';
+import { CP, IN, RU, CV, LK, AP, SH, LN, FT, BG, MW, S, MH, AX, AZ, SRC_Y, toArt, BUILDINGS, ARENA_C, EXITS, FOXES, DIALOGUE, PAVED, inPaved, outsideDist, heightAt, ZONES, INTERIORS, zoneAt, QUEST, TALK } from './worlds/meru.js';
 import { save } from './engine/save.js';
-import { Conversation, questBanner } from './engine/story.js';
+import { createWorldKit, phoneBudget } from './engine/meru-kit.js';
+import { createBuildingKit } from './engine/building-kit.js';
+import { Conversation, questBanner, branch, treeFromLinear } from './engine/story.js';
+import { createCombat } from './engine/combat.js';
 
 // ---------- main ----------
 export async function createGame({ container, minimap, options = {}, onState = () => {}, onNavigate = () => {}, onPlayGame = () => {} }) {
   const opts = { timeScale: 2, startHour: 19.5, outlines: true, quality: 'high', followCam: true, ...options };
   const WALK = await (await fetch(new URL('./meru-town-walk.json', import.meta.url))).json();
+  CP.setWalk(await (await fetch(new URL('./worlds/meru-castlepath-walk.json', import.meta.url))).json());
+  { const [a, b] = await Promise.all(['./worlds/meruruins-walk.json', './worlds/merudesert-walk.json'].map(async p => (await fetch(new URL(p, import.meta.url))).json())); RU.setWalk(a, b); { const lnD = await (await fetch(new URL('./worlds/meru-lanes-dialogue.json', import.meta.url))).json(); Object.assign(DIALOGUE, lnD); for (const k in lnD) TALK[k] = treeFromLinear(lnD[k]); } { const apD = await (await fetch(new URL('./worlds/meru-arenapath-dialogue.json', import.meta.url))).json(); AP.setDialogue(apD); Object.assign(DIALOGUE, apD); for (const k in apD) TALK[k] = treeFromLinear(apD[k]); } LK.setWater(await (await fetch(new URL('./worlds/merulake-water.json', import.meta.url))).json()); }
   const mapImg = new Image(); mapImg.src = new URL('./meru-town-map.png', import.meta.url).href;
   try { await document.fonts.load(`900 40px Archivo`); } catch (e) {}
 
+  const BOAT = { on: false };
   function walkableAt(X, Z) {
     const [ax, ay] = toArt(X, Z), sy = ay / SRC_Y;
+    if (ay > 1620 && LK.inZone(ax, ay)) return BOAT.on ? LK.boatable(ax, ay) : LK.walkable(ax, ay);
+    if (BOAT.on) return false;
+    if (ax < 0 && RU.inZone(ax, ay)) return RU.walkable(ax, ay);
+    if (ay < 0 && CP.inZone(ax, ay)) return CP.walkable(ax, ay);
+    if (AP.inZone(X, Z)) return X < 95;
     if (ax < 0 || ax > 2879 || sy < 0 || sy > 2879) return false;
     let lo = 0, hi = WALK.length - 1; while (lo < hi) { const m = (lo + hi + 1) >> 1; if (WALK[m].y <= sy) lo = m; else hi = m - 1; }
     for (const [a, b] of WALK[lo].s) if (ax >= a && ax <= b) return true; return false;
   }
 
-  const W = () => container.clientWidth || 1, H = () => container.clientHeight || 1;
-  const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, opts.quality === 'low' ? 1 : 2)); renderer.setSize(W(), H());
-  renderer.shadowMap.enabled = opts.quality !== 'low'; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  renderer.domElement.style.cssText = 'display:block;width:100%;height:100%;touch-action:none;outline:none';
-  container.appendChild(renderer.domElement);
-  const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(55, W() / H(), 0.1, 1200);
-  scene.fog = new THREE.FogExp2(0xcfe4f0, 0.006);
-  const grad = makeGradient(), glowTex = glowTexture(), dotTex = dotTexture();
-  const cache = new Map();
-  const toon = (c, extra) => { const k = c + (extra ? JSON.stringify(extra) : ''); if (!cache.has(k)) cache.set(k, new THREE.MeshToonMaterial({ color: c, gradientMap: grad, ...extra })); return cache.get(k); };
-  const outlineMat = new THREE.MeshBasicMaterial({ color: 0x1a1626, side: THREE.BackSide }); outlineMat.visible = !!opts.outlines;
-  function addOutline(mesh, t = 0.04, radius) {
-    const g = mesh.geometry; g.computeBoundingBox(); const s = new THREE.Vector3(); g.boundingBox.getSize(s);
-    const o = new THREE.Mesh(g, outlineMat);
-    if (radius) o.scale.setScalar(1 + t / radius); else o.scale.set(1 + 2 * t / Math.max(s.x, 0.01), 1 + 2 * t / Math.max(s.y, 0.01), 1 + 2 * t / Math.max(s.z, 0.01));
-    mesh.add(o); return mesh;
-  }
-  function M(geo, mat, x = 0, y = 0, z = 0, parent, outline = 0.04, radius) {
-    const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true;
-    if (outline) addOutline(m, outline, radius); (parent || scene).add(m); return m;
-  }
-  const BOX = (w, h, d) => new THREE.BoxGeometry(w, h, d);
-  const glowMats = []; // {mat, k}
-  const glowing = (color, map, k = 1.6) => { const m = new THREE.MeshToonMaterial({ color: map ? 0xffffff : color, map, gradientMap: grad, emissive: new THREE.Color(map ? 0xffffff : color), emissiveMap: map || null, emissiveIntensity: 0 }); glowMats.push({ m, k }); return m; };
-  const flames = [], glows = [], pointLights = [];
-  function glowSprite(x, y, z, color, size, parent) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, opacity: 0 })); s.position.set(x, y, z); s.scale.setScalar(size); (parent || scene).add(s); glows.push(s); return s; }
-
-  // lights + sky
-  const hemi = new THREE.HemisphereLight(0xd6ecff, 0x6f9a52, 1); scene.add(hemi);
-  const sun = new THREE.DirectionalLight(0xffffff, 2.5); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
-  Object.assign(sun.shadow.camera, { left: -48, right: 48, top: 48, bottom: -48, near: 1, far: 260 }); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.04;
-  scene.add(sun, sun.target);
-  const skyU = { top: { value: new THREE.Color() }, hor: { value: new THREE.Color() }, bottom: { value: new THREE.Color() }, sunDir: { value: new THREE.Vector3() }, moonDir: { value: new THREE.Vector3() }, sunCol: { value: new THREE.Color() }, sunVis: { value: 1 }, moonVis: { value: 0 } };
-  const sky = new THREE.Mesh(new THREE.SphereGeometry(500, 32, 16), new THREE.ShaderMaterial({ side: THREE.BackSide, depthWrite: false, fog: false, uniforms: skyU,
-    vertexShader: 'varying vec3 vDir; void main(){ vDir = normalize(position); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.); }',
-    fragmentShader: `varying vec3 vDir; uniform vec3 top, hor, bottom, sunDir, moonDir, sunCol; uniform float sunVis, moonVis;
-      void main(){ vec3 d = normalize(vDir); float y = d.y; vec3 col = mix(hor, top, pow(smoothstep(0.0, 1.0, max(y, 0.0)), 0.55)); col = mix(col, bottom, smoothstep(0.0, -0.2, y));
-        float sd = max(dot(d, sunDir), 0.0); col += sunCol * (pow(sd, 48.0) * 0.55 + pow(sd, 6.0) * 0.22) * sunVis; col = mix(col, vec3(1.0, 0.97, 0.88), smoothstep(0.9990, 0.9994, sd) * sunVis);
-        float md = max(dot(d, moonDir), 0.0); col = mix(col, vec3(0.93, 0.95, 1.0), smoothstep(0.9993, 0.9996, md) * moonVis); col += vec3(0.45, 0.55, 1.0) * pow(md, 120.0) * 0.35 * moonVis;
-        gl_FragColor = vec4(col, 1.0);
-        #include <colorspace_fragment>
-      }` }));
-  scene.add(sky);
-  const sp = []; for (let i = 0; i < 1000; i++) { const u = rnd() * 6.283, v = Math.acos(rr(0.05, 1)); sp.push(Math.sin(v) * Math.cos(u) * 450, Math.cos(v) * 450, Math.sin(v) * Math.sin(u) * 450); }
-  const starGeo = new THREE.BufferGeometry(); starGeo.setAttribute('position', new THREE.Float32BufferAttribute(sp, 3));
-  const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 1.6, sizeAttenuation: false, transparent: true, opacity: 0, fog: false, depthWrite: false });
-  const stars = new THREE.Points(starGeo, starMat); scene.add(stars);
+  const K = createWorldKit({ container, opts });
+  const { W, H, renderer, scene, camera, grad, glowTex, dotTex, toon, outlineMat, addOutline, M, BOX, glowMats, glowing, flames, glows, pointLights, glowSprite, hemi, sun, skyU, sky, starMat, stars } = K;
 
   // terrain
-  const tg = new THREE.PlaneGeometry(340, 280, 220, 180); tg.rotateX(-Math.PI / 2);
+  const tg = new THREE.PlaneGeometry(480, 280, 300, 180); tg.rotateX(-Math.PI / 2); tg.translate(-70, 0, 0); const SAND1 = new THREE.Color('#e3c690'), SAND2 = new THREE.Color('#d2ad74');
   const pos = tg.attributes.position, cols = new Float32Array(pos.count * 3), tc = new THREE.Color();
   const G1 = new THREE.Color('#6aa64e'), G2 = new THREE.Color('#4f8d45'), G3 = new THREE.Color('#3b7343'), RK = new THREE.Color('#a9a390');
   for (let i = 0; i < pos.count; i++) {
     const x = pos.getX(i), z = pos.getZ(i), h = heightAt(x, z); pos.setY(i, h);
     tc.copy(G1).lerp(G2, smooth(0.35, 0.65, fbm(x * 0.07 + 9, z * 0.07))).lerp(G3, smooth(4, 14, h)).lerp(RK, smooth(18, 30, h));
+    { const sd = RU.sandAt(x, z); if (sd > 0) tc.lerp(SAND2.clone().lerp(SAND1, smooth(0.3, 0.7, fbm(x * 0.05, z * 0.05))), sd * (1 - smooth(10, 26, h) * 0.6)); }
     cols.set([tc.r, tc.g, tc.b], i * 3);
   }
   tg.setAttribute('color', new THREE.BufferAttribute(cols, 3)); tg.computeVertexNormals();
@@ -89,7 +55,7 @@ export async function createGame({ container, minimap, options = {}, onState = (
   const asph = (x0, x1, y0, y1) => { const m = new THREE.MeshToonMaterial({ map: asphaltTex([(x1 - x0) / 240, (y1 - y0) / 240]), gradientMap: grad }); return slab(x0, x1, y0, y1, m, 0.09); };
   asph(364, 2516, 750, 870); asph(1380, 1500, 460, 1160);
   const cob = (x0, x1, y0, y1) => { const m = new THREE.MeshToonMaterial({ map: cobbleTex([(x1 - x0) / 150, (y1 - y0) / 150]), gradientMap: grad }); return slab(x0, x1, y0, y1, m, 0.07); };
-  cob(1290, 1590, -1100, 430); cob(1290, 1590, 1190, 2720); cob(-1100, 330, 660, 960); cob(2550, 3980, 660, 960);
+  cob(1290, 1590, -40, 430); cob(1290, 1590, 1190, 1640); cob(-1100, 330, 660, 960); cob(2550, 4760, 660, 960);
   const laneMark = toon('#e7e3f2');
   for (const [ax, ay] of [[436, 810], [1060, 810], [1820, 810], [2440, 810], [1440, 540], [1440, 1100]]) { const d = new THREE.Mesh(BOX(0.5, 0.02, 0.5), laneMark); d.rotation.y = Math.PI / 4; d.position.set(AX(ax), 0.1, AZ(ay)); scene.add(d); }
   const emb = emblemTex();
@@ -187,49 +153,8 @@ export async function createGame({ container, minimap, options = {}, onState = (
   }
 
   // ---------- polish pass: masonry, trims, windows, doors, roofs, lights ----------
-  const texCache = {};
-  function wallTex(kind, base) {
-    const k = kind + base; if (texCache[k]) return texCache[k];
-    const c0 = new THREE.Color(base), hex = (c, f) => '#' + c.clone().multiplyScalar(f).getHexString();
-    const t = canvasTex(256, 256, (c) => {
-      c.fillStyle = hex(c0, 1); c.fillRect(0, 0, 256, 256);
-      if (kind === 'brick') { for (let r = 0; r < 8; r++) for (let q = -1; q < 5; q++) { const x = q * 64 + (r % 2) * 32, y = r * 32; c.fillStyle = hex(c0, 0.86 + ((r * 7 + q * 3) % 5) * 0.06); c.fillRect(x + 2, y + 2, 60, 28); } c.fillStyle = hex(c0, 0.62); for (let r = 0; r <= 8; r++) c.fillRect(0, r * 32 - 1, 256, 3); }
-      if (kind === 'stone') { for (let r = 0; r < 5; r++) for (let q = -1; q < 4; q++) { const x = q * 86 + (r % 2) * 43, y = r * 52; c.fillStyle = hex(c0, 0.82 + ((r * 5 + q * 7) % 6) * 0.06); c.beginPath(); c.roundRect(x + 3, y + 3, 80, 46, 8); c.fill(); } }
-      if (kind === 'plank') { for (let q = 0; q < 8; q++) { c.fillStyle = hex(c0, 0.86 + (q % 3) * 0.08); c.fillRect(q * 32 + 1, 0, 30, 256); c.fillStyle = hex(c0, 0.6); c.fillRect(q * 32, 0, 2, 256); for (let n = 0; n < 2; n++) { c.beginPath(); c.arc(q * 32 + 16, 40 + n * 140 + q * 9, 2.5, 0, 7); c.fill(); } } }
-      if (kind === 'tile') { for (let r = 0; r < 8; r++) for (let q = 0; q < 8; q++) { c.fillStyle = hex(c0, 0.88 + ((r + q) % 3) * 0.07); c.fillRect(q * 32 + 2, r * 32 + 2, 28, 28); } }
-      if (kind === 'panel') { for (let q = 0; q < 4; q++) { c.fillStyle = hex(c0, 0.92); c.fillRect(q * 64 + 4, 4, 56, 248); c.strokeStyle = hex(c0, 1.35); c.lineWidth = 2; c.strokeRect(q * 64 + 10, 12, 44, 232); } }
-      if (kind === 'shingle') { c.fillStyle = hex(c0, 0.7); c.fillRect(0, 0, 256, 256); for (let r = 0; r < 8; r++) for (let q = -1; q < 9; q++) { const x = q * 32 + (r % 2) * 16, y = r * 32; c.fillStyle = hex(c0, 0.9 + ((r * 3 + q) % 4) * 0.06); c.beginPath(); c.moveTo(x, y); c.lineTo(x + 30, y); c.lineTo(x + 30, y + 22); c.quadraticCurveTo(x + 15, y + 34, x, y + 22); c.closePath(); c.fill(); } }
-    }); t.wrapS = t.wrapT = THREE.RepeatWrapping; texCache[k] = t; return t;
-  }
-  const texMat = (kind, base, rx, ry) => { const t = wallTex(kind, base).clone(); t.needsUpdate = true; t.repeat.set(rx, ry); return new THREE.MeshToonMaterial({ map: t, gradientMap: grad }); };
-  function sconce(g, x, y, z, ry = 0) { const s = new THREE.Group(); s.position.set(x, y, z); s.rotation.y = ry; g.add(s); M(BOX(0.12, 0.12, 0.3), DARK, 0, 0, 0.12, s, 0.015); M(BOX(0.24, 0.3, 0.24), lampM, 0, -0.08, 0.32, s, 0.02); M(new THREE.ConeGeometry(0.2, 0.16, 4), DARK, 0, 0.12, 0.32, s, 0).rotation.y = Math.PI / 4; glowSprite(0, -0.08, 0.36, 0xffb060, 1.8, s); }
-  function sideWindow(g, x, y, z, ry, trim, shutter) { const wg = new THREE.Group(); wg.position.set(x, y, z); wg.rotation.y = ry; g.add(wg);
-    M(BOX(1.0, 1.2, 0.12), trim, 0, 0, 0, wg, 0.02); M(BOX(0.8, 1.0, 0.1), windowM, 0, 0, 0.03, wg, 0); M(BOX(0.06, 1.0, 0.13), trim, 0, 0, 0.04, wg, 0); M(BOX(0.8, 0.06, 0.13), trim, 0, 0.05, 0.04, wg, 0);
-    M(BOX(1.2, 0.1, 0.25), trim, 0, -0.65, 0.08, wg, 0.012);
-    if (shutter) for (const s of [-1, 1]) { const sh = M(BOX(0.42, 1.12, 0.06), shutter, s * 0.74, 0, 0.05, wg, 0.012); for (let k = -2; k <= 2; k++) M(BOX(0.36, 0.03, 0.07), trim, 0, k * 0.2, 0.01, sh, 0); } }
-  function planter(g, x, z, col) { M(BOX(0.8, 0.5, 0.8), toon('#4a4560'), x, 0.25, z, g, 0.02); M(BOX(0.9, 0.08, 0.9), toon(col), x, 0.52, z, g, 0.012); M(new THREE.IcosahedronGeometry(0.45, 1), toon('#3f8a46'), x, 0.9, z, g, 0.025, 0.45); for (let i = 0; i < 4; i++) M(new THREE.SphereGeometry(0.07, 6, 4), toon(pick(['#ffd04a', '#ff8fb0', '#ffffff'])), x + rr(-0.3, 0.3), 1.1 + rr(-0.1, 0.15), z + rr(-0.3, 0.3), g, 0); }
-  function dress(rec, o) {
-    const { g, w, d, dx, f } = rec, h = o.h, trim = toon(o.trim), stone = toon(o.stone || '#5c5675');
-    const wall = g.children[0]; if (o.wall) wall.material = texMat(o.wall, o.base, Math.max(1, w / 2.2), Math.max(1, h / 2.2));
-    M(BOX(w + 0.5, 0.4, d + 0.5), stone, 0, 0.2, 0, g, 0.03);
-    M(BOX(2.6, 0.14, 0.8), stone, dx, 0.07, f + 0.55, g, 0.015); M(BOX(2.2, 0.14, 0.5), stone, dx, 0.21, f + 0.4, g, 0.015);
-    for (const sx of [-1, 1]) for (const sz of [-1, 1]) { M(BOX(0.4, h + 0.1, 0.4), trim, sx * (w / 2 + 0.02), (h + 0.1) / 2, sz * (d / 2 + 0.02), g, 0.025); M(BOX(0.55, 0.18, 0.55), trim, sx * (w / 2 + 0.02), h + 0.12, sz * (d / 2 + 0.02), g, 0.015); }
-    if (!o.noCornice) M(BOX(w + 0.45, 0.22, d + 0.45), trim, 0, h - 0.11, 0, g, 0.02);
-    M(BOX(w + 0.08, 0.14, 0.12), trim, 0, 0.6, f + 0.04, g, 0);
-    // door frame
-    M(BOX(0.22, 2.7, 0.3), trim, dx - 1.25, 1.35, f + 0.08, g, 0.015); M(BOX(0.22, 2.7, 0.3), trim, dx + 1.25, 1.35, f + 0.08, g, 0.015); M(BOX(2.75, 0.3, 0.32), trim, dx, 2.75, f + 0.08, g, 0.015);
-    M(new THREE.OctahedronGeometry(0.16, 0), toon(o.accent, { emissive: new THREE.Color(o.accent), emissiveIntensity: 0.5 }), dx, 2.75, f + 0.27, g, 0.01).scale.set(1, 1.2, 0.5);
-    sconce(g, dx - 1.75, 2.4, f + 0.02); sconce(g, dx + 1.75, 2.4, f + 0.02);
-    // windows down both sides and on the back
-    const nSide = Math.max(1, Math.floor(d / 3)), nBack = Math.max(1, Math.floor(w / 3.4)), sh = o.shutter ? toon(o.shutter) : null;
-    for (let i = 0; i < nSide; i++) { const z = -d / 2 + (i + 0.5) * d / nSide; sideWindow(g, w / 2 + 0.06, h * 0.55, z, Math.PI / 2, trim, sh); sideWindow(g, -w / 2 - 0.06, h * 0.55, z, -Math.PI / 2, trim, sh); }
-    for (let i = 0; i < nBack; i++) sideWindow(g, -w / 2 + (i + 0.5) * w / nBack, h * 0.55, -d / 2 - 0.06, Math.PI, trim, sh);
-    // planters at the front corners, clear of the door
-    if (Math.abs(dx) < w / 2 - 2.6 || true) { const pxs = [-w / 2 + 0.9, w / 2 - 0.9].filter(px => Math.abs(px - dx) > 2.4); pxs.forEach(px => planter(g, px, f + 0.9, o.accent)); }
-    // roof dressing
-    if (o.flat) { for (let i = 0; i < 3; i++) { const vx = rr(-w / 3, w / 3), vz = rr(-d / 3, d / 4); M(BOX(0.9, 0.5, 0.7), STEEL, vx, h + 0.35, vz, g, 0.02); M(new THREE.CylinderGeometry(0.22, 0.22, 0.08, 12), DARK, vx, h + 0.64, vz, g, 0); } }
-    if (o.roofMesh) { o.roofMesh.material = texMat('shingle', o.roofColor, 0.45, 0.45); }
-  }
+  const BK = createBuildingKit(K, { DARK, STEEL, lampM, windowM });
+  const { texMat, sconce, sideWindow, planter, dress } = BK;
   dress(BLD[0], { h: 6.5, wall: 'brick', base: '#273061', trim: '#e0a84a', accent: '#c42d3c', stone: '#3a3a58', flat: true, noCornice: true });
   dress(BLD[1], { h: 4.6, wall: 'plank', base: '#6a4732', trim: '#2e2018', accent: '#ffb85a', stone: '#6b6280', shutter: '#3f6b4a', roofMesh: BLD[1].g.children.find(c => c.geometry && c.geometry.type === 'ExtrudeGeometry'), roofColor: '#4a3248' });
   dress(BLD[2], { h: 4.2, wall: 'tile', base: '#24504d', trim: '#e6e1d3', accent: '#4ade80', stone: '#4a4560', shutter: '#3f9a5e', flat: true });
@@ -258,7 +183,7 @@ export async function createGame({ container, minimap, options = {}, onState = (
     colliders.push({ c: [x, z, 0.35] });
   }
   for (const [ax, ay] of [[1190, 994], [1690, 994]]) { const x = AX(ax), z = AZ(ay); M(BOX(2.2, 0.12, 0.6), WOOD, x, 0.5, z, null, 0.03); M(BOX(2.2, 0.5, 0.1), WOOD, x, 0.8, z + 0.28, null, 0.03); for (const sx of [-1, 1]) M(BOX(0.12, 0.5, 0.5), DARK, x + sx * 0.95, 0.25, z, null, 0); colliders.push({ box: [x - 1.1, x + 1.1, z - 0.35, z + 0.4] }); }
-  const torchSpots = [[300, 420], [90, 630], [230, 990], [300, 1200], [2580, 420], [2790, 630], [2650, 990], [2580, 1200], [1260, 140], [1616, 300], [1260, 1480], [1616, 1330], [960, 1250]];
+  const torchSpots = [[300, 420], [90, 630], [230, 990], [300, 1200], [2864, 420], [2790, 630], [2650, 990], [2580, 1200], [1260, 140], [1616, 300], [1260, 1480], [1616, 1330], [960, 1250]];
   for (const [ax, ay] of torchSpots) { const x = AX(ax), z = AZ(ay); M(new THREE.CylinderGeometry(0.07, 0.1, 2.2, 8), DARK, x, 1.1, z, null, 0.03, 0.1); M(BOX(0.34, 0.4, 0.34), lampM, x, 2.4, z, null, 0.03); M(new THREE.ConeGeometry(0.3, 0.25, 4), DARK, x, 2.72, z, null, 0).rotation.y = Math.PI / 4; glowSprite(x, 2.4, z, 0xffb060, 2.6); colliders.push({ c: [x, z, 0.25] }); }
   // north gate: banner poles + string lights
   const gp = [[1240, 250], [1640, 250]].map(([ax, ay]) => { const x = AX(ax), z = AZ(ay); M(new THREE.CylinderGeometry(0.1, 0.12, 4.6, 10), DARK, x, 2.3, z, null, 0.03, 0.12); M(new THREE.SphereGeometry(0.18, 10, 8), GOLD, x, 4.7, z, null, 0.02, 0.18); const p = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 1.6), bannerM); p.position.set(x, 3.4, z + 0.12); scene.add(p); colliders.push({ c: [x, z, 0.25] }); return new THREE.Vector3(x, 4.5, z); });
@@ -272,6 +197,10 @@ export async function createGame({ container, minimap, options = {}, onState = (
     const t = signTex(e.label.toUpperCase(), null, '#e6b45a'); M(BOX(4.4, 1.1, 0.16), [DARK, DARK, DARK, DARK, glowing(0, t, 1.2), DARK], 0, 3.4, 0.18, g, 0.03);
   }
 
+  const cpRoot = CP.buildCastlePath({ THREE, scene, M, BOX, toon, grad, glowing, glowSprite, BK, colliders, camBlockers, flames, bannerM, emblemTex, signTex, cobbleTex, plazaTex, lampM, DARK, GOLD, WOOD, crystalM });
+  const apFx = AP.buildArenaPath({ THREE, scene, M, BOX, toon, BK, colliders, signTex, glowing, DARK, WOOD, bannerM });
+  const lakeFx = LK.buildLake({ THREE, scene, M, BOX, toon, grad, glowing, glowSprite, BK, colliders, flames, signTex, DARK, WOOD, heightAt });
+  const ruinsFx = RU.buildRuins({ THREE, scene, M, BOX, toon, grad, glowing, glowSprite, BK, colliders, camBlockers, flames, emblemTex, signTex, cobbleTex, plazaTex, lampM, DARK, GOLD, WOOD, crystalM, heightAt, pointLights, windowM });
   // ---- Meru Arena, directly east of the east gate ----
   { const A = new THREE.Group(); A.position.set(ARENA_C.x, 0, ARENA_C.z); scene.add(A);
     const archT = canvasTex(1024, 256, (c) => { c.fillStyle = '#3b3f52'; c.fillRect(0, 0, 1024, 256); c.fillStyle = '#2a2d3c'; for (let y = 0; y < 256; y += 32) for (let x = (y / 32) % 2 * 32; x < 1024; x += 64) c.fillRect(x, y, 62, 30); c.fillStyle = '#141626'; for (let i = 0; i < 16; i++) { const x = i * 64 + 12; c.beginPath(); c.moveTo(x, 230); c.lineTo(x, 120); c.arc(x + 20, 120, 20, Math.PI, 0); c.lineTo(x + 40, 230); c.fill(); } c.fillStyle = '#c42d3c'; c.fillRect(0, 0, 1024, 14); c.fillStyle = '#e6b45a'; c.fillRect(0, 14, 1024, 6); }, [4, 1]);
@@ -294,7 +223,10 @@ export async function createGame({ container, minimap, options = {}, onState = (
   for (let i = 0; i < 4000 && trunks.length < 360; i++) {
     const X = rr(-150, 150), Z = rr(-125, 125); const [ax, ay] = toArt(X, Z);
     if (inPaved(ax, ay, 110)) continue; if (Math.hypot(X - ARENA_C.x, Z - ARENA_C.z) < ARENA_C.r + 6) continue;
-    const d = outsideDist(X, Z), inside = d === 0;
+    const cpz = ay < 0 && CP.inZone(ax, ay); if (cpz && !CP.treeOK(ax, ay)) continue;
+    const lkz = ay > 1620 && LK.inZone(ax, ay); if (lkz && !LK.treeOK(ax, ay)) continue;
+    const ruz = (ax < 0 && RU.inZone(ax, ay)) || lkz; if (ax < 0 && RU.inZone(ax, ay) && !RU.treeOK(ax, ay)) continue; if (!ruz && RU.sandAt(X, Z) > 0.6) continue;
+    const d = outsideDist(X, Z), inside = d === 0 || cpz || ruz;
     if (inside && rnd() > 0.35) continue;
     if (!inside && Math.min(Math.abs(X), Math.abs(Z)) < 7) continue;
     if (!inside && rnd() > 0.25 + smooth(0, 25, d) * 0.75) continue;
@@ -316,10 +248,10 @@ export async function createGame({ container, minimap, options = {}, onState = (
   const pAO = new THREE.ConeGeometry(1.68, 2.9, 7); pAO.translate(0, 2.58, 0); const pBO = new THREE.ConeGeometry(1.22, 2.4, 7); pBO.translate(0, 4.08, 0);
   instanced(pA, toon('#2f6e4a'), pines, pAO); instanced(pB, toon('#3a7f52'), pines, pBO);
   const tufts = [], tuftCols = [], tg2 = new THREE.ConeGeometry(0.08, 0.4, 3); tg2.translate(0, 0.2, 0);
-  for (let i = 0; i < 12000 && tufts.length < 3500; i++) { const X = rr(-110, 110), Z = rr(-90, 90), [ax, ay] = toArt(X, Z); if (inPaved(ax, ay, 20)) continue; const y = heightAt(X, Z); if (y > 14) continue; tufts.push({ X, y, Z, s: rr(0.7, 1.4) }); tuftCols.push(pick(['#4a8a3a', '#6aa848', '#7fbf50', '#3f7a3a']).length ? new THREE.Color(pick(['#4a8a3a', '#6aa848', '#7fbf50', '#3f7a3a'])) : null); }
+  for (let i = 0; i < 12000 && tufts.length < 3500; i++) { const X = rr(-110, 110), Z = rr(-90, 90), [ax, ay] = toArt(X, Z); if (inPaved(ax, ay, 20) || RU.sandAt(X, Z) > 0.4) continue; const y = heightAt(X, Z); if (y > 14) continue; tufts.push({ X, y, Z, s: rr(0.7, 1.4) }); tuftCols.push(pick(['#4a8a3a', '#6aa848', '#7fbf50', '#3f7a3a']).length ? new THREE.Color(pick(['#4a8a3a', '#6aa848', '#7fbf50', '#3f7a3a'])) : null); }
   instanced(tg2, toon('#ffffff'), tufts, null, tuftCols).castShadow = false;
   const flowers = [], flCols = [], FC = ['#ffffff', '#ffd04a', '#ff8fb0', '#b9a0ff'].map(c => new THREE.Color(c));
-  for (let i = 0; i < 8000 && flowers.length < 1400; i++) { const X = rr(-90, 90), Z = rr(-70, 70), [ax, ay] = toArt(X, Z); if (inPaved(ax, ay, 30)) continue; const y = heightAt(X, Z); if (y > 10) continue; flowers.push({ X, y: y + 0.22, Z, s: rr(0.7, 1.2) }); flCols.push(pick(FC)); }
+  for (let i = 0; i < 8000 && flowers.length < 1400; i++) { const X = rr(-90, 90), Z = rr(-70, 70), [ax, ay] = toArt(X, Z); if (inPaved(ax, ay, 30) || RU.sandAt(X, Z) > 0.4) continue; const y = heightAt(X, Z); if (y > 10) continue; flowers.push({ X, y: y + 0.22, Z, s: rr(0.7, 1.2) }); flCols.push(pick(FC)); }
   instanced(new THREE.IcosahedronGeometry(0.1, 0), toon('#ffffff'), flowers, null, flCols).castShadow = false;
 
   // clouds, fireflies, rain, smoke
@@ -347,10 +279,10 @@ export async function createGame({ container, minimap, options = {}, onState = (
   const playerLook = new THREE.Vector3();
   const Pl = { x: AX(1440), z: AZ(1010), y: 0, vy: 0, vx: 0, vz: 0, face: Math.PI, ground: true, stepT: 0 };
   let spawnEast = false; try { spawnEast = sessionStorage.getItem('meru.spawn') === 'east'; sessionStorage.removeItem('meru.spawn'); } catch (e) {}
-  if (spawnEast) { Pl.x = AX(2700); Pl.z = AZ(810); Pl.face = -Math.PI / 2; }
+  if (spawnEast) { Pl.x = AX(4560); Pl.z = AZ(810); Pl.face = -Math.PI / 2; }
   const npcs = FOXES.map(f => {
-    const c = makeFox({ ...f, eyes: EYES[f.key], mood: MOODS[f.key], look: f.female ? PLAYER_FEMALE : PLAYER_MALE }); const n = { ...f, c, speedNow: 0, wait: rr(0, 2), seg: 0, dir: 1, lookV: new THREE.Vector3() };
-    if (f.stand) { n.x = AX(f.stand[0]); n.z = AZ(f.stand[1] * SRC_Y); n.face = n.x > 0 ? -Math.PI / 2 : Math.PI / 2; }
+    const c = makeFox({ ...f, eyes: EYES[f.key] || f.eyes, mood: MOODS[f.key] || (MOODS[f.key] = f.mood), look: f.look || (f.female ? PLAYER_FEMALE : PLAYER_MALE) }); const n = { ...f, c, speedNow: 0, wait: rr(0, 2), seg: 0, dir: 1, lookV: new THREE.Vector3() };
+    if (f.stand) { n.x = AX(f.stand[0]); n.z = AZ(f.stand[1] * SRC_Y); n.face = f.face != null ? f.face : n.x > 0 ? -Math.PI / 2 : Math.PI / 2; }
     else { n.pts = f.path.map(([sx, sy]) => [AX(sx), AZ(sy * SRC_Y)]); n.x = n.pts[0][0]; n.z = n.pts[0][1]; n.face = 0; n.seg = 1; }
     return n;
   });
@@ -559,7 +491,7 @@ export async function createGame({ container, minimap, options = {}, onState = (
   }
   function playSong(i) {
     stopSong(); const s = SONGS[i]; if (!s) return; JUKE.playing = i; JUKE.err = null; JUKE.beat = 0;
-    const a = new Audio(); a.loop = true; a.volume = 0; a.src = '../MERU/MUSIC/JUKEBOX/' + s.file; JUKE.audio = a;
+    const a = new Audio(); a.loop = true; a.volume = 0; a.src = 'MERU/MUSIC/JUKEBOX/' + s.file; JUKE.audio = a;
     a.addEventListener('error', () => { if (JUKE.audio === a) { JUKE.audio = null; JUKE.err = 'synth'; synthSong(s); } }, { once: true });
     a.play().catch(() => { if (JUKE.audio === a && !JUKE.synth) { JUKE.audio = null; JUKE.err = 'synth'; synthSong(s); } });
     audio.tone(1320, 0.06, 0.04, 'square'); setTimeout(() => audio.tone(990, 0.08, 0.04, 'square'), 70);
@@ -693,6 +625,17 @@ export async function createGame({ container, minimap, options = {}, onState = (
     c.font = '700 16px Archivo, Arial'; c.fillText({ boxing: 'BOXING · ROUND ' + (1 + Math.floor(t / 20) % 12) + ' · REDTAIL vs. BLUEFUR', horses: 'MERU DERBY · LAP ' + (1 + Math.floor(t / 15) % 3) + ' · RUSTY BOLT LEADS', baseball: 'BASEBALL · TOP 7 · DENS 3, TAILS ' + (2 + Math.floor(t / 9) % 2), soccer: 'SOCCER · ' + (12 + Math.floor(t) % 78) + "' · MERU 1–1 GAYA" }[tv.sport], 104, H - 17);
     c.fillStyle = '#ec3013'; c.beginPath(); c.arc(W - 22, 22, 7 + Math.sin(t * 4), 0, 7); c.fill(); c.fillStyle = '#fff'; c.font = '800 14px Archivo, Arial'; c.fillText('LIVE', W - 66, 23);
     tv.tex.needsUpdate = true; }
+  const roomLights = [];
+  const inGroups = IN.buildInteriors({ THREE, scene, M, BOX, toon, grad, glowing, glowSprite, BK, colliders, camBlockers, flames, bannerM, emblemTex, signTex, lampM, DARK, GOLD, WOOD, crystalM, roomLights });
+  const caveK = { THREE, scene, M, BOX, toon, grad, glowing, glowSprite, BK, flames, emblemTex, DARK, GOLD, WOOD, roomLights }; const caveFx = CV.buildCaves(caveK);
+  const shopGroups = SH.buildShops({ THREE, scene, M, BOX, toon, BK, glowSprite, DARK, WOOD, GOLD, roomLights, colliders, lampM });
+  const lanesG = LN.buildLanes({ THREE, scene, M, BOX, toon, BK, DARK, WOOD, GOLD, roomLights, colliders, lampM, glowing });
+  const tentFx = FT.buildTent({ THREE, scene, M, toon, glowing, glowSprite, roomLights, colliders, GOLD, WOOD }); const dinerFx = BG.buildDiner({ THREE, scene, M, BOX, toon, BK, grad, glowing, glowSprite, DARK, roomLights, colliders, lampM, camBlockers, sign, AX, AZ, S }); const ORA_LINES = await (await fetch(new URL('./worlds/meru-ora.json', import.meta.url))).json();
+  const ROOMS = { fortune: FT.TENT, bowling: LN.LANES, tavern: TAV, casino: CAS, barracks: IN.BAR, throneroom: IN.THR, cave: CV.CAVE, itemshop: SH.ROOMS.itemshop, armory: SH.ROOMS.armory, burgers: BG.DINER };
+  const SHOP_OUT = k => { if (k === 'burgers') return dinerFx.OUT; const b = BUILDINGS[(SH.ROOMS[k] || (k === 'fortune' ? FT.TENT : LN.LANES)).b]; if (b.r) return { x: AX(b.door), z: AZ(b.cy - b.r) - 2.2, face: Math.PI }; return { x: AX(b.door), z: AZ(b.face === 'N' ? b.y0 : b.y1) + (b.face === 'N' ? -2.2 : 2.2), face: b.face === 'N' ? Math.PI : 0 }; };
+  const roomGroup = R => scene.children.find(o => o.isGroup && o.position.x === R.x && o.position.z === R.z);
+  const ROOM_G = { tavern: roomGroup(TAV), casino: roomGroup(CAS), barracks: inGroups.barracks, throneroom: inGroups.throneroom, cave: caveFx.group, itemshop: shopGroups.itemshop, armory: shopGroups.armory, bowling: lanesG, fortune: tentFx.group, burgers: dinerFx.group };
+  const BAR_OUT = { x: CP.cx(2560), z: CP.cz(2047) }, THR_OUT = { x: CP.cx(876), z: CP.cz(1080) };
   const CAS_EXIT = { x: CAS.x, z: CAS.z + CAS.d / 2 - 1.1 }, CAS_DOOR_OUT = (() => { const b = BUILDINGS[0]; return { x: AX(b.door), z: AZ(b.y1) + 2.2 }; })();
   const TAV_EXIT = { x: TAV.x, z: TAV.z + TAV.d / 2 - 1.1 }, TAV_DOOR_OUT = (() => { const b = BUILDINGS[1]; return { x: AX(b.door), z: AZ(b.y1) + 2.2 }; })();
   const marker = new THREE.Mesh(new THREE.OctahedronGeometry(0.16, 0), new THREE.MeshBasicMaterial({ color: 0xec3013 })); marker.scale.y = 1.6; scene.add(marker);
@@ -713,7 +656,22 @@ export async function createGame({ container, minimap, options = {}, onState = (
     cashier: [{ who: 'npc', text: 'Chips in, chips out. Mind the bars, they are real gold.' }, { who: 'player', text: 'Real gold?' }, { who: 'npc', text: 'Paint. But please do not tell the King.' }],
     croupier: [{ who: 'npc', text: 'Round and round she goes! Step on the gold ring and give the Treasure Wheel a spin.' }],
   });
-  const doors = BUILDINGS.map(b => { const out = b.face === 'S' ? 1 : -1; const edge = b.r ? b.cy - out * b.r : (b.face === 'S' ? b.y1 : b.y0); return { label: b.label, x: AX(b.door), z: AZ(edge) + out * 1.4 }; });
+  for (const p of IN.PEOPLE) { const c = makeFox({ ...p, look: p.king ? KING_MIGHT : p.female ? PLAYER_FEMALE : PLAYER_MALE }); const n = { ...p, c, speedNow: 0, wait: 0, lookV: new THREE.Vector3(), stand: [0, 0] }; if (p.pts) { n.pts = p.pts; n.x = p.pts[0][0]; n.z = p.pts[0][1]; n.seg = 1; n.wait = 2; } npcs.push(n); MOODS[p.key] = p.mood; }
+  const mkNpc = p => { const c = makeFox({ ...p, look: p.female ? PLAYER_FEMALE : PLAYER_MALE }); const n = { ...p, c, speedNow: 0, wait: 0, lookV: new THREE.Vector3(), stand: [0, 0] }; npcs.push(n); MOODS[p.key] = p.mood; return n; };
+  const bandits = CV.BANDITS.map(mkNpc); SH.KEEPERS.forEach(mkNpc); LN.PEOPLE.forEach(mkNpc); BG.PEOPLE.forEach(mkNpc); mkNpc({ ...BG.BRAUN, x: TAV.x + 3.8, z: TAV.z - TAV.d / 2 + 4.2, face: -Math.PI * 0.75 }); mkNpc(FT.ORA);
+  // the Arena Path meeting (2D checkArenaPathMeeting): Michelle and Max wait on the road until you have heard them out
+  const MEET = await (await fetch(new URL('./worlds/meru-meet.json', import.meta.url))).json();
+  let meetMi = null, meetMx = null, meetRun = false;
+  if (!save.flag('arenaMeetDone')) { meetMi = mkNpc({ key: 'pathMichelle', name: 'Michelle', role: 'Princess', outfit: 'dress', female: true, torso: ['#3a4a75', '#22304f', '#0e1730'], crest: 'M', x: 52, z: 1.6, face: -Math.PI / 2, mood: 'smug' }); meetMx = mkNpc({ key: 'pathMax', name: 'Max', role: 'Prince', outfit: 'armor', torso: ['#3a4a75', '#22304f', '#0e1730'], crest: 'M', gear: 'sword', x: 54.5, z: 3.0, face: -Math.PI / 2, mood: 'happy' }); meetMi.hold = meetMx.hold = true; }
+  function checkMeet() { if (!meetMi || meetRun || St.dialog || St.indoor || save.flag('arenaMeetDone')) return; if (Math.hypot(Pl.x - meetMi.x, Pl.z - meetMi.z) > 7) return; meetRun = true;
+    const who = l => l.npc === 'pathMax' ? meetMx : meetMi;
+    St.dialog = { npc: meetMi, lines: MEET.map(l => l.who === 'player' ? { name: 'You', role: 'Fox', text: l.text, you: true, mood: moodOf(l.text, 'warm', true) } : { name: who(l).name, role: who(l).role, text: l.text, spk: who(l).c, mood: moodOf(l.text, who(l).mood, false) }), i: 0, chars: 0, choices: null,
+      then: () => { save.setFlag('arenaMeetDone'); meetMx.runWest = true; meetMx.hold = false; setTimeout(() => { meetMi.c.visible = false; meetMi.gone = true; }, 1500); } }; audio.blip(); }
+  let maxNpc = null; function addMax() { if (maxNpc) { maxNpc.follow = false; maxNpc.x = IN.MAX.x; maxNpc.z = IN.MAX.z; maxNpc.face = IN.MAX.face; maxNpc.c.userData.mood = 'happy'; return maxNpc; } const p = IN.MAX; const c = makeFox({ ...p, look: PLAYER_MALE }); maxNpc = { ...p, c, speedNow: 0, wait: 0, lookV: new THREE.Vector3(), stand: [0, 0] }; npcs.push(maxNpc); MOODS.max = p.mood; return maxNpc; }
+  if (save.flag('maxHome')) addMax(); else { maxNpc = mkNpc(CV.MAX_CAGED); if (save.flag('maxFreed')) { maxNpc.x = CV.MAX_FREE.x; maxNpc.z = CV.MAX_FREE.z; maxNpc.c.userData.mood = 'happy'; } if (save.flag('maxFollowing')) { maxNpc.follow = true; maxNpc.x = Pl.x - 1.5; maxNpc.z = Pl.z; } }
+  if (save.flag('maxFreed') || save.flag('maxHome')) { caveK.cageBars.visible = false; }
+  for (let i = 0; i < 2; i++) if (save.flag('caveChest' + i)) caveK.chestLids[i].rotation.x = -1.9;
+  const doors = BUILDINGS.map(b => { const out = b.face === 'S' ? 1 : -1; const edge = b.r ? b.cy - out * b.r : (b.face === 'S' ? b.y1 : b.y0); return { label: b.label, x: AX(b.door), z: AZ(edge) + out * 1.4 }; }); doors.push(dinerFx.DOOR);
 
   // ---------- state, input ----------
   const St = { time: ((opts.startHour % 24) + 24) % 24, weather: 'clear', wRain: 0, wFog: 0, mode: 'attract', yaw: spawnEast ? Math.PI / 2 : 0, pitch: 0.38, dist: 8.5, dialog: null, near: null, muted: false, t: 0, asked: {}, wheel: false, toast: null, zone: null };
@@ -726,7 +684,7 @@ export async function createGame({ container, minimap, options = {}, onState = (
   window.addEventListener('keydown', onKeyDown); window.addEventListener('keyup', onKeyUp); window.addEventListener('blur', onBlur);
   const fade = document.createElement('div'); fade.style.cssText = 'position:absolute;inset:0;background:#0b0a12;opacity:0;pointer-events:none;transition:opacity .28s ease;z-index:5'; container.appendChild(fade);
   function goTo(x, z, face, indoor) { if (St.moving2) return; St.moving2 = true; fade.style.opacity = '1'; audio.tone(indoor ? 330 : 440, 0.18, 0.04, 'triangle', indoor ? 0.8 : 1.25);
-    setTimeout(() => { if (!indoor) { stopSong(); JUKE.open = false; } Pl.x = x; Pl.z = z; Pl.vx = Pl.vz = 0; Pl.face = face; St.yaw = face + Math.PI; St.indoor = indoor; St.dialog = null; camPos.set(x - Math.sin(face) * (indoor ? 3.5 : 6), indoor ? 3 : 4, z - Math.cos(face) * (indoor ? 3.5 : 6)); St.pitch = indoor ? 0.28 : 0.38; camLook.set(x, 1.5, z); St.camD = 4; setTimeout(() => { fade.style.opacity = '0'; St.moving2 = false; }, 60); }, 300); }
+    setTimeout(() => { if (!indoor) { stopSong(); JUKE.open = false; } Pl.x = x; Pl.z = z; Pl.vx = Pl.vz = 0; Pl.face = face; if (maxNpc && maxNpc.follow) { maxNpc.x = x - Math.sin(face) * 1.6; maxNpc.z = z - Math.cos(face) * 1.6; maxNpc.trail = []; } St.yaw = face + Math.PI; St.indoor = indoor; St.dialog = null; camPos.set(x - Math.sin(face) * (indoor ? 3.5 : 6), indoor ? 3 : 4, z - Math.cos(face) * (indoor ? 3.5 : 6)); St.pitch = indoor ? 0.28 : 0.38; camLook.set(x, 1.5, z); St.camD = 4; setTimeout(() => { fade.style.opacity = '0'; St.moving2 = false; }, 60); }, 300); }
   const el = renderer.domElement, ptrs = new Map();
   const joyBase = document.createElement('div'), joyKnob = document.createElement('div');
   joyBase.style.cssText = 'position:absolute;width:112px;height:112px;border:2px solid #f3f2f2;background:rgba(32,30,29,.25);transform:translate(-50%,-50%);display:none;pointer-events:none;';
@@ -743,10 +701,11 @@ export async function createGame({ container, minimap, options = {}, onState = (
 
   // collisions: the 2D game's own walk map, then props
   const PR = 0.34;
-  const RM = () => St.room === 'casino' ? CAS : TAV;
+  const RM = () => ROOMS[St.room] || TAV;
   const inRoom = (Rm, x, z) => Math.abs(x - Rm.x) < Rm.w / 2 - 0.55 && Math.abs(z - Rm.z) < Rm.d / 2 - 0.55;
   const inTav = (x, z) => inRoom(TAV, x, z) || inRoom(CAS, x, z);
-  const free = (x, z) => St.indoor ? inRoom(RM(), x, z) : (walkableAt(x, z) && walkableAt(x + PR, z) && walkableAt(x - PR, z) && walkableAt(x, z + PR) && walkableAt(x, z - PR));
+  phoneBudget(scene, opts);
+  const free = (x, z) => St.indoor ? (RM().walk ? RM().walk(x, z) : inRoom(RM(), x, z)) : (walkableAt(x, z) && walkableAt(x + PR, z) && walkableAt(x - PR, z) && walkableAt(x, z + PR) && walkableAt(x, z - PR));
   function pushProps(o, r) {
     for (const c of colliders) {
       if (c.c) { const [cx, cz, cr] = c.c, dx = o.x - cx, dz = o.z - cz, d = Math.hypot(dx, dz), m = cr + r; if (d < m && d > 1e-5) { o.x = cx + dx / d * m; o.z = cz + dz / d * m; } }
@@ -759,6 +718,11 @@ export async function createGame({ container, minimap, options = {}, onState = (
     const bx = o.x, bz = o.z; pushProps(o, r); if (!free(o.x, o.z)) { o.x = bx; o.z = bz; }
   }
 
+  const CB = createCombat({ THREE, scene, audio, move: (o, nx, nz, r) => { const ox = o.x, oz = o.z; if (free(nx, nz)) { o.x = nx; o.z = nz; } else if (free(nx, oz)) o.x = nx; else if (free(ox, nz)) o.z = nz; } });
+  bandits.forEach(n => CB.add(n, n.fight)); if (save.flag('banditsDown')) CB.foes.forEach(f => { f.down = true; f.hp = 0; f.n.c.rotation.x = -Math.PI / 2; });
+  const banditsDown = () => bandits.every(b => b.ctl.down), banditsActive = () => bandits.some(b => b.ctl.hostile && !b.ctl.down);
+  const critters = CV.CRITTERS.map(p => { const m = CV.makeCritter({ THREE, scene, M, toon }, p); const n = { key: p.key, x: p.x, z: p.z, face: 0, c: m.c, speedNow: 0 }; const f = CB.add(n, m.opts); f.anim = (dt, spd) => m.anim(f.t, spd); return n; });
+  const critterGroup = new THREE.Group(); scene.add(critterGroup); critters.forEach(n => critterGroup.add(n.c));
   // minimap
   let mapCanvas = null, mapCtx = null;
   const css = (v, f) => (getComputedStyle(document.documentElement).getPropertyValue(v) || '').trim() || f;
@@ -781,9 +745,22 @@ export async function createGame({ container, minimap, options = {}, onState = (
   // ---------- loop ----------
   const clock = new THREE.Clock(); let raf = 0, lastHud = '', hudT = 0;
   const sunDir = new THREE.Vector3(), moonDir = new THREE.Vector3(), lightDir = new THREE.Vector3(), v3 = new THREE.Vector3();
-  const nearest = () => { let best = null, bd = 3.2; for (const n of npcs) { const d = Math.hypot(n.x - Pl.x, n.z - Pl.z); if (d < bd) { bd = d; best = n; } } return best; };
-  const nearSpot = () => { if (St.indoor && St.room === 'casino') { for (const s of CAS_GAMES) if (Math.hypot(s.x - Pl.x, s.z - Pl.z) < 1.4) return { kind: 'game', label: s.label, game: s.key }; return Math.hypot(CAS_EXIT.x - Pl.x, CAS_EXIT.z - Pl.z) < 2.2 ? { kind: 'exit', label: 'Town Square', cas: 'out' } : null; }
-    if (St.indoor) { { const [jx, jz] = JPOS(); if (Math.hypot(jx - Pl.x, jz - Pl.z) < 2.6) return { kind: 'juke', label: 'jukebox', juke: true }; } if (Math.hypot(DART.oche - 0.4 - Pl.x, DART.z - Pl.z) < 2.6) return { kind: 'darts', label: 'darts', darts: true }; return Math.hypot(TAV_EXIT.x - Pl.x, TAV_EXIT.z - Pl.z) < 2.2 ? { kind: 'exit', label: 'Town Square', tav: 'out' } : null; } for (const d of doors) if (Math.hypot(d.x - Pl.x, d.z - Pl.z) < 2.4) return { kind: 'door', label: d.label, tav: d.label === 'Tavern' ? 'in' : null, cas: d.label === 'Casino' ? 'in' : null }; for (const e of EXITS) if (Math.hypot(AX(e.ax) - Pl.x, AZ(e.ay) - Pl.z) < (e.go ? 5 : 3.5)) return { kind: 'exit', label: e.label, go: e.go }; return null; };
+  const nearest = () => { if (meetMi && !save.flag('arenaMeetDone') && Math.hypot(meetMi.x - Pl.x, meetMi.z - Pl.z) < 7.5) return null; if (!St.indoor && Math.hypot(LK.ASHORE.x - Pl.x, LK.ASHORE.z - Pl.z) < 1.7) return null; let best = null, bd = 3.2; for (const n of npcs) { if (n.ctl && (n.ctl.down || n.ctl.hostile)) continue; if (n.follow) continue; const d = Math.hypot(n.x - Pl.x, n.z - Pl.z); if (d < bd) { bd = d; best = n; } } return best; };
+  const nearSpot = () => {
+    if (St.indoor && St.room === 'barracks') { if (Math.hypot(IN.BAR_EXIT.x - Pl.x, IN.BAR_EXIT.z - Pl.z) < 2.4) return { kind: 'exit', text: 'Leave', label: '', out: 'barracks' }; for (const s of IN.BAR_SPOTS) if (Math.hypot(s.x - Pl.x, s.z - Pl.z) < (s.bunk ? 1.4 : 1.8)) return s.bunk ? { kind: 'use', text: 'Rest on the bunk', label: '', bunk: true } : s.range ? { kind: 'use', text: 'Step up to the range', label: '', range: true } : { kind: 'use', text: 'Step into the circle', label: '', spar: true }; return null; }
+    if (St.indoor && St.room === 'cave') { if (Math.hypot(CV.EXIT_SPOT.x - Pl.x, CV.EXIT_SPOT.z - Pl.z) < 2.4) return { kind: 'exit', text: 'Leave', label: '', out: 'cave' };
+      if (CV.state.rubble > 0 && Math.hypot(RUB.x - Pl.x, RUB.z - Pl.z) < 3.4) return { kind: 'use', text: 'Blast the cave-in with 2 RANGE', label: '', rubble: true };
+      if (!['called', 'parley', 'fight'].includes(St.camp)) for (let i = 0; i < 2; i++) if (!save.flag('caveChest' + i) && Math.hypot(CV.CHESTS[i].x - Pl.x, CV.CHESTS[i].z - Pl.z) < 1.6) return { kind: 'use', text: 'Open the chest', label: '', chest: i };
+      return null; }
+    if (St.indoor && St.room === 'fortune') { tentFx.update(St.t); return Math.hypot(FT.TENT.exit.x - Pl.x, FT.TENT.exit.z - Pl.z) < 2.0 ? { kind: 'exit', text: 'Leave', label: '', out: 'shop' } : null; }
+    if (St.indoor && St.room === 'bowling') { if (Math.hypot(LN.LANES.exit.x - Pl.x, LN.LANES.exit.z - Pl.z) < 2.2) return { kind: 'exit', text: 'Leave', label: '', out: 'shop' }; for (const b of LN.BOWL_SPOTS) if (Math.hypot(b.x - Pl.x, b.z - Pl.z) < 1.6) return { kind: 'use', text: 'Bowl on lane ' + b.lane, label: '', bowl: true }; return null; }
+    if (St.indoor && St.room === 'burgers') return Math.hypot(BG.DINER.exit.x - Pl.x, BG.DINER.exit.z - Pl.z) < 2.2 ? { kind: 'exit', text: 'Leave', label: '', out: 'shop' } : null;
+    if (St.indoor && SH.ROOMS[St.room]) { const E = SH.ROOMS[St.room].exit; return Math.hypot(E.x - Pl.x, E.z - Pl.z) < 2.2 ? { kind: 'exit', text: 'Leave', label: '', out: 'shop' } : null; }
+    if (St.indoor && St.room === 'throneroom') { if (Math.hypot(IN.THR_EXIT.x - Pl.x, IN.THR_EXIT.z - Pl.z) < 2.4) return { kind: 'exit', text: 'Leave', label: '', out: 'throneroom' }; return null; }
+    if (St.indoor && St.room === 'casino') { for (const s of CAS_GAMES) if (Math.hypot(s.x - Pl.x, s.z - Pl.z) < 1.4) return { kind: 'game', label: s.label, game: s.key }; return Math.hypot(CAS_EXIT.x - Pl.x, CAS_EXIT.z - Pl.z) < 2.2 ? { kind: 'exit', label: 'Town Square', cas: 'out' } : null; }
+    if (St.indoor) { { const [jx, jz] = JPOS(); if (Math.hypot(jx - Pl.x, jz - Pl.z) < 2.6) return { kind: 'juke', label: 'jukebox', juke: true }; } if (Math.hypot(DART.oche - 0.4 - Pl.x, DART.z - Pl.z) < 2.6) return { kind: 'darts', label: 'darts', darts: true }; return Math.hypot(TAV_EXIT.x - Pl.x, TAV_EXIT.z - Pl.z) < 2.2 ? { kind: 'exit', label: 'Town Square', tav: 'out' } : null; } for (const d of doors) if (Math.hypot(d.x - Pl.x, d.z - Pl.z) < 2.4) return { kind: 'door', label: d.label, tav: d.label === 'Tavern' ? 'in' : null, cas: d.label === 'Casino' ? 'in' : null }; if (BOAT.on) { if (Math.hypot(LK.MOOR.x - Pl.x, LK.MOOR.z - Pl.z) < 3.2) return { kind: 'use', text: 'Step ashore', label: '', ashore: true }; for (const d of LK.DIVES) if (Math.hypot(d.x - Pl.x, d.z - Pl.z) < d.r) return { kind: 'use', text: 'DIVE for PEARLS', label: '', dive: true }; return null; }
+    for (const p of LK.SPOTS) if (Math.hypot(p.x - Pl.x, p.z - Pl.z) < p.r) return { kind: 'use', text: p.gate === 'board' && !save.flag('boatRented') ? 'The boat (talk to the Fisherman)' : p.text, label: '', lake: p.gate };
+    for (const p of [...CP.SPOTS, ...RU.SPOTS]) if (Math.hypot(p.x - Pl.x, p.z - Pl.z) < p.r) return { kind: 'door', label: p.label, gate: p.gate, toast: p.toast }; for (const e of EXITS) if (!e.open && Math.hypot(AX(e.ax) - Pl.x, AZ(e.ay) - Pl.z) < (e.go ? 5 : 3.5)) return { kind: 'exit', label: e.label, go: e.go }; return null; };
 
   function update(dt) {
     St.t += dt; St.time = (St.time + dt * opts.timeScale / 60) % 24;
@@ -811,7 +788,7 @@ export async function createGame({ container, minimap, options = {}, onState = (
       const il = Math.hypot(ix, iy); if (il > 1) { ix /= il; iy /= il; }
       const fx = -Math.sin(St.yaw), fz = -Math.cos(St.yaw), rx = Math.cos(St.yaw), rz = -Math.sin(St.yaw);
       const run = keys.has('ShiftLeft') || keys.has('ShiftRight') || Math.hypot(input.jx, input.jy) > 0.92;
-      const spd = (run ? 8.5 : 4.8) * Math.min(1, Math.hypot(ix, iy));
+      const spd = (BOAT.on ? 6.5 : run ? 8.5 : 4.8) * Math.min(1, Math.hypot(ix, iy));
       let mx = fx * iy + rx * ix, mz = fz * iy + rz * ix; const ml = Math.hypot(mx, mz); if (ml > 0) { mx /= ml; mz /= ml; }
       Pl.vx = damp(Pl.vx, mx * spd, 12, dt); Pl.vz = damp(Pl.vz, mz * spd, 12, dt);
       moveWithWalls(Pl, Pl.x + Pl.vx * dt, Pl.z + Pl.vz * dt, 0.42);
@@ -819,18 +796,35 @@ export async function createGame({ container, minimap, options = {}, onState = (
       const hs = Math.hypot(Pl.vx, Pl.vz); if (hs > 0.3) { let df = Math.atan2(Pl.vx, Pl.vz) - Pl.face; df = Math.atan2(Math.sin(df), Math.cos(df)); Pl.face += df * Math.min(1, dt * 12); }
       St.dragT = (St.dragT || 0) - dt;
       if (opts.followCam && hs > 0.6 && St.dragT <= 0 && !St.dialog) { let dy = (Pl.face + Math.PI) - St.yaw; dy = Math.atan2(Math.sin(dy), Math.cos(dy)); St.yaw += dy * Math.min(1, dt * 2.2 * Math.min(1, hs / 4)); }
-      const gy = St.indoor ? 0 : Math.max(0.06, heightAt(Pl.x, Pl.z));
-      if (input.jump && Pl.ground) { Pl.vy = 8.4; Pl.ground = false; audio.tone(420, 0.12, 0.04, 'triangle', 1.8); } input.jump = false;
+      const gy = St.indoor ? 0 : BOAT.on ? LK.WATER_Y + 0.35 : Math.max(0.06, heightAt(Pl.x, Pl.z));
+      if (input.jump && Pl.ground && !BOAT.on) { Pl.vy = 8.4; Pl.ground = false; audio.tone(420, 0.12, 0.04, 'triangle', 1.8); } input.jump = false;
       Pl.vy -= 24 * dt; Pl.y += Pl.vy * dt; if (Pl.y <= gy) { if (!Pl.ground && Pl.vy < -6) audio.burst(0.1, 500, 0.18); Pl.y = gy; Pl.vy = 0; Pl.ground = true; } else if (Pl.y - gy > 0.15) Pl.ground = false;
       if (Pl.ground && hs > 1) { Pl.stepT -= dt * hs; if (Pl.stepT < 0) { Pl.stepT = 2.2; audio.step(); } }
-      player.userData.mood = Pl.ground ? 'warm' : 'excited'; player.position.set(Pl.x, Pl.y, Pl.z); player.rotation.y = Pl.face; animFox(player, dt, hs, !Pl.ground);
+      player.userData.mood = Pl.ground ? 'warm' : 'excited'; player.position.set(Pl.x, Pl.y, Pl.z); player.rotation.y = Pl.face; animFox(player, dt, BOAT.on ? 0 : hs, !Pl.ground && !BOAT.on); if (BOAT.on) { const P2 = player.userData.P; P2.legs[0].rotation.x = P2.legs[1].rotation.x = -1.4; P2.arms[0].rotation.x = P2.arms[1].rotation.x = -0.9 + Math.sin(St.t * 5) * 0.4 * Math.min(1, hs / 3); }
     } else { player.position.set(Pl.x, 0.06, Pl.z); player.rotation.y = Pl.face; animFox(player, dt, 0); }
 
+    ruinsFx.update(Pl.x, Pl.z, St.indoor); cull(); checkMeet(); if (apFx.root.visible) apFx.update(dt); if (lakeFx.root.visible) lakeFx.update(dt, BOAT.on, Pl.x, Pl.z, Pl.face);
+    if (St.indoor && St.room === 'cave') { caveFx.update(dt, Pl.x, Pl.z); const r = CB.update(dt, Pl, player); CB.pose(player);
+      if (r.playerDown && !St.moving2) knockedDown();
+      if (banditsActive() && St.camp !== 'fight' && !St.dialog) { St.camp = 'fight'; CB.engage(bandits.map(b => b.key)); }
+      if (St.camp === 'fight' && banditsDown()) { St.camp = 'down'; save.setFlag('banditsDown'); toast('The crew is down. Get Max out.'); audio.tone(520, 0.4, 0.05, 'triangle', 1.6); }
+      if (St.camp === 'idle' && !St.dialog && !St.moving2 && !save.flag('maxFreed')) { const s = bn('snag'); if (!s.ctl.down && Math.hypot(Pl.x - s.x, Pl.z - s.z) < 7) callOut(s); } }
+    if (St.lock) { const lk = St.lock; lk.pos += lk.dir * lk.speed * dt; if (lk.pos > 1) { lk.pos = 1; lk.dir = -1; } if (lk.pos < 0) { lk.pos = 0; lk.dir = 1; } }
+    if (maxNpc && !maxNpc.follow && save.flag('maxFollowing') && !save.flag('maxHome')) { maxNpc.follow = true; maxNpc.trail = []; }
     const nr = nearest(); St.near = St.dialog ? null : nr; St.spot = St.dialog || nr ? null : nearSpot();
+    if (St.indoor && St.mode === 'play' && !St.dialog && !St.playing && !St.moving2 && nr) { const amb = St.room === 'burgers' && nr.key === 'michaelJay' ? ['mjGreeted', 2.6] : St.room === 'tavern' && nr.key === 'docBraun' ? ['docGreeted', 2.2] : null; if (amb && !save.flag(amb[0]) && Math.hypot(nr.x - Pl.x, nr.z - Pl.z) < amb[1]) { save.setFlag(amb[0]); api.talk(); } }
     [player, ...npcs.map(n => n.c)].forEach(c => { c.userData.talking = false; c.userData.lineMood = null; });
-    if (St.dialog && St.dialog.npc) { const d = St.dialog, ln = d.lines[d.i], spk = ln.you ? player : d.npc.c; spk.userData.talking = d.chars < ln.text.length; spk.userData.lineMood = ln.mood; if (!ln.you) d.npc.c.userData.lineMood = ln.mood; }
+    if (St.dialog && St.dialog.npc) { const d = St.dialog, ln = d.lines[d.i], spk = ln.you ? player : ln.spk ? ln.spk : ln.who === 'max' && maxNpc ? maxNpc.c : d.npc.c; spk.userData.talking = d.chars < ln.text.length; spk.userData.lineMood = ln.mood; if (!ln.you) d.npc.c.userData.lineMood = ln.mood; }
     { let lk = null, bd = 5; for (const n of npcs) { const dd = Math.hypot(n.x - Pl.x, n.z - Pl.z); if (dd < bd) { bd = dd; lk = n; } } player.userData.lookAt = lk && St.mode === 'play' ? playerLook.set(lk.x, 1.5, lk.z) : null; }
     for (const n of npcs) {
+      if (n.gone) { n.c.visible = false; continue; }
+      if (n.runWest) { n.x -= 7 * dt; n.face = -Math.PI / 2; n.c.position.set(n.x, 0.06, n.z); n.c.rotation.y = n.face; animFox(n.c, dt, 7); if (n.x < 30) { n.gone = true; } continue; }
+      if (n.ctl) { animFox(n.c, dt, n.ctl.down ? 0 : n.speedNow || 0); if (!n.ctl.hostile && !n.ctl.down) { const dd = Math.hypot(Pl.x - n.x, Pl.z - n.z); n.c.userData.lookAt = St.mode === 'play' && dd < 7 ? n.lookV.set(Pl.x, Pl.y + 1.6, Pl.z) : null; if ((St.dialog && St.dialog.npc === n) || dd < 3) { let df = Math.atan2(Pl.x - n.x, Pl.z - n.z) - n.face; df = Math.atan2(Math.sin(df), Math.cos(df)); n.face += df * Math.min(1, dt * 6); } } else n.c.userData.lookAt = null; continue; }
+      if (n.follow) { const tr = n.trail || (n.trail = []); const hd = tr[tr.length - 1]; if (!hd || Math.hypot(Pl.x - hd[0], Pl.z - hd[1]) > 0.3) tr.push([Pl.x, Pl.z]); if (tr.length > 80) tr.shift();
+        let acc = 0, tg = tr[0] || [Pl.x, Pl.z]; for (let i = tr.length - 1; i > 0; i--) { acc += Math.hypot(tr[i][0] - tr[i - 1][0], tr[i][1] - tr[i - 1][1]); if (acc >= 1.8) { tg = tr[i - 1]; break; } }
+        const fdx = tg[0] - n.x, fdz = tg[1] - n.z, fd = Math.hypot(fdx, fdz); let fs = 0; if (fd > 0.15 && Math.hypot(Pl.x - n.x, Pl.z - n.z) > 1.4) { fs = Math.min(fd * 4, 7.5); n.x += fdx / fd * Math.min(fd, fs * dt); n.z += fdz / fd * Math.min(fd, fs * dt); n.face = Math.atan2(fdx, fdz); }
+        if (Math.hypot(Pl.x - n.x, Pl.z - n.z) > 12) { n.x = Pl.x - Math.sin(Pl.face) * 1.6; n.z = Pl.z - Math.cos(Pl.face) * 1.6; n.trail = []; }
+        n.speedNow = damp(n.speedNow, fs, 8, dt); n.c.position.set(n.x, St.indoor ? 0.06 : Math.max(0.06, heightAt(n.x, n.z)), n.z); n.c.rotation.y = n.face; n.c.userData.lookAt = null; animFox(n.c, dt, n.speedNow); continue; }
       const dpl = Math.hypot(Pl.x - n.x, Pl.z - n.z), engaged = St.mode === 'play' && ((St.dialog && St.dialog.npc === n) || dpl < 3.2);
       let spd = 0, tf = n.face;
       if (engaged) tf = Math.atan2(Pl.x - n.x, Pl.z - n.z);
@@ -840,7 +834,7 @@ export async function createGame({ container, minimap, options = {}, onState = (
         else { spd = n.speed * 1.1; n.x += dx / d * Math.min(d, spd * dt); n.z += dz / d * Math.min(d, spd * dt); tf = Math.atan2(dx, dz); }
       }
       let df = tf - n.face; df = Math.atan2(Math.sin(df), Math.cos(df)); n.face += df * Math.min(1, dt * 6);
-      n.c.userData.lookAt = St.mode === 'play' && dpl < 7 ? n.lookV.set(Pl.x, Pl.y + 1.6, Pl.z) : null; n.speedNow = damp(n.speedNow, spd, 8, dt); n.c.position.set(n.x, 0.06, n.z); n.c.rotation.y = n.face; animFox(n.c, dt, n.speedNow);
+      n.c.userData.lookAt = St.mode === 'play' && dpl < 7 ? n.lookV.set(Pl.x, Pl.y + 1.6, Pl.z) : null; n.speedNow = damp(n.speedNow, spd, 8, dt); n.c.position.set(n.x, n.x < -42 && Math.abs(n.z) < 140 ? Math.max(0.06, heightAt(n.x, n.z)) : 0.06, n.z); n.c.rotation.y = n.face; animFox(n.c, dt, n.speedNow);
     }
     const mk = St.mode === 'play' ? (St.dialog ? St.dialog.npc : St.near) : null;
     marker.visible = !!mk; if (mk) { marker.position.set(mk.x, 2.45 + (mk.chair ? 0.28 : 0) + Math.sin(St.t * 4) * 0.08, mk.z); marker.rotation.y += dt * 2.5; }
@@ -871,7 +865,7 @@ export async function createGame({ container, minimap, options = {}, onState = (
       const tx = Pl.x, ty = Pl.y + 1.5, tz = Pl.z;
       v3.set(tx + Math.sin(St.yaw) * Math.cos(St.pitch) * St.dist, ty + Math.sin(St.pitch) * St.dist, tz + Math.cos(St.yaw) * Math.cos(St.pitch) * St.dist);
       if (St.darts) { const F = St.darts.fly; if (St.darts.phase === 'fly' && F) { v3.set(F.dm.position.x - 1.3, F.dm.position.y + 0.35, F.dm.position.z + 0.75); } else v3.set(Pl.x + 0.6, 2.35, Pl.z + 1.9); St.yaw = -Math.PI / 2; }
-      else if (St.indoor) { const dd = Math.min(St.dist, 5.2); v3.set(tx + Math.sin(St.yaw) * Math.cos(St.pitch) * dd, ty + Math.sin(St.pitch) * dd, tz + Math.cos(St.yaw) * Math.cos(St.pitch) * dd); const Rm = RM(); v3.x = clamp(v3.x, Rm.x - Rm.w / 2 + 0.5, Rm.x + Rm.w / 2 - 0.5); v3.z = clamp(v3.z, Rm.z - Rm.d / 2 + 0.5, Rm.z + Rm.d / 2 - 0.5); v3.y = clamp(v3.y, 1.2, Rm.h - 0.5); }
+      else if (St.indoor) { const dd = Math.min(St.dist, 5.2); v3.set(tx + Math.sin(St.yaw) * Math.cos(St.pitch) * dd, ty + Math.sin(St.pitch) * dd, tz + Math.cos(St.yaw) * Math.cos(St.pitch) * dd); const Rm = RM(); v3.x = clamp(v3.x, Rm.x - Rm.w / 2 + 0.5, Rm.x + Rm.w / 2 - 0.5); v3.z = clamp(v3.z, Rm.z - Rm.d / 2 + 0.5, Rm.z + Rm.d / 2 - 0.5); v3.y = clamp(v3.y, 1.2, Rm.h - 0.5); if (Rm.camOK) for (let i = 0; i < 12 && !Rm.camOK(v3.x, v3.z); i++) { v3.x += (tx - v3.x) * 0.25; v3.z += (tz - v3.z) * 0.25; } }
       const gh = St.indoor ? 0.8 : heightAt(v3.x, v3.z) + 0.6; if (v3.y < gh) v3.y = gh;
       camFrom.set(tx, ty, tz); camDir.subVectors(v3, camFrom); const want = camDir.length(); camDir.normalize();
       camRay.set(camFrom, camDir); camRay.camera = camera; camRay.far = want + 0.4;
@@ -890,6 +884,7 @@ export async function createGame({ container, minimap, options = {}, onState = (
     updateDarts(dt); updateJuke(dt);
     if (St.indoor && St.room === 'casino') { St.tvT = (St.tvT || 0) + dt; if (St.tvT > 1 / 20) { TVS.forEach(tv => drawTV(tv, St.tvT)); St.tvT = 0; } }
     casLights.forEach(t => { t.L.visible = St.indoor && St.room === 'casino'; t.L.intensity = t.k; });
+    { const Rm = St.indoor ? RM() : null; roomLights.forEach(t => { const on = !!Rm && (St.room === 'barracks' || St.room === 'throneroom' || St.room === 'cave' || St.room === 'itemshop' || St.room === 'armory' || St.room === 'bowling' || St.room === 'fortune' || St.room === 'burgers') && Math.abs(t.L.position.x - Rm.x) < Rm.w; t.L.visible = on; t.L.intensity = t.k; }); }
     tavLights.forEach(t => { t.L.visible = St.indoor && St.room !== 'casino'; t.L.intensity = t.k * (t.flick ? 0.8 + 0.25 * Math.sin(St.t * 11) + 0.1 * Math.sin(St.t * 23) : 1); });
     drawMap();
 
@@ -899,29 +894,94 @@ export async function createGame({ container, minimap, options = {}, onState = (
       const period = h < 5 ? 'Night' : h < 7 ? 'Dawn' : h < 11 ? 'Morning' : h < 14 ? 'Midday' : h < 17.5 ? 'Afternoon' : h < 19.3 ? 'Evening' : h < 20.6 ? 'Dusk' : 'Night';
       const d = St.dialog, ln = d && d.lines[d.i];
       if (St.toast) { St.toast.t -= 0.05; if (St.toast.t <= 0) St.toast = null; }
-      let zoneLabel; if (St.indoor) { const I = INTERIORS[St.room === 'casino' ? 'casino' : 'tavern']; zoneLabel = I.label; if (St.zone !== I.key) { St.zone = I.key; save.where('meru', I.key); } } else { const z = zoneAt(...toArt(Pl.x, Pl.z)); zoneLabel = z.label; if (St.zone !== z.key) { St.zone = z.key; save.where('meru', z.key); } }
+      let zoneLabel; if (St.indoor) { const I = INTERIORS[St.room] || INTERIORS.tavern; zoneLabel = I.label; if (St.zone !== I.key) { St.zone = I.key; save.where('meru', I.key); } } else { const z = ruinsFx.inOffice(Pl.x, Pl.z) ? { key: 'meruPermitOffice', label: 'Permit Office' } : zoneAt(...toArt(Pl.x, Pl.z)); zoneLabel = z.label; if (St.zone !== z.key) { St.zone = z.key; save.where('meru', z.key); } }
       const qb = questBanner(QUEST, r => save.test(r));
       const DD = St.darts; const dartsHud = DD ? { power: Math.round((DD.phase === 'aim' ? DD.p : (DD.lock ? DD.lock.p : DD.p)) * 100), perfect: Math.round(PERFECT * 100), n: Math.min(3, DD.n + (DD.phase === 'aim' || DD.phase === 'wind' ? 1 : 0)), score: DD.score, best: save.stat('meru.darts.best') } : null;
-      const hud = { juke: { open: JUKE.open, playing: JUKE.playing, title: JUKE.playing >= 0 ? SONGS[JUKE.playing].title : null, genre: JUKE.playing >= 0 ? SONGS[JUKE.playing].genre : null, synth: JUKE.err === 'synth', here: !!St.indoor }, darts: dartsHud, place: 'Meru · ' + zoneLabel, zone: St.zone, quest: { title: qb.title, text: qb.text, done: qb.done }, toast: St.toast ? St.toast.text : null, gold: save.data.gold, wheel: St.wheel ? { items: Object.entries(save.data.items).map(([id, n]) => ({ id, n, label: itemName(id) })) } : null, clock: String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0'), period, weather: { clear: 'Clear', fog: 'Fog', rain: 'Rain' }[St.weather], muted: St.muted,
-        prompt: St.mode === 'play' && St.near ? 'Talk to ' + St.near.name : St.mode === 'play' && St.spot ? (St.spot.game ? 'Play ' : St.spot.cas === 'out' ? 'Back to the ' : St.spot.juke ? (JUKE.open ? 'Close the ' : 'Play the ') : St.spot.darts ? (St.darts ? 'Throw dart ' + (St.darts.n + 1) + ' of 3' : 'Play ') : St.spot.tav === 'out' ? 'Back to the ' : St.spot.go ? 'Enter ' : St.spot.kind === 'door' ? 'Enter the ' : 'Take the ') + (St.spot.darts && St.darts ? '' : St.spot.label) : null,
+      const hud = { juke: { open: JUKE.open, playing: JUKE.playing, title: JUKE.playing >= 0 ? SONGS[JUKE.playing].title : null, genre: JUKE.playing >= 0 ? SONGS[JUKE.playing].genre : null, synth: JUKE.err === 'synth', here: !!St.indoor }, darts: dartsHud, place: 'Meru · ' + zoneLabel, zone: St.zone, quest: { title: qb.title, text: qb.text, done: qb.done }, toast: St.toast ? St.toast.text : null, gold: save.data.gold, fight: St.indoor && St.room === 'cave' && (St.camp === 'fight' || CB.hud().foes > 0 || CB.P.hp < CB.P.max) ? CB.hud() : null, lock: St.lock ? { pins: St.lock.pins, set: St.lock.set, pos: St.lock.pos, zone: St.lock.zone, msg: St.lock.msg } : null, wheel: St.wheel ? { items: Object.entries(save.data.items).map(([id, n]) => ({ id, n, label: itemName(id) })) } : null, clock: String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0'), period, weather: { clear: 'Clear', fog: 'Fog', rain: 'Rain' }[St.weather], muted: St.muted,
+        prompt: St.mode === 'play' && St.near ? 'Talk to ' + St.near.name : St.mode === 'play' && St.spot ? (St.spot.text ? St.spot.text : St.spot.game ? 'Play ' : St.spot.cas === 'out' ? 'Back to the ' : St.spot.juke ? (JUKE.open ? 'Close the ' : 'Play the ') : St.spot.darts ? (St.darts ? 'Throw dart ' + (St.darts.n + 1) + ' of 3' : 'Play ') : St.spot.tav === 'out' ? 'Back to the ' : St.spot.go ? 'Enter ' : St.spot.kind === 'door' ? 'Enter the ' : 'Take the ') + (St.spot.darts && St.darts ? '' : St.spot.label) : null,
         dialog: d ? { name: ln.name, role: ln.role, text: ln.text.slice(0, Math.floor(d.chars)), step: d.i + 1, total: d.lines.length, done: d.chars >= ln.text.length, you: ln.you, more: !!d.conv, choices: d.choices ? d.choices.map(c => ({ text: c.text, asked: c.asked, bye: c.bye })) : null } : null };
       const key = JSON.stringify(hud); if (key !== lastHud) { lastHud = key; onState(hud); }
     }
   }
-  function frame() { raf = requestAnimationFrame(frame); try { update(Math.min(clock.getDelta(), 0.05)); } catch (e) { if (!frame.err) { frame.err = 1; console.error('town update failed: ' + (e && e.message) + ' @ ' + String(e && e.stack).split('\n').slice(0, 3).join(' | ')); } } renderer.render(scene, camera); }
+  // phone budget: draw only the room you are in, the zones near you, and foxes within sight
+  let cullK = 0, lastIndoor = null;
+  function cull() {
+    if (cullK++ % 8 && lastIndoor === St.indoor) return; const ind = St.indoor;
+    if (ind !== lastIndoor) { camera.far = ind ? 60 : 1200; camera.updateProjectionMatrix(); lastIndoor = ind; }
+    for (const k in ROOM_G) if (ROOM_G[k]) ROOM_G[k].visible = ind && St.room === k; critterGroup.visible = ind && St.room === 'cave';
+    cpRoot.visible = !ind && Pl.z < CP.cz(2880) + 50;
+    ruinsFx.rootR.visible = !ind && Pl.x < 25; lakeFx.root.visible = !ind && Pl.z > 8; apFx.root.visible = !ind && Pl.x > 10; ruinsFx.rootD.visible = !ind && Pl.x < -70;
+    const Rm = ind ? RM() : null;
+    for (const n of npcs) if (!n.gone) n.c.visible = ind ? inRoom(Rm, n.x, n.z) || Math.hypot(n.x - Pl.x, n.z - Pl.z) < 20 : n.z < 150 && Math.hypot(n.x - Pl.x, n.z - Pl.z) < 55;
+  }
+  function frame() { raf = requestAnimationFrame(frame); try { update(Math.min(clock.getDelta(), 0.05)); } catch (e) { window.__townErr = String(e && e.stack || e); if (!frame.err) { frame.err = 1; console.error('town update failed: ' + (e && e.message) + ' @ ' + String(e && e.stack).split('\n').slice(0, 3).join(' | ')); } } renderer.render(scene, camera); }
   frame();
 
-  const lineFor = (n, l) => l.who === 'player' ? { name: 'You', role: 'Fox', text: l.text, you: true, mood: l.mood || moodOf(l.text, 'warm', true) } : { name: n.name, role: n.role, text: l.text, mood: l.mood || moodOf(l.text, MOODS[n.key], false) };
+  const lineFor = (n, l) => l.who === 'max' ? { name: 'Max', role: 'Prince', text: l.text, mood: 'warm', who: 'max' } : l.who === 'player' ? { name: 'You', role: 'Fox', text: l.text, you: true, mood: l.mood || moodOf(l.text, 'warm', true) } : { name: n.name, role: n.role, text: l.text, mood: l.mood || moodOf(l.text, MOODS[n.key], false) };
   function convNext(d) { const o = d.conv.options(); if (o === 'lines') { d.lines = d.conv.lines().map(l => lineFor(d.npc, l)); d.i = 0; d.chars = 0; audio.blip(); return true; } if (o) { d.choices = o; d.chars = d.lines[d.i].text.length; audio.blip(); return true; } return false; }
+  const RUB = CV.at(0.5, 0.099); St.camp = save.flag('banditsDown') ? 'down' : save.flag('banditsJoined') ? 'gang' : (save.flag('ringJob') || save.flag('ransomNamed')) ? 'joined' : 'idle';
+  const chestsOpen = () => (save.flag('caveChest0') ? 1 : 0) + (save.flag('caveChest1') ? 1 : 0);
+  function caveTree(n) {
+    if (n.key === 'rook' && !banditsDown() && !save.flag('maxFreed')) { if (save.flag('ringJob') && save.flag('hasSageRing')) return branch(CV.RING_HANDOVER); if (save.flag('ringJob')) return branch(CV.ROOK_RING); if (save.flag('ransomNamed')) return branch(CV.ROOK_RANSOM); }
+    if (n.key !== 'max' || save.flag('maxHome')) return null;
+    if (save.flag('maxFollowing')) return branch([{ who: 'npc', text: 'Right behind you. Lead the way!' }]);
+    if (save.flag('maxFreed')) return CV.READY(chestsOpen()); if (!banditsDown() && !save.flag('banditsJoined')) return branch(CV.MAX_BUSY); return CV.RESCUE(); }
+  function openChest(i) { save.setFlag('caveChest' + i); const h = CV.HAUL[i]; save.addGold(h.gold); save.addRelic(h.relic); caveK.chestLids[i].rotation.x = -1.9; save.addXp(25); toast('+' + h.gold + ' GOLD · ' + h.name); audio.tone(660, 0.3, 0.05, 'triangle', 1.5); }
+  function sayAs(n, lines, then) { n.c.userData.hop = 1; St.dialog = { npc: n, lines: lines.map(l => lineFor(n, l)), i: 0, chars: 0, choices: null, then }; audio.blip(); }
+  function treeAs(n, tree, then) { const conv = new Conversation(tree, { test: r => save.test(r), set: f => save.setFlag(f), act: a => talkAction(a), asked: new Set() }); const ls = conv.lines(); St.dialog = { npc: n, conv, lines: ls.map(l => lineFor(n, l)), i: 0, chars: 0, choices: null, then }; audio.blip(); }
+  const bn = k => bandits.find(b => b.key === k);
+  function callOut(g) { St.camp = 'called'; audio.tone(300, 0.2, 0.05, 'square', 0.8); sayAs(g, CV.CALL_OUT, () => { goTo(CV.MARCH.player.x, CV.MARCH.player.z, 0, true);
+    setTimeout(() => { for (const k of ['rook', 'vix', 'snag']) { const b = bn(k), p = CV.MARCH[k]; b.x = p.x; b.z = p.z; b.face = Math.atan2(CV.MARCH.player.x - p.x, CV.MARCH.player.z - p.z); } }, 320);
+    setTimeout(() => { St.camp = 'parley'; treeAs(bn('rook'), CV.PARLEY()); }, 520); }); }
+  function freeMax() { save.setFlag('maxFreed'); caveK.cageBars.visible = false; maxNpc.x = CV.MAX_FREE.x; maxNpc.z = CV.MAX_FREE.z; maxNpc.c.userData.mood = 'happy'; toast('The lock pops open!'); audio.tone(880, 0.3, 0.05, 'triangle', 1.5); setTimeout(() => treeAs(maxNpc, CV.FREED(chestsOpen())), 600); }
+  function knockedDown() { toast('Knocked down. You come round by the river.'); CB.reset(save.flag('banditsDown') ? f => f.critter : null); if (!save.flag('banditsDown')) St.camp = save.flag('banditsJoined') ? 'gang' : (save.flag('ringJob') || save.flag('ransomNamed')) ? 'joined' : 'idle'; goTo(CV.at(0.5, 0.26).x, CV.at(0.5, 0.26).z, 0, true); }
+  function talkAction(a) { const d = St.dialog; if (!d) return;
+    if (a === 'fight') { d.then = () => { St.camp = 'fight'; CB.engage(); toast('Fight! 1 MELEE · 2 RANGE'); }; }
+    if (a === 'release') { d.then = () => { St.camp = save.flag('ringJob') ? 'joined' : 'ransom'; const s = bn('snag'); s.x = s.ctl.home[0]; s.z = s.ctl.home[1]; s.face = s.ctl.home[2]; Pl.z = CV.RELEASE_Z; }; }
+    if (a === 'lock') { d.then = () => { St.lock = { pins: 3, set: 0, pos: 0.06, dir: 1, speed: 0.43, zone: 0.42, msg: 'PRESS when the pick is in the GREEN.' }; }; }
+    if (a === 'dig') { d.then = () => { toast('EXCAVATION PERMIT'); St.playing = 'duneglass'; onPlayGame('duneglass', 'Dig site', 'minigames/meru/duneglass.html', 'Meru Desert'); }; }
+    if (a === 'relics') d.then = () => relicCounter(d.npc);
+    if (a && a.startsWith('sell:')) { const k = a.slice(5), r = CV.RELICS[k]; if (r && save.dropRelic(k)) { save.addGold(r.value); toast('+' + r.value + ' GOLD · sold ' + r.name); d.then = () => { if (save.data.relics.some(x => CV.RELICS[x])) relicCounter(d.npc); }; } }
+    if (a && a.startsWith('buy:')) { const [, shop, key] = a.split(':'); const line = SH.buy(save, shop, key); if (line) toast('-' + line.price + ' GOLD · ' + line.label); d.then = () => treeAs(d.npc, SH.counter(d.npc, save)); }
+    if (a === 'diner') d.then = () => { St.playing = 'diner'; onPlayGame('diner', 'Burgers', 'minigames/meru/diner.html', 'Burgers'); };
+    if (a === 'shopAgain') d.then = () => treeAs(d.npc, SH.counter(d.npc, save));
+    if (a === 'shopTalk') d.then = () => treeAs(d.npc, TALK[d.npc.key]);
+    if (a === 'offer') { d.then = () => treeAs(d.npc, LK.RENTAL(save.data.gold >= 1)); }
+    if (a === 'pay1') { save.spend(1); toast('-1 GOLD · The boat is yours'); }
+    if (a === 'steal') { const caught = Math.random() < 0.3; if (caught) toast('Caught! The Sage pulls his hand away. Try again later.'); else { save.setFlag('hasSageRing'); toast('BLACK STONE RING · Take it to the bandit camp'); } } }
+  function relicCounter(n) { const own = save.data.relics.filter(k => CV.RELICS[k]); if (!own.length) return;
+    treeAs(n, branch([{ who: 'npc', text: 'Let me see what you have.' }, { who: 'npc', text: 'Your purse: ' + save.data.gold + ' gold.' }], [...own.map(k => ({ label: CV.RELICS[k].name + ' — ' + CV.RELICS[k].value + 'g', replies: [CV.RELICS[k].remark], do: 'sell:' + k })), { label: '← Keep them for now', replies: ['As you like. The offer does not expire.'] }])); }
+  function ringHandover() { save.setFlag('banditsJoined'); save.setFlag('hasSageRing', false); St.camp = 'gang'; freeMax(); setTimeout(() => toast('WELCOMED INTO THE GANG'), 2400); }
+
+  function castleGate(s) {
+    if (s.gate === 'cave') { St.room = 'cave'; goTo(CV.ENTRY.x, CV.ENTRY.z, 0, true); return; }
+    if (s.toast) { toast(s.toast); return; }
+    if (s.gate === 'barracks') { St.room = 'barracks'; goTo(IN.BAR_EXIT.x, IN.BAR_EXIT.z - 4.5, Math.PI, true); return; }
+    const g1 = npcs.find(n => n.key === 'castleGuard1'), ls = CP.castleDoorLines(f => save.flag(f));
+    if (!ls) { enterThrone(false); return; }
+    g1.c.userData.hop = 1; St.dialog = { npc: g1, lines: ls.map(l => l.who === 'max' ? { name: 'Max', role: 'Prince', text: l.text, mood: 'warm' } : lineFor(g1, l)), i: 0, chars: 0, choices: null, then: save.flag('maxFollowing') ? () => enterThrone(true) : null }; audio.blip();
+  }
+  function enterThrone(audience) {
+    St.room = 'throneroom'; goTo(IN.THR_EXIT.x, IN.THR_EXIT.z - 4.5, Math.PI, true);
+    if (!audience) return;
+    save.setFlag('maxHome'); save.setFlag('maxFollowing', false); const mx = addMax(); const king = npcs.find(n => n.key === 'mike');
+    setTimeout(() => { Pl.x = IN.KING_SPOT.x; Pl.z = IN.KING_SPOT.z + 4.2; Pl.face = Math.PI; St.yaw = 0; toast('Max made it home!');
+      St.dialog = { npc: king, lines: IN.audienceLines().map(l => l.who === 'max' ? { name: 'Max', role: 'Prince', text: l.text, mood: 'warm', who: 'max' } : lineFor(king, l)), i: 0, chars: 0, choices: null, then: () => { IN.grantGifts(save); toast('+5 HEALING CHARGES · +150 GOLD · FLAGSHIP · BIG LASER GUN'); } }; }, 700);
+  }
+  function cAttack(kind) {
+    { let tf = null, bd = kind === 'melee' ? 4 : 14; for (const f of CB.foes) { if (f.down || !f.hostile) continue; const d = Math.hypot(f.n.x - Pl.x, f.n.z - Pl.z); if (d < bd) { bd = d; tf = f; } } if (tf) { Pl.face = Math.atan2(tf.n.x - Pl.x, tf.n.z - Pl.z); } }
+    const hit = CV.state.rubble > 0 ? [{ x: RUB.x, z: RUB.z, r: 1.2, onHit: k => { if (k !== 'range') { toast('Stone will not yield to the blade. Use 2 RANGE.'); return; } if (!save.flag('tournamentWon')) { toast('The rocks hold. Come back after the tournament.'); return; } CV.state.rubble--; audio.burst(0.2, 300, 0.25); toast(CV.state.rubble > 0 ? 'The cave-in cracks.' : 'The way is clear.'); } }] : [];
+    CB.attack(kind, Pl, player, { laserDmg: save.flag('bigLaser') ? 30 : 15, meleeDmg: 30, hit }); }
   const toast = text => { St.toast = { text, t: 2.4 }; audio.blip(); };
-  const itemName = id => String(id).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, c => c.toUpperCase());
+  const itemName = id => SH.ITEM_LABELS[id] || String(id).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, c => c.toUpperCase());
   const api = window.__8G_GAME = {
     start() { St.mode = 'play'; audio.init(); audio.setMuted(St.muted); camPos.set(Pl.x, 10, Pl.z + 14); },
     talk() {
-      if (St.mode !== 'play') return; const d = St.dialog;
+      if (St.mode !== 'play') return; if (St.lock) { const lk = St.lock; if (Math.abs(lk.pos - 0.5) < lk.zone / 2) { lk.set++; lk.msg = 'Pin ' + lk.set + ' of ' + lk.pins + ' set.'; audio.tone(700 + lk.set * 120, 0.12, 0.05, 'triangle', 1.2); if (lk.set >= lk.pins) { St.lock = null; freeMax(); } } else { lk.msg = 'PRESS when the pick is in the GREEN.'; audio.tone(160, 0.12, 0.05, 'square', 0.7); } return; } const d = St.dialog;
       if (d) { if (d.choices) return; const L = d.lines[d.i].text.length; if (d.chars < L) d.chars = L; else if (d.i < d.lines.length - 1) { d.i++; d.chars = 0; audio.blip(); const ln = d.lines[d.i]; if (d.npc && ln.mood === 'excited') (ln.you ? player : d.npc.c).userData.hop = 1; } else if (d.conv && convNext(d)) {} else { const th = St.dialog.then; St.dialog = null; if (th) th(); } return; }
       const n = nearest();
-      if (n) { n.c.userData.hop = 1; const asked = St.asked[n.key] || (St.asked[n.key] = new Set()); const conv = new Conversation(TALK[n.key] || { start: 'root', nodes: { root: { lines: [] } } }, { test: r => save.test(r), set: f => save.setFlag(f), asked }); const ls = conv.lines(); const d = St.dialog = { npc: n, conv, lines: ls.length ? ls.map(l => lineFor(n, l)) : [{ name: n.name, role: n.role, text: '', mood: MOODS[n.key] }], i: 0, chars: 0, choices: null }; if (!ls.length) convNext(d); audio.blip(); return; }
+      if (n) { n.c.userData.hop = 1; const asked = St.asked[n.key] || (St.asked[n.key] = new Set()); if (n.key === 'fisherwoman') save.setFlag('maxTavernLead'); if (n.key === 'michaelJay') save.setFlag('mjGreeted'); if (n.key === 'docBraun') save.setFlag('docGreeted'); if (save.flag('maxTavernLead') && St.indoor && St.room === 'tavern') save.setFlag('maxTavernAsked');
+        const ringNow = n.key === 'rook' && save.flag('ringJob') && save.flag('hasSageRing') && !save.flag('maxFreed'); const dyn = (n.key === 'ora' ? branch(ORA_LINES[FT.oraIndex(f => save.flag(f))]) : null) || (n.shop ? SH.counter(n, save) : null) || (BG.DYN[n.key] ? BG.DYN[n.key](f => save.flag(f)) : null) || caveTree(n) || (RU.DYN[n.key] ? RU.DYN[n.key](f => save.flag(f), save) : LK.DYN[n.key] ? LK.DYN[n.key](f => save.flag(f), save) : null); const conv = new Conversation(dyn || TALK[n.key] || { start: 'root', nodes: { root: { lines: [] } } }, { test: r => save.test(r), set: f => save.setFlag(f), act: a => talkAction(a), asked: dyn ? new Set() : asked }); const ls = conv.lines(); const d = St.dialog = { npc: n, conv, lines: ls.length ? ls.map(l => lineFor(n, l)) : [{ name: n.name, role: n.role, text: '', mood: MOODS[n.key] }], i: 0, chars: 0, choices: null, then: ringNow ? ringHandover : null }; if (!ls.length) convNext(d); audio.blip(); return; }
       const s = nearSpot();
       if (s && s.darts) { dartsPress(); return; }
       if (s && s.juke) { JUKE.open = !JUKE.open; audio.blip(); return; }
@@ -930,17 +990,35 @@ export async function createGame({ container, minimap, options = {}, onState = (
       if (s && s.cas === 'out') { goTo(CAS_DOOR_OUT.x, CAS_DOOR_OUT.z, 0, false); return; }
       if (s && s.tav === 'in') { St.room = 'tavern'; goTo(TAV_EXIT.x, TAV_EXIT.z - 2.6, Math.PI, true); return; }
       if (s && s.tav === 'out') { goTo(TAV_DOOR_OUT.x, TAV_DOOR_OUT.z, 0, false); return; }
+      if (s && s.gate) { castleGate(s); return; }
+      if (s && s.lake === 'fish') { St.playing = 'fishing'; onPlayGame('fishing', 'Fishing', 'minigames/meru/fishing.html', 'Meru Lake'); return; }
+      if (s && s.lake === 'board') { if (!save.flag('boatRented')) { toast('Rent the boat from the Fisherman first.'); return; } BOAT.on = true; Pl.x = LK.MOOR.x; Pl.z = LK.MOOR.z; Pl.face = LK.MOOR.face; St.yaw = Pl.face + Math.PI; toast('Aboard. Steer back to the jetty to step ashore.'); audio.tone(300, 0.2, 0.04, 'sine', 1.3); return; }
+      if (s && s.ashore) { BOAT.on = false; Pl.x = LK.ASHORE.x; Pl.z = LK.ASHORE.z; lakeFx.boat.position.set(LK.MOOR.x, LK.WATER_Y, LK.MOOR.z); lakeFx.boat.rotation.set(0, LK.MOOR.face, 0); audio.tone(300, 0.2, 0.04, 'sine', 1.3); return; }
+      if (s && s.dive) { St.playing = 'diving'; onPlayGame('diving', 'Dive for pearls', 'minigames/meru/diving.html', 'Meru Lake'); return; }
+      if (s && s.bowl) { St.playing = 'tenpin'; onPlayGame('tenpin', 'Ten-pin bowling', 'minigames/meru/tenpin.html', 'Meru Lanes'); return; }
+      if (s && s.kind === 'door' && s.label === 'Fortune Teller') { St.room = 'fortune'; goTo(FT.TENT.exit.x, FT.TENT.exit.z - 1.8, Math.PI, true); return; }
+      if (s && s.kind === 'door' && s.label === 'Burgers') { St.room = 'burgers'; goTo(BG.DINER.exit.x, BG.DINER.exit.z - 2.4, Math.PI, true); return; }
+      if (s && s.kind === 'door' && s.label === 'Meru Lanes') { St.room = 'bowling'; goTo(LN.LANES.exit.x, LN.LANES.exit.z - 2.4, Math.PI, true); return; }
+      if (s && s.out === 'shop') { const o = SHOP_OUT(St.room); goTo(o.x, o.z, o.face, false); return; }
+      if (s && s.kind === 'door' && /^(Item Shop|Armory)$/.test(s.label)) { const k = s.label === 'Armory' ? 'armory' : 'itemshop'; St.room = k; goTo(SH.ROOMS[k].exit.x, SH.ROOMS[k].exit.z - 2.4, Math.PI, true); return; }
+      if (s && s.out === 'cave') { goTo(RU.dx(1440), RU.dz(1880), 0, false); return; }
+      if (s && s.rubble) { toast('Stand back and fire: 2 RANGE.'); return; }
+      if (s && s.chest != null) { openChest(s.chest); return; }
+      if (s && s.out === 'barracks') { goTo(BAR_OUT.x, BAR_OUT.z, -Math.PI / 2, false); return; }
+      if (s && s.out === 'throneroom') { goTo(THR_OUT.x, THR_OUT.z, 0, false); return; }
+      if (s && s.bunk) { toast('Rested. You are fit to serve the King again.'); audio.tone(520, 0.3, 0.05, 'sine', 1.5); return; }
+      if (s && (s.range || s.spar)) { toast(s.range ? 'The range opens with the shared combat engine (next build step).' : 'Sparring opens with the shared combat engine (next build step).'); return; }
       if (s && s.go) { try { sessionStorage.setItem('meru.from', 'town'); } catch (e) {} onNavigate(s.go); return; }
       if (s) { St.dialog = { npc: null, at: [Pl.x, Pl.z], lines: [{ name: s.label, role: s.kind === 'door' ? 'Interior' : 'Exit', text: s.kind === 'door' ? `The ${s.label} interior hasn't been built in 3D yet. Only the square is so far.` : `The road to ${s.label} hasn't been built in 3D yet.` }], i: 0, chars: 0 }; audio.blip(); }
     },
     jump() { input.jump = true; },
-    choose(k) { const d = St.dialog; if (!d || !d.choices) return; const o = d.choices[k]; if (!o) return; const ls = d.conv.choose(o.i); d.choices = null; if (!ls) { St.dialog = null; audio.blip(); return; } d.lines = ls.map(l => lineFor(d.npc, l)); d.i = 0; d.chars = 0; audio.blip(); },
-    melee() { if (St.mode === 'play') toast('Weapons stay holstered in town.'); },
-    range() { if (St.mode === 'play') toast('Weapons stay holstered in town.'); },
+    choose(k) { const d = St.dialog; if (!d || !d.choices) return; const o = d.choices[k]; if (!o) return; const ls = d.conv.choose(o.i); d.choices = null; if (!ls) { const th = d.then; St.dialog = null; audio.blip(); if (th) th(); return; } d.lines = ls.map(l => lineFor(d.npc, l)); d.i = 0; d.chars = 0; audio.blip(); },
+    melee() { if (St.mode !== 'play' || St.dialog || St.lock) return; if (St.indoor && St.room === 'cave') { cAttack('melee'); return; } toast('Weapons stay holstered in town.'); },
+    range() { if (St.mode !== 'play' || St.dialog || St.lock) return; if (St.indoor && St.room === 'cave') { cAttack('range'); return; } toast('Weapons stay holstered in town.'); },
     item() { if (St.mode !== 'play' || St.dialog) return; St.wheel = !St.wheel; audio.blip(); },
     closeWheel() { St.wheel = false; },
-    useItem(id) { St.wheel = false; toast(itemName(id) + ': nothing to use it on here.'); },
-    warp(where) { if (where === 'casino' || where === 'tavern') { St.room = where; const E = where === 'casino' ? CAS_EXIT : TAV_EXIT; goTo(E.x, E.z - 2.6, Math.PI, true); } },
+    useItem(id) { St.wheel = false; if (id === 'erToGo' || id === 'healingCharges' || id === 'splint') { if (CB.P.hp >= CB.P.max) { toast('You are already at full health.'); return; } save.take(id); CB.P.hp = Math.min(CB.P.max, CB.P.hp + (id === 'splint' ? 60 : 40)); toast(itemName(id) + ': +' + (id === 'splint' ? 60 : 40) + ' health'); audio.tone(660, 0.25, 0.05, 'sine', 1.5); return; } if (id === 'amber' || id === 'chocolates') { save.take(id); toast(itemName(id) + ': delicious.'); return; } toast(itemName(id) + ': nothing to use it on here.'); },
+    warp(where) { if (where === 'burgers') { St.room = 'burgers'; goTo(BG.DINER.exit.x, BG.DINER.exit.z - 2.4, Math.PI, true); return; } if (where === 'fortune') { St.room = 'fortune'; goTo(FT.TENT.exit.x, FT.TENT.exit.z - 1.8, Math.PI, true); return; } if (where === 'bowling') { St.room = 'bowling'; goTo(LN.LANES.exit.x, LN.LANES.exit.z - 2.4, Math.PI, true); return; } if (where === 'itemshop' || where === 'armory') { St.room = where; goTo(SH.ROOMS[where].exit.x, SH.ROOMS[where].exit.z - 2.4, Math.PI, true); return; } if (where === 'arenapath') { goTo(46, 0, Math.PI / 2, false); return; } if (where === 'boat') { save.setFlag('boatRented'); goTo(LK.ASHORE.x, LK.ASHORE.z - 0.6, Math.PI, false); setTimeout(() => api.talk(), 700); return; } if (where === 'lake') { goTo(LK.lx(1710), LK.lz(1300), Math.PI, false); return; } if (where === 'beach') { goTo(LK.lx(840), LK.lz(500), 0, false); return; } if (where === 'rescue') { save.setFlag('tournamentWon'); CV.state.rubble = 0; CB.foes.forEach(f => { f.down = true; f.hp = 0; }); St.camp = 'down'; save.setFlag('banditsDown'); St.room = 'cave'; goTo(CV.at(0.5, 0.922).x, CV.at(0.5, 0.922).z, 0, true); return; } if (where === 'cave' || where === 'camp') { St.room = 'cave'; const p = where === 'camp' ? CV.at(0.5, 0.70) : CV.ENTRY; goTo(p.x, p.z, 0, true); if (where === 'camp') { save.setFlag('tournamentWon'); CV.state.rubble = 0; } return; } if (where === 'ruins') { goTo(RU.rx(1900), RU.rz(1440), -Math.PI / 2, false); return; } if (where === 'museum') { goTo(RU.rx(1400), RU.rz(2050), 0, false); return; } if (where === 'desert') { goTo(RU.dx(1800), RU.dz(2150), Math.PI, false); return; } if (where === 'permit') { goTo(RU.dx(2367), RU.dz(760), Math.PI, false); return; } if (where === 'barracks' || where === 'throneroom') { St.room = where; const E = where === 'barracks' ? IN.BAR_EXIT : IN.THR_EXIT; goTo(E.x, E.z - 4.5, Math.PI, true); return; } if (where === 'audience') { save.setFlag('tournamentWon'); save.setFlag('maxFollowing'); enterThrone(true); return; } if (where === 'castle') { St.room = null; goTo(CP.cx(876), CP.cz(1250), Math.PI, false); return; } if (where === 'castleSouth') { goTo(CP.cx(876), CP.cz(2700), Math.PI, false); return; } if (where === 'casino' || where === 'tavern') { St.room = where; const E = where === 'casino' ? CAS_EXIT : TAV_EXIT; goTo(E.x, E.z - 2.6, Math.PI, true); } },
     gameClosed() { St.playing = null; },
     playSong(i) { playSong(i); }, stopSong() { stopSong(); }, closeJuke() { JUKE.open = false; },
     songs: SONGS.map(s => ({ n: s.n, genre: s.genre, title: s.title, col: s.col })),

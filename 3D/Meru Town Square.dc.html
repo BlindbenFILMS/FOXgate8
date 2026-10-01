@@ -44,6 +44,36 @@
     </div>
     </sc-if>
 
+    <sc-if value="{{ showFight }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:{{ fightTop }};width:min(260px, calc(100% - 140px));background:{{ fightBg }};border:2px solid var(--color-text);display:flex;flex-direction:column;pointer-events:none;z-index:2">
+        <div style="display:grid;grid-template-columns:56px 1fr 34px;align-items:center;gap:8px;padding:7px 10px;border-bottom:2px solid var(--color-text)">
+          <span style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-text)">Health</span>
+          <div style="height:10px;border:2px solid var(--color-text);background:var(--color-neutral-200)"><div style="height:100%;background:var(--color-accent);width:{{ fightHpW }}"></div></div>
+          <span style="font-size:12px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums;color:var(--color-text)">{{ hud.fight.hp }}</span>
+        </div>
+        <div style="padding:6px 10px;font-size:12px;font-weight:700;color:var(--color-text)">{{ fightFoes }}</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showLock }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box;background:rgba(10,8,14,0.5);z-index:9">
+        <div style="width:min(420px,100%);background:var(--color-bg);border:2px solid var(--color-text);display:flex;flex-direction:column">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding:10px 16px;border-bottom:2px solid var(--color-text);background:var(--color-text);color:var(--color-bg)">
+            <span style="font:800 20px var(--font-heading)">Pick the lock</span>
+            <span style="font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-accent-300)">{{ lockPins }}</span>
+          </div>
+          <div style="padding:18px 16px 10px;display:flex;flex-direction:column;gap:12px">
+            <div style="position:relative;height:36px;border:2px solid var(--color-text);background:var(--color-neutral-200)">
+              <div style="position:absolute;top:0;bottom:0;left:{{ lockZoneL }};width:{{ lockZoneW }};background:#4ade80"></div>
+              <div style="position:absolute;top:-8px;bottom:-8px;left:{{ lockPickL }};width:6px;margin-left:-3px;background:var(--color-text)"></div>
+            </div>
+            <div style="font-size:14px;font-weight:700;color:var(--color-text)">{{ hud.lock.msg }}</div>
+          </div>
+          <button onPointerDown="{{ lockPress }}" style="min-height:64px;margin:0 16px 16px;border:2px solid var(--color-text);border-radius:0;background:var(--color-accent);color:var(--color-bg);font:800 20px var(--font-heading);text-align:left;padding:0 18px;cursor:pointer" style-active="background:var(--color-accent-600)">{{ lockKey }}</button>
+        </div>
+      </div>
+    </sc-if>
+
     <sc-if value="{{ showToast }}" hint-placeholder-val="{{ false }}">
       <div style="position:absolute;top:max(12px, env(safe-area-inset-top));left:50%;transform:translateX(-50%);max-width:calc(100% - 24px);background:var(--color-text);color:var(--color-bg);border:2px solid var(--color-text);padding:10px 14px;font:700 14px var(--font-body);pointer-events:none;z-index:4">{{ hud.toast }}</div>
     </sc-if>
@@ -168,7 +198,7 @@
     <div style="position:absolute;inset:0;background:rgba(10,8,14,0.72);display:flex;align-items:center;justify-content:center;padding:{{ gamePad }};box-sizing:border-box;z-index:20">
       <div style="width:min(1100px,100%);height:min(760px,100%);background:var(--color-bg);border:2px solid var(--color-text);display:flex;flex-direction:column">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:6px 6px 6px 14px;border-bottom:2px solid var(--color-text);background:var(--color-text);color:var(--color-bg)">
-          <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#ffd23a">Meru Casino</span><span style="font:800 18px var(--font-heading);line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ gameLabel }}</span></div>
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#ffd23a">{{ gameKicker }}</span><span style="font:800 18px var(--font-heading);line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ gameLabel }}</span></div>
           <button onClick="{{ closeGameBtn }}" style="height:48px;min-width:120px;padding:0 16px;border:2px solid var(--color-bg);border-radius:0;background:var(--color-accent);color:var(--color-bg);font:800 15px var(--font-heading);cursor:pointer;text-align:left;flex:none">Leave table</button>
         </div>
         <iframe src="{{ gameSrc }}" style="flex:1;width:100%;border:0;background:#000"></iframe>
@@ -211,12 +241,12 @@ class Component extends DCLogic {
     try {
       const mod = await import(new URL('meru-game.js', document.baseURI).href);
       if (this.unmounted) return;
-      this.game = await mod.createGame({ container: this.stageRef.current, options: this.opts(), onState: hud => this.setState({ hud }), onNavigate: url => { window.location.href = encodeURI(url); }, onPlayGame: (key, label) => this.setState({ game: { key, label } }) });
+      this.game = await mod.createGame({ container: this.stageRef.current, options: this.opts(), onState: hud => this.setState({ hud }), onNavigate: url => { window.location.href = encodeURI(url); }, onPlayGame: (key, label, src, where) => this.setState({ game: { key, label, src, where } }) });
       this.setState({ ready: true });
     } catch (e) { console.error(e); this.setState({ error: 'Could not start 3D: ' + (e && e.message || e) }); }
   }
   componentDidUpdate() { if (this.game) this.game.setOptions(this.opts()); }
-  onMsg = e => { const m = e.data; if (m === 'backToCasino' || m === 'backToTavern') this.closeGame(); };
+  onMsg = e => { const m = e.data; if (typeof m === 'string' && /^backTo/.test(m)) this.closeGame(); };
   closeGame = () => { this.setState({ game: null }); this.game && this.game.gameClosed(); };
   componentWillUnmount() { window.removeEventListener('message', this.onMsg); window.removeEventListener('resize', this.onResize); this.unmounted = true; if (this.game) this.game.destroy(); }
   renderVals() {
@@ -227,7 +257,7 @@ class Component extends DCLogic {
     const ch = d && d.choices;
     const wheel = hud.wheel, items = wheel ? wheel.items : [];
     const wheelSlots = Array.from({ length: 8 }, (_, i) => { const a = -Math.PI / 2 + i * Math.PI / 4, it = items[i]; return { x: (132 + Math.cos(a) * 100) + 'px', y: (132 + Math.sin(a) * 100) + 'px', n: i + 1, label: it ? it.label + (it.n > 1 ? ' ×' + it.n : '') : '—', empty: !it, pick: e => { e.stopPropagation(); it && G() && G().useItem(it.id); } }; });
-    const busy = !!(hud.darts || hud.juke && hud.juke.open || wheel);
+    const busy = !!(hud.darts || hud.juke && hud.juke.open || wheel || hud.lock);
     return {
       stageRef: this.stageRef,
       started, showIntro: !started, error,
@@ -251,12 +281,16 @@ class Component extends DCLogic {
       soundLabel: hud.muted ? 'Sound off' : 'Sound on',
       placeLabel: hud.place || 'Meru · Town Square',
       gamePad: phone ? '0' : '16px',
-      showGame: !!this.state.game, gameSrc: this.state.game ? 'casino/' + this.state.game.key + '.html' : 'about:blank', gameLabel: this.state.game ? this.state.game.label : '', closeGameBtn: () => this.closeGame(),
+      showGame: !!this.state.game, gameSrc: this.state.game ? (this.state.game.src || 'casino/' + this.state.game.key + '.html') : 'about:blank', gameKicker: this.state.game && this.state.game.where || 'Meru Casino', gameLabel: this.state.game ? this.state.game.label : '', closeGameBtn: () => this.closeGame(),
       showJuke: !!(hud.juke && hud.juke.open) && !d, showNowPlaying: !!(hud.juke && hud.juke.title && hud.juke.here && !hud.juke.open) && !phone,
       songList: (this.game ? this.game.songs : []).map((s, i) => { const on = hud.juke && hud.juke.playing === i; return { n: s.n, title: s.title, genre: s.genre, bg: on ? 'var(--color-text)' : 'var(--color-bg)', fg: on ? 'var(--color-bg)' : 'var(--color-text)', state: on ? '♪ Playing' : (pad ? 'Tap' : 'Key ' + (i + 1)), pick: e => { e.currentTarget.blur(); G() && G().playSong(i); } }; }),
       jukeClose: e => { e.currentTarget.blur(); G() && G().closeJuke(); }, jukeStop: e => { e.currentTarget.blur(); G() && G().stopSong(); },
       jukeFoot: hud.juke && hud.juke.synth ? 'Tavern MP3s not found here, so a stand-in groove plays' : (hud.juke && hud.juke.playing >= 0 ? 'Plays on until you leave the tavern' : 'Pick a record'),
       showDarts: !!hud.darts && !d, dartsN: hud.darts ? hud.darts.n + ' / 3' : '', dartsPowerH: (hud.darts ? hud.darts.power : 0) + '%', dartsPerfectB: 'calc(' + (hud.darts ? hud.darts.perfect : 72) + '% - 4px)', dartsHint: pad ? 'Tap anywhere to throw' : 'Click or E to throw',
+      showFight: !!hud.fight && !d && !hud.lock, fightTop: phone ? (land ? 'auto' : '190px') : '206px', fightBg: hud.fight && hud.fight.hurt ? 'var(--color-accent-200)' : 'var(--color-bg)',
+      fightHpW: (hud.fight ? Math.round(hud.fight.hp / hud.fight.max * 100) : 0) + '%', fightFoes: hud.fight ? (hud.fight.foes ? hud.fight.foes + ' still standing' : 'All clear') : '',
+      showLock: !!hud.lock, lockPins: hud.lock ? hud.lock.set + ' / ' + hud.lock.pins + ' pins' : '', lockZoneL: (hud.lock ? (0.5 - hud.lock.zone / 2) * 100 : 0) + '%', lockZoneW: (hud.lock ? hud.lock.zone * 100 : 0) + '%', lockPickL: (hud.lock ? hud.lock.pos * 100 : 0) + '%',
+      lockPress: e => { e.preventDefault(); G() && G().talk(); }, lockKey: pad ? 'Press' : 'Press (E)',
       showTopHud: !(hud.darts && phone) && !(land && d),
       showPad: pad && !d && !busy, padSize: land ? '60px' : '64px',
       showTalkBtn: !!hud.prompt, talkKind: hud.prompt && /^Talk/.test(hud.prompt) ? 'Near' : 'Here',

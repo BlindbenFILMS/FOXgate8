@@ -22,6 +22,7 @@ export const save = {
   count: id => data.items[id] || 0,
   give(id, n = 1) { data.items[id] = (data.items[id] || 0) + n; changed(); },
   take(id, n = 1) { if ((data.items[id] || 0) < n) return false; data.items[id] -= n; if (!data.items[id]) delete data.items[id]; changed(); return true; },
+  dropRelic(id) { const i = data.relics.indexOf(id); if (i < 0) return false; data.relics.splice(i, 1); changed(); return true; },
   addRelic(id) { if (!data.relics.includes(id)) { data.relics.push(id); changed(); } },
   setOutfit(o) { data.outfit = o; changed(); },
   where(world, zone) { if (data.world === world && data.zone === zone) return; data.world = world; if (zone) data.zone = zone; changed(); },
