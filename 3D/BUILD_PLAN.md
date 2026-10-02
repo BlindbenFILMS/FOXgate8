@@ -81,3 +81,11 @@ Ben's PlayCanvas project (BCP export) was exported with PlayCanvas's own GltfExp
   - `?room=x` makes a private room and `?net=local` uses BroadcastChannel for testing. `wmp.js` in g3d_checks tests two tabs.
   - **Limits:** a mesh like this is good for about 15–20 people per room. There's no TURN server, so some phone-carrier networks may fail to connect. For bigger events, move to Supabase Realtime.
 - **Wing moved (1 Oct, night).** The New Artists Wing now joins the south end of the Wall of Why hallway, at origin (-69.9,-3.14,22), rotY π/2, with an 8.4 m open doorway. It runs 66 m out over the lawn toward +z. The teal portals are gone, and the HUD label switches as you enter the wing's bounds.
+
+- **Remodel in the New Wing style (1 Oct, late).** The style guide is in `gallery/STYLE.md`. `engine/gallery-remodel.js` carves out old pieces (triangles and instances inside the boxes or cylinders listed in `CARVES`, along with their signs, art and screens) and builds replacements.
+  - The entrance is one continuous 5.6 m oak walkway with a red handrail and glass panels. It runs through a rebuilt, bigger eye and down to an open landing 2 m short of "Hope Floating in Braille", with a skirt under the ramp's low end.
+  - The opening platform's black pit walls are gone. The arrival area is now a 20 × 27 m oak plaza on a white plinth, and the welcome video stands on a wing totem at (-9,0,-6) with plenty of room behind it.
+  - The north annex is the AMB room (`rooms` in gallery.json).
+  - The 57 artworks are frameless canvas boxes with wing plaques.
+  - Grey walls across the building are repainted gallery white in the shader.
+  - A backup of the pre-remodel version is in `backup/gallery-v1/`.

@@ -7,8 +7,7 @@ import { MeshBVH } from '../vendor/three/three-mesh-bvh.js';
 import { rr, pick, clamp, smooth, damp, makeGradient } from '../village-game.js';
 import { foxKit, PLAYER_MALE, PLAYER_FEMALE } from '../fox-kit.js';
 import { crestTex } from './textures.js';
-import { makeWood, woodify, isWhiteFloorMat, isPaletteMat, buildWing, buildDoor } from './gallery-wing.js';
-import { carveWorld, carved, buildEntrance, buildRooms, canvasBox, cardTexture } from './gallery-remodel.js';
+import { makeWood, woodify, isWhiteFloorMat, buildWing, buildDoor } from './gallery-wing.js';
 
 const BASE = 'gallery/';
 const SPAWN = { x: 5.5, y: 0.5, z: 0, face: -Math.PI / 2 };
@@ -42,12 +41,6 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   } catch (e) { console.warn('image pack', e); }
   const gltf = await new Promise((res, rej) => new GLTFLoader().load(BASE + 'gallery.glb', res, e => e.total && onProgress(e.loaded / e.total), rej));
   const world = gltf.scene; scene.add(world); world.updateMatrixWorld(true);
-  // remodel: cut out the old pieces we rebuild in the New Wing style, and drop their signs/art/screens
-  const carveInfo = carveWorld(world);
-  const ctrOf = c => c.reduce((a, v) => [a[0] + v[0] / 4, a[1] + v[1] / 4, a[2] + v[2] / 4], [0, 0, 0]);
-  data.signs = data.signs.filter(sg => !carved(...ctrOf(sg.c)));
-  data.arts = data.arts.filter(a => !carved(...(a.c ? ctrOf(a.c) : a.p)));
-  data.vids = data.vids.filter(v => !carved(...v.p));
   const colGeos = [];
   const wood = makeWood();   // honey oak planks, drawn here (no file)
   world.traverse(o => {
@@ -56,7 +49,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     const conv = mats.map(m => {   // Lambert: cheap on phones, and no black metal without an env map
       const n = new THREE.MeshLambertMaterial({ color: m.color, map: m.map, emissive: m.emissive, emissiveMap: m.emissiveMap, emissiveIntensity: m.emissiveIntensity ?? 1, transparent: m.transparent, opacity: m.opacity, alphaTest: m.alphaTest, side: m.side, vertexColors: m.vertexColors });
       if (m.metalness > 0.5 && !m.map) n.color.multiplyScalar(0.85);
-      if (isPaletteMat(n)) woodify(n, wood, 4, true);   // New Wing look: white floors become hardwood, grey walls go gallery white
+      if (isWhiteFloorMat(n)) woodify(n, wood);   // the white floors become hardwood (walls keep their colour)
       return n;
     });
     o.material = Array.isArray(old) ? conv : conv[0];
@@ -73,9 +66,6 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const wing = data.wing ? buildWing({ scene, wing: data.wing, O: WING_O, rotY: Math.PI / 2, doorW: 8.4, wood, resolveImg: RES }) : null;
   const doors = [];
   if (wing) for (const m of wing.col) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); colGeos.push(g); }
-  const entrance = buildEntrance({ scene, wood });
-  const rooms = buildRooms({ scene, data, wood, resolveImg: RES, buildWing });
-  for (const m of [...entrance.col, ...rooms.col]) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); colGeos.push(g); }
   // one position-only collision mesh with a BVH (fast rays on phones)
   let total = 0; for (const g of colGeos) total += (g.index ? g.index.count : g.attributes.position.count);
   const P = new Float32Array(total * 3); let k = 0;
@@ -125,18 +115,14 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     return { title: a.t, desc, imgDesc, img: best < 1.5 ? img : null, ctr, n };
   });
   if (wing) arts.push(...wing.arts);
-  arts.push(...rooms.arts);
   function showSign(sg) {
     if (sg.mesh) return; const s = sg.s;
-    if (s.k === 'c') { sg.mesh = canvasBox(s, texLoader); scene.add(sg.mesh); return; }
-    if (s.k === 'l') { sg.mesh = new THREE.Mesh(quad(s.c), new THREE.MeshBasicMaterial({ map: cardTexture(s), polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 })); sg.mesh.renderOrder = 2; scene.add(sg.mesh); return; }
     let mat;
     if (s.k === 't') mat = new THREE.MeshBasicMaterial({ map: textTexture(s), transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2, fog: true });
     else { mat = new THREE.MeshBasicMaterial({ color: new THREE.Color(...s.col), transparent: true, opacity: s.op ?? 1, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }); if (s.img) texLoader.load(s.img, t => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; mat.map = t; mat.needsUpdate = true; if (!sg.mesh) t.dispose(); }); }
     sg.mesh = new THREE.Mesh(quad(s.c), mat); sg.mesh.renderOrder = s.k === 't' ? 3 : 2; scene.add(sg.mesh);
   }
-  function hideSign(sg) { if (!sg.mesh) return; scene.remove(sg.mesh); sg.mesh.geometry.dispose(); for (const m of [].concat(sg.mesh.material)) { if (m.map) m.map.dispose(); if (m !== sideShared) m.dispose(); } sg.mesh = null; }
-  const sideShared = null;
+  function hideSign(sg) { if (!sg.mesh) return; scene.remove(sg.mesh); sg.mesh.geometry.dispose(); if (sg.mesh.material.map) sg.mesh.material.map.dispose(); sg.mesh.material.dispose(); sg.mesh = null; }
   const NEAR = lowEnd ? 34 : 50, FAR = NEAR + 18;
 
   // ---------------------------------------------------------------- video screens (zone video: play while you stand in the room)
@@ -149,8 +135,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     const zone = v.tmin ? new THREE.Box3(new THREE.Vector3(...v.tmin), new THREE.Vector3(...v.tmax)).expandByScalar(0.6) : null;
     return { ...v, box, posterMat, zone };
   });
-  if (wing) vids.push(...wing.screens);
-  vids.push(...rooms.screens);   // a two-sided interview screen in the middle of each bay of the New Artists Wing
+  if (wing) vids.push(...wing.screens);   // a two-sided interview screen in the middle of each bay of the New Artists Wing
   const localFail = new Set();
   const video = document.createElement('video'); video.crossOrigin = 'anonymous'; video.playsInline = true; video.setAttribute('playsinline', ''); video.loop = true; video.muted = true; video.preload = 'auto';
   const vidTex = new THREE.VideoTexture(video); vidTex.colorSpace = THREE.SRGBColorSpace;
@@ -470,7 +455,6 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     if (streamT <= 0) {
       streamT = 0.4; const p = new THREE.Vector3(Pl.x, Pl.y, Pl.z);
       if (wing) { const inWing = wing.bounds.containsPoint(p); if (inWing !== St.inWing) { St.inWing = inWing; onZone(inWing ? 'New Artists Wing' : 'The Gallery'); } if (Math.hypot(Pl.x - WING_O.x, Pl.z - WING_O.z) < 45) wing.load(); }
-      for (const r of rooms.list) if (Math.hypot(Pl.x - r.O.x, Pl.z - r.O.z) < 45) r.room.load();
       for (const sg of signs) { const d = sg.ctr.distanceTo(p); if (d < NEAR) showSign(sg); else if (d > FAR) hideSign(sg); }
       // which video zone are we in?
       let zUrl = null; const pp = new THREE.Vector3(Pl.x, Pl.y + 0.5, Pl.z);

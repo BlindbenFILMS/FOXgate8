@@ -59,6 +59,8 @@ Open `gallery.html` (or the Blind Canvas card on the galaxy page).
 - [ ] Try the learning stations: tools, ally tips, the spectrum and the Wall of Why.
 - [ ] Videos play in each room's screens while you stand in that room. Tap the screen once to turn the sound on. **Test this on the iPhone; Vimeo streams can't be reached from the build machine.**
 - [ ] In the ☰ menu, try Fox or Vixen, glasses, a white cane, a wheelchair, read-aloud and larger text.
-- [ ] In the main hall, walk into the teal NEW ARTISTS WING doorway. You should arrive in the wing, where 7 artists each have 3 canvases and a bio board. Walk into the doorway behind you to go back.
+- [ ] Walk south down the Wall of Why hallway and straight into the New Artists Wing (there's no portal). The AMB room is at the north end.
+- [ ] From the spawn, walk straight ahead across the plaza, along the wide walkway, through the eye and down to the landing in front of "Hope Floating in Braille". You shouldn't hit a gap or get stuck anywhere.
+- [ ] Stand behind the welcome video totem and turn around. There should be plenty of room.
 - [ ] The white floors are now honey oak. Check that nothing important turned to wood by mistake, such as white tabletops.
 - [ ] Multiplayer: open the gallery on two devices, ideally one on Wi-Fi and one on cell data. Each should see the other fox with a name tag within about 10–20 seconds. Try 👋 and the private room link in ☰.
