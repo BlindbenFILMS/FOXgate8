@@ -75,3 +75,9 @@ Ben's PlayCanvas project (BCP export) was exported with PlayCanvas's own GltfExp
   - 16 of them replace the Vimeo streams on the gallery's screens (`vids[].local`). The 7 wing artists' interviews play on two-sided totems in the middle of each pair of bays.
   - Playback tries the local file first and falls back to Vimeo. Six screens still stream from Vimeo only: Artists of the Year, Stevie Wonder, the main BCP screen, the blindness simulator, Goalball and Ora.
   - Each file must stay under 20 MB for the folder bridge.
+- **Multiplayer (1 Oct, night).** `engine/gallery-net.js` uses Trystero (`vendor/trystero-nostr.js`, bundled 0.25.4): public Nostr relays handle matchmaking, then visitors connect directly over WebRTC. There is no server and no account.
+  - Each visitor sends a profile (name, look, gear) plus their position 10× a second while moving and once a second while idle.
+  - Other visitors appear as baked foxes in the BCP tee with name tags. There's a 👋 wave, plus screen-reader announcements when people join and leave.
+  - `?room=x` makes a private room and `?net=local` uses BroadcastChannel for testing. `wmp.js` in g3d_checks tests two tabs.
+  - **Limits:** a mesh like this is good for about 15–20 people per room. There's no TURN server, so some phone-carrier networks may fail to connect. For bigger events, move to Supabase Realtime.
+- **Wing moved (1 Oct, night).** The New Artists Wing now joins the south end of the Wall of Why hallway, at origin (-69.9,-3.14,22), rotY π/2, with an 8.4 m open doorway. It runs 66 m out over the lawn toward +z. The teal portals are gone, and the HUD label switches as you enter the wing's bounds.

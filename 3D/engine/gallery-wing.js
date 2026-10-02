@@ -66,8 +66,11 @@ const FONT = 'Archivo, Arimo, Helvetica, Arial, sans-serif';
 
 // ------------------------------------------------------------ the wing
 // Laid out along -x from its origin O (entrance), floor at O.y. Returns meshes for collision, art entries and doors.
-export function buildWing({ scene, wing, O, wood, resolveImg }) {
-  const g = new THREE.Group(); g.position.copy(O); scene.add(g);
+export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveImg }) {
+  const g = new THREE.Group(); g.position.copy(O); g.rotation.y = rotY; scene.add(g); g.updateMatrixWorld(true);
+  // local layout -> world (the wing can be turned to join any doorway of the building)
+  const toW = v => v.clone().applyMatrix4(g.matrixWorld), dirW = v => v.clone().applyQuaternion(g.quaternion);
+  const boxW = (a, b) => new THREE.Box3().setFromPoints([0, 1, 2, 3, 4, 5, 6, 7].map(i => toW(new THREE.Vector3(i & 1 ? a.x : b.x, i & 2 ? a.y : b.y, i & 4 ? a.z : b.z))));
   const L = 66, Wd = 18, Hh = 6.4, HW = Wd / 2;
   const col = [], arts = [], loaders = [];
   const wallM = new THREE.MeshLambertMaterial({ color: 0xeceae6 });
@@ -80,7 +83,14 @@ export function buildWing({ scene, wing, O, wood, resolveImg }) {
   // shell
   box(L + 2, 0.4, Wd + 2, floorM, -L / 2, -0.2, 0);
   box(L + 2, 0.3, Wd + 2, ceilM, -L / 2, Hh + 0.15, 0);
-  box(0.4, Hh, Wd, wallM, 0.2, Hh / 2, 0); box(0.4, Hh, Wd, wallM, -L - 0.2, Hh / 2, 0);
+  if (doorW > 0) {   // open entrance: walk straight in from the building's hallway
+    const side = (Wd - doorW) / 2, lintel = 5.0;
+    box(0.4, Hh, side, wallM, 0.2, Hh / 2, -(doorW / 2 + side / 2)); box(0.4, Hh, side, wallM, 0.2, Hh / 2, doorW / 2 + side / 2);
+    box(0.4, Hh - lintel, doorW, wallM, 0.2, lintel + (Hh - lintel) / 2, 0);
+    const sg = panelTex(1024, 128, (c, w, h) => { c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, 0, 10, h); c.fillStyle = '#fff'; c.font = `800 64px ${FONT}`; c.textBaseline = 'middle'; c.fillText('NEW ARTISTS WING', 40, 66); });
+    for (const r of [0, Math.PI]) { const m = new THREE.Mesh(new THREE.PlaneGeometry(doorW - 0.4, 1.0), new THREE.MeshBasicMaterial({ map: sg })); m.position.set(r ? 0.45 : -0.05, lintel + 0.6, 0); m.rotation.y = r ? Math.PI / 2 : -Math.PI / 2; g.add(m); }
+  } else box(0.4, Hh, Wd, wallM, 0.2, Hh / 2, 0);
+  box(0.4, Hh, Wd, wallM, -L - 0.2, Hh / 2, 0);
   box(L, Hh, 0.4, wallM, -L / 2, Hh / 2, -HW - 0.2); box(L, Hh, 0.4, wallM, -L / 2, Hh / 2, HW + 0.2);
   // baseboards + a red accent line (the Modernist rule)
   box(L, 0.18, 0.06, inkM, -L / 2, 0.09, -HW + 0.03, false); box(L, 0.18, 0.06, inkM, -L / 2, 0.09, HW - 0.03, false);
@@ -122,8 +132,8 @@ export function buildWing({ scene, wing, O, wood, resolveImg }) {
       const posterT = panelTex(640, 360, (c, w, h) => { c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, 0, w, 8); c.fillStyle = '#ff9783'; c.font = `800 22px ${FONT}`; c.fillText('BLINDNESS · AN INTERVIEW WITH', 34, 150); c.fillStyle = '#fff'; c.font = `800 46px ${FONT}`; wrap(c, A.name.toUpperCase(), w - 68).forEach((l, i) => c.fillText(l, 34, 205 + i * 50)); });
       const posterMat = new THREE.MeshBasicMaterial({ map: posterT }); tv.material[face] = posterMat;
       const z0 = s.side < 0 ? -HW : 0, z1 = s.side < 0 ? 0 : HW;
-      screens.push({ u: A.video, local: A.video, box: tv, faces: [face], posterMat, vol: 0.8, dist: 16, p: [O.x + s.x, O.y + 2.35, O.z],
-        zone: new THREE.Box3(new THREE.Vector3(O.x + s.x - 7.4, O.y - 1, O.z + z0), new THREE.Vector3(O.x + s.x + 7.4, O.y + 6, O.z + z1)) });
+      screens.push({ u: A.video, local: A.video, box: tv, faces: [face], posterMat, vol: 0.8, dist: 16, p: toW(new THREE.Vector3(s.x, 2.35, 0)).toArray(),
+        zone: boxW(new THREE.Vector3(s.x - 7.4, -1, z0), new THREE.Vector3(s.x + 7.4, 6, z1)) });
     }
     const zf = s.side * (HW - 0.05);   // wall face
     const rotY = s.side < 0 ? 0 : Math.PI;   // plane faces +z on the left wall, -z on the right
@@ -142,7 +152,7 @@ export function buildWing({ scene, wing, O, wood, resolveImg }) {
     });
     const bio = new THREE.Mesh(new THREE.PlaneGeometry(3.0, 3.67), new THREE.MeshBasicMaterial({ map: bioT }));
     bio.position.copy(at(-5.3, 2.35, 0.03)); bio.rotation.y = rotY; g.add(bio);
-    arts.push({ title: A.name, desc: [...A.sub, ...A.bio].join(' / '), imgDesc: '', img: null, ctr: bio.position.clone().add(O), n: n.clone(), artist: A.name });
+    arts.push({ title: A.name, desc: [...A.sub, ...A.bio].join(' / '), imgDesc: '', img: null, ctr: toW(bio.position), n: dirW(n), artist: A.name });
     // three canvases, no frames: a shallow box with the image on its face + a plaque below
     A.pieces.forEach((p, k) => {
       const cx = -1.5 + k * 3.7, S = 2.7;
@@ -159,12 +169,13 @@ export function buildWing({ scene, wing, O, wood, resolveImg }) {
       });
       const pl = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 0.6), new THREE.MeshBasicMaterial({ map: plT }));
       pl.position.copy(at(cx, 0.85, 0.03)); pl.rotation.y = rotY; g.add(pl);
-      arts.push({ title: p.title, desc: (p.quote ? p.quote + ' — ' : '') + A.name, imgDesc: p.paras.join(' '), img: resolveImg(p.img), ctr: cvs.position.clone().add(O), n: n.clone(), artist: A.name });
+      arts.push({ title: p.title, desc: (p.quote ? p.quote + ' — ' : '') + A.name, imgDesc: p.paras.join(' '), img: resolveImg(p.img), ctr: toW(cvs.position), n: dirW(n), artist: A.name });
     });
   });
   g.updateMatrixWorld(true);
   let loaded = false;
-  return { group: g, col, arts, screens, load() { if (loaded) return; loaded = true; loaders.forEach(f => f()); }, length: L };
+  const bounds = boxW(new THREE.Vector3(-L - 0.5, -1, -HW - 0.5), new THREE.Vector3(0.5, Hh + 0.5, HW + 0.5));
+  return { group: g, col, arts, screens, bounds, load() { if (loaded) return; loaded = true; loaders.forEach(f => f()); }, length: L };
 }
 
 // ------------------------------------------------------------ a doorway (freestanding arch with a glowing teal opening)

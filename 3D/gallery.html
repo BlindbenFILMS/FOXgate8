@@ -60,8 +60,8 @@
 </head>
 <body>
 <div id="stage"></div>
-<div id="load"><div class="k">8 GATES · 3D · Ben Fox</div><h1>Blind Canvas<br>Project</h1><div class="bar"><i id="lb"></i></div><p id="lt">Opening the gallery…</p><button id="enter" style="display:none;margin-top:18px;min-height:56px;padding:14px 22px;max-width:420px;background:#ec3013;color:#fff;border:2px solid #f3f2f2;font:800 16px var(--font);letter-spacing:.08em;text-transform:uppercase;text-align:center">Enter the gallery · sound on 🔊</button></div>
-<div id="place"><div class="t box"><div class="w">Blind Canvas Project</div><div class="c">The Gallery</div></div><button id="menuBtn" aria-label="Menu">☰</button></div>
+<div id="load"><div class="k">8 GATES · 3D · Ben Fox</div><h1>Blind Canvas<br>Project</h1><div class="bar"><i id="lb"></i></div><p id="lt">Opening the gallery…</p><label id="nameRow" style="display:none;max-width:420px;margin-top:6px"><span style="display:block;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#ff9783;margin-bottom:6px">Your name (others in the gallery see it)</span><input id="nameIn" maxlength="20" autocomplete="nickname" style="width:100%;min-height:52px;padding:10px 14px;background:#141312;color:#fff;border:2px solid #f3f2f2;border-radius:0;font:700 18px var(--font)" placeholder="Your name"></label><button id="enter" style="display:none;margin-top:18px;min-height:56px;padding:14px 22px;max-width:420px;background:#ec3013;color:#fff;border:2px solid #f3f2f2;font:800 16px var(--font);letter-spacing:.08em;text-transform:uppercase;text-align:center">Enter the gallery · sound on 🔊</button></div>
+<div id="place"><div class="t box"><div class="w">Blind Canvas Project</div><div class="c">The Gallery</div><div id="who" style="font-size:12px;font-weight:700;margin-top:3px;color:#cfcaca">Connecting…</div></div><button id="menuBtn" aria-label="Menu">☰</button><button id="waveBtn" aria-label="Wave to everyone" style="width:48px;border:2px solid var(--ink);border-left:0;background:var(--bg);font-size:22px;text-align:center">👋</button></div>
 <button id="act" aria-live="polite"></button>
 <div id="hint" class="box">Use the joystick to walk · drag the screen to look</div>
 <div id="panel" class="box" role="dialog" aria-modal="true" aria-labelledby="pt"><header><div class="h"><div class="k" id="pk"></div><h2 id="pt"></h2></div><button id="px" aria-label="Close">✕</button></header><div class="body" id="pb"></div></div>
@@ -72,6 +72,9 @@
   <div class="opts" id="extras"><button data-x="none">None</button><button data-x="glasses">Glasses</button><button data-x="cane">White cane</button><button data-x="chair">Wheelchair</button></div>
   <div class="lab">Reading</div>
   <div class="opts"><button id="autoRead">Read aloud when I open art</button><button id="big">Larger text</button></div>
+  <div class="lab">Visiting together</div>
+  <div class="opts"><button id="rename">Change my name</button><button id="invite">Copy private room link</button></div>
+  <div id="whoList" style="font-size:13px;line-height:1.5;margin-top:8px"></div>
   <div class="lab">Lost?</div>
   <div class="opts"><button id="home">Back to the entrance</button></div>
   <a href="index.html">← Back to the galaxy</a>
@@ -164,15 +167,53 @@ $('autoRead').onclick = () => { pref.autoRead = !pref.autoRead; savePref(); sync
 $('big').onclick = () => { pref.big = !pref.big; savePref(); syncMenu(); };
 $('home').onclick = () => { G.respawn(); $('menu').style.display = 'none'; };
 syncMenu();
+let ENTER_RES; const ENTERED = new Promise(r => ENTER_RES = r);
+// ------------------------------------------------ multiplayer: see each other's foxes
+const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery }) => {
+  const names = new Map();
+  const announce = t => { $('live').textContent = t; };
+  const refresh = () => {
+    const n = G.remote.count();
+    $('who').textContent = net === null ? 'Connecting…' : status === 'offline' ? 'Just you (offline)' : n ? (n + 1) + ' foxes here' : 'Just you here · invite a friend';
+    $('whoList').innerHTML = ['<b>' + esc(pref.name || 'You') + '</b> (you)', ...G.remote.names().map(esc)].join('<br>');
+  };
+  let status = 'connecting', net = null, entered = false;
+  net = await connectGallery({
+    onJoin: id => {},
+    onLeave: id => { const nm = names.get(id); G.remote.remove(id); names.delete(id); if (nm) announce(nm + ' left the gallery'); refresh(); },
+    onState: (id, st, prof) => { if (prof && !prof.name) prof = null; if (!prof && !names.has(id) && !st) return; const isNew = !names.has(id) && prof; G.remote.upsert(id, st, prof); if (prof) { names.set(id, prof.name); if (isNew) { announce(prof.name + ' joined the gallery'); if (entered) net && net.hello(me()); } } refresh(); },
+    onEmote: (id, e) => { if (e === 'wave') { G.remote.wave(id); const nm = names.get(id); if (nm) announce(nm + ' waves'); } },
+    onStatus: s => { status = s; refresh(); },
+  });
+  const me = () => ({ name: pref.name, look: pref.look || 'male', extra: pref.extra || 'none', ...G.style() });
+  refresh();
+  await ENTERED; entered = true;
+  // the first visitor in the room is Ben's fox; everyone after gets their own fur colours and a different artwork on their shirt
+  if (G.remote.count() > 0) G.setStyle(G.randomStyle());
+  net.hello(me()); refresh();
+  // send where we are: 10 times a second while moving, once a second while standing still
+  let lastSent = '', lastT = 0;
+  setInterval(() => { const st = G.localState(), k = st.join(','); const now = performance.now(); if (k !== lastSent || now - lastT > 1000) { net.send(st); lastSent = k; lastT = now; } }, 100);
+  const sendProfile = () => net.hello(me());
+  document.querySelectorAll('#looks button, #extras button').forEach(b => b.addEventListener('click', sendProfile));
+  $('rename').onclick = () => { const n = prompt('Your name', pref.name); if (n && n.trim()) { pref.name = n.trim().slice(0, 20); savePref(); sendProfile(); refresh(); } };
+  $('invite').onclick = async () => { const room = new URLSearchParams(location.search).get('room') || ('bcp-' + Math.random().toString(36).slice(2, 7)); const url = location.origin + location.pathname + '?room=' + room; try { await navigator.clipboard.writeText(url); $('invite').textContent = 'Link copied ✓'; } catch (e) { prompt('Share this link', url); } if (!new URLSearchParams(location.search).get('room')) setTimeout(() => location.href = url, 600); };
+  $('waveBtn').onclick = () => { G.wave(); net.emote('wave'); };
+  window.NET = net;
+});
 // one tap to enter: this tap is what lets the room videos (and read-aloud) play with sound from then on
-$('lt').textContent = 'Videos in each room play with sound when you walk in.';
+$('lt').textContent = 'Videos in each room play with sound when you walk in. Other visitors appear as foxes too.';
+$('nameRow').style.display = 'block'; $('nameIn').value = pref.name || '';
 $('enter').style.display = 'block'; $('enter').focus();
 await new Promise(res => $('enter').addEventListener('click', () => {
+  pref.name = ($('nameIn').value || '').trim().slice(0, 20) || ('Fox ' + Math.floor(100 + Math.random() * 900)); savePref();
   G.unlockAudio();
   try { if (window.speechSynthesis) { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } } catch (e) {}
   res();
 }, { once: true }));
 $('load').style.display = 'none';
+ENTER_RES();
+
 window.READY = true;
 </script>
 </body>

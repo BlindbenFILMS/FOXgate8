@@ -61,14 +61,11 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     } else { const g = o.geometry.clone(); g.applyMatrix4(o.matrixWorld); colGeos.push(g); }
   });
   // New Artists Wing: built from Ben's artist pages, entered through a doorway in the main hall (quick fade, like our interiors)
-  const WING_O = new THREE.Vector3(-100, -150, 0);
-  const wing = data.wing ? buildWing({ scene, wing: data.wing, O: WING_O, wood, resolveImg: RES }) : null;
+  // joined to the south end of the Wall of Why hallway (x -74..-66), running out over the lawn; walk straight in
+  const WING_O = new THREE.Vector3(-69.9, -3.14, 22.0);
+  const wing = data.wing ? buildWing({ scene, wing: data.wing, O: WING_O, rotY: Math.PI / 2, doorW: 8.4, wood, resolveImg: RES }) : null;
   const doors = [];
-  if (wing) {
-    for (const m of wing.col) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); colGeos.push(g); }
-    doors.push({ ...buildDoor({ scene, pos: new THREE.Vector3(-96, -3.35, 12), face: Math.PI / 2, title: 'NEW ARTISTS WING', sub: data.wing.artists.map(a => a.name).join(' · ') }), to: { x: WING_O.x - 4.5, y: WING_O.y, z: WING_O.z, face: -Math.PI / 2 }, wing: true });
-    doors.push({ ...buildDoor({ scene, pos: new THREE.Vector3(WING_O.x - 0.9, WING_O.y, WING_O.z), face: Math.PI / 2, title: '← BACK TO THE GALLERY', sub: 'The main hall of the Blind Canvas Project' }), to: { x: -92, y: -3.35, z: 12, face: Math.PI / 2 }, wing: false });
-  }
+  if (wing) for (const m of wing.col) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); colGeos.push(g); }
   // one position-only collision mesh with a BVH (fast rays on phones)
   let total = 0; for (const g of colGeos) total += (g.index ? g.index.count : g.attributes.position.count);
   const P = new Float32Array(total * 3); let k = 0;
@@ -196,24 +193,116 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   let player = null, look = 'male', extra = 'none';
   // the player's merch: Blind Canvas Project logo on the black tee, "Walk Through Fear" on the back of the hoodie
   const printTex = (w, h, draw) => { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const c = cv.getContext('2d'); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; draw(c, w, h, () => { t.needsUpdate = true; }); return t; };
-  const teeLogo = printTex(660, 510, (c, w, h, up) => {
-    // Ben's own Blind Canvas Project logo file (white on transparent), filling the chest
-    const img = new Image(); img.onload = () => { c.clearRect(0, 0, w, h); c.drawImage(img, 0, 0, w, h); up(); }; img.src = RES('gallery/img/bcp_logo_white.webp');
+  // ---- the BCP tee: one artwork on the front (different per visitor), Ben's logo on the back
+  const backLogo = printTex(640, 640, (c, w, h, up) => {
+    const img = new Image(); img.onload = () => { c.clearRect(0, 0, w, h); const lw = 600, lh = lw * img.height / img.width; c.drawImage(img, (w - lw) / 2, (h - lh) / 2, lw, lh); up(); };
+    img.src = RES('gallery/img/bcp_logo_white.webp');
   });
-  const backPrint = printTex(640, 640, (c, w, h, up) => {
-    const img = new Image(); img.onload = () => {
-      c.clearRect(0, 0, w, h); c.drawImage(img, 30, 0, 580, 580);
-      c.fillStyle = '#ffffff'; c.font = '900 52px Archivo, Arial Black, Helvetica, sans-serif'; c.textAlign = 'center';
-      c.fillText('WALK THROUGH FEAR', w / 2, 632); up();
-    }; img.src = RES('gallery/img/wix_walk_through_fear.webp');
-  });
+  const ART_KEYS = Object.keys(IMGURL).filter(k => /\/wix_/.test(k));
+  const DEFAULT_ART = 'gallery/img/wix_walk_through_fear.webp';
+  const artCache = new Map();
+  const frontArt = key => {
+    key = IMGURL[key] ? key : DEFAULT_ART;
+    if (!artCache.has(key)) artCache.set(key, printTex(512, 512, (c, w, h, up) => { const img = new Image(); img.onload = () => { c.fillStyle = '#f3f2f2'; c.fillRect(0, 0, w, h); c.drawImage(img, 14, 14, w - 28, h - 28); up(); }; img.src = RES(key); }));
+    return artCache.get(key);
+  };
+  // fur palettes: 0 is Ben's fox (the first visitor in a room); the rest are shades of orange, red and white
+  const PALETTES = [
+    {},
+    { fur: '#e2552c', furDark: '#a8331a', snout: '#f39a6a', muzzle: '#f8a983', tailBase: '#a8331a', tailMid: '#e8693c', paw: '#e2552c' },
+    { fur: '#c7302a', furDark: '#7f1a16', snout: '#e8826b', muzzle: '#f09a84', tailBase: '#7f1a16', tailMid: '#d54a3a', paw: '#c7302a' },
+    { fur: '#f59a3a', furDark: '#c86a1c', snout: '#fbc07e', muzzle: '#ffcf98', tailBase: '#c86a1c', tailMid: '#f8b060', paw: '#f59a3a' },
+    { fur: '#f1ede7', furDark: '#c9c2b8', snout: '#ffffff', muzzle: '#ffffff', chin: '#ffffff', tailBase: '#d8d1c7', tailMid: '#efe9e1', paw: '#e8e2da', earInner: '#e79aa8' },
+    { fur: '#f3b27c', furDark: '#d0773e', snout: '#fbd2a8', muzzle: '#ffe0bf', tailBase: '#d0773e', tailMid: '#f6c393', paw: '#f3b27c' },
+    { fur: '#a4221d', furDark: '#62110e', snout: '#d8705e', muzzle: '#e48a78', tailBase: '#62110e', tailMid: '#bf3a30', paw: '#a4221d' },
+    { fur: '#f6f2ee', furDark: '#d0473a', snout: '#ffffff', muzzle: '#ffffff', chin: '#ffffff', tailBase: '#d0473a', tailMid: '#f2ddd6', paw: '#d0473a', earInner: '#e07a8a' },
+    { fur: '#e8743a', furDark: '#b24e22', snout: '#f6b48a', muzzle: '#fbc6a0', tailBase: '#b24e22', tailMid: '#ef9156', paw: '#e8743a' },
+  ];
+  const randomStyle = () => ({ pal: 1 + Math.floor(Math.random() * (PALETTES.length - 1)), art: ART_KEYS.filter(k => k !== DEFAULT_ART)[Math.floor(Math.random() * Math.max(1, ART_KEYS.length - 1))] || DEFAULT_ART });
+  let style = { pal: 0, art: DEFAULT_ART };
+  // merge each fox's still parts per joint (about 57 draw calls down to ~15) so a room full of visitors stays light on phones
+  function bakeLocal(root) {   // per animated joint: merge every still mesh beneath it (any depth) by material; outlines into one
+    const P = root.userData.P || {}, keep = new Set([root]);
+    for (const v of Object.values(P)) { if (Array.isArray(v)) v.forEach(x => x && x.isObject3D && keep.add(x)); else if (v && v.isObject3D) keep.add(v); }
+    root.updateMatrixWorld(true);
+    const EMPTY = new THREE.BufferGeometry(), inv = new THREE.Matrix4(), m = new THREE.Matrix4();
+    const ok = o => o.isMesh && !o.isInstancedMesh && !o.isSkinnedMesh && !Array.isArray(o.material) && !o.material.map && !o.material.transparent && !o.userData.keep && !keep.has(o);
+    for (const A of keep) {
+      inv.copy(A.matrixWorld).invert(); const groups = new Map(), outl = [];
+      const visit = o => { for (const c of o.children) { if (keep.has(c)) continue; if (c.isMesh && (c.material === outlineMat || c.material === outlineMat)) { if (c.geometry !== EMPTY) outl.push(c); } else if (ok(c)) { const k = c.material.uuid; if (!groups.has(k)) groups.set(k, { mat: c.material, list: [] }); groups.get(k).list.push(c); } visit(c); } };
+      visit(A);
+      const merge = list => { const pos = [], nor = []; for (const c of list) { const g = c.geometry.index ? c.geometry.toNonIndexed() : c.geometry.clone(); m.multiplyMatrices(inv, c.matrixWorld); g.applyMatrix4(m); pos.push(...g.attributes.position.array); if (g.attributes.normal) nor.push(...g.attributes.normal.array); } const out = new THREE.BufferGeometry(); out.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); if (nor.length === pos.length) out.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3)); else out.computeVertexNormals(); out.computeBoundingSphere(); return out; };
+      for (const { mat, list } of groups.values()) { if (list.length < 2) continue; const mm = new THREE.Mesh(merge(list), mat); mm.castShadow = true; A.add(mm); list.forEach(c => { c.geometry = EMPTY; c.castShadow = false; }); }
+      const ol = outl.filter(c => c.parent && c.parent.geometry === EMPTY || true); if (ol.length > 1) { A.add(new THREE.Mesh(merge(ol), outlineMat)); ol.forEach(c => c.geometry = EMPTY); }
+    }
+    // drop the emptied meshes that carry nothing alive beneath them
+    const dead = []; root.traverse(o => { if (o.isMesh && o.geometry === EMPTY && !o.children.some(c => !(c.isMesh && c.geometry === EMPTY))) dead.push(o); });
+    for (const o of dead.reverse()) if (o.parent && !o.children.length) o.parent.remove(o);
+    return root;
+  }
+
+  function makeVisitorFox(lk, ex, st = { pal: 0, art: DEFAULT_ART }) {   // every visitor wears the BCP tee
+    const f = makeFox({ torso: ['#ffffff', '#e7edf4', '#6b7d93'], crest: '8', mood: 'warm', look: { ...(lk === 'female' ? PLAYER_FEMALE : PLAYER_MALE), ...(PALETTES[st.pal | 0] || {}), tailSide: 1.15 },   // tail swept to the side so the back print shows
+      outfit: 'tee', prints: { front: frontArt(st.art), frontW: 1.45, back: backLogo }, gear: 'none', cane: ex === 'cane', glasses: ex === 'glasses' || ex === 'cane', chair: ex === 'chair' });
+    bakeLocal(f); f.scale.setScalar(FOX_SCALE); return f;
+  }
   function buildPlayer() {
     const pos = player ? player.position.clone() : null;
-    if (player) { scene.remove(player); player.traverse(o => { if (o.geometry) o.geometry.dispose(); }); }
-    player = makeFox({ torso: ['#ffffff', '#e7edf4', '#6b7d93'], crest: '8', mood: 'warm', look: { ...(look === 'female' ? PLAYER_FEMALE : PLAYER_MALE), tailSide: 1.15 },   // tail swept to the side so the back print shows
-      outfit: 'tee', prints: { front: teeLogo, back: backPrint }, gear: 'none', cane: extra === 'cane', glasses: extra === 'glasses' || extra === 'cane', chair: extra === 'chair' });
-    player.scale.setScalar(FOX_SCALE); if (pos) player.position.copy(pos);
+    if (player) scene.remove(player);
+    player = makeVisitorFox(look, extra, style); if (pos) player.position.copy(pos);
     scene.add(player);
+  }
+  // ---------------------------------------------------------------- other visitors (multiplayer)
+  const remotes = new Map();
+  const tagSprite = (text, bg = 'rgba(20,19,18,.88)', fg = '#ffffff', w = 512) => {
+    const cv = document.createElement('canvas'); cv.width = w; cv.height = 112; const c = cv.getContext('2d');
+    c.font = '800 54px Archivo, Arial, sans-serif'; const tw = Math.min(w - 20, c.measureText(text).width + 48);
+    c.fillStyle = bg; c.fillRect((w - tw) / 2, 8, tw, 96); c.fillStyle = '#ec3013'; c.fillRect((w - tw) / 2, 8, 8, 96);
+    c.fillStyle = fg; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, w / 2 + 4, 58, w - 40);
+    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace;
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, depthTest: true, transparent: true })); sp.scale.set(1.6 * w / 512, 0.35, 1); sp.renderOrder = 5; return sp;
+  };
+  const bubbleTex = (() => { const cv = document.createElement('canvas'); cv.width = cv.height = 128; const c = cv.getContext('2d'); c.fillStyle = '#fff'; c.beginPath(); c.arc(64, 60, 52, 0, Math.PI * 2); c.fill(); c.strokeStyle = '#141312'; c.lineWidth = 6; c.stroke(); c.font = '64px serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('👋', 64, 64); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t; })();
+  function showWave(fox) {
+    fox.userData.hop = 1;
+    const b = new THREE.Sprite(new THREE.SpriteMaterial({ map: bubbleTex, transparent: true })); b.scale.setScalar(0.55); b.userData.t = 2.4; b.userData.fox = fox; scene.add(b); waves.push(b);
+  }
+  const waves = [];
+  function remoteUpsert(id, st, prof) {
+    let r = remotes.get(id);
+    if (!r) { r = { id, prof: { name: 'Visitor', look: 'male', extra: 'none' }, fox: null, tag: null, x: 0, y: 0, z: 0, face: 0, tx: 0, ty: 0, tz: 0, tface: 0, speed: 0, air: false, last: performance.now(), placed: false }; remotes.set(id, r); }
+    if (prof) {
+      const changed = !r.fox || prof.look !== r.prof.look || prof.extra !== r.prof.extra || prof.pal !== r.prof.pal || prof.art !== r.prof.art;
+      const renamed = prof.name !== r.prof.name;
+      r.prof = { ...r.prof, ...prof };
+      if (changed) { if (r.fox) scene.remove(r.fox); r.fox = makeVisitorFox(r.prof.look, r.prof.extra, { pal: r.prof.pal | 0, art: r.prof.art }); r.fox.visible = r.placed; scene.add(r.fox); }
+      if (renamed || !r.tag) { if (r.tag) { scene.remove(r.tag); r.tag.material.map.dispose(); } r.tag = tagSprite(r.prof.name || 'Visitor'); r.tag.visible = r.placed; scene.add(r.tag); }
+    }
+    if (st) {
+      [r.tx, r.ty, r.tz, r.tface, r.speed] = st; r.air = !!st[5]; r.last = performance.now();
+      if (!r.placed || Math.hypot(r.tx - r.x, r.tz - r.z) > 8 || Math.abs(r.ty - r.y) > 4) { r.x = r.tx; r.y = r.ty; r.z = r.tz; r.face = r.tface; }
+      r.placed = true;
+    }
+    if (!r.fox) { r.fox = makeVisitorFox(r.prof.look, r.prof.extra, { pal: r.prof.pal | 0, art: r.prof.art }); scene.add(r.fox); }
+    if (!r.tag) { r.tag = tagSprite(r.prof.name || 'Visitor'); scene.add(r.tag); }
+    return r;
+  }
+  function remoteRemove(id) { const r = remotes.get(id); if (!r) return; if (r.fox) scene.remove(r.fox); if (r.tag) scene.remove(r.tag); remotes.delete(id); }
+  function updateRemotes(dt) {
+    const now = performance.now();
+    for (const r of remotes.values()) {
+      if (now - r.last > 25000) { remoteRemove(r.id); continue; }
+      r.x = damp(r.x, r.tx, 10, dt); r.y = damp(r.y, r.ty, 12, dt); r.z = damp(r.z, r.tz, 10, dt);
+      let d = r.tface - r.face; d = Math.atan2(Math.sin(d), Math.cos(d)); r.face += d * Math.min(1, dt * 10);
+      const far = Math.hypot(r.x - Pl.x, r.z - Pl.z) > 70 || Math.abs(r.y - Pl.y) > 60;
+      r.fox.visible = r.placed && !far; r.tag.visible = r.placed && !far;
+      if (!r.fox.visible) continue;
+      r.fox.position.set(r.x, r.y + (r.prof.extra === 'chair' ? 0 : 0.02), r.z); r.fox.rotation.y = r.face;
+      if (r.fox.userData.hop > 0) r.fox.userData.hop = r.fox.userData.hop;
+      animFox(r.fox, dt, (r.speed || 0) / FOX_SCALE * 0.6, r.air);
+      r.tag.position.set(r.x, r.y + 2.15, r.z);
+    }
+    for (let i = waves.length - 1; i >= 0; i--) { const b = waves[i]; b.userData.t -= dt; const f = b.userData.fox; b.position.set(f.position.x, f.position.y + 2.6 + (2.4 - b.userData.t) * 0.15, f.position.z); b.material.opacity = Math.min(1, b.userData.t * 2); if (b.userData.t <= 0) { scene.remove(b); waves.splice(i, 1); } }
   }
   buildPlayer();
 
@@ -255,7 +344,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     if (input.jump && Pl.ground && extra !== 'chair') { Pl.vy = 6.2; Pl.ground = false; } input.jump = 0;
     if (Pl.ground && gy > Pl.y - 0.45 && Pl.vy <= 0) { Pl.y = damp(Pl.y, gy, 30, dt); Pl.vy = 0; }
     else { Pl.vy -= 22 * dt; Pl.y += Pl.vy * dt; Pl.ground = false; if (Pl.y <= gy) { Pl.y = gy; Pl.vy = 0; Pl.ground = true; } }
-    if (Pl.y < (Pl.y < -100 ? WING_O.y - 30 : -60)) respawn();
+    if (Pl.y < -60) respawn();
     Pl.speed = Math.hypot(dx, dz) / Math.max(dt, 1e-4) + (mag > 0.05 ? sp * 0.3 : 0);
   }
   function respawn() { Pl.x = SPAWN.x; Pl.z = SPAWN.z; Pl.y = groundAt(SPAWN.x, 1.5, SPAWN.z); Pl.vy = 0; Pl.face = SPAWN.face; St.yaw = SPAWN.face + Math.PI; }
@@ -353,6 +442,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     move(dt);
     player.position.set(Pl.x, Pl.y + (extra === 'chair' ? 0 : 0.02), Pl.z); player.rotation.y = Pl.face;
     animFox(player, dt, Pl.speed / FOX_SCALE * 0.6, !Pl.ground);
+    updateRemotes(dt);
     if (!DBG.freeCam) updateCamera(dt);
     doorT -= dt;
     for (const d of doors) {
@@ -364,7 +454,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     streamT -= dt;
     if (streamT <= 0) {
       streamT = 0.4; const p = new THREE.Vector3(Pl.x, Pl.y, Pl.z);
-      if (wing && Pl.y < -100) wing.load();
+      if (wing) { const inWing = wing.bounds.containsPoint(p); if (inWing !== St.inWing) { St.inWing = inWing; onZone(inWing ? 'New Artists Wing' : 'The Gallery'); } if (Math.hypot(Pl.x - WING_O.x, Pl.z - WING_O.z) < 45) wing.load(); }
       for (const sg of signs) { const d = sg.ctr.distanceTo(p); if (d < NEAR) showSign(sg); else if (d > FAR) hideSign(sg); }
       // which video zone are we in?
       let zUrl = null; const pp = new THREE.Vector3(Pl.x, Pl.y + 0.5, Pl.z);
@@ -387,6 +477,13 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   return {
     arts, edu,
     setLook(l, x) { look = l || look; extra = x || 'none'; buildPlayer(); },
+    // multiplayer hooks (the page wires these to engine/gallery-net.js)
+    localState: () => [+Pl.x.toFixed(2), +Pl.y.toFixed(2), +Pl.z.toFixed(2), +Pl.face.toFixed(2), +Math.min(9, Pl.speed).toFixed(1), Pl.ground ? 0 : 1],
+    remote: { upsert: remoteUpsert, remove: remoteRemove, count: () => remotes.size, names: () => [...remotes.values()].map(r => r.prof.name), wave: id => { const r = remotes.get(id); if (r && r.fox) showWave(r.fox); } },
+    wave() { showWave(player); },
+    style: () => ({ ...style }),
+    setStyle(st) { style = { pal: st.pal | 0, art: st.art || DEFAULT_ART }; buildPlayer(); },
+    randomStyle,
     jump() { input.jump = 1; },
     setRun(v) { input.run = v ? 1 : 0; },
     respawn,

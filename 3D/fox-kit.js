@@ -264,7 +264,7 @@ export function foxKit({ THREE, scene, toon, M, grad, outlineMat, crestTex, rr, 
         // prints: chest logo on the tee (shows through the open front) and the big back print
         const printMat = tex => new THREE.MeshToonMaterial({ map: tex, gradientMap: grad, transparent: true, alphaTest: 0.05, side: THREE.FrontSide, polygonOffset: true, polygonOffsetFactor: -2 });
         const T = kind === 'tee';
-        if (prints && prints.front) { const fw = T ? 1.78 : 0.62; const f = new THREE.Mesh(T ? new THREE.CylinderGeometry(0.322, 0.256, 0.43, 28, 1, true, -fw / 2, fw) : new THREE.CylinderGeometry(0.33, 0.275, 0.26, 16, 1, true, -fw / 2, fw), printMat(prints.front)); f.position.set(0, (T ? 0.895 : 1.0) + lift, 0); f.scale.z = 1.1; body.add(f); }
+        if (prints && prints.front) { const fw = T ? (prints.frontW || 1.78) : 0.62; const f = new THREE.Mesh(T ? new THREE.CylinderGeometry(0.322, 0.256, 0.43, 28, 1, true, -fw / 2, fw) : new THREE.CylinderGeometry(0.33, 0.275, 0.26, 16, 1, true, -fw / 2, fw), printMat(prints.front)); f.position.set(0, (T ? 0.895 : 1.0) + lift, 0); f.scale.z = 1.1; body.add(f); }
         if (prints && prints.back) { const bw = T ? 1.8 : 1.6; const b = new THREE.Mesh(T ? new THREE.CylinderGeometry(0.325, 0.264, 0.5, 28, 1, true, Math.PI - bw / 2, bw) : new THREE.CylinderGeometry(0.352, 0.298, 0.52, 24, 1, true, Math.PI - bw / 2, bw), printMat(prints.back)); b.position.set(0, (T ? 0.87 : 0.87) + lift, 0); b.scale.z = 0.93; body.add(b); }
         P.arms = T ? sleeve(tee, tee) : sleeve(hood, rib);
       } else if (kind === 'royal') {  // the King: gown, cape, ermine
