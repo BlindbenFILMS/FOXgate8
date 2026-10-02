@@ -170,7 +170,15 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       video.muted = !soundOK; await video.play().catch(() => {});
     } catch (e) { fail(); }
   }
-  const unlockSound = () => { if (soundOK) return; soundOK = true; video.muted = false; if (curUrl) video.play().catch(() => {}); };
+  // Browsers only allow video WITH sound after the visitor has tapped once. The first tap (the Enter button, or any touch/key)
+  // "blesses" our one shared video element by playing it with sound inside that tap; after that every zone autoplays with audio.
+  const unlockSound = () => {
+    if (soundOK) return; soundOK = true; video.muted = false;
+    if (curUrl) { video.play().catch(() => {}); return; }
+    const first = vids.find(v => v.local); if (!first) return;
+    video.src = first.local; video.volume = 0;
+    video.play().then(() => { if (!curUrl) { video.pause(); video.removeAttribute('src'); video.load(); } video.volume = 1; }).catch(() => { video.volume = 1; });
+  };
   addEventListener('pointerdown', unlockSound, { once: false }); addEventListener('keydown', unlockSound);
 
   // ---------------------------------------------------------------- learning stations (tools, ally tips, spectrum, wall of why)
@@ -186,10 +194,24 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const { makeFox, animFox } = foxKit({ THREE, scene, toon, M, grad, outlineMat, crestTex, rr, pick, clamp, smooth, damp });
   const FOX_SCALE = 0.62;   // kit foxes are ~2.7 units; the gallery is in metres
   let player = null, look = 'male', extra = 'none';
+  // the player's merch: Blind Canvas Project logo on the black tee, "Walk Through Fear" on the back of the hoodie
+  const printTex = (w, h, draw) => { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const c = cv.getContext('2d'); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; draw(c, w, h, () => { t.needsUpdate = true; }); return t; };
+  const teeLogo = printTex(660, 510, (c, w, h, up) => {
+    // Ben's own Blind Canvas Project logo file (white on transparent), filling the chest
+    const img = new Image(); img.onload = () => { c.clearRect(0, 0, w, h); c.drawImage(img, 0, 0, w, h); up(); }; img.src = RES('gallery/img/bcp_logo_white.webp');
+  });
+  const backPrint = printTex(640, 640, (c, w, h, up) => {
+    const img = new Image(); img.onload = () => {
+      c.clearRect(0, 0, w, h); c.drawImage(img, 30, 0, 580, 580);
+      c.fillStyle = '#ffffff'; c.font = '900 52px Archivo, Arial Black, Helvetica, sans-serif'; c.textAlign = 'center';
+      c.fillText('WALK THROUGH FEAR', w / 2, 632); up();
+    }; img.src = RES('gallery/img/wix_walk_through_fear.webp');
+  });
   function buildPlayer() {
     const pos = player ? player.position.clone() : null;
     if (player) { scene.remove(player); player.traverse(o => { if (o.geometry) o.geometry.dispose(); }); }
-    player = makeFox({ torso: ['#ffffff', '#e7edf4', '#6b7d93'], crest: '8', mood: 'warm', look: look === 'female' ? PLAYER_FEMALE : PLAYER_MALE, outfit: look === 'female' ? 'dress' : 'coat', gear: 'none', cane: extra === 'cane', glasses: extra === 'glasses' || extra === 'cane', chair: extra === 'chair' });
+    player = makeFox({ torso: ['#ffffff', '#e7edf4', '#6b7d93'], crest: '8', mood: 'warm', look: { ...(look === 'female' ? PLAYER_FEMALE : PLAYER_MALE), tailSide: 1.15 },   // tail swept to the side so the back print shows
+      outfit: 'tee', prints: { front: teeLogo, back: backPrint }, gear: 'none', cane: extra === 'cane', glasses: extra === 'glasses' || extra === 'cane', chair: extra === 'chair' });
     player.scale.setScalar(FOX_SCALE); if (pos) player.position.copy(pos);
     scene.add(player);
   }
@@ -368,6 +390,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     jump() { input.jump = 1; },
     setRun(v) { input.run = v ? 1 : 0; },
     respawn,
+    unlockAudio() { unlockSound(); },
     goWing() { const d = doors.find(x => x.wing); if (d) travel(d); },
     debug: { THREE, DBG, video, Pl, St, input, scene, camera, renderer, vids, signs, teleport(x, y, z, face) { Pl.x = x; Pl.z = z; Pl.y = y ?? groundAt(x, 30, z); Pl.vy = 0; if (face != null) { Pl.face = face; St.yaw = face + Math.PI; } }, groundAt, cast, info: () => ({ calls: renderer.info.render.calls, tris: renderer.info.render.triangles, tex: renderer.info.memory.textures, geo: renderer.info.memory.geometries }) },
     destroy() { cancelAnimationFrame(raf); ro.disconnect(); removeEventListener('keydown', onKeyDown); removeEventListener('keyup', onKeyUp); if (hls) hls.destroy(); video.pause(); renderer.dispose(); el.remove(); joyBase.remove(); joyKnob.remove(); },

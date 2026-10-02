@@ -60,7 +60,7 @@
 </head>
 <body>
 <div id="stage"></div>
-<div id="load"><div class="k">8 GATES · 3D · Ben Fox</div><h1>Blind Canvas<br>Project</h1><div class="bar"><i id="lb"></i></div><p id="lt">Opening the gallery…</p></div>
+<div id="load"><div class="k">8 GATES · 3D · Ben Fox</div><h1>Blind Canvas<br>Project</h1><div class="bar"><i id="lb"></i></div><p id="lt">Opening the gallery…</p><button id="enter" style="display:none;margin-top:18px;min-height:56px;padding:14px 22px;max-width:420px;background:#ec3013;color:#fff;border:2px solid #f3f2f2;font:800 16px var(--font);letter-spacing:.08em;text-transform:uppercase;text-align:center">Enter the gallery · sound on 🔊</button></div>
 <div id="place"><div class="t box"><div class="w">Blind Canvas Project</div><div class="c">The Gallery</div></div><button id="menuBtn" aria-label="Menu">☰</button></div>
 <button id="act" aria-live="polite"></button>
 <div id="hint" class="box">Use the joystick to walk · drag the screen to look</div>
@@ -82,19 +82,18 @@ import { createGallery } from './engine/gallery-game.js';
 const $ = id => document.getElementById(id);
 const pref = (() => { try { return JSON.parse(localStorage.getItem('8gates.gallery.v1') || '{}'); } catch (e) { return {}; } })();
 const savePref = () => { try { localStorage.setItem('8gates.gallery.v1', JSON.stringify(pref)); } catch (e) {} };
-let G;
+let G; let near = null;
 try {
   G = await createGallery({ container: $('stage'), onProgress: f => { $('lb').style.width = Math.round(f * 100) + '%'; }, onNear, onZone: z => { document.querySelector('#place .c').textContent = z; } });
 } catch (e) { $('lt').textContent = 'The gallery could not open: ' + e.message; throw e; }
 window.G = G;
-$('load').style.display = 'none';
+
 if (pref.look || pref.extra) G.setLook(pref.look || 'male', pref.extra || 'none');
 const touch = matchMedia('(pointer:coarse)').matches;
 $('hint').textContent = touch ? 'Use the joystick to walk · drag the screen to look' : 'W A S D to walk · Shift to run · drag to look · E to view';
 setTimeout(() => $('hint').style.display = 'none', 9000);
 
 // ------------------------------------------------ near things
-let near = null;
 function onNear(n) {
   near = n; const b = $('act');
   if (!n) { b.style.display = 'none'; return; }
@@ -165,6 +164,15 @@ $('autoRead').onclick = () => { pref.autoRead = !pref.autoRead; savePref(); sync
 $('big').onclick = () => { pref.big = !pref.big; savePref(); syncMenu(); };
 $('home').onclick = () => { G.respawn(); $('menu').style.display = 'none'; };
 syncMenu();
+// one tap to enter: this tap is what lets the room videos (and read-aloud) play with sound from then on
+$('lt').textContent = 'Videos in each room play with sound when you walk in.';
+$('enter').style.display = 'block'; $('enter').focus();
+await new Promise(res => $('enter').addEventListener('click', () => {
+  G.unlockAudio();
+  try { if (window.speechSynthesis) { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } } catch (e) {}
+  res();
+}, { once: true }));
+$('load').style.display = 'none';
 window.READY = true;
 </script>
 </body>
