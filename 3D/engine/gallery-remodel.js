@@ -135,11 +135,21 @@ export function buildEntrance({ scene, wood }) {
 
 // ------------------------------------------------------------ extra rooms in the New Wing style (gallery.json "rooms")
 export function buildRooms({ scene, data, wood, resolveImg, buildWing }) {
-  const out = { col: [], arts: [], screens: [], list: [] };
+  const out = { col: [], arts: [], screens: [], canvases: [], list: [] };
   for (const R of data.rooms || []) {
     const O = new THREE.Vector3(...R.O);
-    const room = buildWing({ scene, wing: { artists: R.artists }, O, rotY: R.rotY, doorW: R.doorW, wood, resolveImg, L: R.L, title: R.title, doorSign: R.doorSign });
-    out.col.push(...room.col); out.arts.push(...room.arts); out.screens.push(...room.screens); out.list.push({ O, room, key: R.key });
+    const room = buildWing({ scene, wing: { artists: R.artists }, O, rotY: R.rotY, doorW: R.doorW, wood, resolveImg, L: R.L, title: R.title, logo: R.logo, endVideo: R.endVideo, floorLogo: R.floorLogo, fillLogo: R.fillLogo, doorSign: R.doorSign });
+    // the partner's logo out in the hall, on an ink panel, to lead people to the room (loads with the room)
+    for (const hl of R.hallLogos || []) {
+      const lm = new THREE.MeshBasicMaterial({ color: 0x1d1c1b }); const m = new THREE.Mesh(new THREE.PlaneGeometry(hl.w, hl.h), lm);
+      m.position.set(...hl.c); m.rotation.y = hl.rotY || 0; scene.add(m);
+      const img = new Image(); img.onload = () => { const cv = document.createElement('canvas'); cv.width = 1600; cv.height = Math.round(1600 * hl.h / hl.w); const c = cv.getContext('2d');
+        c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, cv.width, cv.height); c.fillStyle = '#ec3013'; c.fillRect(0, 0, cv.width, 14);
+        const k = Math.min(cv.width * 0.86 / img.width, cv.height * 0.78 / img.height), iw = img.width * k, ih = img.height * k; c.drawImage(img, (cv.width - iw) / 2, (cv.height - ih) / 2 + 6, iw, ih);
+        const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; lm.map = t; lm.color.set(0xffffff); lm.needsUpdate = true; };
+      img.src = resolveImg(hl.img || R.floorLogo || R.logo);
+    }
+    out.col.push(...room.col); out.arts.push(...room.arts); out.screens.push(...room.screens); out.canvases.push(...room.canvases); out.list.push({ O, room, key: R.key });
   }
   return out;
 }
@@ -173,20 +183,24 @@ export function cardTexture(s) {
     x.fillStyle = '#fff'; x.font = `800 ${px(0.26)}px ${FONT}`; for (const l of wrapT(x, s.title.toUpperCase(), W - pad * 2)) { x.fillText(l, pad, y); y += px(0.28); }
     x.font = `600 ${px(0.1)}px ${FONT}`; x.fillStyle = '#e9e5e5'; for (const sub of s.sub || []) for (const l of wrapT(x, sub, W - pad * 2)) { x.fillText(l, pad, y); y += px(0.14); }
     y += px(0.06); x.fillStyle = '#ec3013'; x.fillRect(pad, y, px(0.4), px(0.025)); y += px(0.2);
-    x.font = `400 ${px(0.105)}px ${FONT}`; x.fillStyle = '#f3f2f2';
-    for (const p of s.bio || []) { for (const l of wrapT(x, p, W - pad * 2)) { if (y > H - pad) break; x.fillText(l, pad, y); y += px(0.142); } y += px(0.05); }
+    // body text as big as the board allows (short bios read from further away), 0.105–0.16 m
+    let bs = 0.16; const fits = z => { x.font = `400 ${px(z)}px ${FONT}`; let n = 0; for (const p of s.bio || []) n += wrapT(x, p, W - pad * 2).length; return y + n * px(z * 1.35) <= H - pad; };
+    while (bs > 0.105 && !fits(bs)) bs -= 0.005;
+    x.font = `400 ${px(bs)}px ${FONT}`; x.fillStyle = '#f3f2f2';
+    for (const p of s.bio || []) { for (const l of wrapT(x, p, W - pad * 2)) { if (y > H - pad) break; x.fillText(l, pad, y); y += px(bs * 1.35); } y += px(0.05); }
   } else {
-    x.fillStyle = '#f9f8f6'; x.fillRect(0, 0, W, H); x.fillStyle = '#1d1c1b'; x.fillRect(0, 0, px(0.035), H);
-    const pad = px(0.16); let y = pad + px(0.2);
+    const F = s.scale || 1, q = m => px(m * F);   // bigger cards get bigger type
+    x.fillStyle = '#f9f8f6'; x.fillRect(0, 0, W, H); x.fillStyle = '#1d1c1b'; x.fillRect(0, 0, q(0.035), H);
+    const pad = q(0.16); let y = pad + q(0.2);
     const tsz = s.plaque ? 0.17 : 0.24;
-    x.fillStyle = '#1d1c1b'; x.font = `800 ${px(tsz)}px ${FONT}`; for (const l of wrapT(x, s.title, W - pad * 2).slice(0, 2)) { x.fillText(l, pad, y); y += px(tsz * 1.08); }
-    if (s.artist) { x.font = `500 ${px(0.12)}px ${FONT}`; x.fillStyle = '#5a5654'; x.fillText(s.artist, pad, y); y += px(0.2); }
+    x.fillStyle = '#1d1c1b'; x.font = `800 ${q(tsz)}px ${FONT}`; for (const l of wrapT(x, s.title, W - pad * 2).slice(0, 2)) { x.fillText(l, pad, y); y += q(tsz * 1.08); }
+    if (s.artist) { x.font = `500 ${q(0.14)}px ${FONT}`; x.fillStyle = '#5a5654'; x.fillText(s.artist, pad, y); y += q(0.24); }
     if (s.quote && !s.plaque) {
-      x.font = `italic 400 ${px(0.115)}px ${FONT}`; x.fillStyle = '#2b2928';
-      const lines = wrapT(x, s.quote, W - pad * 2); const room = Math.floor((H - y - px(0.3)) / px(0.155));
-      lines.slice(0, Math.max(0, room)).forEach((l, i, arr) => { x.fillText(i === arr.length - 1 && lines.length > arr.length ? l + ' …' : l, pad, y); y += px(0.155); });
+      x.font = `italic 400 ${q(0.14)}px ${FONT}`; x.fillStyle = '#2b2928';
+      const lines = wrapT(x, s.quote, W - pad * 2); const room = Math.floor((H - y - q(0.3)) / q(0.19));
+      lines.slice(0, Math.max(0, room)).forEach((l, i, arr) => { x.fillText(i === arr.length - 1 && lines.length > arr.length ? l + ' …' : l, pad, y); y += q(0.19); });
     }
-    x.fillStyle = '#ec3013'; x.font = `800 ${px(0.075)}px ${FONT}`; x.fillText('APPROACH TO VIEW · READ ALOUD', pad, H - px(0.12));
+    x.fillStyle = '#ec3013'; x.font = `800 ${q(0.085)}px ${FONT}`; x.fillText('APPROACH TO VIEW · READ ALOUD', pad, H - q(0.1));
   }
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
 }

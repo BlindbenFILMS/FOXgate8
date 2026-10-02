@@ -148,7 +148,7 @@ export function foxKit({ THREE, scene, toon, M, grad, outlineMat, crestTex, rr, 
   })(); geoCache.set(k, gg); return gg; };
   let _glowT = null;
   function glowTexFor() { if (_glowT) return _glowT; const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d'); const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.3, 'rgba(255,255,255,0.5)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, 64, 64); _glowT = new THREE.CanvasTexture(c); _glowT.colorSpace = THREE.SRGBColorSpace; return _glowT; }
-  function makeFox({ key, torso, crest, bow, glasses, cane, chair, crown, eyes = ['#f472b6', '#2dd4bf'], mood = 'neutral', look, gear = 'none', outfit = 'armor', prints = null }) {
+  function makeFox({ key, torso, crest, bow, glasses, cane, chair, crown, eyes = ['#f472b6', '#2dd4bf'], mood = 'neutral', look, gear = 'none', outfit = 'armor' }) {
     const L = { ...LOOK, ...(look || {}) };
     const g = new THREE.Group(), body = new THREE.Group(); g.add(body); const P = { body };
     const fur = toon(L.fur), furDark = toon(L.furDark), white = toon(L.fluff), ink = toon(L.ear), leg = toon(L.leg), boot = toon(L.boot);
@@ -243,30 +243,6 @@ export function foxKit({ THREE, scene, toon, M, grad, outlineMat, crestTex, rr, 
         M(new THREE.CylinderGeometry(0.17, 0.2, 0.1, 22), C.cream, 0, 1.24 + lift, 0, body, 0.012, 0.2);
         badge(-0.17, 1.02, 0.31, 0.055);
         P.arms = sleeve(C.mid, C.cream);
-      } else if (kind === 'hoodie' || kind === 'tee') {  // black tee (logo on the chest) under a wide-open hoodie with a print on the back
-        const teeC = prints && prints.tee || '#141414', hoodC = prints && prints.hood || '#2b2b30';
-        const tee = toon(teeC), hood = toon(hoodC), rib = toon('#' + new THREE.Color(hoodC).multiplyScalar(0.72).getHexString());
-        const squashed = (geo, front = 1.1, back = 0.92) => { const pp = geo.attributes.position; for (let i = 0; i < pp.count; i++) { const z = pp.getZ(i); pp.setZ(i, z > 0 ? z * front : z * back); } geo.computeVertexNormals(); return geo; };
-        const prof = [[0.23, 0.42], [0.28, 0.52], [0.25, 0.68], [0.27, 0.95], [0.32, 1.12], [0.22, 1.22], [0.1, 1.26], [0, 1.27]];
-        M(lathe([[0, 0.42], ...prof], C3(teeC)), vcToon, 0, lift, 0, body, 0.028);
-        // the hoodie: same profile pushed out a little, open down the front
-        if (kind === 'hoodie') {
-        const gap = 0.62;
-        const hp = [[0.27, 0.4], [0.31, 0.5], [0.29, 0.68], [0.305, 0.95], [0.35, 1.12], [0.26, 1.21]].map(([r, y]) => new THREE.Vector2(r, y));
-        const shell = M(squashed(new THREE.LatheGeometry(hp, 30, gap, Math.PI * 2 - gap * 2)), hood, 0, lift, 0, body, 0.026); shell.material = shell.material.clone(); shell.material.side = THREE.DoubleSide;
-        // front edges (zipper tape), hem band, hood lying on the shoulders, drawstrings
-        for (const s of [-1, 1]) { const a = s * gap; const ed = M(new THREE.BoxGeometry(0.035, 0.74, 0.03), rib, Math.sin(a) * 0.3 * 1.0, 0.8 + lift, Math.cos(a) * 0.3 * 1.1, body, 0.006); ed.rotation.y = a;
-          const st = M(new THREE.CylinderGeometry(0.008, 0.008, 0.3, 5), toon('#f3f2f2'), s * 0.155, 1.0 + lift, 0.33, body, 0); st.rotation.z = s * 0.06; M(new THREE.SphereGeometry(0.016, 6, 5), toon('#f3f2f2'), s * 0.165, 0.84 + lift, 0.33, body, 0); }
-        const hem = M(squashed(new THREE.LatheGeometry([new THREE.Vector2(0.285, 0.36), new THREE.Vector2(0.29, 0.44)], 30, gap, Math.PI * 2 - gap * 2)), rib, 0, lift, 0, body, 0.012); hem.material = hem.material.clone(); hem.material.side = THREE.DoubleSide;
-        const hoodUp = M(new THREE.SphereGeometry(0.25, 20, 12, 0, Math.PI * 2, 0, Math.PI * 0.5), hood, 0, 1.19 + lift, -0.2, body, 0.02); hoodUp.scale.set(1.0, 0.42, 0.62); hoodUp.rotation.x = -0.75; hoodUp.material = hoodUp.material.clone(); hoodUp.material.side = THREE.DoubleSide;
-        M(new THREE.TorusGeometry(0.2, 0.05, 8, 24, Math.PI * 1.25), hood, 0, 1.2 + lift, -0.02, body, 0.012).rotation.set(Math.PI / 2, 0, Math.PI * 0.5 - Math.PI * 0.125 + Math.PI);
-        }
-        // prints: chest logo on the tee (shows through the open front) and the big back print
-        const printMat = tex => new THREE.MeshToonMaterial({ map: tex, gradientMap: grad, transparent: true, alphaTest: 0.05, side: THREE.FrontSide, polygonOffset: true, polygonOffsetFactor: -2 });
-        const T = kind === 'tee';
-        if (prints && prints.front) { const fw = T ? (prints.frontW || 1.78) : 0.62; const f = new THREE.Mesh(T ? new THREE.CylinderGeometry(0.322, 0.256, 0.43, 28, 1, true, -fw / 2, fw) : new THREE.CylinderGeometry(0.33, 0.275, 0.26, 16, 1, true, -fw / 2, fw), printMat(prints.front)); f.position.set(0, (T ? 0.895 : 1.0) + lift, 0); f.scale.z = 1.1; body.add(f); }
-        if (prints && prints.back) { const bw = T ? 1.8 : 1.6; const b = new THREE.Mesh(T ? new THREE.CylinderGeometry(0.325, 0.264, 0.5, 28, 1, true, Math.PI - bw / 2, bw) : new THREE.CylinderGeometry(0.352, 0.298, 0.52, 24, 1, true, Math.PI - bw / 2, bw), printMat(prints.back)); b.position.set(0, (T ? 0.87 : 0.87) + lift, 0); b.scale.z = 0.93; body.add(b); }
-        P.arms = T ? sleeve(tee, tee) : sleeve(hood, rib);
       } else if (kind === 'royal') {  // the King: gown, cape, ermine
         M(lathe([[0.36, 0.06], [0.4, 0.08], [0.36, 0.4], [0.3, 0.7], [0.3, 0.95], [0.34, 1.12], [0.24, 1.22], [0.12, 1.26], [0, 1.27]], (y, c) => c.copy(t1).lerp(t0, smooth(0.3, 1.1, y))), vcToon, 0, lift - 0.02, 0, body, 0.03);
         const cape = M(new THREE.CylinderGeometry(0.34, 0.52, 1.18, 28, 1, true, Math.PI * 0.62, Math.PI * 0.76), toon('#c42d3c', { side: THREE.DoubleSide }), 0, 0.62 + lift, -0.02, body, 0.03); cape.material.side = THREE.DoubleSide;
@@ -312,7 +288,7 @@ export function foxKit({ THREE, scene, toon, M, grad, outlineMat, crestTex, rr, 
     if (glasses) { const lens = new THREE.MeshBasicMaterial({ color: 0x4ade80, transparent: true, opacity: 0.42 }); for (const s of [-1, 1]) { const r = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.016, 6, 22), toon('#334155')); r.position.set(s * 0.13, 0.03, 0.43); r.scale.x = 0.95 / 1.14; skull.add(r); const l = new THREE.Mesh(new THREE.CircleGeometry(0.095, 22), lens); l.position.set(s * 0.13, 0.03, 0.432); l.scale.x = 0.95 / 1.14; skull.add(l); } M(new THREE.BoxGeometry(0.08, 0.018, 0.018), toon('#334155'), 0, 0.05, 0.44, skull, 0); }
     if (cane) { const c = M(new THREE.CylinderGeometry(0.017, 0.017, 1.25, 6), white, 0, -0.9, 0.22, P.arms[1], 0.012); c.rotation.x = 0.35; M(new THREE.SphereGeometry(0.035, 6, 4), toon('#dc2626'), 0, -0.62, 0, c, 0); }
     const tail = new THREE.Group(); tail.position.set(0, 0.6 + lift, -0.24); body.add(tail); P.tail = tail;
-    const tm = M(tailGeoFor(L), vcToon, 0, 0, 0, tail, 0.03); tm.rotation.x = -L.tailLift; tm.scale.setScalar(L.tailSize); if (L.tailSide) { tm.rotation.order = 'ZXY'; tm.rotation.z = L.tailSide; }   // tailSide: sweep the tail to one side (shows a back print)
+    const tm = M(tailGeoFor(L), vcToon, 0, 0, 0, tail, 0.03); tm.rotation.x = -L.tailLift; tm.scale.setScalar(L.tailSize);
     if (chair) {
       const ch = new THREE.Group(); g.add(ch); P.wheels = [];
       M(new THREE.BoxGeometry(0.7, 0.08, 0.6), toon('#334155'), 0, 0.6, 0, ch, 0.025); M(new THREE.BoxGeometry(0.7, 0.75, 0.08), toon('#334155'), 0, 1.0, -0.3, ch, 0.025);

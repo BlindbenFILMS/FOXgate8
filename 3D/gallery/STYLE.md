@@ -23,8 +23,9 @@ Ben picked the New Artists Wing as the house style on 1 Oct. Every new or rebuil
 
 ## Art
 - **Frameless canvases.** Each artwork sits on the face of a shallow box, 0.07 m deep with white sides, standing proud of the wall. There are no frames.
-- **Plaques.** Plaques are off-white `#f9f8f6` with an ink bar on the left, the title in Archivo 800, the artist in grey, and a red "APPROACH TO VIEW · READ ALOUD" line. The fixed size is 2.7 × 1.5 m (1.9 m with a quote) beside the art, or a short plaque below it.
-- **Bio boards.** Bio boards are slate with ARTIST in salmon `#ff9783`, the name in white caps, a short red rule, then the bio.
+- **Plaques.** Plaques are off-white `#f9f8f6` with an ink bar on the left, the title in Archivo 800, the artist in grey, and a red "APPROACH TO VIEW · READ ALOUD" line. They hang low so you can walk right up and read them: wall cards are 3.4 × 1.75 m (2.35 m with a quote) with the bottom edge 0.75 m off the floor, beside the art. Wing plaques are 3.3 × 0.9 m under each canvas.
+- **Bio boards.** Bio boards are slate with ARTIST in salmon `#ff9783`, the name in white caps, a short red rule, then the bio. Every artist uses the same board, in the wing and on the main gallery's artist kiosks. Short bios get bigger type.
+- **Living paintings.** When an artwork has an animated version, it fades in over the still (0.9 s) while you stand in front of it and fades back out when you walk away. It's silent and loops forward then back.
 - **Interview totems.** A dark 3.6 × 2.0 m screen sits on an ink post and base plate. A totem can be two-sided when it serves two bays. Its video plays only while you stand in its zone.
 - **End walls.** Each room ends in a dark title panel: a salmon kicker, a big white title and a red vertical bar.
 

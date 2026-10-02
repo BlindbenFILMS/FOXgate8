@@ -70,14 +70,14 @@ const FONT = 'Archivo, Arimo, Helvetica, Arial, sans-serif';
 
 // ------------------------------------------------------------ the wing
 // Laid out along -x from its origin O (entrance), floor at O.y. Returns meshes for collision, art entries and doors.
-export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveImg, L = 66, title = null, doorSign = 'NEW ARTISTS WING', videoKicker = 'BLINDNESS · AN INTERVIEW WITH' }) {
+export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveImg, L = 66, title = null, logo = null, endVideo = null, floorLogo = null, fillLogo = null, doorSign = 'NEW ARTISTS WING', videoKicker = 'BLINDNESS · AN INTERVIEW WITH' }) {
   const g = new THREE.Group(); g.position.copy(O); g.rotation.y = rotY; scene.add(g); g.updateMatrixWorld(true);
   // local layout -> world (the wing can be turned to join any doorway of the building)
   const toW = v => v.clone().applyMatrix4(g.matrixWorld), dirW = v => v.clone().applyQuaternion(g.quaternion);
   const boxW = (a, b) => new THREE.Box3().setFromPoints([0, 1, 2, 3, 4, 5, 6, 7].map(i => toW(new THREE.Vector3(i & 1 ? a.x : b.x, i & 2 ? a.y : b.y, i & 4 ? a.z : b.z))));
   const Wd = 18, Hh = 6.4, HW = Wd / 2;
   const T = title || { kicker: 'THE BLIND CANVAS PROJECT', lines: ['New Artists', 'Wing'], sub: wing.artists.map(a => a.name).join(' · ') };
-  const col = [], arts = [], loaders = [];
+  const col = [], arts = [], loaders = [], canvases = [];
   const wallM = new THREE.MeshLambertMaterial({ color: 0xeceae6 });
   const greyM = new THREE.MeshLambertMaterial({ color: 0x55585e });
   const inkM = new THREE.MeshLambertMaterial({ color: 0x1d1c1b });
@@ -92,7 +92,7 @@ export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveIm
     const side = (Wd - doorW) / 2, lintel = 5.0;
     box(0.4, Hh, side, wallM, 0.2, Hh / 2, -(doorW / 2 + side / 2)); box(0.4, Hh, side, wallM, 0.2, Hh / 2, doorW / 2 + side / 2);
     box(0.4, Hh - lintel, doorW, wallM, 0.2, lintel + (Hh - lintel) / 2, 0);
-    const sg = panelTex(1024, 128, (c, w, h) => { c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, 0, 10, h); c.fillStyle = '#fff'; c.font = `800 64px ${FONT}`; c.textBaseline = 'middle'; c.fillText(doorSign, 40, 66); });
+    const sg = panelTex(1024, 128, (c, w, h) => { c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, 0, 10, h); c.fillStyle = '#fff'; let fs = 64; c.font = `800 ${fs}px ${FONT}`; while (c.measureText(doorSign).width > w - 70 && fs > 30) { fs -= 2; c.font = `800 ${fs}px ${FONT}`; } c.textBaseline = 'middle'; c.fillText(doorSign, 40, 66); });   // shrink to fit: the whole name always shows
     for (const r of [0, Math.PI]) { const m = new THREE.Mesh(new THREE.PlaneGeometry(doorW - 0.4, 1.0), new THREE.MeshBasicMaterial({ map: sg })); m.position.set(r ? 0.45 : -0.05, lintel + 0.6, 0); m.rotation.y = r ? Math.PI / 2 : -Math.PI / 2; g.add(m); }
   } else box(0.4, Hh, Wd, wallM, 0.2, Hh / 2, 0);
   box(0.4, Hh, Wd, wallM, -L - 0.2, Hh / 2, 0);
@@ -103,20 +103,54 @@ export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveIm
   // ceiling light strips + bench seats down the middle
   for (let x = -5; x > -L; x -= 7.5) { box(5.5, 0.06, 0.5, lightM, x, Hh - 0.02, -4, false); box(5.5, 0.06, 0.5, lightM, x, Hh - 0.02, 4, false); }
   for (let x = -16; x > -L + 6; x -= 15) { box(3.2, 0.45, 0.9, greyM, x, 0.225, 0); }
-  const screens = [];
   const lamp = new THREE.PointLight(0xfff2dc, 0, 0); g.add(lamp);   // (ambient/hemi do the lighting; no extra cost)
 
-  // title wall at the far end
-  const titleT = panelTex(1600, 700, (c, w, h) => {
+  // a logo on an ink panel (wall or floor); the image loads with the room
+  const logoPanel = (LW, LH, img) => {
+    const lm = new THREE.MeshBasicMaterial({ color: 0x1d1c1b });
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(LW, LH), lm);
+    loaders.push(() => { const im = new Image(); im.onload = () => {
+      const t = panelTex(Math.round(Math.min(2048, LW * 160)), Math.round(Math.min(2048, LW * 160) * LH / LW), (c, w, h) => { c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, 0, w, Math.max(6, h * 0.02));
+        const k = Math.min((w * 0.88) / im.width, (h * 0.8) / im.height), iw = im.width * k, ih = im.height * k; c.drawImage(im, (w - iw) / 2, (h - ih) / 2 + 4, iw, ih); });
+      lm.map = t; lm.color.set(0xffffff); lm.needsUpdate = true; }; im.src = resolveImg(img); });
+    return m;
+  };
+  const screens = [];
+  if (endVideo) {   // the far wall is one big screen: an ink wall with the film filling it
+    box(0.06, Hh - 0.2, Wd - 0.4, inkM, -L + 0.05, Hh / 2, 0, false);
+    const VH = Hh - 0.7, VW = Math.min(Wd - 1.2, VH * 16 / 9);
+    const posterMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
+    if (endVideo.poster) new THREE.TextureLoader().load(resolveImg(endVideo.poster), t => { t.colorSpace = THREE.SRGBColorSpace; posterMat.map = t; posterMat.color.set(0xffffff); posterMat.needsUpdate = true; });
+    const dark = new THREE.MeshBasicMaterial({ color: 0x151515 });
+    const scr = new THREE.Mesh(new THREE.BoxGeometry(0.08, VH, VW), [posterMat, dark, dark, dark, dark, dark]); scr.position.set(-L + 0.12, Hh / 2 + 0.05, 0); g.add(scr);
+    screens.push({ u: endVideo.url, local: endVideo.url, box: scr, faces: [0], posterMat, vol: 0.85, dist: L + 6, p: toW(scr.position.clone()).toArray(),
+      zone: boxW(new THREE.Vector3(-L, -1, -HW), new THREE.Vector3(0.5, 6, HW)) });
+  } else {
+  // title wall at the far end (with a logo: the title on the left, the logo large on the right)
+  const TW = logo ? 7.2 : 9.6, TPX = Math.round(TW / 4.2 * 700);
+  const titleT = panelTex(TPX, 700, (c, w, h) => {
     c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h);
     c.fillStyle = '#ec3013'; c.fillRect(70, 70, 16, h - 140);
     c.fillStyle = '#ff9783'; c.font = `800 46px ${FONT}`; c.fillText(T.kicker, 130, 140);
-    c.fillStyle = '#f3f2f2'; c.font = `800 ${T.lines.some(l => l.length > 11) ? 112 : 150}px ${FONT}`; T.lines.slice(0, 2).forEach((l, i) => c.fillText(l, 124, 300 + i * 150));
-    c.font = `500 40px ${FONT}`; c.fillStyle = '#cfcaca';
-    wrap(c, T.sub || '', w - 220).slice(0, 2).forEach((l, i) => c.fillText(l, 130, 560 + i * 52));
+    const lines = T.lines.slice(0, 3); let fs = lines.length > 2 ? 118 : T.lines.some(l => l.length > 11) ? 112 : 150;
+    c.font = `800 ${fs}px ${FONT}`; while (fs > 60 && lines.some(l => c.measureText(l).width > w - 190)) { fs -= 4; c.font = `800 ${fs}px ${FONT}`; }
+    const lh = fs * 1.0, y0 = lines.length > 2 ? 250 : 300;
+    c.fillStyle = '#f3f2f2'; lines.forEach((l, i) => c.fillText(l, 124, y0 + i * lh));
+    c.font = `500 ${lines.length > 2 ? 34 : 40}px ${FONT}`; c.fillStyle = '#cfcaca';
+    wrap(c, T.sub || '', w - 220).slice(0, 2).forEach((l, i) => c.fillText(l, 130, (lines.length > 2 ? 590 : 560) + i * 46));
   });
-  const tp = new THREE.Mesh(new THREE.PlaneGeometry(9.6, 4.2), new THREE.MeshBasicMaterial({ map: titleT })); tp.position.set(-L + 0.02, 3.0, 0); tp.rotation.y = Math.PI / 2; g.add(tp);
+  const tp = new THREE.Mesh(new THREE.PlaneGeometry(TW, 4.2), new THREE.MeshBasicMaterial({ map: titleT })); tp.position.set(-L + 0.02, 3.0, logo ? -HW + 0.6 + TW / 2 : 0); tp.rotation.y = Math.PI / 2; g.add(tp);
+  if (logo) {   // the partner's logo, large, on an ink panel
+    const LW = Wd - 1.2 - TW - 0.5, LH = 4.2;
+    const lm = new THREE.MeshBasicMaterial({ color: 0x1d1c1b });
+    const lp = new THREE.Mesh(new THREE.PlaneGeometry(LW, LH), lm); lp.position.set(-L + 0.02, 3.0, HW - 0.6 - LW / 2); lp.rotation.y = Math.PI / 2; g.add(lp);
+    loaders.push(() => { const img = new Image(); img.onload = () => {
+      const t = panelTex(Math.round(LW * 160), Math.round(LH * 160), (c, w, h) => { c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, 0, w, 10);
+        const k = Math.min((w * 0.88) / img.width, (h * 0.8) / img.height), iw = img.width * k, ih = img.height * k; c.drawImage(img, (w - iw) / 2, (h - ih) / 2 + 5, iw, ih); });
+      lm.map = t; lm.color.set(0xffffff); lm.needsUpdate = true; }; img.src = resolveImg(logo); });
+  }
 
+  }
   // bays: left wall (z=-HW, facing +z) then right wall (z=+HW, facing -z)
   const bayW = 15, slots = [];
   const nb = Math.max(1, Math.floor((L - 4) / bayW));
@@ -165,23 +199,28 @@ export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveIm
       const faceM = new THREE.MeshBasicMaterial({ color: 0xdddddd });
       const sideM = new THREE.MeshLambertMaterial({ color: 0xf4f2ee });
       const cvs = new THREE.Mesh(new THREE.BoxGeometry(S, S, 0.07), [sideM, sideM, sideM, sideM, faceM, sideM]);
-      cvs.position.copy(at(cx, 2.65, 0.04)); cvs.rotation.y = rotY; g.add(cvs);
+      cvs.position.copy(at(cx, 2.65, 0.04)); cvs.rotation.y = rotY; g.add(cvs); canvases.push({ mesh: cvs, w: S, h: S, key: p.img });
       loaders.push(() => new THREE.TextureLoader().load(resolveImg(p.img), t => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; faceM.map = t; faceM.color.set(0xffffff); faceM.needsUpdate = true; }));
-      const plT = panelTex(820, 190, (c, w, h) => {
-        c.fillStyle = '#f9f8f6'; c.fillRect(0, 0, w, h); c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, 8, h);
-        c.font = `800 46px ${FONT}`; c.fillText(wrap(c, p.title, w - 60)[0], 34, 78);
-        c.font = `500 32px ${FONT}`; c.fillStyle = '#5a5654'; c.fillText(A.name, 34, 132);
-        c.fillStyle = '#ec3013'; c.font = `800 22px ${FONT}`; c.fillText('APPROACH TO VIEW · READ ALOUD', 34, 172);
+      const plT = panelTex(1100, 300, (c, w, h) => {   // 3.3 x 0.9 m: big type, low on the wall so you can walk right up to it
+        c.fillStyle = '#f9f8f6'; c.fillRect(0, 0, w, h); c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, 12, h);
+        let ts = 68; c.font = `800 ${ts}px ${FONT}`; while (c.measureText(p.title).width > w - 80 && ts > 44) { ts -= 2; c.font = `800 ${ts}px ${FONT}`; }
+        c.fillText(wrap(c, p.title, w - 80)[0], 44, 104);
+        c.font = `500 46px ${FONT}`; c.fillStyle = '#5a5654'; c.fillText(A.name, 44, 184);
+        c.fillStyle = '#ec3013'; c.font = `800 30px ${FONT}`; c.fillText('APPROACH TO VIEW · READ ALOUD', 44, 262);
       });
-      const pl = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 0.6), new THREE.MeshBasicMaterial({ map: plT }));
-      pl.position.copy(at(cx, 0.85, 0.03)); pl.rotation.y = rotY; g.add(pl);
+      const pl = new THREE.Mesh(new THREE.PlaneGeometry(3.3, 0.9), new THREE.MeshBasicMaterial({ map: plT }));
+      pl.position.copy(at(cx, 0.78, 0.03)); pl.rotation.y = rotY; g.add(pl);
       arts.push({ title: p.title, desc: (p.quote ? p.quote + ' — ' : '') + A.name, imgDesc: p.paras.join(' '), img: resolveImg(p.img), ctr: toW(cvs.position), n: dirW(n), artist: A.name });
     });
   });
+  // the partner's logo on the floor just inside the door, upright as you walk in
+  if (floorLogo) { const fl = logoPanel(8.4, 3.9, floorLogo); fl.rotation.x = -Math.PI / 2; fl.rotation.z = Math.PI / 2; fl.position.set(-6.2, 0.012, 0); fl.material.polygonOffset = true; fl.material.polygonOffsetFactor = -2; fl.renderOrder = 1; g.add(fl); }
+  // empty bays get the logo, so no wall is left bare
+  if (fillLogo) for (let i = wing.artists.length; i < slots.length; i++) { const sl = slots[i]; const lp = logoPanel(11, 4.8, fillLogo); lp.position.set(sl.x, 2.9, sl.side * (HW - 0.04)); lp.rotation.y = sl.side < 0 ? 0 : Math.PI; g.add(lp); }
   g.updateMatrixWorld(true);
   let loaded = false;
   const bounds = boxW(new THREE.Vector3(-L - 0.5, -1, -HW - 0.5), new THREE.Vector3(0.5, Hh + 0.5, HW + 0.5));
-  return { group: g, col, arts, screens, bounds, load() { if (loaded) return; loaded = true; loaders.forEach(f => f()); }, length: L };
+  return { group: g, col, arts, screens, canvases, bounds, load() { if (loaded) return; loaded = true; loaders.forEach(f => f()); }, length: L };
 }
 
 // ------------------------------------------------------------ a doorway (freestanding arch with a glowing teal opening)

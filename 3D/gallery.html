@@ -63,7 +63,7 @@
 <div id="load"><div class="k">8 GATES · 3D · Ben Fox</div><h1>Blind Canvas<br>Project</h1><div class="bar"><i id="lb"></i></div><p id="lt">Opening the gallery…</p><label id="nameRow" style="display:none;max-width:420px;margin-top:6px"><span style="display:block;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#ff9783;margin-bottom:6px">Your name (others in the gallery see it)</span><input id="nameIn" maxlength="20" autocomplete="nickname" style="width:100%;min-height:52px;padding:10px 14px;background:#141312;color:#fff;border:2px solid #f3f2f2;border-radius:0;font:700 18px var(--font)" placeholder="Your name"></label><button id="enter" style="display:none;margin-top:18px;min-height:56px;padding:14px 22px;max-width:420px;background:#ec3013;color:#fff;border:2px solid #f3f2f2;font:800 16px var(--font);letter-spacing:.08em;text-transform:uppercase;text-align:center">Enter the gallery · sound on 🔊</button></div>
 <div id="place"><div class="t box"><div class="w">Blind Canvas Project</div><div class="c">The Gallery</div><div id="who" style="font-size:12px;font-weight:700;margin-top:3px;color:#cfcaca">Connecting…</div></div><button id="menuBtn" aria-label="Menu">☰</button><button id="waveBtn" aria-label="Wave to everyone" style="width:48px;border:2px solid var(--ink);border-left:0;background:var(--bg);font-size:22px;text-align:center">👋</button></div>
 <button id="act" aria-live="polite"></button>
-<div id="hint" class="box">Use the joystick to walk · drag the screen to look</div>
+<div id="hint" class="box">Touch the left side to walk · drag the right side to look</div>
 <div id="panel" class="box" role="dialog" aria-modal="true" aria-labelledby="pt"><header><div class="h"><div class="k" id="pk"></div><h2 id="pt"></h2></div><button id="px" aria-label="Close">✕</button></header><div class="body" id="pb"></div></div>
 <div id="menu" class="box" role="dialog" aria-label="Menu">
   <div class="lab">Your fox</div>
@@ -93,18 +93,18 @@ window.G = G;
 
 if (pref.look || pref.extra) G.setLook(pref.look || 'male', pref.extra || 'none');
 const touch = matchMedia('(pointer:coarse)').matches;
-$('hint').textContent = touch ? 'Use the joystick to walk · drag the screen to look' : 'W A S D to walk · Shift to run · drag to look · E to view';
+$('hint').textContent = touch ? 'Touch the left side to walk · drag the right side to look' : 'W A S D to walk · Shift to run · drag to look · E to view';
 setTimeout(() => $('hint').style.display = 'none', 9000);
 
 // ------------------------------------------------ near things
 function onNear(n) {
   near = n; const b = $('act');
   if (!n) { b.style.display = 'none'; return; }
-  b.innerHTML = '<small>' + (n.kind === 'art' ? 'Artwork' : 'Learn') + (touch ? '' : ' · press E') + '</small>' + esc(n.label.replace(/^VIEW · /, ''));
+  b.innerHTML = '<small>' + (n.kind === 'art' ? 'Artwork' : n.kind === 'vision' ? 'Stand here · vision simulator' : 'Learn') + (touch ? '' : ' · press E') + '</small>' + esc(n.label.replace(/^VIEW · /, ''));
   b.style.display = 'block'; $('live').textContent = n.label;
 }
 $('act').addEventListener('click', () => near && open(near));
-addEventListener('keydown', e => { if (e.code === 'KeyE' && near && $('panel').style.display !== 'flex') open(near); if (e.code === 'Escape') close(); });
+addEventListener('keydown', e => { if (e.code === 'KeyE' && near && $('panel').style.display !== 'flex') open(near); if (e.code === 'Escape') { if (G && G.vision && G.vision.locked()) G.vision.exit(); close(); } });
 
 // ------------------------------------------------ speech
 const synth = window.speechSynthesis; let speaking = null;
@@ -120,6 +120,7 @@ const para = s => esc(s).split(/\s*\/\s*|\n+/).filter(Boolean).map(p => '<p styl
 
 // ------------------------------------------------ panels
 function open(n) {
+  if (n.kind === 'vision') { $('act').style.display = 'none'; G.vision.enter(n.item); return; }
   const pb = $('pb'); pb.innerHTML = '';
   if (n.kind === 'art') {
     const a = n.item; $('pk').textContent = 'Artwork'; $('pt').textContent = a.title || 'Untitled';

@@ -7,6 +7,8 @@ import { MeshBVH } from '../vendor/three/three-mesh-bvh.js';
 import { rr, pick, clamp, smooth, damp, makeGradient } from '../village-game.js';
 import { foxKit, PLAYER_MALE, PLAYER_FEMALE } from '../fox-kit.js';
 import { crestTex } from './textures.js';
+import { artAnimator } from './gallery-anim.js';
+import { buildVisionSpots, visionOverlay } from './gallery-vision.js';
 import { makeWood, woodify, isWhiteFloorMat, isPaletteMat, buildWing, buildDoor } from './gallery-wing.js';
 import { carveWorld, carved, buildEntrance, buildRooms, canvasBox, cardTexture } from './gallery-remodel.js';
 
@@ -37,7 +39,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     const [idx, buf] = await Promise.all([fetch(BASE + 'img.index.json').then(r => r.json()), fetch(BASE + 'img.pack').then(r => r.arrayBuffer())]);
     const url = IMGURL; for (const [k, [o, l]] of Object.entries(idx)) url[k] = URL.createObjectURL(new Blob([buf.slice(o, o + l)], { type: 'image/webp' }));
     const R = u => (u && url[u]) || u;
-    data.signs.forEach(s => { if (s.img) s.img = R(s.img); }); data.vids.forEach(v => { v.poster = R(v.poster); });
+    data.signs.forEach(s => { if (s.img) { s.key = s.img; s.img = R(s.img); } }); data.vids.forEach(v => { v.poster = R(v.poster); });
     data.edu.forEach(e => (e.people || []).forEach(p => { p.img = R(p.img); }));
   } catch (e) { console.warn('image pack', e); }
   const gltf = await new Promise((res, rej) => new GLTFLoader().load(BASE + 'gallery.glb', res, e => e.total && onProgress(e.loaded / e.total), rej));
@@ -151,6 +153,13 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   });
   if (wing) vids.push(...wing.screens);
   vids.push(...rooms.screens);   // a two-sided interview screen in the middle of each bay of the New Artists Wing
+  // living paintings: the animated version of an artwork fades in over the still while you stand in front of it
+  const ANIMS = new Set(data.anims || []);
+  const animOf = k => { const b = k && k.split('/').pop().replace(/\.\w+$/, ''); return b && ANIMS.has(b) ? BASE + 'anim/' + b + '.mp4' : null; };
+  const animItems = [];
+  for (const sg of signs) if (sg.s.k === 'c') { const u = animOf(sg.s.key || sg.s.img); if (u) { const c = sg.s.c; animItems.push({ mesh: () => sg.mesh, w: Math.hypot(c[1][0] - c[0][0], c[1][1] - c[0][1], c[1][2] - c[0][2]), h: Math.hypot(c[3][0] - c[0][0], c[3][1] - c[0][1], c[3][2] - c[0][2]), url: u }); } }
+  for (const cv of [...(wing ? wing.canvases : []), ...rooms.canvases]) { const u = animOf(cv.key); if (u) animItems.push({ mesh: () => cv.mesh, w: cv.w, h: cv.h, url: u }); }
+  const animator = artAnimator({ items: animItems, maxActive: lowEnd ? 1 : 2 });
   const localFail = new Set();
   const video = document.createElement('video'); video.crossOrigin = 'anonymous'; video.playsInline = true; video.setAttribute('playsinline', ''); video.loop = true; video.muted = true; video.preload = 'auto';
   const vidTex = new THREE.VideoTexture(video); vidTex.colorSpace = THREE.SRGBColorSpace;
@@ -362,7 +371,47 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     if (Pl.y < -60) respawn();
     Pl.speed = Math.hypot(dx, dz) / Math.max(dt, 1e-4) + (mag > 0.05 ? sp * 0.3 : 0);
   }
-  function respawn() { Pl.x = SPAWN.x; Pl.z = SPAWN.z; Pl.y = groundAt(SPAWN.x, 1.5, SPAWN.z); Pl.vy = 0; Pl.face = SPAWN.face; St.yaw = SPAWN.face + Math.PI; }
+  // ---------------------------------------------------------------- "See through their eyes": two floor spots in the main hall (between Ben's and April & Melissa's screens)
+  const vSpots = buildVisionSpots({ scene, groundAt, spots: [{ x: -101.5, y: -3.3, z: -2.4, cond: 'rp', textYaw: Math.PI / 2 }, { x: -101.5, y: -3.3, z: 2.4, cond: 'cataracts', textYaw: Math.PI / 2 }] });
+  const V = { spot: null, py: 0, pp: 0, pts: [], gi: 0, gt: 0, from: null };
+  const vOverlay = visionOverlay({ container, onExit: () => exitVision(), onGuided: on => { if (on) { V.gt = 0; V.from = [St.yaw, St.pitch]; } } });
+  const lookAngles = (from, to) => { const v = to.clone().sub(from).normalize(); return [Math.atan2(-v.x, -v.z), Math.asin(clamp(-v.y, -1, 1))]; };
+  function enterVision(spot) {
+    V.spot = spot; Pl.x = spot.x; Pl.z = spot.z; Pl.y = spot.y; Pl.vy = 0; Pl.speed = 0; for (const k in input) input[k] = 0;
+    const eye = new THREE.Vector3(spot.x, spot.y + 1.55, spot.z);
+    const screen = new THREE.Vector3(...((data.vids[3] && data.vids[3].p) || [-117.6, 0.16, -0.18]));
+    [St.yaw, St.pitch] = lookAngles(eye, screen); Pl.face = St.yaw + Math.PI; V.py = St.yaw; V.pp = St.pitch;
+    // guided look: the big screen, then the paintings you can actually see from here, in a sweep round the room
+    const seen = [];
+    for (const sg of signs) if (sg.s.k === 'c') { const d = sg.ctr.distanceTo(eye); if (d > 34) continue; const dir = sg.ctr.clone().sub(eye).normalize(); const h = cast(eye.x, eye.y, eye.z, dir.x, dir.y, dir.z, d); if (!h || h.distance > d - 0.6) seen.push(sg.ctr.clone()); }
+    seen.sort((a, b) => Math.atan2(a.z - eye.z, -(a.x - eye.x)) - Math.atan2(b.z - eye.z, -(b.x - eye.x)));
+    V.pts = [screen, ...seen.filter((_, i) => i % Math.max(1, Math.ceil(seen.length / 6)) === 0)].map(p => lookAngles(eye, p));
+    V.gi = 0; V.gt = 0; V.from = [St.yaw, St.pitch];
+    vOverlay.open(spot.cond); onNear(null); nearKey = 'vision-locked';
+  }
+  function exitVision() { if (!V.spot) return; const sp = V.spot; V.spot = null; vOverlay.close(); St.pitch = 0.28; St.camDist = 1.2; Pl.x = sp.x + 1.6; nearKey = null; }
+  function updateVision(dt, now) {
+    for (const sp of vSpots) sp.glow.material.opacity = 0.32 + Math.sin(now / 420 + sp.z) * 0.18;
+    let yr = 0, pr = 0;
+    if (V.spot) {
+      Pl.x = V.spot.x; Pl.z = V.spot.z; Pl.y = V.spot.y; Pl.speed = 0;
+      const ix = input.jx + (input.r - input.l), iy = input.jy + (input.f - input.b);
+      if (Math.abs(ix) + Math.abs(iy) > 0.05 || now - St.lastLook < 200) { if (vOverlay.st.guided) vOverlay.setGuided(false); }
+      St.yaw -= ix * 1.7 * dt; St.pitch -= iy * 1.1 * dt;
+      if (vOverlay.st.guided && V.pts.length) {   // ease between points, dwell, move on
+        const TR = 2.8, DW = 2.4; V.gt += dt; const to = V.pts[V.gi % V.pts.length];
+        if (V.gt < TR) { const k = V.gt / TR, e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; let dy = to[0] - V.from[0]; dy = Math.atan2(Math.sin(dy), Math.cos(dy)); St.yaw = V.from[0] + dy * e; St.pitch = V.from[1] + (to[1] - V.from[1]) * e; }
+        else if (V.gt > TR + DW) { V.gt = 0; V.from = [St.yaw, St.pitch]; V.gi++; }
+      }
+      St.pitch = clamp(St.pitch, -0.65, 0.85);
+      let dyw = St.yaw - V.py; dyw = Math.atan2(Math.sin(dyw), Math.cos(dyw)); yr = dyw / Math.max(dt, 1e-3); pr = (St.pitch - V.pp) / Math.max(dt, 1e-3); V.py = St.yaw; V.pp = St.pitch;
+      // through the fox's own eyes
+      const cp = Math.cos(St.pitch), dir = new THREE.Vector3(Math.sin(St.yaw) * cp, Math.sin(St.pitch), Math.cos(St.yaw) * cp);
+      const eye = new THREE.Vector3(Pl.x, Pl.y + 1.55, Pl.z); camera.position.copy(eye); camera.lookAt(eye.clone().sub(dir)); player.visible = false; Pl.face = St.yaw + Math.PI;
+    }
+    vOverlay.update(dt, clamp(yr, -6, 6), clamp(pr, -6, 6));
+  }
+  function respawn() { if (V.spot) exitVision(); Pl.x = SPAWN.x; Pl.z = SPAWN.z; Pl.y = groundAt(SPAWN.x, 1.5, SPAWN.z); Pl.vy = 0; Pl.face = SPAWN.face; St.yaw = SPAWN.face + Math.PI; }
 
   const DBG = { freeCam: false };
   St.lastLook = 0;
@@ -400,29 +449,20 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const onKeyUp = e => { const k = keyMap[e.code]; if (k) input[k] = 0; };
   addEventListener('keydown', onKeyDown); addEventListener('keyup', onKeyUp);
   addEventListener('blur', () => { for (const k in input) input[k] = 0; });
-  // phones/tablets: an always-visible joystick, bottom left (touch anywhere in the lower-left quarter to grab it)
+  // phones/tablets: the Meru joystick. Touch anywhere on the left side of the screen and it appears under your thumb; let go and it hides
   const touchUI = matchMedia('(pointer:coarse)').matches || 'ontouchstart' in window;
-  const JR = 56;   // knob travel
+  const JR = 50;   // knob travel (same as Meru)
   const joyBase = document.createElement('div'), joyKnob = document.createElement('div');
-  joyBase.style.cssText = 'position:absolute;width:132px;height:132px;border:2px solid #f3f2f2;background:rgba(20,19,18,.45);transform:translate(-50%,-50%);pointer-events:none;z-index:5;display:' + (touchUI ? 'block' : 'none');
-  joyKnob.style.cssText = 'position:absolute;width:52px;height:52px;background:#ec3013;border:2px solid #f3f2f2;transform:translate(-50%,-50%);pointer-events:none;z-index:5;transition:left .12s,top .12s;display:' + (touchUI ? 'block' : 'none');
+  joyBase.style.cssText = 'position:absolute;width:112px;height:112px;border:2px solid #f3f2f2;background:rgba(32,30,29,.25);transform:translate(-50%,-50%);display:none;pointer-events:none;z-index:5;';
+  joyKnob.style.cssText = 'position:absolute;width:44px;height:44px;background:#ec3013;transform:translate(-50%,-50%);display:none;pointer-events:none;z-index:5;';
   container.append(joyBase, joyKnob);
-  const safe = document.createElement('div'); safe.style.cssText = 'position:fixed;left:0;bottom:0;width:0;height:env(safe-area-inset-bottom);padding-left:env(safe-area-inset-left);visibility:hidden;pointer-events:none'; document.body.appendChild(safe);
-  const joyHome = () => { const r = el.getBoundingClientRect(); return { x: 26 + 66 + safe.offsetWidth, y: r.height - 26 - 66 - safe.offsetHeight }; };
-  const placeJoy = (x, y, kx = x, ky = y) => { joyBase.style.left = x + 'px'; joyBase.style.top = y + 'px'; joyKnob.style.left = kx + 'px'; joyKnob.style.top = ky + 'px'; };
-  const resetJoy = () => { const h = joyHome(); placeJoy(h.x, h.y); };
-  resetJoy(); addEventListener('resize', resetJoy);
   const ptrs = new Map();
   el.addEventListener('pointerdown', e => {
     const r = el.getBoundingClientRect(), lx = e.clientX - r.left, ly = e.clientY - r.top;
-    const hm = joyHome();
-    const joy = e.pointerType === 'touch' && lx < r.width * 0.5 && ly > r.height * 0.45 && ![...ptrs.values()].some(p => p.joy);
-    // grabbing inside the base keeps it put; touching elsewhere in the corner moves the base under your thumb
-    const inBase = Math.abs(lx - hm.x) < 80 && Math.abs(ly - hm.y) < 80;
-    const ox = joy && inBase ? hm.x : lx, oy = joy && inBase ? hm.y : ly;
-    ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY, ox, oy, joy });
-    if (joy) { joyKnob.style.transition = 'none'; placeJoy(ox, oy, lx, ly); const dx = lx - ox, dy = ly - oy; input.jx = clamp(dx / JR, -1, 1); input.jy = clamp(-dy / JR, -1, 1); }
-    el.setPointerCapture(e.pointerId);
+    const joy = e.pointerType === 'touch' && lx < r.width * 0.45 && ![...ptrs.values()].some(p => p.joy);
+    ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY, ox: lx, oy: ly, joy });
+    if (joy) { joyBase.style.display = joyKnob.style.display = 'block'; joyBase.style.left = joyKnob.style.left = lx + 'px'; joyBase.style.top = joyKnob.style.top = ly + 'px'; }
+    try { el.setPointerCapture(e.pointerId); } catch (err) {}
   });
   el.addEventListener('pointermove', e => {
     const p = ptrs.get(e.pointerId); if (!p) return;
@@ -430,7 +470,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     else { St.lastLook = performance.now(); const k = e.pointerType === 'touch' ? 0.008 : 0.005; St.yaw -= (e.clientX - p.x) * k; St.pitch = clamp(St.pitch + (e.clientY - p.y) * k * 0.8, -0.35, 1.2); }
     p.x = e.clientX; p.y = e.clientY;
   });
-  const endPtr = e => { const p = ptrs.get(e.pointerId); if (p && p.joy) { input.jx = input.jy = 0; joyKnob.style.transition = 'left .12s,top .12s'; resetJoy(); } ptrs.delete(e.pointerId); };
+  const endPtr = e => { const p = ptrs.get(e.pointerId); if (p && p.joy) { input.jx = input.jy = 0; joyBase.style.display = joyKnob.style.display = 'none'; } ptrs.delete(e.pointerId); };
   el.addEventListener('pointerup', endPtr); el.addEventListener('pointercancel', endPtr);
   el.addEventListener('wheel', e => { St.dist = clamp(St.dist + e.deltaY * 0.004, 1.6, 9); e.preventDefault(); }, { passive: false });
 
@@ -440,6 +480,8 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const ro = new ResizeObserver(fit); ro.observe(container); fit();
   function nearest() {
     const p = new THREE.Vector3(Pl.x, Pl.y + 1.2, Pl.z); let best = null, bd = 1e9;
+    if (V.spot) return null;
+    for (const sp of vSpots) if (Math.hypot(Pl.x - sp.x, Pl.z - sp.z) < sp.r + 0.15 && Math.abs(Pl.y - sp.y) < 1.2) return { kind: 'vision', item: sp, label: 'See through their eyes' };
     for (const a of arts) { const d = a.ctr.distanceTo(p); if (d < 4.2 && d < bd) { bd = d; best = { kind: 'art', item: a, label: 'VIEW · ' + (a.title || 'ARTWORK') }; } }
     for (const e of edu) { const d = e.pos.distanceTo(p); if (d < e.r + 1 && d < bd + 1.5) { bd = d; best = { kind: 'edu', item: e, label: (e.prompt || 'LEARN MORE').replace(/^Press E to /i, '') }; } }
     return best;
@@ -454,11 +496,13 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   function tick(now) {
     raf = requestAnimationFrame(tick);
     const dt = Math.min(0.05, (now - last) / 1000); last = now;
-    move(dt);
+    if (!V.spot) move(dt);
     player.position.set(Pl.x, Pl.y + (extra === 'chair' ? 0 : 0.02), Pl.z); player.rotation.y = Pl.face;
     animFox(player, dt, Pl.speed / FOX_SCALE * 0.6, !Pl.ground);
     updateRemotes(dt);
-    if (!DBG.freeCam) updateCamera(dt);
+    animator.update(dt, Pl.x, Pl.y, Pl.z);
+    if (!DBG.freeCam && !V.spot) updateCamera(dt);
+    updateVision(dt, now);
     doorT -= dt;
     for (const d of doors) {
       d.portal.material.opacity = 0.78 + Math.sin(now / 400) * 0.12;
@@ -477,7 +521,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       for (const v of vids) if (v.zone && v.zone.containsPoint(pp)) { zUrl = v.u; break; }
       playUrl(zUrl);
       if (zUrl) { let dmin = 1e9; for (const v of vids) if (v.u === zUrl) dmin = Math.min(dmin, (v.wp ||= v.box.getWorldPosition(new THREE.Vector3())).distanceTo(pp)); const vv = vids.find(v => v.u === zUrl); video.volume = clamp((vv.vol ?? 0.8) * (1 - dmin / (vv.dist || 20)), 0, 1); }
-      const n = nearest(); const key = n ? n.kind + n.label : null; if (key !== nearKey) { nearKey = key; onNear(n); }
+      if (!V.spot) { const n = nearest(); const key = n ? n.kind + n.label + (n.item && n.item.z) : null; if (key !== nearKey) { nearKey = key; onNear(n); } }
     }
     renderer.render(scene, camera);
   }
@@ -503,9 +547,10 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     jump() { input.jump = 1; },
     setRun(v) { input.run = v ? 1 : 0; },
     respawn,
+    vision: { enter: sp => enterVision(sp), exit: () => exitVision(), locked: () => !!V.spot, spots: vSpots, overlay: vOverlay },
     unlockAudio() { unlockSound(); },
     goWing() { const d = doors.find(x => x.wing); if (d) travel(d); },
-    debug: { THREE, DBG, video, Pl, St, input, scene, camera, renderer, vids, signs, teleport(x, y, z, face) { Pl.x = x; Pl.z = z; Pl.y = y ?? groundAt(x, 30, z); Pl.vy = 0; if (face != null) { Pl.face = face; St.yaw = face + Math.PI; } }, groundAt, cast, info: () => ({ calls: renderer.info.render.calls, tris: renderer.info.render.triangles, tex: renderer.info.memory.textures, geo: renderer.info.memory.geometries }) },
+    debug: { THREE, DBG, video, animator, Pl, St, input, scene, camera, renderer, vids, signs, teleport(x, y, z, face) { Pl.x = x; Pl.z = z; Pl.y = y ?? groundAt(x, 30, z); Pl.vy = 0; if (face != null) { Pl.face = face; St.yaw = face + Math.PI; } }, groundAt, cast, info: () => ({ calls: renderer.info.render.calls, tris: renderer.info.render.triangles, tex: renderer.info.memory.textures, geo: renderer.info.memory.geometries }) },
     destroy() { cancelAnimationFrame(raf); ro.disconnect(); removeEventListener('keydown', onKeyDown); removeEventListener('keyup', onKeyUp); if (hls) hls.destroy(); video.pause(); renderer.dispose(); el.remove(); joyBase.remove(); joyKnob.remove(); },
   };
 }

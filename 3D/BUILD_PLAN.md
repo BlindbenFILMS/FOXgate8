@@ -89,3 +89,19 @@ Ben's PlayCanvas project (BCP export) was exported with PlayCanvas's own GltfExp
   - The 57 artworks are frameless canvas boxes with wing plaques.
   - Grey walls across the building are repainted gallery white in the shader.
   - A backup of the pre-remodel version is in `backup/gallery-v1/`.
+  - **Later on 1 Oct:**
+    - The tee's back logo now follows the shirt's profile and sits high, just under the neck (fox-kit `tee`, lathe print from y 0.79 to 1.225).
+    - Art cards are bigger (3.4 m) and lower (bottom 0.75 m off the floor), and their type scales with the card. The wing's plaques are 3.3 × 0.9 m.
+    - The main gallery's 17 artist kiosks now carry the wing's slate bio board.
+    - **Living paintings.** 69 of Ben's Runway animations of his art (960² × 10 s, from `all art - SQUARE/<artist>/4-VIDEOS/Gen-4*`) were matched to their stills by first frame. Each was encoded as a 480² H.264 ping-pong loop (no sound, about 1.2 MB) in `gallery/anim/<image>.mp4` and listed in `gallery.json` → `anims`.
+      - `engine/gallery-anim.js` fades the animation in over the still while you stand within 9 m in front of the painting, and fades it out when you leave. A pool of 2 videos (1 on phones) means only the nearest ones play.
+      - Duplicates skipped: Craig's motorcycle used the newer clip, and Nikki's folder had two of Deborah's clips.
+    - The blindness simulator video (`gallery/video/blindness_simulator.mp4`, 960×540, 16.5 MB) plays on both "What does blindness look like" screens (vids 8 and 24) instead of Vimeo.
+    - **AMB room.** The title now reads "Academy of / Music for / the Blind", and the AMB logo is large on an ink panel on the end wall (`rooms[].logo`). Door signs shrink to fit, so the full name shows. The old hall sign's "ACADAMY" is fixed to ACADEMY.
+    - **See through their eyes** (`engine/gallery-vision.js`). Two floor spots in the main hall at (-101.5, ±2.4), between Ben's and April & Melissa's screens and facing the big screen.
+      - Choosing "Stand here" holds you in place and switches to a first-person view at the fox's eyes. You look around by dragging, with the joystick, or with the arrow keys/WASD.
+      - The overlay is Ben's Patient Experience simulator: RP, cataracts, macular degeneration, floaters and glaucoma, with the same severity maths and a severity slider. Spot 1 starts on RP, spot 2 on cataracts.
+      - Added for 3D: the clear spot leads a little in the direction you turn; floaters trail your look on a spring; your sight settles in over 2.5 s; Guided look pans between the big screen and the paintings visible from the spot. Esc or Step off leaves.
+    - The phone joystick is now Meru's: it floats, appearing under your thumb anywhere on the left 45% of the screen (112 px base, red 44 px knob, 50 px travel), and hides when you let go.
+    - **AMB room v2.** The far wall is one big screen playing `amb.mp4` (16:9, 5.7 m tall on an ink wall, plays while you're in the room; the totem is gone). The AMB logo lies on the floor just inside the door, upright as you walk in (`floorLogo`), and fills the empty left bay (`fillLogo`). It's also on the hall wall before the door at x -74, z -12.8 (`hallLogos`).
+    - 12 cards keep their old spot because the wall there doesn't fit a bigger card: they sit on kiosks or group walls, or would overlap other art.

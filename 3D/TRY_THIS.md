@@ -64,3 +64,4 @@ Open `gallery.html` (or the Blind Canvas card on the galaxy page).
 - [ ] Stand behind the welcome video totem and turn around. There should be plenty of room.
 - [ ] The white floors are now honey oak. Check that nothing important turned to wood by mistake, such as white tabletops.
 - [ ] Multiplayer: open the gallery on two devices, ideally one on Wi-Fi and one on cell data. Each should see the other fox with a name tag within about 10–20 seconds. Try 👋 and the private room link in ☰.
+- [ ] In the main hall, step on one of the two red "See through their eyes" circles and choose Stand here. Look around (drag, or the joystick on a phone), try all five conditions and the severity slider, then try Guided look. The big screen film should keep playing. Step off with the red button or Esc.
