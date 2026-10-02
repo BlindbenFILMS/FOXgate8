@@ -104,4 +104,17 @@ Ben's PlayCanvas project (BCP export) was exported with PlayCanvas's own GltfExp
       - Added for 3D: the clear spot leads a little in the direction you turn; floaters trail your look on a spring; your sight settles in over 2.5 s; Guided look pans between the big screen and the paintings visible from the spot. Esc or Step off leaves.
     - The phone joystick is now Meru's: it floats, appearing under your thumb anywhere on the left 45% of the screen (112 px base, red 44 px knob, 50 px travel), and hides when you let go.
     - **AMB room v2.** The far wall is one big screen playing `amb.mp4` (16:9, 5.7 m tall on an ink wall, plays while you're in the room; the totem is gone). The AMB logo lies on the floor just inside the door, upright as you walk in (`floorLogo`), and fills the empty left bay (`fillLogo`). It's also on the hall wall before the door at x -74, z -12.8 (`hallLogos`).
+    - **2 Oct, midday batch.**
+      - The New Artists Wing is now `spacious`: 22 m wide, 7 m tall, 124 m long, with 30 m bays. Each piece is a 3.4 m canvas with its own description card beside it (title, artist, quote). Benches sit either side of each totem.
+      - Up to 3 living paintings play at once (2 on phones).
+      - Zone videos are never silent inside their zone: volume falls to 45% at most, and the falloff scales to the zone size. This fixed Dave Steele and Raquel Alim on the mezzanine.
+      - Vision simulator: 8 spots (main hall ×2, welcome plaza, AMB room, New Wing, "How we see" room, music room back, meditation area). Each has a pole sign with the eye logo, "CLICK/DRAG SCREEN TO LOOK AROUND" and a Learn more panel with the Patient Experience's condition pages (`LEARN` in gallery-vision.js).
+      - Beam titles (MUSIC ROOM, MAIN GALLERY, HOW WE SEE, WALL OF WHY, ACADEMY, MEDITATE WITH MORTEN) now render as ink plates with padding (`plate: 1` on the sign). HOPE FLOATING is smaller. The Wall of Why name cards are small and sit above each photo.
+      - Kiosks are rebuilt (`buildKiosks` in gallery-remodel.js, art inlined in `engine/kiosk-art.js`): one centred Tools kiosk behind the spawn (the spawn moved to x 3.6), and Ally Tips and Spectrum by the walkway, bigger and 3 m clear of the rails.
+      - Art streams in within 115 m (75 m on phones), nearest first, 14 per tick.
+    - **Six Views wall** (`engine/gallery-simwall.js`). Ben's "Vision Simulator - Six Views" page is rebuilt as shaders on both big screens in the "How we see" room (the vids marked `simwall`).
+      - One film (`gallery/video/sim_hero.mp4`, 720², silent) plays six times: cataracts, regular, macular degeneration, diabetic retinopathy (floaters), RP and glaucoma. It uses the page's severity maths and wandering gaze, under a VISION SIMULATOR / BLINDNESS SPECTRUM title that swaps every 5 s.
+      - A kiosk at `simKiosk` (press E or tap) opens a severity slider with Regular/Mild/Moderate/Severe presets. The wall eases to the new value, and the player's own view is untouched.
+      - It plays only while you're in `simZone`. The old `blindness_simulator.mp4` no longer plays there.
+    - New local videos: `blindcan_capitol.mp4` (welcome platform totem, vids[0]), `stevie_wonder.mp4` (first room after the walkway, vids[1-2], 360p to stay under 20 MB) and `goalball.mp4` (vids[17]).
     - 12 cards keep their old spot because the wall there doesn't fit a bigger card: they sit on kiosks or group walls, or would overlap other art.

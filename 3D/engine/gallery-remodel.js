@@ -3,6 +3,7 @@
 // 2) build: new wing-style pieces (wide walkways, rails, the eye portal) that replace what was cut
 import * as THREE from '../vendor/three/three.module.js';
 import { woodify } from './gallery-wing.js';
+import { TOOLS, ALLY_TIPS, SPECTRUM } from './kiosk-art.js';
 
 // regions are boxes {min:[x,y,z], max:[x,y,z]} or x-axis cylinders {cyl:{x0,x1,y,z,r}}
 export const CARVES = [
@@ -13,6 +14,10 @@ export const CARVES = [
   // the opening platform: its black pit walls and the welcome screen's block (rebuilt as one wide oak plaza with a screen totem)
   { name: 'opening platform', min: [-13.2, -5.2, -10.2], max: [7.3, 0.15, 10.2] },
   { name: 'welcome block', min: [-8.7, 1.6, -5.3], max: [-8.2, 2.1, -4.7] },
+  // the old kiosks (one centred Tools kiosk at the spawn; the two by the walkway rebuilt bigger and further from the rails)
+  { name: 'spawn kiosks', min: [6.3, -1.9, -3.6], max: [9.6, 2.6, 4.2] },
+  { name: 'walkway kiosk south', min: [-22, -1.9, -7.0], max: [-14.2, 2.6, -2.5] },
+  { name: 'walkway kiosk north', min: [-22.2, -1.9, 1.5], max: [-17.8, 2.6, 5.6] },
   // the little building north of the Wall of Why hallway (rebuilt as a twin of the New Artists Wing)
   { name: 'north annex', min: [-86, -3.2, -77], max: [-54, 15, -27.7] },
 ];
@@ -203,4 +208,31 @@ export function cardTexture(s) {
     x.fillStyle = '#ec3013'; x.font = `800 ${q(0.085)}px ${FONT}`; x.fillText('APPROACH TO VIEW · READ ALOUD', pad, H - q(0.1));
   }
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
+}
+
+// ------------------------------------------------------------ learning kiosks: an ink column with a big screen on top (wing style)
+export function buildKiosks({ scene, groundAt }) {
+  const g = new THREE.Group(); scene.add(g); const col = [];
+  const ink = new THREE.MeshLambertMaterial({ color: 0x1d1c1b }), red = new THREE.MeshBasicMaterial({ color: 0xec3013 });
+  const loader = new THREE.TextureLoader();
+  const K = [
+    { x: 6.55, z: 0, face: -Math.PI / 2, img: TOOLS, sw: 2.6, top: 3.1, base: 'spawn' },        // behind the spawn, centred, facing the plaza
+    { x: -15.2, z: -6.0, face: 0, img: ALLY_TIPS, sw: 2.8, top: 3.3 },                           // by the walkway, clear of the rails
+    { x: -22.6, z: 6.0, face: Math.PI, img: SPECTRUM, sw: 2.8, top: 3.3 },
+  ];
+  for (const k of K) {
+    const fy = groundAt(k.x, k.base === 'spawn' ? 1.5 : -0.5, k.z); const y0 = fy > -100 ? fy : -2;
+    const t = new THREE.Group(); t.position.set(k.x, y0, k.z); t.rotation.y = k.face; g.add(t);
+    const sh = k.sw * 0.75, cy = k.top - y0 - sh / 2;   // screen top at world height k.top
+    const colH = cy - sh / 2 + 0.05;
+    const c = new THREE.Mesh(new THREE.BoxGeometry(0.7, colH, 0.5), ink); c.position.y = colH / 2; t.add(c); col.push(c);
+    const foot = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.12, 1.0), ink); foot.position.y = 0.06; t.add(foot);
+    const back = new THREE.Mesh(new THREE.BoxGeometry(k.sw + 0.2, sh + 0.2, 0.16), ink); back.position.y = cy; t.add(back); col.push(back);
+    const bar = new THREE.Mesh(new THREE.BoxGeometry(k.sw + 0.2, 0.07, 0.17), red); bar.position.y = cy + sh / 2 + 0.135; t.add(bar);
+    const m = new THREE.MeshBasicMaterial({ color: 0x222222 });
+    const scr = new THREE.Mesh(new THREE.PlaneGeometry(k.sw, sh), m); scr.position.set(0, cy, 0.085); t.add(scr);
+    loader.load(k.img, tx => { tx.colorSpace = THREE.SRGBColorSpace; tx.anisotropy = 4; m.map = tx; m.color.set(0xffffff); m.needsUpdate = true; });
+  }
+  g.updateMatrixWorld(true);
+  return { group: g, col };
 }

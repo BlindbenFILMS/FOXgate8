@@ -97,14 +97,35 @@ $('hint').textContent = touch ? 'Touch the left side to walk · drag the right s
 setTimeout(() => $('hint').style.display = 'none', 9000);
 
 // ------------------------------------------------ near things
+// severity kiosk for the Six Views wall: a small panel at the bottom; the wall changes live (your own view is untouched)
+let simPanel = null;
+function simCtl(w) {
+  if (!simPanel) {
+    simPanel = document.createElement('div'); simPanel.id = 'simctl'; simPanel.setAttribute('role', 'dialog'); simPanel.setAttribute('aria-label', 'Six views wall severity');
+    simPanel.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom));z-index:12;width:min(560px,calc(100vw - 24px));background:rgba(20,19,18,.94);color:#f3f2f2;border-top:4px solid #ec3013;padding:14px 16px;font:400 13px/1.4 var(--font)';
+    simPanel.innerHTML = '<div style="font:800 10px/1 var(--font);letter-spacing:.16em;color:#ff9783;text-transform:uppercase">The six views wall</div><div style="font:800 18px/1.2 var(--font);margin:4px 0 8px">Change the severity</div>' +
+      '<label style="display:flex;align-items:center;gap:10px;font:800 11px/1 var(--font);letter-spacing:.12em;text-transform:uppercase">Regular<input id="simSev" type="range" min="0" max="100" style="flex:1;accent-color:#ec3013;height:36px">Severe <span id="simP" style="min-width:3.2em;text-align:right">85%</span></label>' +
+      '<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button data-v="0" class="sv">Regular</button><button data-v="35" class="sv">Mild</button><button data-v="65" class="sv">Moderate</button><button data-v="85" class="sv">Severe</button><button id="simX" style="margin-left:auto;background:#ec3013;border-color:#ec3013">Done ✕</button></div>' +
+      '<div style="font-size:11px;color:#a9a4a4;margin-top:8px">Watch the wall: all six views change together. This doesn\'t change your own view (for that, stand on a red circle).</div>';
+    document.body.appendChild(simPanel);
+    simPanel.querySelectorAll('button').forEach(b => b.style.cssText += ';min-height:40px;padding:0 12px;background:' + (b.id === 'simX' ? '#ec3013' : 'transparent') + ';color:#f3f2f2;border:2px solid ' + (b.id === 'simX' ? '#ec3013' : '#f3f2f2') + ';font:800 11px/1 var(--font);letter-spacing:.08em;text-transform:uppercase;cursor:pointer');
+    const set = v => { const W = G.simwall(); if (W) W.setSeverity(v / 100); $('simSev').value = v; $('simP').textContent = v + '%'; $('live').textContent = 'Wall severity ' + v + ' percent'; };
+    $('simSev').oninput = e => set(+e.target.value);
+    simPanel.querySelectorAll('.sv').forEach(b => b.onclick = () => set(+b.dataset.v));
+    $('simX').onclick = () => { simPanel.style.display = 'none'; };
+  }
+  const v = Math.round(w.severity * 100); $('simSev').value = v; $('simP').textContent = v + '%';
+  simPanel.style.display = 'block'; $('act').style.display = 'none'; $('simSev').focus();
+}
 function onNear(n) {
   near = n; const b = $('act');
+  if (simPanel && (!n || n.kind !== 'simctl')) simPanel.style.display = 'none';
   if (!n) { b.style.display = 'none'; return; }
-  b.innerHTML = '<small>' + (n.kind === 'art' ? 'Artwork' : n.kind === 'vision' ? 'Stand here · vision simulator' : 'Learn') + (touch ? '' : ' · press E') + '</small>' + esc(n.label.replace(/^VIEW · /, ''));
+  b.innerHTML = '<small>' + (n.kind === 'art' ? 'Artwork' : n.kind === 'vision' ? 'Stand here · vision simulator' : n.kind === 'simctl' ? 'Kiosk · the six views wall' : 'Learn') + (touch ? '' : ' · press E') + '</small>' + esc(n.label.replace(/^VIEW · /, ''));
   b.style.display = 'block'; $('live').textContent = n.label;
 }
 $('act').addEventListener('click', () => near && open(near));
-addEventListener('keydown', e => { if (e.code === 'KeyE' && near && $('panel').style.display !== 'flex') open(near); if (e.code === 'Escape') { if (G && G.vision && G.vision.locked()) G.vision.exit(); close(); } });
+addEventListener('keydown', e => { if (e.code === 'KeyE' && near && $('panel').style.display !== 'flex') open(near); if (e.code === 'Escape') { if (G && G.vision && G.vision.overlay.learnOpen()) { G.vision.overlay.closeLearn(); return; } if (G && G.vision && G.vision.locked()) G.vision.exit(); close(); } });
 
 // ------------------------------------------------ speech
 const synth = window.speechSynthesis; let speaking = null;
@@ -120,6 +141,7 @@ const para = s => esc(s).split(/\s*\/\s*|\n+/).filter(Boolean).map(p => '<p styl
 
 // ------------------------------------------------ panels
 function open(n) {
+  if (n.kind === 'simctl') { simCtl(n.item); return; }
   if (n.kind === 'vision') { $('act').style.display = 'none'; G.vision.enter(n.item); return; }
   const pb = $('pb'); pb.innerHTML = '';
   if (n.kind === 'art') {

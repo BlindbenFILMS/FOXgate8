@@ -9,11 +9,12 @@ import { foxKit, PLAYER_MALE, PLAYER_FEMALE } from '../fox-kit.js';
 import { crestTex } from './textures.js';
 import { artAnimator } from './gallery-anim.js';
 import { buildVisionSpots, visionOverlay } from './gallery-vision.js';
+import { buildSimWalls } from './gallery-simwall.js';
 import { makeWood, woodify, isWhiteFloorMat, isPaletteMat, buildWing, buildDoor } from './gallery-wing.js';
-import { carveWorld, carved, buildEntrance, buildRooms, canvasBox, cardTexture } from './gallery-remodel.js';
+import { buildKiosks, carveWorld, carved, buildEntrance, buildRooms, canvasBox, cardTexture } from './gallery-remodel.js';
 
 const BASE = 'gallery/';
-const SPAWN = { x: 5.5, y: 0.5, z: 0, face: -Math.PI / 2 };
+const SPAWN = { x: 3.6, y: 0.5, z: 0, face: -Math.PI / 2 };
 
 export async function createGallery({ container, onProgress = () => {}, onNear = () => {}, onZone = () => {} }) {
   const lowEnd = /iPhone|iPad|Android/i.test(navigator.userAgent);
@@ -72,12 +73,14 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   // New Artists Wing: built from Ben's artist pages, entered through a doorway in the main hall (quick fade, like our interiors)
   // joined to the south end of the Wall of Why hallway (x -74..-66), running out over the lawn; walk straight in
   const WING_O = new THREE.Vector3(-69.9, -3.14, 22.0);
-  const wing = data.wing ? buildWing({ scene, wing: data.wing, O: WING_O, rotY: Math.PI / 2, doorW: 8.4, wood, resolveImg: RES }) : null;
+  const wing = data.wing ? buildWing({ scene, wing: data.wing, O: WING_O, rotY: Math.PI / 2, doorW: 8.4, wood, resolveImg: RES, L: 124, spacious: true }) : null;
   const doors = [];
   if (wing) for (const m of wing.col) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); colGeos.push(g); }
   const entrance = buildEntrance({ scene, wood });
+  const glbRay = new THREE.Raycaster(), DOWN = new THREE.Vector3(0, -1, 0);
+  const kiosks = buildKiosks({ scene, groundAt: (x, y, z) => { glbRay.set(new THREE.Vector3(x, y, z), DOWN); glbRay.far = 30; const h = glbRay.intersectObject(world, true)[0]; return h ? h.point.y : -1e9; } });
   const rooms = buildRooms({ scene, data, wood, resolveImg: RES, buildWing });
-  for (const m of [...entrance.col, ...rooms.col]) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); colGeos.push(g); }
+  for (const m of [...entrance.col, ...rooms.col, ...kiosks.col]) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); colGeos.push(g); }
   // one position-only collision mesh with a BVH (fast rays on phones)
   let total = 0; for (const g of colGeos) total += (g.index ? g.index.count : g.attributes.position.count);
   const P = new Float32Array(total * 3); let k = 0;
@@ -113,6 +116,26 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     lines.forEach((l, i) => ctx.fillText(l, x, y0 + i * lh));
     const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
   }
+  // titles on the building's beams: white text on an ink plate with room around it (they used to be white-on-white and touch the edges)
+  function plateSign(s) {
+    const c = s.c.map(v => new THREE.Vector3(...v)), u = c[1].clone().sub(c[0]), v = c[3].clone().sub(c[0]); const boxW = u.length(); u.normalize(); v.normalize();
+    const n = new THREE.Vector3().crossVectors(u, v).normalize(), ctr = c[0].clone().add(c[1]).add(c[2]).add(c[3]).multiplyScalar(0.25);
+    const K = 220, fsM = Math.min(0.34, (s.fs || 48) * 0.0068), F = 'Archivo, Arimo, Helvetica, Arial, sans-serif';
+    const mc = document.createElement('canvas').getContext('2d'); mc.font = `800 ${fsM * K}px ${F}`;
+    const maxW = (boxW - 0.6) * K; let lines = [s.s.toUpperCase()];
+    if (mc.measureText(lines[0]).width > maxW && lines[0].includes(': ')) lines = lines[0].split(/:\s+/).map((l, i, a) => i < a.length - 1 ? l + ':' : l);
+    else if (mc.measureText(lines[0]).width > maxW) { const words = lines[0].split(/\s+/); lines = ['']; for (const w of words) { const t = lines[lines.length - 1] ? lines[lines.length - 1] + ' ' + w : w; if (mc.measureText(t).width > maxW && lines[lines.length - 1]) lines.push(w); else lines[lines.length - 1] = t; } }
+    const tw = Math.max(...lines.map(l => mc.measureText(l).width)) / K, padX = 0.32, padY = 0.2, lh = fsM * 1.12;
+    const W = tw + padX * 2, H = lines.length * lh + padY * 2;
+    const cv = document.createElement('canvas'); cv.width = Math.round(W * K); cv.height = Math.round(H * K); const x = cv.getContext('2d');
+    x.fillStyle = '#1d1c1b'; x.fillRect(0, 0, cv.width, cv.height); x.fillStyle = '#ec3013'; x.fillRect(0, 0, cv.width, Math.round(0.035 * K));
+    x.fillStyle = '#ffffff'; x.font = `800 ${fsM * K}px ${F}`; x.textAlign = 'center'; x.textBaseline = 'middle';
+    lines.forEach((l, i) => x.fillText(l, cv.width / 2, (padY + lh * (i + 0.5)) * K + 0.02 * K));
+    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(W, H), new THREE.MeshBasicMaterial({ map: t }));
+    m.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(u, v, n)); m.position.copy(ctr).addScaledVector(n, 0.03); m.renderOrder = 2;
+    return m;
+  }
   const signs = data.signs.map(s => {
     const c = s.c, ctr = new THREE.Vector3(); c.forEach(v => ctr.add(new THREE.Vector3(...v))); ctr.multiplyScalar(0.25);
     return { s, ctr, mesh: null };
@@ -131,6 +154,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   function showSign(sg) {
     if (sg.mesh) return; const s = sg.s;
     if (s.k === 'c') { sg.mesh = canvasBox(s, texLoader); scene.add(sg.mesh); return; }
+    if (s.k === 't' && s.plate) { sg.mesh = plateSign(s); scene.add(sg.mesh); return; }
     if (s.k === 'l') { sg.mesh = new THREE.Mesh(quad(s.c), new THREE.MeshBasicMaterial({ map: cardTexture(s), polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 })); sg.mesh.renderOrder = 2; scene.add(sg.mesh); return; }
     let mat;
     if (s.k === 't') mat = new THREE.MeshBasicMaterial({ map: textTexture(s), transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2, fog: true });
@@ -139,9 +163,13 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   }
   function hideSign(sg) { if (!sg.mesh) return; scene.remove(sg.mesh); sg.mesh.geometry.dispose(); for (const m of [].concat(sg.mesh.material)) { if (m.map) m.map.dispose(); if (m !== sideShared) m.dispose(); } sg.mesh = null; }
   const sideShared = null;
-  const NEAR = lowEnd ? 34 : 50, FAR = NEAR + 18;
+  const NEAR = lowEnd ? 75 : 115, FAR = NEAR + 30;   // load art well before it can be seen, so walls never fill in as you watch
 
   // ---------------------------------------------------------------- video screens (zone video: play while you stand in the room)
+  // "Six Views": the vision-simulator room's two big screens show one film through six eye conditions, live (severity set from a kiosk)
+  const simWallVids = data.vids.filter(v => v.simwall);
+  data.vids = data.vids.filter(v => !v.simwall);
+  const simwalls = simWallVids.length ? buildSimWalls({ scene, walls: simWallVids, src: BASE + 'video/sim_hero.mp4', kiosk: data.simKiosk, zone: data.simZone }) : null;
   const vids = data.vids.map(v => {
     const posterMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
     if (v.poster) texLoader.load(v.poster, t => { t.colorSpace = THREE.SRGBColorSpace; posterMat.map = t; posterMat.color.set(0xffffff); posterMat.needsUpdate = true; });
@@ -159,7 +187,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const animItems = [];
   for (const sg of signs) if (sg.s.k === 'c') { const u = animOf(sg.s.key || sg.s.img); if (u) { const c = sg.s.c; animItems.push({ mesh: () => sg.mesh, w: Math.hypot(c[1][0] - c[0][0], c[1][1] - c[0][1], c[1][2] - c[0][2]), h: Math.hypot(c[3][0] - c[0][0], c[3][1] - c[0][1], c[3][2] - c[0][2]), url: u }); } }
   for (const cv of [...(wing ? wing.canvases : []), ...rooms.canvases]) { const u = animOf(cv.key); if (u) animItems.push({ mesh: () => cv.mesh, w: cv.w, h: cv.h, url: u }); }
-  const animator = artAnimator({ items: animItems, maxActive: lowEnd ? 1 : 2 });
+  const animator = artAnimator({ items: animItems, maxActive: lowEnd ? 2 : 3 });
   const localFail = new Set();
   const video = document.createElement('video'); video.crossOrigin = 'anonymous'; video.playsInline = true; video.setAttribute('playsinline', ''); video.loop = true; video.muted = true; video.preload = 'auto';
   const vidTex = new THREE.VideoTexture(video); vidTex.colorSpace = THREE.SRGBColorSpace;
@@ -266,8 +294,11 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   }
 
   function makeVisitorFox(lk, ex, st = { pal: 0, art: DEFAULT_ART }) {   // every visitor wears the BCP tee
-    const f = makeFox({ torso: ['#ffffff', '#e7edf4', '#6b7d93'], crest: '8', mood: 'warm', look: { ...(lk === 'female' ? PLAYER_FEMALE : PLAYER_MALE), ...(PALETTES[st.pal | 0] || {}), tailSide: 1.15 },   // tail swept to the side so the back print shows
-      outfit: 'tee', prints: { front: frontArt(st.art), frontW: 1.45, back: backLogo }, gear: 'none', cane: ex === 'cane', glasses: ex === 'glasses' || ex === 'cane', chair: ex === 'chair' });
+    const opts = { torso: ['#ffffff', '#e7edf4', '#6b7d93'], crest: '8', mood: 'warm', look: { ...(lk === 'female' ? PLAYER_FEMALE : PLAYER_MALE), ...(PALETTES[st.pal | 0] || {}), tailSide: 1.15 },   // tail swept to the side so the back print shows
+      outfit: 'tee', prints: { front: frontArt(st.art), frontW: 1.45, back: backLogo }, gear: 'none', cane: ex === 'cane', glasses: ex === 'glasses' || ex === 'cane', chair: ex === 'chair' };
+    let f;
+    try { f = makeFox(opts); if (!f.userData.P || !f.userData.P.arms) throw new Error('no tee outfit'); }
+    catch (e) { console.warn('fox-kit has no BCP tee (an older fox-kit.js?), using a plain outfit', e); f = makeFox({ ...opts, outfit: 'vest', prints: null, look: { ...opts.look, tailSide: 0 } }); }   // never let the fox stop the gallery loading
     bakeLocal(f); f.scale.setScalar(FOX_SCALE); return f;
   }
   function buildPlayer() {
@@ -372,14 +403,23 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     Pl.speed = Math.hypot(dx, dz) / Math.max(dt, 1e-4) + (mag > 0.05 ? sp * 0.3 : 0);
   }
   // ---------------------------------------------------------------- "See through their eyes": two floor spots in the main hall (between Ben's and April & Melissa's screens)
-  const vSpots = buildVisionSpots({ scene, groundAt, spots: [{ x: -101.5, y: -3.3, z: -2.4, cond: 'rp', textYaw: Math.PI / 2 }, { x: -101.5, y: -3.3, z: 2.4, cond: 'cataracts', textYaw: Math.PI / 2 }] });
+  const vSpots = buildVisionSpots({ scene, groundAt, spots: [
+    { x: -101.5, y: -3.3, z: -2.4, cond: 'rp', textYaw: Math.PI / 2, look: [-117.6, 0.16, -0.18], signSide: 1 },          // main hall, facing the big screen
+    { x: -101.5, y: -3.3, z: 2.4, cond: 'cataracts', textYaw: Math.PI / 2, look: [-117.6, 0.16, -0.18], signSide: -1 },
+    { x: -2.5, y: 0.5, z: 0, cond: 'glaucoma', textYaw: Math.PI / 2, look: [-30, 2.5, 0], signSide: 1 },                 // welcome platform, looking down the walkway
+    { x: -70.25, y: -2.5, z: -65.7, cond: 'amd', textYaw: Math.PI, look: [-70.25, 0.4, -73.7] },                        // AMB room, facing the film wall
+    { x: -69.9, y: -2.5, z: 114, cond: 'floaters', textYaw: 0, look: [-69.9, 0.5, 146] },                                // New Artists Wing
+    { x: -160, y: -2.5, z: 0, cond: 'rp', textYaw: Math.PI, look: [-160.1, 1.5, -21.25] },                               // "How we see": facing the blindness simulator screen
+    { x: -224, y: -2.5, z: 0, cond: 'cataracts', textYaw: Math.PI / 2, look: [-205, -1, 0] },                            // music room, back area
+    { x: -258, y: -2.5, z: 2, cond: 'glaucoma', textYaw: 0, look: [-261.5, -1.0, 29.2] },                               // meditation area, facing Morten
+  ] });
   const V = { spot: null, py: 0, pp: 0, pts: [], gi: 0, gt: 0, from: null };
   const vOverlay = visionOverlay({ container, onExit: () => exitVision(), onGuided: on => { if (on) { V.gt = 0; V.from = [St.yaw, St.pitch]; } } });
   const lookAngles = (from, to) => { const v = to.clone().sub(from).normalize(); return [Math.atan2(-v.x, -v.z), Math.asin(clamp(-v.y, -1, 1))]; };
   function enterVision(spot) {
     V.spot = spot; Pl.x = spot.x; Pl.z = spot.z; Pl.y = spot.y; Pl.vy = 0; Pl.speed = 0; for (const k in input) input[k] = 0;
     const eye = new THREE.Vector3(spot.x, spot.y + 1.55, spot.z);
-    const screen = new THREE.Vector3(...((data.vids[3] && data.vids[3].p) || [-117.6, 0.16, -0.18]));
+    const screen = new THREE.Vector3(...(spot.look || (data.vids[3] && data.vids[3].p) || [-117.6, 0.16, -0.18]));
     [St.yaw, St.pitch] = lookAngles(eye, screen); Pl.face = St.yaw + Math.PI; V.py = St.yaw; V.pp = St.pitch;
     // guided look: the big screen, then the paintings you can actually see from here, in a sweep round the room
     const seen = [];
@@ -475,12 +515,13 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   el.addEventListener('wheel', e => { St.dist = clamp(St.dist + e.deltaY * 0.004, 1.6, 9); e.preventDefault(); }, { passive: false });
 
   // ---------------------------------------------------------------- loop
-  let raf = 0, last = performance.now(), streamT = 0, nearKey = null, zoneT = 0;
+  let firstStream = true; let raf = 0, last = performance.now(), streamT = 0, nearKey = null, zoneT = 0;
   const fit = () => { renderer.setSize(W(), H()); camera.aspect = W() / H(); camera.fov = camera.aspect < 1 ? 70 : 60; camera.updateProjectionMatrix(); St.dist = camera.aspect < 1 ? 5.2 : 4.2; };
   const ro = new ResizeObserver(fit); ro.observe(container); fit();
   function nearest() {
     const p = new THREE.Vector3(Pl.x, Pl.y + 1.2, Pl.z); let best = null, bd = 1e9;
     if (V.spot) return null;
+    if (simwalls && simwalls.kioskPos && Math.hypot(Pl.x - simwalls.kioskPos.x, Pl.z - simwalls.kioskPos.z) < 3.2 && Math.abs(Pl.y - simwalls.kioskPos.y) < 2) return { kind: 'simctl', item: simwalls, label: 'Change the wall severity' };
     for (const sp of vSpots) if (Math.hypot(Pl.x - sp.x, Pl.z - sp.z) < sp.r + 0.15 && Math.abs(Pl.y - sp.y) < 1.2) return { kind: 'vision', item: sp, label: 'See through their eyes' };
     for (const a of arts) { const d = a.ctr.distanceTo(p); if (d < 4.2 && d < bd) { bd = d; best = { kind: 'art', item: a, label: 'VIEW · ' + (a.title || 'ARTWORK') }; } }
     for (const e of edu) { const d = e.pos.distanceTo(p); if (d < e.r + 1 && d < bd + 1.5) { bd = d; best = { kind: 'edu', item: e, label: (e.prompt || 'LEARN MORE').replace(/^Press E to /i, '') }; } }
@@ -501,6 +542,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     animFox(player, dt, Pl.speed / FOX_SCALE * 0.6, !Pl.ground);
     updateRemotes(dt);
     animator.update(dt, Pl.x, Pl.y, Pl.z);
+    if (simwalls) simwalls.update(dt, Pl.x, Pl.y, Pl.z);
     if (!DBG.freeCam && !V.spot) updateCamera(dt);
     updateVision(dt, now);
     doorT -= dt;
@@ -512,15 +554,17 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     }
     streamT -= dt;
     if (streamT <= 0) {
-      streamT = 0.4; const p = new THREE.Vector3(Pl.x, Pl.y, Pl.z);
-      if (wing) { const inWing = wing.bounds.containsPoint(p); if (inWing !== St.inWing) { St.inWing = inWing; onZone(inWing ? 'New Artists Wing' : 'The Gallery'); } if (Math.hypot(Pl.x - WING_O.x, Pl.z - WING_O.z) < 45) wing.load(); }
-      for (const r of rooms.list) if (Math.hypot(Pl.x - r.O.x, Pl.z - r.O.z) < 45) r.room.load();
-      for (const sg of signs) { const d = sg.ctr.distanceTo(p); if (d < NEAR) showSign(sg); else if (d > FAR) hideSign(sg); }
+      streamT = 0.25; const p = new THREE.Vector3(Pl.x, Pl.y, Pl.z);
+      if (wing) { const inWing = wing.bounds.containsPoint(p); if (inWing !== St.inWing) { St.inWing = inWing; onZone(inWing ? 'New Artists Wing' : 'The Gallery'); } if (Math.hypot(Pl.x - WING_O.x, Pl.z - WING_O.z) < 110) wing.load(); }
+      for (const r of rooms.list) if (Math.hypot(Pl.x - r.O.x, Pl.z - r.O.z) < 90) r.room.load();
+      // nearest first, a few per tick (no hitch), far enough out that it all arrives before you can see it
+      const want = []; for (const sg of signs) { const d = sg.ctr.distanceTo(p); if (d < NEAR) { if (!sg.mesh) want.push([d, sg]); } else if (d > FAR) hideSign(sg); }
+      want.sort((a, b) => a[0] - b[0]); for (const [, sg] of want.slice(0, firstStream ? 60 : 14)) showSign(sg); firstStream = false;
       // which video zone are we in?
       let zUrl = null; const pp = new THREE.Vector3(Pl.x, Pl.y + 0.5, Pl.z);
       for (const v of vids) if (v.zone && v.zone.containsPoint(pp)) { zUrl = v.u; break; }
       playUrl(zUrl);
-      if (zUrl) { let dmin = 1e9; for (const v of vids) if (v.u === zUrl) dmin = Math.min(dmin, (v.wp ||= v.box.getWorldPosition(new THREE.Vector3())).distanceTo(pp)); const vv = vids.find(v => v.u === zUrl); video.volume = clamp((vv.vol ?? 0.8) * (1 - dmin / (vv.dist || 20)), 0, 1); }
+      if (zUrl) { let dmin = 1e9; for (const v of vids) if (v.u === zUrl) dmin = Math.min(dmin, (v.wp ||= v.box.getWorldPosition(new THREE.Vector3())).distanceTo(pp)); const vv = vids.find(v => v.u === zUrl); const zs = vv.zone ? vv.zone.getSize(new THREE.Vector3()) : null, reach = Math.max(vv.dist || 20, zs ? Math.hypot(zs.x, zs.z) * 1.1 : 0); video.volume = clamp((vv.vol ?? 0.8) * Math.max(0.45, 1 - dmin / reach), 0, 1); }   // never silent while you're in the zone
       if (!V.spot) { const n = nearest(); const key = n ? n.kind + n.label + (n.item && n.item.z) : null; if (key !== nearKey) { nearKey = key; onNear(n); } }
     }
     renderer.render(scene, camera);
@@ -547,6 +591,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     jump() { input.jump = 1; },
     setRun(v) { input.run = v ? 1 : 0; },
     respawn,
+    simwall: () => simwalls,
     vision: { enter: sp => enterVision(sp), exit: () => exitVision(), locked: () => !!V.spot, spots: vSpots, overlay: vOverlay },
     unlockAudio() { unlockSound(); },
     goWing() { const d = doors.find(x => x.wing); if (d) travel(d); },

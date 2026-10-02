@@ -65,3 +65,6 @@ Open `gallery.html` (or the Blind Canvas card on the galaxy page).
 - [ ] The white floors are now honey oak. Check that nothing important turned to wood by mistake, such as white tabletops.
 - [ ] Multiplayer: open the gallery on two devices, ideally one on Wi-Fi and one on cell data. Each should see the other fox with a name tag within about 10–20 seconds. Try 👋 and the private room link in ☰.
 - [ ] In the main hall, step on one of the two red "See through their eyes" circles and choose Stand here. Look around (drag, or the joystick on a phone), try all five conditions and the severity slider, then try Guided look. The big screen film should keep playing. Step off with the red button or Esc.
+- [ ] Try the vision simulator circles in each area: the welcome plaza, AMB room, New Wing, the "How we see" room, the music room and the meditation area. Use Learn more in each.
+- [ ] Walk the New Artists Wing: each painting has a card beside it and comes alive as you walk up.
+- [ ] On the mezzanine, the Dave Steele and Raquel Alim films have sound wherever you stand in their area.
