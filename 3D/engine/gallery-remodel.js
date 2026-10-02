@@ -145,6 +145,11 @@ export function buildRooms({ scene, data, wood, resolveImg, buildWing }) {
     const O = new THREE.Vector3(...R.O);
     const room = buildWing({ scene, wing: { artists: R.artists }, O, rotY: R.rotY, doorW: R.doorW, wood, resolveImg, L: R.L, title: R.title, logo: R.logo, endVideo: R.endVideo, floorLogo: R.floorLogo, fillLogo: R.fillLogo, doorSign: R.doorSign });
     // the partner's logo out in the hall, on an ink panel, to lead people to the room (loads with the room)
+    // a free-standing ink display board (for a photo hung on the low wall across the hall); a red bar on top
+    for (const hb of R.hallBoards || []) {
+      const [sx, sy, sz] = hb.size, b = new THREE.Mesh(new THREE.BoxGeometry(sx, sy, sz), new THREE.MeshLambertMaterial({ color: 0x1d1c1b })); b.position.set(...hb.p); scene.add(b);
+      const bar = new THREE.Mesh(new THREE.BoxGeometry(sx + 0.02, 0.07, sz + 0.02), new THREE.MeshBasicMaterial({ color: 0xec3013 })); bar.position.set(hb.p[0], hb.p[1] + sy / 2 + 0.035, hb.p[2]); scene.add(bar);
+    }
     for (const hl of R.hallLogos || []) {
       const lm = new THREE.MeshBasicMaterial({ color: 0x1d1c1b }); const m = new THREE.Mesh(new THREE.PlaneGeometry(hl.w, hl.h), lm);
       m.position.set(...hl.c); m.rotation.y = hl.rotY || 0; scene.add(m);

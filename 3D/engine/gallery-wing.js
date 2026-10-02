@@ -123,7 +123,9 @@ export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveIm
     if (endVideo.poster) new THREE.TextureLoader().load(resolveImg(endVideo.poster), t => { t.colorSpace = THREE.SRGBColorSpace; posterMat.map = t; posterMat.color.set(0xffffff); posterMat.needsUpdate = true; });
     const dark = new THREE.MeshBasicMaterial({ color: 0x151515 });
     const scr = new THREE.Mesh(new THREE.BoxGeometry(0.08, VH, VW), [posterMat, dark, dark, dark, dark, dark]); scr.position.set(-L + 0.12, Hh / 2 + 0.05, 0); g.add(scr);
-    screens.push({ u: endVideo.url, local: endVideo.url, box: scr, faces: [0], posterMat, vol: 0.85, dist: L + 6, p: toW(scr.position.clone()).toArray(),
+    screens.push({ u: endVideo.url, local: endVideo.url, box: scr, faces: [0], posterMat, vol: 0.85, dist: L + 6, reach: endVideo.reach, minVol: endVideo.minVol,
+      zones: (endVideo.extraZones || []).map(z => new THREE.Box3(new THREE.Vector3(...z[0]), new THREE.Vector3(...z[1]))),   // world boxes outside the room where the film still plays (and is heard, fading with distance)
+      p: toW(scr.position.clone()).toArray(),
       zone: boxW(new THREE.Vector3(-L, -1, -HW), new THREE.Vector3(0.5, 6, HW)) });
   } else {
   // title wall at the far end (with a logo: the title on the left, the logo large on the right)

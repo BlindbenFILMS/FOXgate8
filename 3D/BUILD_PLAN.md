@@ -118,3 +118,53 @@ Ben's PlayCanvas project (BCP export) was exported with PlayCanvas's own GltfExp
       - It plays only while you're in `simZone`. The old `blindness_simulator.mp4` no longer plays there.
     - New local videos: `blindcan_capitol.mp4` (welcome platform totem, vids[0]), `stevie_wonder.mp4` (first room after the walkway, vids[1-2], 360p to stay under 20 MB) and `goalball.mp4` (vids[17]).
     - 12 cards keep their old spot because the wall there doesn't fit a bigger card: they sit on kiosks or group walls, or would overlap other art.
+    - 2 Oct fixes:
+      - The phone joystick now rests faint at the bottom-left on touch screens. It jumps under your thumb anywhere on the left 45% and is hidden while you're on a vision circle.
+      - Vision pole signs: the pole stops under the plate, and a short neck joins the plate to the eye disc, so nothing crosses the words. Standing within 1.6 m of a sign also gives the "See through their eyes" prompt (`signPos`).
+      - The main hall circles are on the centre line (z 0) in the gaps between the ceiling dot clusters: (-97.8) back by the screen and (-88.7) toward the entrance.
+      - Screen flicker: video zones were only about 1.2 m tall, so the raised floor in front of the big screen (and jumping) dropped you out and flipped the screen to its poster. Zones now reach 1 m lower and 2.6 m higher. Screen boxes are 1.25 deep, so faces sit clear of the old GLB screen.
+      - AMB hallway: amb_4 (big) moved to the front of the west wall (z -10.6..-17.1), and the AMB logo moved to z -22 by the door. amb_3 hangs on a free-standing ink board (`hallBoards`) on the low east wall at z -13.5.
+      - The AMB film plays and is heard from just past the Stevie Wonder screens through the whole hallway to the Wall of Why (`endVideo.extraZones`). Volume fades with distance (`reach` 100, `minVol` 0.07): about 0.08 at the Wall of Why, 0.45 at the AMB door and 0.85 at the screen.
+    - 2 Oct, round 2:
+      - The "How we see" room has no layered spot now; only the Six Views wall plays there.
+      - Two severity lecterns (`simKiosks`) sit at (-160.1, ±5), centred in front of each screen. They line up with the foot of the entrance stairs, just off the walking path, so you face the screen while using one. They're low, so they don't block the film, and they're solid (`simCol`).
+      - Layered simulator panel: the condition title is gone (the selected button shows it). "← Back" sits where Learn more was, and a full-width pulsing "Learn about: <condition>" button is the bottom row (no pulse with reduced motion).
+    - 2 Oct, round 3:
+      - The Learn button for Floaters reads "Learn about: Diabetic Retinopathy" (the page it opens).
+      - Floor arrows (`engine/gallery-guides.js`, `guides` in gallery.json): trails of red chevrons with a floor label at the start and a wave of light running in the walking direction (it only animates when you're within 30 m).
+        - Two trails, "HOW WE SEE · MORE ART", go round both ends of the big main-hall screen, through the room behind it, to the "How we see" room.
+        - Two at the hallway junction: "ACADEMY OF MUSIC FOR THE BLIND" (-z) and "NEW ARTISTS WING" (+z).
+        - To add one, give a polyline of [x, z] floor points in walking order, plus an optional label.
+    - 2 Oct, visiting together (`engine/gallery-together.js`, on the new gallery-net `ev` channel):
+      - Tours: ☰ → "Lead a tour" invites everyone with "Follow <name>". Followers' foxes walk the leader's breadcrumb path (`G.follow`). If they get stuck for 2 s they hop to the trail. If they fall 30 m behind, or the leader goes through a door, they jump in behind the leader. Moving yourself stops following. The leader sees how many are following, and "End tour" releases everyone.
+      - Anyone can be followed or jumped to from ☰'s list of who's here ("Go to" / "Follow").
+      - Watch parties: in any room with a film (and someone else online), "Watch together · ▶ Start" restarts that film for everyone in the room. The host sends the time every 3 s and guests re-sync when they drift by more than 0.8 s. People elsewhere get "<name> started a watch party · Join", which takes them there. The host has "From the start" and "End", and leaving the room ends it.
+      - The Six Views wall is shared: a kiosk change is sent to everyone (throttled while dragging) and announced. People who arrive later get the last value.
+      - Tested with two tabs (?net=local&room=test), with g3d_checks/wtog.js serving a webm stand-in from a range server on :8766.
+    - 2 Oct, voice chat (`engine/gallery-voice.js`):
+      - Nothing asks for the microphone at load. A "MIC / OFF" button appears beside 👋 only while someone else is in the gallery. Tapping it asks for the mic (echo cancellation, noise suppression) and sends it to everyone over WebRTC (`net.voice`, Trystero addStream). New arrivals get it too. Tap again to stop. It turns red and reads "MIC / ON" while live.
+      - Voices play louder the closer the fox is (35% at the far end). Names with a live mic show 🎙 in ☰'s list, and on/off changes are announced. Your mic switches off when everyone else leaves.
+      - Local test mode (?net=local) has no voice transport. g3d_checks/wvoice.js tests the button, events and playback with a fake mic. Real voice needs two devices online.
+    - 2 Oct, hosting + notes:
+      - Group vision: on a red circle, "👥 Show everyone" (shown when others are online) sends your condition and severity to visitors within 35 m. They see through your eyes while still walking (overlay `guestView`), with a "Seeing through Ben's eyes · Stop" bar. Changes follow live. The sender re-sends every 4 s, and a guest's view lapses after 12 s of silence or when the sender steps off.
+      - Host mode (☰ → Host this visit): one host at a time (ties go to the lower id), ⭐ in the who list.
+        - Bar tools: Gather everyone, Mute all mics, and 🔊 Spotlight my voice (full volume everywhere).
+        - Gather moves guests into a ring round the host in private rooms. In the public gallery it's an invite with "Go".
+      - Notes and guest book (`engine/gallery-notes.js`, `vendor/nostr-pure.js` = nostr-tools 2.25 signing, 26 KB):
+        - Notes are kept as signed Nostr events: kind 4251 notes, kind 4252 hides, tags t=bcp-gallery-v1 and r=<room>.
+        - Relays are in gallery.json `notes.relays`, overridable with ?relays=. New notes are also sent over the gallery connection, so people present see them instantly.
+        - Spot notes: ☰ → 📝 Leave a note here. A card floats at the spot, opens as you walk up and is read aloud once ("Read notes aloud when I pass" in ☰, on by default). Walk up and press E to see every note there and reply.
+        - Art notes: a "Notes from visitors" section in each artwork panel, and the prompt shows 💬 n.
+        - The guest book: a lectern on the welcome plaza (`notes.guestbook`) showing the latest 4 signatures. Press E to read them all and sign.
+        - Moderation:
+          - A word filter blocks posting and display, and links are not allowed.
+          - One note per 15 s and at most 40 shown per browser key.
+          - "Remove mine" for your own notes, and "Hide for me" for others.
+          - The admin link ?admin=<passphrase> hides any note for everyone; `notes.admins` holds the public key.
+          - `notes.hidden` hides ids for good.
+        - Tests: g3d_checks/wnotes.js, wadmin.js and wnote1.js against a mock relay (/tmp/claude-0/nb/relay.js on :7777).
+    - 2 Oct, the world outside (`engine/gallery-world.js`; ?noworld turns it off for testing):
+      - The lake runs x -43.6..122, z ±84, water at y -2.95: under the entrance bridge and out in front of the plaza. It's a see-through rippling shader (moving vertices, two noise layers, fresnel sky tint, sun glints) over a dark lake bed, with a stone rim.
+      - Flags at (44, ±13) on stone bases with 15 m poles: Blind Canvas Project (white logo on ink, red hem) and Ora. They wave with a shader and read correctly from both sides.
+      - Cherry trees: the park's two tree-card materials get a drawn blossom picture (material names are now kept on conversion), plus 190 more crossed-card trees (one instanced mesh) round the lake and park.
+      - The city: a lawn fills the park (±275 m), a street grid with lane marks and crossings sits outside it, and ~1,900 towers make one instanced mesh with windows drawn in the shader. They get taller towards a downtown to the north-west, with five landmark spires. Fog now reaches 170..1150 m (900 on phones) and the camera sees 1,600 m.

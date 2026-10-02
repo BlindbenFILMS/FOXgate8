@@ -7,6 +7,8 @@ import { MeshBVH } from '../vendor/three/three-mesh-bvh.js';
 import { rr, pick, clamp, smooth, damp, makeGradient } from '../village-game.js';
 import { foxKit, PLAYER_MALE, PLAYER_FEMALE } from '../fox-kit.js';
 import { crestTex } from './textures.js';
+import { buildGuides } from './gallery-guides.js';
+import { buildWorld } from './gallery-world.js';
 import { artAnimator } from './gallery-anim.js';
 import { buildVisionSpots, visionOverlay } from './gallery-vision.js';
 import { buildSimWalls } from './gallery-simwall.js';
@@ -18,6 +20,7 @@ const SPAWN = { x: 3.6, y: 0.5, z: 0, face: -Math.PI / 2 };
 
 export async function createGallery({ container, onProgress = () => {}, onNear = () => {}, onZone = () => {} }) {
   const lowEnd = /iPhone|iPad|Android/i.test(navigator.userAgent);
+  const NOWORLD = new URLSearchParams(location.search).has('noworld');   // (testing) the museum without the lake, flags and city
   const renderer = new THREE.WebGLRenderer({ antialias: !lowEnd || devicePixelRatio < 2, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(devicePixelRatio, lowEnd ? 1.5 : 2));
   renderer.domElement.style.cssText = 'display:block;width:100%;height:100%;touch-action:none;outline:none';
@@ -58,6 +61,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     const old = o.material, mats = Array.isArray(old) ? old : [old];
     const conv = mats.map(m => {   // Lambert: cheap on phones, and no black metal without an env map
       const n = new THREE.MeshLambertMaterial({ color: m.color, map: m.map, emissive: m.emissive, emissiveMap: m.emissiveMap, emissiveIntensity: m.emissiveIntensity ?? 1, transparent: m.transparent, opacity: m.opacity, alphaTest: m.alphaTest, side: m.side, vertexColors: m.vertexColors });
+      n.name = m.name || '';   // kept so add-ons can find things (the park's tree cards)
       if (m.metalness > 0.5 && !m.map) n.color.multiplyScalar(0.85);
       if (isPaletteMat(n)) woodify(n, wood, 4, true);   // New Wing look: white floors become hardwood, grey walls go gallery white
       return n;
@@ -80,7 +84,9 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const glbRay = new THREE.Raycaster(), DOWN = new THREE.Vector3(0, -1, 0);
   const kiosks = buildKiosks({ scene, groundAt: (x, y, z) => { glbRay.set(new THREE.Vector3(x, y, z), DOWN); glbRay.far = 30; const h = glbRay.intersectObject(world, true)[0]; return h ? h.point.y : -1e9; } });
   const rooms = buildRooms({ scene, data, wood, resolveImg: RES, buildWing });
-  for (const m of [...entrance.col, ...rooms.col, ...kiosks.col]) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); colGeos.push(g); }
+  // the Six Views severity lecterns: solid, so you walk round them
+  const simCol = (data.simKiosks || []).map(k => { const m = new THREE.Mesh(new THREE.BoxGeometry(1.3, 1.6, 0.9)); m.position.set(k.p[0], k.p[1] + 0.8, k.p[2]); m.rotation.y = k.face || 0; m.updateMatrixWorld(true); return m; });
+  for (const m of [...entrance.col, ...rooms.col, ...kiosks.col, ...simCol]) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); colGeos.push(g); }
   // one position-only collision mesh with a BVH (fast rays on phones)
   let total = 0; for (const g of colGeos) total += (g.index ? g.index.count : g.attributes.position.count);
   const P = new Float32Array(total * 3); let k = 0;
@@ -169,14 +175,15 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   // "Six Views": the vision-simulator room's two big screens show one film through six eye conditions, live (severity set from a kiosk)
   const simWallVids = data.vids.filter(v => v.simwall);
   data.vids = data.vids.filter(v => !v.simwall);
-  const simwalls = simWallVids.length ? buildSimWalls({ scene, walls: simWallVids, src: BASE + 'video/sim_hero.mp4', kiosk: data.simKiosk, zone: data.simZone }) : null;
+  const simwalls = simWallVids.length ? buildSimWalls({ scene, walls: simWallVids, src: BASE + 'video/sim_hero.mp4', kiosk: data.simKiosk, kiosks: data.simKiosks, zone: data.simZone }) : null;
   const vids = data.vids.map(v => {
     const posterMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
     if (v.poster) texLoader.load(v.poster, t => { t.colorSpace = THREE.SRGBColorSpace; posterMat.map = t; posterMat.color.set(0xffffff); posterMat.needsUpdate = true; });
     const dark = new THREE.MeshBasicMaterial({ color: 0x151515 });
-    const box = new THREE.Mesh(new THREE.BoxGeometry(1.04, 1.01, 1.01), [posterMat, posterMat, dark, dark, dark, dark]);
+    const box = new THREE.Mesh(new THREE.BoxGeometry(1.25, 1.01, 1.01), [posterMat, posterMat, dark, dark, dark, dark]);
     box.position.set(...v.p); box.quaternion.set(...v.q); box.scale.set(...v.s); scene.add(box);
     const zone = v.tmin ? new THREE.Box3(new THREE.Vector3(...v.tmin), new THREE.Vector3(...v.tmax)).expandByScalar(0.6) : null;
+    if (zone) { zone.min.y -= 1; zone.max.y += 2.6; }   // tall enough that steps, platforms and jumps don't drop you out of the room (which flicked the screen back to its poster)
     return { ...v, box, posterMat, zone };
   });
   if (wing) vids.push(...wing.screens);
@@ -187,12 +194,17 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const animItems = [];
   for (const sg of signs) if (sg.s.k === 'c') { const u = animOf(sg.s.key || sg.s.img); if (u) { const c = sg.s.c; animItems.push({ mesh: () => sg.mesh, w: Math.hypot(c[1][0] - c[0][0], c[1][1] - c[0][1], c[1][2] - c[0][2]), h: Math.hypot(c[3][0] - c[0][0], c[3][1] - c[0][1], c[3][2] - c[0][2]), url: u }); } }
   for (const cv of [...(wing ? wing.canvases : []), ...rooms.canvases]) { const u = animOf(cv.key); if (u) animItems.push({ mesh: () => cv.mesh, w: cv.w, h: cv.h, url: u }); }
+  // the world outside: the lake under the bridge, flags, cherry trees and the city
+  let outdoors = { update() {} }; if (!NOWORLD) try { outdoors = buildWorld({ scene, camera, renderer, resolveImg: RES, lowEnd, groundAt: (x, y, z) => { const h = cast(x, y + 0.55, z, 0, -1, 0, 40); return h ? h.point.y : -1e9; } }); } catch (e) { console.warn("outdoors", e); }
+  const guides = buildGuides({ scene, guides: data.guides, groundAt: (x, y, z) => { const h = cast(x, y + 0.55, z, 0, -1, 0, 30); return h ? h.point.y : -1e9; } });
   const animator = artAnimator({ items: animItems, maxActive: lowEnd ? 2 : 3 });
   const localFail = new Set();
   const video = document.createElement('video'); video.crossOrigin = 'anonymous'; video.playsInline = true; video.setAttribute('playsinline', ''); video.loop = true; video.muted = true; video.preload = 'auto';
   const vidTex = new THREE.VideoTexture(video); vidTex.colorSpace = THREE.SRGBColorSpace;
   const vidMat = new THREE.MeshBasicMaterial({ map: vidTex });
   let hls = null, curUrl = null, soundOK = false, vidFail = new Set();
+  let pendingSeek = null;   // a watch party asked for a time before the film had loaded
+  video.addEventListener('loadedmetadata', () => { if (pendingSeek && pendingSeek.u === curUrl) { try { video.currentTime = pendingSeek.t % (video.duration || 1e9); } catch (e) {} } pendingSeek = null; });
   async function playUrl(url) {
     if (url === curUrl) return; curUrl = url;
     for (const v of vids) for (const f of (v.faces || [0, 1])) v.box.material[f] = (url && v.u === url && !vidFail.has(url)) ? vidMat : v.posterMat;
@@ -369,15 +381,51 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   { const gy = groundAt(Pl.x, 1.5, Pl.z); if (gy > -100) Pl.y = gy; }
 
   const tmp = new THREE.Vector3();
+  // ---------------------------------------------------------------- follow a friend (tours): walk the breadcrumb trail of their positions
+  const F = { id: null, crumbs: [], best: 1e9, stuckT: 0, onEnd: null };
+  const nearProviders = [], tickers = [];
+  function placeNear(r, slot) {
+    // behind them, or (slot n, when the host gathers everyone) round them in a ring; the first clear spot with floor wins
+    const tries = slot == null ? [[r.tface + Math.PI, 1.6]] : [0, 1, 2, 3, 4, 5].map(k => [r.tface + 0.9 + (slot + k) * 2.39996, 2.2 + ((slot + k) % 3) * 0.7]);
+    tries.push([r.tface + Math.PI, 1.2]);
+    let bx = r.tx + 0.3, bz = r.tz + 0.3;
+    for (const [a, rad] of tries) { const x = r.tx + Math.sin(a) * rad, z = r.tz + Math.cos(a) * rad; if (!cast(r.tx, r.ty + 0.9, r.tz, Math.sin(a), 0, Math.cos(a), rad + 0.4) && groundAt(x, r.ty + 1, z) > r.ty - 0.6) { bx = x; bz = z; break; } }
+    Pl.x = bx; Pl.z = bz; Pl.y = r.ty + 0.05; Pl.vy = 0; Pl.face = slot == null ? r.tface : Math.atan2(r.tx - bx, r.tz - bz); St.yaw = Pl.face + Math.PI; St.camDist = 1; streamT = 0;
+    fadeEl.style.opacity = 1; setTimeout(() => fadeEl.style.opacity = 0, 160);
+  }
+  function followStart(id, onEnd) { const r = remotes.get(id); if (!r || !r.placed) return false; if (F.id) followStop('switch'); F.id = id; F.crumbs = []; F.best = 1e9; F.stuckT = 0; F.onEnd = onEnd || null; if (Math.hypot(r.tx - Pl.x, r.tz - Pl.z) > 25 || Math.abs(r.ty - Pl.y) > 3) placeNear(r); return true; }
+  function followStop(why) { if (!F.id) return; const cb = F.onEnd; F.id = null; F.crumbs = []; F.onEnd = null; if (cb) cb(why); }
+  function followRecord() {
+    const r = remotes.get(F.id); if (!r) { followStop('left'); return; }
+    const L = F.crumbs[F.crumbs.length - 1];
+    if (!L || Math.hypot(r.tx - L[0], r.tz - L[2]) > 0.7 || Math.abs(r.ty - L[1]) > 0.8) { if (L && Math.hypot(r.tx - L[0], r.tz - L[2]) > 10) F.crumbs = []; F.crumbs.push([r.tx, r.ty, r.tz]); if (F.crumbs.length > 400) F.crumbs.shift(); }
+  }
+  function followAuto(dt) {
+    const r = remotes.get(F.id); if (!r) { followStop('left'); return null; }
+    const dl = Math.hypot(r.tx - Pl.x, r.tz - Pl.z);
+    if (dl > 30 || (dl > 4 && !F.crumbs.length)) { placeNear(r); F.crumbs = []; return null; }   // they went through a door, or we fell far behind
+    if (dl < 2.2 && Math.abs(r.ty - Pl.y) < 1.5) { F.crumbs = []; F.best = 1e9; F.stuckT = 0; return null; }  // close enough: wait beside them
+    while (F.crumbs.length && Math.hypot(F.crumbs[0][0] - Pl.x, F.crumbs[0][2] - Pl.z) < 0.6) { F.crumbs.shift(); F.best = 1e9; F.stuckT = 0; }
+    const c = F.crumbs[0] || [r.tx, r.ty, r.tz], d = Math.hypot(c[0] - Pl.x, c[2] - Pl.z) || 1;
+    if (d < F.best - 0.15) { F.best = d; F.stuckT = 0; }
+    else if ((F.stuckT += dt) > 2) { Pl.x = c[0]; Pl.y = c[1] + 0.05; Pl.z = c[2]; Pl.vy = 0; F.crumbs.shift(); F.best = 1e9; F.stuckT = 0; return null; }   // stuck on something: hop to the trail
+    return { ux: (c[0] - Pl.x) / d, uz: (c[2] - Pl.z) / d, run: dl > 5 };
+  }
+
   function move(dt) {
     // camera-relative input
     let ix = input.jx + (input.r - input.l), iz = input.jy + (input.f - input.b);
     const il = Math.hypot(ix, iz); if (il > 1) { ix /= il; iz /= il; }
-    const mag = Math.min(1, il);
-    const run = input.run || mag > 0.92;
-    const sp = (run ? 6.2 : 3.4) * mag * (extra === 'chair' ? 0.95 : 1);
+    let mag = Math.min(1, il);
+    let run = input.run || mag > 0.92;
+    let sp = (run ? 6.2 : 3.4) * mag * (extra === 'chair' ? 0.95 : 1);
     const fx = -Math.sin(St.yaw), fz = -Math.cos(St.yaw);   // camera forward on the ground
     let dx = (fx * iz + -fz * ix) * sp * dt, dz = (fz * iz + fx * ix) * sp * dt;
+    // following a friend: walk their path behind them; moving yourself stops it
+    if (F.id) {
+      if (mag > 0.05) followStop('moved');
+      else { const a = followAuto(dt); if (a) { mag = 1; run = a.run; sp = (run ? 6.2 : 3.4) * (extra === 'chair' ? 0.95 : 1); dx = a.ux * sp * dt; dz = a.uz * sp * dt; } }
+    }
     if (mag > 0.05) { const want = Math.atan2(dx, dz); let d = want - Pl.face; d = Math.atan2(Math.sin(d), Math.cos(d)); Pl.face += d * Math.min(1, dt * 12); }
     // walls: rays at knee, chest and head; slide along what we hit
     const R = 0.32;
@@ -404,12 +452,11 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   }
   // ---------------------------------------------------------------- "See through their eyes": two floor spots in the main hall (between Ben's and April & Melissa's screens)
   const vSpots = buildVisionSpots({ scene, groundAt, spots: [
-    { x: -101.5, y: -3.3, z: -2.4, cond: 'rp', textYaw: Math.PI / 2, look: [-117.6, 0.16, -0.18], signSide: 1 },          // main hall, facing the big screen
-    { x: -101.5, y: -3.3, z: 2.4, cond: 'cataracts', textYaw: Math.PI / 2, look: [-117.6, 0.16, -0.18], signSide: -1 },
+    { x: -97.8, y: -3.3, z: 0, cond: 'rp', textYaw: Math.PI / 2, look: [-117.6, 0.16, -0.18], signSide: 1 },             // main hall, centred, back by the big screen
+    { x: -88.7, y: -3.3, z: 0, cond: 'cataracts', textYaw: Math.PI / 2, look: [-117.6, 0.16, -0.18], signSide: -1 },      // main hall, centred, toward the entrance
     { x: -2.5, y: 0.5, z: 0, cond: 'glaucoma', textYaw: Math.PI / 2, look: [-30, 2.5, 0], signSide: 1 },                 // welcome platform, looking down the walkway
     { x: -70.25, y: -2.5, z: -65.7, cond: 'amd', textYaw: Math.PI, look: [-70.25, 0.4, -73.7] },                        // AMB room, facing the film wall
     { x: -69.9, y: -2.5, z: 114, cond: 'floaters', textYaw: 0, look: [-69.9, 0.5, 146] },                                // New Artists Wing
-    { x: -160, y: -2.5, z: 0, cond: 'rp', textYaw: Math.PI, look: [-160.1, 1.5, -21.25] },                               // "How we see": facing the blindness simulator screen
     { x: -224, y: -2.5, z: 0, cond: 'cataracts', textYaw: Math.PI / 2, look: [-205, -1, 0] },                            // music room, back area
     { x: -258, y: -2.5, z: 2, cond: 'glaucoma', textYaw: 0, look: [-261.5, -1.0, 29.2] },                               // meditation area, facing Morten
   ] });
@@ -417,7 +464,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const vOverlay = visionOverlay({ container, onExit: () => exitVision(), onGuided: on => { if (on) { V.gt = 0; V.from = [St.yaw, St.pitch]; } } });
   const lookAngles = (from, to) => { const v = to.clone().sub(from).normalize(); return [Math.atan2(-v.x, -v.z), Math.asin(clamp(-v.y, -1, 1))]; };
   function enterVision(spot) {
-    V.spot = spot; Pl.x = spot.x; Pl.z = spot.z; Pl.y = spot.y; Pl.vy = 0; Pl.speed = 0; for (const k in input) input[k] = 0;
+    V.spot = spot; joyBase.style.display = joyKnob.style.display = 'none'; Pl.x = spot.x; Pl.z = spot.z; Pl.y = spot.y; Pl.vy = 0; Pl.speed = 0; for (const k in input) input[k] = 0;
     const eye = new THREE.Vector3(spot.x, spot.y + 1.55, spot.z);
     const screen = new THREE.Vector3(...(spot.look || (data.vids[3] && data.vids[3].p) || [-117.6, 0.16, -0.18]));
     [St.yaw, St.pitch] = lookAngles(eye, screen); Pl.face = St.yaw + Math.PI; V.py = St.yaw; V.pp = St.pitch;
@@ -429,7 +476,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     V.gi = 0; V.gt = 0; V.from = [St.yaw, St.pitch];
     vOverlay.open(spot.cond); onNear(null); nearKey = 'vision-locked';
   }
-  function exitVision() { if (!V.spot) return; const sp = V.spot; V.spot = null; vOverlay.close(); St.pitch = 0.28; St.camDist = 1.2; Pl.x = sp.x + 1.6; nearKey = null; }
+  function exitVision() { if (!V.spot) return; const sp = V.spot; V.spot = null; vOverlay.close(); joyRest(); St.pitch = 0.28; St.camDist = 1.2; Pl.x = sp.x + 1.6; nearKey = null; }
   function updateVision(dt, now) {
     for (const sp of vSpots) sp.glow.material.opacity = 0.32 + Math.sin(now / 420 + sp.z) * 0.18;
     let yr = 0, pr = 0;
@@ -444,11 +491,12 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
         else if (V.gt > TR + DW) { V.gt = 0; V.from = [St.yaw, St.pitch]; V.gi++; }
       }
       St.pitch = clamp(St.pitch, -0.65, 0.85);
-      let dyw = St.yaw - V.py; dyw = Math.atan2(Math.sin(dyw), Math.cos(dyw)); yr = dyw / Math.max(dt, 1e-3); pr = (St.pitch - V.pp) / Math.max(dt, 1e-3); V.py = St.yaw; V.pp = St.pitch;
+
       // through the fox's own eyes
       const cp = Math.cos(St.pitch), dir = new THREE.Vector3(Math.sin(St.yaw) * cp, Math.sin(St.pitch), Math.cos(St.yaw) * cp);
       const eye = new THREE.Vector3(Pl.x, Pl.y + 1.55, Pl.z); camera.position.copy(eye); camera.lookAt(eye.clone().sub(dir)); player.visible = false; Pl.face = St.yaw + Math.PI;
     }
+    { let dyw = St.yaw - V.py; dyw = Math.atan2(Math.sin(dyw), Math.cos(dyw)); yr = dyw / Math.max(dt, 1e-3); pr = (St.pitch - V.pp) / Math.max(dt, 1e-3); V.py = St.yaw; V.pp = St.pitch; }   // how fast the view turns (eyes lead, floaters lag)
     vOverlay.update(dt, clamp(yr, -6, 6), clamp(pr, -6, 6));
   }
   function respawn() { if (V.spot) exitVision(); Pl.x = SPAWN.x; Pl.z = SPAWN.z; Pl.y = groundAt(SPAWN.x, 1.5, SPAWN.z); Pl.vy = 0; Pl.face = SPAWN.face; St.yaw = SPAWN.face + Math.PI; }
@@ -493,15 +541,22 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const touchUI = matchMedia('(pointer:coarse)').matches || 'ontouchstart' in window;
   const JR = 50;   // knob travel (same as Meru)
   const joyBase = document.createElement('div'), joyKnob = document.createElement('div');
-  joyBase.style.cssText = 'position:absolute;width:112px;height:112px;border:2px solid #f3f2f2;background:rgba(32,30,29,.25);transform:translate(-50%,-50%);display:none;pointer-events:none;z-index:5;';
-  joyKnob.style.cssText = 'position:absolute;width:44px;height:44px;background:#ec3013;transform:translate(-50%,-50%);display:none;pointer-events:none;z-index:5;';
+  joyBase.style.cssText = 'position:absolute;width:112px;height:112px;border:2px solid #f3f2f2;background:rgba(32,30,29,.25);transform:translate(-50%,-50%);display:none;pointer-events:none;z-index:5;transition:opacity .2s;';
+  joyKnob.style.cssText = 'position:absolute;width:44px;height:44px;background:#ec3013;transform:translate(-50%,-50%);display:none;pointer-events:none;z-index:5;transition:opacity .2s;';
   container.append(joyBase, joyKnob);
+  // on touch screens the joystick rests, faint, at the bottom left so players can see it's there; touching anywhere on the left half moves it under the thumb
+  const joyRest = () => {
+    if (!touchUI) { joyBase.style.display = joyKnob.style.display = 'none'; return; }
+    const r = el.getBoundingClientRect(), x = 26 + 56 + 'px', y = r.height - 56 - Math.max(30, r.height * 0.06) + 'px';
+    joyBase.style.display = joyKnob.style.display = 'block'; joyBase.style.opacity = '0.55'; joyKnob.style.opacity = '0.7';
+    joyBase.style.left = joyKnob.style.left = x; joyBase.style.top = joyKnob.style.top = y;
+  };
   const ptrs = new Map();
   el.addEventListener('pointerdown', e => {
     const r = el.getBoundingClientRect(), lx = e.clientX - r.left, ly = e.clientY - r.top;
-    const joy = e.pointerType === 'touch' && lx < r.width * 0.45 && ![...ptrs.values()].some(p => p.joy);
+    const joy = !V.spot && e.pointerType !== 'mouse' && touchUI && lx < r.width * 0.45 && ![...ptrs.values()].some(p => p.joy);
     ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY, ox: lx, oy: ly, joy });
-    if (joy) { joyBase.style.display = joyKnob.style.display = 'block'; joyBase.style.left = joyKnob.style.left = lx + 'px'; joyBase.style.top = joyKnob.style.top = ly + 'px'; }
+    if (joy) { joyBase.style.display = joyKnob.style.display = 'block'; joyBase.style.opacity = joyKnob.style.opacity = '1'; joyBase.style.left = joyKnob.style.left = lx + 'px'; joyBase.style.top = joyKnob.style.top = ly + 'px'; }
     try { el.setPointerCapture(e.pointerId); } catch (err) {}
   });
   el.addEventListener('pointermove', e => {
@@ -510,19 +565,21 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     else { St.lastLook = performance.now(); const k = e.pointerType === 'touch' ? 0.008 : 0.005; St.yaw -= (e.clientX - p.x) * k; St.pitch = clamp(St.pitch + (e.clientY - p.y) * k * 0.8, -0.35, 1.2); }
     p.x = e.clientX; p.y = e.clientY;
   });
-  const endPtr = e => { const p = ptrs.get(e.pointerId); if (p && p.joy) { input.jx = input.jy = 0; joyBase.style.display = joyKnob.style.display = 'none'; } ptrs.delete(e.pointerId); };
+  const endPtr = e => { const p = ptrs.get(e.pointerId); if (p && p.joy) { input.jx = input.jy = 0; joyRest(); } ptrs.delete(e.pointerId); };
   el.addEventListener('pointerup', endPtr); el.addEventListener('pointercancel', endPtr);
   el.addEventListener('wheel', e => { St.dist = clamp(St.dist + e.deltaY * 0.004, 1.6, 9); e.preventDefault(); }, { passive: false });
 
   // ---------------------------------------------------------------- loop
   let firstStream = true; let raf = 0, last = performance.now(), streamT = 0, nearKey = null, zoneT = 0;
   const fit = () => { renderer.setSize(W(), H()); camera.aspect = W() / H(); camera.fov = camera.aspect < 1 ? 70 : 60; camera.updateProjectionMatrix(); St.dist = camera.aspect < 1 ? 5.2 : 4.2; };
-  const ro = new ResizeObserver(fit); ro.observe(container); fit();
+  const ro = new ResizeObserver(() => { fit(); if (![...ptrs.values()].some(p => p.joy)) joyRest(); }); ro.observe(container); fit(); joyRest();
   function nearest() {
     const p = new THREE.Vector3(Pl.x, Pl.y + 1.2, Pl.z); let best = null, bd = 1e9;
     if (V.spot) return null;
-    if (simwalls && simwalls.kioskPos && Math.hypot(Pl.x - simwalls.kioskPos.x, Pl.z - simwalls.kioskPos.z) < 3.2 && Math.abs(Pl.y - simwalls.kioskPos.y) < 2) return { kind: 'simctl', item: simwalls, label: 'Change the wall severity' };
+    if (simwalls && simwalls.kioskPositions.some(k => Math.hypot(Pl.x - k.x, Pl.z - k.z) < 2.6 && Math.abs(Pl.y - k.y) < 2)) return { kind: 'simctl', item: simwalls, label: 'Change the wall severity' };
     for (const sp of vSpots) if (Math.hypot(Pl.x - sp.x, Pl.z - sp.z) < sp.r + 0.15 && Math.abs(Pl.y - sp.y) < 1.2) return { kind: 'vision', item: sp, label: 'See through their eyes' };
+    for (const sp of vSpots) if (sp.signPos && Math.hypot(Pl.x - sp.signPos.x, Pl.z - sp.signPos.z) < 1.6 && Math.abs(Pl.y - sp.y) < 1.2) return { kind: 'vision', item: sp, label: 'See through their eyes' };
+    for (const f of nearProviders) { const n = f(Pl); if (n) return n; }   // add-ons: the guest book, visitors' notes
     for (const a of arts) { const d = a.ctr.distanceTo(p); if (d < 4.2 && d < bd) { bd = d; best = { kind: 'art', item: a, label: 'VIEW · ' + (a.title || 'ARTWORK') }; } }
     for (const e of edu) { const d = e.pos.distanceTo(p); if (d < e.r + 1 && d < bd + 1.5) { bd = d; best = { kind: 'edu', item: e, label: (e.prompt || 'LEARN MORE').replace(/^Press E to /i, '') }; } }
     return best;
@@ -541,8 +598,12 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     player.position.set(Pl.x, Pl.y + (extra === 'chair' ? 0 : 0.02), Pl.z); player.rotation.y = Pl.face;
     animFox(player, dt, Pl.speed / FOX_SCALE * 0.6, !Pl.ground);
     updateRemotes(dt);
+    if (F.id) followRecord();
+    for (const f of tickers) f(dt);
     animator.update(dt, Pl.x, Pl.y, Pl.z);
     if (simwalls) simwalls.update(dt, Pl.x, Pl.y, Pl.z);
+    guides.update(dt, Pl.x, Pl.z);
+    outdoors.update(dt);
     if (!DBG.freeCam && !V.spot) updateCamera(dt);
     updateVision(dt, now);
     doorT -= dt;
@@ -562,9 +623,9 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       want.sort((a, b) => a[0] - b[0]); for (const [, sg] of want.slice(0, firstStream ? 60 : 14)) showSign(sg); firstStream = false;
       // which video zone are we in?
       let zUrl = null; const pp = new THREE.Vector3(Pl.x, Pl.y + 0.5, Pl.z);
-      for (const v of vids) if (v.zone && v.zone.containsPoint(pp)) { zUrl = v.u; break; }
+      for (const v of vids) if ((v.zone && v.zone.containsPoint(pp)) || (v.zones && v.zones.some(z => z.containsPoint(pp)))) { zUrl = v.u; break; }
       playUrl(zUrl);
-      if (zUrl) { let dmin = 1e9; for (const v of vids) if (v.u === zUrl) dmin = Math.min(dmin, (v.wp ||= v.box.getWorldPosition(new THREE.Vector3())).distanceTo(pp)); const vv = vids.find(v => v.u === zUrl); const zs = vv.zone ? vv.zone.getSize(new THREE.Vector3()) : null, reach = Math.max(vv.dist || 20, zs ? Math.hypot(zs.x, zs.z) * 1.1 : 0); video.volume = clamp((vv.vol ?? 0.8) * Math.max(0.45, 1 - dmin / reach), 0, 1); }   // never silent while you're in the zone
+      if (zUrl) { let dmin = 1e9; for (const v of vids) if (v.u === zUrl) dmin = Math.min(dmin, (v.wp ||= v.box.getWorldPosition(new THREE.Vector3())).distanceTo(pp)); const vv = vids.find(v => v.u === zUrl); const zs = vv.zone ? vv.zone.getSize(new THREE.Vector3()) : null, reach = vv.reach || Math.max(vv.dist || 20, zs ? Math.hypot(zs.x, zs.z) * 1.1 : 0); video.volume = clamp((vv.vol ?? 0.8) * Math.max(vv.minVol ?? 0.45, 1 - dmin / reach), 0, 1); }   // never silent while you're in the zone
       if (!V.spot) { const n = nearest(); const key = n ? n.kind + n.label + (n.item && n.item.z) : null; if (key !== nearKey) { nearKey = key; onNear(n); } }
     }
     renderer.render(scene, camera);
@@ -579,11 +640,11 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   }
 
   return {
-    arts, edu,
+    arts, edu, notesConfig: data.notes || null,
     setLook(l, x) { look = l || look; extra = x || 'none'; buildPlayer(); },
     // multiplayer hooks (the page wires these to engine/gallery-net.js)
     localState: () => [+Pl.x.toFixed(2), +Pl.y.toFixed(2), +Pl.z.toFixed(2), +Pl.face.toFixed(2), +Math.min(9, Pl.speed).toFixed(1), Pl.ground ? 0 : 1],
-    remote: { upsert: remoteUpsert, remove: remoteRemove, count: () => remotes.size, names: () => [...remotes.values()].map(r => r.prof.name), wave: id => { const r = remotes.get(id); if (r && r.fox) showWave(r.fox); } },
+    remote: { upsert: remoteUpsert, remove: remoteRemove, count: () => remotes.size, names: () => [...remotes.values()].map(r => r.prof.name), list: () => [...remotes.values()].map(r => ({ id: r.id, name: r.prof.name || 'Visitor', placed: r.placed, x: r.tx, y: r.ty, z: r.tz })), wave: id => { const r = remotes.get(id); if (r && r.fox) showWave(r.fox); } },
     wave() { showWave(player); },
     style: () => ({ ...style }),
     setStyle(st) { style = { pal: st.pal | 0, art: st.art || DEFAULT_ART }; buildPlayer(); },
@@ -592,10 +653,19 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     setRun(v) { input.run = v ? 1 : 0; },
     respawn,
     simwall: () => simwalls,
+    // visiting together: follow / go to a friend, and the zone film for watch parties
+    follow: (id, onEnd) => followStart(id, onEnd), unfollow: () => followStop('stopped'), following: () => F.id,
+    goTo(id, slot) { const r = remotes.get(id); if (!r || !r.placed) return false; if (V.spot) exitVision(); if (F.id) followStop('gathered'); placeNear(r, slot); return true; },
+    film: {
+      url: () => curUrl, time: () => video.currentTime || 0, ready: () => video.readyState >= 1, local: u => { const v = vids.find(v => v.u === u); return (v && v.local) || u; },
+      seek(u, t) { if (u !== curUrl) return false; if (video.readyState >= 1) { try { video.currentTime = t % (video.duration || 1e9); } catch (e) {} } else pendingSeek = { u, t }; if (video.paused) video.play().catch(() => {}); return true; },
+    },
     vision: { enter: sp => enterVision(sp), exit: () => exitVision(), locked: () => !!V.spot, spots: vSpots, overlay: vOverlay },
     unlockAudio() { unlockSound(); },
     goWing() { const d = doors.find(x => x.wing); if (d) travel(d); },
-    debug: { THREE, DBG, video, animator, Pl, St, input, scene, camera, renderer, vids, signs, teleport(x, y, z, face) { Pl.x = x; Pl.z = z; Pl.y = y ?? groundAt(x, 30, z); Pl.vy = 0; if (face != null) { Pl.face = face; St.yaw = face + Math.PI; } }, groundAt, cast, info: () => ({ calls: renderer.info.render.calls, tris: renderer.info.render.triangles, tex: renderer.info.memory.textures, geo: renderer.info.memory.geometries }) },
+    // add-ons (notes, guest book): draw into the scene, add things you can walk up to, run each frame
+    world: { THREE, scene, camera, groundAt: (x, y, z) => groundAt(x, y, z), pos: () => [Pl.x, Pl.y, Pl.z], addNear: f => nearProviders.push(f), onTick: f => tickers.push(f), refreshNear: () => { nearKey = null; } },
+    debug: { nearest: () => nearest(), guides, THREE, DBG, video, animator, Pl, St, input, scene, camera, renderer, vids, signs, teleport(x, y, z, face) { Pl.x = x; Pl.z = z; Pl.y = y ?? groundAt(x, 30, z); Pl.vy = 0; if (face != null) { Pl.face = face; St.yaw = face + Math.PI; } }, groundAt, cast, info: () => ({ calls: renderer.info.render.calls, tris: renderer.info.render.triangles, tex: renderer.info.memory.textures, geo: renderer.info.memory.geometries }) },
     destroy() { cancelAnimationFrame(raf); ro.disconnect(); removeEventListener('keydown', onKeyDown); removeEventListener('keyup', onKeyUp); if (hls) hls.destroy(); video.pause(); renderer.dispose(); el.remove(); joyBase.remove(); joyKnob.remove(); },
   };
 }

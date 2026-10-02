@@ -88,14 +88,18 @@ export function buildVisionSpots({ scene, spots, groundAt }) {
       const side = sp.signSide || 1, px = sp.x - dz * 1.75 * side + dx * 0.2, pz = sp.z + dx * 1.75 * side + dz * 0.2, rot = Math.atan2(-dx, -dz);
       const grp = new THREE.Group(); grp.position.set(px, yy, pz); grp.rotation.y = rot; scene.add(grp);
       const ink = new THREE.MeshLambertMaterial({ color: 0x1d1c1b });
-      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 2.0, 10), ink); pole.position.y = 1.0; grp.add(pole);
+      // the pole stops under the plate and a short neck joins plate to disc, so nothing crosses the words
+      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.97, 10), ink); pole.position.y = 0.485; grp.add(pole);
+      const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.1, 10), ink); neck.position.y = 1.63; grp.add(neck);
       const foot = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.32, 0.06, 20), ink); foot.position.y = 0.03; grp.add(foot);
+      const DY = 2.18;
       for (const r of [0, Math.PI]) {
-        const face = new THREE.Mesh(new THREE.CircleGeometry(0.5, 48), new THREE.MeshBasicMaterial({ map: tex, transparent: true })); face.position.set(0, 2.05, r ? -0.03 : 0.03); face.rotation.y = r; grp.add(face);
-        const plate = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.62), new THREE.MeshBasicMaterial({ map: plateTex })); plate.position.set(0, 1.28, r ? -0.03 : 0.03); plate.rotation.y = r; grp.add(plate);
+        const face = new THREE.Mesh(new THREE.CircleGeometry(0.5, 48), new THREE.MeshBasicMaterial({ map: tex, transparent: true })); face.position.set(0, DY, r ? -0.032 : 0.032); face.rotation.y = r; grp.add(face);
+        const plate = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.62), new THREE.MeshBasicMaterial({ map: plateTex })); plate.position.set(0, 1.28, r ? -0.032 : 0.032); plate.rotation.y = r; grp.add(plate);
       }
-      const back = new THREE.Mesh(new THREE.BoxGeometry(1.24, 0.66, 0.04), ink); back.position.y = 1.28; grp.add(back);
-      const ring = new THREE.Mesh(new THREE.CylinderGeometry(0.52, 0.52, 0.04, 40), ink); ring.rotation.x = Math.PI / 2; ring.position.y = 2.05; grp.add(ring);
+      const back = new THREE.Mesh(new THREE.BoxGeometry(1.24, 0.66, 0.06), ink); back.position.y = 1.28; grp.add(back);
+      const ring = new THREE.Mesh(new THREE.CylinderGeometry(0.52, 0.52, 0.06, 40), ink); ring.rotation.x = Math.PI / 2; ring.position.y = DY; grp.add(ring);
+      sp.signPos = new THREE.Vector3(px, yy, pz);
     }
     out.push({ ...sp, y: yy, disc, glow, pos: new THREE.Vector3(sp.x, yy, sp.z), r: 1.1 });
   }
@@ -104,6 +108,7 @@ export function buildVisionSpots({ scene, spots, groundAt }) {
 
 // the overlay + controls, laid over the 3D view
 export function visionOverlay({ container, onExit = () => {}, onGuided = () => {} }) {
+  let onShare = null;   // set by the page when multiplayer is ready: (on, cond, sev) => {}
   const css = document.createElement('style');
   css.textContent = `
   #vsim{position:absolute;inset:0;pointer-events:none;z-index:4;opacity:0;transition:opacity .6s}
@@ -117,6 +122,10 @@ export function visionOverlay({ container, onExit = () => {}, onGuided = () => {
   #vsimUI button{min-height:40px;padding:0 12px;background:transparent;color:#f3f2f2;border:2px solid #f3f2f2;font:800 11px/1 Archivo,Arimo,sans-serif;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
   #vsimUI button.on{background:#f3f2f2;color:#1d1c1b}
   #vsimUI button.x{background:#ec3013;border-color:#ec3013}
+  #vsimUI button.learn{flex:1 1 100%;min-height:46px;background:#ec3013;border-color:#ec3013;font-size:13px;text-align:left;padding:0 14px;animation:vsPulse 1.6s ease-in-out infinite}
+  #vsimUI button.learn span{text-transform:none;letter-spacing:.02em}
+  @keyframes vsPulse{0%,100%{box-shadow:0 0 0 0 rgba(236,48,19,.75);background:#ec3013}50%{box-shadow:0 0 0 7px rgba(236,48,19,0);background:#ff5a3c}}
+  @media (prefers-reduced-motion:reduce){#vsimUI button.learn{animation:none}}
   #vsimUI label{display:flex;align-items:center;gap:10px;flex:1 1 220px;font:800 10px/1 Archivo,Arimo,sans-serif;letter-spacing:.14em;text-transform:uppercase}
   #vsimUI input[type=range]{flex:1;accent-color:#ec3013;height:32px}
   #vsimUI .hint{font-size:11px;color:#a9a4a4;margin-top:6px}
@@ -142,11 +151,12 @@ export function visionOverlay({ container, onExit = () => {}, onGuided = () => {
   ov.append(blurL, spotL); container.appendChild(ov);
   const touch = matchMedia('(pointer:coarse)').matches;
   const ui = document.createElement('div'); ui.id = 'vsimUI'; ui.setAttribute('role', 'region'); ui.setAttribute('aria-label', 'Vision simulator');
-  ui.innerHTML = `<div class="k">See through their eyes · vision simulator</div><div class="t" id="vsT"></div><div class="d" id="vsD"></div>
+  ui.innerHTML = `<div class="k">See through their eyes · vision simulator</div><div class="d" id="vsD"></div>
     <div class="row" id="vsChips"></div>
     <div class="row"><label for="vsSev">Severity <span id="vsP">60%</span><input id="vsSev" type="range" min="0" max="100" value="60"></label>
-      <button id="vsL">Learn more</button><button id="vsG" aria-pressed="false">Guided look</button><button id="vsX" class="x">Step off ✕</button></div>
-    <div class="hint"><b>CLICK/DRAG SCREEN TO LOOK AROUND</b>${touch ? ' \u00b7 or use the joystick' : ' \u00b7 arrow keys work too \u00b7 Esc to step off'}</div>`;
+      <button id="vsX" class="x">← Back</button><button id="vsG" aria-pressed="false">Guided look</button><button id="vsS" aria-pressed="false" style="display:none">👥 Show everyone</button></div>
+    <div class="row"><button id="vsL" class="learn">Learn about: <span id="vsLn"></span></button></div>
+    <div class="hint"><b>CLICK/DRAG SCREEN TO LOOK AROUND</b>${touch ? ' \u00b7 or use the joystick' : ' \u00b7 arrow keys work too \u00b7 Esc to go back'}</div>`;
   document.body.appendChild(ui);
   const $ = id => ui.querySelector('#' + id);
   const live = document.createElement('div'); live.setAttribute('aria-live', 'polite'); live.style.cssText = 'position:absolute;left:-9999px'; document.body.appendChild(live);
@@ -154,11 +164,16 @@ export function visionOverlay({ container, onExit = () => {}, onGuided = () => {
   CONDITIONS.forEach(c => { const b = document.createElement('button'); b.textContent = c.chip; b.dataset.c = c.id; b.onclick = () => setCond(c.id); $('vsChips').appendChild(b); });
   function setCond(id) {
     st.cond = id; const c = CONDITIONS.find(x => x.id === id);
-    $('vsT').textContent = c.label; $('vsD').textContent = c.desc;
+    $('vsD').textContent = c.desc; $('vsLn').textContent = id === 'floaters' ? 'Diabetic Retinopathy' : c.label;   // floaters are what diabetic retinopathy looks like; the Learn page explains it
     ui.querySelectorAll('#vsChips button').forEach(b => { b.classList.toggle('on', b.dataset.c === id); b.setAttribute('aria-pressed', b.dataset.c === id); });
     live.textContent = c.label + '. ' + c.desc;
+    if (st.sharing && onShare) onShare(true, st.cond, st.sev);
   }
-  $('vsSev').oninput = e => { st.sev = e.target.value / 100; $('vsP').textContent = e.target.value + '%'; };
+  let shareT = 0;
+  $('vsSev').oninput = e => { st.sev = e.target.value / 100; $('vsP').textContent = e.target.value + '%'; if (st.sharing && onShare && performance.now() - shareT > 200) { shareT = performance.now(); onShare(true, st.cond, st.sev); } };
+  $('vsSev').onchange = () => { if (st.sharing && onShare) onShare(true, st.cond, st.sev); };
+  const setSharing = v => { st.sharing = v; $('vsS').classList.toggle('on', v); $('vsS').setAttribute('aria-pressed', v); $('vsS').textContent = v ? '👥 Showing everyone ✕' : '👥 Show everyone'; if (onShare) onShare(v, st.cond, st.sev); };
+  $('vsS').onclick = () => setSharing(!st.sharing);
   $('vsX').onclick = () => onExit();
   // Learn more: the condition's page from the Patient Experience (what it is, what it's like, living with it, key facts)
   const lp = document.createElement('div'); lp.id = 'vsLearn'; lp.setAttribute('role', 'dialog'); lp.setAttribute('aria-modal', 'true'); document.body.appendChild(lp);
@@ -182,11 +197,24 @@ export function visionOverlay({ container, onExit = () => {}, onGuided = () => {
   return {
     st,
     open(cond) {
+      st.guest = null;
       st.on = true; st.shown = 0; st.t0 = st.t; if (cond) setCond(cond); ui.style.display = 'block'; ov.style.opacity = 1;
       live.textContent = 'Vision simulator on. ' + CONDITIONS.find(x => x.id === st.cond).label + '. ' + (touch ? 'Drag to look around.' : 'Drag or use the arrow keys to look around. Press Escape to step off.');
     },
     learnOpen: () => lp.style.display === 'flex', closeLearn: () => closeLearn(),
-    close() { closeLearn(); st.on = false; ui.style.display = 'none'; st.guided = false; $('vsG').classList.remove('on'); live.textContent = 'Vision simulator off.'; },
+    close() { if (st.sharing) setSharing(false); closeLearn(); st.on = false; ui.style.display = 'none'; st.guided = false; $('vsG').classList.remove('on'); live.textContent = 'Vision simulator off.'; },
+    // group vision: the page turns on "Show everyone" once multiplayer is ready
+    setShareHandler(fn, others) { onShare = fn; $('vsS').style.display = fn && others ? '' : 'none'; },
+    sharing: () => !!st.sharing,
+    // seeing through someone else's eyes: the filter only (no panel, you can still walk). Ignored while you're on your own circle.
+    guestView(cond, sev, who) {
+      if (st.on && !st.guest) return false;
+      const c = CONDITIONS.find(x => x.id === cond); if (!c) return false;
+      if (!st.guest) { st.t0 = st.t; st.shown = 0; live.textContent = 'You are seeing through ' + who + "'s eyes: " + c.label + '.'; }
+      st.guest = who; st.on = true; st.cond = cond; st.sev = Math.max(0, Math.min(1, +sev || 0.6)); ov.style.opacity = 1; return true;
+    },
+    guestEnd() { if (!st.guest) return; st.guest = null; st.on = false; live.textContent = 'Your own view is back.'; },
+    isGuest: () => st.guest,
     setGuided(v) { st.guided = v; $('vsG').classList.toggle('on', v); },
     // dt seconds; yawRate/pitchRate: how fast the view is turning (rad/s)
     update(dt, yawRate, pitchRate) {

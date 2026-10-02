@@ -16,6 +16,8 @@
   #place .t { padding:8px 12px; min-width:180px; }
   #place .w { font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); }
   #place .c { font:800 22px var(--font); line-height:1.05; }
+  #micBtn { width:52px; border:2px solid var(--ink); border-left:0; background:var(--bg); color:var(--ink); font:800 11px/1.15 var(--font); letter-spacing:.06em; text-align:center; padding:0; white-space:pre-line; }
+  #micBtn.on { background:var(--accent); color:#fff; }
   #menuBtn { width:48px; border:2px solid var(--ink); border-left:0; background:var(--bg); font-size:20px; text-align:center; }
   #act { position:fixed; right:calc(12px + env(safe-area-inset-right)); bottom:calc(24px + env(safe-area-inset-bottom)); z-index:10; display:none; max-width:min(320px,52vw); min-height:52px; padding:10px 14px; background:var(--accent); color:#fff; border:2px solid var(--ink); font:800 13px/1.25 var(--font); letter-spacing:.06em; text-transform:uppercase; }
   #act small { display:block; font-size:10px; letter-spacing:.14em; opacity:.85; }
@@ -61,7 +63,8 @@
 <body>
 <div id="stage"></div>
 <div id="load"><div class="k">8 GATES · 3D · Ben Fox</div><h1>Blind Canvas<br>Project</h1><div class="bar"><i id="lb"></i></div><p id="lt">Opening the gallery…</p><label id="nameRow" style="display:none;max-width:420px;margin-top:6px"><span style="display:block;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#ff9783;margin-bottom:6px">Your name (others in the gallery see it)</span><input id="nameIn" maxlength="20" autocomplete="nickname" style="width:100%;min-height:52px;padding:10px 14px;background:#141312;color:#fff;border:2px solid #f3f2f2;border-radius:0;font:700 18px var(--font)" placeholder="Your name"></label><button id="enter" style="display:none;margin-top:18px;min-height:56px;padding:14px 22px;max-width:420px;background:#ec3013;color:#fff;border:2px solid #f3f2f2;font:800 16px var(--font);letter-spacing:.08em;text-transform:uppercase;text-align:center">Enter the gallery · sound on 🔊</button></div>
-<div id="place"><div class="t box"><div class="w">Blind Canvas Project</div><div class="c">The Gallery</div><div id="who" style="font-size:12px;font-weight:700;margin-top:3px;color:#cfcaca">Connecting…</div></div><button id="menuBtn" aria-label="Menu">☰</button><button id="waveBtn" aria-label="Wave to everyone" style="width:48px;border:2px solid var(--ink);border-left:0;background:var(--bg);font-size:22px;text-align:center">👋</button></div>
+<div id="place"><div class="t box"><div class="w">Blind Canvas Project</div><div class="c">The Gallery</div><div id="who" style="font-size:12px;font-weight:700;margin-top:3px;color:#cfcaca">Connecting…</div></div><button id="menuBtn" aria-label="Menu">☰</button><button id="waveBtn" aria-label="Wave to everyone" style="width:48px;border:2px solid var(--ink);border-left:0;background:var(--bg);font-size:22px;text-align:center">👋</button><button id="micBtn" style="display:none" aria-pressed="false">MIC
+OFF</button></div>
 <button id="act" aria-live="polite"></button>
 <div id="hint" class="box">Touch the left side to walk · drag the right side to look</div>
 <div id="panel" class="box" role="dialog" aria-modal="true" aria-labelledby="pt"><header><div class="h"><div class="k" id="pk"></div><h2 id="pt"></h2></div><button id="px" aria-label="Close">✕</button></header><div class="body" id="pb"></div></div>
@@ -71,9 +74,9 @@
   <div class="lab">Gear</div>
   <div class="opts" id="extras"><button data-x="none">None</button><button data-x="glasses">Glasses</button><button data-x="cane">White cane</button><button data-x="chair">Wheelchair</button></div>
   <div class="lab">Reading</div>
-  <div class="opts"><button id="autoRead">Read aloud when I open art</button><button id="big">Larger text</button></div>
+  <div class="opts"><button id="autoRead">Read aloud when I open art</button><button id="big">Larger text</button><button id="readNotes">Read notes aloud when I pass</button></div>
   <div class="lab">Visiting together</div>
-  <div class="opts"><button id="rename">Change my name</button><button id="invite">Copy private room link</button></div>
+  <div class="opts"><button id="rename">Change my name</button><button id="invite">Copy private room link</button><button id="tourBtn">Lead a tour</button><button id="hostBtn">Host this visit</button><button id="noteBtn">📝 Leave a note here</button></div>
   <div id="whoList" style="font-size:13px;line-height:1.5;margin-top:8px"></div>
   <div class="lab">Lost?</div>
   <div class="opts"><button id="home">Back to the entrance</button></div>
@@ -109,7 +112,7 @@ function simCtl(w) {
       '<div style="font-size:11px;color:#a9a4a4;margin-top:8px">Watch the wall: all six views change together. This doesn\'t change your own view (for that, stand on a red circle).</div>';
     document.body.appendChild(simPanel);
     simPanel.querySelectorAll('button').forEach(b => b.style.cssText += ';min-height:40px;padding:0 12px;background:' + (b.id === 'simX' ? '#ec3013' : 'transparent') + ';color:#f3f2f2;border:2px solid ' + (b.id === 'simX' ? '#ec3013' : '#f3f2f2') + ';font:800 11px/1 var(--font);letter-spacing:.08em;text-transform:uppercase;cursor:pointer');
-    const set = v => { const W = G.simwall(); if (W) W.setSeverity(v / 100); $('simSev').value = v; $('simP').textContent = v + '%'; $('live').textContent = 'Wall severity ' + v + ' percent'; };
+    const set = v => { const W = G.simwall(); if (W) W.setSeverity(v / 100); $('simSev').value = v; $('simP').textContent = v + '%'; $('live').textContent = 'Wall severity ' + v + ' percent'; if (window.TOG) window.TOG.sevChanged(v); };
     $('simSev').oninput = e => set(+e.target.value);
     simPanel.querySelectorAll('.sv').forEach(b => b.onclick = () => set(+b.dataset.v));
     $('simX').onclick = () => { simPanel.style.display = 'none'; };
@@ -121,8 +124,9 @@ function onNear(n) {
   near = n; const b = $('act');
   if (simPanel && (!n || n.kind !== 'simctl')) simPanel.style.display = 'none';
   if (!n) { b.style.display = 'none'; return; }
-  b.innerHTML = '<small>' + (n.kind === 'art' ? 'Artwork' : n.kind === 'vision' ? 'Stand here · vision simulator' : n.kind === 'simctl' ? 'Kiosk · the six views wall' : 'Learn') + (touch ? '' : ' · press E') + '</small>' + esc(n.label.replace(/^VIEW · /, ''));
-  b.style.display = 'block'; $('live').textContent = n.label;
+  const nc = n.kind === 'art' && window.NOTES ? window.NOTES.countFor(n.item) : 0;
+  b.innerHTML = '<small>' + (n.kind === 'art' ? 'Artwork' + (nc ? ' · 💬 ' + nc + (nc === 1 ? ' note' : ' notes') : '') : n.kind === 'vision' ? 'Stand here · vision simulator' : n.kind === 'simctl' ? 'Kiosk · the six views wall' : n.kind === 'guestbook' ? 'Guest book' : n.kind === 'note' ? 'A note left here' : 'Learn') + (touch ? '' : ' · press E') + '</small>' + esc(n.label.replace(/^VIEW · /, ''));
+  b.style.display = 'block'; if (n.kind !== 'note') $('live').textContent = n.label;   // (a note's full text was just announced)
 }
 $('act').addEventListener('click', () => near && open(near));
 addEventListener('keydown', e => { if (e.code === 'KeyE' && near && $('panel').style.display !== 'flex') open(near); if (e.code === 'Escape') { if (G && G.vision && G.vision.overlay.learnOpen()) { G.vision.overlay.closeLearn(); return; } if (G && G.vision && G.vision.locked()) G.vision.exit(); close(); } });
@@ -141,8 +145,11 @@ const para = s => esc(s).split(/\s*\/\s*|\n+/).filter(Boolean).map(p => '<p styl
 
 // ------------------------------------------------ panels
 function open(n) {
+  if (panelOnClose) { const f = panelOnClose; panelOnClose = null; f(); }
   if (n.kind === 'simctl') { simCtl(n.item); return; }
   if (n.kind === 'vision') { $('act').style.display = 'none'; G.vision.enter(n.item); return; }
+  if (n.kind === 'guestbook') { if (window.NOTES) window.NOTES.openBook(); return; }
+  if (n.kind === 'note') { if (window.NOTES) window.NOTES.openSpot(n.item); return; }
   const pb = $('pb'); pb.innerHTML = '';
   if (n.kind === 'art') {
     const a = n.item; $('pk').textContent = 'Artwork'; $('pt').textContent = a.title || 'Untitled';
@@ -152,6 +159,7 @@ function open(n) {
     const rd = $('rd'); rd.onclick = () => say((a.title ? a.title + '. ' : '') + a.desc.replace(/\//g, '. '), rd);
     if ($('rdd')) $('rdd').onclick = () => say(a.imgDesc, $('rdd'));
     if (pref.autoRead) setTimeout(() => rd.click(), 200);
+    if (window.NOTES) pb.appendChild(window.NOTES.artSection(a));   // visitors' notes on this artwork
   } else {
     const e = n.item; const titles = { blindnessTools: 'Tools for the blind', blindnessAllyTips: 'Tips to be loved by the blind', blindnessEducation: 'Blindness is a spectrum', wallOfWhy: 'The Wall of Why' };
     $('pk').textContent = 'Learn'; $('pt').textContent = titles[e.kind] || e.prompt;
@@ -173,20 +181,23 @@ async function playIn(host, url) {
   else { if (!window.Hls) await new Promise(r => { const s = document.createElement('script'); s.src = 'vendor/hls/hls.light.min.js'; s.onload = r; document.head.appendChild(s); }); const h = new Hls(); h.loadSource(url); h.attachMedia(v); }
   v.play().catch(() => {});
 }
-function close() { $('panel').style.display = 'none'; if (synth) synth.cancel(); speaking = null; $('pb').querySelectorAll('video').forEach(v => v.pause()); $('menu').style.display = 'none'; }
+let panelOnClose = null;
+function showPanel(k, t, node, onClose) { $('pk').textContent = k; $('pt').textContent = t; $('pb').replaceChildren(node); $('panel').style.display = 'flex'; $('px').focus(); panelOnClose = onClose || null; $('menu').style.display = 'none'; }
+function close() { if (panelOnClose) { const f = panelOnClose; panelOnClose = null; f(); } $('panel').style.display = 'none'; if (synth) synth.cancel(); speaking = null; $('pb').querySelectorAll('video').forEach(v => v.pause()); $('menu').style.display = 'none'; }
 $('px').onclick = close;
 
 // ------------------------------------------------ menu
 const syncMenu = () => {
   document.querySelectorAll('#looks button').forEach(b => b.classList.toggle('on', b.dataset.l === (pref.look || 'male')));
   document.querySelectorAll('#extras button').forEach(b => b.classList.toggle('on', b.dataset.x === (pref.extra || 'none')));
-  $('autoRead').classList.toggle('on', !!pref.autoRead); $('big').classList.toggle('on', !!pref.big);
+  $('autoRead').classList.toggle('on', !!pref.autoRead); $('readNotes').classList.toggle('on', !pref.quietNotes); $('big').classList.toggle('on', !!pref.big);
   document.documentElement.style.fontSize = pref.big ? '120%' : ''; $('pb').style.fontSize = pref.big ? '20px' : '';
 };
 $('menuBtn').onclick = () => { const m = $('menu'); m.style.display = m.style.display === 'block' ? 'none' : 'block'; syncMenu(); };
 document.querySelectorAll('#looks button').forEach(b => b.onclick = () => { pref.look = b.dataset.l; savePref(); G.setLook(pref.look, pref.extra); syncMenu(); });
 document.querySelectorAll('#extras button').forEach(b => b.onclick = () => { pref.extra = b.dataset.x; savePref(); G.setLook(pref.look || 'male', pref.extra); syncMenu(); });
 $('autoRead').onclick = () => { pref.autoRead = !pref.autoRead; savePref(); syncMenu(); };
+$('readNotes').onclick = () => { pref.quietNotes = !pref.quietNotes; savePref(); syncMenu(); };
 $('big').onclick = () => { pref.big = !pref.big; savePref(); syncMenu(); };
 $('home').onclick = () => { G.respawn(); $('menu').style.display = 'none'; };
 syncMenu();
@@ -198,16 +209,32 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
   const refresh = () => {
     const n = G.remote.count();
     $('who').textContent = net === null ? 'Connecting…' : status === 'offline' ? 'Just you (offline)' : n ? (n + 1) + ' foxes here' : 'Just you here · invite a friend';
-    $('whoList').innerHTML = ['<b>' + esc(pref.name || 'You') + '</b> (you)', ...G.remote.names().map(esc)].join('<br>');
+    const sig = (pref.name || '') + '|' + G.remote.list().map(p => p.id + p.name + p.placed + (G.following() === p.id) + (window.VOICE && window.VOICE.isOn(p.id)) + (window.TOG && window.TOG.host() === p.id)).join(',');
+    if (sig !== whoSig && window.TOG) { whoSig = sig; window.TOG.whoRows($('whoList'), pref.name); }
+    $('tourBtn').textContent = window.TOG && window.TOG.leading() ? 'End my tour' : 'Lead a tour';
+    if (window.TOG) { const h = window.TOG.host(); $('hostBtn').textContent = h === 'me' ? 'Stop hosting' : h ? '⭐ ' + (names.get(h) || 'Someone') + ' is hosting' : 'Host this visit'; $('hostBtn').disabled = !!h && h !== 'me'; }
   };
-  let status = 'connecting', net = null, entered = false;
+  let status = 'connecting', net = null, entered = false, whoSig = '';
   net = await connectGallery({
     onJoin: id => {},
-    onLeave: id => { const nm = names.get(id); G.remote.remove(id); names.delete(id); if (nm) announce(nm + ' left the gallery'); refresh(); },
-    onState: (id, st, prof) => { if (prof && !prof.name) prof = null; if (!prof && !names.has(id) && !st) return; const isNew = !names.has(id) && prof; G.remote.upsert(id, st, prof); if (prof) { names.set(id, prof.name); if (isNew) { announce(prof.name + ' joined the gallery'); if (entered) net && net.hello(me()); } } refresh(); },
+    onLeave: id => { const nm = names.get(id); if (G.following() === id) G.unfollow(); G.remote.remove(id); names.delete(id); if (window.TOG) window.TOG.onLeave(id); if (nm) announce(nm + ' left the gallery'); if (window.VOICE) window.VOICE.onLeave(id); refresh(); },
+    onState: (id, st, prof) => { if (prof && !prof.name) prof = null; if (!prof && !names.has(id) && !st) return; const isNew = !names.has(id) && prof; G.remote.upsert(id, st, prof); if (prof) { names.set(id, prof.name); if (isNew) { announce(prof.name + ' joined the gallery'); if (entered) { net && net.hello(me()); if (window.TOG) window.TOG.onNewPeer(id); if (window.VOICE) window.VOICE.onNewPeer(id); } } } refresh(); },
+    onEvent: (id, d) => { if (window.TOG) window.TOG.onEvent(id, d); if (window.VOICE) window.VOICE.onEvent(id, d); if (window.NOTES) window.NOTES.onEvent(id, d); },
+    onStream: (id, stream) => { if (window.VOICE) window.VOICE.onStream(id, stream); },
     onEmote: (id, e) => { if (e === 'wave') { G.remote.wave(id); const nm = names.get(id); if (nm) announce(nm + ' waves'); } },
     onStatus: s => { status = s; refresh(); },
   });
+  const { setupTogether } = await import('./engine/gallery-together.js');
+  window.TOG = setupTogether({ G, net, esc, announce, nameOf: id => names.get(id) || 'A visitor',
+    onSev: (v, who) => { const W = G.simwall(); if (W) W.setSeverity(v / 100); const sv = $('simSev'); if (sv) { sv.value = v; $('simP').textContent = v + '%'; } announce(who + ' set the Six Views wall to ' + v + ' percent'); } });
+  const { setupVoice } = await import('./engine/gallery-voice.js');
+  window.VOICE = setupVoice({ G, net, button: $('micBtn'), announce, nameOf: id => names.get(id) || 'A visitor' });
+  import('./engine/gallery-notes.js').then(async ({ setupNotes }) => {
+    window.NOTES = await setupNotes({ G, net, cfg: G.notesConfig, myName: () => pref.name, announce, esc, readAloud: () => !pref.quietNotes, showPanel });
+  }).catch(e => console.warn('notes unavailable', e));
+  $('noteBtn').onclick = () => { if (window.NOTES) window.NOTES.openCompose(); };
+  $('hostBtn').onclick = () => { window.TOG.claimHost(window.TOG.host() !== 'me'); $('menu').style.display = 'none'; refresh(); };
+  $('tourBtn').onclick = () => { window.TOG.leadTour(!window.TOG.leading()); $('menu').style.display = 'none'; refresh(); };
   const me = () => ({ name: pref.name, look: pref.look || 'male', extra: pref.extra || 'none', ...G.style() });
   refresh();
   await ENTERED; entered = true;

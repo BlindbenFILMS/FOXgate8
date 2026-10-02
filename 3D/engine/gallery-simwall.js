@@ -78,7 +78,7 @@ void main() {
 function textTex(w, h, draw) { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; draw(cv.getContext('2d'), w, h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t; }
 const FONT = 'Archivo, Arimo, Helvetica, Arial, sans-serif';
 
-export function buildSimWalls({ scene, walls, src, kiosk, zone }) {
+export function buildSimWalls({ scene, walls, src, kiosk, kiosks, zone }) {
   // one video for every tile on every wall: always in sync
   const video = document.createElement('video'); video.src = src; video.muted = true; video.loop = true; video.playsInline = true; video.setAttribute('playsinline', ''); video.preload = 'auto'; video.crossOrigin = 'anonymous';
   const vtex = new THREE.VideoTexture(video); vtex.colorSpace = THREE.NoColorSpace;   // shader works in sRGB like CSS
@@ -120,24 +120,31 @@ export function buildSimWalls({ scene, walls, src, kiosk, zone }) {
     c.fillStyle = '#e8b26a'; c.font = `800 120px ${FONT}`; c.fillText(Math.round(st.sev * 100) + '%', 50, 330);
     c.fillStyle = '#3d4046'; c.fillRect(50, 384, w - 100, 28); c.fillStyle = '#ec3013'; c.fillRect(50, 384, (w - 100) * st.sev, 28);
     c.fillStyle = '#cfcaca'; c.font = `600 28px ${FONT}`; c.fillText('Regular', 50, 452); c.textAlign = 'right'; c.fillText('Severe', w - 50, 452); c.textAlign = 'left';
-    c.fillStyle = '#f3f2f2'; c.font = `700 34px ${FONT}`; c.fillText('Walk up and press E (or tap)', 50, 540); c.fillText('to change what the wall shows', 50, 584);
+    c.fillStyle = '#f3f2f2'; c.font = `700 34px ${FONT}`; c.fillText('Press E (or tap) to change', 50, 540); c.fillText('what the wall shows', 50, 584);
     if (kioskTex) kioskTex.needsUpdate = true;
   };
-  if (kiosk) {
-    const ink = new THREE.MeshLambertMaterial({ color: 0x1d1c1b });
-    const t = new THREE.Group(); t.position.set(...kiosk.p); t.rotation.y = kiosk.face || 0; scene.add(t);
-    const colm = new THREE.Mesh(new THREE.BoxGeometry(0.6, 1.25, 0.5), ink); colm.position.y = 0.62; t.add(colm);
-    const foot = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.1, 1.0), ink); foot.position.y = 0.05; t.add(foot);
-    const back = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.48, 0.12), ink); back.position.y = 1.95; back.rotation.x = -0.18; t.add(back);
+  // the kiosks: low lecterns, one in front of each screen, so you face the wall while you change it (and they don't block the film)
+  const kioskList = (kiosks || (kiosk ? [kiosk] : []));
+  if (kioskList.length) {
     const cv = document.createElement('canvas'); cv.width = 900; cv.height = 640; kioskCtx = cv.getContext('2d'); drawKiosk();
-    kioskTex = new THREE.CanvasTexture(cv); kioskTex.colorSpace = THREE.SRGBColorSpace;
-    const scr = new THREE.Mesh(new THREE.PlaneGeometry(1.86, 1.32), new THREE.MeshBasicMaterial({ map: kioskTex })); scr.position.set(0, 1.95, 0.07); scr.rotation.x = -0.18; t.add(scr);
-    const bar = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.06, 0.13), new THREE.MeshBasicMaterial({ color: 0xec3013 })); bar.position.set(0, 2.71, -0.13); bar.rotation.x = -0.18; t.add(bar);
-    t.updateMatrixWorld(true);
+    kioskTex = new THREE.CanvasTexture(cv); kioskTex.colorSpace = THREE.SRGBColorSpace; kioskTex.anisotropy = 4;
+    const ink = new THREE.MeshLambertMaterial({ color: 0x1d1c1b }), scrM = new THREE.MeshBasicMaterial({ map: kioskTex }), red = new THREE.MeshBasicMaterial({ color: 0xec3013 });
+    const TILT = -0.95;   // screen leans back, like a lectern
+    for (const k of kioskList) {
+      const t = new THREE.Group(); t.position.set(...k.p); t.rotation.y = k.face || 0; scene.add(t);
+      const foot = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.08, 0.8), ink); foot.position.y = 0.04; t.add(foot);
+      const colm = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.95, 0.36), ink); colm.position.set(0, 0.52, -0.05); t.add(colm);
+      const top = new THREE.Group(); top.position.set(0, 1.08, 0); top.rotation.x = TILT; t.add(top);
+      const back = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.16, 0.08), ink); top.add(back);
+      const scr = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.07), scrM); scr.position.z = 0.045; top.add(scr);
+      const bar = new THREE.Mesh(new THREE.BoxGeometry(1.62, 0.05, 0.1), red); bar.position.set(0, 0.6, 0); top.add(bar);
+      t.updateMatrixWorld(true);
+    }
   }
   const zoneBox = new THREE.Box3(new THREE.Vector3(...zone[0]), new THREE.Vector3(...zone[1]));
   return {
-    kioskPos: kiosk ? new THREE.Vector3(...kiosk.p) : null,
+    kioskPos: kioskList.length ? new THREE.Vector3(...kioskList[0].p) : null,
+    kioskPositions: kioskList.map(k => new THREE.Vector3(...k.p)),
     get severity() { return st.sev; },
     setSeverity(v) { st.sev = THREE.MathUtils.clamp(v, 0, 1); drawKiosk(); },
     update(dt, px, py, pz) {
