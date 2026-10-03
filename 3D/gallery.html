@@ -18,6 +18,9 @@
   #place .c { font:800 22px var(--font); line-height:1.05; }
   #micBtn { width:52px; border:2px solid var(--ink); border-left:0; background:var(--bg); color:var(--ink); font:800 11px/1.15 var(--font); letter-spacing:.06em; text-align:center; padding:0; white-space:pre-line; }
   #micBtn.on { background:var(--accent); color:#fff; }
+  #avRow .av { flex:1; min-height:76px; padding:10px; background:#141312; color:#fff; border:2px solid #5a5654; font:400 26px/1 var(--font); text-align:center; }
+  #avRow .av b { display:block; margin-top:6px; font:800 13px/1.2 var(--font); letter-spacing:.08em; text-transform:uppercase; }
+  #avRow .av[aria-checked=true] { border-color:#ec3013; background:#2a1512; box-shadow:inset 0 -4px 0 #ec3013; }
   #menuBtn { width:48px; border:2px solid var(--ink); border-left:0; background:var(--bg); font-size:20px; text-align:center; }
   #act { position:fixed; right:calc(12px + env(safe-area-inset-right)); bottom:calc(24px + env(safe-area-inset-bottom)); z-index:10; display:none; max-width:min(320px,52vw); min-height:52px; padding:10px 14px; background:var(--accent); color:#fff; border:2px solid var(--ink); font:800 13px/1.25 var(--font); letter-spacing:.06em; text-transform:uppercase; }
   #act small { display:block; font-size:10px; letter-spacing:.14em; opacity:.85; }
@@ -62,7 +65,7 @@
 </head>
 <body>
 <div id="stage"></div>
-<div id="load"><div class="k">8 GATES · 3D · Ben Fox</div><h1>Blind Canvas<br>Project</h1><div class="bar"><i id="lb"></i></div><p id="lt">Opening the gallery…</p><label id="nameRow" style="display:none;max-width:420px;margin-top:6px"><span style="display:block;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#ff9783;margin-bottom:6px">Your name (others in the gallery see it)</span><input id="nameIn" maxlength="20" autocomplete="nickname" style="width:100%;min-height:52px;padding:10px 14px;background:#141312;color:#fff;border:2px solid #f3f2f2;border-radius:0;font:700 18px var(--font)" placeholder="Your name"></label><button id="enter" style="display:none;margin-top:18px;min-height:56px;padding:14px 22px;max-width:420px;background:#ec3013;color:#fff;border:2px solid #f3f2f2;font:800 16px var(--font);letter-spacing:.08em;text-transform:uppercase;text-align:center">Enter the gallery · sound on 🔊</button></div>
+<div id="load"><div class="k">8 GATES · 3D · Ben Fox</div><h1>Blind Canvas<br>Project</h1><div class="bar"><i id="lb"></i></div><p id="lt">Opening the gallery…</p><label id="nameRow" style="display:none;max-width:420px;margin-top:6px"><span style="display:block;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#ff9783;margin-bottom:6px">Your name (others in the gallery see it)</span><input id="nameIn" maxlength="20" autocomplete="nickname" style="width:100%;min-height:52px;padding:10px 14px;background:#141312;color:#fff;border:2px solid #f3f2f2;border-radius:0;font:700 18px var(--font)" placeholder="Your name"></label><div id="avRow" style="display:none;max-width:420px;margin-top:14px"><span style="display:block;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#ff9783;margin-bottom:6px">Choose your avatar</span><div style="display:flex;gap:8px" role="radiogroup" aria-label="Choose your avatar"><button class="av" data-x="cane" role="radio">🦯<b>White cane</b></button><button class="av" data-x="chair" role="radio">♿<b>Wheelchair</b></button></div></div><button id="enter" style="display:none;margin-top:18px;min-height:56px;padding:14px 22px;max-width:420px;background:#ec3013;color:#fff;border:2px solid #f3f2f2;font:800 16px var(--font);letter-spacing:.08em;text-transform:uppercase;text-align:center">Enter the gallery · sound on 🔊</button></div>
 <div id="place"><div class="t box"><div class="w">Blind Canvas Project</div><div class="c">The Gallery</div><div id="who" style="font-size:12px;font-weight:700;margin-top:3px;color:#cfcaca">Connecting…</div></div><button id="menuBtn" aria-label="Menu">☰</button><button id="waveBtn" aria-label="Wave to everyone" style="width:48px;border:2px solid var(--ink);border-left:0;background:var(--bg);font-size:22px;text-align:center">👋</button><button id="micBtn" style="display:none" aria-pressed="false">MIC
 OFF</button></div>
 <button id="act" aria-live="polite"></button>
@@ -70,7 +73,7 @@ OFF</button></div>
 <div id="panel" class="box" role="dialog" aria-modal="true" aria-labelledby="pt"><header><div class="h"><div class="k" id="pk"></div><h2 id="pt"></h2></div><button id="px" aria-label="Close">✕</button></header><div class="body" id="pb"></div></div>
 <div id="menu" class="box" role="dialog" aria-label="Menu">
   <div class="lab">Your fox</div>
-  <div class="opts" id="looks"><button data-l="male">Fox</button><button data-l="female">Vixen</button></div>
+  <div class="opts" id="looks"><button data-l="suit">Suit fox</button><button data-l="male">Fox</button><button data-l="female">Vixen</button></div>
   <div class="lab">Gear</div>
   <div class="opts" id="extras"><button data-x="none">None</button><button data-x="glasses">Glasses</button><button data-x="cane">White cane</button><button data-x="chair">Wheelchair</button></div>
   <div class="lab">Reading</div>
@@ -260,6 +263,10 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
 // one tap to enter: this tap is what lets the room videos (and read-aloud) play with sound from then on
 $('lt').textContent = 'Videos in each room play with sound when you walk in. Other visitors appear as foxes too.';
 $('nameRow').style.display = 'block'; $('nameIn').value = pref.name || '';
+// the avatar: the suited fox with a white cane or in a wheelchair (remembered; more looks in ☰)
+{ const pickAv = x => { document.querySelectorAll('#avRow .av').forEach(b => b.setAttribute('aria-checked', b.dataset.x === x)); pref.look = 'suit'; pref.extra = x; G.setLook('suit', x); };
+  $('avRow').style.display = 'block'; document.querySelectorAll('#avRow .av').forEach(b => b.onclick = () => pickAv(b.dataset.x));
+  pickAv(pref.extra === 'chair' ? 'chair' : 'cane'); }
 $('enter').style.display = 'block'; $('enter').focus();
 await new Promise(res => $('enter').addEventListener('click', () => {
   pref.name = ($('nameIn').value || '').trim().slice(0, 20) || ('Fox ' + Math.floor(100 + Math.random() * 900)); savePref();

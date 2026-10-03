@@ -47,6 +47,7 @@ export function foxKit({ THREE, scene, toon, M, grad, outlineMat, crestTex, rr, 
     if (/\?$/.test(text)) return 'curious';
     return base;
   };
+  const SUN = { w: 33, h: 27 };
   function drawFace(g, f) {
     const W = 256; g.clearRect(0, 0, W, W);
     const md = MOOD[f.mood] || MOOD.neutral, L = f.L || DEFAULT_LOOK, ES = L.eyeSize, EX = L.eyeSpacing, EY = L.eyeY, INK = L.ink;
@@ -80,6 +81,13 @@ export function foxKit({ THREE, scene, toon, M, grad, outlineMat, crestTex, rr, 
       g.lineWidth = 2; g.beginPath(); g.ellipse(cx, ccy, hw * 0.92, ry, 0, Math.PI * 0.2, Math.PI * 0.8); g.stroke(); g.restore();
     };
     eye(128 - EX, EY, -1, f.eyeL); eye(128 + EX, EY, 1, f.eyeR);
+    if (f.sun) {   // sunglasses painted onto the face so the lenses wrap the head exactly
+      const lw = SUN.w * ES, lh = SUN.h * ES;
+      g.lineJoin = 'round'; g.strokeStyle = '#111827'; g.lineWidth = 6; g.beginPath(); g.moveTo(128 - EX + lw * 0.7, EY - lh * 0.45); g.quadraticCurveTo(128, EY - lh * 0.75, 128 + EX - lw * 0.7, EY - lh * 0.45); g.stroke();
+      for (const s of [-1, 1]) { const cx = 128 + s * EX; g.save(); g.translate(cx, EY); g.rotate(-s * L.eyeTilt * 0.5);
+        g.fillStyle = '#0b0f19'; g.beginPath(); g.ellipse(0, 0, lw, lh, 0, 0, 7); g.fill(); g.lineWidth = 5; g.strokeStyle = '#111827'; g.stroke();
+        g.strokeStyle = 'rgba(148,163,184,0.55)'; g.lineWidth = 3; g.lineCap = 'round'; g.beginPath(); g.ellipse(0, 0, lw * 0.7, lh * 0.66, 0, Math.PI * 1.1, Math.PI * 1.45); g.stroke(); g.restore(); }
+    }
     // brows
     g.strokeStyle = L.browColor || INK; g.lineWidth = L.browWeight; g.lineCap = 'round';
     for (const [cx, side] of [[128 - EX, -1], [128 + EX, 1]]) {
@@ -148,7 +156,7 @@ export function foxKit({ THREE, scene, toon, M, grad, outlineMat, crestTex, rr, 
   })(); geoCache.set(k, gg); return gg; };
   let _glowT = null;
   function glowTexFor() { if (_glowT) return _glowT; const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d'); const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.3, 'rgba(255,255,255,0.5)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, 64, 64); _glowT = new THREE.CanvasTexture(c); _glowT.colorSpace = THREE.SRGBColorSpace; return _glowT; }
-  function makeFox({ key, torso, crest, bow, glasses, cane, chair, crown, eyes = ['#f472b6', '#2dd4bf'], mood = 'neutral', look, gear = 'none', outfit = 'armor', prints = null }) {
+  function makeFox({ key, torso, crest, bow, glasses, legColor, cane, chair, crown, eyes = ['#f472b6', '#2dd4bf'], mood = 'neutral', look, gear = 'none', outfit = 'armor', prints = null }) {
     const L = { ...LOOK, ...(look || {}) };
     const g = new THREE.Group(), body = new THREE.Group(); g.add(body); const P = { body };
     const fur = toon(L.fur), furDark = toon(L.furDark), white = toon(L.fluff), ink = toon(L.ear), leg = toon(L.leg), boot = toon(L.boot);
@@ -233,6 +241,21 @@ export function foxKit({ THREE, scene, toon, M, grad, outlineMat, crestTex, rr, 
         const tail2 = M(new THREE.BoxGeometry(0.08, 0.2, 0.03), C.dark, 0.06, 1.12 + lift, 0.2, body, 0.008); tail2.rotation.z = -0.2;
         badge(0.15, 1.02, 0.33, 0.06);
         P.arms = sleeve(toon('#f7f1e6'), C.mid);
+      } else if (kind === 'suit' && prints) {   // the gallery suit: an open jacket over an art shirt (art on the front, a logo across the back)
+        const sp = [[0.24, 0.42], [0.29, 0.5], [0.26, 0.66], [0.27, 0.95], [0.33, 1.12], [0.24, 1.21], [0.1, 1.26], [0, 1.27]];
+        M(lathe([[0, 0.42], ...sp], (y, c) => c.copy(t1).lerp(t2, smooth(0.7, 0.4, y))), vcToon, 0, lift, 0, body, 0.03);
+        const rAt = y => { for (let i = 0; i < sp.length - 1; i++) { const [r0, y0] = sp[i], [r1, y1] = sp[i + 1]; if (y >= y0 && y <= y1) return r0 + (r1 - r0) * (y - y0) / (y1 - y0); } return sp[sp.length - 1][0]; };
+        const panel = (Y0, Y1, phi0, phiLen, tex) => { const pts = []; for (let i = 0; i <= 16; i++) { const y = Y0 + (Y1 - Y0) * i / 16; pts.push(new THREE.Vector2(rAt(y) + 0.016, y)); }
+          const lg = new THREE.LatheGeometry(pts, 24, phi0, phiLen), pp = lg.attributes.position; for (let i = 0; i < pp.count; i++) { const z = pp.getZ(i); pp.setZ(i, z > 0 ? z * 1.1 : z * 0.92); } lg.computeVertexNormals();   // the jacket's own front/back squash
+          const m = new THREE.Mesh(lg, new THREE.MeshToonMaterial({ map: tex, gradientMap: grad, transparent: true, alphaTest: 0.05, polygonOffset: true, polygonOffsetFactor: -2 })); m.position.y = lift; body.add(m); return m; };
+        const fw = prints.frontW || 1.2;
+        if (prints.front) panel(0.6, 1.12, -fw / 2, fw, prints.front);
+        if (prints.back) panel(0.79, 1.2, Math.PI - 0.8, 1.6, prints.back);
+        // the jacket's open edges: slim dark lapels framing the art
+        for (const sx of [-1, 1]) { const a = sx * (fw / 2 + 0.05), lp = M(new THREE.BoxGeometry(0.05, 0.5, 0.03), C.dark, Math.sin(a) * 0.29, 0.92 + lift, Math.cos(a) * 0.29, body, 0.008); lp.rotation.y = a; lp.rotation.z = sx * 0.12; }
+        M(new THREE.TorusGeometry(0.262, 0.026, 8, 28), C.dark, 0, 0.6 + lift, 0, body, 0).rotation.x = Math.PI / 2;
+        M(new THREE.CylinderGeometry(0.17, 0.2, 0.1, 22), C.dark, 0, 1.24 + lift, 0, body, 0.012, 0.2);
+        P.arms = sleeve(C.mid, C.cream);
       } else if (kind === 'suit') {   // fitted jacket, lapels, cravat
         M(lathe([[0, 0.42], [0.24, 0.42], [0.29, 0.5], [0.26, 0.66], [0.27, 0.95], [0.33, 1.12], [0.24, 1.21], [0.1, 1.26], [0, 1.27]], (y, c) => c.copy(t1).lerp(t2, smooth(0.7, 0.4, y))), vcToon, 0, lift, 0, body, 0.03);
         for (const sx of [-1, 1]) { const lp = M(new THREE.BoxGeometry(0.1, 0.36, 0.025), C.dark, sx * 0.09, 1.02 + lift, 0.32, body, 0.008); lp.rotation.set(-0.2, 0, sx * 0.32); }
@@ -313,7 +336,23 @@ export function foxKit({ THREE, scene, toon, M, grad, outlineMat, crestTex, rr, 
     if (crown) { const cw = new THREE.Group(); cw.position.set(0, 0.36, -0.02); cw.rotation.x = -0.12; head.add(cw); const gold = toon('#e6b45a', { emissive: new THREE.Color('#7a5a1a'), emissiveIntensity: 0.4 });
       M(new THREE.CylinderGeometry(0.2, 0.22, 0.1, 20, 1, true), gold, 0, 0, 0, cw, 0.015, 0.22);
       for (let k = 0; k < 5; k++) { const a = k / 5 * Math.PI * 2; M(new THREE.ConeGeometry(0.045, 0.14, 4), gold, Math.sin(a) * 0.2, 0.11, Math.cos(a) * 0.2, cw, 0.01); M(new THREE.SphereGeometry(0.025, 6, 4), toon('#c42d3c', { emissive: new THREE.Color('#c42d3c'), emissiveIntensity: 0.6 }), Math.sin(a) * 0.215, 0.0, Math.cos(a) * 0.215, cw, 0); } }
-    if (glasses) { const lens = new THREE.MeshBasicMaterial({ color: 0x4ade80, transparent: true, opacity: 0.42 }); for (const s of [-1, 1]) { const r = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.016, 6, 22), toon('#334155')); r.position.set(s * 0.13, 0.03, 0.43); r.scale.x = 0.95 / 1.14; skull.add(r); const l = new THREE.Mesh(new THREE.CircleGeometry(0.095, 22), lens); l.position.set(s * 0.13, 0.03, 0.432); l.scale.x = 0.95 / 1.14; skull.add(l); } M(new THREE.BoxGeometry(0.08, 0.018, 0.018), toon('#334155'), 0, 0.05, 0.44, skull, 0); }
+    if (glasses === 'sun') {   // lenses are painted on the face (drawFace); here: side shields + arms back to the ears,
+      // starting from the painted lens's outer edge, found through the face mask's UVs
+      const fr = toon('#111827'), shield = toon('#0b0f19'); g.updateMatrixWorld(true);
+      const pos = mask.geometry.attributes.position, uv = mask.geometry.attributes.uv, nrm = mask.geometry.attributes.normal, nm = new THREE.Matrix3().getNormalMatrix(mask.matrixWorld);
+      const at = (px, py) => { const tu = px / 256, tv = 1 - py / 256; let bi = 0, bd = 1e9; for (let i = 0; i < uv.count; i++) { const d = (uv.getX(i) - tu) ** 2 + (uv.getY(i) - tv) ** 2; if (d < bd) { bd = d; bi = i; } }
+        const p = head.worldToLocal(mask.localToWorld(new THREE.Vector3().fromBufferAttribute(pos, bi))), n = new THREE.Vector3().fromBufferAttribute(nrm, bi).applyMatrix3(nm).normalize(); return { p, n }; };
+      const rc = new THREE.Raycaster(), hitSide = (sx, y, z) => { rc.set(head.localToWorld(new THREE.Vector3(sx * 2, y, z)), new THREE.Vector3(-sx, 0, 0)); const h = rc.intersectObject(skull, false)[0]; if (!h) return null; return head.worldToLocal(h.point.clone()); };
+      const Zf = new THREE.Vector3(0, 0, 1);
+      const seg = (A, B, w, h, mat) => { const d = B.clone().sub(A), m = M(new THREE.BoxGeometry(w, h, d.length()), mat, (A.x + B.x) / 2, (A.y + B.y) / 2, (A.z + B.z) / 2, head, 0.006); m.quaternion.setFromUnitVectors(Zf, d.normalize()); return m; };
+      const lw = SUN.w * L.eyeSize;
+      for (const cs of [-1, 1]) { const e = at(128 + cs * (L.eyeSpacing + lw - 2), L.eyeY), sx = Math.sign(e.p.x) || cs;
+        const hinge = e.p.clone().addScaledVector(e.n, 0.006), pts = [hinge];
+        for (const back of [0.08, 0.2, 0.32]) { const q = hitSide(sx, hinge.y, hinge.z - back); if (q) pts.push(q.add(new THREE.Vector3(sx * 0.01, 0, 0))); }
+        for (let i = 0; i < pts.length - 1; i++) seg(pts[i], pts[i + 1], 0.014, 0.02, fr);
+        if (pts[1]) { const sh = seg(pts[0], pts[1], 0.008, 0.07, shield); sh.position.y -= 0.006; }
+      }
+    } else if (glasses) { const lens = new THREE.MeshBasicMaterial({ color: 0x4ade80, transparent: true, opacity: 0.42 }); for (const s of [-1, 1]) { const r = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.016, 6, 22), toon('#334155')); r.position.set(s * 0.13, 0.03, 0.43); r.scale.x = 0.95 / 1.14; skull.add(r); const l = new THREE.Mesh(new THREE.CircleGeometry(0.095, 22), lens); l.position.set(s * 0.13, 0.03, 0.432); l.scale.x = 0.95 / 1.14; skull.add(l); } M(new THREE.BoxGeometry(0.08, 0.018, 0.018), toon('#334155'), 0, 0.05, 0.44, skull, 0); }
     if (cane) { const c = M(new THREE.CylinderGeometry(0.017, 0.017, 1.25, 6), white, 0, -0.9, 0.22, P.arms[1], 0.012); c.rotation.x = 0.35; M(new THREE.SphereGeometry(0.035, 6, 4), toon('#dc2626'), 0, -0.62, 0, c, 0); }
     const tail = new THREE.Group(); tail.position.set(0, 0.6 + lift, -0.24); body.add(tail); P.tail = tail;
     const tm = M(tailGeoFor(L), vcToon, 0, 0, 0, tail, 0.03); tm.rotation.x = -L.tailLift; tm.scale.setScalar(L.tailSize); if (L.tailSide) { tm.rotation.order = 'ZXY'; tm.rotation.z = L.tailSide; }   // tailSide: sweep the tail to one side (shows a back print)
@@ -360,8 +399,9 @@ export function foxKit({ THREE, scene, toon, M, grad, outlineMat, crestTex, rr, 
       M(new THREE.SphereGeometry(0.048, 10, 8), pawM, 0.075, 0.09, 0.07, gn, 0.012, 0.048).scale.set(0.8, 0.8, 1.3);
     }
     g.traverse(o => { if (o.isMesh && o.material !== outlineMat && o.material !== faceMat) o.castShadow = true; });
+    if (legColor) { const lm = toon(legColor); P.legs.forEach(p => p.children.forEach(c => { if (c.isMesh && !(c.geometry.type === 'SphereGeometry' && c.geometry.parameters.radius === 0.14)) c.material = lm; })); }
     g.userData = { hold, P, phase: rr(0, 6), amt: 0, blink: rr(1, 4), blinkT: 0, chair: !!chair, base: mood, mood, moodT: 0, look: 0, lookT: rr(1, 3), lookTo: 0, mouth: 0, talking: false, hop: 0, hopY: 0,
-      face: { ctx: fctx, tex: ftex, eyeL: eyes[0], eyeR: eyes[1], key: '', L }, lookAt: null };
+      face: { ctx: fctx, tex: ftex, eyeL: eyes[0], eyeR: eyes[1], key: '', L, sun: glasses === 'sun' }, lookAt: null };
     g.scale.setScalar(L.bodyScale);
     scene.add(g); return g;
   }
@@ -403,7 +443,8 @@ export function foxKit({ THREE, scene, toon, M, grad, outlineMat, crestTex, rr, 
     u.look = damp(u.look, u.lookTo, 8, dt);
     u.mouth = u.talking ? Math.max(0, Math.sin(u.phase * 7.5)) * 0.85 + 0.1 : damp(u.mouth, 0, 14, dt);
     const f = u.face, key = `${Math.round(bl * 4)}|${mood}|${Math.round(u.mouth * 5)}|${Math.round(u.look * 4)}`;
-    if (key !== f.key) { f.key = key; drawFace(f.ctx, { L: f.L, eyeL: f.eyeL, eyeR: f.eyeR, blink: Math.round(bl * 4) / 4, mood, mouth: Math.round(u.mouth * 5) / 5, look: Math.round(u.look * 4) / 4 }); f.tex.needsUpdate = true; }
+    if (key !== f.key) { f.key = key; drawFace(f.ctx, { L: f.L, sun: f.sun, eyeL: f.eyeL, eyeR: f.eyeR, blink: Math.round(bl * 4) / 4, mood, mouth: Math.round(u.mouth * 5) / 5, look: Math.round(u.look * 4) / 4 }); f.tex.needsUpdate = true; }
+    if (u.rig) u.rig.update(dt, speed);   // the museum avatars' tuned cane and wheelchair rigs
   }
 
 

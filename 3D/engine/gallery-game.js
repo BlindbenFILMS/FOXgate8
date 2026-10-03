@@ -10,6 +10,8 @@ import { crestTex } from './textures.js';
 import { buildGuides } from './gallery-guides.js';
 import { buildWorld } from './gallery-world.js';
 import { makePlant, makeBench } from './gallery-props.js';
+import { caneKit, loadCane, CANE_DEFAULTS } from './avatars/cane.js';
+import { chairKit, loadChair, CHAIR_DEFAULTS } from './avatars/chair.js';
 import { artAnimator } from './gallery-anim.js';
 import { buildVisionSpots, visionOverlay } from './gallery-vision.js';
 import { buildSimWalls } from './gallery-simwall.js';
@@ -94,7 +96,23 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const place = (p, x, z, ry = 0) => { const y = (() => { glbRay.set(new THREE.Vector3(x, 4, z), DOWN); glbRay.far = 12; const h = glbRay.intersectObject(world, true)[0]; return h ? h.point.y : 0; })(); p.group.position.set(x, y, z); p.group.rotation.y = ry; scene.add(p.group); const cb = new THREE.Mesh(new THREE.BoxGeometry(...p.size)); cb.position.set(x, y + p.size[1] / 2, z); cb.rotation.y = ry; cb.updateMatrixWorld(true); propCol.push(cb); };
   for (const [x, z] of [[6.4, 12.4], [6.4, -12.4], [-12.2, 12.4], [-12.2, -12.4], [-76.4, 11.4], [-76.4, -11.4]]) place(makePlant(2.3), x, z);
   for (const z of [7.6, -7.6]) place(makeBench(2.8), 5.6, z, Math.PI / 2);
-  for (const m of [...entrance.col, ...rooms.col, ...kiosks.col, ...simCol, ...edgeCol, ...propCol]) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); colGeos.push(g); }
+  // glass in the building's tall wall openings: you see out to the trees and the city, and can't walk out
+  const winCol = [];
+  {
+    const glassM = new THREE.MeshBasicMaterial({ color: 0xcfe3ec, transparent: true, opacity: 0.16, depthWrite: false, side: THREE.DoubleSide });
+    const sheenTex = (() => { const cv = document.createElement('canvas'); cv.width = 64; cv.height = 256; const c = cv.getContext('2d'); const g = c.createLinearGradient(0, 0, 64, 256); g.addColorStop(0, 'rgba(255,255,255,0.0)'); g.addColorStop(0.42, 'rgba(255,255,255,0.0)'); g.addColorStop(0.5, 'rgba(255,255,255,0.35)'); g.addColorStop(0.56, 'rgba(255,255,255,0.0)'); g.addColorStop(0.7, 'rgba(255,255,255,0.18)'); g.addColorStop(0.74, 'rgba(255,255,255,0.0)'); c.fillStyle = g; c.fillRect(0, 0, 64, 256); return new THREE.CanvasTexture(cv); })();
+    const sheenM = new THREE.MeshBasicMaterial({ map: sheenTex, transparent: true, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending });
+    const frameM = new THREE.MeshLambertMaterial({ color: 0x1d1c1b });
+    for (const w of data.windows || []) {
+      const [xa, xb] = w.x, [ya, yb] = w.y, cx = (xa + xb) / 2, cy = (ya + yb) / 2, W = xb - xa, H = yb - ya;
+      const g = new THREE.Group(); g.position.set(cx, cy, w.z); scene.add(g);
+      const pane = new THREE.Mesh(new THREE.PlaneGeometry(W, H), glassM); pane.renderOrder = 4; g.add(pane);
+      const sh = new THREE.Mesh(new THREE.PlaneGeometry(W, H), sheenM); sh.position.z = 0.01; sh.renderOrder = 4; g.add(sh);
+      for (let k = 1; k < Math.max(2, Math.round(H / 3.2)); k++) { const b = new THREE.Mesh(new THREE.BoxGeometry(W, 0.06, 0.08), frameM); b.position.y = -H / 2 + k * H / Math.max(2, Math.round(H / 3.2)); g.add(b); }   // slim transoms
+      const c = new THREE.Mesh(new THREE.BoxGeometry(W, H, 0.2)); c.position.set(cx, cy, w.z); c.updateMatrixWorld(true); winCol.push(c);
+    }
+  }
+  for (const m of [...entrance.col, ...rooms.col, ...kiosks.col, ...simCol, ...edgeCol, ...propCol, ...winCol]) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); colGeos.push(g); }
   // one position-only collision mesh with a BVH (fast rays on phones)
   let total = 0; for (const g of colGeos) total += (g.index ? g.index.count : g.attributes.position.count);
   const P = new Float32Array(total * 3); let k = 0;
@@ -329,7 +347,21 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     return root;
   }
 
+  // the museum avatars: the suited fox with a long white cane, or in a wheelchair (tuned rigs from the 8 GATES workshops).
+  // The suit is open over an art shirt: Walk Through Fear on the front, the BCP logo across the back (and on the chair's backrest).
+  const AVB = new URL('./avatars/', import.meta.url).href;
+  const [caneCfg, chairCfg] = await Promise.all([loadCane(AVB).catch(() => CANE_DEFAULTS), loadChair(AVB).catch(() => CHAIR_DEFAULTS)]);
+  const CK = caneKit({ THREE, M, toon }), HK = chairKit({ THREE, M, toon });
+  const SUIT = { torso: ['#2a2e34', '#1a1d22', '#0c0e10'], outfit: 'suit', glasses: 'sun', crest: 'none', eyes: ['#3a3a44', '#3a3a44'], mood: 'happy' };
+  function makeSuitFox(ex, st) {
+    const chair = ex === 'chair';
+    const f = makeFox({ key: 'suit-' + ex, ...SUIT, chair, look: { ...PLAYER_MALE, ...(PALETTES[st.pal | 0] || {}), tailSide: 1.15 }, prints: { front: frontArt(DEFAULT_ART), frontW: 1.2, back: backLogo } });
+    if (ex === 'chair') f.userData.rig = HK.attach(f, { ...chairCfg, backLogo });
+    else if (ex === 'cane') f.userData.rig = CK.attach(f, caneCfg);
+    f.scale.setScalar(FOX_SCALE); return f;   // (not baked: the cane and chair rigs move their own parts)
+  }
   function makeVisitorFox(lk, ex, st = { pal: 0, art: DEFAULT_ART }) {   // every visitor wears the BCP tee
+    if (lk === 'suit') { try { return makeSuitFox(ex, st); } catch (e) { console.warn('suit avatar failed, using the BCP tee', e); } }
     const opts = { torso: ['#ffffff', '#e7edf4', '#6b7d93'], crest: '8', mood: 'warm', look: { ...(lk === 'female' ? PLAYER_FEMALE : PLAYER_MALE), ...(PALETTES[st.pal | 0] || {}), tailSide: 1.15 },   // tail swept to the side so the back print shows
       outfit: 'tee', prints: { front: frontArt(st.art), frontW: 1.45, back: backLogo }, gear: 'none', cane: ex === 'cane', glasses: ex === 'glasses' || ex === 'cane', chair: ex === 'chair' };
     let f;

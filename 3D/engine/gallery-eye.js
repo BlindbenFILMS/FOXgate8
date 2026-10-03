@@ -106,6 +106,22 @@ export function buildEye({ scene, lowEnd }) {
     glint.position.set(C.x + 0.3, C.y + 4.25, C.z - 3.3); glint.rotation.y = Math.PI / 2; glint.rotation.x = -0.35; glint.renderOrder = 6; scene.add(glint);
     out.glint = glint;
   }
+  // ------------------------------------------------ the eyelid: a slim charcoal canopy over the top of the eye (it also tidies the roof beams' cut ends)
+  {
+    const n = OUTLINE.length, shape = new THREE.Shape(), inner = [], outer = [];
+    const A0 = 12 * Math.PI / 180, A1 = 168 * Math.PI / 180, STEPS = 64;
+    const rAt = a => { const t = ((a / (Math.PI * 2)) * n + n) % n, i0 = Math.floor(t), f = t - i0; return OUTLINE[i0 % n] * (1 - f) + OUTLINE[(i0 + 1) % n] * f; };
+    for (let i = 0; i <= STEPS; i++) { const a = A0 + (A1 - A0) * i / STEPS, r = rAt(a), lift = Math.sin((i / STEPS) * Math.PI); inner.push([a, r + 1.3]); outer.push([a, r + 1.3 + 1.2 + 4.6 * lift]); }
+    shape.moveTo(Math.cos(inner[0][0]) * inner[0][1], Math.sin(inner[0][0]) * inner[0][1]);
+    for (const [a, r] of inner) shape.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+    for (const [a, r] of outer.reverse()) shape.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+    const geo = new THREE.ExtrudeGeometry(shape, { depth: 0.5, bevelEnabled: false, curveSegments: 4 });
+    const lid = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color: 0x2b2a29 }));
+    lid.position.set(-22.1, C.y, C.z); lid.rotation.y = Math.PI / 2; lid.scale.x = -1; scene.add(lid);
+    // a thin red line along its lower edge (the house accent)
+    const pts = inner.map(([a, r]) => new THREE.Vector3(-21.58, C.y + Math.sin(a) * (r + 0.06), C.z + Math.cos(a) * (r + 0.06)));
+    const tube = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 96, 0.07, 6, false), new THREE.MeshBasicMaterial({ color: 0xec3013 })); scene.add(tube);
+  }
   // ------------------------------------------------ the name sign, up on two posts in the water in front of the museum
   {
     const SW = 22, SH = 3.0, X = 21, Y0 = 4.4;

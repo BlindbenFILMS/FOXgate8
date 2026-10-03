@@ -181,3 +181,12 @@ Ben's PlayCanvas project (BCP export) was exported with PlayCanvas's own GltfExp
       - Plants and benches (`engine/gallery-props.js`): plants at the plaza corners and the main hall entrance, and two oak benches on the plaza facing the lake.
       - Safety: an invisible wall on the plaza's open lake side (x 7.6). Anyone below the water line outside the building is sent back to the entrance with a "Splash!" message.
       - The model's old lawn (Plane001) is lowered 0.2 m visually; it was peeking along wall bases in the main hall.
+    - 2 Oct, exterior polish (round 2):
+      - Shell smoothing: the curved Palette meshes of the white shell (4 meshes, 60+ vertices) get creased normals at 32°. Curves shade smoothly and flat faces and edges stay crisp. Pure-black model parts become charcoal #2b2a29, so they read as surfaces, not holes.
+      - Eyelid: a slim charcoal canopy with a red edge over the top of the eye (gallery-eye.js), at x -22.1 following the measured outline. It also hides the roof beams' cut ends.
+      - Glass in the tall side openings: `windows` in gallery.json (8 openings, measured), each a faint blue-white pane with a sheen streak and slim ink transoms. They're solid, so you can't walk out (`winCol`).
+    - 2 Oct, museum avatars (Ben's AVATARS_for_BCP_gallary pack):
+      - The opening screen has "Choose your avatar": 🦯 White cane or ♿ Wheelchair (pref.look = 'suit', extra cane or chair). ☰ → Your fox also has "Suit fox". Multiplayer sends look + extra, so others see the same avatar.
+      - The suited fox wears sunglasses and an open dark jacket over an art shirt: Walk Through Fear on the front (follows the jacket's shape) and the BCP logo across the back. The tail is swept aside so the back shows.
+      - Rigs: `engine/avatars/cane.js` and `chair.js` with `presets/` (Hope's tuned two-point cane, Noble's "future" chair). The chair takes `backLogo`: a curved BCP logo patch on the backrest.
+      - fox-kit.js gained the pack's painted-on sunglasses (`glasses: 'sun'`), `legColor` and `rig.update` in animFox. The suit gets a `prints` variant. Suit foxes are not baked (the rigs move their parts).

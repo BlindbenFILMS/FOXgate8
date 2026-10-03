@@ -6,6 +6,7 @@
 // Everything is a handful of draw calls (instancing + small shaders) so it stays inside the phone budget.
 import * as THREE from '../vendor/three/three.module.js';
 import { buildEye } from './gallery-eye.js';
+import { toCreasedNormals } from '../vendor/three/addons/BufferGeometryUtils.js';
 
 const rnd = (() => { let s = 20261002; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; })();
 
@@ -127,6 +128,17 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
   const updaters = [];
   let cityMat = null, waterMat = null;
   // the model's old lawn sits a few cm above some floors and peeks along wall bases: drop it out of sight (looks only; walking is unchanged)
+  // the building's white shell: smooth the curves (flat faces stay crisp: only edges under 32 degrees are rounded)
+  // and paint pure-black parts a deep charcoal, so they read as surfaces rather than holes
+  let smoothed = 0;
+  scene.traverse(o => {
+    if (!o.isMesh || o.isInstancedMesh || !o.geometry || !o.geometry.attributes.normal) return;
+    const m0 = Array.isArray(o.material) ? o.material[0] : o.material;
+    if (m0 && /^Palette/.test(m0.name || '') && o.geometry.attributes.position.count >= 60 && !Array.isArray(o.material)) {
+      try { const g = toCreasedNormals(o.geometry, THREE.MathUtils.degToRad(32)); o.geometry = g; smoothed++; } catch (e) {}
+    }
+    for (const m of [].concat(o.material)) if (m && m.name === 'black' && m.color && m.color.getHex() === 0) m.color.set(0x2b2a29);
+  });
   scene.traverse(o => { if (o.isMesh && /^Plane001/.test(o.name)) { o.position.y -= 0.2; o.updateMatrix(); o.updateMatrixWorld(true); } });
 
   // ---------------------------------------------------------------- 1. cherry trees
@@ -294,7 +306,7 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
       const tip = new THREE.Mesh(new THREE.ConeGeometry(6, 40, 6), spire); tip.position.set(x, -3.4 + h + 20, z); scene.add(tip);
     }
     updaters.push(() => {});
-    console.log('[world] trees repainted', repainted, '+', treePts.length, '· towers', boxes.length, '·', Math.round(performance.now() - t0), 'ms');
+    console.log('[world] smoothed', smoothed, '· trees repainted', repainted, '+', treePts.length, '· towers', boxes.length, '·', Math.round(performance.now() - t0), 'ms');
   }
 
   let t = 0;
