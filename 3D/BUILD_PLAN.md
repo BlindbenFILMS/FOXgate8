@@ -168,3 +168,16 @@ Ben's PlayCanvas project (BCP export) was exported with PlayCanvas's own GltfExp
       - Flags at (44, ±13) on stone bases with 15 m poles: Blind Canvas Project (white logo on ink, red hem) and Ora. They wave with a shader and read correctly from both sides.
       - Cherry trees: the park's two tree-card materials get a drawn blossom picture (material names are now kept on conversion), plus 190 more crossed-card trees (one instanced mesh) round the lake and park.
       - The city: a lawn fills the park (±275 m), a street grid with lane marks and crossings sits outside it, and ~1,900 towers make one instanced mesh with windows drawn in the shader. They get taller towards a downtown to the north-west, with five landmark spires. Fog now reaches 170..1150 m (900 on phones) and the camera sees 1,600 m.
+    - 2 Oct, building polish:
+      - Eye facade (`engine/gallery-eye.js`):
+        - Frosted see-through glass fills the opening from the iris out to the white frame. The outline was measured from the model, 48 samples at x -28.5. The glass shader adds a ceramic frit that gets denser outward, steel mullions every 30° plus rings, faint veins, and a limbus shadow. At night it glows warm from inside.
+        - The iris is 40 teal fins angled like an aperture (28 on phones), with a dark limbal ring and an ink collar round the pupil tunnel. A catch-light glint sits high on the iris.
+      - Name sign: BLIND CANVAS PROJECT on an ink panel (red hem) on two steel posts in the water at x 21, readable from both sides. The flags moved to (40, ±21) so they don't hide it.
+      - Sky: a gradient dome, golden hour (warm horizon, low sun at (110,60,85)), with warm sun and hemisphere light and peach haze.
+      - ☰ → Atmosphere → 🌙 Night (saved) eases to a starry sky with a moon, lit city windows, a dark lake with light shimmer, and a lit-from-inside eye. Interior lights stay up.
+      - Sound (`engine/gallery-sound.js`, all synthesized): lake water near the edge, birds outside, a quiet hum inside (x < -44), and wood footsteps (a soft roll in the wheelchair). It ducks under room films. ☰ → Ambient sounds turns it on or off.
+      - Art: every painting has a warm light pool on the wall and a small ink spotlight fixture above it (`lightArt`, attached as art streams in).
+      - Room doorways (every buildWing room): an ink portal with a red inner edge, a dark floor band, and a plant either side.
+      - Plants and benches (`engine/gallery-props.js`): plants at the plaza corners and the main hall entrance, and two oak benches on the plaza facing the lake.
+      - Safety: an invisible wall on the plaza's open lake side (x 7.6). Anyone below the water line outside the building is sent back to the entrance with a "Splash!" message.
+      - The model's old lawn (Plane001) is lowered 0.2 m visually; it was peeking along wall bases in the main hall.

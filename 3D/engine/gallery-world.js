@@ -5,6 +5,7 @@
 //  • A city all round the park: streets and a skyline of towers fading into the haze.
 // Everything is a handful of draw calls (instancing + small shaders) so it stays inside the phone budget.
 import * as THREE from '../vendor/three/three.module.js';
+import { buildEye } from './gallery-eye.js';
 
 const rnd = (() => { let s = 20261002; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; })();
 
@@ -59,7 +60,7 @@ const WATER_VS = `
     #include <fog_vertex>
   }`;
 const WATER_FS = `
-  uniform float uT; uniform vec3 uDeep; uniform vec3 uShallow; uniform vec3 uSky; uniform float uAlpha; varying vec3 vW; varying float vH;
+  uniform float uT; uniform vec3 uDeep; uniform vec3 uShallow; uniform vec3 uSky; uniform float uAlpha; uniform float uNight; varying vec3 vW; varying float vH;
   #include <fog_pars_fragment>
   float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
   float noise(vec2 p) { vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
@@ -75,7 +76,8 @@ const WATER_FS = `
     col = mix(col, uSky, clamp(fres * 0.85 + 0.08, 0.0, 0.9));
     // sun glints and soft caustic lines
     vec3 L = normalize(vec3(-0.45, 0.85, 0.3)); vec3 H = normalize(L + V);
-    col += vec3(1.0, 0.97, 0.9) * pow(max(dot(N, H), 0.0), 90.0) * 0.45;
+    col += mix(vec3(1.0, 0.9, 0.72), vec3(1.0, 0.85, 0.6) * 0.6, uNight) * pow(max(dot(N, H), 0.0), 90.0) * 0.45;
+    col += uNight * vec3(1.0, 0.8, 0.5) * smoothstep(0.72, 0.8, noise(p * vec2(0.25, 3.0) + vec2(0.0, uT * 0.4))) * 0.22;   // city lights shimmering on the water
     float c = smoothstep(0.62, 0.7, noise(p * 1.4 + vec2(uT * 0.3, uT * 0.22)) * 0.6 + n2 * 0.4);
     col += vec3(0.65, 0.9, 1.0) * c * 0.07 + vH * 0.35;
     gl_FragColor = vec4(col, clamp(uAlpha + fres * 0.3, 0.0, 0.95));
@@ -96,7 +98,7 @@ const CITY_VS = `
     #include <fog_vertex>
   }`;
 const CITY_FS = `
-  varying vec3 vW; varying vec3 vN; varying vec3 vC; varying vec3 vL;
+  uniform float uNight; varying vec3 vW; varying vec3 vN; varying vec3 vC; varying vec3 vL;
   #include <fog_pars_fragment>
   float hash(vec2 p) { return fract(sin(dot(p, vec2(41.3, 289.1))) * 13758.5453); }
   void main() {
@@ -107,11 +109,12 @@ const CITY_FS = `
       vec2 f = vec2(abs(n.x) > 0.5 ? vW.z : vW.x, vW.y + 3.4);
       vec2 cell = floor(f / vec2(3.2, 3.6)), q = fract(f / vec2(3.2, 3.6));
       float win = step(0.18, q.x) * step(q.x, 0.82) * step(0.22, q.y) * step(q.y, 0.78) * step(4.0, f.y);
-      float lit = step(0.86, hash(cell + floor(vW.xz * 0.01)));
+      float lit = step(mix(0.86, 0.42, uNight), hash(cell + floor(vW.xz * 0.01)));
       vec3 glass = mix(vec3(0.33, 0.42, 0.52), vec3(0.62, 0.72, 0.82), hash(cell * 1.7)) * (0.75 + 0.25 * light);
-      col = mix(col, mix(glass, vec3(1.0, 0.86, 0.6), lit * 0.55), win * 0.9);
+      col *= mix(1.0, 0.16, uNight); glass *= mix(1.0, 0.22, uNight);
+      col = mix(col, mix(glass, vec3(1.0, 0.84, 0.55) * mix(1.0, 1.25, uNight), lit * mix(0.55, 1.0, uNight)), win * 0.9);
       col *= 0.92 + 0.08 * step(0.5, fract(f.y / 3.6 * 0.5));
-    } else col *= 0.86;
+    } else col *= 0.86 * mix(1.0, 0.16, uNight);
     gl_FragColor = vec4(col, 1.0);
     #include <fog_fragment>
   }`;
@@ -122,6 +125,9 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
   if (scene.fog) { scene.fog.near = 170; scene.fog.far = lowEnd ? 900 : 1150; }
   camera.far = 1600; camera.updateProjectionMatrix();
   const updaters = [];
+  let cityMat = null, waterMat = null;
+  // the model's old lawn sits a few cm above some floors and peeks along wall bases: drop it out of sight (looks only; walking is unchanged)
+  scene.traverse(o => { if (o.isMesh && /^Plane001/.test(o.name)) { o.position.y -= 0.2; o.updateMatrix(); o.updateMatrixWorld(true); } });
 
   // ---------------------------------------------------------------- 1. cherry trees
   const tall = cherryCanvas(256, 512, 11), round = cherryCanvas(512, 512, 23);
@@ -176,9 +182,10 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
     const seg = lowEnd ? 72 : 128;
     const water = new THREE.Mesh(new THREE.PlaneGeometry(lakeW, lakeD, seg, Math.round(seg * lakeD / lakeW)), new THREE.ShaderMaterial({
       vertexShader: WATER_VS, fragmentShader: WATER_FS, transparent: true, depthWrite: false, fog: true,
-      uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uT: { value: 0 }, uDeep: { value: new THREE.Color(0x14506a) }, uShallow: { value: new THREE.Color(0x3aa0b4) }, uSky: { value: new THREE.Color(0xcfe6f4) }, uAlpha: { value: 0.66 } }]),
+      uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uT: { value: 0 }, uDeep: { value: new THREE.Color(0x14506a) }, uShallow: { value: new THREE.Color(0x3aa0b4) }, uSky: { value: new THREE.Color(0xcfe6f4) }, uAlpha: { value: 0.66 }, uNight: { value: 0 } }]),
     }));
     water.rotation.x = -Math.PI / 2; water.position.set(lcx, WATER_Y, lcz); water.renderOrder = 1; scene.add(water);
+    waterMat = water.material;
     updaters.push(t => { water.material.uniforms.uT.value = t; });
     // a pale stone rim round the lake (the museum side is the building itself)
     const stone = new THREE.MeshLambertMaterial({ color: 0xd8d2c8 });
@@ -234,8 +241,8 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
       flags.push(mat); return g;
     };
     // centred out on the water in front of the welcome plaza, either side of the museum's axis
-    make(44, -13, resolveImg('gallery/img/bcp_logo_white.webp'), 'bcp', 0);
-    make(44, 13, resolveImg('gallery/img/ora_card_16x9_black_269773142.webp'), 'ora', 1.9);
+    make(40, -21, resolveImg('gallery/img/bcp_logo_white.webp'), 'bcp', 0);
+    make(40, 21, resolveImg('gallery/img/ora_card_16x9_black_269773142.webp'), 'ora', 1.9);
     updaters.push(t => { for (const m of flags) m.uniforms.uT.value = t; });
   }
 
@@ -244,7 +251,7 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
     // park lawn that fills the gaps round the museum, then city streets beyond
     const PARK = { x0: -335, x1: 135, z0: -275, z1: 275 };
     const lawn = new THREE.Mesh(new THREE.PlaneGeometry(PARK.x1 - PARK.x0, PARK.z1 - PARK.z0), new THREE.MeshLambertMaterial({ color: 0x6f7a3c }));
-    lawn.rotation.x = -Math.PI / 2; lawn.position.set((PARK.x0 + PARK.x1) / 2, -3.36, (PARK.z0 + PARK.z1) / 2); scene.add(lawn);
+    lawn.rotation.x = -Math.PI / 2; lawn.position.set((PARK.x0 + PARK.x1) / 2, -3.55, (PARK.z0 + PARK.z1) / 2); scene.add(lawn);
     const BLOCK = 74, ROAD = 14;
     const cv = document.createElement('canvas'); cv.width = cv.height = 256; const c = cv.getContext('2d');
     const r = ROAD / BLOCK * 256;
@@ -256,7 +263,7 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
     const st = new THREE.CanvasTexture(cv); st.colorSpace = THREE.SRGBColorSpace; st.wrapS = st.wrapT = THREE.RepeatWrapping; st.anisotropy = 8;
     const SIZE = 3200; st.repeat.set(SIZE / BLOCK, SIZE / BLOCK); st.offset.set(0.5 - ((PARK.x0 - ROAD) / BLOCK) % 1, 0);
     const streets = new THREE.Mesh(new THREE.PlaneGeometry(SIZE, SIZE), new THREE.MeshLambertMaterial({ map: st }));
-    streets.rotation.x = -Math.PI / 2; streets.position.set(-100, -3.42, 0); scene.add(streets);
+    streets.rotation.x = -Math.PI / 2; streets.position.set(-100, -3.6, 0); scene.add(streets);
     // towers on every block outside the park: taller towards a downtown to the north-west
     const boxes = [];
     for (let bx = -1500; bx < 1300; bx += BLOCK) for (let bz = -1500; bz < 1500; bz += BLOCK) {
@@ -274,7 +281,8 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
       }
     }
     const geo = new THREE.BoxGeometry(1, 1, 1); geo.translate(0, 0.5, 0);
-    const mat = new THREE.ShaderMaterial({ vertexShader: CITY_VS, fragmentShader: CITY_FS, fog: true, uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog]) });
+    const mat = new THREE.ShaderMaterial({ vertexShader: CITY_VS, fragmentShader: CITY_FS, fog: true, uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uNight: { value: 0 } }]) });
+    cityMat = mat;
     const city = new THREE.InstancedMesh(geo, mat, boxes.length), m4 = new THREE.Matrix4(), col = new THREE.Color();
     const tones = [0xe6e0d6, 0xcfd3d8, 0xb9bec4, 0xd9cbb8, 0xa9b4bf, 0xeeeae2, 0x9aa4ad, 0xc8b8a4];
     boxes.forEach(([x, z, w, h, d], i) => { m4.makeScale(w, h, d); m4.setPosition(x, -3.42, z); city.setMatrixAt(i, m4); city.setColorAt(i, col.setHex(tones[(rnd() * tones.length) | 0])); });
@@ -290,5 +298,61 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
   }
 
   let t = 0;
-  return { update(dt) { t += dt; for (const f of updaters) f(t); }, lake: LAKE, waterY: WATER_Y };
+  // ---------------------------------------------------------------- 5. the sky: golden hour by day, stars by night
+  const sky = new THREE.Mesh(new THREE.SphereGeometry(1500, 32, 16), new THREE.ShaderMaterial({
+    side: THREE.BackSide, depthWrite: false, fog: false,
+    uniforms: { uNight: { value: 0 }, uSun: { value: new THREE.Vector3(0.62, 0.22, 0.48).normalize() } },
+    vertexShader: 'varying vec3 vD; void main() { vD = normalize(position); vec4 p = projectionMatrix * modelViewMatrix * vec4(position, 1.0); gl_Position = p.xyww; }',
+    fragmentShader: `uniform float uNight; uniform vec3 uSun; varying vec3 vD;
+      float hash(vec3 p) { return fract(sin(dot(p, vec3(12.9898, 78.233, 37.719))) * 43758.5453); }
+      void main() {
+        float h = max(vD.y, -0.1);
+        vec3 day = mix(vec3(1.0, 0.82, 0.64), vec3(0.42, 0.62, 0.86), smoothstep(0.0, 0.42, h));   // warm horizon, deep blue overhead
+        day = mix(day, vec3(0.98, 0.9, 0.82), smoothstep(0.05, -0.08, vD.y));
+        float sd = max(dot(vD, uSun), 0.0);
+        day += vec3(1.0, 0.75, 0.45) * pow(sd, 18.0) * 0.55 + vec3(1.0, 0.96, 0.85) * smoothstep(0.9993, 0.9997, sd);
+        vec3 night = mix(vec3(0.16, 0.13, 0.2), vec3(0.02, 0.03, 0.08), smoothstep(0.0, 0.5, h));
+        vec3 g = floor(vD * 420.0); float st = step(0.9975, hash(g)) * smoothstep(0.05, 0.3, h);
+        night += vec3(0.9, 0.92, 1.0) * st * (0.6 + 0.4 * hash(g + 3.0));
+        night += vec3(0.95, 0.95, 1.0) * smoothstep(0.9996, 0.9998, max(dot(vD, normalize(vec3(-0.5, 0.45, -0.7))), 0.0));   // the moon
+        gl_FragColor = vec4(mix(day, night, uNight), 1.0);
+      }`,
+  }));
+  sky.renderOrder = -10; sky.frustumCulled = false; scene.add(sky);
+  updaters.push(() => sky.position.copy(camera.position));
+  // the sun low and warm; remember the lights so night can dim them
+  const lights = { hemi: null, sun: null, amb: null };
+  scene.traverse(o => { if (o.isHemisphereLight) lights.hemi = o; else if (o.isDirectionalLight) lights.sun = o; else if (o.isAmbientLight) lights.amb = o; });
+  const L0 = { hemi: lights.hemi && lights.hemi.intensity, sun: lights.sun && lights.sun.intensity, amb: lights.amb && lights.amb.intensity };
+  if (lights.sun) { lights.sun.color.set(0xffe2bf); lights.sun.position.set(110, 60, 85); }
+  if (lights.hemi) lights.hemi.color.set(0xfff4e8);
+  const fogDay = new THREE.Color(0xeedfd0), fogNight = new THREE.Color(0x141626);
+  if (scene.fog) scene.fog.color.copy(fogDay);
+  scene.background = null;
+
+  // ---------------------------------------------------------------- 6. the eye facade and the name sign
+  let eye = { update() {} };
+  try { eye = buildEye({ scene, lowEnd }); } catch (e) { console.warn('eye', e); }
+
+  // ---------------------------------------------------------------- night: eases in and out
+  let night = 0, nightTarget = 0;
+  const applyNight = n => {
+    sky.material.uniforms.uNight.value = n;
+    if (cityMat) cityMat.uniforms.uNight.value = n;
+    if (waterMat) { const u = waterMat.uniforms; u.uNight.value = n; u.uSky.value.setRGB(0.81 - 0.7 * n, 0.9 - 0.78 * n, 0.96 - 0.78 * n); u.uDeep.value.setRGB(0.08 - 0.05 * n, 0.31 - 0.22 * n, 0.42 - 0.27 * n); u.uShallow.value.setRGB(0.23 - 0.15 * n, 0.63 - 0.45 * n, 0.71 - 0.45 * n); }
+    if (scene.fog) scene.fog.color.copy(fogDay).lerp(fogNight, n);
+    // inside stays well lit (the gallery has its lights on); outside goes dark
+    if (lights.hemi) { lights.hemi.intensity = L0.hemi * (1 - 0.45 * n); lights.hemi.color.setRGB(1, 0.96 - 0.08 * n, 0.91 + 0.04 * n); }
+    if (lights.sun) lights.sun.intensity = L0.sun * (1 - 0.85 * n);
+    if (lights.amb) lights.amb.intensity = L0.amb * (1 + 0.9 * n);
+  };
+  applyNight(0);
+  updaters.push((tt, dt) => { if (Math.abs(night - nightTarget) > 0.001) { night += Math.sign(nightTarget - night) * Math.min(Math.abs(nightTarget - night), dt / 2.5); applyNight(night); } eye.update(tt, night); });
+
+  let last = 0;
+  return {
+    update(dt) { t += dt; for (const f of updaters) f(t, dt); },
+    setNight(v) { nightTarget = v ? 1 : 0; }, isNight: () => nightTarget === 1,
+    lake: LAKE, waterY: WATER_Y,
+  };
 }

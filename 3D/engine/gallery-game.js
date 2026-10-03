@@ -9,6 +9,7 @@ import { foxKit, PLAYER_MALE, PLAYER_FEMALE } from '../fox-kit.js';
 import { crestTex } from './textures.js';
 import { buildGuides } from './gallery-guides.js';
 import { buildWorld } from './gallery-world.js';
+import { makePlant, makeBench } from './gallery-props.js';
 import { artAnimator } from './gallery-anim.js';
 import { buildVisionSpots, visionOverlay } from './gallery-vision.js';
 import { buildSimWalls } from './gallery-simwall.js';
@@ -18,7 +19,7 @@ import { buildKiosks, carveWorld, carved, buildEntrance, buildRooms, canvasBox, 
 const BASE = 'gallery/';
 const SPAWN = { x: 3.6, y: 0.5, z: 0, face: -Math.PI / 2 };
 
-export async function createGallery({ container, onProgress = () => {}, onNear = () => {}, onZone = () => {} }) {
+export async function createGallery({ container, onProgress = () => {}, onNear = () => {}, onZone = () => {}, onSplash = () => {} }) {
   const lowEnd = /iPhone|iPad|Android/i.test(navigator.userAgent);
   const NOWORLD = new URLSearchParams(location.search).has('noworld');   // (testing) the museum without the lake, flags and city
   const renderer = new THREE.WebGLRenderer({ antialias: !lowEnd || devicePixelRatio < 2, powerPreference: 'high-performance' });
@@ -86,7 +87,14 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const rooms = buildRooms({ scene, data, wood, resolveImg: RES, buildWing });
   // the Six Views severity lecterns: solid, so you walk round them
   const simCol = (data.simKiosks || []).map(k => { const m = new THREE.Mesh(new THREE.BoxGeometry(1.3, 1.6, 0.9)); m.position.set(k.p[0], k.p[1] + 0.8, k.p[2]); m.rotation.y = k.face || 0; m.updateMatrixWorld(true); return m; });
-  for (const m of [...entrance.col, ...rooms.col, ...kiosks.col, ...simCol]) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); colGeos.push(g); }
+  // invisible edges: the plaza's open side above the lake (the other sides have railings)
+  const edgeCol = [[7.6, 1.5, 0, 0.3, 6, 27.6]].map(([x, y, z, w, h, d]) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d)); m.position.set(x, y, z); m.updateMatrixWorld(true); return m; });
+  // furnishings: plants at the plaza corners and the main hall entrance, benches on the plaza looking out over the lake
+  const propCol = [];
+  const place = (p, x, z, ry = 0) => { const y = (() => { glbRay.set(new THREE.Vector3(x, 4, z), DOWN); glbRay.far = 12; const h = glbRay.intersectObject(world, true)[0]; return h ? h.point.y : 0; })(); p.group.position.set(x, y, z); p.group.rotation.y = ry; scene.add(p.group); const cb = new THREE.Mesh(new THREE.BoxGeometry(...p.size)); cb.position.set(x, y + p.size[1] / 2, z); cb.rotation.y = ry; cb.updateMatrixWorld(true); propCol.push(cb); };
+  for (const [x, z] of [[6.4, 12.4], [6.4, -12.4], [-12.2, 12.4], [-12.2, -12.4], [-76.4, 11.4], [-76.4, -11.4]]) place(makePlant(2.3), x, z);
+  for (const z of [7.6, -7.6]) place(makeBench(2.8), 5.6, z, Math.PI / 2);
+  for (const m of [...entrance.col, ...rooms.col, ...kiosks.col, ...simCol, ...edgeCol, ...propCol]) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); colGeos.push(g); }
   // one position-only collision mesh with a BVH (fast rays on phones)
   let total = 0; for (const g of colGeos) total += (g.index ? g.index.count : g.attributes.position.count);
   const P = new Float32Array(total * 3); let k = 0;
@@ -197,6 +205,22 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   // the world outside: the lake under the bridge, flags, cherry trees and the city
   let outdoors = { update() {} }; if (!NOWORLD) try { outdoors = buildWorld({ scene, camera, renderer, resolveImg: RES, lowEnd, groundAt: (x, y, z) => { const h = cast(x, y + 0.55, z, 0, -1, 0, 40); return h ? h.point.y : -1e9; } }); } catch (e) { console.warn("outdoors", e); }
   const guides = buildGuides({ scene, guides: data.guides, groundAt: (x, y, z) => { const h = cast(x, y + 0.55, z, 0, -1, 0, 30); return h ? h.point.y : -1e9; } });
+  // gallery lighting: a soft warm pool on the wall round every painting, from a small spotlight above it (drawn, no real lights)
+  const spotTex = (() => { const cv = document.createElement('canvas'); cv.width = cv.height = 256; const c = cv.getContext('2d');
+    const g = c.createRadialGradient(128, 70, 10, 128, 120, 150); g.addColorStop(0, 'rgba(255,236,205,0.95)'); g.addColorStop(0.45, 'rgba(255,226,190,0.45)'); g.addColorStop(1, 'rgba(255,220,180,0)');
+    c.fillStyle = g; c.fillRect(0, 0, 256, 256); const t = new THREE.CanvasTexture(cv); return t; })();
+  const spotMat = new THREE.MeshBasicMaterial({ map: spotTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.32, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 });
+  const fixGeo = new THREE.CylinderGeometry(0.07, 0.11, 0.26, 10); fixGeo.rotateX(0.7); const fixMat = new THREE.MeshLambertMaterial({ color: 0x1d1c1b });
+  const spotItems = [];
+  for (const sg of signs) if (sg.s.k === 'c') { const c = sg.s.c; spotItems.push({ mesh: () => sg.mesh, w: Math.hypot(c[1][0] - c[0][0], c[1][1] - c[0][1], c[1][2] - c[0][2]), h: Math.hypot(c[3][0] - c[0][0], c[3][1] - c[0][1], c[3][2] - c[0][2]) }); }
+  for (const cv of [...(wing ? wing.canvases : []), ...rooms.canvases]) spotItems.push({ mesh: () => cv.mesh, w: cv.w, h: cv.h });
+  function lightArt() {
+    for (const it of spotItems) {
+      const m = it.mesh(); if (!m || m.userData.spot) continue; m.userData.spot = true;
+      const pool = new THREE.Mesh(new THREE.PlaneGeometry(it.w + 2.2, it.h + 2.4), spotMat); pool.position.set(0, 0.35, -0.03); pool.renderOrder = 1; m.add(pool);
+      const fx = new THREE.Mesh(fixGeo, fixMat); fx.position.set(0, it.h / 2 + 1.25, 0.45); m.add(fx);
+    }
+  }
   const animator = artAnimator({ items: animItems, maxActive: lowEnd ? 2 : 3 });
   const localFail = new Set();
   const video = document.createElement('video'); video.crossOrigin = 'anonymous'; video.playsInline = true; video.setAttribute('playsinline', ''); video.loop = true; video.muted = true; video.preload = 'auto';
@@ -448,6 +472,8 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     if (Pl.ground && gy > Pl.y - 0.45 && Pl.vy <= 0) { Pl.y = damp(Pl.y, gy, 30, dt); Pl.vy = 0; }
     else { Pl.vy -= 22 * dt; Pl.y += Pl.vy * dt; Pl.ground = false; if (Pl.y <= gy) { Pl.y = gy; Pl.vy = 0; Pl.ground = true; } }
     if (Pl.y < -60) respawn();
+    // in the lake (jumped off a rail, or squeezed past one): no swimming, back to the plaza
+    if (!NOWORLD && Pl.y < -2.6 && Pl.x > -43 && !(Math.abs(Pl.z) < 3.6 && Pl.x < -12)) { respawn(); onSplash(); }
     Pl.speed = Math.hypot(dx, dz) / Math.max(dt, 1e-4) + (mag > 0.05 ? sp * 0.3 : 0);
   }
   // ---------------------------------------------------------------- "See through their eyes": two floor spots in the main hall (between Ben's and April & Melissa's screens)
@@ -621,6 +647,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       // nearest first, a few per tick (no hitch), far enough out that it all arrives before you can see it
       const want = []; for (const sg of signs) { const d = sg.ctr.distanceTo(p); if (d < NEAR) { if (!sg.mesh) want.push([d, sg]); } else if (d > FAR) hideSign(sg); }
       want.sort((a, b) => a[0] - b[0]); for (const [, sg] of want.slice(0, firstStream ? 60 : 14)) showSign(sg); firstStream = false;
+      lightArt();
       // which video zone are we in?
       let zUrl = null; const pp = new THREE.Vector3(Pl.x, Pl.y + 0.5, Pl.z);
       for (const v of vids) if ((v.zone && v.zone.containsPoint(pp)) || (v.zones && v.zones.some(z => z.containsPoint(pp)))) { zUrl = v.u; break; }
@@ -652,6 +679,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     jump() { input.jump = 1; },
     setRun(v) { input.run = v ? 1 : 0; },
     respawn,
+    setNight: v => outdoors.setNight && outdoors.setNight(v), isNight: () => !!(outdoors.isNight && outdoors.isNight()),
     simwall: () => simwalls,
     // visiting together: follow / go to a friend, and the zone film for watch parties
     follow: (id, onEnd) => followStart(id, onEnd), unfollow: () => followStop('stopped'), following: () => F.id,

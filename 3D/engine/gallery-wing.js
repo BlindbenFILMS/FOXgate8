@@ -1,5 +1,6 @@
 // Blind Canvas gallery: honey-oak floors + the New Artists Wing (built from Ben's artist pages)
 import * as THREE from '../vendor/three/three.module.js';
+import { makePlant } from './gallery-props.js';
 
 // ------------------------------------------------------------ hardwood
 export function makeWood({ size = 1024, planksAcross = 16, hue = 32, sat = 46, light = 45 } = {}) {
@@ -94,6 +95,12 @@ export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveIm
     box(0.4, Hh - lintel, doorW, wallM, 0.2, lintel + (Hh - lintel) / 2, 0);
     const sg = panelTex(1024, 128, (c, w, h) => { c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, 0, 10, h); c.fillStyle = '#fff'; let fs = 64; c.font = `800 ${fs}px ${FONT}`; while (c.measureText(doorSign).width > w - 70 && fs > 30) { fs -= 2; c.font = `800 ${fs}px ${FONT}`; } c.textBaseline = 'middle'; c.fillText(doorSign, 40, 66); });   // shrink to fit: the whole name always shows
     for (const r of [0, Math.PI]) { const m = new THREE.Mesh(new THREE.PlaneGeometry(doorW - 0.4, 1.0), new THREE.MeshBasicMaterial({ map: sg })); m.position.set(r ? 0.45 : -0.05, lintel + 0.6, 0); m.rotation.y = r ? Math.PI / 2 : -Math.PI / 2; g.add(m); }
+    // the threshold: an ink portal with a red inner edge, and a dark band across the floor, so you feel the room begin
+    const redM = new THREE.MeshBasicMaterial({ color: 0xec3013 });
+    for (const sz of [-1, 1]) { box(0.7, lintel, 0.28, inkM, 0.2, lintel / 2, sz * (doorW / 2 + 0.14), false); box(0.72, lintel, 0.05, redM, 0.2, lintel / 2, sz * (doorW / 2 - 0.02), false); }
+    box(0.7, 0.32, doorW + 0.56, inkM, 0.2, lintel + 0.16, 0, false); box(0.72, 0.05, doorW, redM, 0.2, lintel - 0.02, 0, false);
+    box(1.4, 0.02, doorW, inkM, -0.5, 0.012, 0, false);
+    for (const sz of [-1, 1]) { const pl = makePlant(2.2); pl.group.position.set(-1.6, 0, sz * (HW - 1.0)); g.add(pl.group); const cb = new THREE.Mesh(new THREE.BoxGeometry(...pl.size)); cb.position.set(-1.6, 0.8, sz * (HW - 1.0)); cb.visible = false; g.add(cb); col.push(cb); }   // a plant either side, just inside
   } else box(0.4, Hh, Wd, wallM, 0.2, Hh / 2, 0);
   box(0.4, Hh, Wd, wallM, -L - 0.2, Hh / 2, 0);
   box(L, Hh, 0.4, wallM, -L / 2, Hh / 2, -HW - 0.2); box(L, Hh, 0.4, wallM, -L / 2, Hh / 2, HW + 0.2);

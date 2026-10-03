@@ -75,6 +75,8 @@ OFF</button></div>
   <div class="opts" id="extras"><button data-x="none">None</button><button data-x="glasses">Glasses</button><button data-x="cane">White cane</button><button data-x="chair">Wheelchair</button></div>
   <div class="lab">Reading</div>
   <div class="opts"><button id="autoRead">Read aloud when I open art</button><button id="big">Larger text</button><button id="readNotes">Read notes aloud when I pass</button></div>
+  <div class="lab">Atmosphere</div>
+  <div class="opts"><button id="ambBtn">Ambient sounds</button><button id="nightBtn">🌙 Night</button></div>
   <div class="lab">Visiting together</div>
   <div class="opts"><button id="rename">Change my name</button><button id="invite">Copy private room link</button><button id="tourBtn">Lead a tour</button><button id="hostBtn">Host this visit</button><button id="noteBtn">📝 Leave a note here</button></div>
   <div id="whoList" style="font-size:13px;line-height:1.5;margin-top:8px"></div>
@@ -90,11 +92,12 @@ const pref = (() => { try { return JSON.parse(localStorage.getItem('8gates.galle
 const savePref = () => { try { localStorage.setItem('8gates.gallery.v1', JSON.stringify(pref)); } catch (e) {} };
 let G; let near = null;
 try {
-  G = await createGallery({ container: $('stage'), onProgress: f => { $('lb').style.width = Math.round(f * 100) + '%'; }, onNear, onZone: z => { document.querySelector('#place .c').textContent = z; } });
+  G = await createGallery({ container: $('stage'), onProgress: f => { $('lb').style.width = Math.round(f * 100) + '%'; }, onNear, onZone: z => { document.querySelector('#place .c').textContent = z; }, onSplash: () => { $('live').textContent = 'Splash! No swimming in the lake. Back to the entrance.'; $('hint').textContent = '💦 Splash! No swimming in the lake. Back to the entrance.'; $('hint').style.display = 'block'; setTimeout(() => $('hint').style.display = 'none', 3500); } });
 } catch (e) { $('lt').textContent = 'The gallery could not open: ' + e.message; throw e; }
 window.G = G;
 
 if (pref.look || pref.extra) G.setLook(pref.look || 'male', pref.extra || 'none');
+if (pref.night) G.setNight(true);
 const touch = matchMedia('(pointer:coarse)').matches;
 $('hint').textContent = touch ? 'Touch the left side to walk · drag the right side to look' : 'W A S D to walk · Shift to run · drag to look · E to view';
 setTimeout(() => $('hint').style.display = 'none', 9000);
@@ -190,6 +193,7 @@ $('px').onclick = close;
 const syncMenu = () => {
   document.querySelectorAll('#looks button').forEach(b => b.classList.toggle('on', b.dataset.l === (pref.look || 'male')));
   document.querySelectorAll('#extras button').forEach(b => b.classList.toggle('on', b.dataset.x === (pref.extra || 'none')));
+  $('ambBtn').classList.toggle('on', !pref.quietAmb); $('nightBtn').classList.toggle('on', !!pref.night); $('nightBtn').textContent = pref.night ? '☀️ Day' : '🌙 Night';
   $('autoRead').classList.toggle('on', !!pref.autoRead); $('readNotes').classList.toggle('on', !pref.quietNotes); $('big').classList.toggle('on', !!pref.big);
   document.documentElement.style.fontSize = pref.big ? '120%' : ''; $('pb').style.fontSize = pref.big ? '20px' : '';
 };
@@ -197,6 +201,8 @@ $('menuBtn').onclick = () => { const m = $('menu'); m.style.display = m.style.di
 document.querySelectorAll('#looks button').forEach(b => b.onclick = () => { pref.look = b.dataset.l; savePref(); G.setLook(pref.look, pref.extra); syncMenu(); });
 document.querySelectorAll('#extras button').forEach(b => b.onclick = () => { pref.extra = b.dataset.x; savePref(); G.setLook(pref.look || 'male', pref.extra); syncMenu(); });
 $('autoRead').onclick = () => { pref.autoRead = !pref.autoRead; savePref(); syncMenu(); };
+$('ambBtn').onclick = () => { pref.quietAmb = !pref.quietAmb; savePref(); if (window.SOUND) window.SOUND.set(!pref.quietAmb); syncMenu(); };
+$('nightBtn').onclick = () => { pref.night = !pref.night; savePref(); G.setNight(pref.night); $('live').textContent = pref.night ? 'Night falls over the city.' : 'Back to golden afternoon light.'; syncMenu(); };
 $('readNotes').onclick = () => { pref.quietNotes = !pref.quietNotes; savePref(); syncMenu(); };
 $('big').onclick = () => { pref.big = !pref.big; savePref(); syncMenu(); };
 $('home').onclick = () => { G.respawn(); $('menu').style.display = 'none'; };
@@ -258,6 +264,7 @@ $('enter').style.display = 'block'; $('enter').focus();
 await new Promise(res => $('enter').addEventListener('click', () => {
   pref.name = ($('nameIn').value || '').trim().slice(0, 20) || ('Fox ' + Math.floor(100 + Math.random() * 900)); savePref();
   G.unlockAudio();
+  try { if (!window.SOUND) { import('./engine/gallery-sound.js').then(({ setupSound }) => { window.SOUND = setupSound({ getState: () => G.localState(), inside: (x, y, z) => x < -44, filmPlaying: () => !!G.film.url(), chair: () => (pref.extra || '') === 'chair' }); if (window.SOUND) { window.SOUND.resume(); window.SOUND.set(!pref.quietAmb); } }); } } catch (e) {}
   try { if (window.speechSynthesis) { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } } catch (e) {}
   res();
 }, { once: true }));
