@@ -110,7 +110,7 @@ export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveIm
   // ceiling light strips + bench seats down the middle
   for (let x = -5; x > -L; x -= 7.5) { box(5.5, 0.06, 0.5, lightM, x, Hh - 0.02, -4, false); box(5.5, 0.06, 0.5, lightM, x, Hh - 0.02, 4, false); }
   if (!spacious) for (let x = -16; x > -L + 6; x -= 15) { box(3.2, 0.45, 0.9, greyM, x, 0.225, 0); }
-  const lamp = new THREE.PointLight(0xfff2dc, 0, 0); g.add(lamp);   // (ambient/hemi do the lighting; no extra cost)
+  // (no lights here: ambient + hemisphere light the rooms; even a 0-intensity point light costs every surface in the gallery)
 
   // a logo on an ink panel (wall or floor); the image loads with the room
   const logoPanel = (LW, LH, img) => {

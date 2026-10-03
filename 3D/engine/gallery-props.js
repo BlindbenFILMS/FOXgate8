@@ -18,19 +18,21 @@ function leaves() {
   leafTex = new THREE.CanvasTexture(cv); leafTex.colorSpace = THREE.SRGBColorSpace; return leafTex;
 }
 
+let PM = null;   // shared materials, so every plant (and bench) in a room merges into a few draws
+const pm = () => PM || (PM = { pot: new THREE.MeshLambertMaterial({ color: 0x1d1c1b }), rim: new THREE.MeshBasicMaterial({ color: 0xec3013 }), soil: new THREE.MeshLambertMaterial({ color: 0x3a2a1e }), leaf: new THREE.MeshLambertMaterial({ map: leaves(), transparent: true, alphaTest: 0.35, side: THREE.DoubleSide }), oak: new THREE.MeshLambertMaterial({ color: 0xb98a5a }) });
 export function makePlant(height = 2.1) {
-  const g = new THREE.Group();
-  const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.26, 0.62, 18), new THREE.MeshLambertMaterial({ color: 0x1d1c1b })); pot.position.y = 0.31; g.add(pot);
-  const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.05, 18), new THREE.MeshBasicMaterial({ color: 0xec3013 })); rim.position.y = 0.6; g.add(rim);
-  const soil = new THREE.Mesh(new THREE.CircleGeometry(0.31, 18), new THREE.MeshLambertMaterial({ color: 0x3a2a1e })); soil.rotation.x = -Math.PI / 2; soil.position.y = 0.58; g.add(soil);
-  const mat = new THREE.MeshLambertMaterial({ map: leaves(), transparent: true, alphaTest: 0.35, side: THREE.DoubleSide });
+  const g = new THREE.Group(), P = pm();
+  const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.26, 0.62, 18), P.pot); pot.position.y = 0.31; g.add(pot);
+  const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.05, 18), P.rim); rim.position.y = 0.6; g.add(rim);
+  const soil = new THREE.Mesh(new THREE.CircleGeometry(0.31, 18), P.soil); soil.rotation.x = -Math.PI / 2; soil.position.y = 0.58; g.add(soil);
+  const mat = P.leaf;
   for (let i = 0; i < 3; i++) { const p = new THREE.Mesh(new THREE.PlaneGeometry(1.25, height), mat); p.position.y = 0.55 + height / 2; p.rotation.y = (i / 3) * Math.PI; g.add(p); }
   return { group: g, size: [0.8, 1.6, 0.8] };
 }
 
 export function makeBench(len = 2.6) {
   const g = new THREE.Group();
-  const oak = new THREE.MeshLambertMaterial({ color: 0xb98a5a }), ink = new THREE.MeshLambertMaterial({ color: 0x1d1c1b });
+  const oak = pm().oak, ink = pm().pot;
   const seat = new THREE.Mesh(new THREE.BoxGeometry(len, 0.08, 0.62), oak); seat.position.y = 0.46; g.add(seat);
   for (const x of [-len / 2 + 0.2, len / 2 - 0.2]) { const leg = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.44, 0.56), ink); leg.position.set(x, 0.22, 0); g.add(leg); }
   return { group: g, size: [len, 0.6, 0.65] };

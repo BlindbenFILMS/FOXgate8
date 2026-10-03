@@ -52,7 +52,7 @@ export function setupSound({ getState, inside, filmPlaying, chair }) {
     if (!on || ctx.state !== 'running') return;
     const [x, y, z, , speed, air] = getState(), inn = inside(x, y, z), duck = filmPlaying() ? 0.35 : 1;
     // the lake: louder the nearer you are to its edge (outside the building only)
-    const nearLake = inn ? 0 : Math.max(0, 1 - Math.max(0, x < -43 ? -43 - x : 0) / 30);
+    const nearLake = inn ? 0 : Math.max(0, 1 - Math.max(0, x > -12.4 ? x + 12.4 : 0) / 26);   // the lake lies between the plaza and the museum; it fades as you walk into the garden
     ramp(water.gain, 0.22 * nearLake * duck);
     ramp(hum.gain, (inn ? 0.06 : 0.015) * duck);
     if (!inn && (birdT -= dt) <= 0) { birdT = 3 + Math.random() * 7; chirp(); }

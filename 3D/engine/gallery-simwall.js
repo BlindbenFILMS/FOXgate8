@@ -92,7 +92,7 @@ const FONT = 'Archivo, Arimo, Helvetica, Arial, sans-serif';
 const LOW = /iPhone|iPad|Android/i.test(navigator.userAgent);
 export function buildSimWalls({ scene, walls, src, kiosk, kiosks, zone }) {
   // one video for every tile on every wall: always in sync
-  const video = document.createElement('video'); video.src = src; video.muted = true; video.loop = true; video.playsInline = true; video.setAttribute('playsinline', ''); video.preload = 'auto'; video.crossOrigin = 'anonymous';
+  const video = document.createElement('video'); video.muted = true; video.loop = true; video.playsInline = true; video.setAttribute('playsinline', ''); video.preload = 'none'; video.crossOrigin = 'anonymous';
   const vtex = new THREE.VideoTexture(video); vtex.colorSpace = THREE.NoColorSpace;   // shader works in sRGB like CSS
   const st = { sev: 0.85, shown: 0.85, playing: false, phase: 0, t: 0 };
   const tiles = [];   // { mat, i }
@@ -162,8 +162,8 @@ export function buildSimWalls({ scene, walls, src, kiosk, kiosks, zone }) {
     update(dt, px, py, pz) {
       st.t += dt;
       const inRoom = zoneBox.containsPoint(new THREE.Vector3(px, py + 0.5, pz));
-      if (inRoom && !st.playing) { st.playing = true; for (const T of tiles) T.mesh.visible = true; const p = video.play(); if (p && p.catch) p.catch(() => {}); }
-      else if (!inRoom && st.playing) { st.playing = false; video.pause(); for (const T of tiles) T.mesh.visible = false; }   // outside the room (or upstairs): screens off, no effect to draw
+      if (inRoom && !st.playing) { st.playing = true; for (const T of tiles) T.mesh.visible = true; if (!video.getAttribute('src')) { video.src = src; video.load(); } const p = video.play(); if (p && p.catch) p.catch(() => {}); }
+      else if (!inRoom && st.playing) { st.playing = false; video.pause(); video.removeAttribute('src'); video.load(); for (const T of tiles) T.mesh.visible = false; }   // left the room: screens off and the film let go of (memory)   // outside the room (or upstairs): screens off, no effect to draw
       if (!st.playing) return;
       st.shown += THREE.MathUtils.clamp(st.sev - st.shown, -dt * 1.5, dt * 1.5);   // the wall eases to a new severity
       const ph = Math.floor(st.t / 5) % 2, k = THREE.MathUtils.clamp((st.t % 5) / 0.9, 0, 1);

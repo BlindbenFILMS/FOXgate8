@@ -4,11 +4,13 @@
 import * as THREE from '../vendor/three/three.module.js';
 import { GLTFLoader } from '../vendor/three/addons/GLTFLoader.js';
 import { MeshBVH } from '../vendor/three/three-mesh-bvh.js';
+import { mergeGeometries } from '../vendor/three/addons/BufferGeometryUtils.js';
 import { rr, pick, clamp, smooth, damp, makeGradient } from '../village-game.js';
 import { foxKit, PLAYER_MALE, PLAYER_FEMALE } from '../fox-kit.js';
 import { crestTex } from './textures.js';
 import { buildGuides } from './gallery-guides.js';
 import { buildWorld } from './gallery-world.js';
+import { GARDEN, RING, planGarden } from './gallery-garden-plan.js';
 import { makePlant, makeBench } from './gallery-props.js';
 import { caneKit, loadCane, CANE_DEFAULTS } from './avatars/cane.js';
 import { chairKit, loadChair, CHAIR_DEFAULTS } from './avatars/chair.js';
@@ -31,6 +33,23 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const W = () => container.clientWidth || 1, H = () => container.clientHeight || 1;
   renderer.setSize(W(), H());
   const scene = new THREE.Scene();
+  // draw-call saver: a mesh with a material array draws once per geometry group (a box = 6). Join neighbouring groups that use
+  // the same material object, and point every face at the first copy, so a canvas or screen box draws 2-3 times, not 6.
+  function compactGroups(mesh) {
+    if (!mesh || !mesh.isMesh || !Array.isArray(mesh.material) || mesh.userData.compact) return;
+    const g = mesh.geometry, mats = mesh.material; if (!g.groups || g.groups.length < 2) return;
+    const first = mats.map((m, i) => mats.indexOf(m)), out = [];
+    const sorted = g.groups.map(gr => ({ start: gr.start, count: gr.count, mi: first[gr.materialIndex] })).sort((a, b) => a.start - b.start);
+    for (const gr of sorted) { const L = out[out.length - 1]; if (L && L.mi === gr.mi && L.start + L.count === gr.start) L.count += gr.count; else out.push({ ...gr }); }
+    // a box's faces are px,nx,py,ny,pz,nz: same-material faces that aren't neighbours can be joined by reordering the index
+    if (g.index && out.length > new Set(out.map(o => o.mi)).size) {
+      const idx = g.index.array, order = [...new Set(sorted.map(o => o.mi))], parts = []; let start = 0; const ng = [];
+      for (const mi of order) { let n = 0; for (const gr of sorted) if (gr.mi === mi) { parts.push(idx.slice(gr.start, gr.start + gr.count)); n += gr.count; } ng.push({ start, count: n, mi }); start += n; }
+      const merged = new idx.constructor(idx.length); let o = 0; for (const p of parts) { merged.set(p, o); o += p.length; }
+      g.setIndex(new THREE.BufferAttribute(merged, 1)); out.length = 0; out.push(...ng);
+    }
+    g.clearGroups(); for (const o of out) g.addGroup(o.start, o.count, o.mi); mesh.userData.compact = true;
+  }
   scene.background = new THREE.Color(0xbfd9ec);
   scene.fog = new THREE.Fog(0xbfd9ec, 120, 420);
   const camera = new THREE.PerspectiveCamera(60, W() / H(), 0.08, 900);
@@ -90,10 +109,25 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   // the Six Views severity lecterns: solid, so you walk round them
   const simCol = (data.simKiosks || []).map(k => { const m = new THREE.Mesh(new THREE.BoxGeometry(1.3, 1.6, 0.9)); m.position.set(k.p[0], k.p[1] + 0.8, k.p[2]); m.rotation.y = k.face || 0; m.updateMatrixWorld(true); return m; });
   // invisible edges: the plaza's open side above the lake (the other sides have railings)
-  const edgeCol = [[7.6, 1.5, 0, 0.3, 6, 27.6]].map(([x, y, z, w, h, d]) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d)); m.position.set(x, y, z); m.updateMatrixWorld(true); return m; });
+  // the cherry blossom garden east of the plaza: a lawn terrace level with the plaza, walled by hedges (invisible walls behind them)
+  const edgeCol = [];
+  if (!NOWORLD) {
+    const B = (w, h, d, x, y, z, ry = 0) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d)); m.position.set(x, y, z); m.rotation.y = ry; m.updateMatrixWorld(true); edgeCol.push(m); };
+    const G = GARDEN, gw = G.x1 - G.x0, gd = G.z1 - G.z0, gx = (G.x0 + G.x1) / 2;
+    B(gw, 0.6, gd, gx, G.y - 0.3, 0);                                                      // the lawn
+    B(gw, 3, 0.4, gx, 1.5, G.z1); B(gw, 3, 0.4, gx, 1.5, G.z0); B(0.4, 3, gd, G.x1, 1.5, 0);   // hedges: north, south, east
+    const sl = G.z1 - G.plaza.z; B(0.4, 3, sl, G.x0, 1.5, G.plaza.z + sl / 2); B(0.4, 3, sl, G.x0, 1.5, -G.plaza.z - sl / 2);   // west, beside the lake
+    const plan = planGarden();
+    for (const [x, z] of plan.lanterns) B(0.7, 1.6, 0.7, x, 0.8, z);
+    for (const [x, z, ry] of plan.benches) B(2.5, 0.6, 0.7, x, 0.3, z, ry);
+    B(1.6, 3, 1.6, RING.x, 1.5, RING.z);                                                    // the big tree's trunk
+    for (const z of [-7.04, 7.04]) B(0.5, 4.4, 0.5, 21, 2.2, z);                           // the name sign's posts
+    for (const z of [-21, 21]) B(2.6, 1, 2.6, 40, 0.5, z);                                 // flag bases
+  }
   // furnishings: plants at the plaza corners and the main hall entrance, benches on the plaza looking out over the lake
   const propCol = [];
-  const place = (p, x, z, ry = 0) => { const y = (() => { glbRay.set(new THREE.Vector3(x, 4, z), DOWN); glbRay.far = 12; const h = glbRay.intersectObject(world, true)[0]; return h ? h.point.y : 0; })(); p.group.position.set(x, y, z); p.group.rotation.y = ry; scene.add(p.group); const cb = new THREE.Mesh(new THREE.BoxGeometry(...p.size)); cb.position.set(x, y + p.size[1] / 2, z); cb.rotation.y = ry; cb.updateMatrixWorld(true); propCol.push(cb); };
+  const propsG = new THREE.Group(); scene.add(propsG);
+  const place = (p, x, z, ry = 0) => { const y = (() => { glbRay.set(new THREE.Vector3(x, 4, z), DOWN); glbRay.far = 12; const h = glbRay.intersectObject(world, true)[0]; return h ? h.point.y : 0; })(); p.group.position.set(x, y, z); p.group.rotation.y = ry; propsG.add(p.group); const cb = new THREE.Mesh(new THREE.BoxGeometry(...p.size)); cb.position.set(x, y + p.size[1] / 2, z); cb.rotation.y = ry; cb.updateMatrixWorld(true); propCol.push(cb); };
   for (const [x, z] of [[6.4, 12.4], [6.4, -12.4], [-12.2, 12.4], [-12.2, -12.4], [-76.4, 11.4], [-76.4, -11.4]]) place(makePlant(2.3), x, z);
   for (const z of [7.6, -7.6]) place(makeBench(2.8), 5.6, z, Math.PI / 2);
   // glass in the building's tall wall openings: you see out to the trees and the city, and can't walk out
@@ -118,6 +152,27 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const P = new Float32Array(total * 3); let k = 0;
   for (const g of colGeos) { const pa = g.attributes.position, ix = g.index; const n = ix ? ix.count : pa.count; for (let i = 0; i < n; i++) { const j = ix ? ix.getX(i) : i; P[k++] = pa.getX(j); P[k++] = pa.getY(j); P[k++] = pa.getZ(j); } g.dispose(); }
   const colGeo = new THREE.BufferGeometry(); colGeo.setAttribute('position', new THREE.BufferAttribute(P, 3));
+  // draw-call saver: inside each built group (rooms, the wing, the walkway, kiosks), merge still meshes that share a material
+  function mergeStatic(root) {
+    root.updateMatrixWorld(true); const inv = new THREE.Matrix4().copy(root.matrixWorld).invert(), buckets = new Map(), m4 = new THREE.Matrix4();
+    root.traverse(o => {
+      if (!o.isMesh || o.isInstancedMesh || Array.isArray(o.material) || o.children.length || !o.visible || o.userData.dyn) return;
+      const ga = o.geometry; if (!ga || !ga.attributes.position) return;
+      const keys = ['position', 'normal', 'uv'].filter(k => ga.attributes[k]).join(',');
+      const key = o.material.uuid + '|' + keys + '|' + o.renderOrder;
+      if (!buckets.has(key)) buckets.set(key, []); buckets.get(key).push(o);
+    });
+    let saved = 0;
+    for (const list of buckets.values()) {
+      if (list.length < 2) continue;
+      const geos = list.map(o => { const g = o.geometry.index ? o.geometry.toNonIndexed() : o.geometry.clone(); for (const k of Object.keys(g.attributes)) if (!['position', 'normal', 'uv'].includes(k)) g.deleteAttribute(k); g.applyMatrix4(m4.multiplyMatrices(inv, o.matrixWorld)); return g; });
+      const merged = mergeGeometries(geos, false); geos.forEach(g => g.dispose()); if (!merged) continue;
+      const mm = new THREE.Mesh(merged, list[0].material); mm.renderOrder = list[0].renderOrder; mm.matrixAutoUpdate = false; root.add(mm); mm.updateMatrix();
+      for (const o of list) o.parent && o.parent.remove(o); saved += list.length - 1;
+    }
+    return saved;
+  }
+  { let saved = 0; for (const g of [entrance.group, kiosks.group, propsG, wing && wing.group, ...rooms.list.map(r => r.room.group)]) if (g) saved += mergeStatic(g); console.log('[perf] merged', saved, 'static meshes'); }
   const bvh = new MeshBVH(colGeo);
   const ray = new THREE.Ray();
   const cast = (ox, oy, oz, dx, dy, dz, far) => { ray.origin.set(ox, oy, oz); ray.direction.set(dx, dy, dz); const h = bvh.raycastFirst(ray, THREE.DoubleSide, 0, far); return h && h.distance <= far ? h : null; };
@@ -185,7 +240,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   arts.push(...rooms.arts);
   function showSign(sg) {
     if (sg.mesh) return; const s = sg.s;
-    if (s.k === 'c') { sg.mesh = canvasBox(s, texLoader); scene.add(sg.mesh); return; }
+    if (s.k === 'c') { sg.mesh = canvasBox(s, texLoader); compactGroups(sg.mesh); scene.add(sg.mesh); return; }
     if (s.k === 't' && s.plate) { sg.mesh = plateSign(s); scene.add(sg.mesh); return; }
     if (s.k === 'l') { sg.mesh = new THREE.Mesh(quad(s.c), new THREE.MeshBasicMaterial({ map: cardTexture(s), polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 })); sg.mesh.renderOrder = 2; scene.add(sg.mesh); return; }
     let mat;
@@ -213,7 +268,8 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     return { ...v, box, posterMat, zone };
   });
   if (wing) vids.push(...wing.screens);
-  vids.push(...rooms.screens);   // a two-sided interview screen in the middle of each bay of the New Artists Wing
+  vids.push(...rooms.screens);
+  for (const v of vids) compactGroups(v.box);   // a screen box draws 2 times, not 6   // a two-sided interview screen in the middle of each bay of the New Artists Wing
   // living paintings: the animated version of an artwork fades in over the still while you stand in front of it
   const ANIMS = new Set(data.anims || []);
   const animOf = k => { const b = k && k.split('/').pop().replace(/\.\w+$/, ''); return b && ANIMS.has(b) ? BASE + 'anim/' + b + '.mp4' : null; };
@@ -232,12 +288,24 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const spotItems = [];
   for (const sg of signs) if (sg.s.k === 'c') { const c = sg.s.c; spotItems.push({ mesh: () => sg.mesh, w: Math.hypot(c[1][0] - c[0][0], c[1][1] - c[0][1], c[1][2] - c[0][2]), h: Math.hypot(c[3][0] - c[0][0], c[3][1] - c[0][1], c[3][2] - c[0][2]) }); }
   for (const cv of [...(wing ? wing.canvases : []), ...rooms.canvases]) spotItems.push({ mesh: () => cv.mesh, w: cv.w, h: cv.h });
+  // all the pools and fixtures are two instanced meshes (2 draw calls in total), placed when each painting streams in
+  const poolGeo = new THREE.PlaneGeometry(1, 1), poolIM = new THREE.InstancedMesh(poolGeo, spotMat, Math.max(1, spotItems.length)), fixIM = new THREE.InstancedMesh(fixGeo, fixMat, Math.max(1, spotItems.length));
+  poolIM.renderOrder = 1; poolIM.frustumCulled = fixIM.frustumCulled = false; scene.add(poolIM, fixIM);
+  const ZERO = new THREE.Matrix4().makeScale(0, 0, 0), lm4 = new THREE.Matrix4(), om4 = new THREE.Matrix4();
+  for (let i = 0; i < spotItems.length; i++) { poolIM.setMatrixAt(i, ZERO); fixIM.setMatrixAt(i, ZERO); }
+  const shownIn = m => { for (let o = m; o; o = o.parent) if (!o.visible) return false; return !!m.parent; };
   function lightArt() {
-    for (const it of spotItems) {
-      const m = it.mesh(); if (!m || m.userData.spot) continue; m.userData.spot = true;
-      const pool = new THREE.Mesh(new THREE.PlaneGeometry(it.w + 2.2, it.h + 2.4), spotMat); pool.position.set(0, 0.35, -0.03); pool.renderOrder = 1; m.add(pool);
-      const fx = new THREE.Mesh(fixGeo, fixMat); fx.position.set(0, it.h / 2 + 1.25, 0.45); m.add(fx);
-    }
+    let dirty = false;
+    spotItems.forEach((it, i) => {
+      const m = it.mesh(), on = !!(m && shownIn(m));
+      if (on === !!it.lit && (!on || it.litMesh === m)) return;
+      it.lit = on; it.litMesh = m; dirty = true;
+      if (!on) { poolIM.setMatrixAt(i, ZERO); fixIM.setMatrixAt(i, ZERO); return; }
+      m.updateWorldMatrix(true, false);
+      lm4.compose(new THREE.Vector3(0, 0.35, -0.03), new THREE.Quaternion(), new THREE.Vector3(it.w + 2.2, it.h + 2.4, 1)); poolIM.setMatrixAt(i, om4.multiplyMatrices(m.matrixWorld, lm4));
+      lm4.makeTranslation(0, it.h / 2 + 1.25, 0.45); fixIM.setMatrixAt(i, om4.multiplyMatrices(m.matrixWorld, lm4));
+    });
+    if (dirty) { poolIM.instanceMatrix.needsUpdate = fixIM.instanceMatrix.needsUpdate = true; }
   }
   const animator = artAnimator({ items: animItems, maxActive: lowEnd ? 2 : 3 });
   const localFail = new Set();
@@ -327,8 +395,8 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const randomStyle = () => ({ pal: 1 + Math.floor(Math.random() * (PALETTES.length - 1)), art: ART_KEYS.filter(k => k !== DEFAULT_ART)[Math.floor(Math.random() * Math.max(1, ART_KEYS.length - 1))] || DEFAULT_ART });
   let style = { pal: 0, art: DEFAULT_ART };
   // merge each fox's still parts per joint (about 57 draw calls down to ~15) so a room full of visitors stays light on phones
-  function bakeLocal(root) {   // per animated joint: merge every still mesh beneath it (any depth) by material; outlines into one
-    const P = root.userData.P || {}, keep = new Set([root]);
+  function bakeLocal(root, extraKeep) {   // per animated joint: merge every still mesh beneath it (any depth) by material; outlines into one
+    const P = root.userData.P || {}, keep = new Set([root, ...(extraKeep || [])]);
     for (const v of Object.values(P)) { if (Array.isArray(v)) v.forEach(x => x && x.isObject3D && keep.add(x)); else if (v && v.isObject3D) keep.add(v); }
     root.updateMatrixWorld(true);
     const EMPTY = new THREE.BufferGeometry(), inv = new THREE.Matrix4(), m = new THREE.Matrix4();
@@ -352,13 +420,24 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const AVB = new URL('./avatars/', import.meta.url).href;
   const [caneCfg, chairCfg] = await Promise.all([loadCane(AVB).catch(() => CANE_DEFAULTS), loadChair(AVB).catch(() => CHAIR_DEFAULTS)]);
   const CK = caneKit({ THREE, M, toon }), HK = chairKit({ THREE, M, toon });
+  const SUIT_BACK_ART = 'gallery/img/wix_curating_hope.webp';   // the art across the suit's back (the chair keeps the BCP logo on its backrest)
   const SUIT = { torso: ['#2a2e34', '#1a1d22', '#0c0e10'], outfit: 'suit', glasses: 'sun', crest: 'none', eyes: ['#3a3a44', '#3a3a44'], mood: 'happy' };
   function makeSuitFox(ex, st) {
     const chair = ex === 'chair';
-    const f = makeFox({ key: 'suit-' + ex, ...SUIT, chair, look: { ...PLAYER_MALE, ...(PALETTES[st.pal | 0] || {}), tailSide: 1.15 }, prints: { front: frontArt(DEFAULT_ART), frontW: 1.2, back: backLogo } });
+    const f = makeFox({ key: 'suit-' + ex, ...SUIT, chair, look: { ...PLAYER_MALE, ...(PALETTES[st.pal | 0] || {}), tailSide: chair ? 1.75 : 1.15, tailLift: chair ? 0.6 : PLAYER_MALE.tailLift }, prints: { front: frontArt(DEFAULT_ART), frontW: 1.2, back: frontArt(SUIT_BACK_ART) } });
+    if (chair && f.userData.P && f.userData.P.tail) { const t = f.userData.P.tail; t.position.x = 0.48; t.position.z = 0.05; t.position.y += 0.06; }   // in the chair the tail comes out at his side, over the wheel, not through the backrest
     if (ex === 'chair') f.userData.rig = HK.attach(f, { ...chairCfg, backLogo });
     else if (ex === 'cane') f.userData.rig = CK.attach(f, caneCfg);
-    f.scale.setScalar(FOX_SCALE); return f;   // (not baked: the cane and chair rigs move their own parts)
+    // merge the still parts (about 90 draw calls -> ~30): run the rig for a few test frames, keep every part it moves
+    // (and every group, since rigs pose groups) as its own joint, and bake the rest beneath them
+    try {
+      const keep = new Set(), snap = new Map();
+      f.traverse(o => { if (!o.isMesh) keep.add(o); o.updateMatrix(); snap.set(o, o.matrix.clone()); });
+      for (const [dt, sp] of [[0.12, 0], [0.16, 1.4], [0.21, 2.6], [0.11, 0.8], [0.27, 3.5], [0.4, 0]]) animFox(f, dt, sp, false);
+      f.traverse(o => { o.updateMatrix(); if (!o.matrix.equals(snap.get(o))) keep.add(o); });
+      bakeLocal(f, keep);
+    } catch (e) { console.warn('suit bake skipped', e); }
+    f.scale.setScalar(FOX_SCALE); return f;
   }
   function makeVisitorFox(lk, ex, st = { pal: 0, art: DEFAULT_ART }) {   // every visitor wears the BCP tee
     if (lk === 'suit') { try { return makeSuitFox(ex, st); } catch (e) { console.warn('suit avatar failed, using the BCP tee', e); } }
@@ -517,7 +596,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     else { Pl.vy -= 22 * dt; Pl.y += Pl.vy * dt; Pl.ground = false; if (Pl.y <= gy) { Pl.y = gy; Pl.vy = 0; Pl.ground = true; } }
     if (Pl.y < -60) respawn();
     // in the lake (jumped off a rail, or squeezed past one): no swimming, back to the plaza
-    if (!NOWORLD && Pl.y < -2.6 && Pl.x > -43 && !(Math.abs(Pl.z) < 3.6 && Pl.x < -12)) { respawn(); onSplash(); }
+    if (!NOWORLD && Pl.y < -2.6 && Pl.x > -43 && Pl.x < GARDEN.x0 + 0.5 && !(Math.abs(Pl.z) < 3.6 && Pl.x < -12)) { respawn(); onSplash(); }
     Pl.speed = Math.hypot(dx, dz) / Math.max(dt, 1e-4) + (mag > 0.05 ? sp * 0.3 : 0);
   }
   // ---------------------------------------------------------------- "See through their eyes": two floor spots in the main hall (between Ben's and April & Melissa's screens)
@@ -530,6 +609,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     { x: -224, y: -2.5, z: 0, cond: 'cataracts', textYaw: Math.PI / 2, look: [-205, -1, 0] },                            // music room, back area
     { x: -258, y: -2.5, z: 2, cond: 'glaucoma', textYaw: 0, look: [-261.5, -1.0, 29.2] },                               // meditation area, facing Morten
   ] });
+  if (vSpots.signGroup) mergeStatic(vSpots.signGroup);   // 8 pole signs: a handful of draws in all
   const V = { spot: null, py: 0, pp: 0, pts: [], gi: 0, gt: 0, from: null };
   const vOverlay = visionOverlay({ container, onExit: () => exitVision(), onGuided: on => { if (on) { V.gt = 0; V.from = [St.yaw, St.pitch]; } } });
   const lookAngles = (from, to) => { const v = to.clone().sub(from).normalize(); return [Math.atan2(-v.x, -v.z), Math.asin(clamp(-v.y, -1, 1))]; };
@@ -661,9 +741,14 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     fadeEl.style.opacity = 1;
     setTimeout(() => { const t = d.to; Pl.x = t.x; Pl.z = t.z; Pl.y = t.y; Pl.vy = 0; Pl.face = t.face; St.yaw = t.face + Math.PI; St.camDist = 1; streamT = 0; onZone(d.wing ? 'New Artists Wing' : 'The Gallery'); setTimeout(() => fadeEl.style.opacity = 0, 120); }, 300);
   }
+  const Q = { max: renderer.getPixelRatio(), pr: renderer.getPixelRatio(), t: 0, n: 0 };
   function tick(now) {
     raf = requestAnimationFrame(tick);
-    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    const rawDt = (now - last) / 1000, dt = Math.min(0.05, rawDt); last = now;
+    // adaptive resolution: if frames run slow for a few seconds, render fewer pixels (down to 1x); speed back up when smooth
+    if (rawDt < 0.5) { Q.t += rawDt; Q.n++; if (Q.t > 2.5) { const ms = Q.t / Q.n * 1000; Q.t = Q.n = 0;
+      if (ms > 30 && Q.pr > 1) { Q.pr = Math.max(1, Q.pr - 0.25); renderer.setPixelRatio(Q.pr); renderer.setSize(W(), H()); }
+      else if (ms < 17 && Q.pr < Q.max) { Q.pr = Math.min(Q.max, Q.pr + 0.25); renderer.setPixelRatio(Q.pr); renderer.setSize(W(), H()); } } }
     if (!V.spot) move(dt);
     player.position.set(Pl.x, Pl.y + (extra === 'chair' ? 0 : 0.02), Pl.z); player.rotation.y = Pl.face;
     animFox(player, dt, Pl.speed / FOX_SCALE * 0.6, !Pl.ground);
@@ -688,8 +773,10 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       streamT = 0.25; const p = new THREE.Vector3(Pl.x, Pl.y, Pl.z);
       if (wing) { const inWing = wing.bounds.containsPoint(p); if (inWing !== St.inWing) { St.inWing = inWing; onZone(inWing ? 'New Artists Wing' : 'The Gallery'); } if (Math.hypot(Pl.x - WING_O.x, Pl.z - WING_O.z) < 110) wing.load(); }
       for (const r of rooms.list) if (Math.hypot(Pl.x - r.O.x, Pl.z - r.O.z) < 90) r.room.load();
+      // rooms behind walls still draw (the camera doesn't know about walls): hide a room's whole group unless you're close to it
+      { const pp2 = new THREE.Vector3(Pl.x, Pl.y + 1, Pl.z); for (const r of rooms.list) r.room.group.visible = r.room.bounds.distanceToPoint(pp2) < 50; if (wing) wing.group.visible = wing.bounds.distanceToPoint(pp2) < 50; }
       // nearest first, a few per tick (no hitch), far enough out that it all arrives before you can see it
-      const want = []; for (const sg of signs) { const d = sg.ctr.distanceTo(p); if (d < NEAR) { if (!sg.mesh) want.push([d, sg]); } else if (d > FAR) hideSign(sg); }
+      const want = []; for (const sg of signs) { const d = sg.ctr.distanceTo(p); if (d < NEAR) { if (!sg.mesh) want.push([d, sg]); else sg.mesh.visible = d < ((sg.s.k === 't' || sg.s.k === 'l') ? 38 : 70); } else if (d > FAR) hideSign(sg); }   // loaded far out (no pop-in of images), but only drawn when close enough to matter: labels 38 m, art 70 m
       want.sort((a, b) => a[0] - b[0]); for (const [, sg] of want.slice(0, firstStream ? 60 : 14)) showSign(sg); firstStream = false;
       lightArt();
       // which video zone are we in?

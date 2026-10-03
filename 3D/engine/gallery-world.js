@@ -6,6 +6,7 @@
 // Everything is a handful of draw calls (instancing + small shaders) so it stays inside the phone budget.
 import * as THREE from '../vendor/three/three.module.js';
 import { buildEye } from './gallery-eye.js';
+import { GARDEN, RING, planGarden } from './gallery-garden-plan.js';
 import { toCreasedNormals } from '../vendor/three/addons/BufferGeometryUtils.js';
 
 const rnd = (() => { let s = 20261002; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; })();
@@ -154,7 +155,7 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
   });
   // more cherry trees round the lake and the park near the museum (crossed cards, one draw call)
   const keepOut = [   // the building, its wings, the lake and the plaza (x0, z0, x1, z1)
-    [-285, -32, 20, 32], [-86, -80, -54, 152], [-48, -86, 120, 86], [-130, -30, -60, 30],
+    [-285, -32, 20, 32], [-86, -80, -54, 152], [-48, -86, -10, 86], [-130, -30, -60, 30], [GARDEN.x0 - 2, GARDEN.z0 - 2, GARDEN.x1 + 2, GARDEN.z1 + 2],
   ];
   const treePts = [];
   for (let tries = 0; treePts.length < (lowEnd ? 90 : 170) && tries < 6000; tries++) {
@@ -163,10 +164,7 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
     if (treePts.some(p => Math.hypot(p[0] - x, p[1] - z) < 7)) continue;
     treePts.push([x, z]);
   }
-  for (let i = 0; i < 28; i++) {   // a ring of trees round the lake shore
-    const a = (i / 28) * Math.PI * 2, x = 36 + Math.cos(a) * 86, z = Math.sin(a) * 90;
-    if (x < -40) continue; treePts.push([x, z]);
-  }
+  for (const [x, z, sc] of planGarden().trees) treePts.push([x, z, sc]);   // the cherry blossom garden (the big old tree first)
   {
     const card = new THREE.PlaneGeometry(1, 1); card.translate(0, 0.5, 0);
     const cross = new THREE.BufferGeometry(), a = card.clone(), b = card.clone(); b.rotateY(Math.PI / 2);
@@ -174,13 +172,13 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
     merge(a, b);
     const mat = new THREE.MeshLambertMaterial({ map: round, transparent: true, alphaTest: 0.3, side: THREE.DoubleSide });
     const im = new THREE.InstancedMesh(cross, mat, treePts.length), m4 = new THREE.Matrix4(), q = new THREE.Quaternion();
-    treePts.forEach(([x, z], i) => { const s = 9 + rnd() * 6, g = groundAt(x, 5, z); m4.compose(new THREE.Vector3(x, g > -100 ? g - 0.1 : -3.35, z), q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), rnd() * Math.PI), new THREE.Vector3(s * (0.9 + rnd() * 0.3), s, s)); im.setMatrixAt(i, m4); });
+    treePts.forEach(([x, z, sc], i) => { const s = sc || 9 + rnd() * 6, g = groundAt(x, 5, z); m4.compose(new THREE.Vector3(x, g > -100 ? g - 0.1 : -3.35, z), q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), rnd() * Math.PI), new THREE.Vector3(s * (0.9 + rnd() * 0.3), s, s)); im.setMatrixAt(i, m4); });
     im.frustumCulled = false; scene.add(im);
   }
 
   // ---------------------------------------------------------------- 2. the lake
   const WATER_Y = -2.95;
-  const LAKE = { x0: -43.6, x1: 122, z0: -84, z1: 84 };
+  const LAKE = { x0: -43.6, x1: GARDEN.x0, z0: -84, z1: 84 };   // between the museum's eye and the welcome plaza, under the bridge
   const lakeW = LAKE.x1 - LAKE.x0, lakeD = LAKE.z1 - LAKE.z0, lcx = (LAKE.x0 + LAKE.x1) / 2, lcz = (LAKE.z0 + LAKE.z1) / 2;
   {
     // lake bed: dark and sandy so the water reads as deep (just above the park grass, which sits at -3.3)
@@ -202,7 +200,7 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
     // a pale stone rim round the lake (the museum side is the building itself)
     const stone = new THREE.MeshLambertMaterial({ color: 0xd8d2c8 });
     const rim = (w, d, x, z) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, 0.7, d), stone); m.position.set(x, -3.0, z); scene.add(m); };
-    rim(lakeW + 2, 1.2, lcx, LAKE.z0 - 0.6); rim(lakeW + 2, 1.2, lcx, LAKE.z1 + 0.6); rim(1.2, lakeD + 2.4, LAKE.x1 + 0.6, lcz);
+    rim(lakeW + 2, 1.2, lcx, LAKE.z0 - 0.6); rim(lakeW + 2, 1.2, lcx, LAKE.z1 + 0.6);   // (the garden's stone terrace wall is the east shore)
     rim(1.2, LAKE.z1 - 34, LAKE.x0 - 0.6, (LAKE.z1 + 34) / 2); rim(1.2, LAKE.z1 - 34, LAKE.x0 - 0.6, -(LAKE.z1 + 34) / 2);
   }
 
@@ -241,8 +239,8 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
       }`;
     const ink = new THREE.MeshLambertMaterial({ color: 0x1d1c1b }), silver = new THREE.MeshLambertMaterial({ color: 0xd9d9d6 });
     const make = (x, z, img, kind, phase) => {
-      const g = new THREE.Group(); g.position.set(x, WATER_Y, z); g.rotation.y = -Math.PI / 2; scene.add(g);   // flags face the plaza (+x side looks back at the museum)
-      const base = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.8, 0.9, 24), new THREE.MeshLambertMaterial({ color: 0xd8d2c8 })); base.position.y = 0.15; g.add(base);
+      const g = new THREE.Group(); g.position.set(x, GARDEN.y, z); g.rotation.y = -Math.PI / 2; scene.add(g);   // on the garden's ring path, facing the plaza
+      const base = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.35, 0.6, 24), new THREE.MeshLambertMaterial({ color: 0xd8d2c8 })); base.position.y = 0.3; g.add(base);
       const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.15, 15, 12), silver); pole.position.y = 7.5; g.add(pole);
       const ball = new THREE.Mesh(new THREE.SphereGeometry(0.24, 16, 12), ink); ball.position.y = 15.1; g.add(ball);
       const geo = new THREE.PlaneGeometry(FW, FH, 28, 12); geo.translate(FW / 2 + 0.12, 0, 0);
@@ -253,9 +251,88 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
       flags.push(mat); return g;
     };
     // centred out on the water in front of the welcome plaza, either side of the museum's axis
-    make(40, -21, resolveImg('gallery/img/bcp_logo_white.webp'), 'bcp', 0);
-    make(40, 21, resolveImg('gallery/img/ora_card_16x9_black_269773142.webp'), 'ora', 1.9);
+    make(RING.x, -RING.r, resolveImg('gallery/img/bcp_logo_white.webp'), 'bcp', 0);
+    make(RING.x, RING.r, resolveImg('gallery/img/ora_card_16x9_black_269773142.webp'), 'ora', 1.9);
     updaters.push(t => { for (const m of flags) m.uniforms.uT.value = t; });
+  }
+
+  // ---------------------------------------------------------------- 3b. the cherry blossom garden (where the lake used to be)
+  let lanternMat = null;
+  {
+    const G = GARDEN, plan = planGarden(), gw = G.x1 - G.x0, gd = G.z1 - G.z0;
+    // the lawn: one painted texture with the gravel walks, the dry river of petals and petal drifts under the trees
+    const TS = lowEnd ? 1024 : 2048, cv = document.createElement('canvas'); cv.width = cv.height = TS; const c = cv.getContext('2d');
+    const U = x => (x - G.x0) / gw * TS, V = z => (z - G.z0) / gd * TS, PX = TS / gw;
+    c.fillStyle = '#6f8f3e'; c.fillRect(0, 0, TS, TS);
+    for (let i = 0; i < TS * 6; i++) { const g = 110 + rnd() * 60; c.fillStyle = `rgba(${50 + rnd() * 40},${g},${40 + rnd() * 30},${0.25 + rnd() * 0.3})`; c.fillRect(rnd() * TS, rnd() * TS, 2 + rnd() * 3, 2 + rnd() * 3); }
+    // petal drifts under every tree, the river of petals
+    const petals = (x, z, r, n, a = 0.75) => { for (let i = 0; i < n; i++) { const an = rnd() * 6.283, d = Math.sqrt(rnd()) * r; c.fillStyle = ['#f7c3d6', '#f4aac6', '#ffd6e6', '#fbe3ee'][(rnd() * 4) | 0]; c.globalAlpha = a * (0.4 + rnd() * 0.6); c.beginPath(); c.ellipse(U(x + Math.cos(an) * d), V(z + Math.sin(an) * d), PX * (0.07 + rnd() * 0.08), PX * (0.05 + rnd() * 0.05), rnd() * 3, 0, 6.283); c.fill(); } c.globalAlpha = 1; };
+    for (const [x, z, sc] of plan.trees) petals(x, z, sc * 0.42, Math.round(sc * 60 * (TS / 2048)));
+    c.lineCap = c.lineJoin = 'round';
+    c.strokeStyle = '#f2b9cf'; c.lineWidth = PX * 3.4; c.beginPath(); plan.river.forEach(([x, z], i) => i ? c.lineTo(U(x), V(z)) : c.moveTo(U(x), V(z))); c.stroke();
+    for (let i = 0; i < plan.river.length - 1; i++) { const [x, z] = plan.river[i]; petals(x, z, 2.2, Math.round(160 * TS / 2048), 0.95); }
+    // gravel walks with a darker edge
+    for (const [col, extra] of [['#9c8f78', 0.5], ['#d9cdb4', 0]]) { c.strokeStyle = col; for (const p of plan.paths) { c.lineWidth = PX * (p.w + extra); c.beginPath(); p.pts.forEach(([x, z], i) => i ? c.lineTo(U(x), V(z)) : c.moveTo(U(x), V(z))); c.stroke(); } }
+    for (let i = 0; i < TS * 3; i++) { const x = G.x0 + rnd() * gw, z = G.z0 + rnd() * gd; if (plan.pathDist(x, z) < 0) { c.fillStyle = `rgba(${120 + rnd() * 80},${110 + rnd() * 70},${90 + rnd() * 60},0.5)`; c.fillRect(U(x), V(z), 2, 2); } }
+    // a round stone court under the big tree
+    c.fillStyle = '#cfc4ad'; c.beginPath(); c.arc(U(RING.x), V(RING.z), PX * 6.5, 0, 6.283); c.fill(); petals(RING.x, RING.z, 6.5, Math.round(500 * TS / 2048), 0.9);
+    const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+    const lawnM = new THREE.MeshLambertMaterial({ map: tex });
+    const lawnPlane = (x0, x1, z0, z1) => {   // a piece of the lawn, its UVs taken from the one big picture
+      const g = new THREE.PlaneGeometry(x1 - x0, z1 - z0); g.rotateX(-Math.PI / 2); g.translate((x0 + x1) / 2, G.y + 0.005, (z0 + z1) / 2);
+      const pa = g.attributes.position, uv = g.attributes.uv; for (let i = 0; i < pa.count; i++) uv.setXY(i, (pa.getX(i) - G.x0) / gw, 1 - (pa.getZ(i) - G.z0) / gd);
+      const m = new THREE.Mesh(g, lawnM); scene.add(m); return m; };
+    tex.flipY = true;
+    lawnPlane(G.plaza.x1, G.x1, G.z0, G.z1); lawnPlane(G.x0, G.plaza.x1, G.plaza.z, G.z1); lawnPlane(G.x0, G.plaza.x1, G.z0, -G.plaza.z);
+    // the terrace's stone wall down to the park (and into the lake on the west), and a clipped hedge along the top
+    const stoneM = new THREE.MeshLambertMaterial({ color: 0xd8d2c8 });
+    const wall = (w, d, x, z) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, 3.7, d), stoneM); m.position.set(x, G.y - 1.85, z); scene.add(m); };
+    wall(gw + 0.8, 0.8, (G.x0 + G.x1) / 2, G.z1 + 0.4); wall(gw + 0.8, 0.8, (G.x0 + G.x1) / 2, G.z0 - 0.4); wall(0.8, gd + 0.8, G.x1 + 0.4, 0);
+    const sl = G.z1 - G.plaza.z; wall(0.8, sl, G.x0 - 0.4, G.plaza.z + sl / 2); wall(0.8, sl, G.x0 - 0.4, -G.plaza.z - sl / 2);
+    const hcv = document.createElement('canvas'); hcv.width = hcv.height = 128; const hc = hcv.getContext('2d'); hc.fillStyle = '#2f5a2a'; hc.fillRect(0, 0, 128, 128);
+    for (let i = 0; i < 900; i++) { hc.fillStyle = `rgba(${40 + rnd() * 50},${90 + rnd() * 70},${40 + rnd() * 30},0.8)`; hc.beginPath(); hc.arc(rnd() * 128, rnd() * 128, 1.5 + rnd() * 2.5, 0, 6.283); hc.fill(); }
+    const htex = new THREE.CanvasTexture(hcv); htex.colorSpace = THREE.SRGBColorSpace; htex.wrapS = htex.wrapT = THREE.RepeatWrapping;
+    const hedge = (w, d, x, z) => { const t = htex.clone(); t.needsUpdate = true; t.repeat.set(Math.max(w, d) / 1.5, 1); const m = new THREE.Mesh(new THREE.BoxGeometry(w, 1.1, d), new THREE.MeshLambertMaterial({ map: t })); m.position.set(x, G.y + 0.55, z); scene.add(m); };
+    hedge(gw, 0.9, (G.x0 + G.x1) / 2, G.z1 - 0.45); hedge(gw, 0.9, (G.x0 + G.x1) / 2, G.z0 + 0.45); hedge(0.9, gd, G.x1 - 0.45, 0);
+    hedge(0.9, sl, G.x0 + 0.45, G.plaza.z + sl / 2); hedge(0.9, sl, G.x0 + 0.45, -G.plaza.z - sl / 2);
+    // stone lanterns (tōrō): one instanced stone body + one glowing window (warm at night)
+    {
+      const parts = [[0.9, 0.18, 0.9, 0.09], [0.32, 0.55, 0.32, 0.45], [0.75, 0.12, 0.75, 0.78], [0.6, 0.42, 0.6, 1.05], [0.95, 0.14, 0.95, 1.33], [0.5, 0.18, 0.5, 1.47], [0.18, 0.16, 0.18, 1.62]];
+      const geos = parts.map(([w, h, d, y]) => { const b = new THREE.BoxGeometry(w, h, d); b.translate(0, y, 0); return b; });
+      const merge = list => { const pos = [], nor = []; for (const g of list) { const n = g.toNonIndexed(); pos.push(...n.attributes.position.array); nor.push(...n.attributes.normal.array); } const o = new THREE.BufferGeometry(); o.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); o.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3)); return o; };
+      const body = new THREE.InstancedMesh(merge(geos), new THREE.MeshLambertMaterial({ color: 0xb9b2a6 }), plan.lanterns.length);
+      lanternMat = new THREE.MeshBasicMaterial({ color: 0x8a7a5c });
+      const win = new THREE.InstancedMesh(new THREE.BoxGeometry(0.62, 0.26, 0.62).translate(0, 1.06, 0), lanternMat, plan.lanterns.length);
+      const m4 = new THREE.Matrix4(), q = new THREE.Quaternion();
+      plan.lanterns.forEach(([x, z], i) => { m4.compose(new THREE.Vector3(x, G.y, z), q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), (i * 0.7) % 1.57), new THREE.Vector3(1, 1, 1)); body.setMatrixAt(i, m4); win.setMatrixAt(i, m4); });
+      scene.add(body, win);
+    }
+    // benches round the court, facing the big tree
+    {
+      const seat = new THREE.BoxGeometry(2.4, 0.09, 0.6).translate(0, 0.46, 0), legs = [-0.95, 0.95].map(x => new THREE.BoxGeometry(0.12, 0.42, 0.5).translate(x, 0.21, 0));
+      const im = new THREE.InstancedMesh(seat, new THREE.MeshLambertMaterial({ color: 0xb98a5a }), plan.benches.length), il = new THREE.InstancedMesh(new THREE.BoxGeometry(0.12, 0.42, 0.5).translate(0, 0.21, 0), new THREE.MeshLambertMaterial({ color: 0x1d1c1b }), plan.benches.length * 2);
+      const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0), one = new THREE.Vector3(1, 1, 1);
+      plan.benches.forEach(([x, z, ry], i) => { q.setFromAxisAngle(up, ry); m4.compose(new THREE.Vector3(x, G.y, z), q, one); im.setMatrixAt(i, m4);
+        for (const [k, lx] of [[0, -0.95], [1, 0.95]]) { const off = new THREE.Vector3(lx, 0, 0).applyQuaternion(q); m4.compose(new THREE.Vector3(x + off.x, G.y, z + off.z), q, one); il.setMatrixAt(i * 2 + k, m4); } });
+      scene.add(im, il);
+    }
+    // petals drifting down through the garden
+    {
+      const N = lowEnd ? 260 : 560, pos = new Float32Array(N * 3), sp = new Float32Array(N);
+      for (let i = 0; i < N; i++) { pos[i * 3] = G.x0 + 4 + rnd() * (gw - 8); pos[i * 3 + 1] = rnd() * 14; pos[i * 3 + 2] = G.z0 + 4 + rnd() * (gd - 8); sp[i] = 0.35 + rnd() * 0.5; }
+      const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      const pc = document.createElement('canvas'); pc.width = pc.height = 32; const px = pc.getContext('2d'); px.fillStyle = '#f9c9da'; px.beginPath(); px.ellipse(16, 16, 12, 7, 0.6, 0, 6.283); px.fill(); px.fillStyle = 'rgba(236,140,172,0.6)'; px.beginPath(); px.ellipse(16, 16, 5, 3, 0.6, 0, 6.283); px.fill();
+      const ptex = new THREE.CanvasTexture(pc); ptex.colorSpace = THREE.SRGBColorSpace;
+      const pts = new THREE.Points(geo, new THREE.PointsMaterial({ map: ptex, size: 0.32, transparent: true, alphaTest: 0.3, depthWrite: false, sizeAttenuation: true }));
+      pts.frustumCulled = false; scene.add(pts);
+      updaters.push((t, dt) => {
+        const cp = camera.position; pts.visible = cp.x > G.x0 - 50 && cp.x < G.x1 + 30 && Math.abs(cp.z) < G.z1 + 40 && cp.y > -6;   // only animate when you can see the garden
+        if (!pts.visible || !dt) return;
+        for (let i = 0; i < N; i++) { const k = i * 3; pos[k + 1] -= sp[i] * dt; pos[k] += Math.sin(t * 0.9 + i) * 0.4 * dt + 0.25 * dt; pos[k + 2] += Math.cos(t * 0.7 + i * 1.3) * 0.35 * dt;
+          if (pos[k + 1] < G.y + 0.05) { pos[k + 1] = 9 + rnd() * 6; pos[k] = G.x0 + 4 + rnd() * (gw - 8); pos[k + 2] = G.z0 + 4 + rnd() * (gd - 8); } }
+        geo.attributes.position.needsUpdate = true;
+      });
+    }
   }
 
   // ---------------------------------------------------------------- 4. the city round the park
@@ -349,6 +426,7 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
   // ---------------------------------------------------------------- night: eases in and out
   let night = 0, nightTarget = 0;
   const applyNight = n => {
+    if (lanternMat) lanternMat.color.setRGB(0.54 + 0.46 * n, 0.48 + 0.34 * n, 0.36 + 0.06 * n);   // stone lanterns glow warm at night
     sky.material.uniforms.uNight.value = n;
     if (cityMat) cityMat.uniforms.uNight.value = n;
     if (waterMat) { const u = waterMat.uniforms; u.uNight.value = n; u.uSky.value.setRGB(0.81 - 0.7 * n, 0.9 - 0.78 * n, 0.96 - 0.78 * n); u.uDeep.value.setRGB(0.08 - 0.05 * n, 0.31 - 0.22 * n, 0.42 - 0.27 * n); u.uShallow.value.setRGB(0.23 - 0.15 * n, 0.63 - 0.45 * n, 0.71 - 0.45 * n); }

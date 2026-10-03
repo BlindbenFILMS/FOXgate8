@@ -194,3 +194,24 @@ Ben's PlayCanvas project (BCP export) was exported with PlayCanvas's own GltfExp
       - The Six Views wall's shader was one uber-shader (all six modes as runtime branches, 17 video taps per pixel blur, highp) on 24 tiles. It drew whenever the screens were in view, including from outside the room and upstairs.
       - Now each tile compiles only its own mode (`#if MODE`), the blur is one ring of 8 taps (6 on phones) in mediump, and the tiles only draw while you're inside `simZone`; otherwise the screens show dark.
       - Safety net: on `webglcontextlost` the page saves your position, shows a short "graphics reset" message and reloads you back at the same spot (sessionStorage `8gates.gallery.resume`, valid for 2 min).
+    - 2 Oct, optimisation pass (draw calls measured in the test browser, before → after):
+      - Entrance 1112 → 122, main hall 622 → 292, vision room 1160 → 320, music room 1311 → 380, upstairs 698 → 216, New Wing 268 → 91. Geometries 870 → 420.
+      - Rooms (wing, AMB, north room) are hidden unless you're within 50 m of their bounds; walls don't stop the camera from drawing what's behind them.
+      - `mergeStatic`: still meshes that share a material are merged per group (entrance, kiosks, props, every room, the vision pole signs).
+      - `compactGroups`: boxes with a material array (art canvases, video screens) draw 2 times instead of 6.
+      - Painting spotlights became two InstancedMeshes (pool + fixture) for the whole gallery.
+      - The suit fox runs its rig for test frames, keeps every part that moves, and bakes the rest (about 90 → 35 draws).
+      - Plants and benches share materials. Removed the rooms' 0-intensity PointLights (they still cost every lit material).
+      - Signs stay loaded to 115 m (75 on phones) but draw only within 38 m (text and labels) or 70 m (art).
+      - Six Views film: no src until you enter the room. On leaving, it is paused, the src removed and `load()` called (memory freed). Room films already unload in `playUrl(null)`, and living paintings release their video when you walk away.
+      - Adaptive resolution: if frames average more than 30 ms over 2.5 s the pixel ratio drops 0.25 (down to 1x), and it climbs back when frames are under 17 ms.
+    - 2 Oct, garden + avatar tweaks:
+      - Suit avatar: the back of the shirt is now art (`SUIT_BACK_ART` = Curating Hope, wix_curating_hope.webp); the BCP logo stays on the wheelchair backrest. In the chair the tail comes out at his left side over the wheel (tail group x 0.48, tailSide 1.75, lower lift) instead of through the backrest.
+      - The lake now lies only between the museum's eye and the welcome plaza (x -43.6..-12.4, under the bridge).
+      - The Cherry Blossom Garden replaces the water east of the plaza (`engine/gallery-garden-plan.js` = layout, shared by scenery and collision; drawn in gallery-world.js section 3b):
+        - a walkable lawn terrace level with the plaza (x -12.4..92, z ±58), with a stone wall, a clipped hedge and invisible walls round it;
+        - gravel walks (from the plaza under the name sign, a ring round a big old cherry tree on a stone court, north/south walks, an east walk), and a dry river of fallen petals;
+        - 78 cherry trees with petal drifts underneath, 24 stone lanterns (glow warm at night), 6 oak benches round the court, and falling petals (only animated when the garden is in view).
+      - The flags stand on the ring path (40, ±21) and the BCP name sign stands on the lawn at x 21 (the walk passes under it); lanterns, benches, sign posts, flag bases and the big trunk are solid.
+      - CARVES: 'old platform rim' (x 7.35..13) removes the old model's hidden rim that blocked walking from the plaza into the garden.
+      - Lake sounds fade as you walk into the garden; birds stay.

@@ -75,7 +75,8 @@ export function buildVisionSpots({ scene, spots, groundAt }) {
     c.fillStyle = '#e9e5e5'; c.font = `700 28px ${F}`; c.fillText('STEP ON THE CIRCLE \u00b7 STAND HERE', 40, 266);
     c.fillStyle = '#ec3013'; c.font = `800 28px ${F}`; c.fillText('CLICK/DRAG SCREEN TO LOOK AROUND', 40, 318);
     const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; })();
-  const out = [];
+  const out = [], signG = new THREE.Group(); scene.add(signG);
+  const ink = new THREE.MeshLambertMaterial({ color: 0x1d1c1b }), faceM = new THREE.MeshBasicMaterial({ map: tex, transparent: true }), plateM = new THREE.MeshBasicMaterial({ map: plateTex });   // shared, so the signs merge
   for (const sp of spots) {
     const y = groundAt(sp.x, sp.y + 1, sp.z); const yy = y > -100 ? y : sp.y;
     const disc = new THREE.Mesh(new THREE.CircleGeometry(1.1, 64), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 }));
@@ -86,16 +87,15 @@ export function buildVisionSpots({ scene, spots, groundAt }) {
     if (sp.look) {
       let dx = sp.look[0] - sp.x, dz = sp.look[2] - sp.z; const dl = Math.hypot(dx, dz) || 1; dx /= dl; dz /= dl;
       const side = sp.signSide || 1, px = sp.x - dz * 1.75 * side + dx * 0.2, pz = sp.z + dx * 1.75 * side + dz * 0.2, rot = Math.atan2(-dx, -dz);
-      const grp = new THREE.Group(); grp.position.set(px, yy, pz); grp.rotation.y = rot; scene.add(grp);
-      const ink = new THREE.MeshLambertMaterial({ color: 0x1d1c1b });
+      const grp = new THREE.Group(); grp.position.set(px, yy, pz); grp.rotation.y = rot; signG.add(grp);
       // the pole stops under the plate and a short neck joins plate to disc, so nothing crosses the words
       const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.97, 10), ink); pole.position.y = 0.485; grp.add(pole);
       const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.1, 10), ink); neck.position.y = 1.63; grp.add(neck);
       const foot = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.32, 0.06, 20), ink); foot.position.y = 0.03; grp.add(foot);
       const DY = 2.18;
       for (const r of [0, Math.PI]) {
-        const face = new THREE.Mesh(new THREE.CircleGeometry(0.5, 48), new THREE.MeshBasicMaterial({ map: tex, transparent: true })); face.position.set(0, DY, r ? -0.032 : 0.032); face.rotation.y = r; grp.add(face);
-        const plate = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.62), new THREE.MeshBasicMaterial({ map: plateTex })); plate.position.set(0, 1.28, r ? -0.032 : 0.032); plate.rotation.y = r; grp.add(plate);
+        const face = new THREE.Mesh(new THREE.CircleGeometry(0.5, 48), faceM); face.position.set(0, DY, r ? -0.032 : 0.032); face.rotation.y = r; grp.add(face);
+        const plate = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.62), plateM); plate.position.set(0, 1.28, r ? -0.032 : 0.032); plate.rotation.y = r; grp.add(plate);
       }
       const back = new THREE.Mesh(new THREE.BoxGeometry(1.24, 0.66, 0.06), ink); back.position.y = 1.28; grp.add(back);
       const ring = new THREE.Mesh(new THREE.CylinderGeometry(0.52, 0.52, 0.06, 40), ink); ring.rotation.x = Math.PI / 2; ring.position.y = DY; grp.add(ring);
@@ -103,6 +103,7 @@ export function buildVisionSpots({ scene, spots, groundAt }) {
     }
     out.push({ ...sp, y: yy, disc, glow, pos: new THREE.Vector3(sp.x, yy, sp.z), r: 1.1 });
   }
+  out.signGroup = signG;
   return out;
 }
 

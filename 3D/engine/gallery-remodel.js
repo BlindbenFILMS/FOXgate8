@@ -20,6 +20,8 @@ export const CARVES = [
   { name: 'walkway kiosk north', min: [-22.2, -1.9, 1.5], max: [-17.8, 2.6, 5.6] },
   // the little building north of the Wall of Why hallway (rebuilt as a twin of the New Artists Wing)
   { name: 'north annex', min: [-86, -3.2, -77], max: [-54, 15, -27.7] },
+  // the old platform's back rim east of the plaza (the cherry garden starts there now)
+  { name: 'old platform rim', min: [7.35, -6, -17.5], max: [13, 3.2, 17.5] },
 ];
 
 const inRegion = (R, x, y, z) => {

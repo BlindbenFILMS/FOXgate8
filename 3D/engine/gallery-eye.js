@@ -144,8 +144,8 @@ export function buildEye({ scene, lowEnd }) {
       face.position.set(0.21 * s, Y0 + SH / 2, 0); face.rotation.y = s * Math.PI / 2; g.add(face);
     }
     for (const z of [-SW * 0.32, SW * 0.32]) {
-      const post = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.26, Y0 + 3.0, 14), steel); post.position.set(0, (Y0 - 3.0) / 2, z); g.add(post);
-      const foot = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 1.1, 0.8, 20), new THREE.MeshLambertMaterial({ color: 0xd8d2c8 })); foot.position.set(0, -2.75, z); g.add(foot);
+      const post = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.26, Y0, 14), steel); post.position.set(0, Y0 / 2, z); g.add(post);   // standing in the cherry garden; the walk passes under the sign
+      const foot = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.5, 0.3, 20), new THREE.MeshLambertMaterial({ color: 0xd8d2c8 })); foot.position.set(0, 0.15, z); g.add(foot);
     }
     out.sign = g;
   }
