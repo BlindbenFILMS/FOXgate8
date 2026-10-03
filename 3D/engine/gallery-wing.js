@@ -203,7 +203,7 @@ export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveIm
     });
     const bio = new THREE.Mesh(new THREE.PlaneGeometry(3.0, 3.67), new THREE.MeshBasicMaterial({ map: bioT }));
     bio.position.copy(at(spacious ? -12.3 : -5.3, 2.35, 0.03)); bio.rotation.y = rotY; g.add(bio);
-    arts.push({ title: A.name, desc: [...A.sub, ...A.bio].join(' / '), imgDesc: '', img: null, ctr: toW(bio.position), n: dirW(n), artist: A.name });
+    arts.push({ title: A.name, desc: [...A.sub, ...A.bio].join(' / '), imgDesc: '', img: A.photo ? resolveImg(A.photo) : null, ctr: toW(bio.position), n: dirW(n), artist: A.name, au: A.au || null, bio: true });
     // three canvases, no frames: a shallow box with the image on its face + a plaque below
     A.pieces.forEach((p, k) => {
       const cx = spacious ? -6.5 + k * 8.2 : -1.5 + k * 3.7, S = spacious ? 3.4 : 2.7;
@@ -237,7 +237,7 @@ export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveIm
       const pl = new THREE.Mesh(new THREE.PlaneGeometry(3.3, 0.9), new THREE.MeshBasicMaterial({ map: plT }));
       pl.position.copy(at(cx, 0.78, 0.03)); pl.rotation.y = rotY; g.add(pl);
       }
-      arts.push({ title: p.title, desc: (p.quote ? p.quote + ' — ' : '') + A.name, imgDesc: p.paras.join(' '), img: resolveImg(p.img), ctr: toW(cvs.position), n: dirW(n), artist: A.name });
+      arts.push({ title: p.title, desc: (p.quote ? p.quote + ' — ' : '') + A.name, imgDesc: p.paras.join(' '), img: resolveImg(p.img), ctr: toW(cvs.position), n: dirW(n), artist: A.name, au: p.au || null, aus: !!p.aus });
     });
   });
   // the partner's logo on the floor just inside the door, upright as you walk in

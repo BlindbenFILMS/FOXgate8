@@ -34,6 +34,7 @@
   #panel .body { overflow:auto; padding:14px; font-size:16px; line-height:1.5; -webkit-overflow-scrolling:touch; }
   #panel .art { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.1fr); gap:14px; }
   @media (max-width:640px) { #panel .art { grid-template-columns:1fr; } }
+  @media (min-width:641px) { #panel .art > div:first-child { position:sticky; top:0; align-self:start; } }
   #panel .art img { width:100%; max-height:62dvh; object-fit:contain; border:2px solid var(--ink); background:#2b2928; display:block; }
   #panel .lab { font-size:11px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; margin:12px 0 4px; }
   #panel .row { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
@@ -73,11 +74,12 @@ OFF</button></div>
 <div id="panel" class="box" role="dialog" aria-modal="true" aria-labelledby="pt"><header><div class="h"><div class="k" id="pk"></div><h2 id="pt"></h2></div><button id="px" aria-label="Close">✕</button></header><div class="body" id="pb"></div></div>
 <div id="menu" class="box" role="dialog" aria-label="Menu">
   <div class="lab">Your fox</div>
+  <div class="opts" style="margin-bottom:6px"><button id="faceBtn" aria-pressed="false">🦊 Fox copies my face (camera)</button></div>
   <div class="opts" id="looks"><button data-l="suit">Suit fox</button><button data-l="male">Fox</button><button data-l="female">Vixen</button></div>
   <div class="lab">Gear</div>
   <div class="opts" id="extras"><button data-x="none">None</button><button data-x="glasses">Glasses</button><button data-x="cane">White cane</button><button data-x="chair">Wheelchair</button></div>
   <div class="lab">Reading</div>
-  <div class="opts"><button id="autoRead">Read aloud when I open art</button><button id="big">Larger text</button><button id="readNotes">Read notes aloud when I pass</button></div>
+  <div class="opts"><button id="voices">Play the artist's voice when I open art</button><button id="autoRead">Read aloud when I open art</button><button id="big">Larger text</button><button id="readNotes">Read notes aloud when I pass</button></div>
   <div class="lab">Atmosphere</div>
   <div class="opts"><button id="ambBtn">Ambient sounds</button><button id="nightBtn">🌙 Night</button></div>
   <div class="lab">Visiting together</div>
@@ -156,15 +158,21 @@ function open(n) {
   if (n.kind === 'vision') { $('act').style.display = 'none'; G.vision.enter(n.item); return; }
   if (n.kind === 'guestbook') { if (window.NOTES) window.NOTES.openBook(); return; }
   if (n.kind === 'note') { if (window.NOTES) window.NOTES.openSpot(n.item); return; }
-  const pb = $('pb'); pb.innerHTML = '';
+  quoteStop(); bioScrollStop();
+  const pb = $('pb'); pb.innerHTML = ''; pb.scrollTop = 0;
   if (n.kind === 'art') {
-    const a = n.item; $('pk').textContent = 'Artwork'; $('pt').textContent = a.title || 'Untitled';
+    const a = n.item; $('pk').textContent = a.bio ? 'Meet the artist' : 'Artwork'; $('pt').textContent = a.title || 'Untitled';
     pb.innerHTML = '<div class="art"><div>' + (a.img ? '<img src="' + a.img + '" alt="' + esc(a.imgDesc || a.title) + '">' : '') + '</div><div>' + para(a.desc) +
       (a.imgDesc ? '<div class="lab">Image description</div>' + para(a.imgDesc) : '') +
-      '<div class="row"><button id="rd">🔊 Read aloud</button>' + (a.imgDesc ? '<button id="rdd">🔊 Describe the image</button>' : '') + '</div></div></div>';
-    const rd = $('rd'); rd.onclick = () => say((a.title ? a.title + '. ' : '') + a.desc.replace(/\//g, '. '), rd);
-    if ($('rdd')) $('rdd').onclick = () => say(a.imgDesc, $('rdd'));
-    if (pref.autoRead) setTimeout(() => rd.click(), 200);
+      '<div class="row">' + (a.au ? '<button id="hq" data-l="' + esc(voiceLabel(a)) + '">▶ ' + esc(voiceLabel(a)) + '</button>' : '') + '<button id="rd">🔊 Read aloud</button>' + (a.imgDesc ? '<button id="rdd">🔊 Describe the image</button>' : '') + '</div></div></div>';
+    const rd = $('rd'); rd.onclick = () => { quoteStop(); say((a.title ? a.title + '. ' : '') + a.desc.replace(/\//g, '. '), rd); };
+    if ($('rdd')) $('rdd').onclick = () => { quoteStop(); say(a.imgDesc, $('rdd')); };
+    if (a.au) {   // the artist's own voice saying this quote (cut from their interview)
+      const hq = $('hq'); hq.onclick = () => quotePlay(a.au, hq);
+      const after = () => { if ($('rd') !== rd) return; if (a.bio) bioScroll(); if (pref.autoRead) rd.click(); };
+      if (!pref.noVoices) setTimeout(() => quotePlay(a.au, hq, after), 250);
+      else setTimeout(after, 1200);
+    } else if (pref.autoRead) setTimeout(() => rd.click(), 200);
     if (window.NOTES) pb.appendChild(window.NOTES.artSection(a));   // visitors' notes on this artwork
   } else {
     const e = n.item; const titles = { blindnessTools: 'Tools for the blind', blindnessAllyTips: 'Tips to be loved by the blind', blindnessEducation: 'Blindness is a spectrum', wallOfWhy: 'The Wall of Why' };
@@ -187,9 +195,42 @@ async function playIn(host, url) {
   else { if (!window.Hls) await new Promise(r => { const s = document.createElement('script'); s.src = 'vendor/hls/hls.light.min.js'; s.onload = r; document.head.appendChild(s); }); const h = new Hls(); h.loadSource(url); h.attachMedia(v); }
   v.play().catch(() => {});
 }
+// the artist's voice: one audio element, stopped when the panel closes or another voice starts
+const quoteAu = new Audio(); quoteAu.preload = 'none'; let quoteBtn = null, quoteAfter = null;
+const firstName = a => a.vn || a.artist.replace(/&amp;/g, '&').split(/\s|&/)[0];
+function voiceLabel(a) {   // "Meet Dave" on a bio board, "Hear Dave's story" when it isn't the exact quote, "Hear Dave" when it is
+  const group = !a.vn && (!a.artist || /academy/i.test(a.artist));
+  if (a.bio) return group ? 'Meet them' : 'Meet ' + firstName(a);
+  if (group) return a.aus ? 'Hear their story' : 'Hear their voice';
+  return 'Hear ' + firstName(a) + (a.aus ? '\u2019s story' : '');
+}
+// a bio board: after the artist introduces themselves, the bio slowly scrolls past (any touch, wheel or key takes over)
+let bioScrollRaf = 0;
+function bioScrollStop() { cancelAnimationFrame(bioScrollRaf); bioScrollRaf = 0; }
+function bioScroll() {
+  bioScrollStop(); const el = $('pb'); let last = performance.now(), y = el.scrollTop, wait = 900;
+  const quit = () => { bioScrollStop(); ['pointerdown', 'wheel', 'touchstart', 'keydown'].forEach(e => el.removeEventListener(e, quit)); };
+  ['pointerdown', 'wheel', 'touchstart', 'keydown'].forEach(e => el.addEventListener(e, quit, { passive: true }));
+  const step = t => {
+    const dt = Math.min(0.1, (t - last) / 1000); last = t;
+    if (wait > 0) wait -= dt * 1000; else { y += 26 * dt; el.scrollTop = y; if (el.scrollTop + el.clientHeight >= el.scrollHeight - 1) return quit(); }
+    if ($('panel').style.display !== 'flex') return quit();
+    bioScrollRaf = requestAnimationFrame(step);
+  };
+  bioScrollRaf = requestAnimationFrame(step);
+}
+function quoteStop() { quoteAu.pause(); if (quoteBtn) { quoteBtn.classList.remove('on'); quoteBtn.textContent = '▶ ' + quoteBtn.dataset.l; } quoteBtn = null; quoteAfter = null; }
+function quotePlay(url, btn, after) {
+  if (quoteBtn === btn && !quoteAu.paused) { quoteStop(); return; }
+  quoteStop(); if (synth) synth.cancel(); speaking = null; document.querySelectorAll('#pb .on').forEach(b => b.classList.remove('on'));
+  quoteBtn = btn; quoteAfter = after || null; btn.classList.add('on'); btn.textContent = '■ Stop';
+  if (!quoteAu.src.endsWith(url)) quoteAu.src = url; quoteAu.currentTime = 0;
+  quoteAu.play().catch(() => quoteStop());
+}
+quoteAu.onended = () => { const f = quoteAfter; quoteStop(); if (f) f(); };
 let panelOnClose = null;
 function showPanel(k, t, node, onClose) { $('pk').textContent = k; $('pt').textContent = t; $('pb').replaceChildren(node); $('panel').style.display = 'flex'; $('px').focus(); panelOnClose = onClose || null; $('menu').style.display = 'none'; }
-function close() { if (panelOnClose) { const f = panelOnClose; panelOnClose = null; f(); } $('panel').style.display = 'none'; if (synth) synth.cancel(); speaking = null; $('pb').querySelectorAll('video').forEach(v => v.pause()); $('menu').style.display = 'none'; }
+function close() { if (panelOnClose) { const f = panelOnClose; panelOnClose = null; f(); } quoteStop(); bioScrollStop(); $('panel').style.display = 'none'; if (synth) synth.cancel(); speaking = null; $('pb').querySelectorAll('video').forEach(v => v.pause()); $('menu').style.display = 'none'; }
 $('px').onclick = close;
 
 // ------------------------------------------------ menu
@@ -197,13 +238,14 @@ const syncMenu = () => {
   document.querySelectorAll('#looks button').forEach(b => b.classList.toggle('on', b.dataset.l === (pref.look || 'male')));
   document.querySelectorAll('#extras button').forEach(b => b.classList.toggle('on', b.dataset.x === (pref.extra || 'none')));
   $('ambBtn').classList.toggle('on', !pref.quietAmb); $('nightBtn').classList.toggle('on', !!pref.night); $('nightBtn').textContent = pref.night ? '☀️ Day' : '🌙 Night';
-  $('autoRead').classList.toggle('on', !!pref.autoRead); $('readNotes').classList.toggle('on', !pref.quietNotes); $('big').classList.toggle('on', !!pref.big);
+  $('voices').classList.toggle('on', !pref.noVoices); $('autoRead').classList.toggle('on', !!pref.autoRead); $('readNotes').classList.toggle('on', !pref.quietNotes); $('big').classList.toggle('on', !!pref.big);
   document.documentElement.style.fontSize = pref.big ? '120%' : ''; $('pb').style.fontSize = pref.big ? '20px' : '';
 };
 $('menuBtn').onclick = () => { const m = $('menu'); m.style.display = m.style.display === 'block' ? 'none' : 'block'; syncMenu(); };
 document.querySelectorAll('#looks button').forEach(b => b.onclick = () => { pref.look = b.dataset.l; savePref(); G.setLook(pref.look, pref.extra); syncMenu(); });
 document.querySelectorAll('#extras button').forEach(b => b.onclick = () => { pref.extra = b.dataset.x; savePref(); G.setLook(pref.look || 'male', pref.extra); syncMenu(); });
 $('autoRead').onclick = () => { pref.autoRead = !pref.autoRead; savePref(); syncMenu(); };
+$('voices').onclick = () => { pref.noVoices = !pref.noVoices; savePref(); syncMenu(); if (pref.noVoices) quoteStop(); };
 $('ambBtn').onclick = () => { pref.quietAmb = !pref.quietAmb; savePref(); if (window.SOUND) window.SOUND.set(!pref.quietAmb); syncMenu(); };
 $('nightBtn').onclick = () => { pref.night = !pref.night; savePref(); G.setNight(pref.night); $('live').textContent = pref.night ? 'Night falls over the city.' : 'Back to golden afternoon light.'; syncMenu(); };
 $('readNotes').onclick = () => { pref.quietNotes = !pref.quietNotes; savePref(); syncMenu(); };
@@ -226,10 +268,10 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
   let status = 'connecting', net = null, entered = false, whoSig = '';
   net = await connectGallery({
     onJoin: id => {},
-    onLeave: id => { const nm = names.get(id); if (G.following() === id) G.unfollow(); G.remote.remove(id); names.delete(id); if (window.TOG) window.TOG.onLeave(id); if (nm) announce(nm + ' left the gallery'); if (window.VOICE) window.VOICE.onLeave(id); refresh(); },
-    onState: (id, st, prof) => { if (prof && !prof.name) prof = null; if (!prof && !names.has(id) && !st) return; const isNew = !names.has(id) && prof; G.remote.upsert(id, st, prof); if (prof) { names.set(id, prof.name); if (isNew) { announce(prof.name + ' joined the gallery'); if (entered) { net && net.hello(me()); if (window.TOG) window.TOG.onNewPeer(id); if (window.VOICE) window.VOICE.onNewPeer(id); } } } refresh(); },
-    onEvent: (id, d) => { if (window.TOG) window.TOG.onEvent(id, d); if (window.VOICE) window.VOICE.onEvent(id, d); if (window.NOTES) window.NOTES.onEvent(id, d); },
-    onStream: (id, stream) => { if (window.VOICE) window.VOICE.onStream(id, stream); },
+    onLeave: id => { const nm = names.get(id); if (G.following() === id) G.unfollow(); G.remote.remove(id); names.delete(id); if (window.TOG) window.TOG.onLeave(id); if (window.LIVE) window.LIVE.onLeave(id); if (nm) announce(nm + ' left the gallery'); if (window.VOICE) window.VOICE.onLeave(id); refresh(); },
+    onState: (id, st, prof) => { if (prof && !prof.name) prof = null; if (!prof && !names.has(id) && !st) return; const isNew = !names.has(id) && prof; G.remote.upsert(id, st, prof); if (prof) { names.set(id, prof.name); if (isNew) { announce(prof.name + ' joined the gallery'); if (entered) { net && net.hello(me()); if (window.TOG) window.TOG.onNewPeer(id); if (window.VOICE) window.VOICE.onNewPeer(id); if (window.LIVE) window.LIVE.onNewPeer(id); } } } refresh(); },
+    onEvent: (id, d) => { if (window.LIVE) window.LIVE.onEvent(id, d); if (window.FACE) window.FACE.onEvent(id, d); if (window.TOG) window.TOG.onEvent(id, d); if (window.VOICE) window.VOICE.onEvent(id, d); if (window.NOTES) window.NOTES.onEvent(id, d); },
+    onStream: (id, stream) => { if (window.LIVE) window.LIVE.onStream(id, stream); if (window.VOICE) window.VOICE.onStream(id, stream); },
     onEmote: (id, e) => { if (e === 'wave') { G.remote.wave(id); const nm = names.get(id); if (nm) announce(nm + ' waves'); } },
     onStatus: s => { status = s; refresh(); },
   });
@@ -242,6 +284,11 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
     window.NOTES = await setupNotes({ G, net, cfg: G.notesConfig, myName: () => pref.name, announce, esc, readAloud: () => !pref.quietNotes, showPanel });
   }).catch(e => console.warn('notes unavailable', e));
   $('noteBtn').onclick = () => { if (window.NOTES) window.NOTES.openCompose(); };
+  const [{ setupLive }, { setupFace }] = await Promise.all([import('./engine/gallery-live.js'), import('./engine/gallery-face.js')]);
+  window.LIVE = setupLive({ G, net, announce, nameOf: id => names.get(id) || 'A visitor', invite: (...a) => window.TOG && window.TOG.invite(...a) });
+  window.FACE = setupFace({ G, net, announce, onState: st => { const b = $('faceBtn'); b.classList.toggle('on', st === 'on'); b.setAttribute('aria-pressed', st === 'on'); b.textContent = st === 'loading' ? '🦊 Starting camera…' : st === 'on' ? '🦊 Fox copies my face · ON' : '🦊 Fox copies my face (camera)'; } });
+  if (!window.FACE.supported) $('faceBtn').style.display = 'none';
+  $('faceBtn').onclick = () => { window.FACE.toggle(); $('menu').style.display = 'none'; };
   $('hostBtn').onclick = () => { window.TOG.claimHost(window.TOG.host() !== 'me'); $('menu').style.display = 'none'; refresh(); };
   $('tourBtn').onclick = () => { window.TOG.leadTour(!window.TOG.leading()); $('menu').style.display = 'none'; refresh(); };
   const me = () => ({ name: pref.name, look: pref.look || 'male', extra: pref.extra || 'none', ...G.style() });

@@ -215,3 +215,31 @@ Ben's PlayCanvas project (BCP export) was exported with PlayCanvas's own GltfExp
       - The flags stand on the ring path (40, ±21) and the BCP name sign stands on the lawn at x 21 (the walk passes under it); lanterns, benches, sign posts, flag bases and the big trunk are solid.
       - CARVES: 'old platform rim' (x 7.35..13) removes the old model's hidden rim that blocked walking from the plaza into the garden.
       - Lake sounds fade as you walk into the garden; birds stay.
+    - 3 Oct, going live + fox Animoji:
+      - Host live (`engine/gallery-live.js`): the host bar has "📷 Camera on screen" and "🖥 Share screen" (where the browser supports it). The host's camera or screen goes onto the big screen of the room they're in (`G.live.nearest`: the zone's screen, preferring big ones), replacing that screen's film. The room film drops to 12% volume while live.
+        - The video is sent peer-to-peer (`net.video`, Trystero addStream; new arrivals get it too). Visitors far away get "Ben is live · Go watch". It stops with "⏹ Stop live", via the browser's own "Stop sharing", or when the host stops hosting. The voice stays on the MIC.
+        - Peer-to-peer works for small groups (about 6–10 viewers); bigger events need a relay (e.g. LiveKit) or a YouTube Live embed.
+      - Fox Animoji (`engine/gallery-face.js`, ☰ → 🦊 Fox copies my face): face-api (vendor/face-api: tiny face detector, 68 landmarks and the expression net, ~2.3 MB, loaded only when turned on) runs on the visitor's own device.
+        - Head yaw, pitch and roll come from the landmarks (yaw and pitch calibrated over the first 6 frames). Blink comes from the eye aspect ratio, mouth openness from the inner-lip gap, and the mood (happy, excited, surprised, sad, stern) from the expressions.
+        - The fox gets `userData.faceCtl` (fox-kit animFox uses it while it's fresh, < 1.5 s). Only six small numbers about 10× a second go to others (`{k:'face', f:[…]}`); no video is ever sent.
+        - A small mirrored preview shows "Fox copies you · stays on this device". It switches off when the tab is hidden.
+      - Voice ignores video streams; the live module takes them.
+
+## Artist voices on the art (3 Oct)
+- 69 artist voices cut from the artists' own interview videos: `gallery/audio/art_<n>.mp3` (main gallery, index into gallery.json `arts`) and `wing_<a>_<p>.mp3` (New Artists Wing). Linked by `au` on each artwork in gallery.json.
+- Found with YouTube auto-captions + Whisper (base.en model Ben downloaded to Documents\ggml-base.en.bin; run with pywhispercpp). Every clip re-transcribed with Whisper to check first/last words. Fades (0.08 in / 0.3 out) + loudness levelled.
+- Art panel: plays the artist's voice when it opens (☰ "Play the artist's voice when I open art", on by default), "▶ Hear <name>" button to replay/stop, stops on close; "Read aloud when I open art" follows after the voice.
+- Story clips (`aus:1` in gallery.json, button reads "Hear <name>'s story"): where the wall quote isn't spoken, a related passage from the same interview: Delric Beauty in the Blurry, Doreen yoga teacher, April Pathways Unveiled, Bill Pedals of Freedom (geese over the driveway), Shardasia Joyride + Embracing Unity, Marcus Rhapsody in Blue (music as communication), Ben Walk Through Fear ("blindness or not, I'm going to make films").
+- AMB wing photo boards (On Stage, The Ensemble, Practice, Together, Rehearsal, Bright Future) now play story clips `ambb_0..5.mp3` from the AMB film (parents, David Pinto) and the Acabella interview.
+- April & Melissa "Reflections of Sisterhood": story clip art_10.mp3 = Melissa's Honduras crabbing memory from Eyes on Sedona Skies ep.3 (Blind CAN Film Festival, ~15:11).
+- Still silent: the allies (no recordings).
+- Video versions of each clip for Ben: Desktop\BCP -VIDEOS for CLAUDE\Quote clips\.
+
+- AMB wing end screen now plays `gallery/video/amb_acabella.mp4` (Acabella performance, 480p re-encode). (The old main-hall AMB screen sat in the carved north annex, so it never shows.)
+- Morten's room: the small screen by the Mirror (vids[15], interview poster) now plays his interview `gallery/video/morten_bonde.mp4`; the big angled screen (vids[16]) keeps the meditation.
+
+## Meet the artist (3 Oct)
+- Every artist bio board plays the artist introducing themselves (`gallery/audio/bio_<name>.mp3`, first seconds of each interview; AMB = David Pinto; April & Melissa = Melissa). Panel kicker reads MEET THE ARTIST, button "Meet Dave". After the voice ends the bio scrolls slowly (any touch/wheel/key stops it); on wide screens the photo stays put (sticky) while the text scrolls.
+- New Artists Wing bio boards now show a portrait (`gallery/img2/bio_<name>.webp`, grey frames from their interviews) + voice.
+- `vn` in gallery.json overrides the first name on the voice button (Melissa, David).
+- Fixed the spelling RICKY RIZUKA -> RICKY RUZICKA on his labels.

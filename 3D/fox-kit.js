@@ -434,16 +434,20 @@ export function foxKit({ THREE, scene, toon, M, grad, outlineMat, crestTex, rr, 
     // head: look at a target, idle tilt
     let hy = 0, hx = mood === 'sad' ? 0.12 : 0;
     if (u.lookAt) { c.updateWorldMatrix(true, false); tmpV.copy(u.lookAt); c.worldToLocal(tmpV); hy = clamp(Math.atan2(tmpV.x, tmpV.z), -0.85, 0.85); hx += clamp(-Math.atan2(tmpV.y - 1.6, Math.hypot(tmpV.x, tmpV.z)) * 0.5, -0.25, 0.25); }
-    P.head.rotation.y = damp(P.head.rotation.y, hy, 6, dt); P.head.rotation.x = damp(P.head.rotation.x, hx, 6, dt);
-    P.head.rotation.z = damp(P.head.rotation.z, (mood === 'curious' ? 0.16 : 0) + Math.sin(u.phase * 0.35) * 0.04, 5, dt);
+    const fc = u.faceCtl && performance.now() - u.faceCtl.t < 1500 ? u.faceCtl : null;   // a tracked real face (the gallery's fox Animoji)
+    if (fc) { hy = clamp(fc.yaw || 0, -0.8, 0.8); hx = clamp(fc.pitch || 0, -0.4, 0.4); }
+    P.head.rotation.y = damp(P.head.rotation.y, hy, fc ? 14 : 6, dt); P.head.rotation.x = damp(P.head.rotation.x, hx, fc ? 14 : 6, dt);
+    P.head.rotation.z = damp(P.head.rotation.z, fc ? clamp(fc.roll || 0, -0.5, 0.5) : (mood === 'curious' ? 0.16 : 0) + Math.sin(u.phase * 0.35) * 0.04, fc ? 14 : 5, dt);
     // face
     u.blink -= dt; if (u.blink < 0) { u.blinkT = 0.14; u.blink = rr(2, 5); } u.blinkT = Math.max(0, u.blinkT - dt);
-    const bl = u.blinkT > 0 ? Math.sin((u.blinkT / 0.14) * Math.PI) : 0;
+    const bl = fc ? clamp(fc.blink || 0, 0, 1) : u.blinkT > 0 ? Math.sin((u.blinkT / 0.14) * Math.PI) : 0;
     u.lookT -= dt; if (u.lookT < 0) { u.lookT = rr(1.2, 3.5); u.lookTo = u.lookAt || u.talking ? 0 : pick([-1, -0.6, 0, 0, 0.6, 1]); }
     u.look = damp(u.look, u.lookTo, 8, dt);
-    u.mouth = u.talking ? Math.max(0, Math.sin(u.phase * 7.5)) * 0.85 + 0.1 : damp(u.mouth, 0, 14, dt);
-    const f = u.face, key = `${Math.round(bl * 4)}|${mood}|${Math.round(u.mouth * 5)}|${Math.round(u.look * 4)}`;
-    if (key !== f.key) { f.key = key; drawFace(f.ctx, { L: f.L, sun: f.sun, eyeL: f.eyeL, eyeR: f.eyeR, blink: Math.round(bl * 4) / 4, mood, mouth: Math.round(u.mouth * 5) / 5, look: Math.round(u.look * 4) / 4 }); f.tex.needsUpdate = true; }
+    u.mouth = fc ? damp(u.mouth, clamp(fc.mouth || 0, 0, 1), 18, dt) : u.talking ? Math.max(0, Math.sin(u.phase * 7.5)) * 0.85 + 0.1 : damp(u.mouth, 0, 14, dt);
+    if (fc) u.look = damp(u.look, clamp(fc.look || 0, -1, 1), 10, dt);
+    const fmood = fc && fc.mood && MOOD[fc.mood] ? fc.mood : mood;
+    const f = u.face, key = `${Math.round(bl * 4)}|${fmood}|${Math.round(u.mouth * 5)}|${Math.round(u.look * 4)}`;
+    if (key !== f.key) { f.key = key; drawFace(f.ctx, { L: f.L, sun: f.sun, eyeL: f.eyeL, eyeR: f.eyeR, blink: Math.round(bl * 4) / 4, mood: fmood, mouth: Math.round(u.mouth * 5) / 5, look: Math.round(u.look * 4) / 4 }); f.tex.needsUpdate = true; }
     if (u.rig) u.rig.update(dt, speed);   // the museum avatars' tuned cane and wheelchair rigs
   }
 

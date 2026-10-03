@@ -53,12 +53,18 @@ export function setupTogether({ G, net, nameOf, announce, onSev = () => {}, esc 
     return d;
   }
   let shown = '';
-  function render() {
+  function render(force) {
+    if (force) shown = '';
     invites = invites.filter(i => i.until > now());
     const rows = [], sig = [];
     const fid = G.following();
     if (fid) { const nm = nameOf(fid); rows.push(row(tour.from === fid ? 'On ' + nm + "'s tour" : 'Following', tour.from === fid ? 'Your fox walks behind ' + nm + '. Move to stop.' : nm + ' · move to stop', [['Stop', () => G.unfollow(), '']])); sig.push('f' + fid); }
-    if (host === 'me') { rows.push(row("You're the host", G.remote.count() ? 'Your tools for this visit' : 'Waiting for guests', [['Gather everyone', () => gather(), 'p'], ['Mute all mics', () => muteAll(), ''], [spotOn ? '🔊 Spotlight on' : '🔊 Spotlight my voice', () => spotlight(!spotOn), spotOn ? 'p' : '']])); sig.push('h' + spotOn + (G.remote.count() > 0)); }
+    if (host === 'me') {
+      const L = window.LIVE, liveBtns = !L ? [] : L.on() ? [['⏹ Stop live ' + (L.kind() === 'screen' ? 'screen' : 'camera'), () => { L.stop(); render(true); }, 'p']]
+        : [['📷 Camera on screen', () => L.start('cam').then(() => render(true)), ''], ...(L.canShare ? [['🖥 Share screen', () => L.start('screen').then(() => render(true)), '']] : [])];
+      rows.push(row("You're the host", G.remote.count() ? 'Your tools for this visit' : 'Waiting for guests', [['Gather everyone', () => gather(), 'p'], ['Mute all mics', () => muteAll(), ''], [spotOn ? '🔊 Spotlight on' : '🔊 Spotlight my voice', () => spotlight(!spotOn), spotOn ? 'p' : ''], ...liveBtns]));
+      sig.push('h' + spotOn + (G.remote.count() > 0) + (L && L.on() ? L.kind() : '-'));
+    }
     if (gview) { rows.push(row("Seeing through " + nameOf(gview.from) + "'s eyes", (COND[gview.cond] || '') + ' · ' + Math.round(gview.sev * 100) + '%', [['Stop', () => { optOut.add(gview.from); endGuest(); }, '']])); sig.push('g' + gview.from + gview.cond + Math.round(gview.sev * 20)); }
     if (tour.leading) { const n = tour.followers.size; rows.push(row("You're leading a tour", n ? n + (n === 1 ? ' fox is' : ' foxes are') + ' following you' : 'Waiting for people to follow', [['End tour', () => leadTour(false), 'p']])); sig.push('t' + n); }
     const film = G.film.url();
@@ -170,7 +176,7 @@ export function setupTogether({ G, net, nameOf, announce, onSev = () => {}, esc 
   function claimHost(on) {
     if (on && host && host !== 'me') { announce(nameOf(host) + ' is already hosting.'); return; }
     if (on) { host = 'me'; net.event({ k: 'host', a: 'on' }); announce("You're the host. Gather everyone, mute all mics or put your voice in the spotlight from the bar under the room name."); }
-    else if (host === 'me') { if (spotOn) spotlight(false); host = null; net.event({ k: 'host', a: 'off' }); announce('You stopped hosting.'); }
+    else if (host === 'me') { if (window.LIVE && window.LIVE.on()) window.LIVE.stop(); if (spotOn) spotlight(false); host = null; net.event({ k: 'host', a: 'off' }); announce('You stopped hosting.'); }
     render();
   }
   function gather() { net.event({ k: 'host', a: 'gather' }); announce(privateRoom ? 'Everyone is coming to you.' : 'Everyone has been invited to come to you.'); }
@@ -225,5 +231,5 @@ export function setupTogether({ G, net, nameOf, announce, onSev = () => {}, esc 
     }
   }
 
-  return { claimHost, host: () => host, shareVision, onEvent, onNewPeer, onLeave, sevChanged, leadTour, leading: () => tour.leading, follow, goTo, startParty, endParty, party: () => party, whoRows, render };
+  return { invite, claimHost, host: () => host, shareVision, onEvent, onNewPeer, onLeave, sevChanged, leadTour, leading: () => tour.leading, follow, goTo, startParty, endParty, party: () => party, whoRows, render };
 }

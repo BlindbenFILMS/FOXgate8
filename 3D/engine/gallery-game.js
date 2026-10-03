@@ -234,7 +234,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     let best = 1e9; for (const sg of signs) if (sg.s.img) { const d = sg.ctr.distanceTo(ctr); if (d < best) { best = d; img = sg.s.img; } }
     const n = a.c ? new THREE.Vector3().subVectors(new THREE.Vector3(...a.c[1]), new THREE.Vector3(...a.c[0])).cross(new THREE.Vector3().subVectors(new THREE.Vector3(...a.c[3]), new THREE.Vector3(...a.c[0]))).normalize() : new THREE.Vector3();
     const { desc, imgDesc } = splitDesc(a.d);
-    return { title: a.t, desc, imgDesc, img: best < 1.5 ? img : null, ctr, n };
+    return { title: a.t, desc, imgDesc, img: best < 1.5 ? img : null, ctr, n, au: a.au || null, aus: !!a.aus, bio: !!a.bio, vn: a.vn || null, artist: a.artist || null };
   });
   if (wing) arts.push(...wing.arts);
   arts.push(...rooms.arts);
@@ -315,9 +315,26 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   let hls = null, curUrl = null, soundOK = false, vidFail = new Set();
   let pendingSeek = null;   // a watch party asked for a time before the film had loaded
   video.addEventListener('loadedmetadata', () => { if (pendingSeek && pendingSeek.u === curUrl) { try { video.currentTime = pendingSeek.t % (video.duration || 1e9); } catch (e) {} } pendingSeek = null; });
+  // a host's live camera / screen share can take over one screen (LIVE.idx); everything else shows the room film or its poster
+  const LIVE = { idx: -1, mat: null, el: null, tex: null };
+  function applyScreens(url = curUrl) { vids.forEach((v, i) => { for (const f of (v.faces || [0, 1])) v.box.material[f] = i === LIVE.idx && LIVE.mat ? LIVE.mat : (url && v.u === url && !vidFail.has(url)) ? vidMat : v.posterMat; }); }
+  function liveShow(idx, stream) {
+    liveClear(true);
+    const el = document.createElement('video'); el.muted = true; el.playsInline = true; el.setAttribute('playsinline', ''); el.autoplay = true; el.srcObject = stream;
+    const p = el.play(); if (p && p.catch) p.catch(() => {});
+    const tex = new THREE.VideoTexture(el); tex.colorSpace = THREE.SRGBColorSpace;
+    Object.assign(LIVE, { idx, el, tex, mat: new THREE.MeshBasicMaterial({ map: tex }) }); applyScreens();
+  }
+  function liveClear(quiet) { if (LIVE.el) { LIVE.el.pause(); LIVE.el.srcObject = null; } if (LIVE.tex) LIVE.tex.dispose(); if (LIVE.mat) LIVE.mat.dispose(); Object.assign(LIVE, { idx: -1, mat: null, el: null, tex: null }); if (!quiet) applyScreens(); }
+  const screenPos = i => vids[i].wp || (vids[i].wp = vids[i].box.getWorldPosition(new THREE.Vector3()));
+  function nearestScreen(x, y, z) {   // the screen of the room you're in, or else the closest one in sight range
+    const p = new THREE.Vector3(x, y + 0.5, z); let best = -1, bd = 1e9;
+    vids.forEach((v, i) => { const inZone = (v.zone && v.zone.containsPoint(p)) || (v.zones && v.zones.some(q => q.containsPoint(p))); const d = screenPos(i).distanceTo(p) - (inZone ? 1000 : 0) - (v.box.scale.y * v.box.scale.z > 40 ? 8 : 0); if (d < bd) { bd = d; best = i; } });
+    return best;
+  }
   async function playUrl(url) {
     if (url === curUrl) return; curUrl = url;
-    for (const v of vids) for (const f of (v.faces || [0, 1])) v.box.material[f] = (url && v.u === url && !vidFail.has(url)) ? vidMat : v.posterMat;
+    applyScreens(url);
     if (hls) { hls.destroy(); hls = null; }
     video.pause(); video.removeAttribute('src'); video.load();
     if (!url || vidFail.has(url)) return;
@@ -741,6 +758,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     fadeEl.style.opacity = 1;
     setTimeout(() => { const t = d.to; Pl.x = t.x; Pl.z = t.z; Pl.y = t.y; Pl.vy = 0; Pl.face = t.face; St.yaw = t.face + Math.PI; St.camDist = 1; streamT = 0; onZone(d.wing ? 'New Artists Wing' : 'The Gallery'); setTimeout(() => fadeEl.style.opacity = 0, 120); }, 300);
   }
+  let faceLocal = null;   // the fox Animoji: the visitor's tracked face drives their own fox
   const Q = { max: renderer.getPixelRatio(), pr: renderer.getPixelRatio(), t: 0, n: 0 };
   function tick(now) {
     raf = requestAnimationFrame(tick);
@@ -751,6 +769,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       else if (ms < 17 && Q.pr < Q.max) { Q.pr = Math.min(Q.max, Q.pr + 0.25); renderer.setPixelRatio(Q.pr); renderer.setSize(W(), H()); } } }
     if (!V.spot) move(dt);
     player.position.set(Pl.x, Pl.y + (extra === 'chair' ? 0 : 0.02), Pl.z); player.rotation.y = Pl.face;
+    if (faceLocal) player.userData.faceCtl = faceLocal;
     animFox(player, dt, Pl.speed / FOX_SCALE * 0.6, !Pl.ground);
     updateRemotes(dt);
     if (F.id) followRecord();
@@ -783,7 +802,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       let zUrl = null; const pp = new THREE.Vector3(Pl.x, Pl.y + 0.5, Pl.z);
       for (const v of vids) if ((v.zone && v.zone.containsPoint(pp)) || (v.zones && v.zones.some(z => z.containsPoint(pp)))) { zUrl = v.u; break; }
       playUrl(zUrl);
-      if (zUrl) { let dmin = 1e9; for (const v of vids) if (v.u === zUrl) dmin = Math.min(dmin, (v.wp ||= v.box.getWorldPosition(new THREE.Vector3())).distanceTo(pp)); const vv = vids.find(v => v.u === zUrl); const zs = vv.zone ? vv.zone.getSize(new THREE.Vector3()) : null, reach = vv.reach || Math.max(vv.dist || 20, zs ? Math.hypot(zs.x, zs.z) * 1.1 : 0); video.volume = clamp((vv.vol ?? 0.8) * Math.max(vv.minVol ?? 0.45, 1 - dmin / reach), 0, 1); }   // never silent while you're in the zone
+      if (zUrl) { let dmin = 1e9; for (const v of vids) if (v.u === zUrl) dmin = Math.min(dmin, (v.wp ||= v.box.getWorldPosition(new THREE.Vector3())).distanceTo(pp)); const vv = vids.find(v => v.u === zUrl); const zs = vv.zone ? vv.zone.getSize(new THREE.Vector3()) : null, reach = vv.reach || Math.max(vv.dist || 20, zs ? Math.hypot(zs.x, zs.z) * 1.1 : 0); video.volume = clamp((vv.vol ?? 0.8) * Math.max(vv.minVol ?? 0.45, 1 - dmin / reach) * (LIVE.idx >= 0 ? 0.12 : 1), 0, 1); }   // a live host talk: the room film drops to a murmur   // never silent while you're in the zone
       if (!V.spot) { const n = nearest(); const key = n ? n.kind + n.label + (n.item && n.item.z) : null; if (key !== nearKey) { nearKey = key; onNear(n); } }
     }
     renderer.render(scene, camera);
@@ -815,6 +834,8 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     // visiting together: follow / go to a friend, and the zone film for watch parties
     follow: (id, onEnd) => followStart(id, onEnd), unfollow: () => followStop('stopped'), following: () => F.id,
     goTo(id, slot) { const r = remotes.get(id); if (!r || !r.placed) return false; if (V.spot) exitVision(); if (F.id) followStop('gathered'); placeNear(r, slot); return true; },
+    live: { show: (i, st) => liveShow(i, st), clear: () => liveClear(), nearest: (x, y, z) => nearestScreen(x, y, z), active: () => LIVE.idx, pos: i => screenPos(i).toArray() },
+    face: { local: c => { faceLocal = c; if (!c && player) player.userData.faceCtl = null; }, remote: (id, c) => { const r = remotes.get(id); if (r && r.fox) r.fox.userData.faceCtl = c; } },
     film: {
       url: () => curUrl, time: () => video.currentTime || 0, ready: () => video.readyState >= 1, local: u => { const v = vids.find(v => v.u === u); return (v && v.local) || u; },
       seek(u, t) { if (u !== curUrl) return false; if (video.readyState >= 1) { try { video.currentTime = t % (video.duration || 1e9); } catch (e) {} } else pendingSeek = { u, t }; if (video.paused) video.play().catch(() => {}); return true; },

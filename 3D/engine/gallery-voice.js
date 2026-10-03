@@ -42,6 +42,7 @@ export function setupVoice({ G, net, button, announce, nameOf }) {
 
   // incoming voices
   function onStream(id, stream) {
+    if (stream.getVideoTracks().length || !stream.getAudioTracks().length) return;   // video streams belong to the live screen
     drop(id);
     const audio = document.createElement('audio');
     audio.autoplay = true; audio.playsInline = true; audio.setAttribute('playsinline', ''); audio.srcObject = stream;
