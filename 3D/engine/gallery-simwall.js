@@ -19,9 +19,9 @@ const WP = [{ x: 34, y: 38 }, { x: 66, y: 32 }, { x: 76, y: 56 }, { x: 50, y: 64
 
 const VERT = `varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
 const FRAG = `
-precision highp float;
+precision mediump float;
 varying vec2 vUv;
-uniform sampler2D map; uniform int mode; uniform float sev, aspect; uniform vec2 gaze; uniform vec4 crop; uniform vec3 spots[24]; uniform vec2 fshift;
+uniform sampler2D map; uniform float sev, aspect; uniform vec2 gaze; uniform vec4 crop; uniform vec3 spots[24]; uniform vec2 fshift;
 // CSS-style helpers (everything in sRGB, like the browser does it)
 float farR(vec2 c, float a) { // farthest-corner radius from c, in tile-height units (x scaled by aspect)
   vec2 p = vec2(c.x * a, c.y); float r = 0.0;
@@ -33,38 +33,48 @@ vec3 vid(vec2 uv) { vec2 q = clamp(uv, 0.0, 1.0); return texture2D(map, crop.xy 
 vec3 blurred(vec2 uv, float px) {   // css blur(px): gaussian, approximated by two rings of taps (px measured against a ~515 px tall tile)
   if (px < 0.05) return vid(uv);
   float r = px / 515.0; vec3 acc = vid(uv) * 0.2; float w = 0.2;
-  for (int i = 0; i < 8; i++) { float a = float(i) * 0.7853982; vec2 d = vec2(cos(a) / aspect, sin(a)); acc += vid(uv + d * r) * 0.12; acc += vid(uv + d * r * 2.0 + vec2(-d.y / aspect, d.x * aspect) * r * 0.4) * 0.05; w += 0.17; }
+  for (int i = 0; i < TAPS; i++) { float a = float(i) * (6.2831853 / float(TAPS)) + 0.39; vec2 d = vec2(cos(a) / aspect, sin(a)); acc += vid(uv + d * r * 1.35) * 0.17; w += 0.17; }
   return acc / w; }
 void main() {
   vec2 uv = vec2(vUv.x, 1.0 - vUv.y);   // css coordinates: y down
   vec2 g = gaze / 100.0; float s = sev; vec3 col;
-  if (mode == 0) { col = vid(uv); }
-  else if (mode == 1) {   // cataracts: blur, contrast, brightness, sepia, then a milky veil
+#if MODE == 0
+  col = vid(uv);
+#elif MODE == 1
+  {   // cataracts: blur, contrast, brightness, sepia, then a milky veil
     col = blurred(uv, s * 5.0);
     col = (col - 0.5) * (1.0 - s * 0.35) + 0.5; col *= 1.0 + s * 0.18;
     vec3 sep = vec3(dot(col, vec3(0.393, 0.769, 0.189)), dot(col, vec3(0.349, 0.686, 0.168)), dot(col, vec3(0.272, 0.534, 0.131)));
     col = mix(col, sep, s * 0.35); col = clamp(col, 0.0, 1.0);
     col = mix(col, vec3(228.0, 221.0, 200.0) / 255.0, 0.1 + s * 0.4);
-  } else if (mode == 2) {   // macular degeneration: a dark smudge where you look
+  }
+#elif MODE == 2
+  {   // macular degeneration: a dark smudge where you look
     col = blurred(uv, 1.4 + s * 3.4);
     float fog = min(1.0, 0.45 + s * 0.85), r1 = 13.0 + s * 15.0, r2 = 28.0 + s * 28.0, t = pct(uv, g, aspect);
     float a = ramp4(t, 0.0, 0.98 * fog, r1, 0.9 * fog, r2, 0.5 * fog, r2 + 16.0, 0.0);
     col = mix(col, vec3(22.0, 19.0, 15.0) / 255.0, a);
-  } else if (mode == 3) {   // diabetic retinopathy: floaters (they drift with the eye)
+  }
+#elif MODE == 3
+  {   // diabetic retinopathy: floaters (they drift with the eye)
     col = blurred(uv, s * 3.0);
     vec2 L = ((uv - 0.5 - fshift) / 1.15) / 1.24 + 0.5;   // the spot layer is 124% of the tile, scaled 1.15 and moved with the gaze
     float o = min(1.0, s * 0.88), grow = 1.0 + s * 1.43, keep = 1.0;
     for (int i = 0; i < 24; i++) { vec2 c = spots[i].xy / 100.0; float r = spots[i].z * grow; float t = pct(L, c, aspect);
       float a = t < r * 0.45 ? mix(o, o * 0.78, t / (r * 0.45)) : (t < r ? mix(o * 0.78, 0.0, (t - r * 0.45) / (r * 0.55)) : 0.0); keep *= 1.0 - a; }
     col = mix(vec3(6.0, 5.0, 3.0) / 255.0, col, keep);
-  } else if (mode == 4) {   // retinitis pigmentosa: the tunnel, a washed-out centre, and night dimming
+  }
+#elif MODE == 4
+  {   // retinitis pigmentosa: the tunnel, a washed-out centre, and night dimming
     col = blurred(uv, s * 2.25);
     float amp = min(1.0, s * 1.5125), clr = max(3.0, (1.0 - amp) * 46.0 + 4.0), t = pct(uv, g, aspect);
     col *= 1.0 - s * 0.3;
     col = mix(col, vec3(0.0), ramp4(t, clr, 0.0, clr + 6.0, 0.4 + s * 0.45, clr + 14.0, 0.7 + s * 0.28, clr + 21.0, 1.0));
     float wa = t < clr * 0.55 ? mix(s * 0.42, s * 0.22, t / (clr * 0.55)) : (t < clr ? mix(s * 0.22, 0.0, (t - clr * 0.55) / (clr * 0.45)) : 0.0);
     col = mix(col, vec3(247.0, 243.0, 233.0) / 255.0, wa);
-  } else {   // glaucoma: a soft foggy frame closing in
+  }
+#else
+  {   // glaucoma: a soft foggy frame closing in
     col = blurred(uv, s * s * 11.0);
     float amp = min(1.0, s * 0.52734375), clr = max(2.0, (1.0 - amp) * 40.0 + 3.0);
     float t = length(vec2((uv.x - g.x) / 0.64, (uv.y - g.y) / 0.64)) * 100.0;
@@ -72,12 +82,14 @@ void main() {
     vec3 fc = t < clr + 7.0 ? vec3(16.0, 14.0, 12.0) / 255.0 : mix(vec3(16.0, 14.0, 12.0) / 255.0, vec3(0.0), clamp((t - clr - 7.0) / 17.0, 0.0, 1.0));
     col = mix(col, fc, a);
   }
+#endif
   gl_FragColor = vec4(col, 1.0);
 }`;
 
 function textTex(w, h, draw) { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; draw(cv.getContext('2d'), w, h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t; }
 const FONT = 'Archivo, Arimo, Helvetica, Arial, sans-serif';
 
+const LOW = /iPhone|iPad|Android/i.test(navigator.userAgent);
 export function buildSimWalls({ scene, walls, src, kiosk, kiosks, zone }) {
   // one video for every tile on every wall: always in sync
   const video = document.createElement('video'); video.src = src; video.muted = true; video.loop = true; video.playsInline = true; video.setAttribute('playsinline', ''); video.preload = 'auto'; video.crossOrigin = 'anonymous';
@@ -98,7 +110,7 @@ export function buildSimWalls({ scene, walls, src, kiosk, kiosks, zone }) {
       ORDER.forEach((o, i) => {
         const cx = -W / 2 + gap + gw / 2 + (i % 3) * (gw + gap), cy = H / 2 - HH - gap - gh / 2 - Math.floor(i / 3) * (gh + gap);
         const aspect = gw / gh, crop = aspect > 1 ? new THREE.Vector4(0, (1 - 1 / aspect) / 2, 1, 1 / aspect) : new THREE.Vector4((1 - aspect) / 2, 0, aspect, 1);   // object-fit: cover (square film)
-        const mat = new THREE.ShaderMaterial({ vertexShader: VERT, fragmentShader: FRAG, uniforms: { map: { value: vtex }, mode: { value: o.mode }, sev: { value: st.sev }, aspect: { value: aspect }, gaze: { value: new THREE.Vector2(50, 40) }, crop: { value: crop }, spots: { value: SPOTS.map(p => new THREE.Vector3(...p)) }, fshift: { value: new THREE.Vector2() } } });
+        const mat = new THREE.ShaderMaterial({ vertexShader: VERT, fragmentShader: FRAG, defines: { MODE: o.mode, TAPS: LOW ? 6 : 8 }, uniforms: { map: { value: vtex }, sev: { value: st.sev }, aspect: { value: aspect }, gaze: { value: new THREE.Vector2(50, 40) }, crop: { value: crop }, spots: { value: SPOTS.map(p => new THREE.Vector3(...p)) }, fshift: { value: new THREE.Vector2() } } });
         mat.toneMapped = false;
         const tile = new THREE.Mesh(new THREE.PlaneGeometry(gw, gh), mat); tile.position.set(cx, cy, 0.01); face.add(tile);
         // the label pill, bottom left (Regular Vision in gold, like the page)
@@ -107,7 +119,7 @@ export function buildSimWalls({ scene, walls, src, kiosk, kiosks, zone }) {
         const lt = textTex(PW, 96, (c, cw, ch) => { c.font = `700 40px ${FONT}`; c.fillStyle = reg ? '#e8b26a' : 'rgba(255,255,255,0.92)'; c.beginPath(); c.roundRect(2, 8, cw - 4, ch - 16, (ch - 16) / 2); c.fill(); c.fillStyle = '#111'; c.textBaseline = 'middle'; c.fillText(label, 32, ch / 2 + 2); });
         const ph = gh * 0.1, pw = ph * PW / 96, pill = new THREE.Mesh(new THREE.PlaneGeometry(pw, ph), new THREE.MeshBasicMaterial({ map: lt, transparent: true }));
         pill.position.set(cx - gw / 2 + pw / 2 + gw * 0.03, cy - gh / 2 + ph / 2 + gh * 0.04, 0.02); face.add(pill);
-        tiles.push({ mat, i, id: o.id });
+        tile.visible = false; tiles.push({ mat, i, id: o.id, mesh: tile });
       });
     }
   }
@@ -150,8 +162,8 @@ export function buildSimWalls({ scene, walls, src, kiosk, kiosks, zone }) {
     update(dt, px, py, pz) {
       st.t += dt;
       const inRoom = zoneBox.containsPoint(new THREE.Vector3(px, py + 0.5, pz));
-      if (inRoom && !st.playing) { st.playing = true; const p = video.play(); if (p && p.catch) p.catch(() => {}); }
-      else if (!inRoom && st.playing) { st.playing = false; video.pause(); }
+      if (inRoom && !st.playing) { st.playing = true; for (const T of tiles) T.mesh.visible = true; const p = video.play(); if (p && p.catch) p.catch(() => {}); }
+      else if (!inRoom && st.playing) { st.playing = false; video.pause(); for (const T of tiles) T.mesh.visible = false; }   // outside the room (or upstairs): screens off, no effect to draw
       if (!st.playing) return;
       st.shown += THREE.MathUtils.clamp(st.sev - st.shown, -dt * 1.5, dt * 1.5);   // the wall eases to a new severity
       const ph = Math.floor(st.t / 5) % 2, k = THREE.MathUtils.clamp((st.t % 5) / 0.9, 0, 1);

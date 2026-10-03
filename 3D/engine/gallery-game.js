@@ -431,6 +431,18 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
 
   const Pl = { x: SPAWN.x, y: SPAWN.y, z: SPAWN.z, vy: 0, face: SPAWN.face, ground: false, speed: 0 };
   const St = { yaw: SPAWN.face + Math.PI, pitch: 0.28, dist: 4.2, camDist: 4.2 };
+  // if the phone's graphics reset (WebGL context lost), reload and put the visitor back where they were
+  {
+    try { const r = JSON.parse(sessionStorage.getItem('8gates.gallery.resume') || 'null'); sessionStorage.removeItem('8gates.gallery.resume');
+      if (r && Date.now() - r.t < 120000) { Pl.x = r.p[0]; Pl.y = r.p[1]; Pl.z = r.p[2]; Pl.face = r.p[3]; St.yaw = r.p[3] + Math.PI; } } catch (e) {}
+    renderer.domElement.addEventListener('webglcontextlost', e => {
+      e.preventDefault();
+      try { sessionStorage.setItem('8gates.gallery.resume', JSON.stringify({ t: Date.now(), p: [Pl.x, Pl.y + 0.3, Pl.z, Pl.face] })); } catch (err) {}
+      const m = document.createElement('div'); m.style.cssText = 'position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:#0b0a12;color:#f3f2f2;font:800 18px Archivo,Arimo,sans-serif;text-align:center;padding:24px';
+      m.textContent = 'The graphics needed a quick reset. Bringing you back to where you were…'; document.body.appendChild(m);
+      setTimeout(() => location.reload(), 1200);
+    }, false);
+  }
   const input = { f: 0, b: 0, l: 0, r: 0, run: 0, jx: 0, jy: 0, jump: 0 };
 
   function groundAt(x, y, z) { const h = cast(x, y + 0.55, z, 0, -1, 0, 30); return h ? h.point.y : -1e9; }

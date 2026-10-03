@@ -190,3 +190,7 @@ Ben's PlayCanvas project (BCP export) was exported with PlayCanvas's own GltfExp
       - The suited fox wears sunglasses and an open dark jacket over an art shirt: Walk Through Fear on the front (follows the jacket's shape) and the BCP logo across the back. The tail is swept aside so the back shows.
       - Rigs: `engine/avatars/cane.js` and `chair.js` with `presets/` (Hope's tuned two-point cane, Noble's "future" chair). The chair takes `backLogo`: a curved BCP logo patch on the backrest.
       - fox-kit.js gained the pack's painted-on sunglasses (`glasses: 'sun'`), `legColor` and `rig.update` in animFox. The suit gets a `prints` variant. Suit foxes are not baked (the rigs move their parts).
+    - 2 Oct, crash fix (near the vision simulator room, and upstairs by the wall next to it):
+      - The Six Views wall's shader was one uber-shader (all six modes as runtime branches, 17 video taps per pixel blur, highp) on 24 tiles. It drew whenever the screens were in view, including from outside the room and upstairs.
+      - Now each tile compiles only its own mode (`#if MODE`), the blur is one ring of 8 taps (6 on phones) in mediump, and the tiles only draw while you're inside `simZone`; otherwise the screens show dark.
+      - Safety net: on `webglcontextlost` the page saves your position, shows a short "graphics reset" message and reloads you back at the same spot (sessionStorage `8gates.gallery.resume`, valid for 2 min).
