@@ -711,7 +711,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     for (const sg of signs) if (sg.s.k === 'c') { const d = sg.ctr.distanceTo(eye); if (d > 34) continue; const dir = sg.ctr.clone().sub(eye).normalize(); const h = cast(eye.x, eye.y, eye.z, dir.x, dir.y, dir.z, d); if (!h || h.distance > d - 0.6) seen.push(sg.ctr.clone()); }
     seen.sort((a, b) => Math.atan2(a.z - eye.z, -(a.x - eye.x)) - Math.atan2(b.z - eye.z, -(b.x - eye.x)));
     V.pts = [screen, ...seen.filter((_, i) => i % Math.max(1, Math.ceil(seen.length / 6)) === 0)].map(p => lookAngles(eye, p));
-    V.gi = 0; V.gt = 0; V.from = [St.yaw, St.pitch];
+    V.gi = 0; V.gt = 0; V.from = [St.yaw, St.pitch]; V.home = [St.yaw, St.pitch];
     vOverlay.open(spot.cond); onNear(null); nearKey = 'vision-locked';
   }
   function exitVision() { if (!V.spot) return; const sp = V.spot; V.spot = null; vOverlay.close(); joyRest(); St.pitch = 0.28; St.camDist = 1.2; Pl.x = sp.x + 1.6; nearKey = null; }
@@ -743,6 +743,13 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   St.lastLook = 0;
   const camRay = new THREE.Vector3(), camSide = new THREE.Vector3(), camUp = new THREE.Vector3();
   function updateCamera(dt) {
+    // first person (tap the eye button): the camera at the fox's eyes; walking turns you the way you go, as usual
+    if (St.fp) {
+      const cp = Math.cos(St.pitch), dir = new THREE.Vector3(Math.sin(St.yaw) * cp, Math.sin(St.pitch), Math.cos(St.yaw) * cp);
+      const moving = Pl.speed > 0.6 && (Math.abs(input.jx) + Math.abs(input.jy) + input.f + input.b + input.l + input.r) > 0.1;
+      if (moving && performance.now() - St.lastLook > 900) { let d = Pl.face + Math.PI - St.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); St.yaw += d * Math.min(1, dt * 2.4 * clamp((Math.cos(d) + 0.6) / 1.2, 0, 1)); }
+      const eye = new THREE.Vector3(Pl.x, Pl.y + 1.5, Pl.z); camera.position.copy(eye); camera.lookAt(eye.sub(dir)); St.camDist = 0.55; player.visible = false; return;
+    }
     // follow: while walking, swing the camera round behind the fox (not when you just dragged to look, and not when walking toward the camera)
     const moving = Pl.speed > 0.6 && (Math.abs(input.jx) + Math.abs(input.jy) + input.f + input.b + input.l + input.r) > 0.1;
     if (moving && performance.now() - St.lastLook > 900) {
@@ -779,9 +786,58 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const touchUI = matchMedia('(pointer:coarse)').matches || 'ontouchstart' in window;
   const JR = 50;   // knob travel (same as Meru)
   const joyBase = document.createElement('div'), joyKnob = document.createElement('div');
-  joyBase.style.cssText = 'position:absolute;width:112px;height:112px;border:2px solid #f3f2f2;background:rgba(32,30,29,.25);transform:translate(-50%,-50%);display:none;pointer-events:none;z-index:5;transition:opacity .2s;';
-  joyKnob.style.cssText = 'position:absolute;width:44px;height:44px;background:#ec3013;transform:translate(-50%,-50%);display:none;pointer-events:none;z-index:5;transition:opacity .2s;';
+  joyBase.style.cssText = 'position:absolute;width:112px;height:112px;border:2px solid #f3f2f2;border-radius:50%;background:rgba(32,30,29,.25);transform:translate(-50%,-50%);display:none;pointer-events:none;z-index:5;transition:opacity .2s;';
+  // arrows round the middle: N, E, S, W
+  joyBase.innerHTML = '<svg viewBox="0 0 112 112" width="112" height="112" style="position:absolute;left:-2px;top:-2px" aria-hidden="true"><g fill="#f3f2f2"><path d="M56 9 L64 19 L48 19 Z"/><path d="M56 103 L64 93 L48 93 Z"/><path d="M9 56 L19 48 L19 64 Z"/><path d="M103 56 L93 48 L93 64 Z"/></g></svg>';
+  joyKnob.style.cssText = 'position:absolute;width:44px;height:44px;border-radius:50%;background:#ec3013;border:2px solid #f3f2f2;box-sizing:border-box;transform:translate(-50%,-50%);display:none;pointer-events:none;z-index:5;transition:opacity .2s;';
   container.append(joyBase, joyKnob);
+  // the LOOK AROUND eye, always in the bottom right corner: tap = first person on/off; press (and drag) = look around, and on
+  // letting go the view swings back to the normal camera angle
+  St.fp = false;
+  const lookBtn = document.createElement('div');
+  lookBtn.setAttribute('role', 'button'); lookBtn.setAttribute('tabindex', '0'); lookBtn.setAttribute('aria-pressed', 'false');
+  lookBtn.setAttribute('aria-label', 'Look around. Tap for first person view, press and drag to look around');
+  lookBtn.style.cssText = 'position:fixed;right:calc(12px + env(safe-area-inset-right));bottom:calc(16px + env(safe-area-inset-bottom));z-index:9;display:flex;align-items:center;gap:8px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer;';
+  lookBtn.innerHTML = '<span style="font:800 10px/1 Archivo,Arimo,sans-serif;letter-spacing:.14em;color:#f3f2f2;background:rgba(29,28,27,.72);padding:6px 8px;pointer-events:none">LOOK AROUND</span>' +
+    '<span class="eye" style="width:56px;height:56px;border-radius:50%;border:2px solid #f3f2f2;background:rgba(29,28,27,.72);display:flex;align-items:center;justify-content:center;pointer-events:none;transition:background .15s">' +
+    '<svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true"><path d="M2 16 C8 7 24 7 30 16 C24 25 8 25 2 16 Z" fill="none" stroke="#f3f2f2" stroke-width="2.4" stroke-linejoin="round"/><circle cx="16" cy="16" r="5.2" fill="#f3f2f2"/><circle cx="16" cy="16" r="2.2" fill="#1d1c1b"/></svg></span>';
+  document.body.appendChild(lookBtn);
+  const lookEye = lookBtn.querySelector('.eye');
+  // LEAVE NOTE, just above it: opens the note composer for the spot you're standing on (text, voice, photo)
+  const noteBtn = document.createElement('div');
+  noteBtn.setAttribute('role', 'button'); noteBtn.setAttribute('tabindex', '0'); noteBtn.setAttribute('aria-label', 'Leave a note here');
+  noteBtn.style.cssText = lookBtn.style.cssText; noteBtn.style.bottom = 'calc(84px + env(safe-area-inset-bottom))';
+  noteBtn.innerHTML = '<span style="font:800 10px/1 Archivo,Arimo,sans-serif;letter-spacing:.14em;color:#f3f2f2;background:rgba(29,28,27,.72);padding:6px 8px;pointer-events:none">LEAVE NOTE</span>' +
+    '<span style="width:56px;height:56px;border-radius:50%;border:2px solid #f3f2f2;background:rgba(29,28,27,.72);display:flex;align-items:center;justify-content:center;pointer-events:none">' +
+    '<svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><path d="M5 6 H27 V21 H14 L8 27 V21 H5 Z" fill="none" stroke="#f3f2f2" stroke-width="2.4" stroke-linejoin="round"/><path d="M11 13.5 H21 M16 8.5 V18.5" stroke="#ec3013" stroke-width="2.6" stroke-linecap="round"/></svg></span>';
+  document.body.appendChild(noteBtn);
+  const openNote = () => { if (window.NOTES && window.NOTES.openCompose) window.NOTES.openCompose(); };
+  noteBtn.addEventListener('click', e => { e.stopPropagation(); openNote(); });
+  noteBtn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openNote(); } });
+  const LK = { id: null, t0: 0, x: 0, y: 0, moved: 0, held: false, snap: null };
+  const homeAngles = () => V.spot && V.home ? V.home : [Pl.face + Math.PI, St.fp ? 0.04 : 0.28];
+  const setFP = on => { if (V.spot || studio) return; St.fp = on; St.yaw = Pl.face + Math.PI; St.pitch = on ? 0.04 : 0.28; if (!on) St.camDist = 1.2;
+    lookBtn.setAttribute('aria-pressed', on); lookEye.style.background = on ? '#ec3013' : 'rgba(29,28,27,.72)'; };
+  const snapBack = () => { const [ty, tp] = homeAngles(); LK.snap = { fy: St.yaw, fp: St.pitch, ty, tp, t: 0 }; };
+  lookBtn.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); LK.id = e.pointerId; LK.t0 = performance.now(); LK.x = e.clientX; LK.y = e.clientY; LK.moved = 0; LK.held = false; LK.snap = null; try { lookBtn.setPointerCapture(e.pointerId); } catch (err) {} });
+  lookBtn.addEventListener('pointermove', e => {
+    if (e.pointerId !== LK.id) return; const dx = e.clientX - LK.x, dy = e.clientY - LK.y; LK.x = e.clientX; LK.y = e.clientY; LK.moved += Math.abs(dx) + Math.abs(dy);
+    if (!LK.held && (LK.moved > 10 || performance.now() - LK.t0 > 280)) { LK.held = true; lookEye.style.outline = '3px solid #ec3013'; }
+    if (LK.held) { St.lastLook = performance.now(); const k = e.pointerType === 'mouse' ? 0.006 : 0.01; St.yaw -= dx * k; const fp = St.fp || V.spot; St.pitch = clamp(St.pitch + dy * k * 0.8, fp ? -0.9 : -0.35, fp ? 0.9 : 1.2); }
+  });
+  const lookUp = e => { if (e.pointerId !== LK.id) return; LK.id = null; lookEye.style.outline = 'none';
+    if (!LK.held && LK.moved <= 10 && performance.now() - LK.t0 < 280) setFP(!St.fp); else snapBack(); LK.held = false; };
+  lookBtn.addEventListener('pointerup', lookUp); lookBtn.addEventListener('pointercancel', lookUp);
+  lookBtn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setFP(!St.fp); } });
+  addEventListener('keydown', e => { if (e.code === 'KeyV' && !(e.target.closest && e.target.closest('input,textarea'))) setFP(!St.fp); });
+  function lookTick(dt) {
+    lookBtn.style.display = studio ? 'none' : 'flex'; noteBtn.style.display = studio || V.spot || !window.NOTES ? 'none' : 'flex';
+    if (!LK.snap || LK.id != null) return;
+    const s = LK.snap; s.t += dt; const k = Math.min(1, s.t / 0.35), e = 1 - Math.pow(1 - k, 3);
+    let dy = s.ty - s.fy; dy = Math.atan2(Math.sin(dy), Math.cos(dy));
+    St.yaw = s.fy + dy * e; St.pitch = s.fp + (s.tp - s.fp) * e; St.lastLook = performance.now() - 700;
+    if (k >= 1) LK.snap = null;
+  }
   // on touch screens the joystick rests, faint, at the bottom left so players can see it's there; touching anywhere on the left half moves it under the thumb
   const joyRest = () => {
     if (!touchUI) { joyBase.style.display = joyKnob.style.display = 'none'; return; }
@@ -800,7 +856,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   el.addEventListener('pointermove', e => {
     const p = ptrs.get(e.pointerId); if (!p) return;
     if (p.joy) { const r = el.getBoundingClientRect(); let dx = e.clientX - r.left - p.ox, dy = e.clientY - r.top - p.oy; const l = Math.hypot(dx, dy); if (l > JR) { dx *= JR / l; dy *= JR / l; } input.jx = dx / JR; input.jy = -dy / JR; joyKnob.style.left = p.ox + dx + 'px'; joyKnob.style.top = p.oy + dy + 'px'; }
-    else { St.lastLook = performance.now(); const k = e.pointerType === 'touch' ? 0.008 : 0.005; St.yaw -= (e.clientX - p.x) * k; St.pitch = clamp(St.pitch + (e.clientY - p.y) * k * 0.8, -0.35, 1.2); }
+    else { St.lastLook = performance.now(); const k = e.pointerType === 'touch' ? 0.008 : 0.005; St.yaw -= (e.clientX - p.x) * k; St.pitch = clamp(St.pitch + (e.clientY - p.y) * k * 0.8, St.fp ? -0.9 : -0.35, St.fp ? 0.9 : 1.2); }
     p.x = e.clientX; p.y = e.clientY;
   });
   const endPtr = e => { const p = ptrs.get(e.pointerId); if (p && p.joy) { input.jx = input.jy = 0; joyRest(); } ptrs.delete(e.pointerId); };
@@ -860,6 +916,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     if (simwalls) simwalls.update(dt, Pl.x, Pl.y, Pl.z);
     guides.update(dt, Pl.x, Pl.z);
     outdoors.update(dt);
+    lookTick(dt);
     if (!DBG.freeCam && !V.spot) updateCamera(dt);
     updateVision(dt, now);
     doorT -= dt;
@@ -941,6 +998,6 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     // add-ons (notes, guest book): draw into the scene, add things you can walk up to, run each frame
     world: { THREE, scene, camera, groundAt: (x, y, z) => groundAt(x, y, z), pos: () => [Pl.x, Pl.y, Pl.z], addNear: f => nearProviders.push(f), onTick: f => tickers.push(f), refreshNear: () => { nearKey = null; } },
     debug: { nearest: () => nearest(), guides, THREE, DBG, video, animator, Pl, St, input, scene, camera, renderer, vids, signs, teleport(x, y, z, face) { Pl.x = x; Pl.z = z; Pl.y = y ?? groundAt(x, 30, z); Pl.vy = 0; if (face != null) { Pl.face = face; St.yaw = face + Math.PI; } }, groundAt, cast, info: () => ({ calls: renderer.info.render.calls, tris: renderer.info.render.triangles, tex: renderer.info.memory.textures, geo: renderer.info.memory.geometries }) },
-    destroy() { cancelAnimationFrame(raf); ro.disconnect(); removeEventListener('keydown', onKeyDown); removeEventListener('keyup', onKeyUp); if (hls) hls.destroy(); video.pause(); renderer.dispose(); el.remove(); joyBase.remove(); joyKnob.remove(); },
+    destroy() { cancelAnimationFrame(raf); ro.disconnect(); removeEventListener('keydown', onKeyDown); removeEventListener('keyup', onKeyUp); if (hls) hls.destroy(); video.pause(); renderer.dispose(); el.remove(); joyBase.remove(); lookBtn.remove(); noteBtn.remove(); joyKnob.remove(); },
   };
 }

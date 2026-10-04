@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d0f1f">
+<title>Blind Canvas AR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0d0f1f; --panel:rgba(13,15,31,.88); --ink:#fff; --soft:#c9cbe0;
+    --gold:#ffcf5a; --sky:#7fdcff; --orange:#ff8a3d; --line:rgba(255,255,255,.16);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font-family:'Atkinson Hyperlegible',system-ui,sans-serif;overflow:hidden;
+    -webkit-tap-highlight-color:transparent}
+  button{font:inherit;color:inherit;cursor:pointer}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+  /* ── intro ── */
+  #intro{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:24px 20px calc(24px + env(safe-area-inset-bottom));text-align:center;gap:18px;z-index:20;
+    background:radial-gradient(120% 80% at 50% 0%,#2a1f55 0%,var(--bg) 60%)}
+  #intro .kicker{letter-spacing:.18em;text-transform:uppercase;color:var(--sky);font-size:14px;font-weight:700}
+  #intro h1{margin:0;font-size:clamp(30px,8vw,46px);line-height:1.05}
+  #intro .art{color:var(--gold);font-size:20px;font-weight:700}
+  #intro p{margin:0;max-width:30em;color:var(--soft);font-size:17px;line-height:1.5}
+  #start{margin-top:6px;min-width:240px;min-height:64px;padding:16px 28px;border:0;border-radius:999px;
+    background:var(--gold);color:#1a1300;font-size:22px;font-weight:700;box-shadow:0 8px 30px rgba(255,207,90,.35)}
+  #start:focus-visible,.btn:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
+  #intro .small{font-size:15px;color:var(--soft)}
+  #intro a{color:var(--sky)}
+  #pick{display:flex;flex-direction:column;gap:10px;width:min(420px,100%)}
+  #pick a{display:block;padding:14px 16px;border:1px solid var(--line);border-radius:14px;color:var(--ink);text-decoration:none;font-size:18px}
+
+  /* ── AR view ── */
+  #ar{position:fixed;inset:0;overflow:hidden}
+  #ar video{object-fit:cover}
+
+  #hud{position:fixed;left:0;right:0;bottom:0;z-index:10;padding:12px 14px calc(14px + env(safe-area-inset-bottom));
+    display:none;flex-direction:column;gap:10px;pointer-events:none}
+  #hud > *{pointer-events:auto}
+  #status{align-self:center;padding:10px 18px;border-radius:999px;background:var(--panel);
+    border:1px solid var(--line);font-size:17px;font-weight:700;text-align:center;max-width:100%}
+  #status.found{color:var(--gold)}
+  #caption{display:none;max-height:32vh;overflow:auto;padding:14px 16px;border-radius:16px;background:var(--panel);
+    border:1px solid var(--line);font-size:18px;line-height:1.5}
+  #caption.show{display:block}
+  #explore{display:none;gap:8px;flex-wrap:wrap;justify-content:center}
+  #explore.show{display:flex}
+  .row{display:flex;gap:10px;justify-content:center}
+  .btn{flex:1;max-width:180px;min-height:56px;padding:10px 14px;border-radius:16px;border:1px solid var(--line);
+    background:var(--panel);font-size:17px;font-weight:700}
+  .btn[aria-pressed="true"]{background:var(--sky);color:#00202b;border-color:transparent}
+  .chip{min-height:48px;padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-size:16px;font-weight:700}
+
+  /* scanning frame */
+  #scan{position:fixed;inset:0;z-index:5;display:none;align-items:center;justify-content:center;pointer-events:none}
+  #scan .box{width:min(70vw,360px);aspect-ratio:3/4;border-radius:22px;position:relative}
+  #scan .box::before,#scan .box::after{content:"";position:absolute;inset:0;border-radius:22px;
+    border:3px solid var(--sky);opacity:.85;
+    -webkit-mask:linear-gradient(#000 0 0) top/100% 22% no-repeat,linear-gradient(#000 0 0) bottom/100% 22% no-repeat;
+            mask:linear-gradient(#000 0 0) top/100% 22% no-repeat,linear-gradient(#000 0 0) bottom/100% 22% no-repeat}
+  #scan .box::after{animation:pulse 1.6s ease-in-out infinite}
+  @keyframes pulse{50%{transform:scale(1.04);opacity:.35}}
+
+  #loading{position:fixed;inset:0;z-index:15;display:none;align-items:center;justify-content:center;
+    flex-direction:column;gap:14px;background:var(--bg);font-size:19px}
+  .spinner{width:46px;height:46px;border-radius:50%;border:4px solid var(--line);border-top-color:var(--gold);animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  #err{display:none;color:#ffb4b4;max-width:30em}
+  @media (prefers-reduced-motion:reduce){#scan .box::after,.spinner{animation:none}}
+</style>
+</head>
+<body>
+
+<main id="intro">
+  <div class="kicker">Blind Canvas · AR</div>
+  <h1 id="introTitle">Augmented Art</h1>
+  <div class="art" id="introArt"></div>
+  <p id="introText">Point your phone at the artwork. It will come alive on screen, and a voice will describe it to you. You can tap parts of the painting to hear more.</p>
+  <button id="start" type="button">Start</button>
+  <p class="small" id="introHelp">Your phone will ask to use the camera. Nothing is recorded or uploaded.</p>
+  <p class="small" id="testLink"></p>
+  <p id="err" role="alert"></p>
+  <nav id="pick" aria-label="Choose an artwork" hidden></nav>
+</main>
+
+<div id="loading" role="status"><div class="spinner" aria-hidden="true"></div><div>Starting camera…</div></div>
+<div id="ar" aria-hidden="true"></div>
+<div id="scan" aria-hidden="true"><div class="box"></div></div>
+
+<section id="hud" aria-label="Artwork controls">
+  <div id="status" role="status" aria-live="polite">Point your camera at the artwork</div>
+  <div id="caption" aria-live="off"></div>
+  <div id="explore" role="group" aria-label="Explore parts of the artwork"></div>
+  <div class="row">
+    <button class="btn" id="listen" type="button">Listen</button>
+    <button class="btn" id="textBtn" type="button" aria-pressed="false">Show text</button>
+    <button class="btn" id="stopBtn" type="button">Quiet</button>
+  </div>
+</section>
+
+<script type="importmap">
+{ "imports": {
+    "three": "./lib/three/three.module.js",
+    "three/addons/": "./lib/three/addons/",
+    "mindar-image-three": "./lib/mindar/mindar-image-three.prod.js"
+} }
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { MindARThree } from 'mindar-image-three';
+import { ARTWORKS } from './artworks.js';
+
+const $ = id => document.getElementById(id);
+const params = new URLSearchParams(location.search);
+const art = ARTWORKS.find(a => a.id === params.get('art')) || (params.get('art') ? null : ARTWORKS[0]);
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ── intro ─────────────────────────────────────────── */
+if (!art) {
+  $('introArt').textContent = 'Choose an artwork';
+  $('start').hidden = true; $('introHelp').hidden = true;
+  const pick = $('pick'); pick.hidden = false;
+  for (const a of ARTWORKS) {
+    const link = document.createElement('a');
+    link.href = '?art=' + encodeURIComponent(a.id);
+    link.textContent = a.title + ' — ' + a.artist;
+    pick.appendChild(link);
+  }
+} else {
+  document.title = art.title + ' · Blind Canvas AR';
+  $('introArt').textContent = art.title + (art.artist ? ' — ' + art.artist : '');
+  if (art.image) $('testLink').innerHTML =
+    'No artwork nearby? <a href="' + art.image + '" target="_blank" rel="noopener">Open the picture</a> on a computer screen and point your phone at it.';
+}
+
+/* ── speech + sound ────────────────────────────────── */
+const synth = window.speechSynthesis;
+let voice = null;
+function pickVoice() {
+  const vs = synth ? synth.getVoices() : [];
+  voice = vs.find(v => /en[-_]US/i.test(v.lang) && /natural|samantha|google|aria|jenny/i.test(v.name))
+       || vs.find(v => /^en/i.test(v.lang)) || null;
+}
+if (synth) { pickVoice(); synth.onvoiceschanged = pickVoice; }
+
+let narrationAudio = null;
+function stopTalking() {
+  if (synth) synth.cancel();
+  if (narrationAudio) { narrationAudio.pause(); }
+}
+function say(text) {
+  stopTalking();
+  if (!synth || !text) return;
+  const u = new SpeechSynthesisUtterance(text);
+  if (voice) u.voice = voice;
+  u.rate = 0.95; u.pitch = 1;
+  synth.speak(u);
+}
+function playDescription() {
+  setCaption(art.description);
+  if (art.narration) {
+    stopTalking();
+    narrationAudio.currentTime = 0;
+    narrationAudio.play().catch(() => say(art.description));
+  } else {
+    say(art.description);
+  }
+}
+function buzz(p) { if (navigator.vibrate) navigator.vibrate(p); }
+
+/* ── HUD ───────────────────────────────────────────── */
+function setStatus(text, found) {
+  const s = $('status'); s.textContent = text; s.classList.toggle('found', !!found);
+}
+function setCaption(text) { $('caption').textContent = text || ''; }
+$('textBtn').onclick = () => {
+  const on = $('textBtn').getAttribute('aria-pressed') !== 'true';
+  $('textBtn').setAttribute('aria-pressed', on);
+  $('textBtn').textContent = on ? 'Hide text' : 'Show text';
+  $('caption').classList.toggle('show', on);
+};
+$('listen').onclick = () => playDescription();
+$('stopBtn').onclick = () => stopTalking();
+
+/* ── helpers: photo pixels → anchor space ──────────── */
+// MindAR's anchor: the artwork is 1 unit wide, centered at 0,0.
+let W, H, h;
+const px = x => x / W - 0.5;
+const py = y => (0.5 - y / H) * h;
+const pr = r => r / W;
+
+function radialTexture(stops) {
+  const c = document.createElement('canvas'); c.width = c.height = 128;
+  const g = c.getContext('2d').createRadialGradient(64, 64, 0, 64, 64, 64);
+  stops.forEach(([o, col]) => g.addColorStop(o, col));
+  const ctx = c.getContext('2d'); ctx.fillStyle = g; ctx.fillRect(0, 0, 128, 128);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+function frameTexture(color) {
+  const cw = 512, ch = Math.round(512 * h);
+  const c = document.createElement('canvas'); c.width = cw; c.height = ch;
+  const ctx = c.getContext('2d');
+  const pad = 26;
+  ctx.shadowColor = color; ctx.strokeStyle = color;
+  for (const [blur, w, a] of [[28, 10, .55], [12, 5, .8], [0, 2.5, 1]]) {
+    ctx.shadowBlur = blur; ctx.lineWidth = w; ctx.globalAlpha = a;
+    ctx.beginPath(); ctx.roundRect(pad, pad, cw - pad * 2, ch - pad * 2, 14); ctx.stroke();
+  }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+
+/* ── overlay builders ──────────────────────────────── */
+const animators = [];   // functions(t, dt) run every frame while visible
+let overlayGroup, hotspotMeshes = [], videoEl = null;
+
+function buildMagic(group) {
+  // glowing frame around the artwork (slightly larger than the art)
+  const scale = 1.08;
+  const frame = new THREE.Mesh(
+    new THREE.PlaneGeometry(scale, h * scale),
+    new THREE.MeshBasicMaterial({ map: frameTexture('#7fdcff'), transparent: true,
+      blending: THREE.AdditiveBlending, depthWrite: false })
+  );
+  frame.position.z = 0.002; group.add(frame);
+  animators.push(t => { frame.material.opacity = 0.65 + 0.35 * Math.sin(t * 2.2); });
+
+  // glows + ripples on hotspots marked glow:true
+  const glowTex = radialTexture([[0, 'rgba(255,255,255,1)'], [0.25, 'rgba(255,255,255,.55)'], [1, 'rgba(255,255,255,0)']]);
+  for (const hs of art.hotspots || []) {
+    if (!hs.glow) continue;
+    const col = new THREE.Color(hs.color || '#ffcf5a');
+    const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: col, transparent: true,
+      blending: THREE.AdditiveBlending, depthWrite: false }));
+    const base = pr(hs.r) * 2.6;
+    glow.position.set(px(hs.x), py(hs.y), 0.01); glow.scale.set(base, base, 1); group.add(glow);
+    animators.push(t => { const s = base * (1 + 0.08 * Math.sin(t * 1.7)); glow.scale.set(s, s, 1);
+      glow.material.opacity = 0.55 + 0.25 * Math.sin(t * 1.7); });
+
+    for (let i = 0; i < 3; i++) {
+      const ring = new THREE.Mesh(new THREE.RingGeometry(0.96, 1, 64),
+        new THREE.MeshBasicMaterial({ color: col, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
+      ring.position.set(px(hs.x), py(hs.y), 0.012); group.add(ring);
+      const r0 = pr(hs.r);
+      animators.push(t => { const k = ((t * 0.35) + i / 3) % 1;
+        const s = r0 * (1 + k * 0.9); ring.scale.set(s, s, 1); ring.material.opacity = (1 - k) * 0.7; });
+    }
+  }
+
+  // sparkles drifting up off the canvas
+  const N = 170, pos = new Float32Array(N * 3), col = new Float32Array(N * 3), seed = [];
+  const palette = ['#ffcf5a', '#7fdcff', '#ff7aa8', '#9dffa0', '#ffffff'].map(c => new THREE.Color(c));
+  for (let i = 0; i < N; i++) {
+    const c = palette[i % palette.length]; col.set([c.r, c.g, c.b], i * 3);
+    seed.push({ x: Math.random() - 0.5, y: (Math.random() - 0.5) * h, sp: 0.03 + Math.random() * 0.06,
+      ph: Math.random() * 6.28, zs: Math.random() });
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  const dot = radialTexture([[0, 'rgba(255,255,255,1)'], [0.4, 'rgba(255,255,255,.6)'], [1, 'rgba(255,255,255,0)']]);
+  const pts = new THREE.Points(geo, new THREE.PointsMaterial({ size: 0.028, map: dot, vertexColors: true,
+    transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
+  group.add(pts);
+  animators.push((t) => {
+    for (let i = 0; i < N; i++) {
+      const s = seed[i];
+      let y = s.y + t * s.sp; y = ((y + h / 2) % h) - h / 2;          // wrap bottom→top
+      const k = (y + h / 2) / h;                                        // 0 bottom → 1 top
+      pos[i * 3] = s.x + Math.sin(t * 0.8 + s.ph) * 0.015;
+      pos[i * 3 + 1] = y;
+      pos[i * 3 + 2] = 0.01 + k * 0.18 * s.zs;                          // lift off the canvas as they rise
+    }
+    geo.attributes.position.needsUpdate = true;
+  });
+}
+
+function buildVideo(group) {
+  videoEl = document.createElement('video');
+  Object.assign(videoEl, { src: art.overlay.src, loop: true, playsInline: true, crossOrigin: 'anonymous', preload: 'auto' });
+  videoEl.setAttribute('playsinline', ''); videoEl.setAttribute('webkit-playsinline', '');
+  videoEl.muted = !art.overlay.sound;
+  const tex = new THREE.VideoTexture(videoEl); tex.colorSpace = THREE.SRGBColorSpace;
+  const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, h), new THREE.MeshBasicMaterial({ map: tex, transparent: true }));
+  plane.position.z = 0.003; group.add(plane);
+}
+
+function buildImage(group) {
+  const tex = new THREE.TextureLoader().load(art.overlay.src); tex.colorSpace = THREE.SRGBColorSpace;
+  const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, h), new THREE.MeshBasicMaterial({ map: tex, transparent: true }));
+  plane.position.z = 0.003; group.add(plane);
+  animators.push(t => { plane.position.z = 0.02 + 0.015 * Math.sin(t * 1.5); });
+}
+
+function buildHotspots(group) {
+  const mat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false });
+  for (const hs of art.hotspots || []) {
+    const m = new THREE.Mesh(new THREE.CircleGeometry(pr(hs.r), 32), mat);
+    m.position.set(px(hs.x), py(hs.y), 0.02); m.userData.label = hs.label;
+    group.add(m); hotspotMeshes.push(m);
+  }
+}
+
+/* explore buttons: the same hotspots, reachable without aiming */
+function buildExploreButtons() {
+  const box = $('explore');
+  (art.hotspots || []).forEach((hs, i) => {
+    const b = document.createElement('button');
+    b.className = 'chip'; b.type = 'button';
+    b.textContent = hs.name || hs.label.split(/[.,]/)[0];
+    b.onclick = () => { setCaption(hs.label); say(hs.label); buzz(30); };
+    box.appendChild(b);
+  });
+}
+
+/* ── start AR ──────────────────────────────────────── */
+let started = false;
+$('start').addEventListener('click', async () => {
+  if (started) return; started = true;
+
+  // unlock speech + audio inside the tap (needed on iPhone)
+  if (synth) { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; synth.speak(u); }
+  if (art.narration) { narrationAudio = new Audio(art.narration); narrationAudio.preload = 'auto';
+    narrationAudio.play().then(() => narrationAudio.pause()).catch(() => {}); }
+
+  $('intro').style.display = 'none';
+  $('loading').style.display = 'flex';
+  try {
+    await startAR();
+  } catch (e) {
+    console.error(e);
+    started = false;
+    $('loading').style.display = 'none';
+    $('intro').style.display = 'flex';
+    $('err').style.display = 'block';
+    $('err').textContent = (e && (e.name === 'NotAllowedError' || /permission/i.test(e.message)))
+      ? 'Camera permission was blocked. Allow camera access for this site in your browser settings, then tap Start again.'
+      : 'The camera could not start. Make sure no other app is using it, then tap Start again. (' + (e.message || e) + ')';
+  }
+});
+
+async function startAR() {
+  W = art.width; H = art.height; h = H / W;
+
+  const mindar = new MindARThree({
+    container: $('ar'), imageTargetSrc: art.target,
+    uiLoading: 'no', uiScanning: 'no', uiError: 'no',
+    filterMinCF: 0.0001, filterBeta: 0.001,   // steadier overlay
+    missTolerance: 8, warmupTolerance: 4
+  });
+  const { renderer, scene, camera } = mindar;
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+  const anchor = mindar.addAnchor(0);
+  overlayGroup = new THREE.Group();
+  anchor.group.add(overlayGroup);
+
+  const type = (art.overlay && art.overlay.type) || 'magic';
+  if (type === 'video') buildVideo(overlayGroup);
+  else if (type === 'image') buildImage(overlayGroup);
+  else buildMagic(overlayGroup);
+  buildHotspots(overlayGroup);
+  buildExploreButtons();
+
+  if (videoEl) videoEl.play().then(() => videoEl.pause()).catch(() => {});
+
+  let found = false, appearT = 0, lastSpoken = -1e9;
+  anchor.onTargetFound = () => {
+    found = true; appearT = performance.now();
+    buzz([60, 40, 60]);
+    setStatus('Found: ' + art.title, true);
+    $('scan').style.display = 'none';
+    $('explore').classList.add('show');
+    if (videoEl) videoEl.play().catch(() => {});
+    // describe once; again only if it's been a while
+    const autoSpeak = !(type === 'video' && art.overlay.sound);
+    if (autoSpeak && performance.now() - lastSpoken > 45000) { lastSpoken = performance.now(); playDescription(); }
+  };
+  anchor.onTargetLost = () => {
+    found = false;
+    setStatus('Point your camera at the artwork');
+    $('scan').style.display = 'flex';
+    if (videoEl) videoEl.pause();
+    // narration keeps going on purpose: a listener shouldn't lose the description if the phone drifts
+  };
+
+  // tap the art to hear a part of it
+  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+  $('ar').addEventListener('pointerup', (ev) => {
+    if (!found || !hotspotMeshes.length) return;
+    const r = renderer.domElement.getBoundingClientRect();
+    ndc.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
+    ray.setFromCamera(ndc, camera);
+    const hit = ray.intersectObjects(hotspotMeshes)[0];
+    if (hit) { const l = hit.object.userData.label; setCaption(l); say(l); buzz(30); }
+  });
+
+  await mindar.start();
+
+  $('loading').style.display = 'none';
+  $('hud').style.display = 'flex';
+  $('scan').style.display = 'flex';
+  $('ar').removeAttribute('aria-hidden');
+
+  const clock = new THREE.Clock();
+  let stillDrawn = false;
+  renderer.setAnimationLoop(() => {
+    const t = clock.getElapsedTime();
+    if (found) {
+      // ease in when the art is first found
+      const k = Math.min(1, (performance.now() - appearT) / 600);
+      const e = reduceMotion ? 1 : 1 - Math.pow(1 - k, 3);
+      overlayGroup.scale.setScalar(0.92 + 0.08 * e);
+      if (!reduceMotion) for (const f of animators) f(t);
+      else if (!stillDrawn) { for (const f of animators) f(2); stillDrawn = true; }   // one calm still frame
+    }
+    renderer.render(scene, camera);
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { stopTalking(); if (videoEl) videoEl.pause(); }
+  });
+}
+</script>
+</body>
+</html>

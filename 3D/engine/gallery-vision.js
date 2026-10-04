@@ -12,9 +12,9 @@ import * as THREE from '../vendor/three/three.module.js';
 export const LEARN = {"rp": {"label": "Retinitis Pigmentosa", "common": "Tunnel Vision", "accent": "#5b8def", "effect": "rp", "art": "Clinic examination room", "tagline": "A slow narrowing of the visual field — the world seen through a closing tunnel of light.", "whatIs": "Retinitis Pigmentosa is a family of inherited disorders that gradually break down the light-sensing cells of the retina. The rods and cones stop working over many years, so vision changes slowly rather than all at once — most often beginning at the edges and with difficulty seeing in the dark.", "experience": ["Night blindness — struggling to see in low light long before anything else", "Peripheral vision narrowing inward, like looking through a shrinking tube", "Bumping into things just outside the center of view", "Central, detailed sight often remaining clear far longer"], "living": ["A white cane and orientation training restore confident movement", "High contrast, good lighting, and screen readers keep work open", "Pace and severity vary widely — each person’s road is their own"], "facts": [{"k": "Affects", "v": "~1 in 4,000 people"}, {"k": "Onset", "v": "Childhood to early adulthood"}, {"k": "Cause", "v": "Inherited / genetic"}, {"k": "Progression", "v": "Gradual, over years"}]}, "amd": {"label": "Macular Degeneration", "common": "Central Loss", "accent": "#e0903f", "effect": "amd", "art": "Clinic examination room", "tagline": "The center of sight fades while the edges remain — faces and detail dissolve behind a smudge.", "whatIs": "Macular degeneration affects the macula, the small central part of the retina responsible for sharp, straight-ahead vision. As central detail fades, side (peripheral) vision typically remains, so people navigate while faces and fine print blur.", "experience": ["A blurred, dim, or empty patch in the very center of view", "Straight lines appearing wavy or bent", "Faces becoming hard to recognize while edges stay clear", "Needing more light and contrast to read or see detail"], "living": ["Eccentric viewing — looking slightly to the side — uses healthy retina", "Magnifiers and large-print tools keep reading possible", "Most people keep useful peripheral mobility vision"], "facts": [{"k": "Affects", "v": "Millions, mostly 50+"}, {"k": "Onset", "v": "Usually later in life"}, {"k": "Cause", "v": "Age, genetics, lifestyle"}, {"k": "Pattern", "v": "Central vision first"}]}, "cataracts": {"label": "Cataracts", "common": "Cataracts", "accent": "#d9c24a", "effect": "cataracts", "art": "Clinic examination room", "tagline": "The lens of the eye clouds over — the world washes into a milky, glaring haze.", "whatIs": "A cataract is a clouding of the eye’s normally clear lens. Light scatters as it passes through, so vision turns hazy and washed-out, colors fade, and bright lights bloom into glare. Cataracts are extremely common with age and, unlike most retinal conditions, are usually treatable with surgery.", "experience": ["A cloudy, foggy, or filmy quality over everything", "Colors looking faded, yellowed, or less vivid", "Strong glare and halos around lights, especially at night", "Reduced contrast — detail flattening into haze"], "living": ["Surgery to replace the lens restores clarity for most people", "Anti-glare lenses and good lighting ease daily tasks", "One of the most treatable causes of vision loss"], "facts": [{"k": "Affects", "v": "Very common with age"}, {"k": "Onset", "v": "Typically 60+"}, {"k": "Cause", "v": "Lens proteins clumping"}, {"k": "Treatment", "v": "Surgery, often curative"}]}, "glaucoma": {"label": "Glaucoma", "common": "Glaucoma", "accent": "#7b7bd6", "effect": "glaucoma", "art": "Clinic examination room", "tagline": "Pressure damages the optic nerve — vision quietly erodes from the edges, often unnoticed at first.", "whatIs": "Glaucoma is a group of conditions that damage the optic nerve, frequently linked to raised pressure inside the eye. It typically erodes peripheral vision in irregular patches, closing a soft, foggy frame inward. Because it’s painless and gradual, it can advance silently — which is why regular eye checks matter.", "experience": ["Peripheral vision fading in uneven, blurred patches", "A soft, foggy frame slowly closing inward", "Trouble adjusting in dim light or seeing contrast", "Often no early symptoms — it can go unnoticed"], "living": ["Eye drops and treatment can slow or halt progression", "Early detection through routine screening is key", "Orientation tools support safe movement as fields narrow"], "facts": [{"k": "Affects", "v": "~80 million worldwide"}, {"k": "Onset", "v": "More common after 60"}, {"k": "Cause", "v": "Optic nerve damage"}, {"k": "Key", "v": "Early detection matters"}]}, "dr": {"label": "Diabetic Retinopathy", "common": "Floaters", "accent": "#cf5b41", "effect": "floaters", "art": "Clinic examination room", "tagline": "Diabetes damages the retina’s vessels — drifting floaters, dark spots, and blur cloud the view.", "whatIs": "Diabetic Retinopathy occurs when high blood sugar damages the tiny blood vessels in the retina. They can leak or bleed, casting drifting shadows (floaters), dark spots, and patches of blur across vision. It is a leading cause of vision loss in working-age adults — and largely preventable with blood-sugar control and screening.", "experience": ["Drifting specks, threads, and floaters across the view", "Dark or empty spots where vessels have bled", "Blurred or fluctuating vision day to day", "Trouble with color and night vision as it advances"], "living": ["Managing blood sugar and pressure slows the damage", "Laser treatment and injections can preserve sight", "Annual dilated eye exams catch it before it’s felt"], "facts": [{"k": "Affects", "v": "Many with diabetes"}, {"k": "Onset", "v": "Working-age adults"}, {"k": "Cause", "v": "Vessel damage from diabetes"}, {"k": "Key", "v": "Largely preventable"}]}};
 
 export const CONDITIONS = [
-  { id: 'rp', label: 'Retinitis Pigmentosa', chip: 'Tunnel vision', desc: 'A shrinking tunnel of sight: peripheral vision narrows inward, with early night blindness. (Ben\'s diagnosis.)' },
+  { id: 'rp', label: 'Retinitis Pigmentosa', chip: 'Tunnel', desc: 'A shrinking tunnel of sight: peripheral vision narrows inward, with early night blindness. (Ben\'s diagnosis.)' },
   { id: 'cataracts', label: 'Cataracts', chip: 'Cataracts', desc: "The eye's lens clouds over: a milky, glaring haze with faded colour and contrast." },
-  { id: 'amd', label: 'Macular Degeneration', chip: 'Macular deg.', desc: 'Central vision blurs and darkens: detail vanishes where you look, while the edges linger.' },
+  { id: 'amd', label: 'Macular Degeneration', chip: 'Macular', desc: 'Central vision blurs and darkens: detail vanishes where you look, while the edges linger.' },
   { id: 'floaters', label: 'Floaters', chip: 'Floaters', desc: 'Drifting specks and threads swim across the view, clearest against bright areas. They trail behind as you look around.' },
   { id: 'glaucoma', label: 'Glaucoma', chip: 'Glaucoma', desc: 'Peripheral vision erodes in patches as a soft, foggy frame closes inward.' },
 ];
@@ -115,17 +115,20 @@ export function visionOverlay({ container, onExit = () => {}, onGuided = () => {
   #vsim{position:absolute;inset:0;pointer-events:none;z-index:4;opacity:0;transition:opacity .6s}
   #vsim .vb{position:absolute;inset:0}
   #vsim .vf{position:absolute;inset:-12%;will-change:transform}
-  #vsimUI{position:fixed;left:0;right:0;top:0;z-index:12;display:none;background:rgba(20,19,18,.9);color:#f3f2f2;font:400 13px/1.35 Archivo,Arimo,Helvetica,Arial,sans-serif;border-bottom:2px solid #ec3013;padding:calc(8px + env(safe-area-inset-top)) calc(12px + env(safe-area-inset-right)) 10px calc(12px + env(safe-area-inset-left))}
+  #vsimUI{position:fixed;left:0;right:0;top:0;z-index:12;display:none;background:#141312;color:#f3f2f2;font:400 13px/1.35 Archivo,Arimo,Helvetica,Arial,sans-serif;border-bottom:2px solid #ec3013;padding:calc(6px + env(safe-area-inset-top)) calc(8px + env(safe-area-inset-right)) 6px calc(8px + env(safe-area-inset-left))}
   #vsimUI .k{font:800 10px/1 Archivo,Arimo,sans-serif;letter-spacing:.16em;color:#ff9783;text-transform:uppercase}
   #vsimUI .t{font:800 17px/1.15 Archivo,Arimo,sans-serif;margin:3px 0 2px}
   #vsimUI .d{color:#cfcaca;font-size:12px;max-width:70ch}
-  #vsimUI .row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:8px}
+  #vsimUI .row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px}
+  #vsimUI .row:first-child{margin-top:0}
+  #vsimUI #vsChips{flex-wrap:nowrap;gap:4px}
+  #vsimUI #vsChips button{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 4px;letter-spacing:0;font-size:clamp(9px,2.45vw,13px);white-space:nowrap;overflow:hidden}
   #vsimUI button{min-height:40px;padding:0 12px;background:transparent;color:#f3f2f2;border:2px solid #f3f2f2;font:800 11px/1 Archivo,Arimo,sans-serif;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
   #vsimUI button.on{background:#f3f2f2;color:#1d1c1b}
   #vsimUI button.x{background:#ec3013;border-color:#ec3013}
-  #vsimUI button.learn{flex:1 1 100%;min-height:46px;background:#ec3013;border-color:#ec3013;font-size:13px;text-align:left;padding:0 14px;animation:vsPulse 1.6s ease-in-out infinite}
+  #vsimUI button.learn{flex:1 1 100%;min-height:40px;background:#1f4fd8;border-color:#1f4fd8;font-size:13px;text-align:left;padding:0 14px;animation:vsPulse 1.6s ease-in-out infinite}
   #vsimUI button.learn span{text-transform:none;letter-spacing:.02em}
-  @keyframes vsPulse{0%,100%{box-shadow:0 0 0 0 rgba(236,48,19,.75);background:#ec3013}50%{box-shadow:0 0 0 7px rgba(236,48,19,0);background:#ff5a3c}}
+  @keyframes vsPulse{0%,100%{box-shadow:0 0 0 0 rgba(31,79,216,.75);background:#1f4fd8}50%{box-shadow:0 0 0 7px rgba(31,79,216,0);background:#3d6cf0}}
   @media (prefers-reduced-motion:reduce){#vsimUI button.learn{animation:none}}
   #vsimUI label{display:flex;align-items:center;gap:10px;flex:1 1 220px;font:800 10px/1 Archivo,Arimo,sans-serif;letter-spacing:.14em;text-transform:uppercase}
   #vsimUI input[type=range]{flex:1;accent-color:#ec3013;height:32px}
@@ -144,20 +147,19 @@ export function visionOverlay({ container, onExit = () => {}, onGuided = () => {
   #vsLearn .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
   #vsLearn button{min-height:44px;padding:0 16px;border:2px solid #1d1c1b;background:#fff;font:800 12px/1 Archivo,Arimo,sans-serif;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
   #vsLearn button.p{background:#1d1c1b;color:#fff}
-  @media (max-height:500px){#vsimUI .d,#vsimUI .hint{display:none}#vsimUI .t{font-size:14px;margin:2px 0 0}#vsimUI .row{margin-top:5px}#vsimUI button{min-height:34px}}
-  @media (max-width:520px){#vsimUI .d{display:none}#vsimUI button{min-height:38px;padding:0 9px;font-size:10px}}`;
+  @media (max-height:500px){#vsimUI .row{margin-top:4px}#vsimUI button{min-height:34px}#vsimUI button.learn{min-height:34px}}
+  @media (max-width:520px){#vsimUI button{min-height:38px;padding:0 9px;font-size:10px}#vsimUI #vsChips button{padding:0 3px}}`;
   document.head.appendChild(css);
   const ov = document.createElement('div'); ov.id = 'vsim'; ov.setAttribute('aria-hidden', 'true');
   const blurL = document.createElement('div'); blurL.className = 'vb'; const spotL = document.createElement('div'); spotL.className = 'vf';
   ov.append(blurL, spotL); container.appendChild(ov);
   const touch = matchMedia('(pointer:coarse)').matches;
   const ui = document.createElement('div'); ui.id = 'vsimUI'; ui.setAttribute('role', 'region'); ui.setAttribute('aria-label', 'Vision simulator');
-  ui.innerHTML = `<div class="k">See through their eyes · vision simulator</div><div class="d" id="vsD"></div>
-    <div class="row" id="vsChips"></div>
-    <div class="row"><label for="vsSev">Severity <span id="vsP">60%</span><input id="vsSev" type="range" min="0" max="100" value="60"></label>
-      <button id="vsX" class="x">← Back</button><button id="vsG" aria-pressed="false">Guided look</button><button id="vsS" aria-pressed="false" style="display:none">👥 Show everyone</button></div>
+  // kept as small as it can be, so the simulated view gets the screen: the conditions on one line, Learn, then severity + Back
+  ui.innerHTML = `<div class="row" id="vsChips"></div>
     <div class="row"><button id="vsL" class="learn">Learn about: <span id="vsLn"></span></button></div>
-    <div class="hint"><b>CLICK/DRAG SCREEN TO LOOK AROUND</b>${touch ? ' \u00b7 or use the joystick' : ' \u00b7 arrow keys work too \u00b7 Esc to go back'}</div>`;
+    <div class="row"><label for="vsSev">Severity <span id="vsP">60%</span><input id="vsSev" type="range" min="0" max="100" value="60"></label>
+      <button id="vsX" class="x">← Back</button><button id="vsS" aria-pressed="false" style="display:none">👥 Show everyone</button></div>`;
   document.body.appendChild(ui);
   const $ = id => ui.querySelector('#' + id);
   const live = document.createElement('div'); live.setAttribute('aria-live', 'polite'); live.style.cssText = 'position:absolute;left:-9999px'; document.body.appendChild(live);
@@ -165,7 +167,7 @@ export function visionOverlay({ container, onExit = () => {}, onGuided = () => {
   CONDITIONS.forEach(c => { const b = document.createElement('button'); b.textContent = c.chip; b.dataset.c = c.id; b.onclick = () => setCond(c.id); $('vsChips').appendChild(b); });
   function setCond(id) {
     st.cond = id; const c = CONDITIONS.find(x => x.id === id);
-    $('vsD').textContent = c.desc; $('vsLn').textContent = id === 'floaters' ? 'Diabetic Retinopathy' : c.label;   // floaters are what diabetic retinopathy looks like; the Learn page explains it
+    $('vsLn').textContent = id === 'floaters' ? 'Diabetic Retinopathy' : c.label;   // floaters are what diabetic retinopathy looks like; the Learn page explains it
     ui.querySelectorAll('#vsChips button').forEach(b => { b.classList.toggle('on', b.dataset.c === id); b.setAttribute('aria-pressed', b.dataset.c === id); });
     live.textContent = c.label + '. ' + c.desc;
     if (st.sharing && onShare) onShare(true, st.cond, st.sev);
@@ -193,7 +195,6 @@ export function visionOverlay({ container, onExit = () => {}, onGuided = () => {
   const closeLearn = () => { lp.style.display = 'none'; if (window.speechSynthesis) window.speechSynthesis.cancel(); };
   lp.addEventListener('click', e => { if (e.target === lp) closeLearn(); });
   $('vsL').onclick = openLearn;
-  $('vsG').onclick = () => { st.guided = !st.guided; $('vsG').classList.toggle('on', st.guided); $('vsG').setAttribute('aria-pressed', st.guided); onGuided(st.guided); };
   setCond('rp');
   return {
     st,
@@ -203,7 +204,7 @@ export function visionOverlay({ container, onExit = () => {}, onGuided = () => {
       live.textContent = 'Vision simulator on. ' + CONDITIONS.find(x => x.id === st.cond).label + '. ' + (touch ? 'Drag to look around.' : 'Drag or use the arrow keys to look around. Press Escape to step off.');
     },
     learnOpen: () => lp.style.display === 'flex', closeLearn: () => closeLearn(),
-    close() { if (st.sharing) setSharing(false); closeLearn(); st.on = false; ui.style.display = 'none'; st.guided = false; $('vsG').classList.remove('on'); live.textContent = 'Vision simulator off.'; },
+    close() { if (st.sharing) setSharing(false); closeLearn(); st.on = false; ui.style.display = 'none'; st.guided = false; live.textContent = 'Vision simulator off.'; },
     // group vision: the page turns on "Show everyone" once multiplayer is ready
     setShareHandler(fn, others) { onShare = fn; $('vsS').style.display = fn && others ? '' : 'none'; },
     sharing: () => !!st.sharing,
@@ -216,7 +217,7 @@ export function visionOverlay({ container, onExit = () => {}, onGuided = () => {
     },
     guestEnd() { if (!st.guest) return; st.guest = null; st.on = false; live.textContent = 'Your own view is back.'; },
     isGuest: () => st.guest,
-    setGuided(v) { st.guided = v; $('vsG').classList.toggle('on', v); },
+    setGuided(v) { st.guided = v; },
     // dt seconds; yawRate/pitchRate: how fast the view is turning (rad/s)
     update(dt, yawRate, pitchRate) {
       st.t += dt;
