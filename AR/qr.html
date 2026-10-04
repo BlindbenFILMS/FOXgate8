@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blind Canvas AR · QR codes</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;800;900&display=swap" rel="stylesheet">
+<style>
+  /* One card per artwork: print this page and put each card beside its painting. */
+  :root{--ink:#111;--muted:#555}
+  *{box-sizing:border-box}
+  body{margin:0;padding:24px 16px;background:#fff;color:var(--ink);font-family:Archivo,Arial,sans-serif}
+  header{max-width:1000px;margin:0 auto 18px}
+  h1{margin:0;font-weight:900;font-size:28px}
+  header p{margin:6px 0 0;color:var(--muted);font-size:15px;line-height:1.45}
+  button{margin-top:10px;min-height:44px;padding:0 18px;border:2px solid #111;background:#111;color:#fff;font:800 14px Archivo,Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+  #grid{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+  .card{border:2px solid #111;padding:14px;break-inside:avoid;page-break-inside:avoid;display:flex;flex-direction:column;align-items:center;text-align:center}
+  .card canvas{width:100%;max-width:200px;height:auto;image-rendering:pixelated}
+  .t{margin-top:10px;background:#000;color:#fff;width:100%;padding:8px 6px 7px;font-weight:900;font-size:16px;line-height:1.15;text-transform:uppercase}
+  .a{background:#000;color:#fff;width:100%;padding:0 6px 8px;font-weight:800;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+  .s{margin-top:8px;font-size:12px;color:var(--muted)}
+  .card a{font-size:11px;color:var(--muted);word-break:break-all;margin-top:4px}
+  @media print{header button{display:none}body{padding:0}#grid{grid-template-columns:repeat(3,1fr);gap:10px}.card a{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Blind Canvas AR · QR codes</h1>
+  <p>Print this page and place each card beside its painting. Visitors scan the code with their phone camera, tap Start, and point the phone at the painting: it comes alive, the title appears under it, and the artist's interview plays.</p>
+  <button type="button" onclick="print()">Print the cards</button>
+</header>
+<main id="grid"></main>
+<script src="lib/qrcode.js"></script>
+<script type="module">
+import { ARTWORKS } from './artworks.js';
+const base = location.href.replace(/qr\.html.*$/, '');
+const grid = document.getElementById('grid');
+for (const a of ARTWORKS) {
+  if (a.id === 'fox-at-dusk') continue;
+  const url = base + '?art=' + encodeURIComponent(a.id);
+  const q = qrcode(0, 'M'); q.addData(url); q.make();
+  const n = q.getModuleCount(), s = 8, m = 4, c = document.createElement('canvas'); c.width = c.height = (n + m * 2) * s;
+  const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.fillStyle = '#000';
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (q.isDark(y, x)) g.fillRect((x + m) * s, (y + m) * s, s, s);
+  c.setAttribute('role', 'img'); c.setAttribute('aria-label', 'QR code for ' + a.title);
+  const card = document.createElement('section'); card.className = 'card';
+  card.innerHTML = '<div class="t"></div><div class="a"></div><div class="s">Scan · point your phone at the painting</div><a></a>';
+  card.prepend(c); card.querySelector('.t').textContent = a.title; card.querySelector('.a').textContent = a.artist;
+  const l = card.querySelector('a'); l.href = url; l.textContent = url;
+  grid.appendChild(card);
+}
+</script>
+</body>
+</html>

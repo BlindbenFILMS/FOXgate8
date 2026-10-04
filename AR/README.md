@@ -1,13 +1,23 @@
 # Blind Canvas AR
 
-No-download augmented reality for artwork. Visitors scan a QR code, the page opens in their phone browser, they point the camera at the painting, and it comes alive and describes itself aloud.
+No-download augmented reality for artwork. Visitors scan a QR code, the page opens in their phone browser, they point the camera at a painting, and it comes alive and describes itself aloud.
 
-- **index.html**: the AR viewer. Each artwork has its own link: `.../AR/?art=<id>`
+- **index.html**: the AR viewer
+  - one artwork: `.../AR/?art=<id>`
+  - a whole room (one QR code, many artworks): `.../AR/?show=<id>`
+  - no link name: a menu of every room and artwork
 - **add.html**: turns a photo of an artwork into a tracking file, tap-to-hear spots, and a QR code
-- **artworks.js**: the list of artworks: titles, descriptions, overlays, and spots
-- **targets/**: tracking files (`.mind`) and photos for each artwork
+- **exhibition.html**: groups artworks already on the site into one room with one QR code
+- **artworks.js**: the list of artworks (ARTWORKS) and rooms (EXHIBITIONS)
+- **qr.html**: printable QR cards, one per artwork, to put beside each painting
+- **targets/**: tracking files (`.mind`) and photos
+- **media/clips/**: the artists' interview clips (the same moments as the online gallery's audio, cut from the full interviews)
 - **lib/**: MindAR (image tracking) and Three.js (3D), stored here so the site never depends on another server
 
 Works in Safari on iPhone and Chrome on Android. Phones only allow camera access over https, which GitHub Pages provides.
 
-Test it: open `targets/fox-at-dusk.jpg` on a computer screen, then open `.../AR/` on a phone and point the phone at the screen.
+Rooms: aim for 10–20 artworks each. Each one adds about 0.7 MB for visitors to download.
+
+Test it: open `targets/fox-at-dusk.jpg` and `targets/harbor-light.jpg` on a computer screen, open `.../AR/?show=test-room` on a phone, and point the phone at one painting, then the other.
+
+The Blind Canvas artworks use the `story` layout: the animated art (from `../3D/gallery/anim/`) plays over the painting, a black title banner (TITLE / ARTIST in white capitals) sits under it, and the artist's clip plays with sound under that. Buttons: Story (play it again), Describe (reads the image description), Show text, Quiet. Tap the clip to pause it.

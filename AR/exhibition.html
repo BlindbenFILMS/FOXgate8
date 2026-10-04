@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build an Exhibition · Blind Canvas AR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0d0f1f;--card:#171a33;--ink:#fff;--soft:#c3c6de;--gold:#ffcf5a;--sky:#7fdcff;--line:rgba(255,255,255,.14);--bad:#ff9b9b;--ok:#9dffa0}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Atkinson Hyperlegible',system-ui,sans-serif;line-height:1.5}
+  main{max-width:960px;margin:0 auto;padding:28px 16px 80px}
+  h1{margin:0 0 4px;font-size:32px}
+  .lead{color:var(--soft);margin:0 0 24px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:18px}
+  .card h2{margin:0 0 12px;font-size:20px;display:flex;gap:10px;align-items:center}
+  .num{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--gold);color:#1a1300;font-size:16px}
+  label.f{display:block;font-weight:700;margin:12px 0 6px}
+  input[type=text]{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:#0f1126;color:var(--ink);font:inherit}
+  button{font:inherit;font-weight:700;padding:12px 18px;border-radius:12px;border:1px solid var(--line);background:#23274a;color:var(--ink);cursor:pointer}
+  button.primary{background:var(--gold);color:#1a1300;border-color:transparent}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  button:focus-visible,input:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+  .work{position:relative;display:block;border:2px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;background:#0f1126}
+  .work img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
+  .work .t{padding:8px 10px;font-size:15px}
+  .work .t small{display:block;color:var(--soft)}
+  .work input{position:absolute;top:10px;left:10px;width:22px;height:22px;accent-color:var(--gold)}
+  .work .order{position:absolute;top:8px;right:8px;background:var(--gold);color:#1a1300;border-radius:50%;width:28px;height:28px;display:none;place-items:center;font-weight:700}
+  .work.on{border-color:var(--gold)}
+  .work.on .order{display:grid}
+  .note{margin-top:12px;font-weight:700}
+  .note.bad{color:var(--bad)} .note.ok{color:var(--ok)}
+  progress{width:100%;height:14px;margin-top:12px}
+  pre{background:#0a0c1c;border:1px solid var(--line);border-radius:12px;padding:14px;overflow:auto;font-size:13px;white-space:pre-wrap}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .split{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;margin-top:16px}
+  @media (max-width:640px){.split{grid-template-columns:1fr}}
+  #qr{background:#fff;border-radius:12px;width:220px;height:220px}
+  .muted{color:var(--soft);font-size:15px}
+  a{color:var(--sky)}
+  ol li{margin-bottom:6px}
+</style>
+</head>
+<body>
+<main>
+  <h1>Build an exhibition</h1>
+  <p class="lead">Group artworks into one room so a single QR code covers all of them. Artworks need to be added with <a href="add.html">add.html</a> and pushed to the site first.</p>
+
+  <section class="card">
+    <h2><span class="num">1</span> Name the room</h2>
+    <label class="f" for="title">Title</label><input id="title" type="text" placeholder="Room 1: Landscapes">
+    <label class="f" for="id">Link name</label><input id="id" type="text" placeholder="room-1" autocomplete="off">
+  </section>
+
+  <section class="card">
+    <h2><span class="num">2</span> Pick the artworks</h2>
+    <p class="muted" style="margin:0 0 12px">Aim for 10–20 per room. Each one adds about 0.7 MB for visitors to download.</p>
+    <div class="grid" id="grid" role="group" aria-label="Artworks"></div>
+    <div class="note" id="count" role="status"></div>
+  </section>
+
+  <section class="card">
+    <h2><span class="num">3</span> Build the room's tracking file</h2>
+    <button class="primary" id="build" disabled>Build exhibition</button>
+    <progress id="prog" max="100" value="0" hidden></progress>
+    <div class="note" id="result" role="status"></div>
+  </section>
+
+  <section class="card" id="doneCard" hidden>
+    <h2><span class="num">4</span> Put it on the site</h2>
+    <div class="row">
+      <button class="primary" id="dlMind">Download tracking file (.mind)</button>
+      <button id="dlQR">Download QR code</button>
+    </div>
+    <ol style="margin-top:16px">
+      <li>Move the <b>.mind</b> file into the <b>AR\targets</b> folder.</li>
+      <li>Open <b>AR\artworks.js</b>. Scroll to <b>EXHIBITIONS</b> at the bottom and paste the block below where it says <i>Paste new exhibitions here</i>, with a comma after the <b>}</b> before it.</li>
+      <li>In GitHub Desktop: commit, then <b>Push origin</b>.</li>
+      <li>Print the QR code at the room's entrance.</li>
+    </ol>
+    <pre id="entry"></pre>
+    <div class="row"><button id="copy">Copy this block</button></div>
+    <div class="split">
+      <canvas id="qr" width="220" height="220" role="img" aria-label="QR code for this room's AR link"></canvas>
+      <div>
+        <label class="f" for="base">Site address</label>
+        <input id="base" type="text">
+        <p class="muted">The QR code opens:<br><a id="link" target="_blank" rel="noopener"></a></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="lib/qrcode.js"></script>
+<script type="module">
+import './lib/mindar/mindar-image.prod.js';
+import { ARTWORKS } from './artworks.js';
+const Compiler = window.MINDAR.IMAGE.Compiler;
+const $ = id => document.getElementById(id);
+
+let picked = [];            // artwork ids, in the order they were ticked
+let mindBuf = null;
+
+const slug = s => s.toLowerCase().normalize('NFKD').replace(/[^\w\s-]/g, '').trim().replace(/[\s_:]+/g, '-').replace(/-+/g, '-').slice(0, 48);
+$('title').addEventListener('input', () => { if (!$('id').dataset.touched) $('id').value = slug($('title').value); refresh(); });
+$('id').addEventListener('input', () => { $('id').dataset.touched = 1; $('id').value = slug($('id').value); refresh(); });
+
+const here = location.href.replace(/exhibition\.html.*$/, '').replace(/[?#].*$/, '');
+$('base').value = /^https?:/.test(here) && !/localhost|127\.0\.0\.1/.test(here) ? here : 'https://blindbenfilms.github.io/FOXgate8/AR/';
+$('base').addEventListener('input', refresh);
+
+/* artwork picker */
+for (const a of ARTWORKS) {
+  const card = document.createElement('label'); card.className = 'work';
+  card.innerHTML = `<input type="checkbox" aria-label="${a.title}"><span class="order"></span>
+    <img src="${a.image}" alt=""><div class="t">${a.title}<small>${a.artist || ''}</small></div>`;
+  card.querySelector('input').onchange = e => {
+    if (e.target.checked) picked.push(a.id); else picked = picked.filter(x => x !== a.id);
+    mindBuf = null; $('doneCard').hidden = true; $('result').textContent = '';
+    refresh();
+  };
+  card.dataset.id = a.id;
+  $('grid').appendChild(card);
+}
+
+function refresh() {
+  document.querySelectorAll('.work').forEach(c => {
+    const i = picked.indexOf(c.dataset.id);
+    c.classList.toggle('on', i >= 0); c.querySelector('.order').textContent = i >= 0 ? i + 1 : '';
+  });
+  const n = picked.length, cnt = $('count');
+  cnt.className = 'note' + (n > 30 ? ' bad' : '');
+  cnt.textContent = n ? `${n} selected · about ${(n * 0.75).toFixed(1)} MB for visitors` +
+    (n > 30 ? ' — this is a lot for one room; consider splitting it.' : '') : '';
+  $('build').disabled = n < 1 || !$('id').value;
+  if (mindBuf) writeOutputs();
+}
+
+/* build: compile all picked artworks into one tracking file, in order */
+$('build').onclick = async () => {
+  $('build').disabled = true; $('prog').hidden = false; $('prog').value = 0;
+  $('result').className = 'note'; $('result').textContent = `Building ${picked.length} artworks… about 20 seconds each.`;
+  try {
+    const works = picked.map(id => ARTWORKS.find(a => a.id === id));
+    const imgs = await Promise.all(works.map(w => new Promise((ok, bad) => {
+      const im = new Image(); im.onload = () => ok(im);
+      im.onerror = () => bad(new Error('Could not load ' + w.image + '. Is it in the targets folder?'));
+      im.src = w.image;
+    })));
+    const compiler = new Compiler();
+    await compiler.compileImageTargets(imgs, p => { $('prog').value = p; });
+    mindBuf = await compiler.exportData();
+    const weak = works.filter((w, i) => compiler.data[i].trackingData[0].points.length < 10).map(w => w.title);
+    $('result').className = 'note ' + (weak.length ? 'bad' : 'ok');
+    $('result').textContent = `Done: ${(mindBuf.byteLength / 1048576).toFixed(1)} MB.` +
+      (weak.length ? ' These may track weakly: ' + weak.join(', ') + '.' : ' All artworks track well.');
+    $('doneCard').hidden = false; writeOutputs();
+    $('doneCard').scrollIntoView({ behavior: 'smooth' });
+  } catch (e) {
+    console.error(e); $('result').className = 'note bad'; $('result').textContent = 'Build failed: ' + (e.message || e);
+  } finally { $('build').disabled = false; $('prog').hidden = true; }
+};
+
+/* outputs */
+const id = () => $('id').value || 'room';
+function url() { let b = $('base').value.trim(); if (!b.endsWith('/')) b += '/'; return b + '?show=' + encodeURIComponent(id()); }
+function writeOutputs() {
+  $('entry').textContent =
+`  {
+    id: ${JSON.stringify(id())},
+    title: ${JSON.stringify($('title').value || 'Exhibition')},
+    artworks: ${JSON.stringify(picked)},
+    target: ${JSON.stringify('targets/' + id() + '.mind')}
+  }`;
+  $('link').textContent = $('link').href = url();
+  drawQR($('qr'), 220, 0);
+}
+function drawQR(c, size, footer) {
+  const q = qrcode(0, 'M'); q.addData(url()); q.make();
+  const n = q.getModuleCount(), cell = Math.floor(size / (n + 8)), off = Math.floor((size - cell * n) / 2);
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height); ctx.fillStyle = '#000';
+  for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (q.isDark(r, k)) ctx.fillRect(off + k * cell, off + r * cell, cell, cell);
+}
+function save(blob, name) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); }
+$('dlMind').onclick = () => save(new Blob([mindBuf]), id() + '.mind');
+$('dlQR').onclick = () => {
+  const size = 1100, c = document.createElement('canvas'); c.width = size; c.height = size + 170;
+  drawQR(c, size);
+  const ctx = c.getContext('2d'); ctx.fillStyle = '#000'; ctx.textAlign = 'center';
+  ctx.font = 'bold 52px Atkinson Hyperlegible, sans-serif'; ctx.fillText($('title').value || 'Exhibition', size / 2, size + 60);
+  ctx.font = '34px Atkinson Hyperlegible, sans-serif';
+  ctx.fillText(`Scan once, then point your phone at any of the ${picked.length} artworks`, size / 2, size + 120);
+  c.toBlob(b => save(b, id() + '-qr.png'));
+};
+$('copy').onclick = async () => { await navigator.clipboard.writeText($('entry').textContent); $('copy').textContent = 'Copied ✓'; setTimeout(() => $('copy').textContent = 'Copy this block', 1500); };
+</script>
+</body>
+</html>

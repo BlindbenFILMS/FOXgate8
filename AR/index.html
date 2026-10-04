@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0d0f1f">
 <title>Blind Canvas AR</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Archivo:wght@800;900&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#0d0f1f; --panel:rgba(13,15,31,.88); --ink:#fff; --soft:#c9cbe0;
@@ -85,7 +85,7 @@
   <p class="small" id="introHelp">Your phone will ask to use the camera. Nothing is recorded or uploaded.</p>
   <p class="small" id="testLink"></p>
   <p id="err" role="alert"></p>
-  <nav id="pick" aria-label="Choose an artwork" hidden></nav>
+  <nav id="pick" aria-label="Choose a room or an artwork" hidden></nav>
 </main>
 
 <div id="loading" role="status"><div class="spinner" aria-hidden="true"></div><div>Starting camera…</div></div>
@@ -98,6 +98,7 @@
   <div id="explore" role="group" aria-label="Explore parts of the artwork"></div>
   <div class="row">
     <button class="btn" id="listen" type="button">Listen</button>
+    <button class="btn" id="describe" type="button" hidden>Describe</button>
     <button class="btn" id="textBtn" type="button" aria-pressed="false">Show text</button>
     <button class="btn" id="stopBtn" type="button">Quiet</button>
   </div>
@@ -114,29 +115,48 @@
 <script type="module">
 import * as THREE from 'three';
 import { MindARThree } from 'mindar-image-three';
-import { ARTWORKS } from './artworks.js';
+import * as DATA from './artworks.js';
+const ARTWORKS = DATA.ARTWORKS, EXHIBITIONS = DATA.EXHIBITIONS || [];
 
 const $ = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
-const art = ARTWORKS.find(a => a.id === params.get('art')) || (params.get('art') ? null : ARTWORKS[0]);
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const byId = id => ARTWORKS.find(a => a.id === id);
+
+/* What are we showing? ?show=<exhibition> (many works) or ?art=<artwork> (one work).
+   Either way we end up with: a tracking file + the list of artworks in the order it was built. */
+let show = null;
+if (params.get('show')) {
+  const ex = EXHIBITIONS.find(e => e.id === params.get('show'));
+  if (ex) show = { title: ex.title, subtitle: ex.artworks.length + ' artworks', target: ex.target,
+                   works: ex.artworks.map(byId).filter(Boolean) };
+} else if (params.get('art')) {
+  const a = byId(params.get('art'));
+  if (a) show = { title: a.title, subtitle: a.artist, target: a.target, works: [a] };
+}
 
 /* ── intro ─────────────────────────────────────────── */
-if (!art) {
-  $('introArt').textContent = 'Choose an artwork';
-  $('start').hidden = true; $('introHelp').hidden = true;
+if (!show) {
+  $('introArt').textContent = 'Choose a room or an artwork';
+  $('introText').hidden = true; $('start').hidden = true; $('introHelp').hidden = true;
   const pick = $('pick'); pick.hidden = false;
-  for (const a of ARTWORKS) {
-    const link = document.createElement('a');
-    link.href = '?art=' + encodeURIComponent(a.id);
-    link.textContent = a.title + ' — ' + a.artist;
-    pick.appendChild(link);
-  }
+  const add = (href, text) => { const l = document.createElement('a'); l.href = href; l.textContent = text; pick.appendChild(l); };
+  for (const e of EXHIBITIONS) add('?show=' + encodeURIComponent(e.id), e.title + ' — ' + e.artworks.length + ' artworks');
+  for (const a of ARTWORKS) add('?art=' + encodeURIComponent(a.id), a.title + (a.artist ? ' — ' + a.artist : ''));
 } else {
-  document.title = art.title + ' · Blind Canvas AR';
-  $('introArt').textContent = art.title + (art.artist ? ' — ' + art.artist : '');
-  if (art.image) $('testLink').innerHTML =
-    'No artwork nearby? <a href="' + art.image + '" target="_blank" rel="noopener">Open the picture</a> on a computer screen and point your phone at it.';
+  document.title = show.title + ' · Blind Canvas AR';
+  $('introArt').textContent = show.title + (show.subtitle ? ' — ' + show.subtitle : '');
+  if (show.works.length > 1)
+    $('introText').textContent = 'Walk the room and point your phone at any of the ' + show.works.length +
+      ' artworks. Each one comes alive on screen and a voice describes it. Tap parts of a painting to hear more.';
+  if (show.works.length === 1 && show.works[0].overlay && show.works[0].overlay.type === 'story')
+    $('introText').textContent = 'Point your phone at the painting. It comes alive on screen, and you will hear the artist talk about it. Turn your sound on.';
+  else if (show.works.some(w => w.overlay && w.overlay.type === 'story'))
+    $('introText').textContent = 'Walk the room and point your phone at any of the ' + show.works.length + ' artworks. Each one comes alive on screen and you will hear the artist talk about it. Turn your sound on.';
+  const imgs = show.works.filter(w => w.image);
+  if (imgs.length) $('testLink').innerHTML = 'No artwork nearby? Open ' +
+    imgs.map(w => '<a href="' + w.image + '" target="_blank" rel="noopener">' + w.title + '</a>').join(', ') +
+    ' on a computer screen and point your phone at it.';
 }
 
 /* ── speech + sound ────────────────────────────────── */
@@ -149,35 +169,29 @@ function pickVoice() {
 }
 if (synth) { pickVoice(); synth.onvoiceschanged = pickVoice; }
 
-let narrationAudio = null;
+const audios = new Map();          // artwork id → recorded narration
 function stopTalking() {
   if (synth) synth.cancel();
-  if (narrationAudio) { narrationAudio.pause(); }
+  for (const a of audios.values()) a.pause();
 }
 function say(text) {
   stopTalking();
   if (!synth || !text) return;
   const u = new SpeechSynthesisUtterance(text);
   if (voice) u.voice = voice;
-  u.rate = 0.95; u.pitch = 1;
-  synth.speak(u);
+  u.rate = 0.95; synth.speak(u);
 }
-function playDescription() {
-  setCaption(art.description);
-  if (art.narration) {
-    stopTalking();
-    narrationAudio.currentTime = 0;
-    narrationAudio.play().catch(() => say(art.description));
-  } else {
-    say(art.description);
-  }
+function describe(work) {
+  setCaption(work.description);
+  const a = audios.get(work.id);
+  if (a) { stopTalking(); a.currentTime = 0; a.play().catch(() => say(work.description)); }
+  else say(work.description);
 }
 function buzz(p) { if (navigator.vibrate) navigator.vibrate(p); }
 
 /* ── HUD ───────────────────────────────────────────── */
-function setStatus(text, found) {
-  const s = $('status'); s.textContent = text; s.classList.toggle('found', !!found);
-}
+let current = null;                // the artwork most recently found
+function setStatus(text, found) { const s = $('status'); s.textContent = text; s.classList.toggle('found', !!found); }
 function setCaption(text) { $('caption').textContent = text || ''; }
 $('textBtn').onclick = () => {
   const on = $('textBtn').getAttribute('aria-pressed') !== 'true';
@@ -185,29 +199,46 @@ $('textBtn').onclick = () => {
   $('textBtn').textContent = on ? 'Hide text' : 'Show text';
   $('caption').classList.toggle('show', on);
 };
-$('listen').onclick = () => playDescription();
-$('stopBtn').onclick = () => stopTalking();
+let allScenes = [];
+const storyMedia = sc => sc && (sc.clip || sc.audio);
+function stopStories(except) { for (const s of allScenes) { const m = storyMedia(s); if (m && s !== except) m.pause(); } }
+function playStory(sc, fromStart) {   // the artist's clip (or sound) for this painting
+  const m = storyMedia(sc); if (!m) return;
+  stopTalking(); stopStories(sc);
+  if (fromStart || m.ended) m.currentTime = 0;
+  m.play().catch(() => {});
+  setCaption(sc.work.quote || ''); setStatus(sc.work.title + ' · ' + sc.work.artist, true);
+}
+$('listen').onclick = () => { if (!current) return; if (storyMedia(current)) playStory(current, true); else describe(current.work); };
+$('describe').onclick = () => { if (!current) return; stopStories(); describe(current.work); };
+$('stopBtn').onclick = () => { stopTalking(); stopStories(); };
 
-/* ── helpers: photo pixels → anchor space ──────────── */
-// MindAR's anchor: the artwork is 1 unit wide, centered at 0,0.
-let W, H, h;
-const px = x => x / W - 0.5;
-const py = y => (0.5 - y / H) * h;
-const pr = r => r / W;
+function showExplore(scene) {
+  const box = $('explore'); box.innerHTML = '';
+  for (const hs of scene.work.hotspots || []) {
+    const b = document.createElement('button');
+    b.className = 'chip'; b.type = 'button';
+    b.textContent = hs.name || hs.label.split(/[.,]/)[0];
+    b.onclick = () => { setCaption(hs.label); say(hs.label); buzz(30); };
+    box.appendChild(b);
+  }
+  box.classList.toggle('show', box.children.length > 0);
+}
 
+/* ── textures ──────────────────────────────────────── */
 function radialTexture(stops) {
   const c = document.createElement('canvas'); c.width = c.height = 128;
-  const g = c.getContext('2d').createRadialGradient(64, 64, 0, 64, 64, 64);
+  const ctx = c.getContext('2d'), g = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
   stops.forEach(([o, col]) => g.addColorStop(o, col));
-  const ctx = c.getContext('2d'); ctx.fillStyle = g; ctx.fillRect(0, 0, 128, 128);
+  ctx.fillStyle = g; ctx.fillRect(0, 0, 128, 128);
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
 }
-function frameTexture(color) {
-  const cw = 512, ch = Math.round(512 * h);
+const glowTex = radialTexture([[0, 'rgba(255,255,255,1)'], [0.25, 'rgba(255,255,255,.55)'], [1, 'rgba(255,255,255,0)']]);
+const dotTex  = radialTexture([[0, 'rgba(255,255,255,1)'], [0.4, 'rgba(255,255,255,.6)'], [1, 'rgba(255,255,255,0)']]);
+function frameTexture(h, color) {
+  const cw = 512, ch = Math.round(512 * h), pad = 26;
   const c = document.createElement('canvas'); c.width = cw; c.height = ch;
-  const ctx = c.getContext('2d');
-  const pad = 26;
-  ctx.shadowColor = color; ctx.strokeStyle = color;
+  const ctx = c.getContext('2d'); ctx.shadowColor = color; ctx.strokeStyle = color;
   for (const [blur, w, a] of [[28, 10, .55], [12, 5, .8], [0, 2.5, 1]]) {
     ctx.shadowBlur = blur; ctx.lineWidth = w; ctx.globalAlpha = a;
     ctx.beginPath(); ctx.roundRect(pad, pad, cw - pad * 2, ch - pad * 2, 14); ctx.stroke();
@@ -215,118 +246,151 @@ function frameTexture(color) {
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
 }
 
-/* ── overlay builders ──────────────────────────────── */
-const animators = [];   // functions(t, dt) run every frame while visible
-let overlayGroup, hotspotMeshes = [], videoEl = null;
+/* ── the Blind Canvas story layout ─────────────────────
+   The animated art plays exactly over the painting; under it a black title banner (TITLE in white
+   capitals, the artist under it); under that the artist's interview clip, with sound. A painting with
+   no clip can have 'audio' (sound only) instead. */
+function mkVideo(src, sound, loop) {
+  const v = document.createElement('video');
+  Object.assign(v, { src, loop, playsInline: true, crossOrigin: 'anonymous', preload: 'auto' });
+  v.setAttribute('playsinline', ''); v.setAttribute('webkit-playsinline', ''); v.muted = !sound;
+  return v;
+}
+function drawBanner(c, work) {
+  const cw = c.width, ch = c.height, g = c.getContext('2d');
+  g.fillStyle = '#000'; g.fillRect(0, 0, cw, ch);
+  const title = work.title.toUpperCase(), who = (work.artist || '').toUpperCase();
+  g.fillStyle = '#fff'; g.textAlign = 'center';
+  let fs = 96; do { g.font = `900 ${fs}px Archivo, 'Atkinson Hyperlegible', Arial, sans-serif`; fs -= 2; } while (g.measureText(title).width > cw - 70 && fs > 30);
+  g.fillText(title, cw / 2, who ? 112 : 132);
+  if (who) { let f2 = 44; do { g.font = `800 ${f2}px Archivo, 'Atkinson Hyperlegible', Arial, sans-serif`; f2 -= 2; } while (g.measureText(who).width > cw - 120 && f2 > 20);
+    g.letterSpacing = '6px'; g.fillText(who, cw / 2, 176); g.letterSpacing = '0px'; }
+}
+function buildStory(sc, work, h) {
+  const o = work.overlay;
+  if (o.anim) {
+    sc.anim = mkVideo(o.anim, false, true);
+    const tex = new THREE.VideoTexture(sc.anim); tex.colorSpace = THREE.SRGBColorSpace;
+    const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, h), new THREE.MeshBasicMaterial({ map: tex }));
+    plane.position.z = 0.003; sc.group.add(plane);
+  }
+  const GAP = 0.035, cv = document.createElement('canvas'); cv.width = 1024; cv.height = 210;
+  drawBanner(cv, work);
+  const bt = new THREE.CanvasTexture(cv); bt.colorSpace = THREE.SRGBColorSpace; bt.anisotropy = 4;
+  if (document.fonts) Promise.all([document.fonts.load('900 60px Archivo'), document.fonts.load('800 40px Archivo')]).then(() => { drawBanner(cv, work); bt.needsUpdate = true; }).catch(() => {});
+  const bh = cv.height / cv.width, by = -h / 2 - GAP - bh / 2;
+  const banner = new THREE.Mesh(new THREE.PlaneGeometry(1, bh), new THREE.MeshBasicMaterial({ map: bt }));
+  banner.position.set(0, by, 0.003); sc.group.add(banner);
+  if (o.clip) {
+    sc.clip = mkVideo(o.clip, true, false);
+    const tex = new THREE.VideoTexture(sc.clip); tex.colorSpace = THREE.SRGBColorSpace;
+    const ch = 9 / 16; sc.clipPlane = new THREE.Mesh(new THREE.PlaneGeometry(1, ch), new THREE.MeshBasicMaterial({ map: tex }));
+    sc.clipPlane.position.set(0, by - bh / 2 - GAP * 0.7 - ch / 2, 0.003); sc.group.add(sc.clipPlane);
+    sc.clip.addEventListener('ended', () => { if (current === sc) setStatus('Tap Story to hear it again', true); });
+  } else if (o.audio) { sc.audio = new Audio(o.audio); sc.audio.preload = 'auto'; }
+}
 
-function buildMagic(group) {
-  // glowing frame around the artwork (slightly larger than the art)
-  const scale = 1.08;
-  const frame = new THREE.Mesh(
-    new THREE.PlaneGeometry(scale, h * scale),
-    new THREE.MeshBasicMaterial({ map: frameTexture('#7fdcff'), transparent: true,
-      blending: THREE.AdditiveBlending, depthWrite: false })
-  );
-  frame.position.z = 0.002; group.add(frame);
-  animators.push(t => { frame.material.opacity = 0.65 + 0.35 * Math.sin(t * 2.2); });
+/* ── one artwork's overlay ─────────────────────────────
+   MindAR's anchor: the artwork is 1 unit wide, centered at 0,0.
+   Each artwork gets its own "scene" object with its own effects. */
+function buildScene(work, anchor) {
+  const W = work.width, H = work.height, h = H / W;
+  const px = x => x / W - 0.5, py = y => (0.5 - y / H) * h, pr = r => r / W;
+  const sc = { work, group: new THREE.Group(), animators: [], hotspots: [], video: null, found: false, appearT: 0, lastSpoken: -1e9 };
+  anchor.group.add(sc.group);
+  const type = (work.overlay && work.overlay.type) || 'magic';
+  sc.type = type;
 
-  // glows + ripples on hotspots marked glow:true
-  const glowTex = radialTexture([[0, 'rgba(255,255,255,1)'], [0.25, 'rgba(255,255,255,.55)'], [1, 'rgba(255,255,255,0)']]);
-  for (const hs of art.hotspots || []) {
-    if (!hs.glow) continue;
-    const col = new THREE.Color(hs.color || '#ffcf5a');
-    const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: col, transparent: true,
-      blending: THREE.AdditiveBlending, depthWrite: false }));
-    const base = pr(hs.r) * 2.6;
-    glow.position.set(px(hs.x), py(hs.y), 0.01); glow.scale.set(base, base, 1); group.add(glow);
-    animators.push(t => { const s = base * (1 + 0.08 * Math.sin(t * 1.7)); glow.scale.set(s, s, 1);
-      glow.material.opacity = 0.55 + 0.25 * Math.sin(t * 1.7); });
+  if (type === 'story') buildStory(sc, work, h);
+  else if (type === 'video') {
+    const v = document.createElement('video');
+    Object.assign(v, { src: work.overlay.src, loop: true, playsInline: true, crossOrigin: 'anonymous', preload: 'auto' });
+    v.setAttribute('playsinline', ''); v.setAttribute('webkit-playsinline', '');
+    v.muted = !work.overlay.sound; sc.video = v;
+    const tex = new THREE.VideoTexture(v); tex.colorSpace = THREE.SRGBColorSpace;
+    const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, h), new THREE.MeshBasicMaterial({ map: tex, transparent: true }));
+    plane.position.z = 0.003; sc.group.add(plane);
+  } else if (type === 'image') {
+    const tex = new THREE.TextureLoader().load(work.overlay.src); tex.colorSpace = THREE.SRGBColorSpace;
+    const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, h), new THREE.MeshBasicMaterial({ map: tex, transparent: true }));
+    plane.position.z = 0.003; sc.group.add(plane);
+    sc.animators.push(t => { plane.position.z = 0.02 + 0.015 * Math.sin(t * 1.5); });
+  } else {
+    // glowing frame
+    const s = 1.08;
+    const frame = new THREE.Mesh(new THREE.PlaneGeometry(s, h * s), new THREE.MeshBasicMaterial({
+      map: frameTexture(h, '#7fdcff'), transparent: true, depthWrite: false }));   // normal blend: shows on light and dark art
+    frame.position.z = 0.002; sc.group.add(frame);
+    sc.animators.push(t => { frame.material.opacity = 0.65 + 0.35 * Math.sin(t * 2.2); });
 
-    for (let i = 0; i < 3; i++) {
-      const ring = new THREE.Mesh(new THREE.RingGeometry(0.96, 1, 64),
-        new THREE.MeshBasicMaterial({ color: col, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
-      ring.position.set(px(hs.x), py(hs.y), 0.012); group.add(ring);
-      const r0 = pr(hs.r);
-      animators.push(t => { const k = ((t * 0.35) + i / 3) % 1;
-        const s = r0 * (1 + k * 0.9); ring.scale.set(s, s, 1); ring.material.opacity = (1 - k) * 0.7; });
+    // glows + ripples on hotspots marked glow:true
+    for (const hs of work.hotspots || []) {
+      if (!hs.glow) continue;
+      const col = new THREE.Color(hs.color || '#ffcf5a');
+      const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: col, transparent: true,
+        blending: THREE.AdditiveBlending, depthWrite: false }));
+      const base = pr(hs.r) * 2.6;
+      glow.position.set(px(hs.x), py(hs.y), 0.01); glow.scale.set(base, base, 1); sc.group.add(glow);
+      sc.animators.push(t => { const k = base * (1 + 0.08 * Math.sin(t * 1.7)); glow.scale.set(k, k, 1);
+        glow.material.opacity = 0.55 + 0.25 * Math.sin(t * 1.7); });
+      for (let i = 0; i < 3; i++) {
+        const ring = new THREE.Mesh(new THREE.RingGeometry(0.96, 1, 64), new THREE.MeshBasicMaterial({
+          color: col, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
+        ring.position.set(px(hs.x), py(hs.y), 0.012); sc.group.add(ring);
+        const r0 = pr(hs.r);
+        sc.animators.push(t => { const k = ((t * 0.35) + i / 3) % 1;
+          ring.scale.setScalar(r0 * (1 + k * 0.9)); ring.material.opacity = (1 - k) * 0.7; });
+      }
     }
-  }
 
-  // sparkles drifting up off the canvas
-  const N = 170, pos = new Float32Array(N * 3), col = new Float32Array(N * 3), seed = [];
-  const palette = ['#ffcf5a', '#7fdcff', '#ff7aa8', '#9dffa0', '#ffffff'].map(c => new THREE.Color(c));
-  for (let i = 0; i < N; i++) {
-    const c = palette[i % palette.length]; col.set([c.r, c.g, c.b], i * 3);
-    seed.push({ x: Math.random() - 0.5, y: (Math.random() - 0.5) * h, sp: 0.03 + Math.random() * 0.06,
-      ph: Math.random() * 6.28, zs: Math.random() });
-  }
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
-  const dot = radialTexture([[0, 'rgba(255,255,255,1)'], [0.4, 'rgba(255,255,255,.6)'], [1, 'rgba(255,255,255,0)']]);
-  const pts = new THREE.Points(geo, new THREE.PointsMaterial({ size: 0.028, map: dot, vertexColors: true,
-    transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
-  group.add(pts);
-  animators.push((t) => {
+    // sparkles drifting up off the canvas
+    const N = 170, pos = new Float32Array(N * 3), col = new Float32Array(N * 3), seed = [];
+    const palette = ['#ffcf5a', '#7fdcff', '#ff7aa8', '#9dffa0', '#ffffff'].map(c => new THREE.Color(c));
     for (let i = 0; i < N; i++) {
-      const s = seed[i];
-      let y = s.y + t * s.sp; y = ((y + h / 2) % h) - h / 2;          // wrap bottom→top
-      const k = (y + h / 2) / h;                                        // 0 bottom → 1 top
-      pos[i * 3] = s.x + Math.sin(t * 0.8 + s.ph) * 0.015;
-      pos[i * 3 + 1] = y;
-      pos[i * 3 + 2] = 0.01 + k * 0.18 * s.zs;                          // lift off the canvas as they rise
+      const c = palette[i % palette.length]; col.set([c.r, c.g, c.b], i * 3);
+      seed.push({ x: Math.random() - 0.5, y: (Math.random() - 0.5) * h, sp: 0.03 + Math.random() * 0.06,
+        ph: Math.random() * 6.28, zs: Math.random() });
     }
-    geo.attributes.position.needsUpdate = true;
-  });
-}
-
-function buildVideo(group) {
-  videoEl = document.createElement('video');
-  Object.assign(videoEl, { src: art.overlay.src, loop: true, playsInline: true, crossOrigin: 'anonymous', preload: 'auto' });
-  videoEl.setAttribute('playsinline', ''); videoEl.setAttribute('webkit-playsinline', '');
-  videoEl.muted = !art.overlay.sound;
-  const tex = new THREE.VideoTexture(videoEl); tex.colorSpace = THREE.SRGBColorSpace;
-  const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, h), new THREE.MeshBasicMaterial({ map: tex, transparent: true }));
-  plane.position.z = 0.003; group.add(plane);
-}
-
-function buildImage(group) {
-  const tex = new THREE.TextureLoader().load(art.overlay.src); tex.colorSpace = THREE.SRGBColorSpace;
-  const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, h), new THREE.MeshBasicMaterial({ map: tex, transparent: true }));
-  plane.position.z = 0.003; group.add(plane);
-  animators.push(t => { plane.position.z = 0.02 + 0.015 * Math.sin(t * 1.5); });
-}
-
-function buildHotspots(group) {
-  const mat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false });
-  for (const hs of art.hotspots || []) {
-    const m = new THREE.Mesh(new THREE.CircleGeometry(pr(hs.r), 32), mat);
-    m.position.set(px(hs.x), py(hs.y), 0.02); m.userData.label = hs.label;
-    group.add(m); hotspotMeshes.push(m);
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    // sizes in screen pixels: MindAR's camera works in photo-pixel units, so distance-based sizing makes dots vanish
+    sc.group.add(new THREE.Points(geo, new THREE.PointsMaterial({ size: 9 * Math.min(2, devicePixelRatio), sizeAttenuation: false,
+      map: dotTex, vertexColors: true, transparent: true, depthWrite: false })));
+    sc.animators.push(t => {
+      for (let i = 0; i < N; i++) {
+        const s = seed[i];
+        let y = s.y + t * s.sp; y = ((y + h / 2) % h) - h / 2;
+        const k = (y + h / 2) / h;
+        pos[i * 3] = s.x + Math.sin(t * 0.8 + s.ph) * 0.015;
+        pos[i * 3 + 1] = y;
+        pos[i * 3 + 2] = 0.01 + k * 0.18 * s.zs;
+      }
+      geo.attributes.position.needsUpdate = true;
+    });
   }
+
+  // invisible tap targets
+  const hit = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false });
+  for (const hs of work.hotspots || []) {
+    const m = new THREE.Mesh(new THREE.CircleGeometry(pr(hs.r), 32), hit);
+    m.position.set(px(hs.x), py(hs.y), 0.02); m.userData.label = hs.label;
+    sc.group.add(m); sc.hotspots.push(m);
+  }
+  return sc;
 }
 
-/* explore buttons: the same hotspots, reachable without aiming */
-function buildExploreButtons() {
-  const box = $('explore');
-  (art.hotspots || []).forEach((hs, i) => {
-    const b = document.createElement('button');
-    b.className = 'chip'; b.type = 'button';
-    b.textContent = hs.name || hs.label.split(/[.,]/)[0];
-    b.onclick = () => { setCaption(hs.label); say(hs.label); buzz(30); };
-    box.appendChild(b);
-  });
-}
-
-/* ── start AR ──────────────────────────────────────── */
+/* ── start ─────────────────────────────────────────── */
 let started = false;
 $('start').addEventListener('click', async () => {
   if (started) return; started = true;
 
   // unlock speech + audio inside the tap (needed on iPhone)
   if (synth) { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; synth.speak(u); }
-  if (art.narration) { narrationAudio = new Audio(art.narration); narrationAudio.preload = 'auto';
-    narrationAudio.play().then(() => narrationAudio.pause()).catch(() => {}); }
+  for (const w of show.works) if (w.narration) {
+    const a = new Audio(w.narration); a.preload = 'auto'; audios.set(w.id, a);
+    a.play().then(() => a.pause()).catch(() => {});
+  }
 
   $('intro').style.display = 'none';
   $('loading').style.display = 'flex';
@@ -345,61 +409,71 @@ $('start').addEventListener('click', async () => {
 });
 
 async function startAR() {
-  W = art.width; H = art.height; h = H / W;
-
   const mindar = new MindARThree({
-    container: $('ar'), imageTargetSrc: art.target,
+    container: $('ar'), imageTargetSrc: show.target,
     uiLoading: 'no', uiScanning: 'no', uiError: 'no',
-    filterMinCF: 0.0001, filterBeta: 0.001,   // steadier overlay
+    filterMinCF: 0.0001, filterBeta: 0.001,      // steadier overlay
     missTolerance: 8, warmupTolerance: 4
   });
   const { renderer, scene, camera } = mindar;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-  const anchor = mindar.addAnchor(0);
-  overlayGroup = new THREE.Group();
-  anchor.group.add(overlayGroup);
+  // one anchor per artwork, in the order the tracking file was built
+  const scenes = show.works.map((work, i) => {
+    const anchor = mindar.addAnchor(i);
+    const sc = buildScene(work, anchor);
+    for (const v of [sc.video, sc.anim, sc.clip, sc.audio]) if (v) v.play().then(() => v.pause()).catch(() => {});   // unlock playback inside the Start tap
 
-  const type = (art.overlay && art.overlay.type) || 'magic';
-  if (type === 'video') buildVideo(overlayGroup);
-  else if (type === 'image') buildImage(overlayGroup);
-  else buildMagic(overlayGroup);
-  buildHotspots(overlayGroup);
-  buildExploreButtons();
-
-  if (videoEl) videoEl.play().then(() => videoEl.pause()).catch(() => {});
-
-  let found = false, appearT = 0, lastSpoken = -1e9;
-  anchor.onTargetFound = () => {
-    found = true; appearT = performance.now();
-    buzz([60, 40, 60]);
-    setStatus('Found: ' + art.title, true);
-    $('scan').style.display = 'none';
-    $('explore').classList.add('show');
-    if (videoEl) videoEl.play().catch(() => {});
-    // describe once; again only if it's been a while
-    const autoSpeak = !(type === 'video' && art.overlay.sound);
-    if (autoSpeak && performance.now() - lastSpoken > 45000) { lastSpoken = performance.now(); playDescription(); }
-  };
-  anchor.onTargetLost = () => {
-    found = false;
-    setStatus('Point your camera at the artwork');
-    $('scan').style.display = 'flex';
-    if (videoEl) videoEl.pause();
-    // narration keeps going on purpose: a listener shouldn't lose the description if the phone drifts
-  };
+    anchor.onTargetFound = () => {
+      sc.found = true; sc.appearT = performance.now();
+      const switched = !current || current !== sc;
+      current = sc;
+      buzz([60, 40, 60]);
+      setStatus('Found: ' + sc.work.title, true);
+      $('scan').style.display = 'none';
+      showExplore(sc);
+      if (sc.video) sc.video.play().catch(() => {});
+      if (sc.anim) sc.anim.play().catch(() => {});
+      if (sc.type === 'story') {   // the artist speaks; Describe reads the picture
+        const m = storyMedia(sc);
+        if (m) { if (switched || !m.ended) playStory(sc, false); }
+        else if (switched || performance.now() - sc.lastSpoken > 45000) { sc.lastSpoken = performance.now(); describe(sc.work); }
+        return;
+      }
+      const autoSpeak = !(sc.type === 'video' && sc.work.overlay.sound);
+      // describe a new painting right away; repeat the same one only after a while
+      if (autoSpeak && (switched || performance.now() - sc.lastSpoken > 45000)) {
+        sc.lastSpoken = performance.now(); describe(sc.work);
+      }
+    };
+    anchor.onTargetLost = () => {
+      sc.found = false;
+      if (sc.video) sc.video.pause(); if (sc.anim) sc.anim.pause(); if (sc.clip) sc.clip.pause();   // (a sound-only story keeps going)
+      if (!scenes.some(s => s.found)) {
+        setStatus(show.works.length > 1 ? 'Point your camera at an artwork' : 'Point your camera at the artwork');
+        $('scan').style.display = 'flex';
+      }
+      // narration keeps going on purpose: a listener shouldn't lose the description if the phone drifts
+    };
+    return sc;
+  });
+  allScenes = scenes;
+  if (scenes.some(s => s.type === 'story')) { $('describe').hidden = false; $('listen').textContent = '\u25B6 Story'; $('listen').setAttribute('aria-label', 'Play the artist\u2019s story again'); }
 
   // tap the art to hear a part of it
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
-  $('ar').addEventListener('pointerup', (ev) => {
-    if (!found || !hotspotMeshes.length) return;
+  $('ar').addEventListener('pointerup', ev => {
     const r = renderer.domElement.getBoundingClientRect();
     ndc.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
     ray.setFromCamera(ndc, camera);
-    const hit = ray.intersectObjects(hotspotMeshes)[0];
+    for (const s of scenes) if (s.found && s.clipPlane && ray.intersectObject(s.clipPlane)[0]) { if (s.clip.paused) playStory(s, false); else s.clip.pause(); return; }   // tap the clip: pause / play
+    const targets = scenes.filter(s => s.found).flatMap(s => s.hotspots);
+    if (!targets.length) return;
+    const hit = ray.intersectObjects(targets)[0];
     if (hit) { const l = hit.object.userData.label; setCaption(l); say(l); buzz(30); }
   });
 
+  if (show.works.length > 1) setStatus('Point your camera at an artwork');
   await mindar.start();
 
   $('loading').style.display = 'none';
@@ -408,22 +482,20 @@ async function startAR() {
   $('ar').removeAttribute('aria-hidden');
 
   const clock = new THREE.Clock();
-  let stillDrawn = false;
   renderer.setAnimationLoop(() => {
     const t = clock.getElapsedTime();
-    if (found) {
-      // ease in when the art is first found
-      const k = Math.min(1, (performance.now() - appearT) / 600);
-      const e = reduceMotion ? 1 : 1 - Math.pow(1 - k, 3);
-      overlayGroup.scale.setScalar(0.92 + 0.08 * e);
-      if (!reduceMotion) for (const f of animators) f(t);
-      else if (!stillDrawn) { for (const f of animators) f(2); stillDrawn = true; }   // one calm still frame
+    for (const sc of scenes) {
+      if (!sc.found) continue;
+      const k = Math.min(1, (performance.now() - sc.appearT) / 600);   // ease in when found
+      sc.group.scale.setScalar(0.92 + 0.08 * (reduceMotion ? 1 : 1 - Math.pow(1 - k, 3)));
+      if (!reduceMotion) for (const f of sc.animators) f(t);
+      else if (!sc.still) { for (const f of sc.animators) f(2); sc.still = true; }  // one calm still frame
     }
     renderer.render(scene, camera);
   });
 
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) { stopTalking(); if (videoEl) videoEl.pause(); }
+    if (document.hidden) { stopTalking(); scenes.forEach(s => { for (const v of [s.video, s.anim, s.clip, s.audio]) if (v) v.pause(); }); }
   });
 }
 </script>
