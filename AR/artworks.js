@@ -680,8 +680,9 @@ export const ARTWORKS = [
 // ─────────────────────────────────────────────────────────────
 //  EXHIBITIONS: many artworks, one QR code
 //  Link: .../AR/?show=<id>
-//  Build the combined tracking file with exhibition.html.
-//  The order of 'artworks' must match the order used to build it.
+//  'target' is optional. Leave it out and the phone joins each artwork's own
+//  tracking file. With a target (built by exhibition.html), the order of
+//  'artworks' must match the order used to build it.
 // ─────────────────────────────────────────────────────────────
 
 export const EXHIBITIONS = [
@@ -690,6 +691,47 @@ export const EXHIBITIONS = [
     title: 'Test Room',
     artworks: ['fox-at-dusk', 'harbor-light'],
     target: 'targets/test-room.mind'
+  },
+
+  // Stress test rooms: no 'target' line, so the phone joins each artwork's own tracking file.
+  {
+    id: 'blind-canvas-10',
+    title: 'Blind Canvas · First 10',
+    artworks: [
+      '5-weeks-on-my-side', 'almost-blindness', 'curating-hope', 'find-your-village', 'take-time-to-bloom',
+      'pour-in-the-love', 'roots-of-kinship', 'all-lifes-beauty', 'the-only-light-well-see',
+      'pathways-unveiled'
+    ]
+  },
+  {
+    id: 'blind-canvas-25',
+    title: 'Blind Canvas · First 25',
+    artworks: [
+      '5-weeks-on-my-side', 'almost-blindness', 'curating-hope', 'find-your-village', 'take-time-to-bloom',
+      'pour-in-the-love', 'roots-of-kinship', 'all-lifes-beauty', 'the-only-light-well-see',
+      'pathways-unveiled', 'reflections-of-sisterhood', 'all-the-possibilities', 'a-new-day',
+      'music-on-the-streets', 'roller-coaster-of-emotions', 'i-am-blind-like-my-hair-is-brown',
+      'reaching-past-blindness', 'reasons-for-a-cure', 'midnight-melodies', 'moment-of-communion',
+      'fearless-request', 'the-scope-of-communication', 'rhapsody-in-blue', 'reliroo', 'harmonious-gathering'
+    ]
+  },
+  {
+    id: 'blind-canvas-all',
+    title: 'Blind Canvas · All',
+    artworks: [
+      '5-weeks-on-my-side', 'almost-blindness', 'curating-hope', 'find-your-village', 'take-time-to-bloom',
+      'pour-in-the-love', 'roots-of-kinship', 'all-lifes-beauty', 'the-only-light-well-see',
+      'pathways-unveiled', 'reflections-of-sisterhood', 'all-the-possibilities', 'a-new-day',
+      'music-on-the-streets', 'roller-coaster-of-emotions', 'i-am-blind-like-my-hair-is-brown',
+      'reaching-past-blindness', 'reasons-for-a-cure', 'midnight-melodies', 'moment-of-communion',
+      'fearless-request', 'the-scope-of-communication', 'rhapsody-in-blue', 'reliroo', 'harmonious-gathering',
+      'napkin-please', 'seeing-the-world-together', 'hope-is-not-lost', 'pedals-of-freedom',
+      'the-bridge-of-perception', 'rhythm-of-life', 'the-dark-uncertainty', 'goalball-is',
+      'the-visions-that-we-share', 'flow-state', 'lighthouse-of-hope', 'telephone-poles', 'back-of-a-harley',
+      'joyride', 'haute-couture-dreams', 'embracing-unity', 'a-bright-future', 'the-harmony-of-vision',
+      'the-power-within', 'the-gray-zone', 'inner-peace-in-outer-chaos', 'the-mirror', 'walk-through-fear',
+      'decision-divide'
+    ]
   }
 
   // Paste new exhibitions here, separated by commas. exhibition.html writes them for you.

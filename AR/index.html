@@ -128,7 +128,9 @@ const byId = id => ARTWORKS.find(a => a.id === id);
 let show = null;
 if (params.get('show')) {
   const ex = EXHIBITIONS.find(e => e.id === params.get('show'));
-  if (ex) show = { title: ex.title, subtitle: ex.artworks.length + ' artworks', target: ex.target,
+  // A room can have its own combined tracking file (target), or none: then the phone joins
+  // each artwork's own tracking file together (see loadTargets), so rooms need no extra files.
+  if (ex) show = { title: ex.title, subtitle: ex.artworks.length + ' artworks', target: ex.target || null,
                    works: ex.artworks.map(byId).filter(Boolean) };
 } else if (params.get('art')) {
   const a = byId(params.get('art'));
@@ -154,8 +156,10 @@ if (!show) {
   else if (show.works.some(w => w.overlay && w.overlay.type === 'story'))
     $('introText').textContent = 'Walk the room and point your phone at any of the ' + show.works.length + ' artworks. Each one comes alive on screen and you will hear the artist talk about it. Turn your sound on.';
   const imgs = show.works.filter(w => w.image);
+  const few = imgs.slice(0, 3), more = imgs.length - few.length;
   if (imgs.length) $('testLink').innerHTML = 'No artwork nearby? Open ' +
-    imgs.map(w => '<a href="' + w.image + '" target="_blank" rel="noopener">' + w.title + '</a>').join(', ') +
+    few.map(w => '<a href="' + w.image + '" target="_blank" rel="noopener">' + w.title + '</a>').join(', ') +
+    (more ? ' (or any of the other ' + more + ' paintings\u2019 photos)' : '') +
     ' on a computer screen and point your phone at it.';
 }
 
@@ -201,9 +205,10 @@ $('textBtn').onclick = () => {
 };
 let allScenes = [];
 const storyMedia = sc => sc && (sc.clip || sc.audio);
-function stopStories(except) { for (const s of allScenes) { const m = storyMedia(s); if (m && s !== except) m.pause(); } }
+function stopStories(except) { const keep = storyMedia(except); for (const s of allScenes) { const m = storyMedia(s); if (m && m !== keep) m.pause(); } }
 function playStory(sc, fromStart) {   // the artist's clip (or sound) for this painting
   const m = storyMedia(sc); if (!m) return;
+  bindMedia(sc);
   stopTalking(); stopStories(sc);
   if (fromStart || m.ended) m.currentTime = 0;
   m.play().catch(() => {});
@@ -266,13 +271,37 @@ function drawBanner(c, work) {
   if (who) { let f2 = 44; do { g.font = `800 ${f2}px Archivo, 'Atkinson Hyperlegible', Arial, sans-serif`; f2 -= 2; } while (g.measureText(who).width > cw - 120 && f2 > 20);
     g.letterSpacing = '6px'; g.fillText(who, cw / 2, 176); g.letterSpacing = '0px'; }
 }
+/* Shared players: one video for the animated art and one for the artist's clip, used by every painting.
+   A room of 49 paintings would otherwise create 98 videos at once, which phones (iPhones especially)
+   can't handle. Only one painting is tracked at a time, so each painting borrows the players when found. */
+const shared = {};
+function sharedPlayer(kind, firstSrc) {          // kind: 'anim' (silent, loops) or 'clip' (sound)
+  if (!shared[kind]) {
+    const v = mkVideo(firstSrc, kind === 'clip', kind === 'anim');
+    v.preload = 'none';                          // nothing downloads until a painting is found
+    const tex = new THREE.VideoTexture(v); tex.colorSpace = THREE.SRGBColorSpace;
+    shared[kind] = { v, tex, owner: null, saved: new Map(), ready: false };
+    v.addEventListener('playing', () => { shared[kind].ready = true; });   // show the layer only once real frames arrive
+    if (kind === 'clip') v.addEventListener('ended', () => { if (current && current.clip === v) setStatus('Tap Story to hear it again', true); });
+  }
+  return shared[kind];
+}
+function bindMedia(sc) {                         // point the shared players at this painting's videos
+  const o = sc.work.overlay || {};
+  for (const [kind, src] of [['anim', o.anim], ['clip', o.clip]]) {
+    const p = shared[kind]; if (!p || !src || p.owner === sc) continue;
+    if (p.owner) p.saved.set(p.owner, p.v.ended ? 0 : p.v.currentTime);   // remember where the last clip was
+    p.owner = sc; p.ready = false; p.v.preload = 'auto'; p.v.src = src;
+    const t = p.saved.get(sc); if (t) p.v.addEventListener('loadedmetadata', () => { p.v.currentTime = t; }, { once: true });
+  }
+}
 function buildStory(sc, work, h) {
   const o = work.overlay;
   if (o.anim) {
-    sc.anim = mkVideo(o.anim, false, true);
-    const tex = new THREE.VideoTexture(sc.anim); tex.colorSpace = THREE.SRGBColorSpace;
+    const p = sharedPlayer('anim', o.anim); sc.anim = p.v;
+    const tex = p.tex;
     const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, h), new THREE.MeshBasicMaterial({ map: tex }));
-    plane.position.z = 0.003; sc.group.add(plane);
+    plane.position.z = 0.003; sc.group.add(plane); sc.animPlane = plane;
   }
   const GAP = 0.035, cv = document.createElement('canvas'); cv.width = 1024; cv.height = 210;
   drawBanner(cv, work);
@@ -282,12 +311,11 @@ function buildStory(sc, work, h) {
   const banner = new THREE.Mesh(new THREE.PlaneGeometry(1, bh), new THREE.MeshBasicMaterial({ map: bt }));
   banner.position.set(0, by, 0.003); sc.group.add(banner);
   if (o.clip) {
-    sc.clip = mkVideo(o.clip, true, false);
-    const tex = new THREE.VideoTexture(sc.clip); tex.colorSpace = THREE.SRGBColorSpace;
+    const p = sharedPlayer('clip', o.clip); sc.clip = p.v;
+    const tex = p.tex;
     const ch = 9 / 16; sc.clipPlane = new THREE.Mesh(new THREE.PlaneGeometry(1, ch), new THREE.MeshBasicMaterial({ map: tex }));
     sc.clipPlane.position.set(0, by - bh / 2 - GAP * 0.7 - ch / 2, 0.003); sc.group.add(sc.clipPlane);
-    sc.clip.addEventListener('ended', () => { if (current === sc) setStatus('Tap Story to hear it again', true); });
-  } else if (o.audio) { sc.audio = new Audio(o.audio); sc.audio.preload = 'auto'; }
+  } else if (o.audio) { sc.audio = new Audio(o.audio); sc.audio.preload = show.works.length > 3 ? 'none' : 'auto'; }
 }
 
 /* ── one artwork's overlay ─────────────────────────────
@@ -380,6 +408,62 @@ function buildScene(work, anchor) {
   return sc;
 }
 
+/* ── joining tracking files ────────────────────────────
+   Every .mind file is the same small header followed by a list of artworks. To make one file
+   for a room we keep one header and put all the lists together, in room order. */
+async function loadTargets(urls, onProgress) {
+  let done = 0, bytes = 0;
+  const bufs = new Array(urls.length);
+  let next = 0;
+  async function worker() {
+    while (next < urls.length) {
+      const i = next++;
+      const r = await fetch(urls[i]);
+      if (!r.ok) throw new Error('Could not load ' + urls[i]);
+      bufs[i] = new Uint8Array(await r.arrayBuffer());
+      bytes += bufs[i].length; onProgress(++done, urls.length, bytes);
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(6, urls.length) }, worker));
+  const HEAD = [0x82, 0xa1, 0x76, 0x02, 0xa8, 100, 97, 116, 97, 76, 105, 115, 116];   // {v:2, dataList:
+  let count = 0; const parts = [];
+  bufs.forEach((b, i) => {
+    for (let k = 0; k < HEAD.length; k++) if (b[k] !== HEAD[k]) throw new Error(urls[i] + ' is not a tracking file this page understands. Rebuild it with add.html.');
+    const t = b[13]; let n, start;
+    if (t >= 0x90 && t <= 0x9f) { n = t - 0x90; start = 14; }
+    else if (t === 0xdc) { n = (b[14] << 8) | b[15]; start = 16; }
+    else if (t === 0xdd) { n = ((b[14] << 24) >>> 0) + (b[15] << 16) + (b[16] << 8) + b[17]; start = 18; }
+    else throw new Error('Unexpected data in ' + urls[i]);
+    count += n; parts.push(b.subarray(start));
+  });
+  const head = count < 16 ? [0x90 + count] : count < 65536 ? [0xdc, count >> 8, count & 255] : [0xdd, count >>> 24, (count >> 16) & 255, (count >> 8) & 255, count & 255];
+  const blob = new Blob([new Uint8Array(HEAD), new Uint8Array(head), ...parts], { type: 'application/octet-stream' });
+  return { url: URL.createObjectURL(blob), bytes, count };
+}
+
+/* ── test readout: add &stats=1 to a link ──────────── */
+const stats = (() => {
+  const on = params.get('stats') === '1';
+  const t0 = performance.now(); let box = null, lines = {}, finds = [];
+  const sec = ms => (ms / 1000).toFixed(1) + ' s';
+  function draw() {
+    if (!on) return;
+    if (!box) { box = document.createElement('div'); box.setAttribute('aria-hidden', 'true');
+      box.style.cssText = 'position:fixed;top:calc(8px + env(safe-area-inset-top));left:8px;z-index:30;max-width:70vw;padding:8px 10px;border-radius:10px;background:rgba(0,0,0,.72);color:#9dffa0;font:12px/1.45 ui-monospace,Menlo,monospace;pointer-events:none;white-space:pre';
+      document.body.appendChild(box); }
+    box.textContent = Object.values(lines).join('\n') + (finds.length ? '\n' + finds.slice(-4).join('\n') : '');
+  }
+  let scanStart = 0, lastLost = 0, frames = 0, fpsT = performance.now();
+  return {
+    on,
+    set(k, v) { lines[k] = v; draw(); },
+    scanning() { scanStart = performance.now(); lines.ready = 'camera ready after ' + sec(scanStart - t0); draw();
+      if (on) (function tick() { frames++; const n = performance.now(); if (n - fpsT > 1000) { lines.fps = 'screen ' + Math.round(frames * 1000 / (n - fpsT)) + ' fps'; frames = 0; fpsT = n; draw(); } requestAnimationFrame(tick); })(); },
+    found(title) { const n = performance.now(); finds.push('found ' + title.slice(0, 22) + ' in ' + sec(n - Math.max(scanStart, lastLost))); draw(); },
+    lost() { lastLost = performance.now(); }
+  };
+})();
+
 /* ── start ─────────────────────────────────────────── */
 let started = false;
 $('start').addEventListener('click', async () => {
@@ -410,7 +494,7 @@ $('start').addEventListener('click', async () => {
 
 async function startAR() {
   const mindar = new MindARThree({
-    container: $('ar'), imageTargetSrc: show.target,
+    container: $('ar'), imageTargetSrc: show.target || 'joined-on-the-phone',
     uiLoading: 'no', uiScanning: 'no', uiError: 'no',
     filterMinCF: 0.0001, filterBeta: 0.001,      // steadier overlay
     missTolerance: 8, warmupTolerance: 4
@@ -419,13 +503,16 @@ async function startAR() {
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
   // one anchor per artwork, in the order the tracking file was built
+  const unlocked = new Set();
   const scenes = show.works.map((work, i) => {
     const anchor = mindar.addAnchor(i);
     const sc = buildScene(work, anchor);
-    for (const v of [sc.video, sc.anim, sc.clip, sc.audio]) if (v) v.play().then(() => v.pause()).catch(() => {});   // unlock playback inside the Start tap
+    for (const v of [sc.video, sc.anim, sc.clip, sc.audio]) if (v && !unlocked.has(v)) { unlocked.add(v); v.play().then(() => v.pause()).catch(() => {}); }   // unlock playback inside the Start tap
 
     anchor.onTargetFound = () => {
       sc.found = true; sc.appearT = performance.now();
+      bindMedia(sc);
+      stats.found(sc.work.title);
       const switched = !current || current !== sc;
       current = sc;
       buzz([60, 40, 60]);
@@ -447,7 +534,7 @@ async function startAR() {
       }
     };
     anchor.onTargetLost = () => {
-      sc.found = false;
+      sc.found = false; stats.lost();
       if (sc.video) sc.video.pause(); if (sc.anim) sc.anim.pause(); if (sc.clip) sc.clip.pause();   // (a sound-only story keeps going)
       if (!scenes.some(s => s.found)) {
         setStatus(show.works.length > 1 ? 'Point your camera at an artwork' : 'Point your camera at the artwork');
@@ -474,7 +561,19 @@ async function startAR() {
   });
 
   if (show.works.length > 1) setStatus('Point your camera at an artwork');
+  stats.set('n', show.works.length + ' artworks');
+  if (!show.target) {
+    const msg = $('loading').lastElementChild, t = performance.now();
+    const res = await loadTargets(show.works.map(w => w.target), (d, n, b) => {
+      msg.textContent = 'Loading artworks ' + d + ' of ' + n + '\u2026';
+      stats.set('dl', 'downloaded ' + (b / 1048576).toFixed(1) + ' MB');
+    });
+    mindar.imageTargetSrc = res.url;
+    stats.set('dl', 'downloaded ' + (res.bytes / 1048576).toFixed(1) + ' MB in ' + ((performance.now() - t) / 1000).toFixed(1) + ' s');
+    msg.textContent = 'Starting camera\u2026';
+  }
   await mindar.start();
+  stats.scanning();
 
   $('loading').style.display = 'none';
   $('hud').style.display = 'flex';
@@ -486,6 +585,10 @@ async function startAR() {
     const t = clock.getElapsedTime();
     for (const sc of scenes) {
       if (!sc.found) continue;
+      // video layers stay hidden until their video is really playing (no black flash, and a video that
+      // fails to load just shows the painting)
+      if (sc.animPlane) sc.animPlane.visible = shared.anim.owner === sc && shared.anim.ready;
+      if (sc.clipPlane) sc.clipPlane.visible = shared.clip.owner === sc && shared.clip.ready;
       const k = Math.min(1, (performance.now() - sc.appearT) / 600);   // ease in when found
       sc.group.scale.setScalar(0.92 + 0.08 * (reduceMotion ? 1 : 1 - Math.pow(1 - k, 3)));
       if (!reduceMotion) for (const f of sc.animators) f(t);

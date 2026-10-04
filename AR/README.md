@@ -17,6 +17,9 @@ No-download augmented reality for artwork. Visitors scan a QR code, the page ope
 Works in Safari on iPhone and Chrome on Android. Phones only allow camera access over https, which GitHub Pages provides.
 
 Rooms: aim for 10–20 artworks each. Each one adds about 0.7 MB for visitors to download.
+A room in artworks.js doesn't need its own tracking file: leave out the `target` line and the phone joins each artwork's own file. Test rooms: `?show=blind-canvas-10`, `?show=blind-canvas-25`, `?show=blind-canvas-all`.
+
+Add `&stats=1` to any link to see download size, camera start time, frame rate, and how long each painting took to recognize.
 
 Test it: open `targets/fox-at-dusk.jpg` and `targets/harbor-light.jpg` on a computer screen, open `.../AR/?show=test-room` on a phone, and point the phone at one painting, then the other.
 
