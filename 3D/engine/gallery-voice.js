@@ -69,6 +69,7 @@ export function setupVoice({ G, net, button, announce, nameOf }) {
       const p = peers.get(r.id); if (!p) continue;
       const d = Math.hypot(r.x - me[0], r.z - me[2]) + Math.abs(r.y - me[1]) * 2;
       p.audio.volume = r.id === spotlight ? 1 : Math.max(0.35, Math.min(1, 1 - (d - 8) / 45));
+      p.audio.muted = !!window.HUSH;   // quiet while an artwork is open
     }
     label();
   }, 300);

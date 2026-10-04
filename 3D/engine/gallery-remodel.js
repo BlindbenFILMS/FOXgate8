@@ -4,6 +4,7 @@
 import * as THREE from '../vendor/three/three.module.js';
 import { woodify } from './gallery-wing.js';
 import { TOOLS, ALLY_TIPS, SPECTRUM } from './kiosk-art.js';
+import { stainedGlass } from './gallery-stained.js';
 
 // regions are boxes {min:[x,y,z], max:[x,y,z]} or x-axis cylinders {cyl:{x0,x1,y,z,r}}
 export const CARVES = [
@@ -20,15 +21,48 @@ export const CARVES = [
   { name: 'walkway kiosk north', min: [-22.2, -1.9, 1.5], max: [-17.8, 2.6, 5.6] },
   // the little building north of the Wall of Why hallway (rebuilt as a twin of the New Artists Wing)
   { name: 'north annex', min: [-86, -3.2, -77], max: [-54, 15, -27.7] },
+  // the welcome plaza's old furniture: the big "to move" cube by the spawn, and the boards that floated out past the rails
+  { name: 'move cube', min: [2.0, -0.8, 4.1], max: [4.0, 3.6, 6.1] },
+  { name: 'intro board north', min: [-4.4, 0.3, 14.5], max: [4.3, 5.5, 15.5] },
+  { name: 'intro board south', min: [-4.4, 0.3, -15.4], max: [4.3, 5.5, -14.4] },
+  { name: 'tip board north', min: [-21.9, -0.1, 13.6], max: [-13.5, 4.9, 14.6] },
+  { name: 'tip board south', min: [-21.9, -0.1, -14.2], max: [-13.5, 4.9, -13.2] },
+  // 'Hope Floating in Braille' in the middle of the entry hall: pool, rim, floating dots, logo frame and label (rebuilt against the left wall)
+  { name: 'braille piece', min: [-56.2, -3.3, -5.9], max: [-47.5, 3.4, 4.7] },
+  { name: 'braille pool water', only: 'Cube__30__1', min: [-53.0, -4.2, -5.4], max: [-48.0, -2.8, 4.1] },
+  // the white shell walls that rose either side of the plaza and the lake, hiding the city: cut away (deck level and the eye stay)
+  { name: 'shell wall north', only: 'Arch__1_', min: [-26.2, 0.6, 13.75], max: [7.6, 30, 30] },
+  { name: 'shell wall south', only: 'Arch__1_', min: [-26.2, 0.6, -30], max: [7.6, 30, -13.75] },
+  { name: 'shell trim north', only: 'TRIM___right___White_ext___2nd', min: [-26.2, 0.6, 13.75], max: [7.6, 30, 30] },
+  { name: 'shell trim south', only: 'TRIM___right___White_ext___2nd', min: [-26.2, 0.6, -30], max: [7.6, 30, -13.75] },
+  // the main hall's painted sky ceiling (12.6 m) and the roof sheet above it (14.5 m), over the bays between the beams:
+  // cut out so the new stained-glass roof (gallery-roof.js) shows against the real sky
+  { name: 'main hall ceiling', only: 'Arch', min: [-116.6, 12.2, -21.9], max: [-76.6, 14.9, 21.9] },
+  // the iris platform over the music room (ring floor at 14.81): its tall outer rim and the tube round the pupil, cut down to the
+  // floor so it's an open ring to walk round and look down from (gallery-elevator.js adds glass rails and the lift)
+  { name: 'iris platform rim + pupil tube', only: 'Arch', min: [-213.2, 15.0, -7.8], max: [-198.8, 21.5, 7.6] },
+  { name: 'iris platform rim + pupil tube (2)', only: 'Arch__1_', min: [-213.2, 15.0, -7.8], max: [-198.8, 21.5, 7.6] },
+  // the music room's ceiling: the eye-shaped opening's faceted rings (black bands, white upstands, the deck, the tall outer wall
+  // and the old support out to the iris), rebuilt smooth in gallery-eyelid.js
+  { name: 'eyelid rings', only: 'Arch__1_', ell: [-208.08, -0.45, 14.3, 26.3], y: [7.3, 15.5] },
+  { name: 'eyelid rings (2)', only: 'Arch', ell: [-208.08, -0.45, 14.3, 26.3], y: [7.3, 15.5] },
+  // the ring floor itself (its teal top and its underside): rebuilt as stained glass in gallery-elevator.js
+  { name: 'iris ring floor', only: 'Arch', min: [-212.2, 14.4, -7.2], max: [-198.9, 14.99, 6.2] },
+  { name: 'iris ring floor (2)', only: 'Arch__1_', min: [-212.2, 14.4, -7.2], max: [-198.9, 14.99, 6.2] },
+  // the skywalk (gallery-skywalk.js): the 2nd floor's low edge wall between the two interview screens (rebuilt in two parts
+  // with a gap), and the two big black screen frames (rebuilt smaller, further apart)
+  { name: 'skywalk gap (2nd floor edge wall)', only: 'mesh_32', min: [-146.2, 5.8, -1.5], max: [-145.2, 6.7, 0.5] },
+  { name: 'old 2nd floor screen frames', only: 'mesh_35', min: [-146, 9, -6], max: [-145.3, 10, 6.5] },
   // the old platform's back rim east of the plaza (the cherry garden starts there now)
   { name: 'old platform rim', min: [7.35, -6, -17.5], max: [13, 3.2, 17.5] },
 ];
 
 const inRegion = (R, x, y, z) => {
+  if (R.ell) { const [cx, cz, rx, rz] = R.ell; return y >= R.y[0] && y <= R.y[1] && ((x - cx) / rx) ** 2 + ((z - cz) / rz) ** 2 <= 1; }
   if (R.cyl) { const c = R.cyl; return x >= c.x0 && x <= c.x1 && Math.hypot(y - c.y, z - c.z) <= c.r; }
   return x >= R.min[0] && x <= R.max[0] && y >= R.min[1] && y <= R.max[1] && z >= R.min[2] && z <= R.max[2];
 };
-export const carved = (x, y, z, list = CARVES) => list.some(R => inRegion(R, x, y, z));
+export const carved = (x, y, z, list = CARVES) => list.some(R => !R.only && inRegion(R, x, y, z));   // (regions limited to one mesh never drop data)
 
 export function carveWorld(world, list = CARVES) {
   const v = new THREE.Vector3(), a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), m = new THREE.Matrix4();
@@ -41,7 +75,7 @@ export function carveWorld(world, list = CARVES) {
       let changed = false;
       for (let i = 0; i < o.count; i++) {
         o.getMatrixAt(i, m); v.copy(ctr).applyMatrix4(m).applyMatrix4(o.matrixWorld);
-        if (carved(v.x, v.y, v.z, list)) { m.makeScale(0, 0, 0); o.setMatrixAt(i, m); changed = true; hidden++; }
+        if (list.some(R => (!R.only || R.only === o.name) && inRegion(R, v.x, v.y, v.z))) { m.makeScale(0, 0, 0); o.setMatrixAt(i, m); changed = true; hidden++; }
       }
       if (changed) o.instanceMatrix.needsUpdate = true;
       return;
@@ -54,7 +88,7 @@ export function carveWorld(world, list = CARVES) {
       const i0 = idx ? idx[t] : t, i1 = idx ? idx[t + 1] : t + 1, i2 = idx ? idx[t + 2] : t + 2;
       a.fromBufferAttribute(pos, i0).applyMatrix4(o.matrixWorld); b.fromBufferAttribute(pos, i1).applyMatrix4(o.matrixWorld); c.fromBufferAttribute(pos, i2).applyMatrix4(o.matrixWorld);
       v.copy(a).add(b).add(c).multiplyScalar(1 / 3);
-      if (carved(v.x, v.y, v.z, list)) { removed++; continue; }
+      if (list.some(R => (!R.only || R.only === o.name) && inRegion(R, v.x, v.y, v.z))) { removed++; continue; }
       keep.push(i0, i1, i2);
     }
     if (!removed) return;
@@ -74,6 +108,8 @@ export function buildEntrance({ scene, wood }) {
   const deckM = woodify(new THREE.MeshLambertMaterial({ color: 0xffffff }), wood);
   const inkM = new THREE.MeshLambertMaterial({ color: 0x1d1c1b });
   const redM = new THREE.MeshBasicMaterial({ color: 0xec3013 });
+  const blueM = new THREE.MeshBasicMaterial({ color: 0x15309a });
+  const railGlass = stainedGlass({ cell: 0.42, y0: -3.4, y1: 4.0 });   // deeper blues as the ramp goes down into the hall   // deep cobalt: the bridge into the stained-glass eye and the ramp down inside
   const P = [[-13.0, 0.0], [-19.5, 0.0], [-25.6, 2.5], [-32.0, 2.5], [-44.5, -3.38], [-45.5, -3.38]];   // lands 2 m short of 'Hope Floating in Braille'
   const seg = (x0, y0, x1, y1, rails = true) => {
     if (x1 < x0) [x0, y0, x1, y1] = [x1, y1, x0, y0];   // keep the angle in (-90°, 90°) so "up" stays up
@@ -87,8 +123,8 @@ export function buildEntrance({ scene, wood }) {
     for (const s of [-1, 1]) {
       piece(len + 0.02, 0.5, 0.12, inkM, -0.2, s * (W / 2 + 0.06), false);   // fascia
       if (!rails) continue;
-      piece(len + 0.02, 0.06, 0.1, redM, 1.05, s * (W / 2 - 0.02), false);   // red handrail (the wing's red rule)
-      piece(len + 0.02, 1.0, 0.06, new THREE.MeshLambertMaterial({ color: 0x1d1c1b, transparent: true, opacity: 0.18 }), 0.55, s * (W / 2 - 0.02), true);   // glass panel: you can't fall off
+      piece(len + 0.02, 0.06, 0.1, blueM, 1.05, s * (W / 2 - 0.02), false);   // deep blue handrail (matches the eye's glass)
+      piece(len + 0.02, 1.0, 0.06, railGlass, 0.55, s * (W / 2 - 0.02), true).renderOrder = 4;   // stained-glass panel (the eye's style), and you can't fall off
     }
     // posts every ~2 m
     const n = rails ? Math.max(1, Math.round(len / 2)) : -1;
@@ -121,10 +157,7 @@ export function buildEntrance({ scene, wood }) {
     const sk = new THREE.Mesh(new THREE.BoxGeometry(len, 3.2, W + 0.24), wallM); sk.rotation.z = ang;
     const off = new THREE.Vector3(0, -1.6 - 0.28, 0).applyAxisAngle(new THREE.Vector3(0, 0, 1), ang);
     sk.position.set((xa + xb) / 2 + off.x, (ya + yb) / 2 + off.y, 0); g.add(sk); col.push(sk); }
-  // welcome screen totem (the screen itself is gallery.json vids[0], placed on top of this stand)
-  { const T = new THREE.Group(); T.position.set(-9, 0, -6); T.rotation.y = -0.393; g.add(T);
-    const post = new THREE.Mesh(new THREE.BoxGeometry(0.25, 1.5, 0.25), inkM); post.position.y = 0.75; T.add(post);
-    const base = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.08, 1.6), inkM); base.position.y = 0.04; T.add(base); col.push(post); }
+  // (the welcome film's stand is built with the rest of the plaza furniture in buildKiosks)
   // the eye: a bigger iris tunnel (teal) with an ink pupil rim, so the 4.6 m walkway passes through comfortably
   const cy = 3.9, cz = 0.1, x0 = -31.9, x1 = -26.1, rIn = 3.5, rOut = 4.55;
   const iris = new THREE.Mesh(new THREE.CylinderGeometry(rIn, rIn, x1 - x0, 48, 1, true), new THREE.MeshLambertMaterial({ color: 0x14a59e, side: THREE.DoubleSide }));
@@ -217,28 +250,129 @@ export function cardTexture(s) {
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
 }
 
-// ------------------------------------------------------------ learning kiosks: an ink column with a big screen on top (wing style)
-export function buildKiosks({ scene, groundAt }) {
+// ------------------------------------------------------------ the welcome plaza: one family of light, museum-style furniture
+// screen stands (two slim legs, a thin ink bezel, the red rule on top), reading lecterns (a slim blade on a floor plate),
+// and free-standing exhibition panels on twin legs. Laid out as an avenue: lecterns flank the spawn, screens face in from both
+// sides, big panels stand along the plaza edges, and the walkway onto the bridge stays clear.
+export const FRONT = {
+  // the welcome film: the only screen out front, standing in the lake beside the bridge (right-hand side walking in), halfway to
+  // the eye, turned to the plaza so you can watch from the platform's edge (gallery.json vids[0] sits in this stand)
+  film: { x: -19.5, z: -6.4, w: 5.0, h: 2.8, base: -1.64, deck: 0.02, bottom: 1.6, look: [-8, -1] },
+  // the learning screens stand back along the plaza's edges, facing in (gallery.json edu points match these)
+  screens: [
+    { x: -4.25, z: 12.9, img: 'TOOLS' },                                // Tools for the blind
+    { x: -4.25, z: -12.9, img: 'ALLY_TIPS' },                           // Tips to be loved by the blind
+    { x: 5.2, z: -12.9, img: 'SPECTRUM' },                              // Blindness is a spectrum
+  ],
+  panels: [
+    { x: 0.6, z: -12.9, img: 'gallery/img/bcp_intro_virtualgallary_graphic_270129099.webp', w: 5.6, ar: 1.70 },
+    { x: 0.6, z: 12.9, img: 'gallery/img/bcp_intro_virtualgallary_graphic_270129099.webp', w: 5.6, ar: 1.70 },
+    { x: -8.6, z: 12.9, img: 'gallery/img/blindness_tip_final_01_270309773.webp', w: 4.6, ar: 1.72 },
+    { x: -8.6, z: -12.9, img: 'gallery/img/blindness_tip_final_02_270309764.webp', w: 4.6, ar: 1.72 },
+  ],
+  lean: 0.35,                                                           // screens turn this much toward the arriving visitor (east)
+};
+const SPAWN_XZ = [3.6, 0];
+export const faceYaw = (x, z, tx, tz) => Math.atan2(tx - x, tz - z);   // yaw that turns local +z toward (tx, tz)
+
+export function buildKiosks({ scene, resolveImg = u => u }) {
   const g = new THREE.Group(); scene.add(g); const col = [];
   const ink = new THREE.MeshLambertMaterial({ color: 0x1d1c1b }), red = new THREE.MeshBasicMaterial({ color: 0xec3013 });
   const loader = new THREE.TextureLoader();
-  const K = [
-    { x: 6.55, z: 0, face: -Math.PI / 2, img: TOOLS, sw: 2.6, top: 3.1, base: 'spawn' },        // behind the spawn, centred, facing the plaza
-    { x: -15.2, z: -6.0, face: 0, img: ALLY_TIPS, sw: 2.8, top: 3.3 },                           // by the walkway, clear of the rails
-    { x: -22.6, z: 6.0, face: Math.PI, img: SPECTRUM, sw: 2.8, top: 3.3 },
-  ];
-  for (const k of K) {
-    const fy = groundAt(k.x, k.base === 'spawn' ? 1.5 : -0.5, k.z); const y0 = fy > -100 ? fy : -2;
-    const t = new THREE.Group(); t.position.set(k.x, y0, k.z); t.rotation.y = k.face; g.add(t);
-    const sh = k.sw * 0.75, cy = k.top - y0 - sh / 2;   // screen top at world height k.top
-    const colH = cy - sh / 2 + 0.05;
-    const c = new THREE.Mesh(new THREE.BoxGeometry(0.7, colH, 0.5), ink); c.position.y = colH / 2; t.add(c); col.push(c);
-    const foot = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.12, 1.0), ink); foot.position.y = 0.06; t.add(foot);
-    const back = new THREE.Mesh(new THREE.BoxGeometry(k.sw + 0.2, sh + 0.2, 0.16), ink); back.position.y = cy; t.add(back); col.push(back);
-    const bar = new THREE.Mesh(new THREE.BoxGeometry(k.sw + 0.2, 0.07, 0.17), red); bar.position.y = cy + sh / 2 + 0.135; t.add(bar);
-    const m = new THREE.MeshBasicMaterial({ color: 0x222222 });
-    const scr = new THREE.Mesh(new THREE.PlaneGeometry(k.sw, sh), m); scr.position.set(0, cy, 0.085); t.add(scr);
-    loader.load(k.img, tx => { tx.colorSpace = THREE.SRGBColorSpace; tx.anisotropy = 4; m.map = tx; m.color.set(0xffffff); m.needsUpdate = true; });
+  const art = { TOOLS, ALLY_TIPS, SPECTRUM };
+  const box = (parent, w, h, d, m, x, y, z, collide) => { const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); b.position.set(x, y, z); parent.add(b); if (collide) col.push(b); return b; };
+  const texMat = (src, base = 0x2b2928) => { const m = new THREE.MeshBasicMaterial({ color: base }); loader.load(src, t => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; m.map = t; m.color.set(0xffffff); m.needsUpdate = true; }); return m; };
+  // facing: the screens look across the avenue, turned a little toward the visitor arriving from the spawn
+  const inward = (z) => Math.atan2(FRONT.lean, -Math.sign(z));
+  // a screen stand: legs to the floor, a slim foot rail, bezel + red rule; img = null leaves the face empty (a video box goes there)
+  const stand = (x, z, yaw, w, h, bottom, img) => {
+    const t = new THREE.Group(); t.position.set(x, 0, z); t.rotation.y = yaw; g.add(t);
+    const lx = w / 2 - Math.min(0.45, w * 0.18);
+    for (const s of [-1, 1]) box(t, 0.07, bottom + h * 0.55, 0.07, ink, s * lx, (bottom + h * 0.55) / 2, -0.09, true);   // legs
+    box(t, lx * 2 + 0.07, 0.05, 0.07, ink, 0, 0.025, -0.09, false);                       // foot rail
+    for (const s of [-1, 1]) box(t, 0.07, 0.04, 0.6, ink, s * lx, 0.02, -0.09, false);    // feet
+    if (img) {
+      box(t, w + 0.08, h + 0.08, 0.06, ink, 0, bottom + h / 2, -0.03, true);              // bezel / back
+      const scr = new THREE.Mesh(new THREE.PlaneGeometry(w, h), texMat(art[img] || img)); scr.position.set(0, bottom + h / 2, 0.002); t.add(scr);
+    }
+    box(t, w + 0.08, 0.04, 0.08, red, 0, bottom + h + 0.06, -0.03, false);                // the red rule
+    return t;
+  };
+  // the welcome film's stand in the lake: one ink pier from the water up to a big bezel (the film box from gallery.json sits in its face)
+  { const f = FRONT.film, t = new THREE.Group(); t.position.set(f.x, f.base, f.z); t.rotation.y = faceYaw(f.x, f.z, ...f.look); g.add(t);
+    const top = f.deck - f.base + f.bottom;   // screen bottom, measured from the stand's foot
+    box(t, 0.5, top + 0.2, 0.36, ink, 0, (top + 0.2) / 2, -0.2, false);                    // the pier
+    box(t, 1.4, 0.12, 1.0, ink, 0, 0.06, -0.2, false);                                      // its footing
+    box(t, f.w + 0.16, f.h + 0.16, 0.12, ink, 0, top + f.h / 2, -0.07, false);             // bezel / back
+    box(t, f.w + 0.16, 0.06, 0.14, red, 0, top + f.h + 0.11, -0.07, false); }              // the red rule
+  for (const k of FRONT.screens) stand(k.x, k.z, inward(k.z), 2.4, 1.8, 0.95, k.img);
+  // exhibition panels along the plaza edges (they replace the old boards that floated out past the rails)
+  for (const pn of FRONT.panels) {
+    const h = pn.w / pn.ar, bottom = 0.85, yaw = pn.z > 0 ? Math.PI : 0;
+    const t = new THREE.Group(); t.position.set(pn.x, 0, pn.z); t.rotation.y = yaw; g.add(t);
+    for (const s of [-1, 1]) box(t, 0.08, bottom + h, 0.08, ink, s * (pn.w / 2 - 0.3), (bottom + h) / 2, -0.08, true);
+    for (const s of [-1, 1]) box(t, 0.08, 0.04, 0.7, ink, s * (pn.w / 2 - 0.3), 0.02, -0.08, false);
+    box(t, pn.w + 0.1, h + 0.1, 0.06, ink, 0, bottom + h / 2, -0.035, true);
+    const face = new THREE.Mesh(new THREE.PlaneGeometry(pn.w, h), texMat(resolveImg(pn.img))); face.position.set(0, bottom + h / 2, 0.001); t.add(face);
+    box(t, pn.w + 0.1, 0.045, 0.08, red, 0, bottom + h + 0.075, -0.035, false);
+  }
+  g.updateMatrixWorld(true);
+  return { group: g, col };
+}
+
+// a reading lectern (local +z faces the reader): floor plate, slim blade, tilted top with a thin ink frame and the red rule
+export function lectern(t, ink, red, col, faceTex, W = 1.42, H = 1.0) {
+  const box = (w, h, d, m, x, y, z, parent = t) => { const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); b.position.set(x, y, z); parent.add(b); return b; };
+  box(0.8, 0.03, 0.56, ink, 0, 0.015, -0.05);
+  const blade = box(0.3, 0.92, 0.05, ink, 0, 0.49, -0.12); if (col) col.push(blade);
+  const top = new THREE.Group(); top.position.set(0, 1.02, 0); top.rotation.x = -0.62; t.add(top);
+  const fr = box(W + 0.08, H + 0.08, 0.05, ink, 0, 0, -0.03, top); if (col) col.push(fr);
+  const face = new THREE.Mesh(new THREE.PlaneGeometry(W, H), new THREE.MeshBasicMaterial({ map: faceTex })); face.position.z = 0.0; top.add(face);
+  box(W + 0.08, 0.035, 0.07, red, 0, H / 2 + 0.06, -0.03, top);
+  return { top, face };
+}
+
+function howToTexture() {
+  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 720; const c = cv.getContext('2d');
+  c.fillStyle = '#f9f8f6'; c.fillRect(0, 0, 1024, 720); c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, 14, 720);
+  c.fillStyle = '#ec3013'; c.font = `800 28px ${FONT}`; c.fillText('WELCOME TO THE GALLERY', 52, 70);
+  c.fillStyle = '#1d1c1b'; c.font = `800 74px ${FONT}`; c.fillText('How to move', 52, 152);
+  c.fillRect(52, 182, 920, 4);
+  const col = (x, head, rows) => {
+    c.fillStyle = '#ec3013'; c.font = `800 26px ${FONT}`; c.fillText(head, x, 238);
+    rows.forEach(([k, v], i) => { const y = 296 + i * 70; c.fillStyle = '#1d1c1b'; c.font = `800 30px ${FONT}`; c.fillText(k, x, y); c.fillStyle = '#5a5654'; c.font = `500 26px ${FONT}`; c.fillText(v, x, y + 32); });
+  };
+  col(52, 'ON A PHONE', [['Left thumb', 'joystick to walk'], ['Drag the screen', 'look around'], ['Pinch', 'zoom in and out'], ['Tap the red button', 'open the art near you']]);
+  col(540, 'ON A COMPUTER', [['W A S D  or  arrows', 'walk  (Shift to run)'], ['Drag the mouse', 'look around'], ['Mouse wheel', 'zoom in and out'], ['E  ·  Esc', 'open the art  ·  close it']]);
+  c.fillStyle = '#ec3013'; c.font = `800 22px ${FONT}`; c.fillText('☰  MENU: READ ALOUD, NIGHT MODE, FRIENDS AND MORE', 52, 676);
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
+}
+
+// ------------------------------------------------------------ slim bio walls (gallery.json "bioWalls")
+// The artists' bio boards used to sit on big 6.4 m x 6.6 m blocks with a black band, the portrait on the far side.
+// Each block is carved out (its region is in the data) and replaced by a slim wall cut to the bio card: the card on
+// the front, the square portrait and the artist's name on the back. Local +z faces the card's reader.
+export function buildBioWalls({ scene, data }) {
+  const g = new THREE.Group(); scene.add(g); const col = [];
+  const white = new THREE.MeshLambertMaterial({ color: 0xf4f2ee }), ink = new THREE.MeshLambertMaterial({ color: 0x1d1c1b });
+  const nameTex = (name, w, h) => {
+    const K = 300, cv = document.createElement('canvas'); cv.width = Math.round(w * K); cv.height = Math.round(h * K); const x = cv.getContext('2d');
+    x.fillStyle = '#1d1c1b'; x.fillRect(0, 0, cv.width, cv.height); x.fillStyle = '#ec3013'; x.fillRect(0, 0, cv.width, 0.03 * K);
+    let fs = 0.25 * K; x.font = `800 ${fs}px ${FONT}`; while (x.measureText(name).width > cv.width * 0.9 && fs > 40) { fs -= 4; x.font = `800 ${fs}px ${FONT}`; }
+    x.fillStyle = '#fff'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(name, cv.width / 2, cv.height / 2 + 0.015 * K);
+    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
+  };
+  for (const B of data.bioWalls || []) {
+    const [nx, nz] = B.n, H = B.top - B.bottom, T = B.t, W = B.w;
+    const t = new THREE.Group(); t.position.set(B.c[0] - nx * (0.02 + T / 2), B.bottom, B.c[2] - nz * (0.02 + T / 2)); t.rotation.y = Math.atan2(nx, nz); g.add(t);
+    const box = (w, h, d, m, y) => { const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); b.position.set(0, y, 0); t.add(b); return b; };
+    col.push(box(W, H - 0.16, T, white, 0.11 + (H - 0.16) / 2));   // the wall, standing on a dark recessed base
+    box(W - 0.08, 0.11, T - 0.08, ink, 0.055);                        // shadow-gap base, so it looks like it floats
+    box(W + 0.02, 0.05, T + 0.02, ink, H - 0.025);                    // thin ink cap
+    // the name, on the back above the portrait
+    const by = B.floorBack - B.bottom + 0.5 + B.ps + 0.32, bw = B.ps, bh = 0.4;
+    const band = new THREE.Mesh(new THREE.PlaneGeometry(bw, bh), new THREE.MeshBasicMaterial({ map: nameTex(B.name.replace(/&amp;/g, '&'), bw, bh) }));
+    band.position.set(0, by, -T / 2 - 0.004); band.rotation.y = Math.PI; t.add(band);
   }
   g.updateMatrixWorld(true);
   return { group: g, col };

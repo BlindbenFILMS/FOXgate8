@@ -50,6 +50,8 @@ export function setupSound({ getState, inside, filmPlaying, chair }) {
   setInterval(() => {
     const now = performance.now(), dt = Math.min(0.2, (now - last) / 1000); last = now;
     if (!on || ctx.state !== 'running') return;
+    // an artwork (or any info panel) is open: everything else goes quiet so the art and the artist's voice have the room
+    master.gain.setTargetAtTime(window.HUSH ? 0 : 0.9, ctx.currentTime, 0.12); if (window.HUSH) return;
     const [x, y, z, , speed, air] = getState(), inn = inside(x, y, z), duck = filmPlaying() ? 0.35 : 1;
     // the lake: louder the nearer you are to its edge (outside the building only)
     const nearLake = inn ? 0 : Math.max(0, 1 - Math.max(0, x > -12.4 ? x + 12.4 : 0) / 26);   // the lake lies between the plaza and the museum; it fades as you walk into the garden

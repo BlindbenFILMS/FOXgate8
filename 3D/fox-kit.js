@@ -287,12 +287,17 @@ export function foxKit({ THREE, scene, toon, M, grad, outlineMat, crestTex, rr, 
         // prints: chest logo on the tee (shows through the open front) and the big back print
         const printMat = tex => new THREE.MeshToonMaterial({ map: tex, gradientMap: grad, transparent: true, alphaTest: 0.05, side: THREE.FrontSide, polygonOffset: true, polygonOffsetFactor: -2 });
         const T = kind === 'tee';
-        if (prints && prints.front) { const fw = T ? (prints.frontW || 1.78) : 0.62; const f = new THREE.Mesh(T ? new THREE.CylinderGeometry(0.322, 0.256, 0.43, 28, 1, true, -fw / 2, fw) : new THREE.CylinderGeometry(0.33, 0.275, 0.26, 16, 1, true, -fw / 2, fw), printMat(prints.front)); f.position.set(0, (T ? 0.895 : 1.0) + lift, 0); f.scale.z = 1.1; body.add(f); }
-        if (prints && prints.back && T) {   // tee: the back print follows the shirt's own profile, up high between the shoulder blades
+        if (prints && prints.wrap && T) {   // an all-over art tee: one print wrapped right round the shirt (front centre = the middle of the picture, seam at the back)
+          const rAt = y => { for (let i = 0; i < prof.length - 1; i++) { const [r0, y0] = prof[i], [r1, y1] = prof[i + 1]; if (y >= y0 && y <= y1) return r0 + (r1 - r0) * (y - y0) / (y1 - y0); } return prof[prof.length - 1][0]; };
+          const Y0 = 0.43, Y1 = 1.2, N = 20, pts = []; for (let i = 0; i <= N; i++) { const y = Y0 + (Y1 - Y0) * i / N; pts.push(new THREE.Vector2(rAt(y) + 0.008, y)); }
+          const w = new THREE.Mesh(new THREE.LatheGeometry(pts, 40, -Math.PI, Math.PI * 2), new THREE.MeshToonMaterial({ map: prints.wrap, gradientMap: grad, polygonOffset: true, polygonOffsetFactor: -2 })); w.position.y = lift; body.add(w);
+        }
+        if (prints && prints.front && !prints.wrap) { const fw = T ? (prints.frontW || 1.78) : 0.62; const f = new THREE.Mesh(T ? new THREE.CylinderGeometry(0.322, 0.256, 0.43, 28, 1, true, -fw / 2, fw) : new THREE.CylinderGeometry(0.33, 0.275, 0.26, 16, 1, true, -fw / 2, fw), printMat(prints.front)); f.position.set(0, (T ? 0.895 : 1.0) + lift, 0); f.scale.z = 1.1; body.add(f); }
+        if (prints && prints.back && T && !prints.wrap) {   // tee: the back print follows the shirt's own profile, up high between the shoulder blades
           const rAt = y => { for (let i = 0; i < prof.length - 1; i++) { const [r0, y0] = prof[i], [r1, y1] = prof[i + 1]; if (y >= y0 && y <= y1) return r0 + (r1 - r0) * (y - y0) / (y1 - y0); } return prof[prof.length - 1][0]; };
           const Y0 = 0.79, Y1 = 1.225, N = 16, pts = []; for (let i = 0; i <= N; i++) { const y = Y0 + (Y1 - Y0) * i / N; pts.push(new THREE.Vector2(rAt(y) + 0.012, y)); }
           const bw = 1.6, b = new THREE.Mesh(new THREE.LatheGeometry(pts, 28, Math.PI - bw / 2, bw), printMat(prints.back)); b.position.y = lift; body.add(b);
-        } else if (prints && prints.back) { const bw = T ? 1.8 : 1.6; const b = new THREE.Mesh(T ? new THREE.CylinderGeometry(0.325, 0.264, 0.5, 28, 1, true, Math.PI - bw / 2, bw) : new THREE.CylinderGeometry(0.352, 0.298, 0.52, 24, 1, true, Math.PI - bw / 2, bw), printMat(prints.back)); b.position.set(0, (T ? 0.87 : 0.87) + lift, 0); b.scale.z = 0.93; body.add(b); }
+        } else if (prints && prints.back && !prints.wrap) { const bw = T ? 1.8 : 1.6; const b = new THREE.Mesh(T ? new THREE.CylinderGeometry(0.325, 0.264, 0.5, 28, 1, true, Math.PI - bw / 2, bw) : new THREE.CylinderGeometry(0.352, 0.298, 0.52, 24, 1, true, Math.PI - bw / 2, bw), printMat(prints.back)); b.position.set(0, (T ? 0.87 : 0.87) + lift, 0); b.scale.z = 0.93; body.add(b); }
         P.arms = T ? sleeve(tee, tee) : sleeve(hood, rib);
       } else if (kind === 'royal') {  // the King: gown, cape, ermine
         M(lathe([[0.36, 0.06], [0.4, 0.08], [0.36, 0.4], [0.3, 0.7], [0.3, 0.95], [0.34, 1.12], [0.24, 1.22], [0.12, 1.26], [0, 1.27]], (y, c) => c.copy(t1).lerp(t0, smooth(0.3, 1.1, y))), vcToon, 0, lift - 0.02, 0, body, 0.03);
@@ -310,12 +315,13 @@ export function foxKit({ THREE, scene, toon, M, grad, outlineMat, crestTex, rr, 
     const head = new THREE.Group(); head.position.y = 1.6 + lift + (L.headScale - 1) * 0.3; head.scale.setScalar(L.headScale); body.add(head); P.head = head;
     const skull = M(foxSkull(0.4, 40, 30, null, 0, 0, 0, L), fur, 0, 0, 0, head, 0.04, 0.4); skull.scale.set(L.headWidth, L.headHeight, 1);
     const SZ = 0.32, tipZ = SZ + 0.25 * L.snoutLength; const snoutMat = new THREE.MeshToonMaterial({ vertexColors: true, gradientMap: grad, emissive: new THREE.Color(L.snout || L.muzzle), emissiveIntensity: 0.32 }); const snout = M(snoutGeoFor(L), snoutMat, 0, -0.075, SZ, head, 0.022); snout.scale.set(L.snoutSize, L.snoutSize, L.snoutLength);
-    M(new THREE.SphereGeometry(0.055, 14, 10), toon(L.nose), 0, -0.045, tipZ, head, 0.012, 0.055).scale.set(1.3 * L.snoutSize, 0.85 * L.snoutSize, 0.9);
+    const noseM = M(new THREE.SphereGeometry(0.055, 14, 10), toon(L.nose), 0, -0.045, tipZ, head, 0.012, 0.055); noseM.scale.set(1.3 * L.snoutSize, 0.85 * L.snoutSize, 0.9);
     const shine = new THREE.Mesh(new THREE.SphereGeometry(0.014, 6, 4), new THREE.MeshBasicMaterial({ color: 0xffffff })); shine.position.set(-0.02, -0.027, tipZ + 0.048); head.add(shine);
     const fc = document.createElement('canvas'); fc.width = fc.height = 256; const fctx = fc.getContext('2d');
     const ftex = new THREE.CanvasTexture(fc); ftex.colorSpace = THREE.SRGBColorSpace; ftex.anisotropy = 4;
     const faceMat = new THREE.MeshToonMaterial({ map: ftex, transparent: true, alphaTest: 0.04, gradientMap: grad, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 });
     const mask = new THREE.Mesh(foxSkull(0.403, 40, 32, Math.PI / 2 - 0.85, 1.7, Math.PI / 2 - 0.75, 1.5, L), faceMat); skull.add(mask);
+    P.faceParts = [snout, noseM, shine, mask]; for (const o of P.faceParts) o.userData.keep = true;   // the face, so a camera mask can stand in for it (gallery)
     for (const s of [-1, 1]) for (const [dy, dz, len, rz] of [[-0.1, 0.1, 0.2, 0.55], [-0.2, 0.06, 0.16, 0.95]]) {
       const t = M(new THREE.ConeGeometry(0.06, len, 6), white, s * 0.42 * L.headWidth / 1.08, dy, dz, head, 0.016); t.rotation.z = -s * (Math.PI / 2 + rz); t.scale.setScalar(L.fluffSize); t.visible = L.fluffSize > 0.05;
     }

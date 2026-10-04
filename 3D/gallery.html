@@ -74,8 +74,9 @@ OFF</button></div>
 <div id="panel" class="box" role="dialog" aria-modal="true" aria-labelledby="pt"><header><div class="h"><div class="k" id="pk"></div><h2 id="pt"></h2></div><button id="px" aria-label="Close">✕</button></header><div class="body" id="pb"></div></div>
 <div id="menu" class="box" role="dialog" aria-label="Menu">
   <div class="lab">Your fox</div>
-  <div class="opts" style="margin-bottom:6px"><button id="faceBtn" aria-pressed="false">🦊 Fox copies my face (camera)</button></div>
-  <div class="opts" id="looks"><button data-l="suit">Suit fox</button><button data-l="male">Fox</button><button data-l="female">Vixen</button></div>
+  <div class="opts" style="margin-bottom:6px"><button id="faceBtn" aria-pressed="false">🦊 Fox copies my face (camera)</button><button id="tvHeadBtn" aria-pressed="false">📺 Screen head</button><button id="maskBtn" aria-pressed="false">🎭 Face mask</button></div>
+  <div class="note" id="camNote" style="font:600 12px/1.35 var(--font);margin:-2px 0 8px;color:var(--muted,#5a5654)">Fox copies you: your camera stays on this device. Screen head and Face mask: everyone in the gallery sees your camera.</div>
+  <div class="opts" id="looks"><button data-l="wrap">Art tee</button><button data-l="suit">Suit fox</button><button data-l="male">Fox</button><button data-l="female">Vixen</button></div>
   <div class="lab">Gear</div>
   <div class="opts" id="extras"><button data-x="none">None</button><button data-x="glasses">Glasses</button><button data-x="cane">White cane</button><button data-x="chair">Wheelchair</button></div>
   <div class="lab">Reading</div>
@@ -100,8 +101,11 @@ try {
   G = await createGallery({ container: $('stage'), onProgress: f => { $('lb').style.width = Math.round(f * 100) + '%'; }, onNear, onZone: z => { document.querySelector('#place .c').textContent = z; }, onSplash: () => { $('live').textContent = 'Splash! No swimming in the lake. Back to the entrance.'; $('hint').textContent = '💦 Splash! No swimming in the lake. Back to the entrance.'; $('hint').style.display = 'block'; setTimeout(() => $('hint').style.display = 'none', 3500); } });
 } catch (e) { $('lt').textContent = 'The gallery could not open: ' + e.message; throw e; }
 window.G = G;
+// stained glass in the main hall's roof, with HOLT for HOPE in braille and its shadow on the floor
+import('./engine/gallery-roof.js').then(({ buildRoof }) => { try { window.ROOF = buildRoof({ G }); } catch (e) { console.warn('roof glass', e); } }).catch(e => console.warn('roof glass', e));
 
 if (pref.look || pref.extra) G.setLook(pref.look || 'male', pref.extra || 'none');
+if (pref.style) G.setStyle(pref.style);   // your fur and shirt art from the Fox Studio
 if (pref.night) G.setNight(true);
 const touch = matchMedia('(pointer:coarse)').matches;
 $('hint').textContent = touch ? 'Touch the left side to walk · drag the right side to look' : 'W A S D to walk · Shift to run · drag to look · E to view';
@@ -133,11 +137,11 @@ function onNear(n) {
   if (simPanel && (!n || n.kind !== 'simctl')) simPanel.style.display = 'none';
   if (!n) { b.style.display = 'none'; return; }
   const nc = n.kind === 'art' && window.NOTES ? window.NOTES.countFor(n.item) : 0;
-  b.innerHTML = '<small>' + (n.kind === 'art' ? 'Artwork' + (nc ? ' · 💬 ' + nc + (nc === 1 ? ' note' : ' notes') : '') : n.kind === 'vision' ? 'Stand here · vision simulator' : n.kind === 'simctl' ? 'Kiosk · the six views wall' : n.kind === 'guestbook' ? 'Guest book' : n.kind === 'note' ? 'A note left here' : 'Learn') + (touch ? '' : ' · press E') + '</small>' + esc(n.label.replace(/^VIEW · /, ''));
+  b.innerHTML = '<small>' + (n.kind === 'art' ? 'Artwork' + (nc ? ' · 💬 ' + nc + (nc === 1 ? ' note' : ' notes') : '') : n.kind === 'vision' ? 'Stand here · vision simulator' : n.kind === 'simctl' ? 'Kiosk · the six views wall' : n.kind === 'guestbook' ? 'Guest book' : n.kind === 'studio' ? 'Fox Studio' : n.kind === 'braille' ? 'Learn' : n.kind === 'elevator' ? 'Elevator' : n.kind === 'note' ? 'A note left here' : 'Learn') + (touch ? '' : ' · press E') + '</small>' + esc(n.label.replace(/^VIEW · /, ''));
   b.style.display = 'block'; if (n.kind !== 'note') $('live').textContent = n.label;   // (a note's full text was just announced)
 }
 $('act').addEventListener('click', () => near && open(near));
-addEventListener('keydown', e => { if (e.code === 'KeyE' && near && $('panel').style.display !== 'flex') open(near); if (e.code === 'Escape') { if (G && G.vision && G.vision.overlay.learnOpen()) { G.vision.overlay.closeLearn(); return; } if (G && G.vision && G.vision.locked()) G.vision.exit(); close(); } });
+addEventListener('keydown', e => { if (e.code === 'KeyE' && near && $('panel').style.display !== 'flex' && !(window.STUDIO && window.STUDIO.isOpen())) open(near); if (e.code === 'Escape') { if (window.STUDIO && window.STUDIO.isOpen()) { window.STUDIO.close(); return; } if (G && G.vision && G.vision.overlay.learnOpen()) { G.vision.overlay.closeLearn(); return; } if (G && G.vision && G.vision.locked()) G.vision.exit(); close(); } });
 
 // ------------------------------------------------ speech
 const synth = window.speechSynthesis; let speaking = null;
@@ -157,6 +161,9 @@ function open(n) {
   if (n.kind === 'simctl') { simCtl(n.item); return; }
   if (n.kind === 'vision') { $('act').style.display = 'none'; G.vision.enter(n.item); return; }
   if (n.kind === 'guestbook') { if (window.NOTES) window.NOTES.openBook(); return; }
+  if (n.kind === 'studio') { if (window.STUDIO) window.STUDIO.open(); return; }
+  if (n.kind === 'braille') { openBraille(); return; }
+  if (n.kind === 'elevator') { G.elevator.act(n); return; }
   if (n.kind === 'note') { if (window.NOTES) window.NOTES.openSpot(n.item); return; }
   quoteStop(); bioScrollStop();
   const pb = $('pb'); pb.innerHTML = ''; pb.scrollTop = 0;
@@ -187,7 +194,7 @@ function open(n) {
     pb.querySelectorAll('[data-say]').forEach(b => b.onclick = () => { const q = e.qa[+b.dataset.say]; say(q.q + '. ' + q.a, b); });
     pb.querySelectorAll('[data-vid]').forEach(b => b.onclick = () => playIn($('v' + b.dataset.vid), e.qa[+b.dataset.vid].v));
   }
-  $('panel').style.display = 'flex'; $('px').focus();
+  $('panel').style.display = 'flex'; window.HUSH = true; $('px').focus();
 }
 async function playIn(host, url) {
   host.innerHTML = '<video controls playsinline></video>'; const v = host.querySelector('video');
@@ -228,9 +235,20 @@ function quotePlay(url, btn, after) {
   quoteAu.play().catch(() => quoteStop());
 }
 quoteAu.onended = () => { const f = quoteAfter; quoteStop(); if (f) f(); };
+// LEARN: BRAILLE AND BRILLIANCE (the hotspot under HOLT for HOPE in the roof glass)
+const HOLT_TEXT = 'This shadow braille was inspired by blindness ally Steve Holt, the co-creator of the Blind Canvas Project and the Creative Director of our sponsor, Ora Clinical. In talks about creating this gallery, Holt said, \u201cWhat if there were braille on the ceiling glass, with a braille shadow on the floor?\u201d That bolt of inspiration is a perfect example of the heart Holt brings to the Blindness Community as an ally, and to the creation of the Blind Canvas Project and this online gallery. We thank you, Steve!';
+async function openBraille() {
+  const { brailleCard } = await import('./engine/gallery-roof.js');
+  const box = document.createElement('div');
+  const cv = brailleCard(); cv.style.cssText = 'display:block;width:100%;max-width:560px;height:auto;margin:0 auto 14px'; cv.setAttribute('role', 'img'); cv.setAttribute('aria-label', 'The braille alphabet, A to Z: each letter with its raised dots in a six-dot cell. At the foot: HOLT for HOPE, as it is written in the roof glass.');
+  const p = document.createElement('div'); p.innerHTML = '<div class="lab" style="font:800 11px var(--font);letter-spacing:.14em;text-transform:uppercase;color:#ec3013;margin:4px 0 6px">Above you, in the roof glass: HOLT for HOPE</div><p style="margin:0 0 12px">' + esc(HOLT_TEXT) + '</p>';
+  const row = document.createElement('div'); row.className = 'row'; const rd = document.createElement('button'); rd.textContent = '🔊 Read aloud'; rd.onclick = () => say('Braille and brilliance. Above you, in the roof glass, it says HOLT for HOPE in braille. ' + HOLT_TEXT, rd); row.appendChild(rd);
+  box.append(cv, p, row);
+  showPanel('Learn', 'Braille and brilliance', box); window.HUSH = true;
+}
 let panelOnClose = null;
-function showPanel(k, t, node, onClose) { $('pk').textContent = k; $('pt').textContent = t; $('pb').replaceChildren(node); $('panel').style.display = 'flex'; $('px').focus(); panelOnClose = onClose || null; $('menu').style.display = 'none'; }
-function close() { if (panelOnClose) { const f = panelOnClose; panelOnClose = null; f(); } quoteStop(); bioScrollStop(); $('panel').style.display = 'none'; if (synth) synth.cancel(); speaking = null; $('pb').querySelectorAll('video').forEach(v => v.pause()); $('menu').style.display = 'none'; }
+function showPanel(k, t, node, onClose) { $('pk').textContent = k; $('pt').textContent = t; $('pb').replaceChildren(node); $('panel').style.display = 'flex'; window.HUSH = true; $('px').focus(); panelOnClose = onClose || null; $('menu').style.display = 'none'; }
+function close() { window.HUSH = false; if (panelOnClose) { const f = panelOnClose; panelOnClose = null; f(); } quoteStop(); bioScrollStop(); $('panel').style.display = 'none'; if (synth) synth.cancel(); speaking = null; $('pb').querySelectorAll('video').forEach(v => v.pause()); $('menu').style.display = 'none'; }
 $('px').onclick = close;
 
 // ------------------------------------------------ menu
@@ -268,10 +286,10 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
   let status = 'connecting', net = null, entered = false, whoSig = '';
   net = await connectGallery({
     onJoin: id => {},
-    onLeave: id => { const nm = names.get(id); if (G.following() === id) G.unfollow(); G.remote.remove(id); names.delete(id); if (window.TOG) window.TOG.onLeave(id); if (window.LIVE) window.LIVE.onLeave(id); if (nm) announce(nm + ' left the gallery'); if (window.VOICE) window.VOICE.onLeave(id); refresh(); },
-    onState: (id, st, prof) => { if (prof && !prof.name) prof = null; if (!prof && !names.has(id) && !st) return; const isNew = !names.has(id) && prof; G.remote.upsert(id, st, prof); if (prof) { names.set(id, prof.name); if (isNew) { announce(prof.name + ' joined the gallery'); if (entered) { net && net.hello(me()); if (window.TOG) window.TOG.onNewPeer(id); if (window.VOICE) window.VOICE.onNewPeer(id); if (window.LIVE) window.LIVE.onNewPeer(id); } } } refresh(); },
-    onEvent: (id, d) => { if (window.LIVE) window.LIVE.onEvent(id, d); if (window.FACE) window.FACE.onEvent(id, d); if (window.TOG) window.TOG.onEvent(id, d); if (window.VOICE) window.VOICE.onEvent(id, d); if (window.NOTES) window.NOTES.onEvent(id, d); },
-    onStream: (id, stream) => { if (window.LIVE) window.LIVE.onStream(id, stream); if (window.VOICE) window.VOICE.onStream(id, stream); },
+    onLeave: id => { const nm = names.get(id); if (G.following() === id) G.unfollow(); G.remote.remove(id); names.delete(id); if (window.TOG) window.TOG.onLeave(id); if (window.LIVE) window.LIVE.onLeave(id); if (window.CAMHEAD) window.CAMHEAD.onLeave(id); if (nm) announce(nm + ' left the gallery'); if (window.VOICE) window.VOICE.onLeave(id); refresh(); },
+    onState: (id, st, prof) => { if (prof && !prof.name) prof = null; if (!prof && !names.has(id) && !st) return; const isNew = !names.has(id) && prof; G.remote.upsert(id, st, prof); if (prof) { names.set(id, prof.name); if (isNew) { announce(prof.name + ' joined the gallery'); if (entered) { net && net.hello(me()); if (window.TOG) window.TOG.onNewPeer(id); if (window.VOICE) window.VOICE.onNewPeer(id); if (window.LIVE) window.LIVE.onNewPeer(id); if (window.CAMHEAD) window.CAMHEAD.onNewPeer(id); } } } refresh(); },
+    onEvent: (id, d) => { if (window.CAMHEAD) window.CAMHEAD.onEvent(id, d); if (window.LIVE) window.LIVE.onEvent(id, d); if (window.FACE) window.FACE.onEvent(id, d); if (window.TOG) window.TOG.onEvent(id, d); if (window.VOICE) window.VOICE.onEvent(id, d); if (window.NOTES) window.NOTES.onEvent(id, d); },
+    onStream: (id, stream, meta) => { if (window.CAMHEAD) window.CAMHEAD.onStream(id, stream, meta); if (window.LIVE) window.LIVE.onStream(id, stream, meta); if (window.VOICE) window.VOICE.onStream(id, stream); },
     onEmote: (id, e) => { if (e === 'wave') { G.remote.wave(id); const nm = names.get(id); if (nm) announce(nm + ' waves'); } },
     onStatus: s => { status = s; refresh(); },
   });
@@ -288,20 +306,42 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
   window.LIVE = setupLive({ G, net, announce, nameOf: id => names.get(id) || 'A visitor', invite: (...a) => window.TOG && window.TOG.invite(...a) });
   window.FACE = setupFace({ G, net, announce, onState: st => { const b = $('faceBtn'); b.classList.toggle('on', st === 'on'); b.setAttribute('aria-pressed', st === 'on'); b.textContent = st === 'loading' ? '🦊 Starting camera…' : st === 'on' ? '🦊 Fox copies my face · ON' : '🦊 Fox copies my face (camera)'; } });
   if (!window.FACE.supported) $('faceBtn').style.display = 'none';
-  $('faceBtn').onclick = () => { window.FACE.toggle(); $('menu').style.display = 'none'; };
+  $('faceBtn').onclick = () => { if (!window.FACE.on() && window.CAMHEAD) window.CAMHEAD.stop(true); window.FACE.toggle(); $('menu').style.display = 'none'; };
+  // wear your camera: a screen for a head, or your face as a mask (both are seen by everyone here)
+  const { setupCamHead } = await import('./engine/gallery-camhead.js');
+  const camLabel = { screen: ['📺 Screen head', 'tvHeadBtn'], mask: ['🎭 Face mask', 'maskBtn'] };
+  window.CAMHEAD = setupCamHead({ G, net, announce, nameOf: id => names.get(id) || 'A visitor', onState: (st, m) => {
+    for (const [k, [txt, id]] of Object.entries(camLabel)) { const b = $(id), on = st === 'on' && window.CAMHEAD && window.CAMHEAD.mode() === k, ld = st === 'loading' && m === k; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); b.textContent = ld ? txt + ' · starting…' : on ? txt + ' · ON' : txt; }
+  } });
+  if (!window.CAMHEAD.supported) { $('tvHeadBtn').style.display = $('maskBtn').style.display = 'none'; }
+  for (const k of ['screen', 'mask']) $(camLabel[k][1]).onclick = () => { if (window.FACE.on()) window.FACE.stop(); window.CAMHEAD.start(k); $('menu').style.display = 'none'; };
+  document.addEventListener('visibilitychange', () => { if (document.hidden && window.CAMHEAD.mode()) window.CAMHEAD.stop(); });   // never send your camera from a background tab
   $('hostBtn').onclick = () => { window.TOG.claimHost(window.TOG.host() !== 'me'); $('menu').style.display = 'none'; refresh(); };
   $('tourBtn').onclick = () => { window.TOG.leadTour(!window.TOG.leading()); $('menu').style.display = 'none'; refresh(); };
   const me = () => ({ name: pref.name, look: pref.look || 'male', extra: pref.extra || 'none', ...G.style() });
   refresh();
   await ENTERED; entered = true;
   // the first visitor in the room is Ben's fox; everyone after gets their own fur colours and a different artwork on their shirt
-  if (G.remote.count() > 0) G.setStyle(G.randomStyle());
+  if (!pref.style && G.remote.count() > 0) G.setStyle(G.randomStyle());   // (unless you dressed your fox in the Fox Studio)
   net.hello(me()); refresh();
   // send where we are: 10 times a second while moving, once a second while standing still
   let lastSent = '', lastT = 0;
   setInterval(() => { const st = G.localState(), k = st.join(','); const now = performance.now(); if (k !== lastSent || now - lastT > 1000) { net.send(st); lastSent = k; lastT = now; } }, 100);
   const sendProfile = () => net.hello(me());
   document.querySelectorAll('#looks button, #extras button').forEach(b => b.addEventListener('click', sendProfile));
+  // the Fox Studio on the plaza: dress your fox (look, shirt art, gear, fur, camera)
+  import('./engine/gallery-studio.js').then(({ setupStudio }) => {
+    window.STUDIO = setupStudio({ G, announce, at: { x: -54.0, z: 9.6 },   // in the entry hall, against the left wall
+      getPrefs: () => ({ look: pref.look || 'male', extra: pref.extra || 'none', style: G.style() }),
+      apply: ({ look, extra, style }) => {
+        if (look) pref.look = look; if (extra) pref.extra = extra;
+        if (style) { pref.style = { pal: style.pal | 0, art: style.art }; G.setStyle(pref.style); }
+        if (look || extra) G.setLook(pref.look || 'male', pref.extra || 'none');
+        savePref(); sendProfile(); syncMenu();
+      },
+      cams: { state: () => window.FACE && window.FACE.on() ? 'fox' : window.CAMHEAD && window.CAMHEAD.mode(),
+        pick: k => { if (k === 'fox') { if (window.CAMHEAD) window.CAMHEAD.stop(true); window.FACE.toggle(); } else { if (window.FACE.on()) window.FACE.stop(); window.CAMHEAD.start(k); } } } });
+  }).catch(e => console.warn('studio unavailable', e));
   $('rename').onclick = () => { const n = prompt('Your name', pref.name); if (n && n.trim()) { pref.name = n.trim().slice(0, 20); savePref(); sendProfile(); refresh(); } };
   $('invite').onclick = async () => { const room = new URLSearchParams(location.search).get('room') || ('bcp-' + Math.random().toString(36).slice(2, 7)); const url = location.origin + location.pathname + '?room=' + room; try { await navigator.clipboard.writeText(url); $('invite').textContent = 'Link copied ✓'; } catch (e) { prompt('Share this link', url); } if (!new URLSearchParams(location.search).get('room')) setTimeout(() => location.href = url, 600); };
   $('waveBtn').onclick = () => { G.wave(); net.emote('wave'); };
@@ -311,7 +351,7 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
 $('lt').textContent = 'Videos in each room play with sound when you walk in. Other visitors appear as foxes too.';
 $('nameRow').style.display = 'block'; $('nameIn').value = pref.name || '';
 // the avatar: the suited fox with a white cane or in a wheelchair (remembered; more looks in ☰)
-{ const pickAv = x => { document.querySelectorAll('#avRow .av').forEach(b => b.setAttribute('aria-checked', b.dataset.x === x)); pref.look = 'suit'; pref.extra = x; G.setLook('suit', x); };
+{ const pickAv = x => { document.querySelectorAll('#avRow .av').forEach(b => b.setAttribute('aria-checked', b.dataset.x === x)); pref.look = pref.look === 'wrap' ? 'wrap' : 'suit'; pref.extra = x; G.setLook(pref.look, x); };   // keeps the Fox Studio's art tee if that's what you chose
   $('avRow').style.display = 'block'; document.querySelectorAll('#avRow .av').forEach(b => b.onclick = () => pickAv(b.dataset.x));
   pickAv(pref.extra === 'chair' ? 'chair' : 'cane'); }
 $('enter').style.display = 'block'; $('enter').focus();

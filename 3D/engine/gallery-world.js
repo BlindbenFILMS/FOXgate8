@@ -6,6 +6,7 @@
 // Everything is a handful of draw calls (instancing + small shaders) so it stays inside the phone budget.
 import * as THREE from '../vendor/three/three.module.js';
 import { buildEye } from './gallery-eye.js';
+import { setStainedNight } from './gallery-stained.js';
 import { GARDEN, RING, planGarden } from './gallery-garden-plan.js';
 import { toCreasedNormals } from '../vendor/three/addons/BufferGeometryUtils.js';
 
@@ -437,7 +438,7 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
     if (lights.amb) lights.amb.intensity = L0.amb * (1 + 0.9 * n);
   };
   applyNight(0);
-  updaters.push((tt, dt) => { if (Math.abs(night - nightTarget) > 0.001) { night += Math.sign(nightTarget - night) * Math.min(Math.abs(nightTarget - night), dt / 2.5); applyNight(night); } eye.update(tt, night); });
+  updaters.push((tt, dt) => { if (Math.abs(night - nightTarget) > 0.001) { night += Math.sign(nightTarget - night) * Math.min(Math.abs(nightTarget - night), dt / 2.5); applyNight(night); } eye.update(tt, night); setStainedNight(night); });
 
   let last = 0;
   return {

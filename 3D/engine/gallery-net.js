@@ -6,9 +6,9 @@ export async function connectGallery({ room = 'lobby', onJoin = () => {}, onLeav
   const qs = new URLSearchParams(location.search);
   const roomName = 'bcp-gallery-' + (qs.get('room') || room).toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 40);
   const mode = qs.get('net') || 'p2p';
-  let send = { hi: () => {}, st: () => {}, em: () => {}, ev: () => {} }, voice = { add: () => false, remove: () => {} }, video = { add: () => false, remove: () => {} }, mic = null, cam = null, myId = Math.random().toString(36).slice(2, 10), leave = () => {};
+  let send = { hi: () => {}, st: () => {}, em: () => {}, ev: () => {} }, voice = { add: () => false, remove: () => {} }, video = { add: () => false, remove: () => {} }, face = { add: () => false, remove: () => {} }, mic = null, cam = null, head = null, myId = Math.random().toString(36).slice(2, 10), leave = () => {};
   const seen = new Set();
-  if (mode === 'off') { onStatus('off'); return { send: () => {}, emote: () => {}, hello: () => {}, event: () => {}, voice, video, id: myId, leave }; }
+  if (mode === 'off') { onStatus('off'); return { send: () => {}, emote: () => {}, hello: () => {}, event: () => {}, voice, video, face, id: myId, leave }; }
   if (mode === 'local') {
     const bc = new BroadcastChannel(roomName);
     const post = (t, d, to) => bc.postMessage({ t, d, from: myId, to });
@@ -27,10 +27,11 @@ export async function connectGallery({ room = 'lobby', onJoin = () => {}, onLeav
       myId = selfId;
       const r = joinRoom({ appId: '8gates-blind-canvas-gallery' }, roomName);
       const hi = r.makeAction('hi'), st = r.makeAction('st'), em = r.makeAction('em'), ev = r.makeAction('ev');   // trystero 0.25 action objects
-      r.onPeerJoin = id => { onJoin(id); if (profile.name) hi.send(profile, { target: id }); if (mic) { try { r.addStream(mic, { target: id }); } catch (e) {} } if (cam) { try { r.addStream(cam, { target: id }); } catch (e) {} } };
-      r.onPeerStream = (stream, peerId) => onStream(peerId, stream);
-      video = { add: s => { cam = s; r.addStream(s, {}); return true; }, remove: s => { cam = null; try { r.removeStream(s); } catch (e) {} } };   // the host's camera / screen share
-      voice = { add: s => { mic = s; r.addStream(s, {}); return true; }, remove: s => { mic = null; try { r.removeStream(s); } catch (e) {} } };   // voice chat: only when the visitor turns their mic on
+      r.onPeerJoin = id => { onJoin(id); if (profile.name) hi.send(profile, { target: id }); if (mic) { try { r.addStream(mic, { target: id, metadata: { kind: 'mic' } }); } catch (e) {} } if (cam) { try { r.addStream(cam, { target: id, metadata: { kind: 'live' } }); } catch (e) {} } if (head) { try { r.addStream(head, { target: id, metadata: { kind: 'face' } }); } catch (e) {} } };
+      r.onPeerStream = (stream, peerId, meta) => onStream(peerId, stream, meta || {});   // meta.kind: 'mic' | 'live' | 'face'
+      video = { add: s => { cam = s; r.addStream(s, { metadata: { kind: 'live' } }); return true; }, remove: s => { cam = null; try { r.removeStream(s); } catch (e) {} } };   // the host's camera / screen share
+      voice = { add: s => { mic = s; r.addStream(s, { metadata: { kind: 'mic' } }); return true; }, remove: s => { mic = null; try { r.removeStream(s); } catch (e) {} } };   // voice chat: only when the visitor turns their mic on
+      face = { add: s => { head = s; r.addStream(s, { metadata: { kind: 'face' } }); return true; }, remove: s => { head = null; try { r.removeStream(s); } catch (e) {} } };   // a visitor's camera on their fox (screen head / face mask)
       r.onPeerLeave = id => onLeave(id);
       hi.onMessage = (d, { peerId }) => onState(peerId, null, d);
       st.onMessage = (d, { peerId }) => onState(peerId, d);
@@ -50,6 +51,7 @@ export async function connectGallery({ room = 'lobby', onJoin = () => {}, onLeav
     emote(e) { send.em(e); },
     event(d, to) { send.ev(d, to); },                // visiting together: tours, watch parties, the shared Six Views wall
     get voice() { return voice; },
+    get face() { return face; },                     // { add(stream), remove(stream) }: your camera on your fox's head
     get video() { return video; },                   // { add(stream), remove(stream) }: the host's live camera or screen                   // { add(stream), remove(stream) }; a no-op in local test mode
     leave,
   };

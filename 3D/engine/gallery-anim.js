@@ -35,7 +35,7 @@ export function artAnimator({ items, maxActive = 2, fade = 0.9, range = 9 }) {
   }
 
   let checkT = 0;
-  function update(dt, px, py, pz) {
+  function update(dt, px, py, pz, busy = false) {   // busy: the visitor is running, so start nothing new (fade out what's playing)
     checkT -= dt;
     if (checkT <= 0) {
       checkT = 0.25;
@@ -52,6 +52,7 @@ export function artAnimator({ items, maxActive = 2, fade = 0.9, range = 9 }) {
         cand.push([d.length(), it]);
       }
       cand.sort((a, b) => a[0] - b[0]);
+      if (busy) cand.length = 0;
       const want = new Set(cand.slice(0, slots.length).map(x => x[1]));
       for (const s of slots) if (s.item && !want.has(s.item)) s.target = 0;            // walked away: fade back to the still
       for (const it of want) {

@@ -9,6 +9,7 @@
 // Moderation: a word filter (and no links); your own notes can be removed; the gallery admin (a private link with a
 // passphrase, ?admin=…) can hide any note for everyone; notes.hidden in gallery.json hides ids for good.
 import { generateSecretKey, getPublicKey, finalizeEvent, verifyEvent, bytesToHex, hexToBytes } from '../vendor/nostr-pure.js';
+import { lectern } from './gallery-remodel.js';
 
 const KIND_NOTE = 4251, KIND_HIDE = 4252, TAG = 'bcp-gallery-v1', MAX = 240;
 const FONT = 'Archivo, Arimo, Helvetica, Arial, sans-serif';
@@ -163,15 +164,10 @@ export async function setupNotes({ G, net, cfg, myName, announce, esc, readAloud
     const [bx, bz] = cfg.guestbook.p, by = W.groundAt(bx, 3, bz) > -100 ? W.groundAt(bx, 3, bz) : 0.15;
     bookPos = new THREE.Vector3(bx, by, bz);
     const g = new THREE.Group(); g.position.copy(bookPos); g.rotation.y = cfg.guestbook.face || 0; W.scene.add(g);
-    const ink = new THREE.MeshLambertMaterial({ color: 0x1d1c1b });
-    const foot = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.08, 0.9), ink); foot.position.y = 0.04; g.add(foot);
-    const colm = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.98, 0.4), ink); colm.position.set(0, 0.53, -0.05); g.add(colm);
-    const top = new THREE.Group(); top.position.y = 1.1; top.rotation.x = -0.95; g.add(top);
-    top.add(new THREE.Mesh(new THREE.BoxGeometry(1.7, 1.2, 0.08), ink));
     const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 720; bookCtx = cv.getContext('2d');
     bookTex = new THREE.CanvasTexture(cv); bookTex.colorSpace = THREE.SRGBColorSpace; bookTex.anisotropy = 4;
-    const pg = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 1.125), new THREE.MeshBasicMaterial({ map: bookTex })); pg.position.z = 0.045; top.add(pg);
-    const bar = new THREE.Mesh(new THREE.BoxGeometry(1.72, 0.05, 0.1), new THREE.MeshBasicMaterial({ color: 0xec3013 })); bar.position.y = 0.62; top.add(bar);
+    // the same reading lectern as "How to move" across the spawn (one furniture family on the plaza)
+    lectern(g, new THREE.MeshLambertMaterial({ color: 0x1d1c1b }), new THREE.MeshBasicMaterial({ color: 0xec3013 }), null, bookTex);
   }
   function drawBook() {
     if (!bookCtx) return; const c = bookCtx, w = 1024, h = 720;

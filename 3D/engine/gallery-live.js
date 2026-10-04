@@ -42,8 +42,8 @@ export function setupLive({ G, net, announce, nameOf, invite }) {
     if (!quiet) announce('You are no longer live.');
     show();
   }
-  function onStream(id, stream) {
-    if (!stream.getVideoTracks().length) return;
+  function onStream(id, stream, meta = {}) {
+    if (!stream.getVideoTracks().length || meta.kind === 'face') return;   // a camera on someone's fox head, not the big screen
     streams.set(id, stream);
     stream.getVideoTracks().forEach(t => t.addEventListener('ended', () => { if (streams.get(id) === stream) streams.delete(id); }));
     show();

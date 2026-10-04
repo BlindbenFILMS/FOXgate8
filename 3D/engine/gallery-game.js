@@ -17,11 +17,17 @@ import { chairKit, loadChair, CHAIR_DEFAULTS } from './avatars/chair.js';
 import { artAnimator } from './gallery-anim.js';
 import { buildVisionSpots, visionOverlay } from './gallery-vision.js';
 import { buildSimWalls } from './gallery-simwall.js';
+import { buildBraille, patchOldBraille } from './gallery-braille.js';
+import { stainedGlass } from './gallery-stained.js';
+import { buildElevator } from './gallery-elevator.js';
+import { buildSkywalk } from './gallery-skywalk.js';
+import { buildEyelid } from './gallery-eyelid.js';
+import { buildRingGlass } from './gallery-ringglass.js';
 import { makeWood, woodify, isWhiteFloorMat, isPaletteMat, buildWing, buildDoor } from './gallery-wing.js';
-import { buildKiosks, carveWorld, carved, buildEntrance, buildRooms, canvasBox, cardTexture } from './gallery-remodel.js';
+import { buildKiosks, carveWorld, carved, buildEntrance, buildRooms, buildBioWalls, CARVES, canvasBox, cardTexture } from './gallery-remodel.js';
 
 const BASE = 'gallery/';
-const SPAWN = { x: 3.6, y: 0.5, z: 0, face: -Math.PI / 2 };
+const SPAWN = { x: 0.4, y: 0.5, z: 0, face: -Math.PI / 2 };   // in front of the braille island, facing the museum
 
 export async function createGallery({ container, onProgress = () => {}, onNear = () => {}, onZone = () => {}, onSplash = () => {} }) {
   const lowEnd = /iPhone|iPad|Android/i.test(navigator.userAgent);
@@ -71,7 +77,8 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const gltf = await new Promise((res, rej) => new GLTFLoader().load(BASE + 'gallery.glb', res, e => e.total && onProgress(e.loaded / e.total), rej));
   const world = gltf.scene; scene.add(world); world.updateMatrixWorld(true);
   // remodel: cut out the old pieces we rebuild in the New Wing style, and drop their signs/art/screens
-  const carveInfo = carveWorld(world);
+  // (the big bio blocks are cut from the building only: their card and portrait already sit on the slim walls built below)
+  const carveInfo = carveWorld(world, [...CARVES, ...(data.bioWalls || []).map(b => ({ name: 'bio wall ' + b.name, ...b.carve }))]);
   const ctrOf = c => c.reduce((a, v) => [a[0] + v[0] / 4, a[1] + v[1] / 4, a[2] + v[2] / 4], [0, 0, 0]);
   data.signs = data.signs.filter(sg => !carved(...ctrOf(sg.c)));
   data.arts = data.arts.filter(a => !carved(...(a.c ? ctrOf(a.c) : a.p)));
@@ -104,8 +111,15 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   if (wing) for (const m of wing.col) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); colGeos.push(g); }
   const entrance = buildEntrance({ scene, wood });
   const glbRay = new THREE.Raycaster(), DOWN = new THREE.Vector3(0, -1, 0);
-  const kiosks = buildKiosks({ scene, groundAt: (x, y, z) => { glbRay.set(new THREE.Vector3(x, y, z), DOWN); glbRay.far = 30; const h = glbRay.intersectObject(world, true)[0]; return h ? h.point.y : -1e9; } });
+  const kiosks = buildKiosks({ scene, resolveImg: RES, groundAt: (x, y, z) => { glbRay.set(new THREE.Vector3(x, y, z), DOWN); glbRay.far = 30; const h = glbRay.intersectObject(world, true)[0]; return h ? h.point.y : -1e9; } });
   const rooms = buildRooms({ scene, data, wood, resolveImg: RES, buildWing });
+  const braille = buildBraille({ scene, resolveImg: RES });   // 'Hope Floating in Braille': an island on the welcome plaza, at the end away from the museum
+  patchOldBraille({ scene, wood, woodify });
+  const lift = buildElevator({ scene, resolveImg: RES });   // the lift from the music room up through the pupil to the eye platform
+  const skywalk = buildSkywalk({ scene, wood, woodify });   // the ramp from the 2nd floor up to the eye platform
+  buildEyelid({ scene, wood, woodify });   // the music room's eye-shaped ceiling, rebuilt smooth
+  const ringGlass = buildRingGlass({ scene, data, resolveImg: RES });   // the outer ring's big windows: stained-glass versions of the art
+  const bioWalls = buildBioWalls({ scene, data });
   // the Six Views severity lecterns: solid, so you walk round them
   const simCol = (data.simKiosks || []).map(k => { const m = new THREE.Mesh(new THREE.BoxGeometry(1.3, 1.6, 0.9)); m.position.set(k.p[0], k.p[1] + 0.8, k.p[2]); m.rotation.y = k.face || 0; m.updateMatrixWorld(true); return m; });
   // invisible edges: the plaza's open side above the lake (the other sides have railings)
@@ -140,13 +154,12 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     for (const w of data.windows || []) {
       const [xa, xb] = w.x, [ya, yb] = w.y, cx = (xa + xb) / 2, cy = (ya + yb) / 2, W = xb - xa, H = yb - ya;
       const g = new THREE.Group(); g.position.set(cx, cy, w.z); scene.add(g);
-      const pane = new THREE.Mesh(new THREE.PlaneGeometry(W, H), glassM); pane.renderOrder = 4; g.add(pane);
-      const sh = new THREE.Mesh(new THREE.PlaneGeometry(W, H), sheenM); sh.position.z = 0.01; sh.renderOrder = 4; g.add(sh);
+      const pane = new THREE.Mesh(new THREE.PlaneGeometry(W, H), stainedGlass({ cell: 0.85, y0: ya, y1: yb })); pane.renderOrder = 4; g.add(pane);   // stained glass, in the eye facade's style
       for (let k = 1; k < Math.max(2, Math.round(H / 3.2)); k++) { const b = new THREE.Mesh(new THREE.BoxGeometry(W, 0.06, 0.08), frameM); b.position.y = -H / 2 + k * H / Math.max(2, Math.round(H / 3.2)); g.add(b); }   // slim transoms
       const c = new THREE.Mesh(new THREE.BoxGeometry(W, H, 0.2)); c.position.set(cx, cy, w.z); c.updateMatrixWorld(true); winCol.push(c);
     }
   }
-  for (const m of [...entrance.col, ...rooms.col, ...kiosks.col, ...simCol, ...edgeCol, ...propCol, ...winCol]) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); colGeos.push(g); }
+  for (const m of [...entrance.col, ...rooms.col, ...kiosks.col, ...bioWalls.col, ...braille.col, ...lift.col, ...skywalk.col, ...simCol, ...edgeCol, ...propCol, ...winCol]) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); colGeos.push(g); }
   // one position-only collision mesh with a BVH (fast rays on phones)
   let total = 0; for (const g of colGeos) total += (g.index ? g.index.count : g.attributes.position.count);
   const P = new Float32Array(total * 3); let k = 0;
@@ -172,7 +185,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     }
     return saved;
   }
-  { let saved = 0; for (const g of [entrance.group, kiosks.group, propsG, wing && wing.group, ...rooms.list.map(r => r.room.group)]) if (g) saved += mergeStatic(g); console.log('[perf] merged', saved, 'static meshes'); }
+  { let saved = 0; for (const g of [entrance.group, kiosks.group, bioWalls.group, propsG, wing && wing.group, ...rooms.list.map(r => r.room.group)]) if (g) saved += mergeStatic(g); console.log('[perf] merged', saved, 'static meshes'); }
   const bvh = new MeshBVH(colGeo);
   const ray = new THREE.Ray();
   const cast = (ox, oy, oz, dx, dy, dz, far) => { ray.origin.set(ox, oy, oz); ray.direction.set(dx, dy, dz); const h = bvh.raycastFirst(ray, THREE.DoubleSide, 0, far); return h && h.distance <= far ? h : null; };
@@ -313,6 +326,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const vidTex = new THREE.VideoTexture(video); vidTex.colorSpace = THREE.SRGBColorSpace;
   const vidMat = new THREE.MeshBasicMaterial({ map: vidTex });
   let hls = null, curUrl = null, soundOK = false, vidFail = new Set();
+  let hushPaused = false; const zPend = { u: null, t: 0 };   // the film we paused because an artwork was opened
   let pendingSeek = null;   // a watch party asked for a time before the film had loaded
   video.addEventListener('loadedmetadata', () => { if (pendingSeek && pendingSeek.u === curUrl) { try { video.currentTime = pendingSeek.t % (video.duration || 1e9); } catch (e) {} } pendingSeek = null; });
   // a host's live camera / screen share can take over one screen (LIVE.idx); everything else shows the room film or its poster
@@ -397,6 +411,18 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     if (!artCache.has(key)) artCache.set(key, printTex(512, 512, (c, w, h, up) => { const img = new Image(); img.onload = () => { c.fillStyle = '#f3f2f2'; c.fillRect(0, 0, w, h); c.drawImage(img, 14, 14, w - 28, h - 28); up(); }; img.src = RES(key); }));
     return artCache.get(key);
   };
+  // the all-over art tee: the picture across the front half, mirrored out to the sides so it meets itself seamlessly at the back
+  const wrapCache = new Map();
+  const wrapArt = key => {
+    key = IMGURL[key] ? key : DEFAULT_ART;
+    if (!wrapCache.has(key)) wrapCache.set(key, printTex(1024, 512, (c, w, h, up) => { const img = new Image(); img.onload = () => {
+      c.save(); c.translate(w, 0); c.scale(-1, 1);   // the lathe runs the other way round: flip so the picture reads left to right from the front
+      c.drawImage(img, 256, 0, 512, 512);
+      c.save(); c.translate(256, 0); c.scale(-1, 1); c.drawImage(img, 0, 0, 512, 512); c.restore();          // mirrored to the left side
+      c.save(); c.translate(1280, 0); c.scale(-1, 1); c.drawImage(img, 0, 0, 512, 512); c.restore();         // and to the right side
+      c.restore(); up(); }; img.src = RES(key); }));
+    return wrapCache.get(key);
+  };
   // fur palettes: 0 is Ben's fox (the first visitor in a room); the rest are shades of orange, red and white
   const PALETTES = [
     {},
@@ -439,9 +465,9 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const CK = caneKit({ THREE, M, toon }), HK = chairKit({ THREE, M, toon });
   const SUIT_BACK_ART = 'gallery/img/wix_curating_hope.webp';   // the art across the suit's back (the chair keeps the BCP logo on its backrest)
   const SUIT = { torso: ['#2a2e34', '#1a1d22', '#0c0e10'], outfit: 'suit', glasses: 'sun', crest: 'none', eyes: ['#3a3a44', '#3a3a44'], mood: 'happy' };
-  function makeSuitFox(ex, st) {
+  function makeSuitFox(ex, st, wrap = false) {   // wrap: the all-over art tee instead of the suit (same tuned cane / chair rigs)
     const chair = ex === 'chair';
-    const f = makeFox({ key: 'suit-' + ex, ...SUIT, chair, look: { ...PLAYER_MALE, ...(PALETTES[st.pal | 0] || {}), tailSide: chair ? 1.75 : 1.15, tailLift: chair ? 0.6 : PLAYER_MALE.tailLift }, prints: { front: frontArt(DEFAULT_ART), frontW: 1.2, back: frontArt(SUIT_BACK_ART) } });
+    const f = makeFox({ key: 'suit-' + ex, ...SUIT, chair, look: { ...PLAYER_MALE, ...(PALETTES[st.pal | 0] || {}), tailSide: chair ? 1.75 : 1.15, tailLift: chair ? 0.6 : PLAYER_MALE.tailLift }, prints: wrap ? { wrap: wrapArt(st.art), tee: '#141414' } : { front: frontArt(st.art || DEFAULT_ART), frontW: 1.2, back: chair ? frontArt(SUIT_BACK_ART) : backLogo }, ...(wrap ? { outfit: 'tee', torso: ['#141414', '#141414', '#0c0c0c'], glasses: ex === 'glasses' || ex === 'cane' ? 'sun' : null } : {}) });   // cane: the BCP logo across his back; chair: art on the back (the backrest carries the logo)
     if (chair && f.userData.P && f.userData.P.tail) { const t = f.userData.P.tail; t.position.x = 0.48; t.position.z = 0.05; t.position.y += 0.06; }   // in the chair the tail comes out at his side, over the wheel, not through the backrest
     if (ex === 'chair') f.userData.rig = HK.attach(f, { ...chairCfg, backLogo });
     else if (ex === 'cane') f.userData.rig = CK.attach(f, caneCfg);
@@ -457,6 +483,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     f.scale.setScalar(FOX_SCALE); return f;
   }
   function makeVisitorFox(lk, ex, st = { pal: 0, art: DEFAULT_ART }) {   // every visitor wears the BCP tee
+    if (lk === 'wrap') { try { return makeSuitFox(ex, st, true); } catch (e) { console.warn('wrap tee avatar failed, using the BCP tee', e); } }
     if (lk === 'suit') { try { return makeSuitFox(ex, st); } catch (e) { console.warn('suit avatar failed, using the BCP tee', e); } }
     const opts = { torso: ['#ffffff', '#e7edf4', '#6b7d93'], crest: '8', mood: 'warm', look: { ...(lk === 'female' ? PLAYER_FEMALE : PLAYER_MALE), ...(PALETTES[st.pal | 0] || {}), tailSide: 1.15 },   // tail swept to the side so the back print shows
       outfit: 'tee', prints: { front: frontArt(st.art), frontW: 1.45, back: backLogo }, gear: 'none', cane: ex === 'cane', glasses: ex === 'glasses' || ex === 'cane', chair: ex === 'chair' };
@@ -506,7 +533,48 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     if (!r.tag) { r.tag = tagSprite(r.prof.name || 'Visitor'); scene.add(r.tag); }
     return r;
   }
-  function remoteRemove(id) { const r = remotes.get(id); if (!r) return; if (r.fox) scene.remove(r.fox); if (r.tag) scene.remove(r.tag); remotes.delete(id); }
+  // ---- camera heads: a visitor's own camera worn on their fox, as a little TV screen for a head, or as a face mask
+  const camHeads = new Map();   // 'me' | peer id -> { mode: 'screen' | 'mask', el, tex }
+  const camInk = new THREE.MeshLambertMaterial({ color: 0x1d1c1b }), camRed = new THREE.MeshBasicMaterial({ color: 0xec3013 });
+  const camOval = (() => {   // the mask's shape: a soft-edged oval (alpha)
+    const cv = document.createElement('canvas'); cv.width = 128; cv.height = 128; const c = cv.getContext('2d');
+    const g = c.createRadialGradient(64, 64, 40, 64, 64, 63); g.addColorStop(0, '#fff'); g.addColorStop(0.75, '#fff'); g.addColorStop(1, '#000');
+    c.fillStyle = '#000'; c.fillRect(0, 0, 128, 128); c.save(); c.translate(64, 64); c.scale(1, 1.0); c.translate(-64, -64); c.fillStyle = g; c.beginPath(); c.arc(64, 64, 63, 0, Math.PI * 2); c.fill(); c.restore();
+    return new THREE.CanvasTexture(cv);
+  })();
+  function setCam(key, mode, stream) {
+    const old = camHeads.get(key); if (old) { old.tex.dispose(); old.el.pause(); old.el.srcObject = null; camHeads.delete(key); }
+    if (!mode || !stream) return;
+    const el = document.createElement('video'); el.muted = true; el.playsInline = true; el.setAttribute('playsinline', ''); el.autoplay = true; el.srcObject = stream;
+    const p = el.play(); if (p && p.catch) p.catch(() => {});
+    const tex = new THREE.VideoTexture(el); tex.colorSpace = THREE.SRGBColorSpace;
+    camHeads.set(key, { mode, el, tex });
+  }
+  addEventListener('pointerdown', () => { for (const e of camHeads.values()) if (e.el.paused) e.el.play().catch(() => {}); }, { passive: true });
+  function wearCam(fox, e) {
+    if (!fox || fox.userData.camE === e) return;
+    const P = fox.userData.P || {}, head = P.head; if (!head) return;
+    const old = fox.userData.camObj;
+    if (old) { head.remove(old); old.traverse(o => { if (o.isMesh) { o.geometry.dispose(); if (o.material !== camInk && o.material !== camRed) o.material.dispose(); } }); }
+    for (const o of fox.userData.camHidden || []) o.visible = true;
+    fox.userData.camObj = null; fox.userData.camHidden = null; fox.userData.camE = e;
+    if (!e) return;
+    const g = new THREE.Group(), hide = [];
+    if (e.mode === 'screen') {   // a little TV for a head: ink bezel, the camera picture, the red rule on top
+      for (const c of head.children) if (c.visible) hide.push(c);
+      const bz = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.8, 0.22), camInk); g.add(bz);
+      const sc = new THREE.Mesh(new THREE.PlaneGeometry(0.88, 0.66), new THREE.MeshBasicMaterial({ map: e.tex, toneMapped: false })); sc.position.z = 0.112; g.add(sc);
+      const rule = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.035, 0.225), camRed); rule.position.y = 0.4; g.add(rule);
+      for (const sx of [-1, 1]) { const ant = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.3, 6), camInk); ant.position.set(sx * 0.16, 0.52, -0.02); ant.rotation.z = -sx * 0.45; g.add(ant); }
+      g.position.set(0, 0.06, 0.02);
+    } else {                     // the face mask: your face, cut to a soft oval, worn where the fox's face was
+      for (const o of P.faceParts || []) if (o.visible) hide.push(o);
+      const m = new THREE.Mesh(new THREE.SphereGeometry(0.46, 24, 20, Math.PI / 2 - 0.8, 1.6, Math.PI / 2 - 0.88, 1.66), new THREE.MeshBasicMaterial({ map: e.tex, alphaMap: camOval, transparent: true, alphaTest: 0.03, toneMapped: false }));
+      g.add(m); g.position.set(0, -0.04, 0.0);
+    }
+    hide.forEach(o => { o.visible = false; }); head.add(g); fox.userData.camObj = g; fox.userData.camHidden = hide;
+  }
+  function remoteRemove(id) { setCam(id, null); const r = remotes.get(id); if (!r) return; if (r.fox) scene.remove(r.fox); if (r.tag) scene.remove(r.tag); remotes.delete(id); }
   function updateRemotes(dt) {
     const now = performance.now();
     for (const r of remotes.values()) {
@@ -518,6 +586,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       if (!r.fox.visible) continue;
       r.fox.position.set(r.x, r.y + (r.prof.extra === 'chair' ? 0 : 0.02), r.z); r.fox.rotation.y = r.face;
       if (r.fox.userData.hop > 0) r.fox.userData.hop = r.fox.userData.hop;
+      wearCam(r.fox, camHeads.get(r.id));
       animFox(r.fox, dt, (r.speed || 0) / FOX_SCALE * 0.6, r.air);
       r.tag.position.set(r.x, r.y + 2.15, r.z);
     }
@@ -538,6 +607,8 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       m.textContent = 'The graphics needed a quick reset. Bringing you back to where you were…'; document.body.appendChild(m);
       setTimeout(() => location.reload(), 1200);
     }, false);
+    // and if the browser itself gives up and reloads the tab (phones do this when memory runs out), the last spot is kept too
+    setInterval(() => { if (Pl.ground) try { sessionStorage.setItem('8gates.gallery.resume', JSON.stringify({ t: Date.now(), p: [Pl.x, Pl.y + 0.3, Pl.z, Pl.face] })); } catch (err) {} }, 3000);
   }
   const input = { f: 0, b: 0, l: 0, r: 0, run: 0, jx: 0, jy: 0, jump: 0 };
 
@@ -547,7 +618,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const tmp = new THREE.Vector3();
   // ---------------------------------------------------------------- follow a friend (tours): walk the breadcrumb trail of their positions
   const F = { id: null, crumbs: [], best: 1e9, stuckT: 0, onEnd: null };
-  const nearProviders = [], tickers = [];
+  const nearProviders = [Pl => lift.near(Pl)], tickers = [];
   function placeNear(r, slot) {
     // behind them, or (slot n, when the host gathers everyone) round them in a ring; the first clear spot with floor wins
     const tries = slot == null ? [[r.tface + Math.PI, 1.6]] : [0, 1, 2, 3, 4, 5].map(k => [r.tface + 0.9 + (slot + k) * 2.39996, 2.2 + ((slot + k) % 3) * 0.7]);
@@ -738,7 +809,10 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
 
   // ---------------------------------------------------------------- loop
   let firstStream = true; let raf = 0, last = performance.now(), streamT = 0, nearKey = null, zoneT = 0;
-  const fit = () => { renderer.setSize(W(), H()); camera.aspect = W() / H(); camera.fov = camera.aspect < 1 ? 70 : 60; camera.updateProjectionMatrix(); St.dist = camera.aspect < 1 ? 5.2 : 4.2; };
+  // the Fox Studio: the camera circles your fox, framed in the part of the screen the studio panel leaves free
+  let studio = null;   // { x, y } px to shift the picture (panel on the right: x; panel at the bottom: y)
+  const studioView = () => { if (studio) camera.setViewOffset(W(), H(), studio.x || 0, studio.y || 0, W(), H()); else camera.clearViewOffset(); };
+  const fit = () => { renderer.setSize(W(), H()); camera.aspect = W() / H(); camera.fov = camera.aspect < 1 ? 70 : 60; camera.updateProjectionMatrix(); St.dist = camera.aspect < 1 ? 5.2 : 4.2; studioView(); };
   const ro = new ResizeObserver(() => { fit(); if (![...ptrs.values()].some(p => p.joy)) joyRest(); }); ro.observe(container); fit(); joyRest();
   function nearest() {
     const p = new THREE.Vector3(Pl.x, Pl.y + 1.2, Pl.z); let best = null, bd = 1e9;
@@ -767,14 +841,22 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     if (rawDt < 0.5) { Q.t += rawDt; Q.n++; if (Q.t > 2.5) { const ms = Q.t / Q.n * 1000; Q.t = Q.n = 0;
       if (ms > 30 && Q.pr > 1) { Q.pr = Math.max(1, Q.pr - 0.25); renderer.setPixelRatio(Q.pr); renderer.setSize(W(), H()); }
       else if (ms < 17 && Q.pr < Q.max) { Q.pr = Math.min(Q.max, Q.pr + 0.25); renderer.setPixelRatio(Q.pr); renderer.setSize(W(), H()); } } }
-    if (!V.spot) move(dt);
+    if (studio) { Pl.speed = 0; studio.t = (studio.t || 0) + dt; St.yaw = Pl.face + Math.sin(studio.t * 0.45) * 1.25; St.pitch = 0.1;   // a slow swing from one side of your fox to the other
+      St.dist = studio.dist || 3.2; St.lastLook = performance.now(); }
+    else if (!V.spot && !(lift.moving() && lift.riding())) move(dt);   // riding the lift: hold still
     player.position.set(Pl.x, Pl.y + (extra === 'chair' ? 0 : 0.02), Pl.z); player.rotation.y = Pl.face;
     if (faceLocal) player.userData.faceCtl = faceLocal;
+    wearCam(player, camHeads.get('me'));
     animFox(player, dt, Pl.speed / FOX_SCALE * 0.6, !Pl.ground);
     updateRemotes(dt);
     if (F.id) followRecord();
     for (const f of tickers) f(dt);
-    animator.update(dt, Pl.x, Pl.y, Pl.z);
+    braille.tick(dt);
+    lift.tick(dt, Pl);
+    ringGlass.tick(Pl);
+    // running: a smoothed pace, so a burst of speed holds back the heavy loading (art, films, living paintings) until you slow down
+    St.pace = damp(St.pace || 0, Pl.speed || 0, 1.5, dt); const fast = St.pace > 5.4;
+    animator.update(dt, Pl.x, Pl.y, Pl.z, fast);
     if (simwalls) simwalls.update(dt, Pl.x, Pl.y, Pl.z);
     guides.update(dt, Pl.x, Pl.z);
     outdoors.update(dt);
@@ -790,18 +872,21 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     streamT -= dt;
     if (streamT <= 0) {
       streamT = 0.25; const p = new THREE.Vector3(Pl.x, Pl.y, Pl.z);
-      if (wing) { const inWing = wing.bounds.containsPoint(p); if (inWing !== St.inWing) { St.inWing = inWing; onZone(inWing ? 'New Artists Wing' : 'The Gallery'); } if (Math.hypot(Pl.x - WING_O.x, Pl.z - WING_O.z) < 110) wing.load(); }
-      for (const r of rooms.list) if (Math.hypot(Pl.x - r.O.x, Pl.z - r.O.z) < 90) r.room.load();
+      if (wing) { const inWing = wing.bounds.containsPoint(p); if (inWing !== St.inWing) { St.inWing = inWing; onZone(inWing ? 'New Artists Wing' : 'The Gallery'); } { const dW = Math.hypot(Pl.x - WING_O.x, Pl.z - WING_O.z); if (dW < (fast ? 70 : 110)) wing.load(); else if (dW > 160) wing.unload(); } }
+      for (const r of rooms.list) { const dR = Math.hypot(Pl.x - r.O.x, Pl.z - r.O.z); if (dR < (fast ? 55 : 90)) r.room.load(); else if (dR > 170) r.room.unload(); }   // far rooms let their paintings go (memory)
       // rooms behind walls still draw (the camera doesn't know about walls): hide a room's whole group unless you're close to it
       { const pp2 = new THREE.Vector3(Pl.x, Pl.y + 1, Pl.z); for (const r of rooms.list) r.room.group.visible = r.room.bounds.distanceToPoint(pp2) < 50; if (wing) wing.group.visible = wing.bounds.distanceToPoint(pp2) < 50; }
       // nearest first, a few per tick (no hitch), far enough out that it all arrives before you can see it
       const want = []; for (const sg of signs) { const d = sg.ctr.distanceTo(p); if (d < NEAR) { if (!sg.mesh) want.push([d, sg]); else sg.mesh.visible = d < ((sg.s.k === 't' || sg.s.k === 'l') ? 38 : 70); } else if (d > FAR) hideSign(sg); }   // loaded far out (no pop-in of images), but only drawn when close enough to matter: labels 38 m, art 70 m
-      want.sort((a, b) => a[0] - b[0]); for (const [, sg] of want.slice(0, firstStream ? 60 : 14)) showSign(sg); firstStream = false;
+      want.sort((a, b) => a[0] - b[0]); for (const [, sg] of want.slice(0, firstStream ? 60 : fast ? 4 : 14)) showSign(sg);   // running: a few at a time, nearest first firstStream = false;
       lightArt();
       // which video zone are we in?
       let zUrl = null; const pp = new THREE.Vector3(Pl.x, Pl.y + 0.5, Pl.z);
       for (const v of vids) if ((v.zone && v.zone.containsPoint(pp)) || (v.zones && v.zones.some(z => z.containsPoint(pp)))) { zUrl = v.u; break; }
-      playUrl(zUrl);
+      // films: only start once you've settled in a room (running past a doorway doesn't spin up a film for a second)
+      if (zUrl !== zPend.u) { zPend.u = zUrl; zPend.t = 0; } else zPend.t += 0.25;
+      if (!zUrl || zUrl === curUrl || zPend.t >= (fast ? 1.5 : 0.25)) playUrl(zUrl);
+      if (window.HUSH) { if (!video.paused) { video.pause(); hushPaused = true; } } else if (hushPaused) { hushPaused = false; if (video.paused && (video.currentSrc || video.src)) video.play().catch(() => {}); }   // the room film pauses while an artwork is open, and picks up where it left off
       if (zUrl) { let dmin = 1e9; for (const v of vids) if (v.u === zUrl) dmin = Math.min(dmin, (v.wp ||= v.box.getWorldPosition(new THREE.Vector3())).distanceTo(pp)); const vv = vids.find(v => v.u === zUrl); const zs = vv.zone ? vv.zone.getSize(new THREE.Vector3()) : null, reach = vv.reach || Math.max(vv.dist || 20, zs ? Math.hypot(zs.x, zs.z) * 1.1 : 0); video.volume = clamp((vv.vol ?? 0.8) * Math.max(vv.minVol ?? 0.45, 1 - dmin / reach) * (LIVE.idx >= 0 ? 0.12 : 1), 0, 1); }   // a live host talk: the room film drops to a murmur   // never silent while you're in the zone
       if (!V.spot) { const n = nearest(); const key = n ? n.kind + n.label + (n.item && n.item.z) : null; if (key !== nearKey) { nearKey = key; onNear(n); } }
     }
@@ -835,6 +920,16 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     follow: (id, onEnd) => followStart(id, onEnd), unfollow: () => followStop('stopped'), following: () => F.id,
     goTo(id, slot) { const r = remotes.get(id); if (!r || !r.placed) return false; if (V.spot) exitVision(); if (F.id) followStop('gathered'); placeNear(r, slot); return true; },
     live: { show: (i, st) => liveShow(i, st), clear: () => liveClear(), nearest: (x, y, z) => nearestScreen(x, y, z), active: () => LIVE.idx, pos: i => screenPos(i).toArray() },
+    studioCam(v) { if (v && !studio && v.face != null) { Pl.face = v.face; } if (v && studio) v.t = studio.t; studio = v || null; if (!v) { St.pitch = 0.28; fit(); } else studioView(); },   // facing the fox's front first
+    shirtArts() {   // every artwork that can go on a shirt, Walk Through Fear first, with titles where the gallery has them
+      const title = new Map(); const rev = new Map(Object.entries(IMGURL).map(([k, u]) => [u, k]));
+      for (const a of arts) { const k = a.img && rev.get(a.img); if (k && a.title && !title.has(k)) title.set(k, a.title); }
+      const list = ART_KEYS.map(k => ({ key: k, url: IMGURL[k], title: title.get(k) || k.replace(/^.*\/wix_|\.webp$/g, '').replace(/_/g, ' ') }));
+      list.sort((a, b) => (b.key === DEFAULT_ART) - (a.key === DEFAULT_ART)); return list;
+    },
+    palettes: () => PALETTES.map((p, i) => ({ i, fur: p.fur || PLAYER_MALE.fur, dark: p.furDark || PLAYER_MALE.furDark, tip: p.tailTip || '#ffffff' })),
+    elevator: { act: n => lift.act(n, Pl), state: lift.state }, ringGlass,
+    camHead: { local: (mode, stream) => setCam('me', mode, stream), remote: (id, mode, stream) => setCam(id, mode, stream) },
     face: { local: c => { faceLocal = c; if (!c && player) player.userData.faceCtl = null; }, remote: (id, c) => { const r = remotes.get(id); if (r && r.fox) r.fox.userData.faceCtl = c; } },
     film: {
       url: () => curUrl, time: () => video.currentTime || 0, ready: () => video.readyState >= 1, local: u => { const v = vids.find(v => v.u === u); return (v && v.local) || u; },

@@ -78,7 +78,7 @@ export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveIm
   const boxW = (a, b) => new THREE.Box3().setFromPoints([0, 1, 2, 3, 4, 5, 6, 7].map(i => toW(new THREE.Vector3(i & 1 ? a.x : b.x, i & 2 ? a.y : b.y, i & 4 ? a.z : b.z))));
   const Wd = spacious ? 22 : 18, Hh = spacious ? 7 : 6.4, HW = Wd / 2;
   const T = title || { kicker: 'THE BLIND CANVAS PROJECT', lines: ['New Artists', 'Wing'], sub: wing.artists.map(a => a.name).join(' · ') };
-  const col = [], arts = [], loaders = [], canvases = [];
+  const col = [], arts = [], loaders = [], canvases = [], artTex = [];
   const wallM = new THREE.MeshLambertMaterial({ color: 0xeceae6 });
   const greyM = new THREE.MeshLambertMaterial({ color: 0x55585e });
   const inkM = new THREE.MeshLambertMaterial({ color: 0x1d1c1b });
@@ -211,7 +211,7 @@ export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveIm
       const sideM = new THREE.MeshLambertMaterial({ color: 0xf4f2ee });
       const cvs = new THREE.Mesh(new THREE.BoxGeometry(S, S, 0.07), [sideM, sideM, sideM, sideM, faceM, sideM]);
       cvs.position.copy(at(cx, spacious ? 2.75 : 2.65, 0.04)); cvs.rotation.y = rotY; g.add(cvs); canvases.push({ mesh: cvs, w: S, h: S, key: p.img });
-      loaders.push(() => new THREE.TextureLoader().load(resolveImg(p.img), t => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; faceM.map = t; faceM.color.set(0xffffff); faceM.needsUpdate = true; }));
+      artTex.push({ faceM, url: resolveImg(p.img) });   // loaded when you come near, let go when you're far away (see load/unload)
       const plT = panelTex(1100, 300, (c, w, h) => {   // 3.3 x 0.9 m: big type, low on the wall so you can walk right up to it
         c.fillStyle = '#f9f8f6'; c.fillRect(0, 0, w, h); c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, 12, h);
         let ts = 68; c.font = `800 ${ts}px ${FONT}`; while (c.measureText(p.title).width > w - 80 && ts > 44) { ts -= 2; c.font = `800 ${ts}px ${FONT}`; }
@@ -245,9 +245,14 @@ export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveIm
   // empty bays get the logo, so no wall is left bare
   if (fillLogo) for (let i = wing.artists.length; i < slots.length; i++) { const sl = slots[i]; const lp = logoPanel(11, 4.8, fillLogo); lp.position.set(sl.x, 2.9, sl.side * (HW - 0.04)); lp.rotation.y = sl.side < 0 ? 0 : Math.PI; g.add(lp); }
   g.updateMatrixWorld(true);
-  let loaded = false;
+  let loaded = false, artGen = 0, artOn = false;
+  const TL = new THREE.TextureLoader();
+  const loadArt = () => { if (artOn) return; artOn = true; const gen = ++artGen;
+    for (const A of artTex) TL.load(A.url, t => { if (gen !== artGen) { t.dispose(); return; } t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; A.faceM.map = t; A.faceM.color.set(0xffffff); A.faceM.needsUpdate = true; }); };
+  const unloadArt = () => { if (!artOn) return; artOn = false; artGen++;
+    for (const A of artTex) if (A.faceM.map) { A.faceM.map.dispose(); A.faceM.map = null; A.faceM.color.set(0xdddddd); A.faceM.needsUpdate = true; } };
   const bounds = boxW(new THREE.Vector3(-L - 0.5, -1, -HW - 0.5), new THREE.Vector3(0.5, Hh + 0.5, HW + 0.5));
-  return { group: g, col, arts, screens, canvases, bounds, load() { if (loaded) return; loaded = true; loaders.forEach(f => f()); }, length: L };
+  return { group: g, col, arts, screens, canvases, bounds, load() { loadArt(); if (loaded) return; loaded = true; loaders.forEach(f => f()); }, unload: unloadArt, artLoaded: () => artOn, length: L };
 }
 
 // ------------------------------------------------------------ a doorway (freestanding arch with a glowing teal opening)
