@@ -58,10 +58,15 @@
 
   /* scanning frame */
   #scan{position:fixed;inset:0;z-index:5;display:none;align-items:center;justify-content:center;pointer-events:none}
-  #scan{flex-direction:column;gap:18px}
+  #scan{flex-direction:column;gap:18px;z-index:7}
+  #visionLayer{position:fixed;inset:0;z-index:6;pointer-events:none}
+  #eyeBtn{position:fixed;top:calc(10px + env(safe-area-inset-top));right:calc(10px + env(safe-area-inset-right));z-index:11;display:none;
+    min-height:48px;padding:0 16px;background:#000;color:#fff;border:2px solid #fff;border-radius:0;
+    font-family:Archivo,'Atkinson Hyperlegible',Arial,sans-serif;font-weight:900;font-size:14px;letter-spacing:.05em;text-transform:uppercase}
+  #eyeBtn:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
   #scan .cue{background:#000;color:#fff;padding:10px 18px 9px;font-family:Archivo,'Atkinson Hyperlegible',Arial,sans-serif;
     font-weight:900;font-size:clamp(22px,6.4vw,30px);line-height:1.1;letter-spacing:.04em;text-align:center}
-  #scan .box{width:min(70vw,360px);aspect-ratio:3/4;border-radius:22px;position:relative}
+  #scan .box{width:min(70vw,360px,40vh);aspect-ratio:3/4;border-radius:22px;position:relative}
   /* while searching, the big cue does the talking; the status pill stays for screen readers only */
   #status:not(.found){position:absolute;width:1px;height:1px;padding:0;border:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
   #scan .box::before,#scan .box::after{content:"";position:absolute;inset:0;border-radius:22px;
@@ -93,6 +98,8 @@
 
 <div id="loading" role="status"><div class="spinner" aria-hidden="true"></div><div>Starting camera…</div></div>
 <div id="ar" aria-hidden="true"></div>
+<div id="visionLayer"></div>
+<button id="eyeBtn" type="button" aria-label="See through their eyes: vision simulator">&#128065; See through their eyes</button>
 <div id="scan" aria-hidden="true"><div class="cue">CENTER ART IN CAMERA</div><div class="box"></div></div>
 
 <section id="hud" aria-label="Artwork controls">
@@ -119,6 +126,7 @@
 import * as THREE from 'three';
 import { MindARThree } from 'mindar-image-three';
 import * as DATA from './artworks.js';
+import { visionOverlay } from './lib/gallery-vision.js';
 const ARTWORKS = DATA.ARTWORKS, EXHIBITIONS = DATA.EXHIBITIONS || [];
 
 const $ = id => document.getElementById(id);
@@ -464,6 +472,46 @@ function silentUnlock(m) {
   m.muted = wasMuted;
 }
 
+/* ── "See through their eyes": Ben's vision simulator over the live camera ──
+   Pure CSS layers (blur + gradients) laid over the camera and the AR art, so whatever the phone sees,
+   including a painting's story, is seen the way someone with that condition would see it.
+   The phone's gyroscope steers it: the clear spot leads a little where you turn, floaters lag behind. */
+let vision = null, motionOn = false;
+const turn = { yaw: 0, pitch: 0 };                       // rad/s, smoothed
+function onMotion(e) {
+  const r = e.rotationRate; if (!r) return;
+  // rotationRate is around the phone's own axes; turn it into "left/right" and "up/down" for how the phone is held
+  const th = (((screen.orientation && screen.orientation.angle) ?? window.orientation ?? 0) * Math.PI) / 180;
+  const b = ((r.beta || 0) * Math.PI) / 180, g = ((r.gamma || 0) * Math.PI) / 180;
+  const yaw = b * Math.sin(th) + g * Math.cos(th);         // turning left is positive
+  const up = b * Math.cos(th) - g * Math.sin(th);          // tilting to look up is positive
+  turn.yaw += (yaw - turn.yaw) * 0.3; turn.pitch += (-up - turn.pitch) * 0.3;
+}
+function askMotion() {                                     // iPhone asks permission; it must start inside a tap
+  try {
+    const DME = window.DeviceMotionEvent;
+    const go = () => { if (!motionOn) { addEventListener('devicemotion', onMotion); motionOn = true; } };
+    if (DME && typeof DME.requestPermission === 'function') DME.requestPermission().then(r => { if (r === 'granted') go(); }).catch(() => {});
+    else go();
+  } catch (e) { /* no sensor: it still works, just without the eye movement */ }
+}
+function openVision() {
+  askMotion();
+  if (!vision) {
+    vision = visionOverlay({ container: $('visionLayer'), onExit: closeVision });
+    vision.open('rp');                                     // Tunnel (Retinitis Pigmentosa) first
+    let last = performance.now();
+    (function loop(now) {
+      const dt = Math.min(0.1, (now - last) / 1000); last = now;
+      vision.update(dt, turn.yaw, turn.pitch);
+      requestAnimationFrame(loop);
+    })(last);
+  } else vision.open();
+  $('eyeBtn').style.display = 'none';
+}
+function closeVision() { vision.close(); $('eyeBtn').style.display = 'block'; $('eyeBtn').focus({ preventScroll: true }); }
+$('eyeBtn').onclick = openVision;
+
 /* ── start ─────────────────────────────────────────── */
 let started = false;
 $('start').addEventListener('click', async () => {
@@ -577,6 +625,7 @@ async function startAR() {
 
   $('loading').style.display = 'none';
   $('hud').style.display = 'flex';
+  $('eyeBtn').style.display = 'block';
   $('scan').style.display = 'flex';
   $('ar').removeAttribute('aria-hidden');
 
