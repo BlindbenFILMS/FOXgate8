@@ -10,6 +10,9 @@
 import * as THREE from 'three';
 
 const EMPTY = 'media/games/napkin-please-empty.jpg';
+// Designed napkin art: drop PNGs named napkin-1.png … napkin-6.png into AR/media/games/napkins/ and the game uses
+// them instead of the drawn napkins below (any that are missing are simply skipped). 1024×256, transparent background.
+const ART = 'media/games/napkins/napkin-';
 // in painting units (1 wide, centred): the tower stands on the diner's head and is as wide as the painted one
 const BASE_Y = 0.5 - 790 / 1024, TOWER_X = 540 / 1024 - 0.5, STEP = 0.031, NW = 0.30, NH = 0.075;
 const HAND = [500 / 1024 - 0.5, 0.5 - 445 / 1024];   // Wayne's hands, where new napkins come from
@@ -56,7 +59,11 @@ function beep(freq, dur, vol, type = 'sine', delay = 0) {
 
 export function napkinsGame() {
   let G = null;                                     // everything for one round
-  const textures = Array.from({ length: 6 }, (_, i) => napkinTexture(i + 1));
+  let textures = Array.from({ length: 6 }, (_, i) => napkinTexture(i + 1));
+  const designed = [];
+  for (let i = 1; i <= 6; i++) new THREE.TextureLoader().load(ART + i + '.png', t => {
+    t.colorSpace = THREE.SRGBColorSpace; designed.push(t); textures = designed.slice();   // once any designed napkin loads, use only designed ones
+  }, undefined, () => {});
   const geo = new THREE.PlaneGeometry(NW, NH);
   let emptyTex = null;
   const best = (() => { try { return +localStorage.getItem('napkins-best') || 0; } catch (e) { return 0; } })();
