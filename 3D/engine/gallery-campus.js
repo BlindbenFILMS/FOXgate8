@@ -298,6 +298,56 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
   }
   near.push(pl => { for (const g of gotos) if (Math.hypot(pl.x - g.x, pl.z - g.z) < g.r && Math.abs(pl.y - g.y) < 2.2) return { kind: 'goto', item: { z: g.to.length, to: g.to }, label: g.label }; return null; });
 
+  // ============================================================ the Academy's grand piano (play it: gallery-piano.js)
+  // In the middle of the AMB building, between the visitors' bench and the film wall: you sit with your back to the door and play
+  // towards the screen. Gloss-black case with the lid propped open, 5 octaves of keys (C2-C7) that dip as notes play, a bench.
+  const piano = (() => {
+    const PX = 40, PZ = -46.6, Y0 = 0.06, g = new THREE.Group(); g.position.set(PX, Y0, PZ); root.add(g);
+    const gloss = new THREE.MeshPhongMaterial({ color: 0x0d0d0f, specular: 0x5a5a66, shininess: 90 }), innerM = new THREE.MeshLambertMaterial({ color: 0x8a6a3a }), brass = new THREE.MeshLambertMaterial({ color: 0xc9a14a });
+    // the case outline seen from above (x across, y = -z towards the tail): the straight bass side on the left, the curved treble side on the right
+    const S = new THREE.Shape(); S.moveTo(-0.76, 0); S.lineTo(0.76, 0); S.lineTo(0.76, 0.55);
+    S.bezierCurveTo(0.76, 1.0, 0.2, 1.05, 0.12, 1.45); S.bezierCurveTo(0.05, 1.8, -0.1, 2.05, -0.45, 2.05); S.bezierCurveTo(-0.7, 2.05, -0.76, 1.95, -0.76, 1.8); S.closePath();
+    const caseGeo = new THREE.ExtrudeGeometry(S, { depth: 0.32, bevelEnabled: false, curveSegments: 14 }); caseGeo.rotateX(-Math.PI / 2); caseGeo.translate(0, 0.68, 0);   // (shape y -> -z; the case from 0.68 to 1.0 m)
+    const body = new THREE.Mesh(caseGeo, gloss); body.position.z = -0.05; g.add(body);
+    const sound = new THREE.Mesh(new THREE.ShapeGeometry(S, 14), innerM); sound.rotation.x = -Math.PI / 2; sound.position.set(0, 0.985, -0.05); sound.scale.set(0.96, 0.96, 1); g.add(sound);   // the soundboard
+    // the lid, hinged on the straight side, propped open
+    const lidPivot = new THREE.Group(); lidPivot.position.set(-0.76, 1.0, -0.05); lidPivot.rotation.z = 0.62; g.add(lidPivot);
+    const lid = new THREE.Mesh(new THREE.ShapeGeometry(S, 14), new THREE.MeshPhongMaterial({ color: 0x0d0d0f, specular: 0x5a5a66, shininess: 90, side: THREE.DoubleSide })); lid.rotation.x = -Math.PI / 2; lid.position.set(0.76, 0.012, 0); lidPivot.add(lid);
+    const prop = box(0.025, 0.95, 0.025, brass, 0, 0, 0, false, g); prop.position.set(0.55, 1.4, -0.9); prop.rotation.z = 0.35;
+    // legs (with brass castors), the lyre and pedals
+    for (const [x, z] of [[-0.66, -0.15], [0.66, -0.15], [-0.5, -1.85]]) { box(0.12, 0.68, 0.12, gloss, x, 0.34, z, false, g); const c = new THREE.Mesh(new THREE.SphereGeometry(0.05, 10, 8), brass); c.position.set(x, 0.04, z); g.add(c); }
+    box(0.22, 0.6, 0.04, gloss, 0, 0.32, -0.2, false, g); for (const x of [-0.06, 0, 0.06]) box(0.035, 0.02, 0.12, brass, x, 0.05, -0.12, false, g);
+    // the keyboard: key bed, cheek blocks, fallboard and music desk
+    const KW = 1.42, WN = 36, ww = KW / WN, kz = 0.11;
+    box(KW + 0.12, 0.09, 0.3, gloss, 0, 0.66, kz - 0.05, false, g);
+    for (const x of [-(KW / 2 + 0.035), KW / 2 + 0.035]) box(0.07, 0.13, 0.3, gloss, x, 0.75, kz - 0.05, false, g);
+    box(KW, 0.11, 0.04, gloss, 0, 0.8, -0.04, false, g);
+    const desk = box(0.95, 0.3, 0.025, gloss, 0, 1.13, -0.12, false, g); desk.rotation.x = -0.25;
+    const sheet = plane(0.42, 0.28, new THREE.MeshBasicMaterial({ map: tex(256, 176, (c, w, h) => { c.fillStyle = '#f6f1e4'; c.fillRect(0, 0, w, h); c.strokeStyle = '#3a3a3a'; c.lineWidth = 1.2; for (let st = 0; st < 3; st++) for (let l = 0; l < 5; l++) { const y = 26 + st * 50 + l * 5; c.beginPath(); c.moveTo(14, y); c.lineTo(w - 14, y); c.stroke(); } c.fillStyle = '#222'; for (let i = 0; i < 26; i++) { c.beginPath(); c.ellipse(24 + i * 8.6, 22 + (i % 3) * 50 + ((i * 7) % 9), 2.6, 2, -0.4, 0, 6.3); c.fill(); } }) }), 0, 1.14, -0.105, 0, g);
+    sheet.rotation.x = -0.25;
+    // keys: instanced, so each one can dip when it's played (white C2..C7, then the black ones)
+    const isBlack = m => [1, 3, 6, 8, 10].includes(m % 12), keys = new Map(), wK = [], bK = [];
+    let wi = 0; for (let m = 36; m <= 96; m++) { if (isBlack(m)) bK.push([m, -KW / 2 + wi * ww]); else { wK.push([m, -KW / 2 + (wi + 0.5) * ww]); wi++; } }
+    const whiteIM = new THREE.InstancedMesh(new THREE.BoxGeometry(ww * 0.92, 0.022, 0.15), new THREE.MeshLambertMaterial({ color: 0xf6f3ea }), wK.length);
+    const blackIM = new THREE.InstancedMesh(new THREE.BoxGeometry(ww * 0.58, 0.03, 0.095), new THREE.MeshLambertMaterial({ color: 0x141414 }), bK.length);
+    const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), one = new THREE.Vector3(1, 1, 1), X = new THREE.Vector3(1, 0, 0);
+    const place = (im, i, x, y, z, dip) => { q.setFromAxisAngle(X, dip ? 0.06 : 0); m4.compose(new THREE.Vector3(x, y - (dip ? 0.008 : 0), z), q, one); im.setMatrixAt(i, m4); im.instanceMatrix.needsUpdate = true; };
+    wK.forEach(([m, x], i) => { keys.set(m, { im: whiteIM, i, x, y: 0.72, z: kz + 0.02 }); place(whiteIM, i, x, 0.72, kz + 0.02, false); });
+    bK.forEach(([m, x], i) => { keys.set(m, { im: blackIM, i, x, y: 0.745, z: kz - 0.02 }); place(blackIM, i, x, 0.745, kz - 0.02, false); });
+    g.add(whiteIM, blackIM);
+    // the bench (sit and play), a little brass name plate
+    const benchM = new THREE.MeshPhongMaterial({ color: 0x111113, specular: 0x444444, shininess: 60 }), cush = new THREE.MeshLambertMaterial({ color: 0x2a2a2e });
+    box(0.92, 0.07, 0.36, benchM, 0, 0.47, 0.72, false, g); box(0.88, 0.04, 0.32, cush, 0, 0.525, 0.72, false, g);
+    for (const x of [-0.4, 0.4]) for (const z of [0.58, 0.86]) box(0.05, 0.46, 0.05, benchM, x, 0.23, z, false, g);
+    plane(0.2, 0.035, new THREE.MeshBasicMaterial({ map: tex(256, 44, (c, w, h) => { c.fillStyle = '#c9a14a'; c.fillRect(0, 0, w, h); c.fillStyle = '#2a2010'; c.font = `800 26px ${FONT}`; c.textAlign = 'center'; c.fillText('AMB', w / 2, 32); }) }), 0, 0.8, -0.018, 0, g);
+    // solid: the case (and the bench, low, so you can step up to it)
+    box(1.55, 1.0, 2.05, null, PX, Y0 + 0.5, PZ - 1.0).visible = false;
+    const bench = { x: PX, z: PZ + 0.72, ry: 0, len: 0.9, dir: -1, top: Y0 + 0.55, name: 'Piano bench' };
+    benches.push(bench);
+    near.push(pl => Math.hypot(pl.x - PX, pl.z - (PZ + 0.9)) < 2.4 && Math.abs(pl.y - Y0) < 1.5 ? { kind: 'piano', item: { z: 3 }, label: 'Grand piano · play it' } : null);
+    return { x: PX, y: Y0 + 1.0, z: PZ - 0.8, bench, press(m, down) { const k = keys.get(m); if (k) place(k.im, k.i, k.x, k.y, k.z, down); } };
+  })();
+
   // ============================================================ the signpost by the big tree: an oak post with an arrow for each place
   {
     const P = SIGNPOST, g = new THREE.Group(); g.position.set(P.x, 0, P.z); root.add(g);
@@ -334,5 +384,5 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
     return null;
   };
   root.updateMatrixWorld(true);
-  return { group: root, col, benches, screens, near, why, cinema, zoneAt, tick: dt => tickers.forEach(f => f(dt)) };
+  return { group: root, col, benches, screens, near, why, cinema, piano, zoneAt, tick: dt => tickers.forEach(f => f(dt)) };
 }

@@ -24,3 +24,15 @@ Add `&stats=1` to any link to see download size, camera start time, frame rate, 
 Test it: open `targets/fox-at-dusk.jpg` and `targets/harbor-light.jpg` on a computer screen, open `.../AR/?show=test-room` on a phone, and point the phone at one painting, then the other.
 
 The Blind Canvas artworks use the `story` layout: the animated art (from `../3D/gallery/anim/`) plays over the painting, a black title banner (TITLE / ARTIST in white capitals) sits under it, and the artist's clip plays with sound under that. Buttons: Story (play it again), Describe (reads the image description), Show text, Quiet. Tap the clip to pause it.
+
+## Mini games (all 49 paintings)
+
+Every Blind Canvas painting has a "Play the game" button. Each game is about a minute long, plays over the painting, and can be played by ear: instructions are spoken, sounds come from where things are, the phone buzzes, and big buttons or screen-thirds do everything. At the end the painting's own animation plays and the "story" button opens the artist's interview.
+
+- **lib/minigames/index.js**: which game belongs to which painting
+- **lib/minigames/kit.js**: shared look (Claude Design's black / white / red style), sounds, spoken intro, 3-2-1-GO countdown and end screen
+- **lib/minigames/engines/**: 11 game types: catch, rhythm, runner, reveal, beam, balance, echo, connect, pop, stack, sort
+- **lib/minigames/cfg/**: one entry per painting for each type: title, instructions, positions on the painting, words, colours, sounds and difficulty
+- **napkins.js, almost-blindness.js, walk-through-fear.js, curating-hope.js**: the four hand-built games, now using Claude Design's art from **media/games/** (and Ben's recorded voice for Almost Blindness). Every picture has a drawn-in fallback, so a missing file never breaks a game.
+
+Test links: `?art=<painting-id>` plays one painting. Add `&bot=1&debug=1` and a robot plays the game by itself.

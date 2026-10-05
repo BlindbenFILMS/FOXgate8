@@ -172,6 +172,7 @@ function actionWords(n) {
     case 'why': return n.item && n.item.id ? ['READ STORY', L] : ['ADD YOUR STORY', 'The WHY House'];
     case 'goto': return ['TAKE ME THERE', L];
     case 'signpost': return ['WHERE TO?', 'Signpost · the park'];
+    case 'piano': return ['PLAY PIANO', 'Grand piano · Academy of Music'];
     default: return [L.toUpperCase().slice(0, 26), ''];
   }
 }
@@ -211,6 +212,7 @@ function open(n) {
   if (n.kind === 'why') { if (window.NOTES) window.NOTES.openWhy(n.item); return; }
   if (n.kind === 'goto') { G.campus && G.campus.go(n.item.to); return; }
   if (n.kind === 'signpost') { openSignpost(); return; }
+  if (n.kind === 'piano') { if (window.PIANO) window.PIANO.open(); return; }
   if (n.kind === 'note') { if (window.NOTES) window.NOTES.openSpot(n.item); return; }
   quoteStop(); bioScrollStop();
   const pb = $('pb'); pb.innerHTML = ''; pb.scrollTop = 0;
@@ -395,7 +397,7 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
     onJoin: id => {},
     onLeave: id => { const nm = names.get(id); if (G.following() === id) G.unfollow(); G.remote.remove(id); names.delete(id); if (window.TOG) window.TOG.onLeave(id); if (window.LIVE) window.LIVE.onLeave(id); if (window.CAMHEAD) window.CAMHEAD.onLeave(id); if (nm) announce(nm + ' left the gallery'); if (window.VOICE) window.VOICE.onLeave(id); refresh(); },
     onState: (id, st, prof) => { if (prof && !prof.name) prof = null; if (!prof && !names.has(id) && !st) return; const isNew = !names.has(id) && prof; G.remote.upsert(id, st, prof); if (prof) { names.set(id, prof.name); if (isNew) { announce(prof.name + ' joined the gallery'); if (entered) { net && net.hello(me()); if (window.TOG) window.TOG.onNewPeer(id); if (window.VOICE) window.VOICE.onNewPeer(id); if (window.LIVE) window.LIVE.onNewPeer(id); if (window.CAMHEAD) window.CAMHEAD.onNewPeer(id); } } } refresh(); },
-    onEvent: (id, d) => { if (window.CAMHEAD) window.CAMHEAD.onEvent(id, d); if (window.LIVE) window.LIVE.onEvent(id, d); if (window.FACE) window.FACE.onEvent(id, d); if (window.TOG) window.TOG.onEvent(id, d); if (window.VOICE) window.VOICE.onEvent(id, d); if (window.NOTES) window.NOTES.onEvent(id, d); },
+    onEvent: (id, d) => { if (window.PIANO) window.PIANO.onEvent(id, d); if (window.CAMHEAD) window.CAMHEAD.onEvent(id, d); if (window.LIVE) window.LIVE.onEvent(id, d); if (window.FACE) window.FACE.onEvent(id, d); if (window.TOG) window.TOG.onEvent(id, d); if (window.VOICE) window.VOICE.onEvent(id, d); if (window.NOTES) window.NOTES.onEvent(id, d); },
     onStream: (id, stream, meta) => { if (window.CAMHEAD) window.CAMHEAD.onStream(id, stream, meta); if (window.LIVE) window.LIVE.onStream(id, stream, meta); if (window.VOICE) window.VOICE.onStream(id, stream); },
     onEmote: (id, e) => { if (e === 'wave') { G.remote.wave(id); const nm = names.get(id); if (nm) announce(nm + ' waves'); } },
     onStatus: s => { status = s; refresh(); },
@@ -405,6 +407,7 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
     onSev: (v, who) => { const W = G.simwall(); if (W) W.setSeverity(v / 100); const sv = $('simSev'); if (sv) { sv.value = v; $('simP').textContent = v + '%'; } announce(who + ' set the Six Views wall to ' + v + ' percent'); } });
   const { setupVoice } = await import('./engine/gallery-voice.js');
   window.VOICE = setupVoice({ G, net, button: $('micBtn'), announce, nameOf: id => names.get(id) || 'A visitor' });
+  if (G.campus) import('./engine/gallery-piano.js').then(({ setupPiano }) => { window.PIANO = setupPiano({ G, net, announce, nameOf: id => names.get(id) || 'Someone' }); });
   import('./engine/gallery-notes.js').then(async ({ setupNotes }) => {
     window.NOTES = await setupNotes({ G, net, cfg: G.notesConfig, myName: () => pref.name, announce, esc, readAloud: () => !pref.quietNotes, showPanel });
   }).catch(e => console.warn('notes unavailable', e));

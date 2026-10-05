@@ -982,6 +982,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   function nearest() {
     const p = new THREE.Vector3(Pl.x, Pl.y + 1.2, Pl.z); let best = null, bd = 1e9;
     if (V.spot) return null;
+    if (Pl.sit && Pl.sit.name === 'Piano bench') return { kind: 'piano', item: { z: 4 }, label: 'Play the piano' };
     if (Pl.sit) return { kind: 'sit', item: { z: 0, up: true, name: Pl.sit.name }, label: 'Stand up' };
     if (simwalls && simwalls.kioskPositions.some(k => Math.hypot(Pl.x - k.x, Pl.z - k.z) < 2.6 && Math.abs(Pl.y - k.y) < 2)) return { kind: 'simctl', item: simwalls, label: 'Change the wall severity' };
     for (const sp of vSpots) if (Math.hypot(Pl.x - sp.x, Pl.z - sp.z) < sp.r + 0.15 && Math.abs(Pl.y - sp.y) < 1.2) return { kind: 'vision', item: sp, label: 'See through their eyes' };
@@ -1110,6 +1111,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     campus: campus && {
       go(to) { const t = CAMPUS_STOPS[to]; if (!t) return; if (Pl.sit) standUp(); travel({ to: { x: t.x, z: t.z, y: groundAt(t.x, 3, t.z), face: t.face } }); },
       walk: (to, onEnd) => walkTo(to, onEnd), stopWalk: () => walkStop('stopped'), walking: () => AW.pts ? AW.to : null, dests: SIGN_DEST,
+      piano: campus.piano, playPiano() { if (!(Pl.sit && Pl.sit.name === 'Piano bench')) { if (Pl.sit) standUp(); sitOn(campus.piano.bench); } }, standUp: () => standUp(),
       zone: () => St.campusZone, why: campus.why, nowShowing: () => campus.cinema.now().title, nextFilm: () => playUrl(campus.cinema.next()), group: campus.group,
     },
     sit: b => (b && b.up) || Pl.sit ? standUp() : sitOn(b), fullFilm: () => fullFilm(), sitting: () => !!Pl.sit,

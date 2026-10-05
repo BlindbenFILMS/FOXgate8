@@ -41,8 +41,11 @@
   #ar{touch-action:none}
   /* during a mini game the story controls step aside, so the whole painting is the board */
   body.gaming #hud .row, body.gaming #status, body.gaming #caption, body.gaming #explore{display:none!important}
-  #gameBtn{align-self:center;flex:none;max-width:none;min-width:250px;background:#ec3013;border-color:#ec3013;color:#fff;
-    font-family:Archivo,'Atkinson Hyperlegible',Arial,sans-serif;font-weight:900;font-size:19px;letter-spacing:.05em;text-transform:uppercase}
+  /* Play / Stop / Play again, in Claude Design's style: full width, square, label flush left with a trailing icon */
+  #gameBtn{align-self:stretch;flex:none;max-width:none;min-height:62px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 20px;
+    border-radius:0;background:#ec3013;border:2px solid #000;color:#fff;
+    font-family:Archivo,'Atkinson Hyperlegible',Arial,sans-serif;font-weight:900;font-size:24px;letter-spacing:.04em;text-transform:uppercase}
+  #gameBtn.stop{background:#000;border-color:#fff;font-size:20px;min-height:54px}
 
   #hud{position:fixed;left:0;right:0;bottom:0;z-index:10;padding:12px 14px calc(14px + env(safe-area-inset-bottom));
     display:none;flex-direction:column;gap:10px;pointer-events:none}
@@ -111,7 +114,7 @@
   <div id="status" role="status" aria-live="polite">Center the art in your camera</div>
   <div id="caption" aria-live="off"></div>
   <div id="explore" role="group" aria-label="Explore parts of the artwork"></div>
-  <button class="btn" id="gameBtn" type="button" hidden>&#9654; Play the game</button>
+  <button class="btn" id="gameBtn" type="button" hidden><span>Play the game</span><span aria-hidden="true">&#9654;</span></button>
   <div class="row">
     <button class="btn" id="listen" type="button">Listen</button>
     <button class="btn" id="describe" type="button" hidden>Describe</button>
@@ -530,12 +533,12 @@ function startGame(sc) {
   game.start({ group: sc.group, h: sc.work.height / sc.work.width, camera: R3.camera, renderer: R3.renderer, say, buzz, work: sc.work,
     story: () => { stopGame(); playStory(sc, true); } });   // a game can hand back to the artist's story
   delete $('gameBtn').dataset.over;
-  $('gameBtn').innerHTML = '&#10005; Stop the game';
+  $('gameBtn').innerHTML = '<span>Stop</span><span aria-hidden="true">&#9632;</span>'; $('gameBtn').classList.add('stop');
 }
 function stopGame() {
   if (!game) return;
   game.stop(); gameScene.gameOn = false; game = null; gameScene = null; document.body.classList.remove('gaming');
-  $('gameBtn').innerHTML = '&#9654; Play the game';
+  $('gameBtn').innerHTML = '<span>Play the game</span><span aria-hidden="true">&#9654;</span>'; $('gameBtn').classList.remove('stop');
 }
 $('gameBtn').onclick = () => {
   if (game && !game.over) { stopGame(); return; }
@@ -669,7 +672,7 @@ async function startAR() {
   const clock = new THREE.Clock();
   renderer.setAnimationLoop(() => {
     const t = clock.getElapsedTime(), nowG = performance.now(), dtG = Math.min(0.05, (nowG - (window.__lastG || nowG)) / 1000); window.__lastG = nowG;
-    if (game) { game.update(dtG); if (params.get('debug')) window.__mg = game.debug; if (game.over && !$('gameBtn').dataset.over) { $('gameBtn').dataset.over = '1'; $('gameBtn').innerHTML = '&#8635; Play again'; } }
+    if (game) { game.update(dtG); if (params.get('debug')) window.__mg = game.debug; if (game.over && !$('gameBtn').dataset.over) { $('gameBtn').dataset.over = '1'; $('gameBtn').innerHTML = '<span>Play again</span><span aria-hidden="true">&#8635;</span>'; $('gameBtn').classList.remove('stop'); } }
     else delete $('gameBtn').dataset.over;
     for (const sc of scenes) {
       if (!sc.found) continue;
