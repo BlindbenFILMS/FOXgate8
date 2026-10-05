@@ -38,6 +38,9 @@
   /* ── AR view ── */
   #ar{position:fixed;inset:0;overflow:hidden}
   #ar video{object-fit:cover}
+  #ar{touch-action:none}
+  #gameBtn{align-self:center;flex:none;max-width:none;min-width:250px;background:#ec3013;border-color:#ec3013;color:#fff;
+    font-family:Archivo,'Atkinson Hyperlegible',Arial,sans-serif;font-weight:900;font-size:19px;letter-spacing:.05em;text-transform:uppercase}
 
   #hud{position:fixed;left:0;right:0;bottom:0;z-index:10;padding:12px 14px calc(14px + env(safe-area-inset-bottom));
     display:none;flex-direction:column;gap:10px;pointer-events:none}
@@ -106,6 +109,7 @@
   <div id="status" role="status" aria-live="polite">Center the art in your camera</div>
   <div id="caption" aria-live="off"></div>
   <div id="explore" role="group" aria-label="Explore parts of the artwork"></div>
+  <button class="btn" id="gameBtn" type="button" hidden>&#9654; Play the game</button>
   <div class="row">
     <button class="btn" id="listen" type="button">Listen</button>
     <button class="btn" id="describe" type="button" hidden>Describe</button>
@@ -127,6 +131,7 @@ import * as THREE from 'three';
 import { MindARThree } from 'mindar-image-three';
 import * as DATA from './artworks.js';
 import { visionOverlay } from './lib/gallery-vision.js';
+import { GAMES } from './lib/minigames/index.js';
 const ARTWORKS = DATA.ARTWORKS, EXHIBITIONS = DATA.EXHIBITIONS || [];
 
 const $ = id => document.getElementById(id);
@@ -512,6 +517,28 @@ function openVision() {
 function closeVision() { vision.close(); $('eyeBtn').style.display = 'block'; $('eyeBtn').focus({ preventScroll: true }); }
 $('eyeBtn').onclick = openVision;
 
+/* ── mini games inside a painting (lib/minigames) ────────
+   A painting listed in GAMES gets a "Play the game" button when it's found. While a game runs, the painting's
+   story is paused and its animation hidden, and swipes on the screen go to the game. */
+let game = null, gameScene = null, R3 = null;          // R3: { camera, renderer } once AR has started
+function startGame(sc) {
+  stopGame();
+  stopTalking(); stopStories();
+  game = GAMES[sc.work.id](); gameScene = sc; sc.gameOn = true;
+  game.start({ group: sc.group, h: sc.work.height / sc.work.width, camera: R3.camera, renderer: R3.renderer, say, buzz });
+  delete $('gameBtn').dataset.over;
+  $('gameBtn').innerHTML = '&#10005; Stop the game';
+}
+function stopGame() {
+  if (!game) return;
+  game.stop(); gameScene.gameOn = false; game = null; gameScene = null;
+  $('gameBtn').innerHTML = '&#9654; Play the game';
+}
+$('gameBtn').onclick = () => {
+  if (game && !game.over) { stopGame(); return; }
+  if (current && GAMES[current.work.id]) startGame(current);
+};
+
 /* ── start ─────────────────────────────────────────── */
 let started = false;
 $('start').addEventListener('click', async () => {
@@ -566,6 +593,9 @@ async function startAR() {
       buzz([60, 40, 60]);
       setStatus('Found: ' + sc.work.title, true);
       $('scan').style.display = 'none';
+      if (game && gameScene !== sc) stopGame();
+      $('gameBtn').hidden = !GAMES[sc.work.id];
+      if (sc.gameOn) { game.resume(); return; }
       showExplore(sc);
       if (sc.video) sc.video.play().catch(() => {});
       if (sc.anim) sc.anim.play().catch(() => {});
@@ -583,6 +613,7 @@ async function startAR() {
     };
     anchor.onTargetLost = () => {
       sc.found = false; stats.lost();
+      if (sc.gameOn) game.pause(); else if (!scenes.some(s => s.found)) $('gameBtn').hidden = true;
       if (sc.video) sc.video.pause(); if (sc.anim) sc.anim.pause(); if (sc.clip) sc.clip.pause();   // (a sound-only story keeps going)
       if (!scenes.some(s => s.found)) {
         setStatus('Center the art in your camera');
@@ -597,7 +628,10 @@ async function startAR() {
 
   // tap the art to hear a part of it
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+  R3 = { camera, renderer };
+  for (const k of ['down', 'move', 'up']) $('ar').addEventListener('pointer' + k, ev => { if (game && gameScene && gameScene.found) game.pointer(k, ev); });
   $('ar').addEventListener('pointerup', ev => {
+    if (game) return;
     const r = renderer.domElement.getBoundingClientRect();
     ndc.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
     ray.setFromCamera(ndc, camera);
@@ -631,13 +665,15 @@ async function startAR() {
 
   const clock = new THREE.Clock();
   renderer.setAnimationLoop(() => {
-    const t = clock.getElapsedTime();
+    const t = clock.getElapsedTime(), nowG = performance.now(), dtG = Math.min(0.05, (nowG - (window.__lastG || nowG)) / 1000); window.__lastG = nowG;
+    if (game) { game.update(dtG); if (game.over && !$('gameBtn').dataset.over) { $('gameBtn').dataset.over = '1'; $('gameBtn').innerHTML = '&#8635; Play again'; } }
+    else delete $('gameBtn').dataset.over;
     for (const sc of scenes) {
       if (!sc.found) continue;
       // video layers stay hidden until their video is really playing (no black flash, and a video that
       // fails to load just shows the painting)
-      if (sc.animPlane) sc.animPlane.visible = shared.anim.owner === sc && shared.anim.ready;
-      if (sc.clipPlane) sc.clipPlane.visible = shared.clip.owner === sc && shared.clip.ready;
+      if (sc.animPlane) sc.animPlane.visible = !sc.gameOn && shared.anim.owner === sc && shared.anim.ready;
+      if (sc.clipPlane) sc.clipPlane.visible = !sc.gameOn && shared.clip.owner === sc && shared.clip.ready;
       const k = Math.min(1, (performance.now() - sc.appearT) / 600);   // ease in when found
       sc.group.scale.setScalar(0.92 + 0.08 * (reduceMotion ? 1 : 1 - Math.pow(1 - k, 3)));
       if (!reduceMotion) for (const f of sc.animators) f(t);
