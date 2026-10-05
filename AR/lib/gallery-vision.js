@@ -137,19 +137,44 @@ export function visionOverlay({ container, onExit = () => {}, onGuided = () => {
   #vsimUI input[type=range]{flex:1;accent-color:#ec3013;height:32px}
   #vsimUI .hint{font-size:11px;color:#a9a4a4;margin-top:6px}
   #vsimUI .hint b{color:#ff9783;font:800 12px/1 Archivo,Arimo,sans-serif;letter-spacing:.1em}
-  #vsLearn{position:fixed;inset:0;z-index:14;display:none;align-items:center;justify-content:center;background:rgba(10,10,10,.6);padding:16px}
-  #vsLearn .box{background:#f9f8f6;color:#1d1c1b;max-width:720px;width:100%;max-height:calc(100vh - 32px);overflow:auto;border-top:8px solid #ec3013;padding:22px 24px;font:400 15px/1.5 Archivo,Arimo,Helvetica,Arial,sans-serif}
-  #vsLearn .k{font:800 11px/1 Archivo,Arimo,sans-serif;letter-spacing:.16em;color:#ec3013;text-transform:uppercase}
-  #vsLearn h2{font:800 28px/1.1 Archivo,Arimo,sans-serif;margin:6px 0 4px}
-  #vsLearn .tag{font-style:italic;color:#5a5654;margin:0 0 12px}
-  #vsLearn h3{font:800 12px/1 Archivo,Arimo,sans-serif;letter-spacing:.14em;text-transform:uppercase;margin:16px 0 6px}
-  #vsLearn ul{margin:0;padding-left:20px}
-  #vsLearn .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:14px}
-  #vsLearn .facts div{border-left:4px solid #1d1c1b;padding:4px 10px}
-  #vsLearn .facts b{display:block;font:800 10px/1.2 Archivo,Arimo,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#5a5654}
-  #vsLearn .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
-  #vsLearn button{min-height:44px;padding:0 16px;border:2px solid #1d1c1b;background:#fff;font:800 12px/1 Archivo,Arimo,sans-serif;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
-  #vsLearn button.p{background:#1d1c1b;color:#fff}
+  /* Learn more: the Blind Canvas "Eye condition · Learn more" page (ableartalliance.com/ben). --acc is the condition's colour. */
+  #vsLearn{position:fixed;inset:0;z-index:14;display:none;flex-direction:column;--acc:#5b8def;background:#0c0e12;color:#f3f5f8;font-family:Oswald,'Arial Narrow',sans-serif}
+  #vsLearn .lbar{position:relative;z-index:3;flex:none;display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:calc(10px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) 10px calc(16px + env(safe-area-inset-left));
+    background:rgba(12,14,18,.94);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.08)}
+  #vsLearn .lbar button{min-height:46px;padding:0 16px;border-radius:8px;cursor:pointer;font:700 13px/1 'Space Mono',ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase}
+  #vsLearn .lback{background:#fff;color:#0c0e12;border:0}
+  #vsLearn .lread{background:transparent;color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.22)}
+  #vsLearn .lscroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;background:radial-gradient(circle at 70% -5%,rgba(255,255,255,.05) 0%,rgba(0,0,0,0) 45%)}
+  #vsLearn .lwrap{max-width:1100px;margin:0 auto;padding:34px calc(20px + env(safe-area-inset-right)) calc(40px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left))}
+  #vsLearn .kick{font:700 12px/1.4 'Space Mono',ui-monospace,monospace;letter-spacing:.34em;text-transform:uppercase;color:var(--acc)}
+  #vsLearn h2.lt{margin:10px 0 12px;font:700 clamp(40px,11vw,76px)/.98 Oswald,'Arial Narrow',sans-serif;text-transform:uppercase;color:#f3f5f8;overflow-wrap:anywhere}
+  #vsLearn .pill{display:inline-block;padding:6px 13px;border-radius:999px;background:var(--acc);color:#0c0e12;font:700 12px/1.2 'Space Mono',ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase}
+  #vsLearn .tagl{margin:20px 0 30px;font:300 clamp(20px,5vw,25px)/1.4 Oswald,'Arial Narrow',sans-serif;color:rgba(255,255,255,.82)}
+  #vsLearn .lgrid{display:grid;grid-template-columns:1fr;gap:30px}
+  @media (min-width:760px){#vsLearn .lgrid{grid-template-columns:1.15fr 1fr;gap:44px}}
+  #vsLearn h3{margin:0 0 13px;padding-left:13px;border-left:3px solid var(--acc);font:600 13px/1.2 Oswald,'Arial Narrow',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--acc)}
+  #vsLearn .sec{margin-bottom:28px}
+  #vsLearn .sec p{margin:0;font:300 18px/1.6 Oswald,'Arial Narrow',sans-serif;color:rgba(255,255,255,.86)}
+  #vsLearn ul{margin:0;padding:0;list-style:none}
+  #vsLearn li{position:relative;padding-left:20px;margin:0 0 9px;font:300 18px/1.5 Oswald,'Arial Narrow',sans-serif;color:rgba(255,255,255,.86)}
+  #vsLearn li::before{content:'';position:absolute;left:2px;top:.62em;width:6px;height:6px;border-radius:50%;background:var(--acc)}
+  #vsLearn .simv{border:1px solid rgba(255,255,255,.1);border-radius:6px;overflow:hidden;background:#000}
+  #vsLearn .simv .pic{position:relative;aspect-ratio:1;overflow:hidden}
+  #vsLearn .simv img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  #vsLearn .simv .ov,#vsLearn .simv .sp{position:absolute;inset:0}
+  #vsLearn .simv .cap{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;font:400 10px/1.3 'Space Mono',ui-monospace,monospace;letter-spacing:.08em;color:rgba(255,255,255,.6);border-top:1px solid rgba(255,255,255,.08)}
+  #vsLearn .simv .cap b{font-weight:400;text-transform:uppercase;letter-spacing:.16em;color:rgba(255,255,255,.5)}
+  #vsLearn .facts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  #vsLearn .facts div{padding:11px 12px 12px;border:1px solid rgba(255,255,255,.08);border-radius:6px;background:rgba(255,255,255,.03);font:600 15px/1.25 Oswald,'Arial Narrow',sans-serif;color:#f3f5f8}
+  #vsLearn .facts b{display:block;margin-bottom:5px;font:400 10px/1.2 'Space Mono',ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--acc)}
+  #vsLearn .try{display:block;width:100%;margin-top:16px;min-height:52px;border:0;border-radius:6px;background:var(--acc);color:#0c0e12;cursor:pointer;font:600 15px/1 Oswald,'Arial Narrow',sans-serif;letter-spacing:.12em;text-transform:uppercase}
+  #vsLearn .more{margin-top:36px;padding-top:24px;border-top:1px solid rgba(255,255,255,.08)}
+  #vsLearn .more .ml{font:400 11px/1.2 'Space Mono',ui-monospace,monospace;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:12px}
+  #vsLearn .chips{display:flex;flex-wrap:wrap;gap:8px}
+  #vsLearn .chips button{min-height:40px;padding:0 14px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:#16191f;color:#f3f5f8;cursor:pointer;font:700 12px/1 'Space Mono',ui-monospace,monospace;letter-spacing:.04em;text-transform:uppercase}
+  #vsLearn .chips button.on{background:var(--acc);border-color:var(--acc);color:#0c0e12}
+  #vsLearn button:focus-visible{outline:3px solid #fff;outline-offset:3px}
   @media (max-height:500px){#vsimUI .row{margin-top:4px}#vsimUI button{min-height:34px}#vsimUI button.learn{min-height:34px}}
   @media (max-width:520px){#vsimUI button{min-height:38px;padding:0 9px;font-size:10px}#vsimUI #vsChips button{padding:0 3px}}`;
   document.head.appendChild(css);
@@ -184,20 +209,62 @@ export function visionOverlay({ container, onExit = () => {}, onGuided = () => {
   // Learn more: the condition's page from the Patient Experience (what it is, what it's like, living with it, key facts)
   const lp = document.createElement('div'); lp.id = 'vsLearn'; lp.setAttribute('role', 'dialog'); lp.setAttribute('aria-modal', 'true'); document.body.appendChild(lp);
   const esc = t => String(t).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
-  const openLearn = () => {
-    const L = LEARN[st.cond === 'floaters' ? 'dr' : st.cond] || LEARN.rp;
-    lp.innerHTML = `<div class="box"><div class="k">Learn more \u00b7 ${esc(L.common)}</div><h2>${esc(L.label)}</h2><p class="tag">${esc(L.tagline)}</p><p>${esc(L.whatIs)}</p>
-      <h3>What it can be like</h3><ul>${L.experience.map(x => '<li>' + esc(x) + '</li>').join('')}</ul>
-      <h3>Living with it</h3><ul>${L.living.map(x => '<li>' + esc(x) + '</li>').join('')}</ul>
-      <div class="facts">${L.facts.map(f => '<div><b>' + esc(f.k) + '</b>' + esc(f.v) + '</div>').join('')}</div>
-      <div class="row"><button class="p" id="vsLb">Back to the simulator</button><button id="vsLr">\ud83d\udd0a Read aloud</button></div></div>`;
-    lp.style.display = 'flex'; lp.querySelector('#vsLb').focus({ preventScroll: true }); lp.querySelector('.box').scrollTop = 0;
+  // the Blind Canvas fonts for the Learn page (Oswald + Space Mono), added once
+  if (!document.getElementById('vsLearnFonts')) { const f = document.createElement('link'); f.id = 'vsLearnFonts'; f.rel = 'stylesheet';
+    f.href = 'https://fonts.googleapis.com/css2?family=Oswald:wght@300;600;700&family=Space+Mono:wght@400;700&display=swap'; document.head.appendChild(f); }
+  // a painting for each condition's "simulated view", seen through that condition (AR folder paths)
+  const VIEW = { rp: ['targets/almost-blindness.jpg', 'Almost Blindness', 'Ben Fox'], amd: ['targets/curating-hope.jpg', 'Curating Hope', 'Ben Fox'],
+    cataracts: ['targets/walk-through-fear.jpg', 'Walk Through Fear', 'Ben Fox'], glaucoma: ['targets/napkin-please.jpg', 'Napkin, Please', 'Wayne Pearcy'],
+    dr: ['targets/decision-divide.jpg', 'Decision Divide', 'Will Hollimon'] };
+  const ORDER = ['rp', 'amd', 'cataracts', 'glaucoma', 'dr'], toCond = k => (k === 'dr' ? 'floaters' : k);
+  let learnKey = 'rp', lastFocus = null;
+  const openLearn = (key) => {
+    learnKey = typeof key === 'string' ? key : (st.cond === 'floaters' ? 'dr' : st.cond);
+    const L = LEARN[learnKey] || LEARN.rp, V = VIEW[learnKey] || VIEW.rp;
+    const S = simStyle(toCond(learnKey), 0.6, 50, 48);
+    lp.style.setProperty('--acc', L.accent);
+    lp.innerHTML = `<div class="lbar"><button class="lback" id="vsLb">← Back to simulator</button><button class="lread" id="vsLr" aria-pressed="false">🔊 Read aloud</button></div>
+      <div class="lscroll"><div class="lwrap">
+        <div class="kick">Eye condition · Learn more</div>
+        <h2 class="lt" id="vsLh">${esc(L.label)}</h2>
+        <span class="pill">${esc(L.common)}</span>
+        <p class="tagl">${esc(L.tagline)}</p>
+        <div class="lgrid">
+          <div>
+            <div class="sec"><h3>What it is</h3><p>${esc(L.whatIs)}</p></div>
+            <div class="sec"><h3>What you might experience</h3><ul>${L.experience.map(x => '<li>' + esc(x) + '</li>').join('')}</ul></div>
+            <div class="sec"><h3>Living with it</h3><ul>${L.living.map(x => '<li>' + esc(x) + '</li>').join('')}</ul></div>
+          </div>
+          <div>
+            <figure class="simv" style="margin:0"><div class="pic"><img src="${V[0]}" alt="" style="filter:${S.filter}"><div class="ov" style="background:${S.background}"></div><div class="sp" style="background:${S.spots}"></div></div>
+              <figcaption class="cap"><b>Simulated view</b><span>‘${esc(V[1])}’ · ${esc(V[2])}</span></figcaption></figure>
+            <div class="facts">${L.facts.map(f => '<div><b>' + esc(f.k) + '</b>' + esc(f.v) + '</div>').join('')}</div>
+            <button class="try" id="vsLt">Experience it in the simulator ↗</button>
+          </div>
+        </div>
+        <div class="more"><div class="ml">Explore other conditions</div><div class="chips">${ORDER.map(k => '<button data-k="' + k + '" class="' + (k === learnKey ? 'on' : '') + '" aria-pressed="' + (k === learnKey) + '">' + esc(LEARN[k].label) + '</button>').join('')}</div></div>
+      </div></div>`;
+    lp.setAttribute('aria-labelledby', 'vsLh');
+    if (lp.style.display !== 'flex') lastFocus = document.activeElement;
+    lp.style.display = 'flex'; lp.querySelector('.lscroll').scrollTop = 0;
+    lp.querySelector('#vsLb').focus({ preventScroll: true });
     lp.querySelector('#vsLb').onclick = closeLearn;
-    lp.querySelector('#vsLr').onclick = () => { const sy = window.speechSynthesis; if (!sy) return; sy.cancel(); sy.speak(new SpeechSynthesisUtterance([L.label, L.tagline, L.whatIs, 'What it can be like. ' + L.experience.join('. '), 'Living with it. ' + L.living.join('. ')].join('. '))); };
+    lp.querySelector('#vsLt').onclick = () => { setCond(toCond(learnKey)); closeLearn(); };
+    lp.querySelectorAll('.chips button').forEach(b => b.onclick = () => { if (window.speechSynthesis) window.speechSynthesis.cancel(); openLearn(b.dataset.k); });
+    lp.querySelector('#vsLr').onclick = () => {
+      const sy = window.speechSynthesis; if (!sy) return;
+      if (sy.speaking) { sy.cancel(); return; }
+      sy.speak(new SpeechSynthesisUtterance([L.label, L.common, L.tagline, 'What it is. ' + L.whatIs, 'What you might experience. ' + L.experience.join('. '),
+        'Living with it. ' + L.living.join('. '), L.facts.map(f => f.k + ': ' + f.v).join('. ')].join('. ')));
+    };
   };
-  const closeLearn = () => { lp.style.display = 'none'; if (window.speechSynthesis) window.speechSynthesis.cancel(); };
-  lp.addEventListener('click', e => { if (e.target === lp) closeLearn(); });
-  $('vsL').onclick = openLearn;
+  const closeLearn = () => {
+    if (lp.style.display !== 'flex') return;
+    lp.style.display = 'none'; if (window.speechSynthesis) window.speechSynthesis.cancel();
+    if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+  };
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && lp.style.display === 'flex') closeLearn(); });
+  $('vsL').onclick = () => openLearn();
   setCond('rp');
   return {
     st,
