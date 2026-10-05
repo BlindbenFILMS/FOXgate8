@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>Eyeball · Blind Canvas AR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Archivo:wght@800;900&display=swap" rel="stylesheet">
+<style>
+  :root{--red:#ec3013;--ink:#fff;--soft:#c9c6c4;--panel:rgba(0,0,0,.78);--line:rgba(255,255,255,.22);--gold:#ffd25a;--sky:#7fdcff}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#000;color:var(--ink);font-family:'Atkinson Hyperlegible',system-ui,sans-serif;overflow:hidden;
+    -webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+  button{font:inherit;color:inherit;cursor:pointer}
+  .A{font-family:Archivo,'Atkinson Hyperlegible',Arial,sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:.05em}
+  button:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
+
+  /* ── menu ── */
+  #menu{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+    padding:20px 18px calc(20px + env(safe-area-inset-bottom));background:#000;text-align:center;overflow:auto}
+  #menu .logo{width:min(34vw,150px);height:auto}
+  #menu h1{margin:0;font-size:clamp(34px,11vw,56px);line-height:.95}
+  #menu h1 span{color:var(--red)}
+  #menu .sub{margin:0;color:var(--soft);font-size:16px;max-width:26em;line-height:1.45}
+  #modes{display:flex;flex-direction:column;gap:10px;width:min(440px,100%)}
+  .mode{display:flex;gap:14px;align-items:center;text-align:left;padding:14px 16px;background:#141312;border:2px solid #fff;border-radius:0;min-height:76px}
+  .mode .ic{font-size:30px;line-height:1;width:38px;text-align:center}
+  .mode b{display:block;font-size:19px}
+  .mode small{display:block;color:var(--soft);font:400 14px/1.35 'Atkinson Hyperlegible',sans-serif;text-transform:none;letter-spacing:0;margin-top:3px}
+  .mode[aria-pressed="true"]{background:#fff;color:#000}
+  .mode[aria-pressed="true"] small{color:#333}
+  #go{min-width:240px;min-height:62px;padding:0 34px;border:0;border-radius:0;background:var(--red);color:#fff;font-size:23px}
+  #menu .help{margin:0;color:var(--soft);font-size:14px;max-width:28em}
+  #err{display:none;color:#ffb4b4;max-width:30em;margin:0}
+
+  /* ── play ── */
+  #ar{position:fixed;inset:0;overflow:hidden;touch-action:none}
+  #ar video{object-fit:cover}
+  #visionLayer{position:fixed;inset:0;z-index:6;pointer-events:none}
+  #vsimUI,#vsLearn{display:none!important}           /* the game drives the vision layer itself */
+  #loading{position:fixed;inset:0;z-index:15;display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;background:#000;font-size:19px}
+  .spinner{width:46px;height:46px;border-radius:50%;border:4px solid var(--line);border-top-color:var(--red);animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  #scan{position:fixed;inset:0;z-index:7;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;pointer-events:none}
+  #scan .cue{background:#000;color:#fff;padding:10px 18px 9px;font-size:clamp(22px,6.4vw,30px);line-height:1.1;text-align:center}
+  #scan .box{width:min(70vw,360px,40vh);aspect-ratio:3/4;position:relative}
+  #scan .box::before{content:"";position:absolute;inset:0;border:3px solid #fff;opacity:.85;
+    -webkit-mask:linear-gradient(#000 0 0) top/100% 20% no-repeat,linear-gradient(#000 0 0) bottom/100% 20% no-repeat;
+            mask:linear-gradient(#000 0 0) top/100% 20% no-repeat,linear-gradient(#000 0 0) bottom/100% 20% no-repeat}
+
+  #top{position:fixed;left:0;right:0;top:0;z-index:10;display:none;justify-content:space-between;align-items:flex-start;gap:8px;
+    padding:calc(8px + env(safe-area-inset-top)) calc(10px + env(safe-area-inset-right)) 0 calc(10px + env(safe-area-inset-left));pointer-events:none}
+  #score{background:var(--panel);border-left:4px solid var(--red);padding:8px 12px 9px;min-width:150px}
+  #score .k{font-size:11px;color:#ff9783}
+  #score .v{font-size:26px;line-height:1.05;margin-top:2px}
+  #score .t{font:700 13px/1.3 'Atkinson Hyperlegible',sans-serif;color:var(--soft);margin-top:3px;max-width:52vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #timer{background:var(--panel);padding:8px 12px;font-size:24px;min-width:84px;text-align:center}
+
+  #big{position:fixed;left:0;right:0;top:38%;z-index:9;display:none;justify-content:center;pointer-events:none}
+  #big div{background:#000;color:#fff;padding:12px 22px 11px;font-size:clamp(30px,10vw,58px);line-height:1;text-align:center;border-bottom:6px solid var(--red)}
+  #big small{display:block;font:700 16px/1.3 'Atkinson Hyperlegible',sans-serif;text-transform:none;letter-spacing:0;color:var(--soft);margin-top:8px}
+
+  #bar{position:fixed;left:0;right:0;bottom:0;z-index:10;display:none;flex-direction:column;gap:8px;
+    padding:0 calc(10px + env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left))}
+  #roll{align-self:center;display:none;min-width:200px;min-height:60px;background:var(--red);color:#fff;border:0;font-size:22px}
+  .row{display:flex;gap:8px;justify-content:center}
+  .b{flex:1;max-width:170px;min-height:52px;padding:6px 8px;background:var(--panel);border:2px solid #fff;font-size:13px}
+  .b[aria-pressed="true"]{background:#fff;color:#000}
+  @media (prefers-reduced-motion:reduce){.spinner{animation:none}}
+</style>
+</head>
+<body>
+
+<main id="menu">
+  <img class="logo" src="media/blind-canvas-logo.jpg" alt="Blind Canvas Project" width="640" height="640">
+  <h1 class="A">Eye<span>ball</span></h1>
+  <p class="sub">Every painting is a level. Tilt your phone to roll the eyeball across the art.</p>
+  <div id="modes" role="group" aria-label="Choose a game">
+    <button class="mode A" data-mode="collect" aria-pressed="true"><span class="ic" aria-hidden="true">✦</span><span><b>Collect the light</b><small>Roll over every glowing light. Dark spots cloud your sight.</small></span></button>
+    <button class="mode A" data-mode="maze" aria-pressed="false"><span class="ic" aria-hidden="true">▦</span><span><b>Maze</b><small>Walls rise out of the painting. Roll to the glowing exit.</small></span></button>
+    <button class="mode A" data-mode="bowl" aria-pressed="false"><span class="ic" aria-hidden="true">●</span><span><b>Bowling</b><small>Swipe up to bowl. Tilt to curve it. Knock down all ten.</small></span></button>
+  </div>
+  <button id="go" class="A" type="button">Play</button>
+  <p class="help">Turn your sound on: beeps guide you, louder and higher as you get close, from the side it's on.</p>
+  <p id="err" role="alert"></p>
+</main>
+
+<div id="loading" role="status"><div class="spinner" aria-hidden="true"></div><div>Starting camera…</div></div>
+<div id="ar" aria-hidden="true"></div>
+<div id="visionLayer"></div>
+<div id="scan" aria-hidden="true"><div class="cue A">Center art in camera</div><div class="box"></div></div>
+
+<div id="top" aria-hidden="true">
+  <div id="score" class="A"><div class="k" id="sk">Lights</div><div class="v" id="sv">0 / 8</div><div class="t" id="st"></div></div>
+  <div id="timer" class="A">0.0</div>
+</div>
+<div id="big" aria-hidden="true"><div class="A" id="bigText"></div></div>
+<div id="say" class="sr" role="status" aria-live="polite" style="position:absolute;left:-9999px"></div>
+
+<section id="bar" aria-label="Game controls">
+  <button id="roll" class="A" type="button">Roll</button>
+  <div class="row">
+    <button class="b A" id="again" type="button">↺ Restart</button>
+    <button class="b A" id="level" type="button" aria-label="Level the board: use how you hold the phone now as flat">◎ Level</button>
+    <button class="b A" id="guide" type="button" aria-pressed="true" aria-label="Sound guide">♪ Guide</button>
+    <button class="b A" id="games" type="button">Games</button>
+  </div>
+</section>
+
+<script type="importmap">
+{ "imports": {
+    "three": "./lib/three/three.module.js",
+    "three/addons/": "./lib/three/addons/",
+    "mindar-image-three": "./lib/mindar/mindar-image-three.prod.js"
+} }
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { MindARThree } from 'mindar-image-three';
+import * as DATA from './artworks.js';
+import { visionOverlay } from './lib/gallery-vision.js';
+
+const $ = id => document.getElementById(id);
+const params = new URLSearchParams(location.search);
+const ARTWORKS = DATA.ARTWORKS, EXHIBITIONS = DATA.EXHIBITIONS || [];
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* Which paintings are levels: ?art=<id>, ?show=<room>, or by default every Blind Canvas painting. */
+let works;
+if (params.get('art')) works = ARTWORKS.filter(a => a.id === params.get('art'));
+else if (params.get('show')) { const ex = EXHIBITIONS.find(e => e.id === params.get('show')); works = ex ? ex.artworks.map(id => ARTWORKS.find(a => a.id === id)).filter(Boolean) : []; }
+if (!works || !works.length) works = ARTWORKS.filter(a => a.overlay && a.overlay.type === 'story');
+if (!works.length) works = ARTWORKS.slice();
+
+/* ── menu ─────────────────────────────────────────── */
+let MODE = params.get('mode') || 'collect';
+function pickMode(m) {
+  MODE = m;
+  document.querySelectorAll('.mode').forEach(b => b.setAttribute('aria-pressed', b.dataset.mode === m));
+}
+document.querySelectorAll('.mode').forEach(b => b.onclick = () => { pickMode(b.dataset.mode); if (started) { $('menu').style.display = 'none'; newLevel(); } });
+pickMode(MODE);
+
+/* ── speech, sound, touch ───────────────────────────── */
+const synth = window.speechSynthesis;
+function say(t, speak = true) { $('say').textContent = t; if (speak && synth) { synth.cancel(); const u = new SpeechSynthesisUtterance(t); u.rate = 1.05; synth.speak(u); } }
+function buzz(p) { if (navigator.vibrate) navigator.vibrate(p); }
+let ac = null;
+function audio() { if (!ac) { const C = window.AudioContext || window.webkitAudioContext; if (C) ac = new C(); } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
+function tone(freq, dur = 0.12, { type = 'sine', vol = 0.18, pan = 0, slide = 0, delay = 0 } = {}) {
+  const a = audio(); if (!a) return;
+  const t = a.currentTime + delay, o = a.createOscillator(), g = a.createGain();
+  o.type = type; o.frequency.setValueAtTime(freq, t); if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(40, freq + slide), t + dur);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  let node = o.connect(g);
+  if (a.createStereoPanner) { const p = a.createStereoPanner(); p.pan.value = Math.max(-1, Math.min(1, pan)); node = g.connect(p); node.connect(a.destination); }
+  else g.connect(a.destination);
+  o.start(t); o.stop(t + dur + 0.02);
+}
+function noise(dur = 0.3, vol = 0.25) {
+  const a = audio(); if (!a) return;
+  const n = a.createBuffer(1, Math.floor(a.sampleRate * dur), a.sampleRate), d = n.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 2);
+  const s = a.createBufferSource(), g = a.createGain(); s.buffer = n; g.gain.value = vol; s.connect(g).connect(a.destination); s.start();
+}
+const SFX = {
+  light: (pan) => { [880, 1175, 1568].forEach((f, i) => tone(f, 0.16, { pan, vol: 0.16, delay: i * 0.06 })); },
+  dark: () => { tone(220, 0.6, { type: 'sawtooth', vol: 0.12, slide: -160 }); },
+  bump: (v) => { tone(90, 0.08, { type: 'triangle', vol: Math.min(0.3, 0.08 + v * 0.3) }); },
+  win: () => { [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.28, { type: 'triangle', vol: 0.2, delay: i * 0.12 })); },
+  pins: (n) => { noise(0.25 + n * 0.05, 0.12 + n * 0.02); },
+  go: () => { tone(660, 0.12, { vol: 0.15 }); tone(990, 0.2, { vol: 0.15, delay: 0.12 }); },
+  tick: () => tone(440, 0.08, { vol: 0.12 }),
+};
+let guideOn = true;
+$('guide').onclick = () => { guideOn = !guideOn; $('guide').setAttribute('aria-pressed', guideOn); say(guideOn ? 'Sound guide on' : 'Sound guide off'); };
+
+/* ── seeded randomness: each painting always makes the same level ── */
+function rng(str) { let h = 1779033703 ^ str.length; for (let i = 0; i < str.length; i++) { h = Math.imul(h ^ str.charCodeAt(i), 3432918353); h = h << 13 | h >>> 19; }
+  return () => { h = Math.imul(h ^ h >>> 16, 2246822507); h = Math.imul(h ^ h >>> 13, 3266489909); h ^= h >>> 16; return (h >>> 0) / 4294967296; }; }
+
+/* ── textures ─────────────────────────────────────── */
+function canvasTex(w, h, draw) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; }
+const eyeTex = canvasTex(1024, 512, (g, w, h) => {
+  // sclera with a little pink at the back, then veins, iris, pupil and a catch-light (iris at u = 0.25 faces the viewer)
+  const sg = g.createRadialGradient(w * 0.25, h / 2, 10, w * 0.25, h / 2, w * 0.55); sg.addColorStop(0, '#ffffff'); sg.addColorStop(0.6, '#f6efe9'); sg.addColorStop(1, '#f0c9c4');
+  g.fillStyle = sg; g.fillRect(0, 0, w, h);
+  const r = rng('veins'); g.strokeStyle = 'rgba(200,40,50,.55)';
+  for (let i = 0; i < 26; i++) { let x = w * 0.25 + (r() - 0.5) * w * 0.9, y = r() * h; g.lineWidth = 1 + r() * 2.2; g.beginPath(); g.moveTo(x, y);
+    for (let k = 0; k < 6; k++) { x += (x < w * 0.25 ? 1 : -1) * (14 + r() * 30); y += (r() - 0.5) * 34; g.lineTo(x, y); } g.stroke(); }
+  const cx = w * 0.25, cy = h / 2, R = 92;
+  const ig = g.createRadialGradient(cx, cy, 18, cx, cy, R); ig.addColorStop(0, '#2a6fd6'); ig.addColorStop(0.55, '#3d9bf0'); ig.addColorStop(0.85, '#1c4fa3'); ig.addColorStop(1, '#0b1f45');
+  g.fillStyle = ig; g.beginPath(); g.ellipse(cx, cy, R, R, 0, 0, Math.PI * 2); g.fill();
+  g.strokeStyle = 'rgba(255,255,255,.25)'; g.lineWidth = 2; for (let a = 0; a < Math.PI * 2; a += 0.22) { g.beginPath(); g.moveTo(cx + Math.cos(a) * 34, cy + Math.sin(a) * 34); g.lineTo(cx + Math.cos(a) * 84, cy + Math.sin(a) * 84); g.stroke(); }
+  g.fillStyle = '#05070c'; g.beginPath(); g.ellipse(cx, cy, 38, 38, 0, 0, Math.PI * 2); g.fill();
+  g.fillStyle = 'rgba(255,255,255,.95)'; g.beginPath(); g.ellipse(cx + 22, cy - 24, 13, 13, 0, 0, Math.PI * 2); g.fill();
+});
+const softTex = canvasTex(128, 128, (g) => { const r = g.createRadialGradient(64, 64, 0, 64, 64, 64); r.addColorStop(0, 'rgba(255,255,255,1)'); r.addColorStop(0.3, 'rgba(255,255,255,.6)'); r.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = r; g.fillRect(0, 0, 128, 128); });
+const shadowTex = canvasTex(128, 128, (g) => { const r = g.createRadialGradient(64, 64, 0, 64, 64, 64); r.addColorStop(0, 'rgba(0,0,0,.6)'); r.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = r; g.fillRect(0, 0, 128, 128); });
+const holeTex = canvasTex(256, 256, (g) => {
+  const r = g.createRadialGradient(128, 128, 0, 128, 128, 128); r.addColorStop(0, 'rgba(0,0,0,1)'); r.addColorStop(0.55, 'rgba(8,4,14,.95)'); r.addColorStop(0.8, 'rgba(40,10,60,.55)'); r.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = r; g.fillRect(0, 0, 256, 256);
+  g.strokeStyle = 'rgba(150,90,255,.35)'; g.lineWidth = 5; for (let k = 0; k < 3; k++) { g.beginPath(); for (let a = 0; a < 9; a += 0.1) { const rr = 18 + a * 11 + k * 6; g.lineTo(128 + Math.cos(a + k * 2.1) * rr, 128 + Math.sin(a + k * 2.1) * rr); } g.stroke(); }
+});
+
+/* ── the game world (in painting units: the painting is 1 wide, h tall, centred on 0,0; z points out of the art) ── */
+const R = 0.045;                                   // eyeball radius
+let world = null;                                  // THREE.Group parented to the found painting's anchor
+let L = null;                                      // the current level
+const ball = { x: 0, y: 0, vx: 0, vy: 0, mesh: null, shadow: null, frozen: true };
+
+function clearWorld() { if (world) { world.parent && world.parent.remove(world); world.traverse(o => { if (o.geometry) o.geometry.dispose(); }); } world = null; }
+function makeBall() {
+  const m = new THREE.Mesh(new THREE.SphereGeometry(R, 40, 24), new THREE.MeshStandardMaterial({ map: eyeTex, roughness: 0.18, metalness: 0.0 }));
+  const s = new THREE.Mesh(new THREE.PlaneGeometry(R * 3.2, R * 3.2), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
+  ball.mesh = m; ball.shadow = s; world.add(m); world.add(s);
+}
+function placeBall(x, y) { ball.x = x; ball.y = y; ball.vx = ball.vy = 0; ball.mesh.quaternion.identity(); syncBall(); }
+function syncBall() { ball.mesh.position.set(ball.x, ball.y, R); ball.shadow.position.set(ball.x + 0.008, ball.y - 0.008, 0.002); }
+
+function glowOrb(x, y) {
+  const g = new THREE.Group(); g.position.set(x, y, 0.035);
+  const core = new THREE.Mesh(new THREE.SphereGeometry(0.018, 16, 12), new THREE.MeshBasicMaterial({ color: 0xfff3b0 }));
+  const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: softTex, color: 0xffd25a, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
+  halo.scale.set(0.12, 0.12, 1); g.add(core, halo); world.add(g); return g;
+}
+
+/* COLLECT: 8 lights to gather, 4 dark spots to avoid */
+function buildCollect(work, h, r) {
+  const items = [], holes = [], used = [[0, -h / 2 + 0.1]];
+  const spot = (min) => { for (let t = 0; t < 400; t++) { const x = (r() - 0.5) * 0.82, y = (r() - 0.5) * (h - 0.18);
+    if (used.every(([ux, uy]) => Math.hypot(ux - x, uy - y) > min)) { used.push([x, y]); return [x, y]; } } return [0, 0]; };
+  for (let i = 0; i < 4; i++) { const [x, y] = spot(0.17); const m = new THREE.Mesh(new THREE.CircleGeometry(0.06, 40), new THREE.MeshBasicMaterial({ map: holeTex, transparent: true, depthWrite: false }));
+    m.position.set(x, y, 0.003); world.add(m); holes.push({ x, y, r: 0.05, m }); }
+  for (let i = 0; i < 8; i++) { const [x, y] = spot(0.13); items.push({ x, y, g: glowOrb(x, y), got: false }); }
+  return { items, holes, start: [0, -h / 2 + 0.1], sight: 0 };
+}
+
+/* MAZE: a maze grown on the painting, start bottom-left, exit top-right */
+function buildMaze(work, h, r) {
+  const cols = 5, rows = Math.max(4, Math.min(8, Math.round(cols * h))), cw = 1 / cols, ch = h / rows;
+  const vis = [...Array(rows)].map(() => Array(cols).fill(false));
+  const wallE = [...Array(rows)].map(() => Array(cols).fill(true)), wallN = [...Array(rows)].map(() => Array(cols).fill(true));
+  const stack = [[0, 0]]; vis[0][0] = true;
+  while (stack.length) {
+    const [rr, cc] = stack[stack.length - 1];
+    const n = [[1, 0], [-1, 0], [0, 1], [0, -1]].map(([dr, dc]) => [rr + dr, cc + dc, dr, dc]).filter(([a, b]) => a >= 0 && b >= 0 && a < rows && b < cols && !vis[a][b]);
+    if (!n.length) { stack.pop(); continue; }
+    const [a, b, dr, dc] = n[Math.floor(r() * n.length)];
+    if (dr === 1) wallN[rr][cc] = false; if (dr === -1) wallN[a][b] = false; if (dc === 1) wallE[rr][cc] = false; if (dc === -1) wallE[a][b] = false;
+    vis[a][b] = true; stack.push([a, b]);
+  }
+  const T = 0.014, H = 0.05, walls = [];
+  const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5, transparent: true, opacity: 0.88 });
+  const add = (x0, y0, x1, y1) => { const w = Math.max(T, x1 - x0), hh = Math.max(T, y1 - y0);
+    const m = new THREE.Mesh(new THREE.BoxGeometry(w, hh, H), mat); m.position.set((x0 + x1) / 2, (y0 + y1) / 2, H / 2); world.add(m);
+    walls.push({ x0: (x0 + x1) / 2 - w / 2, x1: (x0 + x1) / 2 + w / 2, y0: (y0 + y1) / 2 - hh / 2, y1: (y0 + y1) / 2 + hh / 2 }); };
+  const X = c => -0.5 + c * cw, Y = rr => -h / 2 + rr * ch;     // row 0 at the bottom
+  for (let rr = 0; rr < rows; rr++) for (let cc = 0; cc < cols; cc++) {
+    if (wallE[rr][cc] && cc < cols - 1) add(X(cc + 1), Y(rr), X(cc + 1), Y(rr + 1));
+    if (wallN[rr][cc] && rr < rows - 1) add(X(cc), Y(rr + 1), X(cc + 1), Y(rr + 1));
+  }
+  const gx = X(cols - 1) + cw / 2, gy = Y(rows - 1) + ch / 2;
+  const goal = new THREE.Group(); goal.position.set(gx, gy, 0.004); world.add(goal);
+  const pad = new THREE.Mesh(new THREE.RingGeometry(0.03, 0.05, 40), new THREE.MeshBasicMaterial({ color: 0xec3013 })); goal.add(pad);
+  const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: softTex, color: 0xff6a4a, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false })); glow.scale.set(0.18, 0.18, 1); glow.position.z = 0.02; goal.add(glow);
+  return { walls, goal: { x: gx, y: gy, g: goal }, start: [X(0) + cw / 2, Y(0) + ch / 2] };
+}
+
+/* BOWLING: ten pins at the top, the eyeball at the bottom */
+function buildBowl(work, h) {
+  const pins = [], sp = 0.075, top = h / 2 - 0.1;
+  const pinMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.35 }), band = new THREE.MeshStandardMaterial({ color: 0xec3013, roughness: 0.4 });
+  for (let row = 0; row < 4; row++) for (let k = 0; k <= row; k++) {
+    const x = (k - row / 2) * sp, y = top - (3 - row) * sp * 0.87;
+    const g = new THREE.Group(); g.position.set(x, y, 0);
+    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.011, 0.017, 0.075, 16), pinMat); body.rotation.x = Math.PI / 2; body.position.z = 0.0375;
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.0115, 0.0115, 0.008, 16), band); neck.rotation.x = Math.PI / 2; neck.position.z = 0.055;
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.012, 14, 10), pinMat); head.position.z = 0.077;
+    g.add(body, neck, head); world.add(g);
+    pins.push({ x, y, x0: x, y0: y, vx: 0, vy: 0, g, down: false, hit: false, tip: 0, tipAxis: new THREE.Vector3(1, 0, 0) });
+  }
+  return { pins, start: [0, -h / 2 + 0.08], phase: 'aim', roll: 1, frame: 1, total: 0, frameScore: 0, rollT: 0, settleT: 0 };
+}
+
+/* ── level flow ─────────────────────────────────────── */
+let current = null;                      // { work, anchor, h }
+let timeT = 0, playing = false, countdown = 0, best = {};
+try { best = JSON.parse(localStorage.getItem('eyeball-best') || '{}'); } catch (e) {}
+const saveBest = () => { try { localStorage.setItem('eyeball-best', JSON.stringify(best)); } catch (e) {} };
+
+function newLevel() {
+  if (!current) return;
+  clearWorld();
+  world = new THREE.Group(); current.anchor.group.add(world);
+  const { work, h } = current, r = rng(work.id + ':' + MODE);
+  makeBall();
+  if (MODE === 'collect') L = buildCollect(work, h, r);
+  else if (MODE === 'maze') L = buildMaze(work, h, r);
+  else L = buildBowl(work, h);
+  placeBall(...L.start);
+  if (vision && vision.st.on) vision.close();
+  timeT = 0; playing = false; $('roll').style.display = 'none'; $('timer').textContent = '0.0';
+  $('timer').style.display = MODE === 'bowl' ? 'none' : 'block';
+  $('st').textContent = work.title;
+  updateScore();
+  startCountdown();
+}
+function startCountdown() {
+  countdown = 2.4; ball.frozen = true;
+  showBig('Hold still', 'Hold your phone the way you like. That is flat.');
+  say((MODE === 'collect' ? 'Collect the light. ' : MODE === 'maze' ? 'Maze. ' : 'Bowling. ') + current.work.title + '. Hold still.');
+}
+function go() {
+  tilt.r0 = tilt.r; tilt.p0 = tilt.p;     // however the phone is held now counts as level
+  ball.frozen = false; playing = true; hideBig(); SFX.go(); buzz(40);
+  if (MODE === 'bowl') { L.phase = 'aim'; $('roll').style.display = 'block'; say('Swipe up to bowl, or press Roll. Tilt to aim.', false); }
+  else say('Go!', false);
+}
+function finish(title, sub) {
+  playing = false; ball.frozen = true; SFX.win(); buzz([80, 60, 80, 60, 160]);
+  showBig(title, sub + ' · Tap Restart to play again'); say(title + '. ' + sub);
+}
+function updateScore() {
+  if (!L) return;
+  if (MODE === 'collect') { $('sk').textContent = 'Lights'; $('sv').textContent = L.items.filter(i => i.got).length + ' / ' + L.items.length; }
+  else if (MODE === 'maze') { $('sk').textContent = 'Maze'; $('sv').textContent = 'Find the exit'; }
+  else { $('sk').textContent = 'Frame ' + L.frame + ' · Roll ' + L.roll; $('sv').textContent = 'Score ' + L.total; }
+}
+let bigT = 0;
+function showBig(t, sub, secs = 0) { $('bigText').innerHTML = ''; $('bigText').append(t); if (sub) { const s = document.createElement('small'); s.textContent = sub; $('bigText').append(s); } $('big').style.display = 'flex'; bigT = secs; }
+function hideBig() { $('big').style.display = 'none'; bigT = 0; }
+
+$('again').onclick = () => { audio(); newLevel(); };
+$('level').onclick = () => { tilt.r0 = tilt.r; tilt.p0 = tilt.p; buzz(30); say('Level.', false); };
+$('games').onclick = () => { $('menu').style.display = 'flex'; $('go').textContent = 'Back to the game'; };
+
+/* ── tilt: how the phone is turned relative to the painting ────────────
+   Measured from the camera's view of the painting itself, so it works the same on a wall or a table and
+   needs no motion permission. Roll the phone (like a steering wheel) to roll left/right; tip the top of
+   the phone away from you to roll up the painting, toward you to roll down. */
+const tilt = { r: 0, p: 0, r0: 0, p0: 0, ok: false };
+const _m = new THREE.Matrix4(), _x = new THREE.Vector3(), _y = new THREE.Vector3(), _z = new THREE.Vector3();
+function readTilt() {
+  if (!current) return;
+  current.anchor.group.updateWorldMatrix(true, false);
+  _m.copy(current.anchor.group.matrixWorld); _m.extractBasis(_x, _y, _z); _x.normalize(); _y.normalize();
+  const r = Math.atan2(_x.y, _x.x), p = Math.asin(Math.max(-1, Math.min(1, _y.z)));
+  if (!tilt.ok) { tilt.r = r; tilt.p = p; tilt.ok = true; }
+  let dr = r - tilt.r; if (dr > Math.PI) dr -= 2 * Math.PI; if (dr < -Math.PI) dr += 2 * Math.PI;
+  tilt.r += dr * 0.35; tilt.p += (p - tilt.p) * 0.35;
+}
+function tiltForce() {
+  const G = 2.6, dz = 0.035, cap = 0.45;
+  let a = tilt.r - tilt.r0, b = tilt.p - tilt.p0; if (a > Math.PI) a -= 2 * Math.PI; if (a < -Math.PI) a += 2 * Math.PI;
+  const f = v => Math.sign(v) * Math.min(cap, Math.max(0, Math.abs(v) - dz));
+  return [G * Math.sin(f(a)), G * Math.sin(f(b))];
+}
+
+/* ── physics ───────────────────────────────────────── */
+const _q = new THREE.Quaternion(), _ax = new THREE.Vector3();
+function step(dt) {
+  const h = current.h;
+  if (!ball.frozen) {
+    let [fx, fy] = tiltForce();
+    if (MODE === 'bowl') {
+      if (L.phase === 'aim') { ball.vx = fx * 0.12; ball.vy = 0; fy = 0; fx = 0; }      // tilt slides the ball along the line
+      else if (L.phase === 'roll') { fx *= 0.35; fy = 0; }                             // a gentle hook while it rolls
+      else { fx = fy = 0; }
+    }
+    ball.vx += fx * dt; ball.vy += fy * dt;
+    const damp = Math.exp(-(MODE === 'bowl' && L.phase === 'roll' ? 0.15 : 0.9) * dt); ball.vx *= damp; ball.vy *= damp;
+    const sp = Math.hypot(ball.vx, ball.vy), max = MODE === 'bowl' ? 2.2 : 1.1; if (sp > max) { ball.vx *= max / sp; ball.vy *= max / sp; }
+    ball.x += ball.vx * dt; ball.y += ball.vy * dt;
+
+    // the edges of the painting (bowling lets the ball run off the top)
+    const xm = 0.5 - R, ym = h / 2 - R;
+    if (ball.x < -xm || ball.x > xm) { if (Math.abs(ball.vx) > 0.12) { SFX.bump(Math.abs(ball.vx)); buzz(15); } ball.x = Math.max(-xm, Math.min(xm, ball.x)); ball.vx *= -0.35; }
+    if (ball.y < -ym) { if (Math.abs(ball.vy) > 0.12) { SFX.bump(Math.abs(ball.vy)); buzz(15); } ball.y = -ym; ball.vy *= -0.35; }
+    if (ball.y > ym && !(MODE === 'bowl' && L.phase === 'roll')) { if (Math.abs(ball.vy) > 0.12) { SFX.bump(Math.abs(ball.vy)); buzz(15); } ball.y = ym; ball.vy *= -0.35; }
+
+    if (MODE === 'maze') for (const w of L.walls) {          // circle against each wall block
+      const cx = Math.max(w.x0, Math.min(ball.x, w.x1)), cy = Math.max(w.y0, Math.min(ball.y, w.y1));
+      const dx = ball.x - cx, dy = ball.y - cy, d = Math.hypot(dx, dy);
+      if (d < R && d > 1e-6) { const nx = dx / d, ny = dy / d, push = R - d; ball.x += nx * push; ball.y += ny * push;
+        const vn = ball.vx * nx + ball.vy * ny; if (vn < 0) { if (-vn > 0.15) { SFX.bump(-vn); buzz(12); } ball.vx -= 1.4 * vn * nx; ball.vy -= 1.4 * vn * ny; } }
+    }
+    // roll the eye: it turns about the axis across its path
+    const s = Math.hypot(ball.vx, ball.vy);
+    if (s > 1e-4) { _ax.set(-ball.vy / s, ball.vx / s, 0); _q.setFromAxisAngle(_ax, (s * dt) / R); ball.mesh.quaternion.premultiply(_q); }
+  }
+  syncBall();
+  if (playing) rules(dt);
+}
+
+function rules(dt) {
+  const h = current.h;
+  timeT += dt; $('timer').textContent = MODE === 'bowl' ? '' : timeT.toFixed(1);
+  if (MODE === 'collect') {
+    for (const it of L.items) if (!it.got && Math.hypot(it.x - ball.x, it.y - ball.y) < R + 0.025) {
+      it.got = true; it.g.visible = false; SFX.light(it.x * 2); buzz(30);
+      L.sight = Math.max(0, L.sight - 0.2); setSight(L.sight);
+      const n = L.items.filter(i => i.got).length; updateScore();
+      if (n === L.items.length) {
+        const key = current.work.id + ':collect', t = +timeT.toFixed(1), rec = !best[key] || t < best[key]; if (rec) { best[key] = t; saveBest(); }
+        if (L.sight > 0) setSight(0);
+        return finish('All the light!', t + ' seconds' + (rec ? ' · New best!' : ' · Best ' + best[key] + ' s'));
+      }
+      say(n + ' of ' + L.items.length, false);
+    }
+    for (const ho of L.holes) if (Math.hypot(ho.x - ball.x, ho.y - ball.y) < ho.r * 0.85) {
+      SFX.dark(); buzz([60, 40, 120]);
+      L.sight = Math.min(0.9, L.sight + 0.3); setSight(L.sight);
+      showBig('Dark spot!', 'Your sight is closing in. Collect light to clear it.', 1.8); say('Dark spot! Your sight is closing in.', false);
+      placeBall(...L.start);
+    }
+    beacon(dt, L.items.filter(i => !i.got));
+  } else if (MODE === 'maze') {
+    if (Math.hypot(L.goal.x - ball.x, L.goal.y - ball.y) < 0.045) {
+      const key = current.work.id + ':maze', t = +timeT.toFixed(1), rec = !best[key] || t < best[key]; if (rec) { best[key] = t; saveBest(); }
+      return finish('You made it out!', t + ' seconds' + (rec ? ' · New best!' : ' · Best ' + best[key] + ' s'));
+    }
+    beacon(dt, [L.goal]);
+  } else bowlRules(dt, h);
+}
+
+/* the sound guide: a ping from the nearest target, from its side, faster and higher as you get close */
+let pingT = 0;
+function beacon(dt, targets) {
+  if (!guideOn || !targets.length) return;
+  pingT -= dt; if (pingT > 0) return;
+  let best = null, bd = 9; for (const t of targets) { const d = Math.hypot(t.x - ball.x, t.y - ball.y); if (d < bd) { bd = d; best = t; } }
+  const dx = best.x - ball.x, dy = best.y - ball.y;
+  tone(520 + Math.max(-0.5, Math.min(0.5, dy)) * 500, 0.07, { pan: Math.max(-1, Math.min(1, dx * 2.5)), vol: 0.11 });
+  pingT = 0.12 + Math.min(1, bd) * 1.1;
+}
+
+/* sight: the vision simulator's tunnel, driven by the game */
+let vision = null;
+function setSight(s) {
+  if (!vision) { vision = visionOverlay({ container: $('visionLayer') }); }
+  if (s > 0.01) { if (!vision.st.on) vision.open('rp'); vision.st.sev = s; }
+  else if (vision.st.on) vision.close();
+}
+
+/* bowling */
+let swipe = null;
+$('ar').addEventListener('pointerdown', e => { if (MODE === 'bowl' && playing && L.phase === 'aim') swipe = { x: e.clientX, y: e.clientY, t: performance.now() }; });
+$('ar').addEventListener('pointerup', e => {
+  if (!swipe) return; const dx = e.clientX - swipe.x, dy = swipe.y - e.clientY, dtm = Math.max(60, performance.now() - swipe.t); swipe = null;
+  if (dy < 40) return;
+  const speed = Math.max(0.6, Math.min(2.2, (dy / dtm) * 1.1)), ang = Math.max(-0.35, Math.min(0.35, Math.atan2(dx, dy)));
+  launch(speed, ang);
+});
+$('roll').onclick = () => { if (MODE === 'bowl' && playing && L.phase === 'aim') launch(1.3, 0); };
+function launch(speed, ang) {
+  audio(); L.phase = 'roll'; L.rollT = 0; ball.vx = Math.sin(ang) * speed; ball.vy = Math.cos(ang) * speed;
+  $('roll').style.display = 'none'; tone(140, 0.5, { type: 'triangle', vol: 0.15, slide: 60 }); buzz(25);
+}
+function bowlRules(dt, h) {
+  const P = L.pins, pr = 0.017;
+  if (L.phase === 'aim') return;
+  L.rollT += dt;
+  // ball against pins, pins against pins
+  for (const p of P) if (!p.gone) {
+    const dx = p.x - ball.x, dy = p.y - ball.y, d = Math.hypot(dx, dy);
+    if (L.phase === 'roll' && d < R + pr && d > 1e-6) { const nx = dx / d, ny = dy / d, vn = ball.vx * nx + ball.vy * ny;
+      if (vn > 0) { p.vx += nx * vn * 1.15 + ball.vx * 0.15; p.vy += ny * vn * 1.15 + ball.vy * 0.15; ball.vx -= nx * vn * 0.35; ball.vy -= ny * vn * 0.35; knock(p); }
+      ball.x -= nx * (R + pr - d); ball.y -= ny * (R + pr - d); }
+  }
+  for (let i = 0; i < P.length; i++) for (let j = i + 1; j < P.length; j++) {
+    const a = P[i], b = P[j]; if (a.gone || b.gone) continue;
+    const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy); if (d >= pr * 2 || d < 1e-6) continue;
+    const nx = dx / d, ny = dy / d, rv = (a.vx - b.vx) * nx + (a.vy - b.vy) * ny;
+    if (rv > 0) { a.vx -= rv * nx * 0.9; a.vy -= rv * ny * 0.9; b.vx += rv * nx * 0.9; b.vy += rv * ny * 0.9; knock(a); knock(b); }
+    const push = (pr * 2 - d) / 2; a.x -= nx * push; a.y -= ny * push; b.x += nx * push; b.y += ny * push;
+  }
+  for (const p of P) {
+    if (!p.hit || p.gone) continue;
+    p.x += p.vx * dt; p.y += p.vy * dt; const f = Math.exp(-2.2 * dt); p.vx *= f; p.vy *= f;
+    p.tip = Math.min(1, p.tip + dt * 4);
+    p.g.position.set(p.x, p.y, 0); p.g.quaternion.setFromAxisAngle(p.tipAxis, (Math.PI / 2) * p.tip);
+    p.g.position.z = 0.017 * p.tip;
+  }
+  const off = ball.y > h / 2 + 0.05 || ball.y < -h / 2 - 0.05, slow = Math.hypot(ball.vx, ball.vy) < 0.05;
+  if (L.phase === 'roll' && (off || L.rollT > 6 || (slow && L.rollT > 1))) { L.phase = 'settle'; L.settleT = 0; ball.frozen = true; if (off) ball.mesh.visible = ball.shadow.visible = false; }
+  if (L.phase === 'settle') { L.settleT += dt; if (L.settleT > 1.2) endRoll(); }
+}
+function knock(p) {
+  if (p.hit) return; p.hit = true; p.down = true;
+  const s = Math.hypot(p.vx, p.vy) || 1; p.tipAxis.set(-p.vy / s, p.vx / s, 0).normalize();
+  if (!L.crashT || performance.now() - L.crashT > 120) { L.crashT = performance.now(); SFX.pins(1); buzz(18); }
+}
+function endRoll() {
+  const P = L.pins, downNow = P.filter(p => p.down).length, before = L.frameScore, got = downNow - before;
+  L.frameScore = downNow;
+  if (L.roll === 1 && downNow === 10) { L.total += 10; showBig('STRIKE!', 'All ten pins', 2.2); SFX.win(); buzz([60, 40, 60, 40, 140]); say('Strike!'); nextFrame(); return; }
+  if (L.roll === 2) { L.total += downNow; const spare = downNow === 10;
+    showBig(spare ? 'SPARE!' : downNow + ' pins', 'Frame ' + L.frame + ' · total ' + L.total, 2.2); if (spare) SFX.win(); say(spare ? 'Spare!' : downNow + ' pins this frame. Total ' + L.total); nextFrame(); return; }
+  showBig(got + (got === 1 ? ' pin' : ' pins'), 'Roll again', 1.6); say(got + (got === 1 ? ' pin. ' : ' pins. ') + 'Roll again.');
+  for (const p of P) if (p.down) { p.g.visible = false; p.gone = true; }   // clear the fallen pins
+  L.roll = 2; resetBall(); updateScore();
+}
+function nextFrame() {
+  L.frame++; L.roll = 1; L.frameScore = 0;
+  for (const p of L.pins) { p.x = p.x0; p.y = p.y0; p.vx = p.vy = 0; p.down = p.hit = p.gone = false; p.tip = 0; p.g.visible = true; p.g.position.set(p.x, p.y, 0); p.g.quaternion.identity(); }
+  resetBall(); updateScore();
+}
+function resetBall() { ball.mesh.visible = ball.shadow.visible = true; placeBall(...L.start); ball.frozen = false; L.phase = 'aim'; $('roll').style.display = 'block'; }
+
+/* ── joining the paintings' tracking files on the phone (same as the gallery page) ── */
+async function loadTargets(urls, onProgress) {
+  let done = 0, next = 0; const bufs = new Array(urls.length);
+  async function worker() { while (next < urls.length) { const i = next++; const r = await fetch(urls[i]); if (!r.ok) throw new Error('Could not load ' + urls[i]);
+    bufs[i] = new Uint8Array(await r.arrayBuffer()); onProgress(++done, urls.length); } }
+  await Promise.all(Array.from({ length: Math.min(6, urls.length) }, worker));
+  const HEAD = [0x82, 0xa1, 0x76, 0x02, 0xa8, 100, 97, 116, 97, 76, 105, 115, 116];
+  let count = 0; const parts = [];
+  bufs.forEach((b, i) => {
+    for (let k = 0; k < HEAD.length; k++) if (b[k] !== HEAD[k]) throw new Error(urls[i] + ' is not a tracking file this page understands.');
+    const t = b[13]; let n, start;
+    if (t >= 0x90 && t <= 0x9f) { n = t - 0x90; start = 14; } else if (t === 0xdc) { n = (b[14] << 8) | b[15]; start = 16; }
+    else if (t === 0xdd) { n = ((b[14] << 24) >>> 0) + (b[15] << 16) + (b[16] << 8) + b[17]; start = 18; } else throw new Error('Unexpected data in ' + urls[i]);
+    count += n; parts.push(b.subarray(start));
+  });
+  const head = count < 16 ? [0x90 + count] : count < 65536 ? [0xdc, count >> 8, count & 255] : [0xdd, count >>> 24, (count >> 16) & 255, (count >> 8) & 255, count & 255];
+  return URL.createObjectURL(new Blob([new Uint8Array(HEAD), new Uint8Array(head), ...parts]));
+}
+
+/* ── start ─────────────────────────────────────────── */
+let started = false;
+$('go').onclick = async () => {
+  audio();                                          // sound has to be switched on inside a tap
+  if (synth) { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; synth.speak(u); }
+  if (started) { $('menu').style.display = 'none'; if (current) newLevel(); return; }
+  started = true;
+  $('menu').style.display = 'none'; $('loading').style.display = 'flex';
+  try { await startAR(); }
+  catch (e) {
+    console.error(e); started = false; $('loading').style.display = 'none'; $('menu').style.display = 'flex';
+    $('err').style.display = 'block';
+    $('err').textContent = (e && (e.name === 'NotAllowedError' || /permission/i.test(e.message)))
+      ? 'Camera permission was blocked. Allow camera access for this site in your browser settings, then tap Play again.'
+      : 'The camera could not start. (' + (e.message || e) + ')';
+  }
+};
+
+async function startAR() {
+  const mindar = new MindARThree({ container: $('ar'), imageTargetSrc: 'joined-on-the-phone', uiLoading: 'no', uiScanning: 'no', uiError: 'no',
+    filterMinCF: 0.0001, filterBeta: 0.001, missTolerance: 8, warmupTolerance: 4 });
+  const { renderer, scene, camera } = mindar;
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.6));
+  const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(0.4, 1, 1.2); scene.add(sun);
+
+  works.forEach((work, i) => {
+    const anchor = mindar.addAnchor(i), h = work.height / work.width;
+    anchor.onTargetFound = () => {
+      $('scan').style.display = 'none'; buzz([40, 30, 40]);
+      if (!current || current.work !== work) { current = { work, anchor, h }; tilt.ok = false; newLevel(); }
+      else if (playing || countdown > 0) { /* same painting again: carry on */ }
+      lost = false;
+    };
+    anchor.onTargetLost = () => { if (current && current.work === work) { lost = true; $('scan').style.display = 'flex'; say('Center the art in your camera', false); } };
+  });
+
+  const msg = $('loading').lastElementChild;
+  mindar.imageTargetSrc = works.length === 1 ? works[0].target
+    : await loadTargets(works.map(w => w.target), (d, n) => { msg.textContent = 'Loading paintings ' + d + ' of ' + n + '…'; });
+  msg.textContent = 'Starting camera…';
+  await mindar.start();
+  $('loading').style.display = 'none'; $('scan').style.display = 'flex'; $('top').style.display = 'flex'; $('bar').style.display = 'flex';
+  $('ar').removeAttribute('aria-hidden');
+  say('Center a painting in your camera', false);
+
+  let last = performance.now(), lastTick = 0;
+  renderer.setAnimationLoop(() => {
+    const now = performance.now(), dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (current && !lost) {
+      readTilt();
+      if (countdown > 0) { const before = Math.ceil(countdown); countdown -= dt; const after = Math.ceil(countdown);
+        if (after !== before && after > 0) SFX.tick();
+        if (countdown <= 0) go(); }
+      step(dt);
+      if (L && L.items && !reduceMotion) for (const it of L.items) if (!it.got) it.g.position.z = 0.035 + Math.sin(now / 300 + it.x * 9) * 0.008;
+      if (L && L.goal && !reduceMotion) L.goal.g.rotation.z = now / 900;
+    }
+    if (bigT > 0) { bigT -= dt; if (bigT <= 0) hideBig(); }
+    if (vision) vision.update(dt, 0, 0);
+    renderer.render(scene, camera);
+    if (params.get('debug')) window.__eyeball = { mode: MODE, ball: { x: +ball.x.toFixed(3), y: +ball.y.toFixed(3) }, tilt: { r: +(tilt.r - tilt.r0).toFixed(3), p: +(tilt.p - tilt.p0).toFixed(3) }, playing, phase: L && L.phase, total: L && L.total, items: L && L.items && L.items.filter(i => i.got).length, title: current && current.work.title };
+  });
+}
+let lost = true;
+</script>
+</body>
+</html>
