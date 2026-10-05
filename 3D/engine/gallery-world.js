@@ -7,7 +7,7 @@
 import * as THREE from '../vendor/three/three.module.js';
 import { buildEye } from './gallery-eye.js';
 import { setStainedNight } from './gallery-stained.js';
-import { GARDEN, RING, planGarden } from './gallery-garden-plan.js';
+import { GARDEN, RING, CAMPUS, onCampus, planGarden } from './gallery-garden-plan.js';
 import { toCreasedNormals } from '../vendor/three/addons/BufferGeometryUtils.js';
 
 const rnd = (() => { let s = 20261002; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; })();
@@ -240,7 +240,7 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
       }`;
     const ink = new THREE.MeshLambertMaterial({ color: 0x1d1c1b }), silver = new THREE.MeshLambertMaterial({ color: 0xd9d9d6 });
     const make = (x, z, img, kind, phase) => {
-      const g = new THREE.Group(); g.position.set(x, GARDEN.y, z); g.rotation.y = -Math.PI / 2; scene.add(g);   // on the garden's ring path, facing the plaza
+      const g = new THREE.Group(); g.position.set(x, GARDEN.y, z); g.rotation.y = z < 0 ? -Math.PI / 2 : Math.PI / 2; scene.add(g);   // on the ring path, flying in towards the way to the museum
       const base = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.35, 0.6, 24), new THREE.MeshLambertMaterial({ color: 0xd8d2c8 })); base.position.y = 0.3; g.add(base);
       const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.15, 15, 12), silver); pole.position.y = 7.5; g.add(pole);
       const ball = new THREE.Mesh(new THREE.SphereGeometry(0.24, 16, 12), ink); ball.position.y = 15.1; g.add(ball);
@@ -252,8 +252,8 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
       flags.push(mat); return g;
     };
     // centred out on the water in front of the welcome plaza, either side of the museum's axis
-    make(RING.x, -RING.r, resolveImg('gallery/img/bcp_logo_white.webp'), 'bcp', 0);
-    make(RING.x, RING.r, resolveImg('gallery/img/ora_card_16x9_black_269773142.webp'), 'ora', 1.9);
+    const flagImg = { bcp: 'gallery/img/bcp_logo_white.webp', ora: 'gallery/img/ora_card_16x9_black_269773142.webp' };
+    CAMPUS.flags.forEach(([x, z, kind], i) => make(x, z, resolveImg(flagImg[kind]), kind, i * 1.9));   // either side of the way to the museum, as you set off from the big tree
     updaters.push(t => { for (const m of flags) m.uniforms.uT.value = t; });
   }
 
@@ -330,7 +330,8 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
         const cp = camera.position; pts.visible = cp.x > G.x0 - 50 && cp.x < G.x1 + 30 && Math.abs(cp.z) < G.z1 + 40 && cp.y > -6;   // only animate when you can see the garden
         if (!pts.visible || !dt) return;
         for (let i = 0; i < N; i++) { const k = i * 3; pos[k + 1] -= sp[i] * dt; pos[k] += Math.sin(t * 0.9 + i) * 0.4 * dt + 0.25 * dt; pos[k + 2] += Math.cos(t * 0.7 + i * 1.3) * 0.35 * dt;
-          if (pos[k + 1] < G.y + 0.05) { pos[k + 1] = 9 + rnd() * 6; pos[k] = G.x0 + 4 + rnd() * (gw - 8); pos[k + 2] = G.z0 + 4 + rnd() * (gd - 8); } }
+          if (pos[k + 1] < G.y + 0.05 || (pos[k + 1] < 9.5 && onCampus(pos[k], pos[k + 2]) && !CAMPUS.pools.some(p => Math.abs(pos[k] - p.x) < 5))) { pos[k + 1] = 9 + rnd() * 6;   // (none drift indoors: a petal reaching a roof starts again)
+            pos[k] = G.x0 + 4 + rnd() * (gw - 8); pos[k + 2] = G.z0 + 4 + rnd() * (gd - 8); } }
         geo.attributes.position.needsUpdate = true;
       });
     }

@@ -2,7 +2,9 @@
 //  • Leave a note anywhere (☰ → Leave a note here): it floats at that spot as a little card; anyone who walks by sees it
 //    open up, and (if "Read notes aloud" is on) hears it read out.
 //  • Leave a note on an artwork: it shows in that artwork's panel, and the artwork's prompt says how many notes it has.
-//  • The guest book: a lectern on the welcome plaza. Sign it; the latest signatures show on its page.
+//  • The guest book: a lectern on the WHY House's porch (it was on the welcome plaza). Sign it; the latest signatures show on its page.
+//  • The WHY House (4 Oct): visitors' own stories ("why do you create? why do you care?"), with a photo of them or their art
+//    and their voice, hang on its walls in the slots the campus gives (cfg.why). The story stand inside adds one.
 // Notes are kept: each is a small signed message saved on public Nostr relays (the same network the gallery uses to find
 // other visitors), tagged with the room, so a private room keeps its own notes. People here get new notes instantly over
 // the gallery connection too, so notes still appear live if the relays can't be reached.
@@ -17,6 +19,7 @@ import { lectern } from './gallery-remodel.js';
 
 const KIND_NOTE = 4251, KIND_HIDE = 4252, KIND_OK = 4253, TAG = 'bcp-gallery-v1', MAX = 240;
 const IMG_MAX = 24000, AU_MAX = 56000, AU_SECS = 15;   // characters of the data URL; seconds of voice
+const IMG_WHY = 40000;   // a WHY House story's picture can be bigger (it might be their art), unless it also carries a voice clip
 const FONT = 'Archivo, Arimo, Helvetica, Arial, sans-serif';
 
 // ------------------------------------------------ a word filter (kept short; the admin can hide anything it misses)
@@ -69,13 +72,13 @@ export async function setupNotes({ G, net, cfg, myName, announce, esc, readAloud
     if (e.kind === KIND_OK) { const t = e.tags.find(t => t[0] === 'e'); if (t && admins.has(e.pubkey)) { approved.add(t[1]); changed(); } return true; }
     if (e.kind !== KIND_NOTE) return false;
     let c; try { c = JSON.parse(e.content); } catch (err) { return false; }
-    const img = typeof c.img === 'string' && c.img.length < IMG_MAX && /^data:image\/(jpeg|webp|png);base64,[A-Za-z0-9+/=]+$/.test(c.img) ? c.img : null;
+    const img = typeof c.img === 'string' && c.img.length < (c.type === 'why' ? IMG_WHY : IMG_MAX) && /^data:image\/(jpeg|webp|png);base64,[A-Za-z0-9+/=]+$/.test(c.img) ? c.img : null;
     const au = typeof c.au === 'string' && c.au.length < AU_MAX && /^data:audio\/[a-z0-9.+-]+(;codecs=[a-z0-9.,]+)?;base64,[A-Za-z0-9+/=]+$/i.test(c.au) ? c.au : null;
     const text = String(c.text || '').slice(0, MAX).trim(); if ((!text && !au) || (text && blocked(text)) || blocked(c.name || '')) return false;
     const k = (perAuthor.get(e.pubkey) || 0) + 1; if (k > 40) return false; perAuthor.set(e.pubkey, k);   // one browser can't flood the gallery
     const p = Array.isArray(c.p) && c.p.length === 3 && c.p.every(Number.isFinite) ? c.p : null;
-    const type = ['spot', 'art', 'book'].includes(c.type) ? c.type : 'spot';
-    if (type !== 'book' && !p) return false;
+    const type = ['spot', 'art', 'book', 'why'].includes(c.type) ? c.type : 'spot';
+    if (type !== 'book' && type !== 'why' && !p) return false;
     notes.set(e.id, { id: e.id, pubkey: e.pubkey, at: e.created_at, text, name: String(c.name || 'A visitor').slice(0, 20), type, p, art: typeof c.art === 'string' ? c.art.slice(0, 80) : null, title: typeof c.title === 'string' ? c.title.slice(0, 80) : '', img, au, secs: Math.min(AU_SECS + 1, +c.secs || 0), media: !!(img || au) });
     changed(); return true;
   }
@@ -164,7 +167,7 @@ export async function setupNotes({ G, net, cfg, myName, announce, esc, readAloud
   let dirty = true; function changed() { dirty = true; }
   let spoke = 0;
   W.onTick(dt => {
-    if (dirty) { dirty = false; placeMarks(); drawBook(); W.refreshNear(); if (bookOpen) openBook(); }
+    if (dirty) { dirty = false; placeMarks(); drawBook(); drawWhy(); W.refreshNear(); if (bookOpen) openBook(); }
     const [px, py, pz] = W.pos();
     for (const m of marks.values()) {
       const d = Math.hypot(m.n.p[0] - px, m.n.p[2] - pz), near = d < 3.2 && Math.abs(m.n.p[1] - py) < 2.2;
@@ -209,8 +212,59 @@ export async function setupNotes({ G, net, cfg, myName, announce, esc, readAloud
   }
   drawBook();
 
+  // ------------------------------------------------ the WHY House: visitors' stories on its walls
+  const whyCfg = cfg.why || null, whyCards = [];
+  if (whyCfg) {
+    for (const S of whyCfg.slots) {
+      const cv = document.createElement('canvas'); cv.width = 640; cv.height = Math.round(640 * S.h / S.w);
+      const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+      const m = new THREE.Mesh(new THREE.PlaneGeometry(S.w, S.h), new THREE.MeshBasicMaterial({ map: t }));
+      m.position.set(...S.p); m.rotation.y = S.ry; W.scene.add(m);
+      whyCards.push({ S, cv, t, n: null, key: '' });
+    }
+  }
+  function drawWhyCard(C) {
+    const c = C.cv.getContext('2d'), w = C.cv.width, h = C.cv.height, n = C.n;
+    if (!n) {   // an empty frame waiting for a story
+      c.fillStyle = '#ebe6dc'; c.fillRect(0, 0, w, h); c.strokeStyle = '#c9c1b2'; c.setLineDash([16, 12]); c.lineWidth = 6; c.strokeRect(20, 20, w - 40, h - 40); c.setLineDash([]);
+      c.fillStyle = '#8f877a'; c.textAlign = 'center'; c.font = `800 44px ${FONT}`; c.fillText('YOUR STORY HERE', w / 2, h / 2 - 6); c.font = `500 28px ${FONT}`; c.fillText('Tap ADD YOUR STORY by the door', w / 2, h / 2 + 40); c.textAlign = 'left'; C.t.needsUpdate = true; return;
+    }
+    c.fillStyle = '#f9f8f6'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, 0, 12, h);
+    const ph = pic(n, () => { if (C.n === n) drawWhyCard(C); });
+    let tx = 40, tw = w - 80;
+    if (ph) { const bw = h - 60, k = Math.min(bw / ph.naturalWidth, bw / ph.naturalHeight), iw = ph.naturalWidth * k, ih = ph.naturalHeight * k; c.fillStyle = '#1d1c1b'; c.fillRect(30, 30, bw, bw); c.drawImage(ph, 30 + (bw - iw) / 2, 30 + (bw - ih) / 2, iw, ih); tx = 30 + bw + 26; tw = w - tx - 30; }
+    c.fillStyle = pending(n) ? '#b8860b' : '#ec3013'; c.font = `800 22px ${FONT}`; c.fillText(pending(n) ? 'WAITING FOR APPROVAL' : n.au ? '\u{1F50A} A STORY IN THEIR VOICE' : 'A STORY', tx, 58);
+    c.fillStyle = '#1d1c1b'; let fs = 40; c.font = `800 ${fs}px ${FONT}`; while (c.measureText(n.name.toUpperCase()).width > tw && fs > 22) { fs -= 2; c.font = `800 ${fs}px ${FONT}`; } c.fillText(n.name.toUpperCase(), tx, 104);
+    c.font = `500 26px ${FONT}`; c.fillStyle = '#2b2928'; const lines = []; let line = '';
+    for (const wd of (n.text || (n.au ? '(a voice story: walk up and listen)' : '')).split(' ')) { const t = line ? line + ' ' + wd : wd; if (c.measureText(t).width > tw && line) { lines.push(line); line = wd; } else line = t; } if (line) lines.push(line);
+    const room = Math.floor((h - 160) / 34); lines.slice(0, room).forEach((l, i, a) => c.fillText(i === a.length - 1 && lines.length > a.length ? l + '\u2026' : l, tx, 150 + i * 34));
+    c.fillStyle = '#9a948c'; c.font = `600 20px ${FONT}`; c.fillText(ago(n.at), tx, h - 30); C.t.needsUpdate = true;
+  }
+  function drawWhy() {
+    if (!whyCards.length) return; const list = visible('why');
+    whyCards.forEach((C, i) => { const n = list[i] || null, key = n ? n.id + (pending(n) ? 'p' : '') : ''; if (key === C.key && C.drawn) return; C.n = n; C.key = key; C.drawn = true; drawWhyCard(C); });
+  }
+  function openWhy(item = {}) {
+    const one = item.id ? notes.get(item.id) : null;
+    const wrap = el('div');
+    if (one) { wrap.appendChild(noteRow(one, () => openWhy({}))); if (one.au && readAloud()) playVoice(one); }
+    else wrap.appendChild(el('p', 'margin:0;font:400 15px/1.5 ' + FONT, 'Why do you create? Why do you care? Tell us in your own words, record it in your own voice, and add a photo of yourself or of your art. Your story hangs here on the walls of the WHY House for everyone who visits. (Photos and voices show once the gallery team has looked at them.)'));
+    const c = composer(one ? 'Add your own story…' : 'Why do you create? Why do you care?', 'Add my story', (t, a) => post('why', t, { ...a }), { art: true });
+    wrap.appendChild(c.f);
+    const list = visible('why');
+    if (!one) { wrap.appendChild(el('div', 'font:800 11px/1 ' + FONT + ';letter-spacing:.14em;text-transform:uppercase;color:#ff9783;margin:18px 0 4px', list.length ? list.length + (list.length === 1 ? ' story' : ' stories') + ' so far' : 'No stories yet: yours can be the first')); list.slice(0, 60).forEach(n => wrap.appendChild(noteRow(n, () => openWhy({})))); }
+    showPanel('The WHY House', one ? 'A story from ' + one.name : 'Add your story', wrap);
+    if (!one) setTimeout(() => c.ta.focus(), 50);
+  }
+
   // ------------------------------------------------ things you can walk up to
   W.addNear(pl => {
+    if (whyCfg) {
+      const st = whyCfg.station; if (Math.hypot(pl.x - st.x, pl.z - st.z) < st.r && Math.abs(pl.y) < 2) return { kind: 'why', item: { z: -1 }, label: 'Add your story' };
+      let best = null, bd = 3.4;   // stand in front of a story (within a few steps) to read or hear it
+      for (const C of whyCards) { if (!C.n) continue; const [x, y, z] = C.S.p; const d = Math.hypot(pl.x - x, pl.z - z), front = (pl.x - x) * Math.sin(C.S.ry) + (pl.z - z) * Math.cos(C.S.ry); if (d < bd && front > 0.2 && Math.abs(pl.y) < 2) { bd = d; best = C; } }
+      if (best) return { kind: 'why', item: { z: best.S.p[0] + best.S.p[1] * 7 + best.S.p[2] * 13, id: best.n.id }, label: 'Story from ' + best.n.name };
+    }
     if (bookPos && Math.hypot(pl.x - bookPos.x, pl.z - bookPos.z) < 2.8 && Math.abs(pl.y - bookPos.y) < 2) return { kind: 'guestbook', item: { z: bookPos.z }, label: 'Sign the guest book' };
     let best = null, bd = 2.4;
     for (const m of marks.values()) { const d = Math.hypot(m.n.p[0] - pl.x, m.n.p[2] - pl.z); if (d < bd && Math.abs(m.n.p[1] - pl.y) < 2) { bd = d; best = m.n; } }
@@ -230,6 +284,7 @@ export async function setupNotes({ G, net, cfg, myName, announce, esc, readAloud
     if (pending(n)) who.appendChild(el('div', 'font:800 10px/1.3 ' + FONT + ';letter-spacing:.1em;text-transform:uppercase;color:#ffcf6b', n.pubkey === me ? 'Waiting for approval · only you can see it for now' : 'Waiting for your approval'));
     head.appendChild(who);
     if (n.au) { const pb = el('button', BTN + ';min-height:44px;background:#1f4fd8;border-color:#1f4fd8;color:#fff', '\u25B6 Voice' + (n.secs ? ' ' + Math.round(n.secs) + 's' : '')); pb.setAttribute('aria-label', 'Play the voice note from ' + n.name); pb.onclick = () => playVoice(n); head.appendChild(pb); }
+    if (n.type === 'why' && n.img) { head.firstChild.remove(); const big = el('img', 'display:block;max-width:100%;max-height:340px;margin:0 0 8px;border:2px solid var(--ink,#f3f2f2)'); big.src = n.img; big.alt = 'The picture ' + n.name + ' added to their story'; r.appendChild(big); }
     r.appendChild(head); if (n.text) r.appendChild(el('div', 'font:400 15px/1.45 ' + FONT + ';margin:4px 0 2px', n.text));
     const meta = el('div', 'display:flex;gap:6px;align-items:center;flex-wrap:wrap;font:600 12px ' + FONT + ';color:' + MUTED);
     meta.appendChild(el('span', 'flex:1', ago(n.at)));
@@ -239,7 +294,7 @@ export async function setupNotes({ G, net, cfg, myName, announce, esc, readAloud
     else { const b = el('button', BTN + ';min-height:36px', 'Hide for me'); b.onclick = () => { hideForMe(n); onGone && onGone(); }; meta.appendChild(b); }
     r.appendChild(meta); return r;
   }
-  function composer(placeholder, btnText, send) {
+  function composer(placeholder, btnText, send, opt = {}) {
     const f = el('div', 'margin-top:12px');
     const ta = el('textarea'); ta.maxLength = MAX; ta.rows = 3; ta.placeholder = placeholder; ta.setAttribute('aria-label', placeholder);
     ta.style.cssText = 'width:100%;box-sizing:border-box;padding:10px 12px;border:2px solid var(--ink,#f3f2f2);background:#0f0e0d;color:var(--ink,#f3f2f2);border-radius:0;font:400 16px/1.4 ' + FONT + ';resize:vertical;user-select:text;-webkit-user-select:text';
@@ -250,9 +305,9 @@ export async function setupNotes({ G, net, cfg, myName, announce, esc, readAloud
     // ---- a photo of yourself and a voice clip, both optional
     const att = { img: null, au: null, secs: 0 };
     const media = el('div', 'display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap');
-    const micB = el('button', BTN, '\u{1F399} Record voice'), camB = el('button', BTN, '\u{1F4F7} Add your photo');
-    micB.setAttribute('aria-label', 'Record a voice note, up to ' + AU_SECS + ' seconds'); camB.setAttribute('aria-label', 'Add a photo of yourself');
-    const fileIn = el('input'); fileIn.type = 'file'; fileIn.accept = 'image/*'; fileIn.setAttribute('capture', 'user'); fileIn.style.display = 'none';
+    const micB = el('button', BTN, '\u{1F399} Record voice'), camB = el('button', BTN, opt.art ? '\u{1F5BC} Add a photo (you or your art)' : '\u{1F4F7} Add your photo');
+    micB.setAttribute('aria-label', 'Record a voice note, up to ' + AU_SECS + ' seconds'); camB.setAttribute('aria-label', opt.art ? 'Add a photo of yourself or of your art' : 'Add a photo of yourself');
+    const fileIn = el('input'); fileIn.type = 'file'; fileIn.accept = 'image/*'; if (!opt.art) fileIn.setAttribute('capture', 'user'); fileIn.style.display = 'none';
     const prev = el('div', 'display:flex;gap:8px;align-items:center;flex-wrap:wrap');
     const drawPrev = () => {
       prev.replaceChildren();
@@ -263,10 +318,13 @@ export async function setupNotes({ G, net, cfg, myName, announce, esc, readAloud
     fileIn.onchange = () => {
       const file = fileIn.files && fileIn.files[0]; fileIn.value = ''; if (!file) return;
       const url = URL.createObjectURL(file), im = new Image();
-      im.onload = () => { const S = 160, cv = document.createElement('canvas'); cv.width = cv.height = S; const s = Math.min(im.naturalWidth, im.naturalHeight);
-        cv.getContext('2d').drawImage(im, (im.naturalWidth - s) / 2, (im.naturalHeight - s) / 2, s, s, 0, 0, S, S); URL.revokeObjectURL(url);
-        let q = 0.78, d = cv.toDataURL('image/jpeg', q); while (d.length > IMG_MAX - 200 && q > 0.3) { q -= 0.12; d = cv.toDataURL('image/jpeg', q); }
-        if (d.length > IMG_MAX - 200) { say('That photo couldn\u2019t be added. Try another one.', true); return; }
+      im.onload = () => { const cv = document.createElement('canvas'), nw = im.naturalWidth, nh = im.naturalHeight;
+        if (opt.art) { const k = Math.min(1, 360 / Math.max(nw, nh)); cv.width = Math.round(nw * k); cv.height = Math.round(nh * k); cv.getContext('2d').drawImage(im, 0, 0, cv.width, cv.height); }   // the whole picture (it may be their art)
+        else { const S = 160, s = Math.min(nw, nh); cv.width = cv.height = S; cv.getContext('2d').drawImage(im, (nw - s) / 2, (nh - s) / 2, s, s, 0, 0, S, S); }
+        URL.revokeObjectURL(url);
+        const lim = (opt.art ? IMG_WHY : IMG_MAX) - 200;
+        let q = 0.8, d = cv.toDataURL('image/jpeg', q); while (d.length > lim && q > 0.3) { q -= 0.1; d = cv.toDataURL('image/jpeg', q); }
+        if (d.length > lim) { say('That photo couldn\u2019t be added. Try another one.', true); return; }
         att.img = d; drawPrev(); say('Photo added.'); };
       im.onerror = () => { URL.revokeObjectURL(url); say('That photo couldn\u2019t be opened. Try another one.', true); };
       im.src = url;
@@ -293,7 +351,13 @@ export async function setupNotes({ G, net, cfg, myName, announce, esc, readAloud
       tick(); recTimer = setInterval(tick, 250); say('Recording. Tap Stop when you\u2019re done.');
     };
     media.append(micB, camB, fileIn, prev);
-    b.onclick = async () => { stopRec(); b.disabled = true; const r = await send(ta.value, { ...att }); b.disabled = false; if (r.error) { say(r.error, true); return; }
+    // a big picture and a voice clip together would make the note too large for the note servers: shrink the picture to fit
+    const shrink = (d, lim) => new Promise(res => { const im = new Image(); im.onload = () => { let k = 1, out = d; const cv = document.createElement('canvas');
+      while (out.length > lim && k > 0.2) { k *= 0.8; cv.width = Math.round(im.naturalWidth * k); cv.height = Math.round(im.naturalHeight * k); cv.getContext('2d').drawImage(im, 0, 0, cv.width, cv.height); out = cv.toDataURL('image/jpeg', 0.7); }
+      res(out.length <= lim ? out : null); }; im.onerror = () => res(null); im.src = d; });
+    b.onclick = async () => { stopRec(); b.disabled = true;
+      if (att.img && att.au && att.img.length > IMG_MAX - 200) { const d = await shrink(att.img, IMG_MAX - 200); if (d) att.img = d; else att.img = null; }
+      const r = await send(ta.value, { ...att }); b.disabled = false; if (r.error) { say(r.error, true); return; }
       ta.value = ''; att.img = att.au = null; att.secs = 0; drawPrev();
       say(r.pending ? 'Saved \u2713 Your photo and voice will show once the gallery team approves them.' : r.saved ? 'Saved \u2713 Everyone can see it.' : 'Shared with everyone here \u2713 (the note servers didn\u2019t answer, so it may not be kept).'); };
     row.append(b, st); f.append(media, ta, row);
@@ -341,7 +405,7 @@ export async function setupNotes({ G, net, cfg, myName, announce, esc, readAloud
 
   return {
     onEvent: (id, d) => { if (d && d.k === 'note') ingest(d.e); },
-    openBook, openCompose, openSpot, artSection, countFor: a => forArt(a).length,
+    openBook, openCompose, openSpot, openWhy, artSection, countFor: a => forArt(a).length,
     admin: () => !!adminSk, count: () => visible().length, relaysOpen: () => relays.filter(r => r.open).length, me, room, okCount: () => okCount,
   };
 }

@@ -1,4 +1,5 @@
-// Blind Canvas gallery: 'Hope Floating in Braille', an island on the welcome plaza.
+// Blind Canvas gallery: 'Hope Floating in Braille': two pools in the park, one either side of the walk to the museum (4 Oct;
+// it used to be one island on the welcome plaza, with a pool on each side of the glass).
 // In the middle, a glass block in a slim steel frame with the Blind Canvas Project logo suspended inside it in black (an
 // office-lobby sign), lit from its base. On each side of the glass a tiled pool of moving, glowing water with the four braille
 // cells of H-O-P-E floating and bobbing on it, and a black label along the outer rim. Both sides read correctly, so visitors
@@ -6,8 +7,10 @@
 // The old piece (centre of the entry hall) is carved out in gallery-remodel.js CARVES; patchOldBraille() fills its floor.
 import * as THREE from '../vendor/three/three.module.js';
 
-// on the plaza at the end away from the museum, the glass running north-south so one face looks at the museum and one at the garden
-export const BRAILLE = { x: 4.4, z: 0, floor: 0.02, yaw: Math.PI / 2, poolW: 7.0, poolD: 2.0, GW: 5.0, GH: 2.6, GD: 0.42 };
+// each pool: its glass block stands on the far side (away from the walk), the water and the floating H-O-P-E between the glass
+// and the walk, so both read as you pass between them. (Local frame: the walk is at -z.)
+import { CAMPUS } from './gallery-garden-plan.js';
+export const BRAILLE = { units: CAMPUS.pools, floor: 0.02, poolW: 7.0, poolD: 2.0, GW: 5.0, GH: 2.6, GD: 0.42 };
 
 const tex = (w, h, draw, rep) => { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; draw(cv.getContext('2d'), w, h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; if (rep) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(...rep); } return t; };
 
@@ -17,7 +20,8 @@ export function patchOldBraille({ scene, wood, woodify }) {   // the floor where
 }
 
 export function buildBraille({ scene, resolveImg }) {
-  const B = BRAILLE, F = 0, g = new THREE.Group(); g.position.set(B.x, B.floor, B.z); g.rotation.y = B.yaw; scene.add(g); const col = [], tickers = [];
+  const B = BRAILLE, F = 0, root = new THREE.Group(); scene.add(root); const col = [], tickers = [];
+  let g = null;   // the unit being built
   const stone = new THREE.MeshLambertMaterial({ color: 0xf1eee9 }), ink = new THREE.MeshLambertMaterial({ color: 0x1d1c1b });
   const steel = new THREE.MeshLambertMaterial({ color: 0x8d9298 }), red = new THREE.MeshBasicMaterial({ color: 0xec3013 });
   const box = (p, w, h, d, m, x, y, z, solid) => { const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); b.position.set(x, y, z); p.add(b); if (solid) col.push(b); return b; };
@@ -47,7 +51,7 @@ export function buildBraille({ scene, resolveImg }) {
   const W = B.poolW, D = B.poolD, RIM = 0.22, RH = 0.36, GD = B.GD, GAP = 0.18, WY = F + RH - 0.09;
   // one side: a pool between the glass's plinth and the visitor (this side's visitor stands at -z, facing +z)
   function side(rotY) {
-    const s = new THREE.Group(); s.rotation.y = rotY; g.add(s);
+    const s = new THREE.Group(); s.rotation.y = rotY; g.add(s);   // (each unit has one side now: the walk's)
     const zi = -(GD / 2 + 0.15 + GAP), zo = zi - D;   // inner (glass side) and outer edges of the water
     box(s, W + RIM * 2, RH, RIM, stone, 0, F + RH / 2, zo - RIM / 2, true);                       // outer rim
     box(s, W + RIM * 2, RH, RIM, stone, 0, F + RH / 2, zi + RIM / 2, true);                       // inner rim (against the plinth)
@@ -71,10 +75,12 @@ export function buildBraille({ scene, resolveImg }) {
     }));
     return s;
   }
-  side(0); side(Math.PI);
+  const logoMats = [], GW = B.GW, GH = B.GH, gb = F + 0.32;
+  for (const U of B.units) {
+  g = new THREE.Group(); g.position.set(U.x, B.floor, U.z); g.rotation.y = U.yaw; root.add(g);
+  side(0);
 
   // ---- the glass block with the logo inside, in a slim steel frame on a low lit plinth
-  const GW = B.GW, GH = B.GH, gb = F + 0.32;
   box(g, GW + 0.3, 0.32, GD + 0.3, ink, 0, F + 0.16, 0, true);
   for (const k of [-1, 1]) { const led = new THREE.Mesh(new THREE.PlaneGeometry(GW, 0.05), new THREE.MeshBasicMaterial({ color: 0xd8f7ff })); led.position.set(0, gb + 0.002, k * (GD / 2 + 0.07)); led.rotation.x = -Math.PI / 2; g.add(led); }   // LED strips in the plinth, both faces
   const glassM = new THREE.MeshLambertMaterial({ color: 0xbfe6ef, transparent: true, opacity: 0.2, depthWrite: false, side: THREE.DoubleSide });
@@ -88,13 +94,14 @@ export function buildBraille({ scene, resolveImg }) {
   box(g, GW + T * 2, T, GD + 0.06, steel, 0, gb - T / 2 + 0.02, 0, false);
   box(g, GW * 0.4, 0.02, GD + 0.08, red, 0, gb + GH + T + 0.01, 0, false);
   // for each face: a sheen on the near face, the logo (black, reading the right way round), a glow behind it on the far face
-  const logoMats = [];
   for (const k of [-1, 1]) {   // k = -1: side A (visitor at -z); +1: side B
     const ry = k < 0 ? Math.PI : 0;
     const sh = new THREE.Mesh(new THREE.PlaneGeometry(GW, GH), new THREE.MeshBasicMaterial({ map: sheenT, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })); sh.position.set(0, gb + GH / 2, k * (GD / 2 + 0.004)); sh.rotation.y = ry; sh.renderOrder = 6; g.add(sh);
     const lm = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }); logoMats.push(lm);
     const lg = new THREE.Mesh(new THREE.PlaneGeometry(GW * 0.82, GH * 0.82), lm); lg.position.set(0, gb + GH / 2, k * 0.012); lg.rotation.y = ry; lg.renderOrder = 4; g.add(lg);
     const hl = new THREE.Mesh(new THREE.PlaneGeometry(GW - 0.1, GH - 0.1), new THREE.MeshBasicMaterial({ map: haloT, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false })); hl.position.set(0, gb + GH / 2, -k * (GD / 2 - 0.02)); hl.rotation.y = ry; hl.renderOrder = 3; g.add(hl);
+  }
+  g.updateMatrixWorld(true);
   }
   { const img = new Image(); img.onload = () => {
       const t = tex(1024, Math.round(1024 * GH / GW), (c, w, h) => { const k = Math.min(w * 0.94 / img.width, h * 0.94 / img.height), iw = img.width * k, ih = img.height * k; c.drawImage(img, (w - iw) / 2, (h - ih) / 2, iw, ih); c.globalCompositeOperation = 'source-in'; c.fillStyle = '#111'; c.fillRect(0, 0, w, h); });
@@ -108,6 +115,8 @@ export function buildBraille({ scene, resolveImg }) {
     ripple.offset.set(t * 0.012, t * 0.007); cA.offset.set(t * 0.02, t * 0.011); cB.offset.set(-t * 0.017, t * 0.015);
     for (const o of dots) { o.d.position.y = o.y + Math.sin(t * 1.3 + o.ph) * 0.025; o.d.rotation.z = Math.sin(t * 0.9 + o.ph) * 0.05; o.d.rotation.x = Math.cos(t * 0.8 + o.ph) * 0.05; }
   });
-  g.updateMatrixWorld(true);
-  return { group: g, col, tick: dt => tickers.forEach(f => f(dt)) };
+  root.updateMatrixWorld(true);
+  // where each pool's artwork card is read from (the walk side, by the water)
+  const spots = B.units.map(U => ({ x: U.x, y: 0.4, z: U.z - Math.cos(U.yaw) * 2.2 }));
+  return { group: root, col, spots, tick: dt => tickers.forEach(f => f(dt)) };
 }

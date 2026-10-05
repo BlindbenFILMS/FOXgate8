@@ -71,7 +71,7 @@ const FONT = 'Archivo, Arimo, Helvetica, Arial, sans-serif';
 
 // ------------------------------------------------------------ the wing
 // Laid out along -x from its origin O (entrance), floor at O.y. Returns meshes for collision, art entries and doors.
-export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveImg, L = 66, title = null, logo = null, spacious = false, endVideo = null, floorLogo = null, fillLogo = null, doorSign = 'NEW ARTISTS WING', videoKicker = 'BLINDNESS · AN INTERVIEW WITH' }) {
+export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveImg, L = 66, title = null, logo = null, spacious = false, endVideo = null, floorLogo = null, fillLogo = null, doorSign = 'NEW ARTISTS WING', videoKicker = 'BLINDNESS · AN INTERVIEW WITH', bayW: bayWIn = 0 }) {
   const g = new THREE.Group(); g.position.copy(O); g.rotation.y = rotY; scene.add(g); g.updateMatrixWorld(true);
   // local layout -> world (the wing can be turned to join any doorway of the building)
   const toW = v => v.clone().applyMatrix4(g.matrixWorld), dirW = v => v.clone().applyQuaternion(g.quaternion);
@@ -162,7 +162,7 @@ export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveIm
   }
   // bays: left wall (z=-HW, facing +z) then right wall (z=+HW, facing -z)
   // spacious: 30 m bays, each piece gets its own stretch of wall with a description card beside it
-  const bayW = spacious ? 30 : 15, x0 = spacious ? -17 : -8.5, slots = [];
+  const bayW = bayWIn || (spacious ? 30 : 15), x0 = spacious ? -17 : -8.5, slots = [];   // (bayW: a tighter room can pack its bays closer)
   const nb = Math.max(1, Math.floor((L - 4) / bayW));
   for (let i = 0; i < nb; i++) slots.push({ x: x0 - i * bayW, side: -1 });
   for (let i = 0; i < nb; i++) slots.push({ x: x0 - i * bayW, side: 1 });

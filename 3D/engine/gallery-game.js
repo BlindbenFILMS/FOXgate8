@@ -10,7 +10,7 @@ import { foxKit, PLAYER_MALE, PLAYER_FEMALE } from '../fox-kit.js';
 import { crestTex } from './textures.js';
 import { buildGuides } from './gallery-guides.js';
 import { buildWorld } from './gallery-world.js';
-import { GARDEN, RING, planGarden } from './gallery-garden-plan.js';
+import { GARDEN, RING, CAMPUS, planGarden } from './gallery-garden-plan.js';
 import { makePlant, makeBench } from './gallery-props.js';
 import { caneKit, loadCane, CANE_DEFAULTS } from './avatars/cane.js';
 import { chairKit, loadChair, CHAIR_DEFAULTS } from './avatars/chair.js';
@@ -18,6 +18,7 @@ import { artAnimator } from './gallery-anim.js';
 import { buildVisionSpots, visionOverlay } from './gallery-vision.js';
 import { buildSimWalls } from './gallery-simwall.js';
 import { buildBraille, patchOldBraille } from './gallery-braille.js';
+import { buildCampus, CAMPUS_STOPS } from './gallery-campus.js';
 import { stainedGlass } from './gallery-stained.js';
 import { buildElevator } from './gallery-elevator.js';
 import { buildSkywalk } from './gallery-skywalk.js';
@@ -27,7 +28,7 @@ import { makeWood, woodify, isWhiteFloorMat, isPaletteMat, buildWing, buildDoor 
 import { buildKiosks, carveWorld, carved, buildEntrance, buildRooms, buildBioWalls, CARVES, canvasBox, cardTexture } from './gallery-remodel.js';
 
 const BASE = 'gallery/';
-const SPAWN = { x: 0.4, y: 0.5, z: 0, face: -Math.PI / 2 };   // in front of the braille island, facing the museum
+const SPAWN = { x: CAMPUS.spawn.x, y: 0.5, z: CAMPUS.spawn.z, face: CAMPUS.spawn.face };   // in the middle of the park beside the big tree, facing the museum (the cinema behind you)
 
 export async function createGallery({ container, onProgress = () => {}, onNear = () => {}, onZone = () => {}, onSplash = () => {} }) {
   const lowEnd = /iPhone|iPad|Android/i.test(navigator.userAgent);
@@ -113,6 +114,8 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const glbRay = new THREE.Raycaster(), DOWN = new THREE.Vector3(0, -1, 0);
   const kiosks = buildKiosks({ scene, resolveImg: RES, groundAt: (x, y, z) => { glbRay.set(new THREE.Vector3(x, y, z), DOWN); glbRay.far = 30; const h = glbRay.intersectObject(world, true)[0]; return h ? h.point.y : -1e9; } });
   const rooms = buildRooms({ scene, data, wood, resolveImg: RES, buildWing });
+  // the park campus: BLIND CAN CINEMA, the WHY House, the AMB building's outside, and the museum's signs pointing to them
+  const campus = NOWORLD ? null : buildCampus({ scene, wood, woodify, vids: data.vids, resolveImg: RES, lowEnd });
   const braille = buildBraille({ scene, resolveImg: RES });   // 'Hope Floating in Braille': an island on the welcome plaza, at the end away from the museum
   patchOldBraille({ scene, wood, woodify });
   const lift = buildElevator({ scene, resolveImg: RES });   // the lift from the music room up through the pupil to the eye platform
@@ -136,7 +139,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     for (const [x, z, ry] of plan.benches) B(2.5, 0.6, 0.7, x, 0.3, z, ry);
     B(1.6, 3, 1.6, RING.x, 1.5, RING.z);                                                    // the big tree's trunk
     for (const z of [-7.04, 7.04]) B(0.5, 4.4, 0.5, 21, 2.2, z);                           // the name sign's posts
-    for (const z of [-21, 21]) B(2.6, 1, 2.6, 40, 0.5, z);                                 // flag bases
+    for (const [x, z] of CAMPUS.flags) B(2.6, 1, 2.6, x, 0.5, z);                          // flag bases
   }
   // furnishings: plants at the plaza corners and the main hall entrance, benches on the plaza looking out over the lake
   const propCol = [];
@@ -159,7 +162,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       const c = new THREE.Mesh(new THREE.BoxGeometry(W, H, 0.2)); c.position.set(cx, cy, w.z); c.updateMatrixWorld(true); winCol.push(c);
     }
   }
-  for (const m of [...entrance.col, ...rooms.col, ...kiosks.col, ...bioWalls.col, ...braille.col, ...lift.col, ...skywalk.col, ...simCol, ...edgeCol, ...propCol, ...winCol]) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); colGeos.push(g); }
+  for (const m of [...entrance.col, ...rooms.col, ...kiosks.col, ...bioWalls.col, ...braille.col, ...lift.col, ...skywalk.col, ...simCol, ...edgeCol, ...propCol, ...winCol, ...(campus ? campus.col : [])]) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); colGeos.push(g); }
   // one position-only collision mesh with a BVH (fast rays on phones)
   let total = 0; for (const g of colGeos) total += (g.index ? g.index.count : g.attributes.position.count);
   const P = new Float32Array(total * 3); let k = 0;
@@ -185,7 +188,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     }
     return saved;
   }
-  { let saved = 0; for (const g of [entrance.group, kiosks.group, bioWalls.group, propsG, wing && wing.group, ...rooms.list.map(r => r.room.group)]) if (g) saved += mergeStatic(g); console.log('[perf] merged', saved, 'static meshes'); }
+  { let saved = 0; for (const g of [entrance.group, kiosks.group, bioWalls.group, propsG, wing && wing.group, campus && campus.group, ...rooms.list.map(r => r.room.group)]) if (g) saved += mergeStatic(g); console.log('[perf] merged', saved, 'static meshes'); }
   const bvh = new MeshBVH(colGeo);
   const ray = new THREE.Ray();
   const cast = (ox, oy, oz, dx, dy, dz, far) => { ray.origin.set(ox, oy, oz); ray.direction.set(dx, dy, dz); const h = bvh.raycastFirst(ray, THREE.DoubleSide, 0, far); return h && h.distance <= far ? h : null; };
@@ -249,6 +252,9 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     const { desc, imgDesc } = splitDesc(a.d);
     return { title: a.t, desc, imgDesc, img: best < 1.5 ? img : null, ctr, n, au: a.au || null, aus: !!a.aus, bio: !!a.bio, vn: a.vn || null, artist: a.artist || null };
   });
+  // 'Hope Floating in Braille' is two pools now, one either side of the walk: its card reads from beside either one
+  { const i = arts.findIndex(a => /^HOPE FLOATING IN BRAILLE$/i.test(a.title || ''));
+    if (i >= 0) { const a = arts[i]; arts.splice(i, 1, ...braille.spots.map(p => ({ ...a, ctr: new THREE.Vector3(p.x, p.y, p.z) }))); } }
   if (wing) arts.push(...wing.arts);
   arts.push(...rooms.arts);
   function showSign(sg) {
@@ -282,6 +288,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   });
   if (wing) vids.push(...wing.screens);
   vids.push(...rooms.screens);
+  if (campus) vids.push(...campus.screens);
   for (const v of vids) compactGroups(v.box);   // a screen box draws 2 times, not 6   // a two-sided interview screen in the middle of each bay of the New Artists Wing
   // living paintings: the animated version of an artwork fades in over the still while you stand in front of it
   const ANIMS = new Set(data.anims || []);
@@ -619,6 +626,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   // ---------------------------------------------------------------- follow a friend (tours): walk the breadcrumb trail of their positions
   const F = { id: null, crumbs: [], best: 1e9, stuckT: 0, onEnd: null };
   const nearProviders = [Pl => lift.near(Pl)], tickers = [];
+  if (campus) nearProviders.push(...campus.near);
   function placeNear(r, slot) {
     // behind them, or (slot n, when the host gathers everyone) round them in a ring; the first clear spot with floor wins
     const tries = slot == null ? [[r.tface + Math.PI, 1.6]] : [0, 1, 2, 3, 4, 5].map(k => [r.tface + 0.9 + (slot + k) * 2.39996, 2.2 + ((slot + k) % 3) * 0.7]);
@@ -875,22 +883,24 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const BENCHES = [];
   for (const z of [7.6, -7.6]) BENCHES.push({ x: 5.6, z, ry: Math.PI / 2, len: 2.8 });
   if (!NOWORLD) for (const [x, z, ry] of planGarden().benches) BENCHES.push({ x, z, ry, len: 2.4 });
+  if (campus) BENCHES.push(...campus.benches);   // the WHY House's benches, the cinema's rows of seats
   const benchTop = b => (b.top ??= (() => { const y = groundAt(b.x, 4, b.z); return y > -50 ? y - 0.1 : 0.5; })());
   function benchNear() {
     if (extra === 'chair') return null;   // (the wheelchair is already a seat)
+    let best = null, bd = 1.5;   // the nearest one (rows of cinema seats are close together)
     for (const b of BENCHES) { const dx = Pl.x - b.x, dz = Pl.z - b.z, c = Math.cos(b.ry), s = Math.sin(b.ry);
       const along = dx * c - dz * s, across = dx * s + dz * c;
-      if (Math.abs(along) < b.len / 2 + 0.3 && Math.abs(across) < 1.5 && Math.abs(Pl.y - (benchTop(b) - 0.5)) < 1.2) return b; }
-    return null;
+      if (Math.abs(along) < b.len / 2 + 0.3 && Math.abs(across) < bd && Math.abs(Pl.y - (benchTop(b) - 0.5)) < 1.2) { best = b; bd = Math.abs(across); } }
+    return best;
   }
   const hipV = new THREE.Vector3();
   function sitOn(b) {
     if (!b || Pl.sit || !player) return;
     const dx = Pl.x - b.x, dz = Pl.z - b.z, c = Math.cos(b.ry), s = Math.sin(b.ry);
-    const along = clamp(dx * c - dz * s, -(b.len / 2 - 0.45), b.len / 2 - 0.45), side = Math.sign(dx * s + dz * c) || 1;
+    const along = clamp(dx * c - dz * s, -(b.len / 2 - 0.45), b.len / 2 - 0.45), side = b.dir || Math.sign(dx * s + dz * c) || 1;   // (dir: seats that face one way, like the cinema's)
     const nx = s * side, nz = c * side;   // facing out from the side you walked up on
     const P = player.userData.P; let hip = 0.5; if (P && P.legs && P.legs[0]) { player.updateMatrixWorld(true); P.legs[0].getWorldPosition(hipV); hip = hipV.y - player.position.y; }
-    Pl.sit = { gy: Pl.y, nx, nz };
+    Pl.sit = { gy: Pl.y, nx, nz, name: b.name || 'Bench' };
     Pl.x = b.x + c * along + nx * 0.06; Pl.z = b.z - s * along + nz * 0.06; Pl.y = benchTop(b) - hip + 0.03; Pl.vy = 0; Pl.speed = 0;
     Pl.face = Math.atan2(nx, nz); St.yaw = Pl.face + Math.PI; St.pitch = 0.22; player.userData.sit = true; nearKey = null;
   }
@@ -926,7 +936,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   function nearest() {
     const p = new THREE.Vector3(Pl.x, Pl.y + 1.2, Pl.z); let best = null, bd = 1e9;
     if (V.spot) return null;
-    if (Pl.sit) return { kind: 'sit', item: { z: 0, up: true }, label: 'Stand up' };
+    if (Pl.sit) return { kind: 'sit', item: { z: 0, up: true, name: Pl.sit.name }, label: 'Stand up' };
     if (simwalls && simwalls.kioskPositions.some(k => Math.hypot(Pl.x - k.x, Pl.z - k.z) < 2.6 && Math.abs(Pl.y - k.y) < 2)) return { kind: 'simctl', item: simwalls, label: 'Change the wall severity' };
     for (const sp of vSpots) if (Math.hypot(Pl.x - sp.x, Pl.z - sp.z) < sp.r + 0.15 && Math.abs(Pl.y - sp.y) < 1.2) return { kind: 'vision', item: sp, label: 'See through their eyes' };
     for (const sp of vSpots) if (sp.signPos && Math.hypot(Pl.x - sp.signPos.x, Pl.z - sp.signPos.z) < 1.6 && Math.abs(Pl.y - sp.y) < 1.2) return { kind: 'vision', item: sp, label: 'See through their eyes' };
@@ -934,15 +944,15 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     for (const a of arts) { const d = a.ctr.distanceTo(p); if (d < 4.2 && d < bd) { bd = d; best = { kind: 'art', item: a, label: 'VIEW · ' + (a.title || 'ARTWORK') }; } }
     for (const e of edu) { const d = e.pos.distanceTo(p); if (d < e.r + 1 && d < bd + 1.5) { bd = d; best = { kind: 'edu', item: e, label: (e.prompt || 'LEARN MORE').replace(/^Press E to /i, '') }; } }
     if (!best) { const b = benchNear(); if (b) best = { kind: 'sit', item: b, label: 'Sit on the bench' }; }
-    if (!best && filmHere()) best = { kind: 'film', item: { z: curUrl.length }, label: 'Watch the film full screen' };
+    if (!best && filmHere()) best = { kind: 'film', item: { z: curUrl }, label: 'Watch the film full screen' };   // (z: the film, so the button's words change with it)
     return best;
   }
-  let doorT = 0;
+  let doorT = 0, cineT = 0;
   const fadeEl = document.createElement('div'); fadeEl.style.cssText = 'position:absolute;inset:0;background:#0b0a12;opacity:0;pointer-events:none;transition:opacity .28s;z-index:6'; container.appendChild(fadeEl);
   function travel(d) {
     if (d.wing && wing) wing.load();
     fadeEl.style.opacity = 1;
-    setTimeout(() => { const t = d.to; Pl.x = t.x; Pl.z = t.z; Pl.y = t.y; Pl.vy = 0; Pl.face = t.face; St.yaw = t.face + Math.PI; St.camDist = 1; streamT = 0; onZone(d.wing ? 'New Artists Wing' : 'The Gallery'); setTimeout(() => fadeEl.style.opacity = 0, 120); }, 300);
+    setTimeout(() => { const t = d.to; Pl.x = t.x; Pl.z = t.z; Pl.y = t.y; Pl.vy = 0; Pl.face = t.face; St.yaw = t.face + Math.PI; St.camDist = 1; streamT = 0; St.zoneName = null; setTimeout(() => fadeEl.style.opacity = 0, 120); }, 300);
   }
   let faceLocal = null;   // the fox Animoji: the visitor's tracked face drives their own fox
   const Q = { max: renderer.getPixelRatio(), pr: renderer.getPixelRatio(), t: 0, n: 0 };
@@ -965,6 +975,12 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     if (F.id) followRecord();
     for (const f of tickers) f(dt);
     braille.tick(dt);
+    if (campus) {
+      campus.tick(dt);
+      // the cinema's programme: when its film comes round to the start again, the next one goes on
+      const cs = campus.cinema.screen;
+      if (curUrl && curUrl === cs.u && St.campusZone === 'cinema' && video.duration > 5) { const t = video.currentTime; if (cineT > video.duration - 3 && t < 2) { cineT = 0; playUrl(campus.cinema.next()); } else cineT = t; } else cineT = 0;
+    }
     lift.tick(dt, Pl);
     ringGlass.tick(Pl);
     // running: a smoothed pace, so a burst of speed holds back the heavy loading (art, films, living paintings) until you slow down
@@ -986,10 +1002,12 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     streamT -= dt;
     if (streamT <= 0) {
       streamT = 0.25; const p = new THREE.Vector3(Pl.x, Pl.y, Pl.z);
-      if (wing) { const inWing = wing.bounds.containsPoint(p); if (inWing !== St.inWing) { St.inWing = inWing; onZone(inWing ? 'New Artists Wing' : 'The Gallery'); } { const dW = Math.hypot(Pl.x - WING_O.x, Pl.z - WING_O.z); if (dW < (fast ? 70 : 110)) wing.load(); else if (dW > 160) wing.unload(); } }
+      { const inWing = !!wing && wing.bounds.containsPoint(p), cz = campus && campus.zoneAt(Pl.x, Pl.y, Pl.z); St.inWing = inWing; St.campusZone = cz || null;
+        const zn = inWing ? 'New Artists Wing' : cz ? CAMPUS_STOPS[cz].name : 'The Gallery'; if (zn !== St.zoneName) { St.zoneName = zn; onZone(zn); } }
+      if (wing) { { const dW = Math.hypot(Pl.x - WING_O.x, Pl.z - WING_O.z); if (dW < (fast ? 70 : 110)) wing.load(); else if (dW > 160) wing.unload(); } }
       for (const r of rooms.list) { const dR = Math.hypot(Pl.x - r.O.x, Pl.z - r.O.z); if (dR < (fast ? 55 : 90)) r.room.load(); else if (dR > 170) r.room.unload(); }   // far rooms let their paintings go (memory)
       // rooms behind walls still draw (the camera doesn't know about walls): hide a room's whole group unless you're close to it
-      { const pp2 = new THREE.Vector3(Pl.x, Pl.y + 1, Pl.z); for (const r of rooms.list) r.room.group.visible = r.room.bounds.distanceToPoint(pp2) < 50; if (wing) wing.group.visible = wing.bounds.distanceToPoint(pp2) < 50; }
+      { const pp2 = new THREE.Vector3(Pl.x, Pl.y + 1, Pl.z); for (const r of rooms.list) r.room.group.visible = r.park || r.room.bounds.distanceToPoint(pp2) < 50; if (wing) wing.group.visible = wing.bounds.distanceToPoint(pp2) < 50; }
       // nearest first, a few per tick (no hitch), far enough out that it all arrives before you can see it
       const want = []; for (const sg of signs) { const d = sg.ctr.distanceTo(p); if (d < NEAR) { if (!sg.mesh) want.push([d, sg]); else sg.mesh.visible = d < ((sg.s.k === 't' || sg.s.k === 'l') ? 38 : 70); } else if (d > FAR) hideSign(sg); }   // loaded far out (no pop-in of images), but only drawn when close enough to matter: labels 38 m, art 70 m
       want.sort((a, b) => a[0] - b[0]); for (const [, sg] of want.slice(0, firstStream ? 60 : fast ? 4 : 14)) showSign(sg);   // running: a few at a time, nearest first firstStream = false;
@@ -1016,7 +1034,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   }
 
   return {
-    arts, edu, notesConfig: data.notes || null,
+    arts, edu, notesConfig: data.notes ? { ...data.notes, ...(campus ? { guestbook: campus.why.guestbook, why: { slots: campus.why.slots, station: campus.why.station } } : {}) } : null,
     setLook(l, x) { look = l || look; extra = x || 'none'; buildPlayer(); },
     // multiplayer hooks (the page wires these to engine/gallery-net.js)
     localState: () => [+Pl.x.toFixed(2), +Pl.y.toFixed(2), +Pl.z.toFixed(2), +Pl.face.toFixed(2), +Math.min(9, Pl.speed).toFixed(1), Pl.ground ? 0 : 1],
@@ -1043,6 +1061,10 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     },
     palettes: () => PALETTES.map((p, i) => ({ i, fur: p.fur || PLAYER_MALE.fur, dark: p.furDark || PLAYER_MALE.furDark, tip: p.tailTip || '#ffffff' })),
     elevator: { act: n => lift.act(n, Pl), state: lift.state }, ringGlass,
+    campus: campus && {
+      go(to) { const t = CAMPUS_STOPS[to]; if (!t) return; if (Pl.sit) standUp(); travel({ to: { x: t.x, z: t.z, y: groundAt(t.x, 3, t.z), face: t.face } }); },
+      zone: () => St.campusZone, why: campus.why, nowShowing: () => campus.cinema.now().title, nextFilm: () => playUrl(campus.cinema.next()), group: campus.group,
+    },
     sit: b => (b && b.up) || Pl.sit ? standUp() : sitOn(b), fullFilm: () => fullFilm(), sitting: () => !!Pl.sit,
     camHead: { local: (mode, stream) => setCam('me', mode, stream), remote: (id, mode, stream) => setCam(id, mode, stream) },
     face: { local: c => { faceLocal = c; if (!c && player) player.userData.faceCtl = null; }, remote: (id, c) => { const r = remotes.get(id); if (r && r.fox) r.fox.userData.faceCtl = c; } },

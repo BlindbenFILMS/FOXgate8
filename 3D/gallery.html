@@ -166,8 +166,10 @@ function actionWords(n) {
     case 'studio': return ['DRESS UP', 'Fox Studio'];
     case 'braille': return ['LEARN', 'Braille and brilliance'];
     case 'elevator': return [n.busy ? 'WAIT' : /down/.test(l) ? 'GO DOWN' : /call/.test(l) ? 'CALL ELEVATOR' : 'GO UP', L];
-    case 'sit': return [n.item && n.item.up ? 'STAND UP' : 'SIT', 'Bench'];
-    case 'film': return ['FULL SCREEN', 'The film in this room'];
+    case 'sit': return [n.item && n.item.up ? 'STAND UP' : 'SIT', (n.item && n.item.name) || 'Bench'];
+    case 'film': return ['FULL SCREEN', G && G.campus && G.campus.zone() === 'cinema' ? 'Now showing · ' + G.campus.nowShowing() : 'The film in this room'];
+    case 'why': return n.item && n.item.id ? ['READ STORY', L] : ['ADD YOUR STORY', 'The WHY House'];
+    case 'goto': return ['TAKE ME THERE', L];
     default: return [L.toUpperCase().slice(0, 26), ''];
   }
 }
@@ -204,6 +206,8 @@ function open(n) {
   if (n.kind === 'elevator') { G.elevator.act(n); return; }
   if (n.kind === 'sit') { G.sit(n.item); return; }
   if (n.kind === 'film') { G.fullFilm(); return; }
+  if (n.kind === 'why') { if (window.NOTES) window.NOTES.openWhy(n.item); return; }
+  if (n.kind === 'goto') { G.campus && G.campus.go(n.item.to); return; }
   if (n.kind === 'note') { if (window.NOTES) window.NOTES.openSpot(n.item); return; }
   quoteStop(); bioScrollStop();
   const pb = $('pb'); pb.innerHTML = ''; pb.scrollTop = 0;
@@ -229,9 +233,11 @@ function open(n) {
       h += '<div class="people">' + e.people.map(p => '<div class="p">' + (p.img ? '<img src="' + p.img + '" alt="' + esc(p.n) + '">' : '') + '<div><b>' + esc(p.n) + '</b>' + esc(p.t) + (p.s && !/^Share your story here/i.test(p.s) ? '<br>' + esc(p.s) : '') + '</div></div>').join('') + '</div>';
       if (e.form) h += '<div class="row"><a href="' + esc(e.form.replace('embedded=true', '')) + '" target="_blank" rel="noopener">' + esc(e.formBtn || 'Submit your why') + ' ↗</a></div>';
     }
+    if (e.kind === 'wallOfWhy' && G.campus) h += '<div class="row" style="border-left:4px solid var(--accent,#ec3013);padding:8px 12px;background:var(--card,#232120);margin:12px 0"><div style="flex:1 1 100%"><b>Leave your own why.</b> Write it, say it in your own voice, add a photo of you or your art: it hangs on the walls of the WHY House, out in the park.</div><button id="goWhy">Take me to the WHY House →</button></div>';
     if (e.qa && e.qa.length) h += e.qa.map((q, i) => '<details><summary>' + esc(q.q) + '</summary><div class="a">' + para(q.a) + '<div class="row"><button data-say="' + i + '">🔊 Read aloud</button>' + (q.v ? '<button data-vid="' + i + '">▶ Watch the video</button>' : '') + '</div><div id="v' + i + '"></div></div></details>').join('');
     pb.innerHTML = h;
     pb.querySelectorAll('[data-say]').forEach(b => b.onclick = () => { const q = e.qa[+b.dataset.say]; say(q.q + '. ' + q.a, b); });
+    if ($('goWhy')) $('goWhy').onclick = () => { $('px').click(); G.campus.go('why'); };
     pb.querySelectorAll('[data-vid]').forEach(b => b.onclick = () => playIn($('v' + b.dataset.vid), e.qa[+b.dataset.vid].v));
   }
   $('panel').style.display = 'flex'; window.HUSH = true; $('px').focus();
@@ -341,7 +347,7 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
   import('./engine/gallery-notes.js').then(async ({ setupNotes }) => {
     window.NOTES = await setupNotes({ G, net, cfg: G.notesConfig, myName: () => pref.name, announce, esc, readAloud: () => !pref.quietNotes, showPanel });
   }).catch(e => console.warn('notes unavailable', e));
-  $('noteBtn').onclick = () => { if (window.NOTES) window.NOTES.openCompose(); };
+  $('noteBtn').onclick = () => { if (!window.NOTES) return; if (G.campus && G.campus.zone() === 'why') window.NOTES.openWhy({}); else window.NOTES.openCompose(); };   // in the WHY House, LEAVE NOTE adds your story to its walls
   const [{ setupLive }, { setupFace }] = await Promise.all([import('./engine/gallery-live.js'), import('./engine/gallery-face.js')]);
   window.LIVE = setupLive({ G, net, announce, nameOf: id => names.get(id) || 'A visitor', invite: (...a) => window.TOG && window.TOG.invite(...a) });
   window.FACE = setupFace({ G, net, announce, onState: st => { const b = $('faceBtn'); b.classList.toggle('on', st === 'on'); b.setAttribute('aria-pressed', st === 'on'); b.textContent = st === 'loading' ? '🦊 Starting camera…' : st === 'on' ? '🦊 Fox copies my face · ON' : '🦊 Fox copies my face (camera)'; } });

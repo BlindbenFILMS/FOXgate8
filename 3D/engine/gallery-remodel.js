@@ -178,7 +178,7 @@ export function buildRooms({ scene, data, wood, resolveImg, buildWing }) {
   const out = { col: [], arts: [], screens: [], canvases: [], list: [] };
   for (const R of data.rooms || []) {
     const O = new THREE.Vector3(...R.O);
-    const room = buildWing({ scene, wing: { artists: R.artists }, O, rotY: R.rotY, doorW: R.doorW, wood, resolveImg, L: R.L, title: R.title, logo: R.logo, endVideo: R.endVideo, floorLogo: R.floorLogo, fillLogo: R.fillLogo, doorSign: R.doorSign });
+    const room = buildWing({ scene, wing: { artists: R.artists }, O, rotY: R.rotY, doorW: R.doorW, wood, resolveImg, L: R.L, title: R.title, logo: R.logo, endVideo: R.endVideo, floorLogo: R.floorLogo, fillLogo: R.fillLogo, doorSign: R.doorSign, bayW: R.bayW });
     // the partner's logo out in the hall, on an ink panel, to lead people to the room (loads with the room)
     // a free-standing ink display board (for a photo hung on the low wall across the hall); a red bar on top
     for (const hb of R.hallBoards || []) {
@@ -194,7 +194,7 @@ export function buildRooms({ scene, data, wood, resolveImg, buildWing }) {
         const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; lm.map = t; lm.color.set(0xffffff); lm.needsUpdate = true; };
       img.src = resolveImg(hl.img || R.floorLogo || R.logo);
     }
-    out.col.push(...room.col); out.arts.push(...room.arts); out.screens.push(...room.screens); out.canvases.push(...room.canvases); out.list.push({ O, room, key: R.key });
+    out.col.push(...room.col); out.arts.push(...room.arts); out.screens.push(...room.screens); out.canvases.push(...room.canvases); out.list.push({ O, room, key: R.key, park: !!R.park });   // (a room out in the park is its own building: always drawn)
   }
   return out;
 }

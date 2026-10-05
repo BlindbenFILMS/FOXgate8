@@ -2,7 +2,9 @@
 // When the gallery finds one of these paintings it shows a "Play the game" button.
 // To add one: write a module like napkins.js (start / update / pointer / pause / resume / stop) and list it here.
 import { napkinsGame } from './napkins.js';
+import { almostBlindnessGame } from './almost-blindness.js';
 
 export const GAMES = {
   'napkin-please': napkinsGame,
+  'almost-blindness': almostBlindnessGame,
 };

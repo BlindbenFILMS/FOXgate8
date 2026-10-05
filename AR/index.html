@@ -39,6 +39,8 @@
   #ar{position:fixed;inset:0;overflow:hidden}
   #ar video{object-fit:cover}
   #ar{touch-action:none}
+  /* during a mini game the story controls step aside, so the whole painting is the board */
+  body.gaming #hud .row, body.gaming #status, body.gaming #caption, body.gaming #explore{display:none!important}
   #gameBtn{align-self:center;flex:none;max-width:none;min-width:250px;background:#ec3013;border-color:#ec3013;color:#fff;
     font-family:Archivo,'Atkinson Hyperlegible',Arial,sans-serif;font-weight:900;font-size:19px;letter-spacing:.05em;text-transform:uppercase}
 
@@ -524,14 +526,15 @@ let game = null, gameScene = null, R3 = null;          // R3: { camera, renderer
 function startGame(sc) {
   stopGame();
   stopTalking(); stopStories();
-  game = GAMES[sc.work.id](); gameScene = sc; sc.gameOn = true;
-  game.start({ group: sc.group, h: sc.work.height / sc.work.width, camera: R3.camera, renderer: R3.renderer, say, buzz });
+  game = GAMES[sc.work.id](); gameScene = sc; sc.gameOn = true; document.body.classList.add('gaming');
+  game.start({ group: sc.group, h: sc.work.height / sc.work.width, camera: R3.camera, renderer: R3.renderer, say, buzz,
+    story: () => { stopGame(); playStory(sc, true); } });   // a game can hand back to the artist's story
   delete $('gameBtn').dataset.over;
   $('gameBtn').innerHTML = '&#10005; Stop the game';
 }
 function stopGame() {
   if (!game) return;
-  game.stop(); gameScene.gameOn = false; game = null; gameScene = null;
+  game.stop(); gameScene.gameOn = false; game = null; gameScene = null; document.body.classList.remove('gaming');
   $('gameBtn').innerHTML = '&#9654; Play the game';
 }
 $('gameBtn').onclick = () => {
@@ -666,7 +669,7 @@ async function startAR() {
   const clock = new THREE.Clock();
   renderer.setAnimationLoop(() => {
     const t = clock.getElapsedTime(), nowG = performance.now(), dtG = Math.min(0.05, (nowG - (window.__lastG || nowG)) / 1000); window.__lastG = nowG;
-    if (game) { game.update(dtG); if (game.over && !$('gameBtn').dataset.over) { $('gameBtn').dataset.over = '1'; $('gameBtn').innerHTML = '&#8635; Play again'; } }
+    if (game) { game.update(dtG); if (params.get('debug')) window.__mg = game.debug; if (game.over && !$('gameBtn').dataset.over) { $('gameBtn').dataset.over = '1'; $('gameBtn').innerHTML = '&#8635; Play again'; } }
     else delete $('gameBtn').dataset.over;
     for (const sc of scenes) {
       if (!sc.found) continue;
