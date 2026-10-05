@@ -806,7 +806,8 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   // LEAVE NOTE, just above it: opens the note composer for the spot you're standing on (text, voice, photo)
   const noteBtn = document.createElement('div');
   noteBtn.setAttribute('role', 'button'); noteBtn.setAttribute('tabindex', '0'); noteBtn.setAttribute('aria-label', 'Leave a note here');
-  noteBtn.style.cssText = lookBtn.style.cssText; noteBtn.style.bottom = 'calc(84px + env(safe-area-inset-bottom))';
+  lookBtn.style.bottom = 'calc(84px + env(safe-area-inset-bottom))';   // the ACTION button (gallery.html) sits in the corner below it
+  noteBtn.style.cssText = lookBtn.style.cssText; noteBtn.style.bottom = 'calc(152px + env(safe-area-inset-bottom))';
   noteBtn.innerHTML = '<span style="font:800 10px/1 Archivo,Arimo,sans-serif;letter-spacing:.14em;color:#f3f2f2;background:rgba(29,28,27,.72);padding:6px 8px;pointer-events:none">LEAVE NOTE</span>' +
     '<span style="width:56px;height:56px;border-radius:50%;border:2px solid #f3f2f2;background:rgba(29,28,27,.72);display:flex;align-items:center;justify-content:center;pointer-events:none">' +
     '<svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><path d="M5 6 H27 V21 H14 L8 27 V21 H5 Z" fill="none" stroke="#f3f2f2" stroke-width="2.4" stroke-linejoin="round"/><path d="M11 13.5 H21 M16 8.5 V18.5" stroke="#ec3013" stroke-width="2.6" stroke-linecap="round"/></svg></span>';
@@ -831,7 +832,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   lookBtn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setFP(!St.fp); } });
   addEventListener('keydown', e => { if (e.code === 'KeyV' && !(e.target.closest && e.target.closest('input,textarea'))) setFP(!St.fp); });
   function lookTick(dt) {
-    lookBtn.style.display = studio ? 'none' : 'flex'; noteBtn.style.display = studio || V.spot || !window.NOTES ? 'none' : 'flex';
+    lookBtn.style.display = studio ? 'none' : 'flex'; { const ab = document.getElementById('actBtn'); if (ab) ab.style.display = studio ? 'none' : 'flex'; } noteBtn.style.display = studio || V.spot || !window.NOTES ? 'none' : 'flex';
     if (!LK.snap || LK.id != null) return;
     const s = LK.snap; s.t += dt; const k = Math.min(1, s.t / 0.35), e = 1 - Math.pow(1 - k, 3);
     let dy = s.ty - s.fy; dy = Math.atan2(Math.sin(dy), Math.cos(dy));
@@ -870,15 +871,70 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const studioView = () => { if (studio) camera.setViewOffset(W(), H(), studio.x || 0, studio.y || 0, W(), H()); else camera.clearViewOffset(); };
   const fit = () => { renderer.setSize(W(), H()); camera.aspect = W() / H(); camera.fov = camera.aspect < 1 ? 70 : 60; camera.updateProjectionMatrix(); St.dist = camera.aspect < 1 ? 5.2 : 4.2; studioView(); };
   const ro = new ResizeObserver(() => { fit(); if (![...ptrs.values()].some(p => p.joy)) joyRest(); }); ro.observe(container); fit(); joyRest();
+  // ---- benches you can sit on (the plaza's two, the garden's ring): seat along the bench's local x
+  const BENCHES = [];
+  for (const z of [7.6, -7.6]) BENCHES.push({ x: 5.6, z, ry: Math.PI / 2, len: 2.8 });
+  if (!NOWORLD) for (const [x, z, ry] of planGarden().benches) BENCHES.push({ x, z, ry, len: 2.4 });
+  const benchTop = b => (b.top ??= (() => { const y = groundAt(b.x, 4, b.z); return y > -50 ? y - 0.1 : 0.5; })());
+  function benchNear() {
+    if (extra === 'chair') return null;   // (the wheelchair is already a seat)
+    for (const b of BENCHES) { const dx = Pl.x - b.x, dz = Pl.z - b.z, c = Math.cos(b.ry), s = Math.sin(b.ry);
+      const along = dx * c - dz * s, across = dx * s + dz * c;
+      if (Math.abs(along) < b.len / 2 + 0.3 && Math.abs(across) < 1.5 && Math.abs(Pl.y - (benchTop(b) - 0.5)) < 1.2) return b; }
+    return null;
+  }
+  const hipV = new THREE.Vector3();
+  function sitOn(b) {
+    if (!b || Pl.sit || !player) return;
+    const dx = Pl.x - b.x, dz = Pl.z - b.z, c = Math.cos(b.ry), s = Math.sin(b.ry);
+    const along = clamp(dx * c - dz * s, -(b.len / 2 - 0.45), b.len / 2 - 0.45), side = Math.sign(dx * s + dz * c) || 1;
+    const nx = s * side, nz = c * side;   // facing out from the side you walked up on
+    const P = player.userData.P; let hip = 0.5; if (P && P.legs && P.legs[0]) { player.updateMatrixWorld(true); P.legs[0].getWorldPosition(hipV); hip = hipV.y - player.position.y; }
+    Pl.sit = { gy: Pl.y, nx, nz };
+    Pl.x = b.x + c * along + nx * 0.06; Pl.z = b.z - s * along + nz * 0.06; Pl.y = benchTop(b) - hip + 0.03; Pl.vy = 0; Pl.speed = 0;
+    Pl.face = Math.atan2(nx, nz); St.yaw = Pl.face + Math.PI; St.pitch = 0.22; player.userData.sit = true; nearKey = null;
+  }
+  function standUp() {
+    if (!Pl.sit) return; const s = Pl.sit; Pl.sit = null; if (player) player.userData.sit = false;
+    Pl.y = s.gy; Pl.x += s.nx * 0.75; Pl.z += s.nz * 0.75; Pl.vy = 0; nearKey = null;
+  }
+  // ---- the room's film, full screen (the same video the screen shows; tap ✕ or Esc to come back)
+  function filmHere() {
+    const i = nearestScreen(Pl.x, Pl.y, Pl.z); if (i < 0) return false;
+    const v = vids[i], p = new THREE.Vector3(Pl.x, Pl.y + 0.5, Pl.z);
+    const inZone = (v.zone && v.zone.containsPoint(p)) || (v.zones && v.zones.some(q => q.containsPoint(p)));
+    return !!(inZone && curUrl && v.u === curUrl && video.readyState >= 2);
+  }
+  let filmOv = null;
+  function fullFilm() {
+    if (filmOv) return;
+    const was = { muted: video.muted, style: video.getAttribute('style') };
+    filmOv = document.createElement('div'); filmOv.setAttribute('role', 'dialog'); filmOv.setAttribute('aria-label', 'Film, full screen');
+    filmOv.style.cssText = 'position:fixed;inset:0;z-index:40;background:#000;display:flex;align-items:center;justify-content:center';
+    video.style.cssText = 'width:100%;height:100%;object-fit:contain;background:#000';
+    const x = document.createElement('button'); x.textContent = '\u2715 Close'; x.setAttribute('aria-label', 'Close full screen');
+    x.style.cssText = 'position:absolute;top:calc(12px + env(safe-area-inset-top));right:calc(12px + env(safe-area-inset-right));min-height:48px;padding:0 16px;border:2px solid #f3f2f2;background:rgba(29,28,27,.8);color:#f3f2f2;font:800 13px/1 Archivo,Arimo,sans-serif;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;z-index:2';
+    filmOv.append(video, x); document.body.appendChild(filmOv);
+    video.muted = false; video.play().catch(() => {});
+    try { (filmOv.requestFullscreen || filmOv.webkitRequestFullscreen || (() => {})).call(filmOv); } catch (e) {}
+    const close = () => { if (!filmOv) return; removeEventListener('keydown', onKey);
+      try { if (document.fullscreenElement) document.exitFullscreen(); } catch (e) {}
+      video.remove(); if (was.style == null) video.removeAttribute('style'); else video.setAttribute('style', was.style); video.muted = was.muted; filmOv.remove(); filmOv = null; video.play().catch(() => {}); };
+    const onKey = e => { if (e.code === 'Escape') close(); };
+    x.onclick = close; addEventListener('keydown', onKey); x.focus();
+  }
   function nearest() {
     const p = new THREE.Vector3(Pl.x, Pl.y + 1.2, Pl.z); let best = null, bd = 1e9;
     if (V.spot) return null;
+    if (Pl.sit) return { kind: 'sit', item: { z: 0, up: true }, label: 'Stand up' };
     if (simwalls && simwalls.kioskPositions.some(k => Math.hypot(Pl.x - k.x, Pl.z - k.z) < 2.6 && Math.abs(Pl.y - k.y) < 2)) return { kind: 'simctl', item: simwalls, label: 'Change the wall severity' };
     for (const sp of vSpots) if (Math.hypot(Pl.x - sp.x, Pl.z - sp.z) < sp.r + 0.15 && Math.abs(Pl.y - sp.y) < 1.2) return { kind: 'vision', item: sp, label: 'See through their eyes' };
     for (const sp of vSpots) if (sp.signPos && Math.hypot(Pl.x - sp.signPos.x, Pl.z - sp.signPos.z) < 1.6 && Math.abs(Pl.y - sp.y) < 1.2) return { kind: 'vision', item: sp, label: 'See through their eyes' };
     for (const f of nearProviders) { const n = f(Pl); if (n) return n; }   // add-ons: the guest book, visitors' notes
     for (const a of arts) { const d = a.ctr.distanceTo(p); if (d < 4.2 && d < bd) { bd = d; best = { kind: 'art', item: a, label: 'VIEW · ' + (a.title || 'ARTWORK') }; } }
     for (const e of edu) { const d = e.pos.distanceTo(p); if (d < e.r + 1 && d < bd + 1.5) { bd = d; best = { kind: 'edu', item: e, label: (e.prompt || 'LEARN MORE').replace(/^Press E to /i, '') }; } }
+    if (!best) { const b = benchNear(); if (b) best = { kind: 'sit', item: b, label: 'Sit on the bench' }; }
+    if (!best && filmHere()) best = { kind: 'film', item: { z: curUrl.length }, label: 'Watch the film full screen' };
     return best;
   }
   let doorT = 0;
@@ -899,6 +955,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       else if (ms < 17 && Q.pr < Q.max) { Q.pr = Math.min(Q.max, Q.pr + 0.25); renderer.setPixelRatio(Q.pr); renderer.setSize(W(), H()); } } }
     if (studio) { Pl.speed = 0; studio.t = (studio.t || 0) + dt; St.yaw = Pl.face + Math.sin(studio.t * 0.45) * 1.25; St.pitch = 0.1;   // a slow swing from one side of your fox to the other
       St.dist = studio.dist || 3.2; St.lastLook = performance.now(); }
+    else if (Pl.sit) { Pl.speed = 0; if (Math.abs(input.jx) + Math.abs(input.jy) + input.f + input.b + input.l + input.r > 0.35) standUp(); }   // sitting: push the stick to get up
     else if (!V.spot && !(lift.moving() && lift.riding())) move(dt);   // riding the lift: hold still
     player.position.set(Pl.x, Pl.y + (extra === 'chair' ? 0 : 0.02), Pl.z); player.rotation.y = Pl.face;
     if (faceLocal) player.userData.faceCtl = faceLocal;
@@ -986,6 +1043,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     },
     palettes: () => PALETTES.map((p, i) => ({ i, fur: p.fur || PLAYER_MALE.fur, dark: p.furDark || PLAYER_MALE.furDark, tip: p.tailTip || '#ffffff' })),
     elevator: { act: n => lift.act(n, Pl), state: lift.state }, ringGlass,
+    sit: b => (b && b.up) || Pl.sit ? standUp() : sitOn(b), fullFilm: () => fullFilm(), sitting: () => !!Pl.sit,
     camHead: { local: (mode, stream) => setCam('me', mode, stream), remote: (id, mode, stream) => setCam(id, mode, stream) },
     face: { local: c => { faceLocal = c; if (!c && player) player.userData.faceCtl = null; }, remote: (id, c) => { const r = remotes.get(id); if (r && r.fox) r.fox.userData.faceCtl = c; } },
     film: {

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0d0f1f">
+<meta name="theme-color" content="#000000">
 <title>Blind Canvas AR</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Archivo:wght@800;900&display=swap" rel="stylesheet">
@@ -21,14 +21,14 @@
 
   /* ── intro ── */
   #intro{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    padding:24px 20px calc(24px + env(safe-area-inset-bottom));text-align:center;gap:18px;z-index:20;
-    background:radial-gradient(120% 80% at 50% 0%,#2a1f55 0%,var(--bg) 60%)}
-  #intro .kicker{letter-spacing:.18em;text-transform:uppercase;color:var(--sky);font-size:14px;font-weight:700}
-  #intro h1{margin:0;font-size:clamp(30px,8vw,46px);line-height:1.05}
-  #intro .art{color:var(--gold);font-size:20px;font-weight:700}
+    padding:24px 22px calc(24px + env(safe-area-inset-bottom));text-align:center;gap:20px;z-index:20;background:#000;overflow:auto}
+  #intro .logo{display:block;width:min(64vw,300px);height:auto}
+  #intro h1{margin:0;max-width:15em;font-family:Archivo,'Atkinson Hyperlegible',Arial,sans-serif;font-weight:900;
+    font-size:clamp(22px,6.6vw,34px);line-height:1.15;letter-spacing:.01em;color:#fff}
+  #intro .art{color:#fff;opacity:.75;font-size:15px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
   #intro p{margin:0;max-width:30em;color:var(--soft);font-size:17px;line-height:1.5}
-  #start{margin-top:6px;min-width:240px;min-height:64px;padding:16px 28px;border:0;border-radius:999px;
-    background:var(--gold);color:#1a1300;font-size:22px;font-weight:700;box-shadow:0 8px 30px rgba(255,207,90,.35)}
+  #start{min-width:240px;min-height:64px;padding:16px 34px;border:0;border-radius:0;background:#fff;color:#000;
+    font-family:Archivo,'Atkinson Hyperlegible',Arial,sans-serif;font-size:24px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
   #start:focus-visible,.btn:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
   #intro .small{font-size:15px;color:var(--soft)}
   #intro a{color:var(--sky)}
@@ -58,7 +58,12 @@
 
   /* scanning frame */
   #scan{position:fixed;inset:0;z-index:5;display:none;align-items:center;justify-content:center;pointer-events:none}
+  #scan{flex-direction:column;gap:18px}
+  #scan .cue{background:#000;color:#fff;padding:10px 18px 9px;font-family:Archivo,'Atkinson Hyperlegible',Arial,sans-serif;
+    font-weight:900;font-size:clamp(22px,6.4vw,30px);line-height:1.1;letter-spacing:.04em;text-align:center}
   #scan .box{width:min(70vw,360px);aspect-ratio:3/4;border-radius:22px;position:relative}
+  /* while searching, the big cue does the talking; the status pill stays for screen readers only */
+  #status:not(.found){position:absolute;width:1px;height:1px;padding:0;border:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
   #scan .box::before,#scan .box::after{content:"";position:absolute;inset:0;border-radius:22px;
     border:3px solid var(--sky);opacity:.85;
     -webkit-mask:linear-gradient(#000 0 0) top/100% 22% no-repeat,linear-gradient(#000 0 0) bottom/100% 22% no-repeat;
@@ -77,23 +82,21 @@
 <body>
 
 <main id="intro">
-  <div class="kicker">Blind Canvas · AR</div>
-  <h1 id="introTitle">Augmented Art</h1>
+  <img class="logo" src="media/blind-canvas-logo.jpg" alt="Blind Canvas Project" width="640" height="640">
+  <h1 id="introText">CENTER the ART in YOUR CAMERA to see it COME ALIVE.</h1>
   <div class="art" id="introArt"></div>
-  <p id="introText">Point your phone at the artwork. It will come alive on screen, and a voice will describe it to you. You can tap parts of the painting to hear more.</p>
   <button id="start" type="button">Start</button>
-  <p class="small" id="introHelp">Your phone will ask to use the camera. Nothing is recorded or uploaded.</p>
-  <p class="small" id="testLink"></p>
+  <p class="small" id="introHelp">Turn your sound on. Your phone will ask to use the camera.</p>
   <p id="err" role="alert"></p>
   <nav id="pick" aria-label="Choose a room or an artwork" hidden></nav>
 </main>
 
 <div id="loading" role="status"><div class="spinner" aria-hidden="true"></div><div>Starting camera…</div></div>
 <div id="ar" aria-hidden="true"></div>
-<div id="scan" aria-hidden="true"><div class="box"></div></div>
+<div id="scan" aria-hidden="true"><div class="cue">CENTER ART IN CAMERA</div><div class="box"></div></div>
 
 <section id="hud" aria-label="Artwork controls">
-  <div id="status" role="status" aria-live="polite">Point your camera at the artwork</div>
+  <div id="status" role="status" aria-live="polite">Center the art in your camera</div>
   <div id="caption" aria-live="off"></div>
   <div id="explore" role="group" aria-label="Explore parts of the artwork"></div>
   <div class="row">
@@ -148,19 +151,6 @@ if (!show) {
 } else {
   document.title = show.title + ' · Blind Canvas AR';
   $('introArt').textContent = show.title + (show.subtitle ? ' — ' + show.subtitle : '');
-  if (show.works.length > 1)
-    $('introText').textContent = 'Walk the room and point your phone at any of the ' + show.works.length +
-      ' artworks. Each one comes alive on screen and a voice describes it. Tap parts of a painting to hear more.';
-  if (show.works.length === 1 && show.works[0].overlay && show.works[0].overlay.type === 'story')
-    $('introText').textContent = 'Point your phone at the painting. It comes alive on screen, and you will hear the artist talk about it. Turn your sound on.';
-  else if (show.works.some(w => w.overlay && w.overlay.type === 'story'))
-    $('introText').textContent = 'Walk the room and point your phone at any of the ' + show.works.length + ' artworks. Each one comes alive on screen and you will hear the artist talk about it. Turn your sound on.';
-  const imgs = show.works.filter(w => w.image);
-  const few = imgs.slice(0, 3), more = imgs.length - few.length;
-  if (imgs.length) $('testLink').innerHTML = 'No artwork nearby? Open ' +
-    few.map(w => '<a href="' + w.image + '" target="_blank" rel="noopener">' + w.title + '</a>').join(', ') +
-    (more ? ' (or any of the other ' + more + ' paintings\u2019 photos)' : '') +
-    ' on a computer screen and point your phone at it.';
 }
 
 /* ── speech + sound ────────────────────────────────── */
@@ -464,6 +454,16 @@ const stats = (() => {
   };
 })();
 
+/* Phones only let a video play with sound later if it was started inside a tap. We start each player
+   muted and stop it at once, inside the Start tap, so nothing is heard until a painting is found. */
+function silentUnlock(m) {
+  const wasMuted = m.muted;
+  m.muted = true;
+  const p = m.play(); m.pause();
+  if (p) p.catch(() => {});
+  m.muted = wasMuted;
+}
+
 /* ── start ─────────────────────────────────────────── */
 let started = false;
 $('start').addEventListener('click', async () => {
@@ -473,7 +473,7 @@ $('start').addEventListener('click', async () => {
   if (synth) { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; synth.speak(u); }
   for (const w of show.works) if (w.narration) {
     const a = new Audio(w.narration); a.preload = 'auto'; audios.set(w.id, a);
-    a.play().then(() => a.pause()).catch(() => {});
+    silentUnlock(a);
   }
 
   $('intro').style.display = 'none';
@@ -507,7 +507,7 @@ async function startAR() {
   const scenes = show.works.map((work, i) => {
     const anchor = mindar.addAnchor(i);
     const sc = buildScene(work, anchor);
-    for (const v of [sc.video, sc.anim, sc.clip, sc.audio]) if (v && !unlocked.has(v)) { unlocked.add(v); v.play().then(() => v.pause()).catch(() => {}); }   // unlock playback inside the Start tap
+    for (const v of [sc.video, sc.anim, sc.clip, sc.audio]) if (v && !unlocked.has(v)) { unlocked.add(v); silentUnlock(v); }   // unlock playback inside the Start tap
 
     anchor.onTargetFound = () => {
       sc.found = true; sc.appearT = performance.now();
@@ -537,7 +537,7 @@ async function startAR() {
       sc.found = false; stats.lost();
       if (sc.video) sc.video.pause(); if (sc.anim) sc.anim.pause(); if (sc.clip) sc.clip.pause();   // (a sound-only story keeps going)
       if (!scenes.some(s => s.found)) {
-        setStatus(show.works.length > 1 ? 'Point your camera at an artwork' : 'Point your camera at the artwork');
+        setStatus('Center the art in your camera');
         $('scan').style.display = 'flex';
       }
       // narration keeps going on purpose: a listener shouldn't lose the description if the phone drifts
@@ -560,7 +560,7 @@ async function startAR() {
     if (hit) { const l = hit.object.userData.label; setCaption(l); say(l); buzz(30); }
   });
 
-  if (show.works.length > 1) setStatus('Point your camera at an artwork');
+  setStatus('Center the art in your camera');
   stats.set('n', show.works.length + ' artworks');
   if (!show.target) {
     const msg = $('loading').lastElementChild, t = performance.now();

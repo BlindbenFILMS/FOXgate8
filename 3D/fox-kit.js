@@ -418,7 +418,10 @@ export function foxKit({ THREE, scene, toon, M, grad, outlineMat, crestTex, rr, 
     const sw = Math.sin(u.phase) * 0.9 * u.amt;
     if (u.hop > 0) { u.hop = Math.max(0, u.hop - dt * 2.6); }
     u.hopY = Math.sin((1 - u.hop) * Math.PI) * (u.hop > 0 ? 0.22 : 0);
-    if (!u.chair) {
+    if (u.sit && !u.chair) {   // sitting (the gallery's benches): legs out in front, hands on the knees
+      P.legs[0].rotation.x = P.legs[1].rotation.x = -1.45; P.arms[0].rotation.x = P.arms[1].rotation.x = -0.55;
+      P.body.position.y = Math.sin(u.phase * 1.3) * 0.006;
+    } else if (!u.chair) {
       P.legs[0].rotation.x = air ? -0.6 : sw; P.legs[1].rotation.x = air ? 0.4 : -sw;
       P.arms[0].rotation.x = air ? -2.3 : -sw * 0.8; P.arms[1].rotation.x = air ? -2.3 : sw * 0.8;
       P.body.position.y = Math.abs(Math.sin(u.phase)) * 0.06 * u.amt + u.hopY + (mv ? 0 : Math.sin(u.phase * 1.3) * 0.008);

@@ -24,6 +24,16 @@
   #menuBtn { width:48px; border:2px solid var(--ink); border-left:0; background:var(--bg); font-size:20px; text-align:center; }
   #act { position:fixed; right:calc(12px + env(safe-area-inset-right)); bottom:calc(154px + env(safe-area-inset-bottom)); z-index:10; display:none; max-width:min(320px,52vw); min-height:52px; padding:10px 14px; background:var(--accent); color:#fff; border:2px solid var(--ink); font:800 13px/1.25 var(--font); letter-spacing:.06em; text-transform:uppercase; }
   #act small { display:block; font-size:10px; letter-spacing:.14em; opacity:.85; }
+  #actBtn { position:fixed; right:calc(12px + env(safe-area-inset-right)); bottom:calc(16px + env(safe-area-inset-bottom)); z-index:9; display:flex; align-items:center; gap:8px; padding:0; border:0; background:none; cursor:pointer; touch-action:manipulation; }
+  #actBtn .lbl { background:rgba(29,28,27,.78); color:#f3f2f2; padding:6px 8px; text-align:right; max-width:min(58vw,300px); }
+  #actBtn .lbl b { display:block; font:800 12px/1.15 var(--font); letter-spacing:.12em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #actBtn .lbl small { display:none; font:800 9px/1.2 var(--font); letter-spacing:.12em; color:#ff9783; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:2px; }
+  #actBtn.on .lbl small { display:block; }
+  #actBtn .ico { width:56px; height:56px; border-radius:50%; border:2px solid #f3f2f2; background:rgba(29,28,27,.72); display:flex; align-items:center; justify-content:center; flex:none; transition:background .15s, transform .15s; }
+  #actBtn.on .ico { background:#ec3013; }
+  #actBtn:not(.on) .lbl { opacity:.75; }
+  #actBtn:active .ico { transform:scale(.94); }
+  #actBtn:focus-visible .ico { outline:3px solid #ff9783; outline-offset:2px; }
   #hint { position:fixed; left:50%; transform:translateX(-50%); top:calc(74px + env(safe-area-inset-top)); z-index:9; padding:6px 10px; font-size:12px; font-weight:600; max-width:calc(100vw - 24px); text-align:center; }
   #panel { position:fixed; z-index:20; left:50%; top:50%; transform:translate(-50%,-50%); width:min(720px,calc(100vw - 24px)); max-height:calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); display:none; flex-direction:column; user-select:text; -webkit-user-select:text; touch-action:pan-y; }
   #panel header { display:flex; align-items:stretch; border-bottom:2px solid var(--ink); }
@@ -70,6 +80,8 @@
 <div id="place"><div class="t box"><div class="w">Blind Canvas Project</div><div class="c">The Gallery</div><div id="who" style="font-size:12px;font-weight:700;margin-top:3px;color:#cfcaca">Connecting…</div></div><button id="menuBtn" aria-label="Menu">☰</button><button id="waveBtn" aria-label="Wave to everyone" style="width:48px;border:2px solid var(--ink);border-left:0;background:var(--bg);font-size:22px;text-align:center">👋</button><button id="micBtn" style="display:none" aria-pressed="false">MIC
 OFF</button></div>
 <button id="act" aria-live="polite"></button>
+<!-- ACTION: bottom right, under LOOK AROUND and LEAVE NOTE. Its word changes with where you are: VIEW ART, READ, SIGN GUEST BOOK, SIT, FULL SCREEN… -->
+<button id="actBtn" type="button" aria-label="Actions: nothing here yet"><span class="lbl"><small id="actSub"></small><b id="actVerb">ACTIONS</b></span><span class="ico" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30"><path d="M13 27 L13 13.5 a2 2 0 0 1 4 0 L17 19 M17 15.5 a2 2 0 0 1 4 0 L21 20 M21 17 a2 2 0 0 1 4 0 L25 22 c0 3 -2 5 -5 5 L16 27 c-1.6 0 -2.6 -.6 -3.4 -1.8 L9 20 a1.9 1.9 0 0 1 3 -2.2 L13 19" fill="none" stroke="#f3f2f2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.5 9.5 a7 7 0 0 1 13 0 M5 7.5 a11 11 0 0 1 20 0" fill="none" stroke="#f3f2f2" stroke-width="2" stroke-linecap="round" opacity=".75"/></svg></span></button>
 <div id="hint" class="box">Touch the left side to walk · drag the right side to look</div>
 <div id="panel" class="box" role="dialog" aria-modal="true" aria-labelledby="pt"><header><div class="h"><div class="k" id="pk"></div><h2 id="pt"></h2></div><button id="px" aria-label="Close">✕</button></header><div class="body" id="pb"></div></div>
 <div id="menu" class="box" role="dialog" aria-label="Menu">
@@ -135,12 +147,38 @@ function simCtl(w) {
 function onNear(n) {
   near = n; const b = $('act');
   if (simPanel && (!n || n.kind !== 'simctl')) simPanel.style.display = 'none';
-  if (!n) { b.style.display = 'none'; return; }
+  if (!n) { b.style.display = 'none'; setAction(null); return; }
   const nc = n.kind === 'art' && window.NOTES ? window.NOTES.countFor(n.item) : 0;
   b.innerHTML = '<small>' + (n.kind === 'art' ? 'Artwork' + (nc ? ' · 💬 ' + nc + (nc === 1 ? ' note' : ' notes') : '') : n.kind === 'vision' ? 'Stand here · vision simulator' : n.kind === 'simctl' ? 'Kiosk · the six views wall' : n.kind === 'guestbook' ? 'Guest book' : n.kind === 'studio' ? 'Fox Studio' : n.kind === 'braille' ? 'Learn' : n.kind === 'elevator' ? 'Elevator' : n.kind === 'note' ? 'A note left here' : 'Learn') + (touch ? '' : ' · press E') + '</small>' + esc(n.label.replace(/^VIEW · /, ''));
-  b.style.display = 'block'; if (n.kind !== 'note') $('live').textContent = n.label;   // (a note's full text was just announced)
+  b.style.display = 'none'; setAction(n); if (n.kind !== 'note') $('live').textContent = n.label;   // (a note's full text was just announced)
 }
 $('act').addEventListener('click', () => near && open(near));
+// the ACTION button: one word for what you can do right here
+function actionWords(n) {
+  const L = n.label || '', l = L.toLowerCase();
+  switch (n.kind) {
+    case 'art': { const nc = window.NOTES ? window.NOTES.countFor(n.item) : 0; return ['VIEW ART', L.replace(/^VIEW · /, '') + (nc ? ' · ' + nc + (nc === 1 ? ' note' : ' notes') : '')]; }
+    case 'edu': return ['READ', L];
+    case 'note': return ['READ NOTE', L];
+    case 'guestbook': return ['SIGN GUEST BOOK', 'The guest book'];
+    case 'vision': return ['TRY IT', 'Vision simulator · see through their eyes'];
+    case 'simctl': return ['SET SEVERITY', 'The six views wall'];
+    case 'studio': return ['DRESS UP', 'Fox Studio'];
+    case 'braille': return ['LEARN', 'Braille and brilliance'];
+    case 'elevator': return [n.busy ? 'WAIT' : /down/.test(l) ? 'GO DOWN' : /call/.test(l) ? 'CALL ELEVATOR' : 'GO UP', L];
+    case 'sit': return [n.item && n.item.up ? 'STAND UP' : 'SIT', 'Bench'];
+    case 'film': return ['FULL SCREEN', 'The film in this room'];
+    default: return [L.toUpperCase().slice(0, 26), ''];
+  }
+}
+function setAction(n) {
+  const b = $('actBtn'); if (!b) return;
+  if (!n) { b.classList.remove('on'); $('actVerb').textContent = 'ACTIONS'; $('actSub').textContent = ''; b.setAttribute('aria-label', 'Actions: nothing here yet. Walk up to art, a bench, a screen or a sign.'); return; }
+  const [verb, sub] = actionWords(n);
+  b.classList.add('on'); $('actVerb').textContent = verb + (touch ? '' : ' (E)'); $('actSub').textContent = sub || '';
+  b.setAttribute('aria-label', verb.toLowerCase() + (sub ? ': ' + sub : ''));
+}
+$('actBtn').addEventListener('click', e => { e.stopPropagation(); if (near) open(near); else { $('live').textContent = 'Nothing to do right here. Walk up to art, a bench, a screen or a sign and this button changes.'; const v = $('actVerb'); v.textContent = 'WALK UP TO SOMETHING'; setTimeout(() => { if (!near) v.textContent = 'ACTIONS'; }, 1800); } });
 addEventListener('keydown', e => { if (e.code === 'KeyE' && near && $('panel').style.display !== 'flex' && !(window.STUDIO && window.STUDIO.isOpen())) open(near); if (e.code === 'Escape') { if (window.STUDIO && window.STUDIO.isOpen()) { window.STUDIO.close(); return; } if (G && G.vision && G.vision.overlay.learnOpen()) { G.vision.overlay.closeLearn(); return; } if (G && G.vision && G.vision.locked()) G.vision.exit(); close(); } });
 
 // ------------------------------------------------ speech
@@ -164,6 +202,8 @@ function open(n) {
   if (n.kind === 'studio') { if (window.STUDIO) window.STUDIO.open(); return; }
   if (n.kind === 'braille') { openBraille(); return; }
   if (n.kind === 'elevator') { G.elevator.act(n); return; }
+  if (n.kind === 'sit') { G.sit(n.item); return; }
+  if (n.kind === 'film') { G.fullFilm(); return; }
   if (n.kind === 'note') { if (window.NOTES) window.NOTES.openSpot(n.item); return; }
   quoteStop(); bioScrollStop();
   const pb = $('pb'); pb.innerHTML = ''; pb.scrollTop = 0;
