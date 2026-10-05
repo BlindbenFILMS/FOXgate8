@@ -527,7 +527,7 @@ function startGame(sc) {
   stopGame();
   stopTalking(); stopStories();
   game = GAMES[sc.work.id](); gameScene = sc; sc.gameOn = true; document.body.classList.add('gaming');
-  game.start({ group: sc.group, h: sc.work.height / sc.work.width, camera: R3.camera, renderer: R3.renderer, say, buzz,
+  game.start({ group: sc.group, h: sc.work.height / sc.work.width, camera: R3.camera, renderer: R3.renderer, say, buzz, work: sc.work,
     story: () => { stopGame(); playStory(sc, true); } });   // a game can hand back to the artist's story
   delete $('gameBtn').dataset.over;
   $('gameBtn').innerHTML = '&#10005; Stop the game';

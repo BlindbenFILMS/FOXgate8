@@ -47,7 +47,7 @@ export async function connectGallery({ room = 'lobby', onJoin = () => {}, onLeav
   return {
     id: myId,
     hello(p) { profile = p; send.hi(p); },          // name + look; re-sent whenever it changes
-    send(state) { send.st(state); },                 // [x, y, z, face, speed, air]
+    send(state) { send.st(state); },                 // [x, y, z, face, speed, air, sitting]
     emote(e) { send.em(e); },
     event(d, to) { send.ev(d, to); },                // visiting together: tours, watch parties, the shared Six Views wall
     get voice() { return voice; },

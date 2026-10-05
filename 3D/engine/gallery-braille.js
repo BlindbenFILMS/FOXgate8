@@ -69,7 +69,7 @@ export function buildBraille({ scene, resolveImg }) {
     cells.forEach((cell, i) => cell.forEach(n => {
       const c2 = n > 3 ? 1 : 0, row = (n - 1) % 3;
       const x = cellsW / 2 - (i * (CW + CG) + c2 * CW), z = zi - 0.45 - row * 0.55;
-      const d = new THREE.Mesh(dotGeo, dotM); d.position.set(x, WY + 0.03, z); s.add(d);
+      const d = new THREE.Object3D(); d.position.set(x, WY + 0.03, z); s.add(d);   // (a place holder: all the dots draw as one instanced mesh)
       const sh = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.5), shadowM); sh.rotation.x = -Math.PI / 2; sh.position.set(x + 0.04, F + 0.03, z + 0.05); s.add(sh);
       dots.push({ d, ph: Math.random() * Math.PI * 2, y: WY + 0.03 });
     }));
@@ -108,12 +108,15 @@ export function buildBraille({ scene, resolveImg }) {
       for (const m of logoMats) { m.map = t; m.opacity = 0.96; m.needsUpdate = true; } };
     img.src = resolveImg('gallery/img/blind_canvas_project_logo__270692239.webp'); }
 
+  // ---- the dots: one instanced mesh for both pools (one draw instead of 26)
+  const dotsIM = new THREE.InstancedMesh(dotGeo, dotM, dots.length); dotsIM.frustumCulled = false; root.add(dotsIM);
   // ---- motion: the water drifts, the caustics shimmer, the dots bob
   let t = 0;
   tickers.push(dt => {
     t += dt;
     ripple.offset.set(t * 0.012, t * 0.007); cA.offset.set(t * 0.02, t * 0.011); cB.offset.set(-t * 0.017, t * 0.015);
-    for (const o of dots) { o.d.position.y = o.y + Math.sin(t * 1.3 + o.ph) * 0.025; o.d.rotation.z = Math.sin(t * 0.9 + o.ph) * 0.05; o.d.rotation.x = Math.cos(t * 0.8 + o.ph) * 0.05; }
+    dots.forEach((o, i) => { o.d.position.y = o.y + Math.sin(t * 1.3 + o.ph) * 0.025; o.d.rotation.z = Math.sin(t * 0.9 + o.ph) * 0.05; o.d.rotation.x = Math.cos(t * 0.8 + o.ph) * 0.05; o.d.updateMatrixWorld(); dotsIM.setMatrixAt(i, o.d.matrixWorld); });
+    dotsIM.instanceMatrix.needsUpdate = true;
   });
   root.updateMatrixWorld(true);
   // where each pool's artwork card is read from (the walk side, by the water)

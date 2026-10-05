@@ -31,7 +31,16 @@ export const CAMPUS_STOPS = {
   amb: { x: 40, z: -21.4, face: Math.PI, name: 'Academy of Music for the Blind' },
   cinema: { x: 67.5, z: 0, face: Math.PI / 2, name: 'BLIND CAN Cinema' },
   park: { x: CAMPUS.spawn.x, z: CAMPUS.spawn.z, face: CAMPUS.spawn.face, name: 'The Park' },
+  museum: { x: -10, z: 0, face: -Math.PI / 2, name: 'The Museum' },
 };
+// the signpost by the big tree, and the walks it sends you on (along the paths, round the tree; the last point is the door)
+export const SIGNPOST = { x: 29.6, z: 2.1 };   // just ahead of where you start, a little to the left: the first thing you see
+export const SIGN_DEST = [
+  { to: 'museum', label: 'THE MUSEUM', icon: '🏛', sub: 'The Blind Canvas Project gallery', route: [[27.5, -0.8], [19, 0], [7, 0], [-10, 0]] },
+  { to: 'cinema', label: 'BLIND CAN CINEMA', icon: '🎬', sub: 'Films, all day', route: [[33, -5], [37, -6.5], [46, -6], [56, -1], [61, 0], [68, 0]] },
+  { to: 'why', label: 'THE WHY HOUSE', icon: '?', sub: 'Stories · add your own', route: [[33, 5.5], [36.5, 9], [40, 14.5], [40, 21.6], [40, 23.6]] },
+  { to: 'amb', label: 'ACADEMY OF MUSIC', icon: '🎹', sub: 'for the Blind', route: [[33, -5.5], [36.5, -9], [40, -14.5], [40, -21.4], [40, -23]] },
+];
 
 const tex = (w, h, draw, rep) => { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; draw(cv.getContext('2d'), w, h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; if (rep) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(...rep); } return t; };
 const fitText = (c, text, maxW, size, weight = 800, font = FONT, min = 10) => { let fs = size; c.font = `${weight} ${fs}px ${font}`; while (fs > min && c.measureText(text).width > maxW) { fs -= 2; c.font = `${weight} ${fs}px ${font}`; } return fs; };
@@ -288,6 +297,31 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
     gotos.push({ x: x - 1.6, y: y0, z, r: 3.0, to: 'why', label: 'The WHY House · leave your own why' });
   }
   near.push(pl => { for (const g of gotos) if (Math.hypot(pl.x - g.x, pl.z - g.z) < g.r && Math.abs(pl.y - g.y) < 2.2) return { kind: 'goto', item: { z: g.to.length, to: g.to }, label: g.label }; return null; });
+
+  // ============================================================ the signpost by the big tree: an oak post with an arrow for each place
+  {
+    const P = SIGNPOST, g = new THREE.Group(); g.position.set(P.x, 0, P.z); root.add(g);
+    const oakM = new THREE.MeshLambertMaterial({ color: 0x9a6a3c }), capM = new THREE.MeshLambertMaterial({ color: 0x1d1c1b });
+    box(0.22, 3.6, 0.22, oakM, 0, 1.8, 0, false, g); box(0.34, 0.12, 0.34, capM, 0, 3.66, 0, false, g); box(0.5, 0.18, 0.5, capM, 0, 0.09, 0, false, g);
+    const ball = new THREE.Mesh(new THREE.SphereGeometry(0.13, 12, 8), red); ball.position.y = 3.83; g.add(ball);
+    box(0.5, 2, 0.5, null, P.x, 1, P.z).visible = false;
+    // each arrow points at its place (as the crow flies from the post), names on both faces
+    const arrowShape = (L, H) => { const s = new THREE.Shape(); s.moveTo(0, -H / 2); s.lineTo(L - H * 0.55, -H / 2); s.lineTo(L, 0); s.lineTo(L - H * 0.55, H / 2); s.lineTo(0, H / 2); s.closePath(); return s; };
+    const L = 2.1, AH = 0.44;
+    SIGN_DEST.forEach((D, i) => {
+      const end = D.route[D.route.length - 1], ang = Math.atan2(end[0] - P.x, end[1] - P.z);   // the direction to the door
+      const arm = new THREE.Group(); arm.position.y = 3.1 - i * 0.56; arm.rotation.y = ang - Math.PI / 2; g.add(arm);
+      const geo = new THREE.ExtrudeGeometry(arrowShape(L, AH), { depth: 0.06, bevelEnabled: false }); geo.translate(0.08, 0, -0.03);
+      const face = tex(1024, 214, (c, w, h) => { c.fillStyle = '#f4ead6'; c.fillRect(0, 0, w, h); c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, 10); c.fillRect(0, h - 10, w, 10);
+        c.textBaseline = 'middle'; c.fillStyle = '#ec3013'; c.font = `800 96px ${FONT}`; c.fillText(D.icon, 26, h / 2 + 4); c.fillStyle = '#1d1c1b'; fitText(c, D.label, w - 340, 92); c.fillText(D.label, 150, h / 2 + 4); });
+      const mats = [new THREE.MeshLambertMaterial({ color: 0xf4ead6 }), new THREE.MeshLambertMaterial({ color: 0x1d1c1b })];
+      const m = new THREE.Mesh(geo, mats); arm.add(m);
+      // the name, as a plane on each face (reads left to right from both sides)
+      for (const side of [1, -1]) { const pl = new THREE.Mesh(new THREE.PlaneGeometry(L - AH * 0.6, AH - 0.04), new THREE.MeshBasicMaterial({ map: face }));
+        pl.position.set(0.08 + (L - AH * 0.6) / 2, 0, side * 0.035); if (side < 0) pl.rotation.y = Math.PI; arm.add(pl); }
+    });
+    near.push(pl => Math.hypot(pl.x - P.x, pl.z - P.z) < 2.6 && Math.abs(pl.y) < 2 ? { kind: 'signpost', item: { z: 1 }, label: 'Signpost · where to?' } : null);
+  }
 
   // which part of the campus you're in (for the place label)
   const inR = (x, z, R) => x > R.x0 && x < R.x1 && z > R.z0 && z < R.z1;

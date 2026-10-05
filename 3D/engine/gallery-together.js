@@ -14,7 +14,7 @@ const FILM_NAMES = {
 const filmName = u => { const b = String(u || '').split('/').pop().split('?')[0].replace(/\.\w+$/, ''); return FILM_NAMES[b] || (/^[a-z_]+$/.test(b) ? b.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : 'the film here'); };
 
 export function setupTogether({ G, net, nameOf, announce, onSev = () => {}, esc }) {
-  const fname = u => filmName(G.film.local(u));
+  const fname = u => (G.campus && G.campus.zone() === 'cinema') ? '\u201c' + G.campus.nowShowing() + '\u201d in the cinema' : filmName(G.film.local(u));   // (in BLIND CAN CINEMA: the film's title)
   const css = document.createElement('style');
   css.textContent = `
   #together{position:fixed;z-index:10;left:calc(12px + env(safe-area-inset-left));top:calc(94px + env(safe-area-inset-top));width:min(340px,calc(100vw - 24px));display:flex;flex-direction:column;gap:6px;pointer-events:none;font-family:Archivo,Arimo,Helvetica,Arial,sans-serif}

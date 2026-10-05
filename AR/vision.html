@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>Blindness Spectrum Simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Archivo:wght@800;900&display=swap" rel="stylesheet">
+<style>
+  :root{--blue:#0b2fa8;--blue-hi:#1f4fd8}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#000;color:#fff;font-family:'Atkinson Hyperlegible',system-ui,sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+  /* ── welcome: the intro video fills the screen top to bottom; the button sits under its title ── */
+  #welcome{position:fixed;inset:0;z-index:20;background:#000;overflow:hidden}
+  /* a 9:16 stage the height of the screen, centred, so the button keeps its place under the video's title on any phone */
+  #stage{position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);height:100%;aspect-ratio:9/16}
+  #intro{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+  #cta{position:absolute;left:50%;transform:translateX(-50%);top:61%;width:min(86vw,92%);display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;
+    opacity:0;transition:opacity .8s ease}
+  #cta.show{opacity:1}
+  #enter{min-height:62px;min-width:min(300px,84vw);padding:0 30px;border:0;border-radius:6px;background:var(--blue);color:#fff;cursor:pointer;
+    font:900 clamp(18px,5.4vw,24px)/1 Archivo,'Atkinson Hyperlegible',Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;
+    box-shadow:0 0 0 1px rgba(255,255,255,.12),0 8px 30px rgba(31,79,216,.45)}
+  #enter:hover{background:var(--blue-hi)}
+  #enter:focus-visible{outline:3px solid #fff;outline-offset:4px}
+  #cta p{margin:0;max-width:24em;color:#fff;font:700 clamp(15px,4.2vw,18px)/1.4 'Atkinson Hyperlegible',Arial,sans-serif}
+  #err{display:none;margin:0;max-width:24em;color:#ffb4b4;font-size:15px;line-height:1.4}
+  @media (prefers-reduced-motion:reduce){#cta{transition:none}}
+
+  /* ── the simulator: the live camera, with the vision filter over it ── */
+  #cam{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;background:#000}
+  #visionLayer{position:fixed;inset:0;z-index:4;pointer-events:none}
+  #loading{position:fixed;inset:0;z-index:15;display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;background:#000;font-size:19px}
+  .spinner{width:46px;height:46px;border-radius:50%;border:4px solid rgba(255,255,255,.2);border-top-color:var(--blue-hi);animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<main id="welcome">
+  <h1 class="sr">Blindness Spectrum Simulator</h1>
+  <div id="stage">
+    <video id="intro" src="media/vision-sim.mp4" poster="media/vision-sim-poster.jpg" autoplay muted loop playsinline webkit-playsinline preload="auto" aria-hidden="true"></video>
+    <div id="cta">
+      <button id="enter" type="button">Enter simulator</button>
+      <p id="sub">LOOK around you through your camera with a blindness spectrum filter</p>
+      <p id="err" role="alert"></p>
+    </div>
+  </div>
+</main>
+
+<div id="loading" role="status"><div class="spinner" aria-hidden="true"></div><div>Starting camera…</div></div>
+<video id="cam" autoplay muted playsinline webkit-playsinline aria-hidden="true"></video>
+<div id="visionLayer"></div>
+
+<script type="importmap">
+{ "imports": { "three": "./lib/three/three.module.js" } }
+</script>
+
+<script type="module">
+import { visionOverlay } from './lib/gallery-vision.js';
+
+const $ = id => document.getElementById(id);
+
+/* the button appears once the title is on screen (and stays: the video loops underneath it) */
+const intro = $('intro');
+const reveal = () => $('cta').classList.add('show');
+intro.addEventListener('timeupdate', () => { if (intro.currentTime > 3.2) reveal(); });
+setTimeout(reveal, 4200);                                  // even if the video can't autoplay
+intro.play().catch(() => reveal());
+
+/* ── phone movement steers the simulation: the clear spot leads where you turn, floaters lag behind ── */
+let motionOn = false;
+const turn = { yaw: 0, pitch: 0 };
+function onMotion(e) {
+  const r = e.rotationRate; if (!r) return;
+  const th = (((screen.orientation && screen.orientation.angle) ?? window.orientation ?? 0) * Math.PI) / 180;
+  const b = ((r.beta || 0) * Math.PI) / 180, g = ((r.gamma || 0) * Math.PI) / 180;
+  const yaw = b * Math.sin(th) + g * Math.cos(th), up = b * Math.cos(th) - g * Math.sin(th);
+  turn.yaw += (yaw - turn.yaw) * 0.3; turn.pitch += (-up - turn.pitch) * 0.3;
+}
+function askMotion() {                                     // iPhone asks permission; it must start inside a tap
+  try {
+    const DME = window.DeviceMotionEvent, go = () => { if (!motionOn) { addEventListener('devicemotion', onMotion); motionOn = true; } };
+    if (DME && typeof DME.requestPermission === 'function') DME.requestPermission().then(r => { if (r === 'granted') go(); }).catch(() => {});
+    else go();
+  } catch (e) {}
+}
+
+/* ── camera ── */
+let stream = null;
+async function startCamera() {
+  stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } } });
+  $('cam').srcObject = stream; await $('cam').play().catch(() => {});
+}
+function stopCamera() { if (stream) stream.getTracks().forEach(t => t.stop()); stream = null; $('cam').srcObject = null; }
+
+/* ── the simulator ── */
+let vision = null, looping = false;
+function loop() {
+  let last = performance.now(); looping = true;
+  (function tick(now) {
+    const dt = Math.min(0.1, (now - last) / 1000); last = now;
+    if (vision) vision.update(dt, turn.yaw, turn.pitch);
+    requestAnimationFrame(tick);
+  })(last);
+}
+$('enter').addEventListener('click', async () => {
+  askMotion();
+  $('err').style.display = 'none';
+  $('loading').style.display = 'flex';
+  try {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('This browser can’t use the camera here.');
+    await startCamera();
+  } catch (e) {
+    $('loading').style.display = 'none';
+    $('err').style.display = 'block';
+    $('err').textContent = e && (e.name === 'NotAllowedError' || /permission/i.test(e.message))
+      ? 'Camera permission was blocked. Allow camera access for this site in your browser settings, then tap Enter simulator again.'
+      : 'The camera could not start. (' + ((e && e.message) || e) + ')';
+    return;
+  }
+  intro.pause();
+  $('welcome').style.display = 'none'; $('loading').style.display = 'none';
+  if (!vision) vision = visionOverlay({ container: $('visionLayer'), onExit: leave });
+  vision.open('rp');                                       // Tunnel (Retinitis Pigmentosa) first; pick any condition in the bar
+  if (!looping) loop();
+});
+function leave() {                                         // ← Back: back to the welcome screen
+  vision.close(); stopCamera();
+  $('welcome').style.display = 'block'; intro.play().catch(() => {});
+  $('enter').focus({ preventScroll: true });
+}
+document.addEventListener('visibilitychange', () => { if (document.hidden && vision && vision.st.on) leave(); });
+</script>
+</body>
+</html>

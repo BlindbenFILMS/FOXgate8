@@ -18,7 +18,7 @@ import { artAnimator } from './gallery-anim.js';
 import { buildVisionSpots, visionOverlay } from './gallery-vision.js';
 import { buildSimWalls } from './gallery-simwall.js';
 import { buildBraille, patchOldBraille } from './gallery-braille.js';
-import { buildCampus, CAMPUS_STOPS } from './gallery-campus.js';
+import { buildCampus, CAMPUS_STOPS, SIGN_DEST } from './gallery-campus.js';
 import { stainedGlass } from './gallery-stained.js';
 import { buildElevator } from './gallery-elevator.js';
 import { buildSkywalk } from './gallery-skywalk.js';
@@ -188,7 +188,26 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     }
     return saved;
   }
-  { let saved = 0; for (const g of [entrance.group, kiosks.group, bioWalls.group, propsG, wing && wing.group, campus && campus.group, ...rooms.list.map(r => r.room.group)]) if (g) saved += mergeStatic(g); console.log('[perf] merged', saved, 'static meshes'); }
+  { let saved = 0; for (const g of [entrance.group, kiosks.group, bioWalls.group, propsG, wing && wing.group, campus && campus.group, braille.group, ...rooms.list.map(r => r.room.group)]) if (g) saved += mergeStatic(g); console.log('[perf] merged', saved, 'static meshes'); }
+  // phones: small far things (a plaque, a stool, a frame on a wall 60 m away) are a few pixels but each costs a draw call.
+  // Every quarter second, anything smaller than ~0.5 degree on screen is skipped; it comes back long before it's big enough to see.
+  // (From the park you see the whole museum: this saves ~300 of its ~830 draws.)
+  // (works on draw layers, not .visible, so nothing that shows or hides itself is disturbed; the list is made once, after everything is built)
+  let DETAIL = null;
+  const DETAIL_ON = new URLSearchParams(location.search).get('detail') !== 'all';
+  function detailCull() {
+    if (!DETAIL_ON) return; const cp = camera.position;
+    if (!DETAIL) { DETAIL = []; scene.traverse(o => {
+        if (!(o.isMesh || o.isLineSegments) || o.isInstancedMesh || o.isSkinnedMesh || !o.geometry || o.userData.noCull || o.layers.mask !== 1) return;
+        if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); const bs = o.geometry.boundingSphere; if (!bs || !isFinite(bs.radius)) return;
+        o.updateWorldMatrix(true, false); const r = bs.radius * o.matrixWorld.getMaxScaleOnAxis();
+        if (r < 2.5) DETAIL.push({ o, lc: bs.center.clone(), r, off: false }); });
+      console.log('[perf] small things that skip drawing when far:', DETAIL.length); }
+    const c = new THREE.Vector3();
+    for (const D of DETAIL) { c.copy(D.lc).applyMatrix4(D.o.matrixWorld); const d = c.distanceTo(cp), k = D.r / Math.max(d, 0.1);
+      if (!D.off) { if (d > 28 && k < 0.012) { D.o.layers.set(1); D.off = true; } }
+      else if (d <= 28 || k > 0.0145) { D.o.layers.set(0); D.off = false; } }
+  }
   const bvh = new MeshBVH(colGeo);
   const ray = new THREE.Ray();
   const cast = (ox, oy, oz, dx, dy, dz, far) => { ray.origin.set(ox, oy, oz); ray.direction.set(dx, dy, dz); const h = bvh.raycastFirst(ray, THREE.DoubleSide, 0, far); return h && h.distance <= far ? h : null; };
@@ -532,7 +551,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       if (renamed || !r.tag) { if (r.tag) { scene.remove(r.tag); r.tag.material.map.dispose(); } r.tag = tagSprite(r.prof.name || 'Visitor'); r.tag.visible = r.placed; scene.add(r.tag); }
     }
     if (st) {
-      [r.tx, r.ty, r.tz, r.tface, r.speed] = st; r.air = !!st[5]; r.last = performance.now();
+      [r.tx, r.ty, r.tz, r.tface, r.speed] = st; r.air = !!st[5]; r.sit = !!st[6]; r.last = performance.now();   // (st[6]: sitting on a bench or a cinema seat)
       if (!r.placed || Math.hypot(r.tx - r.x, r.tz - r.z) > 8 || Math.abs(r.ty - r.y) > 4) { r.x = r.tx; r.y = r.ty; r.z = r.tz; r.face = r.tface; }
       r.placed = true;
     }
@@ -594,7 +613,8 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       r.fox.position.set(r.x, r.y + (r.prof.extra === 'chair' ? 0 : 0.02), r.z); r.fox.rotation.y = r.face;
       if (r.fox.userData.hop > 0) r.fox.userData.hop = r.fox.userData.hop;
       wearCam(r.fox, camHeads.get(r.id));
-      animFox(r.fox, dt, (r.speed || 0) / FOX_SCALE * 0.6, r.air);
+      r.fox.userData.sit = !!r.sit && r.prof.extra !== 'chair';   // friends sitting together: the same seated pose you see on your own fox
+      animFox(r.fox, dt, r.sit ? 0 : (r.speed || 0) / FOX_SCALE * 0.6, r.air && !r.sit);
       r.tag.position.set(r.x, r.y + 2.15, r.z);
     }
     for (let i = waves.length - 1; i >= 0; i--) { const b = waves[i]; b.userData.t -= dt; const f = b.userData.fox; b.position.set(f.position.x, f.position.y + 2.6 + (2.4 - b.userData.t) * 0.15, f.position.z); b.material.opacity = Math.min(1, b.userData.t * 2); if (b.userData.t <= 0) { scene.remove(b); waves.splice(i, 1); } }
@@ -655,6 +675,28 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     return { ux: (c[0] - Pl.x) / d, uz: (c[2] - Pl.z) / d, run: dl > 5 };
   }
 
+  // ---------------------------------------------------------------- walk me there (the signpost): follow a path to a door; moving yourself stops it
+  const AW = { pts: null, i: 0, to: null, best: 1e9, stuckT: 0, onEnd: null };
+  function walkTo(to, onEnd) {
+    const D = SIGN_DEST.find(d => d.to === to); if (!D) return false; if (Pl.sit) standUp(); if (F.id) followStop('walk');
+    // start at the first point ahead of us (skip ones behind, so it doesn't double back)
+    let i0 = 0, bd = 1e9; D.route.forEach((p, i) => { const d = Math.hypot(p[0] - Pl.x, p[1] - Pl.z); if (d < bd) { bd = d; i0 = i; } });
+    if (i0 < D.route.length - 1) { const a = D.route[i0], b = D.route[i0 + 1]; if ((b[0] - a[0]) * (Pl.x - a[0]) + (b[1] - a[1]) * (Pl.z - a[1]) > 0) i0++; }
+    Object.assign(AW, { pts: D.route, i: i0, to, best: 1e9, stuckT: 0, onEnd: onEnd || null }); return true;
+  }
+  function walkStop(why) { if (!AW.pts) return; const cb = AW.onEnd, to = AW.to; AW.pts = null; AW.onEnd = null; if (cb) cb(why, to); }
+  function walkAuto(dt) {
+    let c = AW.pts[AW.i]; let d = Math.hypot(c[0] - Pl.x, c[1] - Pl.z);
+    if (d < (AW.i === AW.pts.length - 1 ? 0.45 : 1.1)) {
+      AW.i++; AW.best = 1e9; AW.stuckT = 0;
+      if (AW.i >= AW.pts.length) { const t = CAMPUS_STOPS[AW.to]; if (t) { Pl.face = t.face; St.yaw = t.face + Math.PI; } walkStop('arrived'); return null; }
+      c = AW.pts[AW.i]; d = Math.hypot(c[0] - Pl.x, c[1] - Pl.z);
+    }
+    if (d < AW.best - 0.15) { AW.best = d; AW.stuckT = 0; }
+    else if ((AW.stuckT += dt) > 2.5) { Pl.x = c[0]; Pl.z = c[1]; Pl.y = groundAt(c[0], Pl.y + 2, c[1]); Pl.vy = 0; AW.best = 1e9; AW.stuckT = 0; return null; }   // stuck on something: hop on
+    return { ux: (c[0] - Pl.x) / d, uz: (c[1] - Pl.z) / d };
+  }
+
   function move(dt) {
     // camera-relative input
     let ix = input.jx + (input.r - input.l), iz = input.jy + (input.f - input.b);
@@ -665,6 +707,10 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     const fx = -Math.sin(St.yaw), fz = -Math.cos(St.yaw);   // camera forward on the ground
     let dx = (fx * iz + -fz * ix) * sp * dt, dz = (fz * iz + fx * ix) * sp * dt;
     // following a friend: walk their path behind them; moving yourself stops it
+    if (AW.pts) {
+      if (mag > 0.05) walkStop('moved');
+      else { const a = walkAuto(dt); if (a) { mag = 1; run = true; sp = 6.2 * (extra === 'chair' ? 0.95 : 1); dx = a.ux * sp * dt; dz = a.uz * sp * dt; } }
+    }
     if (F.id) {
       if (mag > 0.05) followStop('moved');
       else { const a = followAuto(dt); if (a) { mag = 1; run = a.run; sp = (run ? 6.2 : 3.4) * (extra === 'chair' ? 0.95 : 1); dx = a.ux * sp * dt; dz = a.uz * sp * dt; } }
@@ -1001,7 +1047,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     }
     streamT -= dt;
     if (streamT <= 0) {
-      streamT = 0.25; const p = new THREE.Vector3(Pl.x, Pl.y, Pl.z);
+      streamT = 0.25; const p = new THREE.Vector3(Pl.x, Pl.y, Pl.z); detailCull();
       { const inWing = !!wing && wing.bounds.containsPoint(p), cz = campus && campus.zoneAt(Pl.x, Pl.y, Pl.z); St.inWing = inWing; St.campusZone = cz || null;
         const zn = inWing ? 'New Artists Wing' : cz ? CAMPUS_STOPS[cz].name : 'The Gallery'; if (zn !== St.zoneName) { St.zoneName = zn; onZone(zn); } }
       if (wing) { { const dW = Math.hypot(Pl.x - WING_O.x, Pl.z - WING_O.z); if (dW < (fast ? 70 : 110)) wing.load(); else if (dW > 160) wing.unload(); } }
@@ -1037,7 +1083,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     arts, edu, notesConfig: data.notes ? { ...data.notes, ...(campus ? { guestbook: campus.why.guestbook, why: { slots: campus.why.slots, station: campus.why.station } } : {}) } : null,
     setLook(l, x) { look = l || look; extra = x || 'none'; buildPlayer(); },
     // multiplayer hooks (the page wires these to engine/gallery-net.js)
-    localState: () => [+Pl.x.toFixed(2), +Pl.y.toFixed(2), +Pl.z.toFixed(2), +Pl.face.toFixed(2), +Math.min(9, Pl.speed).toFixed(1), Pl.ground ? 0 : 1],
+    localState: () => [+Pl.x.toFixed(2), +Pl.y.toFixed(2), +Pl.z.toFixed(2), +Pl.face.toFixed(2), +Math.min(9, Pl.speed).toFixed(1), Pl.ground ? 0 : 1, Pl.sit ? 1 : 0],   // [x, y, z, face, speed, air, sitting]
     remote: { upsert: remoteUpsert, remove: remoteRemove, count: () => remotes.size, names: () => [...remotes.values()].map(r => r.prof.name), list: () => [...remotes.values()].map(r => ({ id: r.id, name: r.prof.name || 'Visitor', placed: r.placed, x: r.tx, y: r.ty, z: r.tz })), wave: id => { const r = remotes.get(id); if (r && r.fox) showWave(r.fox); } },
     wave() { showWave(player); },
     style: () => ({ ...style }),
@@ -1063,6 +1109,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     elevator: { act: n => lift.act(n, Pl), state: lift.state }, ringGlass,
     campus: campus && {
       go(to) { const t = CAMPUS_STOPS[to]; if (!t) return; if (Pl.sit) standUp(); travel({ to: { x: t.x, z: t.z, y: groundAt(t.x, 3, t.z), face: t.face } }); },
+      walk: (to, onEnd) => walkTo(to, onEnd), stopWalk: () => walkStop('stopped'), walking: () => AW.pts ? AW.to : null, dests: SIGN_DEST,
       zone: () => St.campusZone, why: campus.why, nowShowing: () => campus.cinema.now().title, nextFilm: () => playUrl(campus.cinema.next()), group: campus.group,
     },
     sit: b => (b && b.up) || Pl.sit ? standUp() : sitOn(b), fullFilm: () => fullFilm(), sitting: () => !!Pl.sit,

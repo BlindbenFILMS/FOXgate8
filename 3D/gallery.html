@@ -85,6 +85,7 @@ OFF</button></div>
 <div id="hint" class="box">Touch the left side to walk · drag the right side to look</div>
 <div id="panel" class="box" role="dialog" aria-modal="true" aria-labelledby="pt"><header><div class="h"><div class="k" id="pk"></div><h2 id="pt"></h2></div><button id="px" aria-label="Close">✕</button></header><div class="body" id="pb"></div></div>
 <div id="menu" class="box" role="dialog" aria-label="Menu">
+  <div class="opts" style="margin-bottom:6px"><button id="mapBtn">🗺 Park map · go to a place</button></div>
   <div class="lab">Your fox</div>
   <div class="opts" style="margin-bottom:6px"><button id="faceBtn" aria-pressed="false">🦊 Fox copies my face (camera)</button><button id="tvHeadBtn" aria-pressed="false">📺 Screen head</button><button id="maskBtn" aria-pressed="false">🎭 Face mask</button></div>
   <div class="note" id="camNote" style="font:600 12px/1.35 var(--font);margin:-2px 0 8px;color:var(--muted,#5a5654)">Fox copies you: your camera stays on this device. Screen head and Face mask: everyone in the gallery sees your camera.</div>
@@ -170,6 +171,7 @@ function actionWords(n) {
     case 'film': return ['FULL SCREEN', G && G.campus && G.campus.zone() === 'cinema' ? 'Now showing · ' + G.campus.nowShowing() : 'The film in this room'];
     case 'why': return n.item && n.item.id ? ['READ STORY', L] : ['ADD YOUR STORY', 'The WHY House'];
     case 'goto': return ['TAKE ME THERE', L];
+    case 'signpost': return ['WHERE TO?', 'Signpost · the park'];
     default: return [L.toUpperCase().slice(0, 26), ''];
   }
 }
@@ -208,6 +210,7 @@ function open(n) {
   if (n.kind === 'film') { G.fullFilm(); return; }
   if (n.kind === 'why') { if (window.NOTES) window.NOTES.openWhy(n.item); return; }
   if (n.kind === 'goto') { G.campus && G.campus.go(n.item.to); return; }
+  if (n.kind === 'signpost') { openSignpost(); return; }
   if (n.kind === 'note') { if (window.NOTES) window.NOTES.openSpot(n.item); return; }
   quoteStop(); bioScrollStop();
   const pb = $('pb'); pb.innerHTML = ''; pb.scrollTop = 0;
@@ -297,6 +300,63 @@ function showPanel(k, t, node, onClose) { $('pk').textContent = k; $('pt').textC
 function close() { window.HUSH = false; if (panelOnClose) { const f = panelOnClose; panelOnClose = null; f(); } quoteStop(); bioScrollStop(); $('panel').style.display = 'none'; if (synth) synth.cancel(); speaking = null; $('pb').querySelectorAll('video').forEach(v => v.pause()); $('menu').style.display = 'none'; }
 $('px').onclick = close;
 
+// ------------------------------------------------ the signpost by the big tree: pick a place, and your fox walks you there along the paths
+function placeRows(wrap, canWalk) {
+  for (const D of G.campus.dests) {
+    const row = document.createElement('div'); row.style.cssText = 'display:flex;gap:8px;margin:8px 0;align-items:stretch';
+    const b = document.createElement('button'); b.style.cssText = 'flex:1;min-height:64px;display:flex;align-items:center;gap:12px;padding:8px 14px;border:2px solid var(--ink);background:var(--card);color:var(--ink);text-align:left;cursor:pointer';
+    b.innerHTML = '<span aria-hidden="true" style="font:800 28px var(--font);color:#ec3013;width:34px;text-align:center">' + D.icon + '</span><span><b style="display:block;font:800 15px/1.2 var(--font);letter-spacing:.06em">' + D.label + '</b><small style="font:500 13px var(--font);color:#b9b4b4">' + D.sub + (canWalk ? '' : ' · tap to go') + '</small></span>';
+    b.setAttribute('aria-label', (canWalk ? 'Walk to ' : 'Go to ') + D.label.toLowerCase() + ', ' + D.sub);
+    b.onclick = () => { close(); if (canWalk) walkWith(D); else G.campus.go(D.to); };
+    row.appendChild(b);
+    if (canWalk) { const j = document.createElement('button'); j.textContent = 'GO NOW'; j.setAttribute('aria-label', 'Jump straight to ' + D.label.toLowerCase());
+      j.style.cssText = 'min-height:64px;padding:0 12px;border:2px solid var(--ink);background:none;color:var(--ink);font:800 11px var(--font);letter-spacing:.1em;cursor:pointer';
+      j.onclick = () => { close(); G.campus.go(D.to); }; row.appendChild(j); }
+    wrap.appendChild(row);
+  }
+}
+function openSignpost() {
+  const wrap = document.createElement('div');
+  const p = document.createElement('p'); p.style.cssText = 'margin:0 0 10px;font:400 15px/1.5 var(--font)'; p.textContent = 'Where would you like to go? Your fox walks you there along the paths. Move the joystick at any time to take over.'; wrap.appendChild(p);
+  placeRows(wrap, true);
+  showPanel('Signpost', 'Where to?', wrap);
+}
+// the park map (☰): the campus drawn as you see it when you arrive (the museum ahead, the cinema behind you), you as a red dot;
+// tap a building (or its row) to walk there when you're in the park, or to go straight there from anywhere else
+function openMap() {
+  const [px, , pz, pf] = G.localState(), inPark = !!G.campus.zone();
+  // map: up = west (towards the museum), left = north; 1 unit = 1 metre; world x -46..94 -> y, z 60..-60 -> x
+  const X = z => 60 - z, Y = x => x + 46;
+  const bld = (to, x0, x1, z0, z1, fill, label, ink = '#fff') => `<g class="mb" data-to="${to}" role="button" tabindex="0" aria-label="${label.replace('|', ' ')}" style="cursor:pointer"><rect x="${X(z1)}" y="${Y(x0)}" width="${z1 - z0}" height="${x1 - x0}" fill="${fill}" stroke="#1d1c1b" stroke-width="1.2"/><text x="${X((z0 + z1) / 2)}" y="${Y((x0 + x1) / 2) + 2.2 - (label.split('|').length - 1) * 3.2}" text-anchor="middle" font-size="6.2" font-weight="800" fill="${ink}" font-family="Archivo, Arimo, sans-serif">${label.split('|').map((l, i) => `<tspan x="${X((z0 + z1) / 2)}" dy="${i ? 6.4 : 0}">${l}</tspan>`).join('')}</text></g>`;
+  const mx = Math.max(5, Math.min(115, X(pz))), my = Math.max(5, Math.min(137, Y(px)));   // (in the museum's far rooms you sit on the map's top edge)
+  const you = `<g transform="translate(${mx} ${my}) rotate(${(-pf * 180 / Math.PI - 90).toFixed(0)})"><circle r="4.2" fill="#ec3013" stroke="#fff" stroke-width="1.4"/><path d="M0 -8.5 L3 -3.6 L-3 -3.6 Z" fill="#ec3013"/></g>`;
+  const svg = `<svg viewBox="0 0 120 142" style="display:block;width:100%;max-width:440px;margin:0 auto 6px;background:#24301f;border:2px solid var(--ink)" role="img" aria-label="Map of the park: the museum at the top, BLIND CAN Cinema at the bottom, the WHY House on the left, the Academy of Music on the right, the big tree in the middle">
+    <rect x="${X(58)}" y="${Y(-12.4)}" width="116" height="104.4" fill="#6f8f3e"/>
+    <path d="M${X(0)} ${Y(-12)} L${X(0)} ${Y(19)} M${X(0)} ${Y(61)} L${X(0)} ${Y(74)} M${X(18.2)} ${Y(29.5)} L${X(27)} ${Y(25)} L${X(40)} ${Y(18)} L${X(46)} ${Y(8)} M${X(-18.2)} ${Y(29.5)} L${X(-27)} ${Y(25)} L${X(-40)} ${Y(18)} L${X(-46)} ${Y(8)} M${X(0)} ${Y(61)} L${X(0)} ${Y(74)}" stroke="#d9cdb4" stroke-width="3" fill="none"/>
+    <circle cx="${X(0)}" cy="${Y(40)}" r="21" stroke="#d9cdb4" stroke-width="3" fill="none"/>
+    <circle cx="${X(0)}" cy="${Y(40)}" r="5" fill="#f4aac6" stroke="#8a4a5e" stroke-width="1"/>
+    <rect x="${X(5.1)}" y="${Y(9.8)}" width="3.1" height="7.4" fill="#5fc6d8"/><rect x="${X(-2)}" y="${Y(9.8)}" width="3.1" height="7.4" fill="#5fc6d8"/>
+    ${bld('museum', -44, -13, -24, 24, '#f3efe8', 'THE MUSEUM', '#1d1c1b')}
+    ${bld('why', 31, 49, 25, 41, '#efe4cf', 'WHY|HOUSE', '#1d1c1b')}
+    ${bld('amb', 30.6, 49.4, -57.4, -23.6, '#1d1c1b', 'ACADEMY')}
+    ${bld('cinema', 74, 90, -11, 11, '#7e3328', 'CINEMA')}
+    <circle cx="${X(2.1)}" cy="${Y(29.6)}" r="1.6" fill="#9a6a3c"/>
+    ${you}
+  </svg>`;
+  const wrap = document.createElement('div'); wrap.innerHTML = svg;
+  const p = document.createElement('p'); p.style.cssText = 'margin:4px 0 6px;font:400 14px/1.45 var(--font)';
+  p.textContent = inPark ? 'You are the red dot. Tap a place and your fox walks you there, or tap GO NOW to jump.' : (px < -13 ? 'You are inside the museum (the red dot). ' : 'You are the red dot. ') + 'Tap a place to go straight there.'; wrap.appendChild(p);
+  placeRows(wrap, inPark);
+  wrap.querySelectorAll('.mb').forEach(g => { const go = () => { const D = G.campus.dests.find(d => d.to === g.dataset.to); close(); if (inPark) walkWith(D); else G.campus.go(D.to); };
+    g.onclick = go; g.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } }; });
+  showPanel('The park', 'Map', wrap);
+}
+function walkWith(D) {
+  const name = D.label.charAt(0) + D.label.slice(1).toLowerCase();
+  $('hint').textContent = 'Walking to ' + name + ' · move the joystick to stop'; $('hint').style.display = 'block'; $('live').textContent = 'Walking you to ' + name + '.';
+  G.campus.walk(D.to, why => { $('hint').style.display = 'none'; $('live').textContent = why === 'arrived' ? 'You have arrived: ' + name + '.' : 'Stopped walking.'; });
+}
+
 // ------------------------------------------------ menu
 const syncMenu = () => {
   document.querySelectorAll('#looks button').forEach(b => b.classList.toggle('on', b.dataset.l === (pref.look || 'male')));
@@ -305,6 +365,7 @@ const syncMenu = () => {
   $('voices').classList.toggle('on', !pref.noVoices); $('autoRead').classList.toggle('on', !!pref.autoRead); $('readNotes').classList.toggle('on', !pref.quietNotes); $('big').classList.toggle('on', !!pref.big);
   document.documentElement.style.fontSize = pref.big ? '120%' : ''; $('pb').style.fontSize = pref.big ? '20px' : '';
 };
+$('mapBtn').onclick = () => { if (G.campus) openMap(); };
 $('menuBtn').onclick = () => { const m = $('menu'); m.style.display = m.style.display === 'block' ? 'none' : 'block'; syncMenu(); };
 document.querySelectorAll('#looks button').forEach(b => b.onclick = () => { pref.look = b.dataset.l; savePref(); G.setLook(pref.look, pref.extra); syncMenu(); });
 document.querySelectorAll('#extras button').forEach(b => b.onclick = () => { pref.extra = b.dataset.x; savePref(); G.setLook(pref.look || 'male', pref.extra); syncMenu(); });
