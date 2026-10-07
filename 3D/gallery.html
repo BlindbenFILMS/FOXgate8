@@ -34,6 +34,11 @@
   #actBtn:not(.on) .lbl { opacity:.75; }
   #actBtn:active .ico { transform:scale(.94); }
   #actBtn:focus-visible .ico { outline:3px solid #ff9783; outline-offset:2px; }
+  #showToast { position:fixed; left:50%; transform:translateX(-50%); top:calc(120px + env(safe-area-inset-top)); z-index:11; width:min(360px,calc(100vw - 24px)); display:none; background:#1d1c1b; color:#f3f2f2; border-left:6px solid #ec3013; padding:10px 12px; font:600 13px/1.35 var(--font); box-shadow:0 6px 24px rgba(0,0,0,.35); }
+  #showToast b { display:block; font:800 12px/1.2 var(--font); letter-spacing:.12em; color:#ffd27a; margin-bottom:2px; }
+  #showToast .row { display:flex; gap:8px; margin-top:8px; }
+  #showToast button { min-height:44px; padding:0 12px; border:2px solid #f3f2f2; background:#ec3013; border-color:#ec3013; color:#fff; font:800 12px var(--font); letter-spacing:.08em; cursor:pointer; }
+  #showToast button.x { background:none; border-color:#f3f2f2; }
   #hint { position:fixed; left:50%; transform:translateX(-50%); top:calc(74px + env(safe-area-inset-top)); z-index:9; padding:6px 10px; font-size:12px; font-weight:600; max-width:calc(100vw - 24px); text-align:center; }
   #panel { position:fixed; z-index:20; left:50%; top:50%; transform:translate(-50%,-50%); width:min(720px,calc(100vw - 24px)); max-height:calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); display:none; flex-direction:column; user-select:text; -webkit-user-select:text; touch-action:pan-y; }
   #panel header { display:flex; align-items:stretch; border-bottom:2px solid var(--ink); }
@@ -168,7 +173,7 @@ function actionWords(n) {
     case 'braille': return ['LEARN', 'Braille and brilliance'];
     case 'elevator': return [n.busy ? 'WAIT' : /down/.test(l) ? 'GO DOWN' : /call/.test(l) ? 'CALL ELEVATOR' : 'GO UP', L];
     case 'sit': return [n.item && n.item.up ? 'STAND UP' : 'SIT', (n.item && n.item.name) || 'Bench'];
-    case 'film': return ['FULL SCREEN', G && G.campus && G.campus.zone() === 'cinema' ? 'Now showing · ' + G.campus.nowShowing() : 'The film in this room'];
+    case 'film': return ['FULL SCREEN', G && G.campus && G.campus.zone() === 'cinema' ? (G.campus.showtime().on ? 'Now showing · ' : 'Next show soon · ') + G.campus.nowShowing() : 'The film in this room'];
     case 'why': return n.item && n.item.id ? ['READ STORY', L] : ['ADD YOUR STORY', 'The WHY House'];
     case 'goto': return ['TAKE ME THERE', L];
     case 'signpost': return ['WHERE TO?', 'Signpost · the park'];
@@ -353,6 +358,24 @@ function openMap() {
     g.onclick = go; g.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } }; });
   showPanel('The park', 'Map', wrap);
 }
+// SHOWTIME: a minute before each show, everyone who isn't already in the cinema gets a nudge (at most every half hour)
+(() => {
+  const el = document.createElement('div'); el.id = 'showToast'; el.setAttribute('role', 'status'); document.body.appendChild(el);
+  let lastShown = 0, hideT = 0, warnedIn = 0;
+  const hide = () => { el.style.display = 'none'; clearTimeout(hideT); };
+  setInterval(() => {
+    if (!window.READY || !G || !G.campus) return; const S = G.campus.showtime(), inCinema = G.campus.zone() === 'cinema';
+    if (!S.on && S.nextIn <= 60 && S.nextIn > 50) {
+      if (inCinema) { if (warnedIn !== S.next) { warnedIn = S.next; $('live').textContent = 'The show starts in one minute.'; } return; }
+      if (Date.now() - lastShown < 25 * 60000) return; lastShown = Date.now();
+      const time = new Date(S.next).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+      el.innerHTML = '<b>🎬 SHOWTIME IN 1 MINUTE · ' + time + '</b>' + esc(G.campus.filmTitle()) + ' at BLIND CAN Cinema<div class="row"><button id="stGo">Take me there</button><button class="x" id="stX">Not now</button></div>';
+      el.style.display = 'block'; $('live').textContent = 'Showtime in one minute at BLIND CAN Cinema: ' + G.campus.filmTitle() + '.';
+      $('stGo').onclick = () => { hide(); if (G.campus.zone()) walkWith(G.campus.dests.find(d => d.to === 'cinema')); else G.campus.go('cinema'); };
+      $('stX').onclick = hide; clearTimeout(hideT); hideT = setTimeout(hide, 30000);
+    }
+  }, 1000);
+})();
 function walkWith(D) {
   const name = D.label.charAt(0) + D.label.slice(1).toLowerCase();
   $('hint').textContent = 'Walking to ' + name + ' · move the joystick to stop'; $('hint').style.display = 'block'; $('live').textContent = 'Walking you to ' + name + '.';

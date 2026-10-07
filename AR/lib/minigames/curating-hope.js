@@ -106,7 +106,7 @@ export function curatingHopeGame() {
     let b = document.getElementById('chPass');
     if (!b && show) {
       b = document.createElement('button'); b.id = 'chPass'; b.type = 'button';
-      b.style.cssText = 'position:fixed;left:calc(16px + env(safe-area-inset-left));right:calc(16px + env(safe-area-inset-right));bottom:calc(96px + env(safe-area-inset-bottom));z-index:12;min-height:64px;padding:0 22px;overflow:hidden;' +
+      b.style.cssText = 'position:fixed;left:calc(16px + env(safe-area-inset-left));right:calc(16px + env(safe-area-inset-right));bottom:calc(24px + env(safe-area-inset-bottom));z-index:12;min-height:64px;padding:0 22px;overflow:hidden;' +
         'display:flex;align-items:center;gap:12px;background:#ec3013;color:#fff;border:2px solid #000;border-radius:0;font:900 clamp(20px,6.4vw,26px)/1 Archivo,"Arial Black",Arial,sans-serif;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;touch-action:none;-webkit-user-select:none;user-select:none';
       b.innerHTML = '<i style="position:absolute;left:0;top:0;bottom:0;width:0;background:#0d2f8f;pointer-events:none"></i><span style="position:relative;display:flex;align-items:center;gap:12px;pointer-events:none"></span>';
       b.addEventListener('pointerdown', e => { e.preventDefault(); try { b.setPointerCapture(e.pointerId); } catch (_) {} press(true); });

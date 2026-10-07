@@ -115,7 +115,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const kiosks = buildKiosks({ scene, resolveImg: RES, groundAt: (x, y, z) => { glbRay.set(new THREE.Vector3(x, y, z), DOWN); glbRay.far = 30; const h = glbRay.intersectObject(world, true)[0]; return h ? h.point.y : -1e9; } });
   const rooms = buildRooms({ scene, data, wood, resolveImg: RES, buildWing });
   // the park campus: BLIND CAN CINEMA, the WHY House, the AMB building's outside, and the museum's signs pointing to them
-  const campus = NOWORLD ? null : buildCampus({ scene, wood, woodify, vids: data.vids, resolveImg: RES, lowEnd });
+  const campus = NOWORLD ? null : buildCampus({ scene, wood, woodify, vids: data.vids, resolveImg: RES, lowEnd, camera });
   const braille = buildBraille({ scene, resolveImg: RES });   // 'Hope Floating in Braille': an island on the welcome plaza, at the end away from the museum
   patchOldBraille({ scene, wood, woodify });
   const lift = buildElevator({ scene, resolveImg: RES });   // the lift from the music room up through the pupil to the eye platform
@@ -1024,9 +1024,13 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     braille.tick(dt);
     if (campus) {
       campus.tick(dt);
-      // the cinema's programme: when its film comes round to the start again, the next one goes on
+      // showtimes: in the cinema the film is locked to the clock (everyone sees the same frame); between shows it waits at the start
       const cs = campus.cinema.screen;
-      if (curUrl && curUrl === cs.u && St.campusZone === 'cinema' && video.duration > 5) { const t = video.currentTime; if (cineT > video.duration - 3 && t < 2) { cineT = 0; playUrl(campus.cinema.next()); } else cineT = t; } else cineT = 0;
+      if (curUrl && curUrl === cs.u && video.readyState >= 1 && !window.HUSH) {
+        const S = campus.cinema.show();
+        if (S.on) { cineT -= dt; if (cineT <= 0 && Math.abs(video.currentTime - S.t) > 2 && S.t < (video.duration || 1e9) - 1) { cineT = 3; try { video.currentTime = S.t; } catch (e) {} }   // (at most one seek every 3 s, so a slow connection isn't kept seeking) if (video.paused) video.play().catch(() => {}); }
+        else if (!video.paused || video.currentTime > 0.5) { video.pause(); try { video.currentTime = 0; } catch (e) {} }
+      }
     }
     lift.tick(dt, Pl);
     ringGlass.tick(Pl);
@@ -1112,6 +1116,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       go(to) { const t = CAMPUS_STOPS[to]; if (!t) return; if (Pl.sit) standUp(); travel({ to: { x: t.x, z: t.z, y: groundAt(t.x, 3, t.z), face: t.face } }); },
       walk: (to, onEnd) => walkTo(to, onEnd), stopWalk: () => walkStop('stopped'), walking: () => AW.pts ? AW.to : null, dests: SIGN_DEST,
       piano: campus.piano, playPiano() { if (!(Pl.sit && Pl.sit.name === 'Piano bench')) { if (Pl.sit) standUp(); sitOn(campus.piano.bench); } }, standUp: () => standUp(),
+      showtime: () => campus.cinema.show(), filmTitle: () => campus.cinema.now().title,
       zone: () => St.campusZone, why: campus.why, nowShowing: () => campus.cinema.now().title, nextFilm: () => playUrl(campus.cinema.next()), group: campus.group,
     },
     sit: b => (b && b.up) || Pl.sit ? standUp() : sitOn(b), fullFilm: () => fullFilm(), sitting: () => !!Pl.sit,

@@ -19,12 +19,17 @@ import { makePlant, makeBench } from './gallery-props.js';
 
 const FONT = 'Archivo, Arimo, Helvetica, Arial, sans-serif';
 const DECO = '"Limelight", "Poiret One", Archivo, Arimo, Helvetica, Arial, sans-serif';
-export const CINEMA_PROGRAM = [
-  { file: 'blindcan_capitol', title: 'Blind Artists Use A.I. to Make Art', kicker: 'As seen on the news' },
-  { file: 'goalball', title: 'Goalball', kicker: 'The game played by ear' },
-  { file: 'bcp_teaser', title: 'The Blind Canvas Project', kicker: 'The teaser' },
-  { file: 'bcp_ora_film', title: 'Blind Canvas × Ora', kicker: 'Imagining together' },
-];
+// what's on at BLIND CAN CINEMA: one film, shown at fixed SHOWTIMES so everyone watches together. A show starts every `every`
+// minutes on the clock (:00, :15, :30, :45 — the same moment for every visitor, wherever they are); between shows the screen and
+// the marquee count down to the next one. Everyone in the cinema sees the same frame (the film is locked to the clock).
+export const CINEMA_SHOW = { file: 'blindcan_festival', title: 'This Weekend Is Blind CAN Film Festival', kicker: 'Blind CAN Film Festival', len: 603.5, every: 15 };
+export const CINEMA_PROGRAM = [CINEMA_SHOW];
+export function showtime(nowMs = Date.now()) {   // { on, t (seconds into the film), start, next (ms of the next show), nextIn (s) }
+  const P = CINEMA_SHOW.every * 60, s = nowMs / 1000, t = s % P, start = (s - t) * 1000, next = start + P * 1000;
+  return t < CINEMA_SHOW.len ? { on: true, t, start, next, nextIn: (next - nowMs) / 1000 } : { on: false, t: 0, start, next, nextIn: (next - nowMs) / 1000 };
+}
+const hhmm = ms => new Date(ms).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+const mmss = s => { s = Math.max(0, Math.ceil(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
 // where "take me there" lands you: just outside each door, facing it
 export const CAMPUS_STOPS = {
   why: { x: 40, z: 21.6, face: 0, name: 'The WHY House' },
@@ -46,7 +51,7 @@ const tex = (w, h, draw, rep) => { const cv = document.createElement('canvas'); 
 const fitText = (c, text, maxW, size, weight = 800, font = FONT, min = 10) => { let fs = size; c.font = `${weight} ${fs}px ${font}`; while (fs > min && c.measureText(text).width > maxW) { fs -= 2; c.font = `${weight} ${fs}px ${font}`; } return fs; };
 function wrap(c, text, maxW) { const out = []; let line = ''; for (const w of String(text).split(/\s+/)) { const t = line ? line + ' ' + w : w; if (c.measureText(t).width > maxW && line) { out.push(line); line = w; } else line = t; } if (line) out.push(line); return out; }
 
-export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u => u, lowEnd = false }) {
+export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u => u, lowEnd = false, camera: cam = null }) {
   const col = [], benches = [], screens = [], tickers = [], near = [];
   const root = new THREE.Group(); scene.add(root);
   // a box: world position, optional per-face materials [+x,-x,+y,-y,+z,-z]; solid ones go in the collision list
@@ -249,32 +254,54 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
       box(1.56, 0.12, 1.56, ink, bx, 2.55, bz, false); const dome = new THREE.Mesh(new THREE.SphereGeometry(0.78, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshLambertMaterial({ color: 0xa3222c })); dome.position.set(bx, 2.6, bz); root.add(dome);
       plane(1.2, 0.34, new THREE.MeshBasicMaterial({ map: tex(512, 140, (c, w, h) => { c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ffd27a'; c.textAlign = 'center'; c.font = `800 92px ${FONT}`; c.fillText('TICKETS', w / 2, 104); }) }), bx - 0.79, 2.32, bz, -Math.PI / 2);
       const p = makePlant(2.2); p.group.position.set(FX - 1.0, 0, cz + 4.2); root.add(p.group); box(0.8, 1.6, 0.8, null, FX - 1.0, 0.8, cz + 4.2).visible = false; }
-    // the programme: one film after another
-    const prog = CINEMA_PROGRAM.map(f => { const v = vids.find(v => (v.local || '').endsWith('/' + f.file + '.mp4')); return { ...f, u: v ? v.u : 'gallery/video/' + f.file + '.mp4', local: 'gallery/video/' + f.file + '.mp4', poster: 'gallery/img2/cinema_' + f.file + '.webp', im: null }; });
-    prog.forEach(p => { p.im = img(p.poster, () => draw()); });
-    let cur = 0;
-    const screen = { u: prog[0].u, local: prog[0].local, box: scr, faces: [1], posterMat, vol: 0.9, dist: 30, reach: 40, minVol: 0.05, p: [SX, SY, cz], zone: new THREE.Box3(new THREE.Vector3(C.x0 + 0.2, -1, C.z0), new THREE.Vector3(C.x1, H + 1.5, C.z1)), cinema: true };
+    // the show: one film at fixed showtimes (CINEMA_SHOW); the poster case on the left is the film, on the right the showtimes
+    const F = CINEMA_SHOW, film = { ...F, u: 'gallery/video/' + F.file + '.mp4', local: 'gallery/video/' + F.file + '.mp4', im: null };
+    film.im = img('gallery/img2/cinema_' + F.file + '.webp', () => { draw(true); setPoster(); });
+    const screen = { u: film.u, local: film.local, box: scr, faces: [1], posterMat, vol: 0.9, dist: 30, reach: 40, minVol: 0.05, p: [SX, SY, cz], zone: new THREE.Box3(new THREE.Vector3(C.x0 + 0.2, -1, C.z0), new THREE.Vector3(C.x1, H + 1.5, C.z1)), cinema: true };
     screens.push(screen);
-    function poster(P, f, label) {
+    const setPoster = () => { const im = film.im; if (!im || !im.complete || !im.naturalWidth) return; const t = new THREE.Texture(im); t.colorSpace = THREE.SRGBColorSpace; t.needsUpdate = true; if (posterMat.map) posterMat.map.dispose(); posterMat.map = t; posterMat.color.set(0xffffff); posterMat.needsUpdate = true; };
+    // between shows: a countdown in front of the screen
+    const cd = { cv: document.createElement('canvas') }; cd.cv.width = 1024; cd.cv.height = 576; cd.t = new THREE.CanvasTexture(cd.cv); cd.t.colorSpace = THREE.SRGBColorSpace;
+    const cdPlane = plane(VW, VH, new THREE.MeshBasicMaterial({ map: cd.t }), SX - 0.08, SY, cz, -Math.PI / 2); cdPlane.userData.dyn = true; cdPlane.visible = false;
+    function filmPoster(P) {
       const c = P.cv.getContext('2d'), w = P.cv.width, h = P.cv.height; c.fillStyle = '#1a0d10'; c.fillRect(0, 0, w, h); c.strokeStyle = '#c9a14a'; c.lineWidth = 10; c.strokeRect(14, 14, w - 28, h - 28);
-      c.fillStyle = '#ffd27a'; c.textAlign = 'center'; c.font = `800 34px ${FONT}`; c.fillText(label, w / 2, 84);
-      const im = f.im; if (im && im.complete && im.naturalWidth) { const iw = w - 70, ih = Math.min(330, iw * im.naturalHeight / im.naturalWidth); c.drawImage(im, 35, 120, iw, ih); }
-      let fs = 54, L; do { c.font = `800 ${fs}px ${FONT}`; L = wrap(c, f.title, w - 80); fs -= 4; } while (L.length > 3 && fs > 30);
+      c.fillStyle = '#ffd27a'; c.textAlign = 'center'; c.font = `800 34px ${FONT}`; c.fillText('NOW SHOWING', w / 2, 84);
+      const im = film.im; if (im && im.complete && im.naturalWidth) { const iw = w - 70, ih = Math.min(330, iw * im.naturalHeight / im.naturalWidth); c.drawImage(im, 35, 120, iw, ih); }
+      let fs = 54, L; do { c.font = `800 ${fs}px ${FONT}`; L = wrap(c, film.title, w - 80); fs -= 4; } while (L.length > 3 && fs > 30);
       c.fillStyle = '#fff'; L.slice(0, 3).forEach((l, i) => c.fillText(l, w / 2, 530 + i * (fs + 12)));
-      c.fillStyle = '#e8d9b8'; c.font = `500 26px ${FONT}`; c.fillText(f.kicker || '', w / 2, 500);
+      c.fillStyle = '#e8d9b8'; c.font = `500 26px ${FONT}`; c.fillText(film.kicker, w / 2, 500);
       c.fillStyle = '#ec3013'; c.font = `800 28px ${FONT}`; c.fillText('BLIND CAN CINEMA', w / 2, h - 50); P.t.needsUpdate = true;
     }
-    function draw() {
-      const f = prog[cur], c = lb.cv.getContext('2d'), w = lb.cv.width, h = lb.cv.height;
-      c.fillStyle = '#fdf8ea'; c.fillRect(0, 0, w, h); c.fillStyle = '#1d1c1b'; c.textAlign = 'center';
-      c.font = `800 40px ${FONT}`; c.fillText('NOW SHOWING  ·  ' + (f.kicker || '').toUpperCase(), w / 2, 56);
-      fitText(c, f.title.toUpperCase(), w - 120, 108); c.fillText(f.title.toUpperCase(), w / 2, 168); lb.t.needsUpdate = true;
-      poster(posters[0], f, 'NOW SHOWING'); poster(posters[1], prog[(cur + 1) % prog.length], 'COMING UP NEXT');
-      if (f.im && f.im.complete) { const t = new THREE.Texture(f.im); t.colorSpace = THREE.SRGBColorSpace; t.needsUpdate = true; if (posterMat.map) posterMat.map.dispose(); posterMat.map = t; posterMat.color.set(0xffffff); posterMat.needsUpdate = true; }
+    function timesPoster(P, S) {
+      const c = P.cv.getContext('2d'), w = P.cv.width, h = P.cv.height; c.fillStyle = '#1a0d10'; c.fillRect(0, 0, w, h); c.strokeStyle = '#c9a14a'; c.lineWidth = 10; c.strokeRect(14, 14, w - 28, h - 28);
+      c.textAlign = 'center'; c.fillStyle = '#ffd27a'; c.font = `800 40px ${FONT}`; c.fillText('SHOWTIMES', w / 2, 96); c.fillStyle = '#ec3013'; c.fillRect(w / 2 - 60, 116, 120, 6);
+      c.font = `500 26px ${FONT}`; c.fillStyle = '#e8d9b8'; c.fillText('Every ' + F.every + ' minutes · ' + Math.round(F.len / 60) + ' min', w / 2, 170);
+      const first = S.on ? S.next : S.next; for (let i = 0; i < 5; i++) { const at = first + i * F.every * 60000; c.fillStyle = i ? '#fff' : '#ffd27a'; c.font = `800 ${i ? 52 : 64}px ${FONT}`; c.fillText(hhmm(at), w / 2, 270 + i * 82); }
+      c.fillStyle = '#ec3013'; c.font = `800 28px ${FONT}`; c.fillText('BLIND CAN CINEMA', w / 2, h - 50); P.t.needsUpdate = true;
     }
-    draw();
-    function next() { cur = (cur + 1) % prog.length; screen.u = prog[cur].u; screen.local = prog[cur].local; draw(); return screen.u; }
-    return { screen, next, now: () => prog[cur], rect: C };
+    let lastKey = '', lastMin = -1;
+    function draw(force) {
+      const S = showtime(), key = S.on ? 'on' + Math.floor(S.start / 60000) : 'off' + Math.ceil(S.nextIn); if (key === lastKey && !force) return; lastKey = key;
+      const c = lb.cv.getContext('2d'), w = lb.cv.width, h = lb.cv.height;
+      c.fillStyle = '#fdf8ea'; c.fillRect(0, 0, w, h); c.fillStyle = '#1d1c1b'; c.textAlign = 'center';
+      c.font = `800 40px ${FONT}`; c.fillText(S.on ? 'NOW SHOWING  ·  STARTED ' + hhmm(S.start) : 'NEXT SHOWTIME ' + hhmm(S.next) + '  ·  IN ' + mmss(S.nextIn), w / 2, 56);
+      fitText(c, film.title.toUpperCase(), w - 120, 108); c.fillText(film.title.toUpperCase(), w / 2, 168); lb.t.needsUpdate = true;
+      const m = Math.floor(Date.now() / 60000); if (m !== lastMin || force) { lastMin = m; filmPoster(posters[0]); timesPoster(posters[1], S); }
+      cdPlane.visible = !S.on;
+      if (!S.on) {   // the countdown on the screen
+        const g = cd.cv.getContext('2d'), W2 = cd.cv.width, H2 = cd.cv.height; g.fillStyle = '#0b0a0c'; g.fillRect(0, 0, W2, H2);
+        const im = film.im; if (im && im.complete && im.naturalWidth) { g.globalAlpha = 0.35; g.drawImage(im, 0, 0, W2, H2); g.globalAlpha = 1; }
+        g.textAlign = 'center'; g.fillStyle = '#ffd27a'; g.font = `800 40px ${FONT}`; g.fillText('NEXT SHOWTIME  ·  ' + hhmm(S.next), W2 / 2, 120);
+        g.fillStyle = '#fff'; g.font = `800 190px ${FONT}`; g.fillText(mmss(S.nextIn), W2 / 2, 330);
+        g.font = `800 40px ${FONT}`; fitText(g, film.title.toUpperCase(), W2 - 120, 44); g.fillText(film.title.toUpperCase(), W2 / 2, 430);
+        g.fillStyle = '#ff9783'; g.font = `600 28px ${FONT}`; g.fillText('Take a seat · everyone watches together', W2 / 2, 500); cd.t.needsUpdate = true;
+      }
+    }
+    draw(true);
+    // redraw once a second, only when you're near enough to see it
+    let acc = 0; tickers.push(dt => { acc += dt; if (acc < 0.5) return; acc = 0; const cp = cam && cam.position; if (!cp || Math.hypot(cp.x - (C.x0 + C.x1) / 2, cp.z - cz) < 140) draw(false); });
+    const next = () => screen.u;
+    return { screen, next, now: () => film, show: showtime, rect: C };
   })();
 
   // ============================================================ back in the museum: the AMB room's old doorway, the Wall of Why's pointer

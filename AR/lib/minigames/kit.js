@@ -175,7 +175,7 @@ function css() {
     display:flex;align-items:center;font-size:104px;line-height:1}
   .mgk-pop{background:#000;border-bottom:4px solid ${RED};padding:4px 10px 3px;font-size:30px;transform:translate(-50%,-50%)}
   .mgk-frame{inset:0;border:8px solid ${RED};z-index:9}
-  .mgk-btns{left:calc(12px + env(safe-area-inset-left));right:calc(12px + env(safe-area-inset-right));bottom:calc(96px + env(safe-area-inset-bottom));display:flex;gap:10px;pointer-events:none}
+  .mgk-btns{left:calc(12px + env(safe-area-inset-left));right:calc(12px + env(safe-area-inset-right));bottom:calc(24px + env(safe-area-inset-bottom));display:flex;gap:10px;pointer-events:none}
   .mgk-btns button{pointer-events:auto;flex:1;min-height:66px;padding:0 12px;border:2px solid #000;background:#fff;color:#000;cursor:pointer;touch-action:none;
     font:900 clamp(15px,4.6vw,20px)/1 Archivo,'Arial Black',Arial,sans-serif;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:8px}
   .mgk-btns button.red{background:${RED};color:#fff} .mgk-btns button.black{background:#000;color:#fff;border-color:#fff} .mgk-btns button.blue{background:${BLUE};color:#fff}

@@ -34,7 +34,7 @@ export function setupTogether({ G, net, nameOf, announce, onSev = () => {}, esc 
   let party = null;            // { host: 'me' | id, u, joined, left }
   let invites = [];            // { key, from, text, title, btn, act, until }
   let lastSev = null;
-  const noWatch = new Set();   // films whose 'Watch together' offer was dismissed
+  const noWatch = new Set();   // films whose 'Watch together' offer was dismissed (never offered in the cinema: it runs on showtimes, everyone's already in sync)
   // group vision: me showing everyone (gv), or me seeing through someone else's eyes (gview)
   const COND = { rp: 'Tunnel vision (RP)', cataracts: 'Cataracts', amd: 'Macular degeneration', floaters: 'Floaters (diabetic retinopathy)', glaucoma: 'Glaucoma' };
   const gv = { on: false, cond: 'rp', sev: 0.6, t: 0 };
@@ -70,7 +70,7 @@ export function setupTogether({ G, net, nameOf, announce, onSev = () => {}, esc 
     const film = G.film.url();
     if (party && party.host === 'me') { rows.push(row('Watch party · you are hosting', fname(party.u), [['From the start', () => { G.film.seek(party.u, 0); hostSync(); }, ''], ['End', () => endParty(), 'p']])); sig.push('ph'); }
     else if (party && party.joined && film === party.u) { rows.push(row('Watch party · in sync', 'with ' + nameOf(party.host) + ' · ' + fname(party.u), [['Leave', () => { party.joined = false; party.left = true; render(); }, '']])); sig.push('pj' + party.host); }
-    else if (film && G.remote.count() > 0 && !(party && party.u === film) && !noWatch.has(film)) { rows.push(row('Watch together', 'Restart ' + fname(film) + ' for everyone, in sync', [['▶ Start', () => startParty(), 'p'], ['✕', () => { noWatch.add(film); render(); }, 'c']])); sig.push('pw' + film); }
+    else if (film && G.remote.count() > 0 && !(party && party.u === film) && !noWatch.has(film) && !(G.campus && G.campus.zone() === 'cinema')) { rows.push(row('Watch together', 'Restart ' + fname(film) + ' for everyone, in sync', [['▶ Start', () => startParty(), 'p'], ['✕', () => { noWatch.add(film); render(); }, 'c']])); sig.push('pw' + film); }
     for (const i of invites) { rows.push(row(i.title, i.text, [[i.btn, () => { invites = invites.filter(x => x !== i); i.act(); render(); }, 'p'], ['✕', () => { invites = invites.filter(x => x !== i); render(); }, 'c']], 'go')); sig.push('i' + i.key); }
     const k = sig.join('|') + '|' + (fid ? nameOf(fid) : '');
     if (k === shown) return; shown = k;

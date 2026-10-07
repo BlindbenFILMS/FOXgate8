@@ -39,17 +39,24 @@
   #ar{position:fixed;inset:0;overflow:hidden}
   #ar video{object-fit:cover}
   #ar{touch-action:none}
-  /* during a mini game the story controls step aside, so the whole painting is the board */
-  body.gaming #hud .row, body.gaming #status, body.gaming #caption, body.gaming #explore{display:none!important}
-  /* Play / Stop / Play again, in Claude Design's style: full width, square, label flush left with a trailing icon */
-  #gameBtn{align-self:stretch;flex:none;max-width:none;min-height:62px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 20px;
-    border-radius:0;background:#ec3013;border:2px solid #000;color:#fff;
-    font-family:Archivo,'Atkinson Hyperlegible',Arial,sans-serif;font-weight:900;font-size:24px;letter-spacing:.04em;text-transform:uppercase}
-  #gameBtn.stop{background:#000;border-color:#fff;font-size:20px;min-height:54px}
+  /* ── the only controls on the camera view: one row at the very top (Play game · Artist · Sound),
+     so everything under it — the painting, its animation and the artist's clip — is free of buttons ── */
+  #topBar{position:fixed;left:0;right:0;top:0;z-index:12;display:none;gap:6px;
+    padding:calc(8px + env(safe-area-inset-top)) calc(8px + env(safe-area-inset-right)) 0 calc(8px + env(safe-area-inset-left))}
+  #topBar.on{display:flex}
+  #topBar button{flex:1 1 0;min-width:0;height:50px;display:flex;align-items:center;justify-content:center;gap:7px;padding:0 6px;
+    border:2px solid #fff;border-radius:0;background:#000;color:#fff;cursor:pointer;white-space:nowrap;
+    font-family:Archivo,'Atkinson Hyperlegible',Arial,sans-serif;font-weight:900;font-size:clamp(12px,3.7vw,16px);letter-spacing:.04em;text-transform:uppercase}
+  #topBar button .i{font-size:1.15em;line-height:1}
+  #topBar #gameBtn{background:#ec3013;border-color:#ec3013}
+  #topBar #gameBtn.stop{background:#000;border-color:#ec3013}
+  #topBar #muteBtn[aria-pressed="true"]{background:#fff;color:#000}
+  #topBar button:disabled{opacity:.38;cursor:default}
+  #topBar button:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+  /* screen-reader-only helpers: the status line and a Describe button stay for VoiceOver / TalkBack users */
+  #hud{position:fixed;left:0;top:0;width:1px;height:1px;overflow:hidden}
+  #hud .sr-btn{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;padding:0;border:0}
 
-  #hud{position:fixed;left:0;right:0;bottom:0;z-index:10;padding:12px 14px calc(14px + env(safe-area-inset-bottom));
-    display:none;flex-direction:column;gap:10px;pointer-events:none}
-  #hud > *{pointer-events:auto}
   #status{align-self:center;padding:10px 18px;border-radius:999px;background:var(--panel);
     border:1px solid var(--line);font-size:17px;font-weight:700;text-align:center;max-width:100%}
   #status.found{color:var(--gold)}
@@ -107,22 +114,36 @@
 <div id="loading" role="status"><div class="spinner" aria-hidden="true"></div><div>Starting camera…</div></div>
 <div id="ar" aria-hidden="true"></div>
 <div id="visionLayer"></div>
-<button id="eyeBtn" type="button" aria-label="See through their eyes: vision simulator">&#128065; See through their eyes</button>
+<nav id="topBar" aria-label="Controls">
+  <button id="gameBtn" type="button" disabled><span class="i" aria-hidden="true">&#9654;</span><span class="l">Play game</span></button>
+  <button id="artistBtn" type="button" disabled><span class="i" aria-hidden="true">&#8599;</span><span class="l">Artist</span></button>
+  <button id="muteBtn" type="button" aria-pressed="false"><span class="i" aria-hidden="true">&#128266;</span><span class="l">Sound on</span></button>
+</nav>
 <div id="scan" aria-hidden="true"><div class="cue">CENTER ART IN CAMERA</div><div class="box"></div></div>
 
-<section id="hud" aria-label="Artwork controls">
+<section id="hud" aria-label="Artwork">
   <div id="status" role="status" aria-live="polite">Center the art in your camera</div>
   <div id="caption" aria-live="off"></div>
   <div id="explore" role="group" aria-label="Explore parts of the artwork"></div>
-  <button class="btn" id="gameBtn" type="button" hidden><span>Play the game</span><span aria-hidden="true">&#9654;</span></button>
-  <div class="row">
-    <button class="btn" id="listen" type="button">Listen</button>
-    <button class="btn" id="describe" type="button" hidden>Describe</button>
-    <button class="btn" id="textBtn" type="button" aria-pressed="false">Show text</button>
-    <button class="btn" id="stopBtn" type="button">Quiet</button>
-  </div>
+  <button class="sr-btn" id="describe" type="button">Describe the painting</button>
 </section>
 
+<script>
+/* One switch for every sound on the page. Every Web Audio context (the games' sounds, Ben's recorded lines)
+   is remembered so Mute can pause them all; every video or audio that starts playing while muted starts muted. */
+(function () {
+  const AC = window.AudioContext || window.webkitAudioContext; window.__acs = [];
+  if (AC) {
+    const Wrapped = function (...a) { const c = new AC(...a); window.__acs.push(c); if (window.__muted) c.suspend().catch(() => {}); return c; };
+    Wrapped.prototype = AC.prototype;
+    window.AudioContext = Wrapped; if (window.webkitAudioContext) window.webkitAudioContext = Wrapped;
+    const resume = AC.prototype.resume;   // a game asking to resume while muted stays quiet
+    AC.prototype.resume = function () { return window.__muted ? Promise.resolve() : resume.call(this); };
+  }
+  const play = HTMLMediaElement.prototype.play;
+  HTMLMediaElement.prototype.play = function () { if (window.__muted && !this.muted) { this.muted = true; this.dataset.unmute = '1'; } return play.call(this); };
+})();
+</script>
 <script type="importmap">
 { "imports": {
     "three": "./lib/three/three.module.js",
@@ -187,6 +208,7 @@ function stopTalking() {
   for (const a of audios.values()) a.pause();
 }
 function say(text) {
+  if (window.__muted) return;
   stopTalking();
   if (!synth || !text) return;
   const u = new SpeechSynthesisUtterance(text);
@@ -205,12 +227,6 @@ function buzz(p) { if (navigator.vibrate) navigator.vibrate(p); }
 let current = null;                // the artwork most recently found
 function setStatus(text, found) { const s = $('status'); s.textContent = text; s.classList.toggle('found', !!found); }
 function setCaption(text) { $('caption').textContent = text || ''; }
-$('textBtn').onclick = () => {
-  const on = $('textBtn').getAttribute('aria-pressed') !== 'true';
-  $('textBtn').setAttribute('aria-pressed', on);
-  $('textBtn').textContent = on ? 'Hide text' : 'Show text';
-  $('caption').classList.toggle('show', on);
-};
 let allScenes = [];
 const storyMedia = sc => sc && (sc.clip || sc.audio);
 function stopStories(except) { const keep = storyMedia(except); for (const s of allScenes) { const m = storyMedia(s); if (m && m !== keep) m.pause(); } }
@@ -222,9 +238,54 @@ function playStory(sc, fromStart) {   // the artist's clip (or sound) for this p
   m.play().catch(() => {});
   setCaption(sc.work.quote || ''); setStatus(sc.work.title + ' · ' + sc.work.artist, true);
 }
-$('listen').onclick = () => { if (!current) return; if (storyMedia(current)) playStory(current, true); else describe(current.work); };
 $('describe').onclick = () => { if (!current) return; stopStories(); describe(current.work); };
-$('stopBtn').onclick = () => { stopTalking(); stopStories(); };
+
+/* ── the top bar: Play game · Artist · Sound ─────────── */
+// each artist's page on blindcanvasproject.com (an artwork can also set its own `link` in artworks.js)
+const BCP = 'https://blindcanvasproject.com/';
+const ARTIST_PAGES = {
+  'ben fox': 'ben-fox/', 'bill mccann': 'bill-mccann/', 'april & melissa': 'april-and-mellissa/', 'morten bonde': 'morten-bonde/',
+  'marcus roberts': 'marcus-roberts/', 'shardasia hadley': 'shardasia-hadley/', 'will hollimon': 'will-hollimon/',
+  'wayne pearcy': 'wayne-pearcy/', 'dave steele': 'dave-steele/', 'craig ellis': 'craig-ellis/', 'raquel alim': 'raquel-alim/',
+  'steven mccoy': 'steven-mccoy/', 'rusty perez': 'rusty-perez/', 'ricky ruzicka': 'ricky-ruzicka/', 'alayna lopez': 'alayna-lopez/',
+  'academy of music for the blind': 'series',      // the Academy's paintings are the site's Series page
+};
+const artistLink = w => w && (w.link || (ARTIST_PAGES[(w.artist || '').trim().toLowerCase()] != null ? BCP + ARTIST_PAGES[(w.artist || '').trim().toLowerCase()] : null));
+function setGameBtn(state) {   // 'play' | 'stop' | 'again'
+  const b = $('gameBtn'), t = { play: ['&#9654;', 'Play game'], stop: ['&#9632;', 'Stop'], again: ['&#8635;', 'Play again'] }[state];
+  b.innerHTML = '<span class="i" aria-hidden="true">' + t[0] + '</span><span class="l">' + t[1] + '</span>';
+  b.classList.toggle('stop', state === 'stop');
+}
+function setNowShowing(sc) {   // the painting the buttons act on (null: nothing in view)
+  const w = sc && sc.work;
+  $('gameBtn').disabled = !(w && GAMES[w.id]);
+  $('gameBtn').setAttribute('aria-label', w && GAMES[w.id] ? (game ? 'Stop the game' : 'Play the game for ' + w.title) : 'Play game: find a painting first');
+  const url = artistLink(w);
+  $('artistBtn').disabled = !url;
+  $('artistBtn').setAttribute('aria-label', url ? 'Visit ' + w.artist + '\u2019s page on the Blind Canvas Project website' : 'Visit the artist\u2019s page: find a painting first');
+}
+$('artistBtn').onclick = () => {
+  const url = artistLink(current && current.work); if (!url) return;
+  if (current && current.clip) current.clip.pause();
+  stopTalking();
+  window.open(url, '_blank', 'noopener');
+};
+function setMuted(on) {
+  window.__muted = on;
+  $('muteBtn').setAttribute('aria-pressed', on);
+  $('muteBtn').innerHTML = on ? '<span class="i" aria-hidden="true">&#128263;</span><span class="l">Muted</span>'
+                              : '<span class="i" aria-hidden="true">&#128266;</span><span class="l">Sound on</span>';
+  $('muteBtn').setAttribute('aria-label', on ? 'Sound is off. Tap to turn sound on' : 'Sound is on. Tap to mute');
+  for (const c of window.__acs) (on ? c.suspend() : c.resume()).catch(() => {});
+  if (on) { stopTalking(); for (const m of document.querySelectorAll('video,audio')) if (!m.muted) { m.muted = true; m.dataset.unmute = '1'; } }
+  const media = [...document.querySelectorAll('video,audio'), ...audios.values(), ...allScenes.flatMap(s => [s.clip, s.audio, s.video])].filter(Boolean);
+  for (const m of new Set(media)) {
+    if (on) { if (!m.muted) { m.muted = true; m.dataset.unmute = '1'; } }
+    else if (m.dataset.unmute) { m.muted = false; delete m.dataset.unmute; }
+  }
+  buzz(20);
+}
+$('muteBtn').onclick = () => setMuted(!window.__muted);
 
 function showExplore(scene) {
   const box = $('explore'); box.innerHTML = '';
@@ -517,10 +578,8 @@ function openVision() {
       requestAnimationFrame(loop);
     })(last);
   } else vision.open();
-  $('eyeBtn').style.display = 'none';
 }
-function closeVision() { vision.close(); $('eyeBtn').style.display = 'block'; $('eyeBtn').focus({ preventScroll: true }); }
-$('eyeBtn').onclick = openVision;
+function closeVision() { vision.close(); }
 
 /* ── mini games inside a painting (lib/minigames) ────────
    A painting listed in GAMES gets a "Play the game" button when it's found. While a game runs, the painting's
@@ -533,12 +592,12 @@ function startGame(sc) {
   game.start({ group: sc.group, h: sc.work.height / sc.work.width, camera: R3.camera, renderer: R3.renderer, say, buzz, work: sc.work,
     story: () => { stopGame(); playStory(sc, true); } });   // a game can hand back to the artist's story
   delete $('gameBtn').dataset.over;
-  $('gameBtn').innerHTML = '<span>Stop</span><span aria-hidden="true">&#9632;</span>'; $('gameBtn').classList.add('stop');
+  setGameBtn('stop'); setNowShowing(sc);
 }
 function stopGame() {
   if (!game) return;
   game.stop(); gameScene.gameOn = false; game = null; gameScene = null; document.body.classList.remove('gaming');
-  $('gameBtn').innerHTML = '<span>Play the game</span><span aria-hidden="true">&#9654;</span>'; $('gameBtn').classList.remove('stop');
+  setGameBtn('play'); setNowShowing(current && current.found ? current : null);
 }
 $('gameBtn').onclick = () => {
   if (game && !game.over) { stopGame(); return; }
@@ -600,7 +659,7 @@ async function startAR() {
       setStatus('Found: ' + sc.work.title, true);
       $('scan').style.display = 'none';
       if (game && gameScene !== sc) stopGame();
-      $('gameBtn').hidden = !GAMES[sc.work.id];
+      setNowShowing(sc);
       if (sc.gameOn) { game.resume(); return; }
       showExplore(sc);
       if (sc.video) sc.video.play().catch(() => {});
@@ -619,7 +678,7 @@ async function startAR() {
     };
     anchor.onTargetLost = () => {
       sc.found = false; stats.lost();
-      if (sc.gameOn) game.pause(); else if (!scenes.some(s => s.found)) $('gameBtn').hidden = true;
+      if (sc.gameOn) game.pause(); else if (!scenes.some(s => s.found)) setNowShowing(null);
       if (sc.video) sc.video.pause(); if (sc.anim) sc.anim.pause(); if (sc.clip) sc.clip.pause();   // (a sound-only story keeps going)
       if (!scenes.some(s => s.found)) {
         setStatus('Center the art in your camera');
@@ -630,7 +689,6 @@ async function startAR() {
     return sc;
   });
   allScenes = scenes;
-  if (scenes.some(s => s.type === 'story')) { $('describe').hidden = false; $('listen').textContent = '\u25B6 Story'; $('listen').setAttribute('aria-label', 'Play the artist\u2019s story again'); }
 
   // tap the art to hear a part of it
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
@@ -664,15 +722,14 @@ async function startAR() {
   stats.scanning();
 
   $('loading').style.display = 'none';
-  $('hud').style.display = 'flex';
-  $('eyeBtn').style.display = 'block';
+  $('topBar').classList.add('on'); setGameBtn('play'); setNowShowing(null);
   $('scan').style.display = 'flex';
   $('ar').removeAttribute('aria-hidden');
 
   const clock = new THREE.Clock();
   renderer.setAnimationLoop(() => {
     const t = clock.getElapsedTime(), nowG = performance.now(), dtG = Math.min(0.05, (nowG - (window.__lastG || nowG)) / 1000); window.__lastG = nowG;
-    if (game) { game.update(dtG); if (params.get('debug')) window.__mg = game.debug; if (game.over && !$('gameBtn').dataset.over) { $('gameBtn').dataset.over = '1'; $('gameBtn').innerHTML = '<span>Play again</span><span aria-hidden="true">&#8635;</span>'; $('gameBtn').classList.remove('stop'); } }
+    if (game) { game.update(dtG); if (params.get('debug')) window.__mg = game.debug; if (game.over && !$('gameBtn').dataset.over) { $('gameBtn').dataset.over = '1'; setGameBtn('again'); } }
     else delete $('gameBtn').dataset.over;
     for (const sc of scenes) {
       if (!sc.found) continue;

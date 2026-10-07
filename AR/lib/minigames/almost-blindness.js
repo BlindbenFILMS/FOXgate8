@@ -263,7 +263,7 @@ export function almostBlindnessGame() {
     if (!b && show) {
       b = document.createElement('button'); b.id = 'mgCane'; b.type = 'button'; b.setAttribute('aria-label', 'Tap the cane: hear what is ahead of you');
       b.innerHTML = '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 21 17 5"/><path d="M17 5c1-1.6 3.4-1 3 1"/><path d="M7.6 18.7 9 16.7" stroke="#ec3013" stroke-width="3"/></svg><span>CANE</span>';
-      b.style.cssText = 'position:fixed;right:calc(14px + env(safe-area-inset-right));bottom:calc(96px + env(safe-area-inset-bottom));z-index:12;width:92px;height:92px;border-radius:50%;box-sizing:border-box;padding:0;' +
+      b.style.cssText = 'position:fixed;right:calc(14px + env(safe-area-inset-right));bottom:calc(24px + env(safe-area-inset-bottom));z-index:12;width:92px;height:92px;border-radius:50%;box-sizing:border-box;padding:0;' +
         'background:#000;color:#fff;border:5px solid #ec3013;box-shadow:0 0 0 3px #fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font:900 15px/1 Archivo,Arial,sans-serif;letter-spacing:.06em;cursor:pointer';
       b.onclick = () => cane(); document.body.appendChild(b);
     }
@@ -291,7 +291,7 @@ export function almostBlindnessGame() {
     V.end = t; V.then = then; V.thenAt = 0;
     return t - a.currentTime;
   }
-  const talking = () => !!(G && G.V.end && ac && ac.currentTime < G.V.end);
+  const talking = () => !!(G && !window.__muted && G.V.end && ac && ac.currentTime < G.V.end);   // muted: the page pauses all sound, so don't wait on a line
 
   /* ── a morning ── */
   function rng(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
