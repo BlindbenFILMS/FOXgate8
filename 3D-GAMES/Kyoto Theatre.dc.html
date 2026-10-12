@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Kyoto Theatre">
+  <div ref="{{ stageRef }}" style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0;overflow:hidden"></div>
+  <div data-hud-host="1" style="position:absolute;inset:0;pointer-events:none"><dc-import name="Game HUD" game="{{ engine }}" hud="{{ stdHud }}" started="{{ started }}" busy="{{ busy }}" on-hud="{{ onHud }}" world="Kyoto" vehicle="kabuki" keys="{{ keysList }}" skip-keys="{{ skipKeys }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  <sc-if value="{{ metersOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:{{ cardTop }};z-index:2;pointer-events:none;width:{{ meterW }};background:#000;border:2px solid #3a3836;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:4px 10px 2px"><span style="font:800 9px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap">THE HOUSE</span><span style="font:900 13px var(--font-heading);font-variant-numeric:tabular-nums">{{ houseTxt }}</span></div>
+      <div style="height:9px;margin:0 10px;background:#3a3836;position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ houseW }};background:{{ houseCol }};display:block"></span><span style="position:absolute;left:60%;top:-3px;bottom:-3px;width:2px;background:#fff;display:block"></span><span style="position:absolute;left:90%;top:-3px;bottom:-3px;width:2px;background:#ffd23a;display:block"></span></div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:5px 10px 2px"><span style="font:800 9px var(--font-heading);letter-spacing:0.12em;color:#f87171">THEY NOTICE</span></div>
+      <div style="height:6px;margin:0 10px 7px;background:#3a3836;position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ slipW }};background:#ec3013;display:block"></span></div>
+    </div>
+    <div style="position:absolute;right:max(12px, env(safe-area-inset-right));top:{{ cardTop }};z-index:2;pointer-events:none;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column;padding:4px 10px 6px;min-width:84px">
+      <span style="font:800 9px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap">{{ sceneTxt }}</span>
+      <span style="font:900 18px var(--font-heading);line-height:1.1;font-variant-numeric:tabular-nums;white-space:nowrap">{{ lineTxt }}</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ dockOn }}" hint-placeholder-val="{{ false }}">
+    <div onPointerDown="{{ tiltDown }}" onPointerMove="{{ tiltMove }}" onPointerUp="{{ tiltUp }}" onPointerCancel="{{ tiltUp }}" style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:{{ dockH }};z-index:3;touch-action:none;cursor:grab"></div>
+    <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:calc(8px + env(safe-area-inset-bottom));width:{{ dockW }};z-index:5;display:flex;flex-direction:column;background:#000;border:2px solid #3a3836">
+      <div style="display:flex;flex-direction:column;border-bottom:2px solid #3a3836;min-height:{{ chorusMinH }}">
+        <div style="display:flex;justify-content:space-between;align-items:stretch;gap:8px"><span style="padding:3px 10px;background:{{ cueCol }};color:#000;font:900 11px var(--font-heading);letter-spacing:0.14em;white-space:nowrap">CHORUS · {{ cueTxt }}</span><span style="padding:3px 10px;font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap">{{ sceneLabel }}</span></div>
+        <span style="padding:5px 12px 4px;font:800 {{ chorusFs }} var(--font-body);line-height:1.3;color:#fff;text-wrap:pretty">{{ chorusTxt }}</span>
+        <div style="height:5px;margin:0 12px 7px;background:#2a2826;position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:35%;background:#3a3836;display:block"></span><span style="position:absolute;left:0;top:0;bottom:0;width:{{ lineW }};background:{{ lineCol }};display:block"></span></div>
+      </div>
+      <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836;min-height:34px">
+        <span style="flex:none;min-width:52px;padding:0 10px;display:flex;align-items:center;background:{{ statCol }};color:{{ statInk }};font:900 12px var(--font-heading);letter-spacing:0.08em;white-space:nowrap">{{ statKey }}</span>
+        <span style="flex:1;min-width:0;padding:6px 12px;display:flex;align-items:center;font:900 {{ statFs }} var(--font-heading);letter-spacing:0.04em;line-height:1.2;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ statTxt }}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr))">
+        <sc-for list="{{ squares }}" as="s" hint-placeholder-count="3">
+          <button onPointerDown="{{ s.press }}" aria-label="{{ s.label }}" style="position:relative;height:{{ sqH }};padding:0;border:0;border-right:{{ s.br }};border-radius:0;background:{{ s.bg }};cursor:pointer;display:flex;flex-direction:column;align-items:stretch;justify-content:space-between;opacity:{{ s.op }};touch-action:none;outline:{{ s.ring }};outline-offset:-4px">
+            <span style="flex:1;min-height:0;display:block;margin:6px 6px 0;background-image:{{ s.imgCss }};background-size:contain;background-repeat:no-repeat;background-position:center;pointer-events:none"></span>
+            <span style="display:flex;justify-content:space-between;align-items:center;gap:4px;padding:4px 8px;background:{{ s.col }};color:#000;font:900 {{ sqFs }} var(--font-heading);letter-spacing:0.06em;white-space:nowrap"><span>{{ s.label }}</span><span>{{ s.tag }}</span></span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}">
+    <button onClick="{{ demoExit }}" aria-label="Exit the demo" style="position:absolute;right:max(12px, env(safe-area-inset-right));bottom:calc(200px + env(safe-area-inset-bottom));z-index:7;min-width:96px;min-height:48px;padding:0 14px;border:2px solid #ec3013;border-radius:0;background:#ec3013;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">EXIT DEMO</button>
+  </sc-if>
+  <sc-if value="{{ introOn }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:6;width:min(300px, calc(100% - 24px));background:#000;border:2px solid #3a3836;display:flex;flex-direction:column">
+      <div style="padding:10px 16px;border-bottom:2px solid #3a3836;display:flex;align-items:baseline;justify-content:space-between;gap:12px"><span style="font:900 26px var(--font-heading);line-height:1;white-space:nowrap">The Fox Wife</span><sc-if value="{{ bestOn }}" hint-placeholder-val="{{ false }}"><span style="font:900 13px var(--font-heading);color:#ffd23a;white-space:nowrap">{{ bestTxt }}</span></sc-if></div>
+      <span style="padding:8px 16px;border-bottom:2px solid #3a3836;font:700 13px var(--font-body);line-height:1.4;color:#cfcac2;text-wrap:pretty">Wear the mask the chorus names before the drum. Drag to tilt it.</span>
+      <button onClick="{{ goStart }}" style="min-height:56px;padding:0 18px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10">PLAY</button>
+      <div style="display:grid;grid-template-columns:{{ introCols }}">
+        <button onClick="{{ goDemo }}" style="min-height:48px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">DEMO</button>
+        <sc-if value="{{ backOn }}" hint-placeholder-val="{{ false }}"><a href="{{ backHref }}" style="min-height:48px;padding:0 18px;border-top:2px solid #3a3836;border-left:2px solid #3a3836;display:flex;align-items:center;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;text-decoration:none" style-hover="background:#2a2826">← BACK</a></sc-if>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:8;background:rgba(0,0,0,0.6);display:flex;align-items:flex-end;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #3a3836;width:min(440px,100%);display:flex;flex-direction:column">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+          <div style="padding:12px 16px;flex:1;min-width:0;display:flex;flex-direction:column;gap:3px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">THE FOX WIFE · {{ doneKick }}</span><span style="font:900 24px var(--font-heading);line-height:1.05">{{ h.done.title }}</span><span style="font:700 13px var(--font-body);color:#cfcac2;line-height:1.4;text-wrap:pretty">{{ h.done.body }}</span></div>
+          <div style="min-width:88px;padding:0 10px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;background:{{ doneCol }}"><span style="font:900 30px var(--font-heading);line-height:1">{{ h.done.house }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em">THE HOUSE</span></div>
+        </div>
+        <sc-for list="{{ doneRows }}" as="r" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:8px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;color:{{ r.c }}">{{ r.v }}</span></div></sc-for>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+          <button onClick="{{ goStart }}" style="min-height:54px;padding:0 16px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10">GO AGAIN</button>
+          <button onClick="{{ toIntro }}" style="min-height:54px;padding:0 16px;border:0;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">BACK</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;pace&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Gentle (slower lines)&quot;,&quot;As written&quot;,&quot;Fast&quot;],&quot;default&quot;:&quot;As written&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Game&quot;}}">
+class Component extends DCLogic {
+  state = { h: null, vw: 1200, vh: 800, hi: { pad: false, menu: false, split: false, bar: 0 } };
+  stageRef = React.createRef();
+  onHud = hi => this.setState({ hi });
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs();
+    try { const m = await import(new URL('minigames/kyoto/fox-wife.js', document.baseURI).href); this.g = await m.createFoxWife({ container: this.stageRef.current, onState: h => this.setState({ h }), opts: { speed: this.speed() } }); window.__foxwife = this.g; this.forceUpdate(); if (/[?&]demo=1/.test(location.search)) setTimeout(() => this.g.demoStart(), 400); }
+    catch (e) { console.warn('theatre failed: ' + (e && e.stack || String(e))); }
+  }
+  speed() { return ({ 'Gentle (slower lines)': 0.8, 'As written': 1, 'Fast': 1.2 })[this.props.pace ?? 'As written'] || 1; }
+  componentDidUpdate() { if (this.g && this.safe) { const k = this.safe.top + ',' + this.safe.bottom; if (k !== this.lastSafe) { this.lastSafe = k; this.g.setSafe(this.safe); } } const sp = this.speed(); if (this.g && sp !== this.lastSp) { this.lastSp = sp; this.g.setOpts({ speed: sp }); } }
+  componentWillUnmount() { removeEventListener('resize', this.onRs); this.g && this.g.destroy(); }
+  onRs = () => this.setState({ vw: innerWidth, vh: innerHeight });
+  renderVals() {
+    const S = this.state, g = this.g, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const h = S.h || { mode: 'intro', house: 34, slip: 0, line: null, mark: null, done: null, scene: '', masks: [{ key: 'girl', label: 'THE WIFE', col: '#f2a7c0' }, { key: 'old', label: 'THE FARMER', col: '#8fc0f0' }, { key: 'fox', label: 'THE FOX', col: '#f2a03c' }], sub: 'three masks, and the fox gets the better lines', best: 0, gold: 0, swap: null };
+    const { vw, vh } = S, phone = Math.min(vw, vh) < 520, land = phone && vw > vh, portrait = phone && !land, bar = S.hi.bar || 0, menu = !!S.hi.menu, play = h.mode === 'play' && !h.over, live = play && !menu, d = h.done || {};
+    let sv = null; try { sv = JSON.parse(localStorage.getItem('8gates.save.v1') || 'null'); } catch (e) {}
+    const stdHud = { hp: 100, hpMax: 100, en: 100, gold: h.gold, hour: 20, day: sv && sv.stats ? sv.stats.worldDay || 1 : 1, items: sv ? Object.entries(sv.items || {}).filter(([, n]) => n > 0).map(([id, n]) => ({ id, n, label: id })) : [], place: 'Kyoto · The Theatre', quest: { text: h.line ? 'THE FOX WIFE · LINE ' + h.line.n + ' / ' + h.line.of : 'THE FOX WIFE · WEAR THE FACE THE CHORUS ASKS FOR' }, prompt: null, toast: null, muted: false, weather: 'Clear', boat: false, inCave: false, weapons: [], dialog: null, vehicles: [], vehAmmo: [], vehSwap: h.swap || null };
+    const top = bar + 42, dockPx = portrait ? 300 : land ? 176 : 262; this.safe = { top: top - bar + 70, bottom: dockPx + 8 };
+    const L = h.line, MK = h.masks.reduce((o, m) => (o[m.key] = m, o), {}), want = L ? MK[L.mask] : null;
+    const tUp = L && L.act === 'terasu', tDn = L && L.act === 'kumorasu', tOk = tUp ? h.headY > 0.35 : tDn ? h.headY < -0.35 : false;
+    const P = !L ? null : h.listening ? ['LISTEN', 'THE RACK IS DOWN · HEAR WHO SPEAKS', '#9a948c'] : h.changing ? ['…', 'CHANGING MASKS', '#ffffff'] : h.wearing === L.mask && (tUp || tDn) ? [tOk ? '✓' : (tUp ? '↑' : '↓'), tOk ? (tUp ? 'TERASU · THE MASK SMILES' : 'KUMORASU · THE MASK WEEPS') : (tUp ? 'TILT THE MASK UP · TERASU' : 'TILT THE MASK DOWN · KUMORASU'), tOk ? '#22c55e' : '#ffd23a'] : h.wearing === L.mask ? ['✓', 'WEARING ' + h.wearingLabel, '#22c55e'] : ['NOW', 'PUT ON ' + (want ? want.label : '') + ' · ' + (L.mask === 'girl' ? '1' : L.mask === 'old' ? '2' : '3'), want ? want.col : '#ffd23a'];
+    const mk = h.mark, mcol = mk ? ({ good: '#22c55e', fox: '#f2a03c', miss: '#ec3013', between: '#ec3013' })[mk.kind] : '#fff';
+    const KEYN = { girl: '1', old: '2', fox: '3' }, SHORT = { girl: 'WIFE', old: 'FARMER', fox: 'FOX' }, imgs = h.maskImg || {}, lis = !!h.listening, demo = !!h.demo;
+    const squares = h.masks.map((m, i) => { const on = h.wearing === m.key, want = L && !lis && L.mask === m.key && !on; return { label: SHORT[m.key] || m.label, tag: on ? '● ON' : phone ? '' : KEYN[m.key], imgCss: imgs[m.key] ? 'url(' + imgs[m.key] + ')' : 'none', col: m.col, bg: on ? '#2a2826' : '#0f0d0c', op: lis ? 0.45 : 1, br: i < 2 ? '2px solid #3a3836' : '0', ring: want ? '3px solid ' + m.col : on ? '3px solid #ffffff' : 'none', press: e => { e.preventDefault(); if (!g || demo) return; g.wear(m.key); } }; });
+    const stat = mk ? [mk.kind === 'good' || mk.kind === 'fox' ? '✓' : '✕', mk.text, mcol] : P ? [P[0], P[1], P[2]] : ['', '', '#3a3836'];
+    const backM = /[?&]back=([^&]+)/.exec(location.search);
+    return {
+      stageRef: this.stageRef, engine: g, stdHud, started: !!g && h.mode === 'play', busy: true, onHud: this.onHud, h,
+      stageTop: bar + 'px', cardTop: top + 'px',
+      keysList: [['1 / J', 'the wife'], ['2 / K', 'the farmer'], ['3 / L', 'the fox'], ['WASD / ↑↓←→', 'tilt + turn the mask'], ['I', 'menu']], skipKeys: ['KeyJ', 'KeyK', 'KeyL', 'KeyT', 'KeyN', 'KeyV', 'KeyC', 'KeyO', 'KeyH', 'KeyE', 'Space', 'Digit4'],
+      metersOn: live && h.phase === 'lines', meterW: phone ? '150px' : '210px', houseTxt: Math.round(h.house) + '%', houseW: Math.round(h.house) + '%', houseCol: h.house >= 90 ? '#ffd23a' : h.house >= 60 ? '#22c55e' : '#f2a03c', slipW: Math.round((h.slip || 0) * 100) + '%', sceneTxt: 'THE FOX WIFE', lineTxt: L ? L.n + ' / ' + L.of : '',
+      dockOn: live && h.phase === 'lines', dockW: portrait ? 'calc(100% - 16px)' : land ? 'min(560px, calc(100% - 340px))' : 'min(640px, calc(100% - 32px))', dockH: dockPx + 'px', sqH: portrait ? '128px' : land ? '72px' : '118px', sqFs: land ? '10px' : '12px', squares,
+      chorusMinH: portrait ? '104px' : land ? '62px' : '86px', cueTxt: L ? L.cue : '', chorusTxt: L ? L.text : '', sceneLabel: h.scene ? 'SCENE · ' + h.scene : (L ? L.n + ' / ' + L.of : ''),
+      statKey: stat[0], statTxt: stat[1], statCol: stat[2], statInk: stat[2] === '#ec3013' ? '#ffffff' : '#000000', statFs: portrait ? '13px' : land ? '12px' : '14px',
+      tiltDown: e => { if (!g) return; this.tilt = { x: e.clientX, y: e.clientY }; try { e.currentTarget.setPointerCapture(e.pointerId); } catch (er) {} }, tiltMove: e => { if (!g || !this.tilt) return; g.setStick(Math.max(-1, Math.min(1, (e.clientX - this.tilt.x) / 80)), Math.max(-1, Math.min(1, -(e.clientY - this.tilt.y) / 70))); }, tiltUp: () => { this.tilt = null; g && g.setStick(0, 0); },
+      chorusOn: false, cueCol: L ? L.col : '#fff', chorusFs: portrait ? '15px' : land ? '13px' : '16px', lineW: L ? Math.round(L.u * 100) + '%' : '0%', lineCol: h.listening ? '#9a948c' : (L ? L.col : '#fff'),
+      markOn: live && !!mk, markCol: mcol, markFs: portrait ? 'clamp(18px,5vw,24px)' : land ? '16px' : '22px', sceneOn: live && !!h.scene,
+      promptOn: live && !!P && !h.demo, promptKey: P ? P[0] : '', promptTxt: P ? P[1] : '', promptCol: P ? P[2] : '#fff',
+      promptL: portrait ? 'max(12px, env(safe-area-inset-left))' : '50%', promptTf: portrait ? 'none' : 'translateX(-50%)', promptB: land ? 'calc(10px + env(safe-area-inset-bottom))' : phone ? 'calc(196px + env(safe-area-inset-bottom))' : 'calc(48px + env(safe-area-inset-bottom))',
+      demoOn: !!h.demo && h.mode !== 'intro', demoExit: e => { blur(e); g && g.demoStop(); },
+      introOn: h.mode === 'intro', bestOn: !!h.best, bestTxt: 'BEST ' + h.best + '%', introCols: backM ? 'repeat(2,minmax(0,1fr))' : 'minmax(0,1fr)',
+      actorLines: ['We are a man short and the house is in nine days. Can you stand still?', 'The play is THE FOX WIFE. A farmer marries a woman who came out of the rain, and does not ask, and then one day he asks. Three masks: the wife, the farmer, the fox.', 'You wear whichever one the chorus is speaking. The drum tells you when. One rule, and it is harder than it sounds.', 'Move the stick (or WASD) to turn and tilt the mask. Tilt it up and the mask smiles. Tilt it down and it weeps.'].map((t, i) => ({ t, c: i === 2 ? '#ffffff' : i === 3 ? '#7dd3fc' : '#cfcac2' })),
+      maskRows: h.masks.map((m, i) => ({ key: String(i + 1), label: m.label, col: m.col })),
+      introRows: [['Best house', h.best ? h.best + '%' : '—', h.best >= 90 ? '#ffd23a' : '#ffffff'], ['Needs', '60% to pass · 90% for the old actor', '#8a847e']].map(([k, v, c]) => ({ k, v, c })),
+      goStart: e => { blur(e); g && g.start(); }, goDemo: e => { blur(e); g && g.demoStart(); }, backOn: !!backM, backHref: backM ? decodeURIComponent(backM[1]) : '#',
+      doneOn: h.mode === 'done' && !!h.done && !h.demo, doneKick: d.over === 'won' ? (d.great ? 'A GREAT NIGHT' : 'A GOOD NIGHT') : d.over === 'thin' ? 'A THIN HOUSE' : 'SEEN', doneCol: d.over === 'won' ? (d.great ? '#ffd23a' : '#22c55e') : '#ec3013',
+      doneRows: [['Right face', (d.hit || 0) + ' / ' + (d.lines || 22), '#ffffff'], ['Fox lines', String(d.foxes || 0), '#f2a03c'], ['Mask tilts', String(h.tilts || 0) + ' / 3', '#7dd3fc'], ...(d.gold ? [['Purse', '+' + d.gold + 'g', '#e6b45a'], ['Experience', '+' + d.xp + ' XP', '#7dd3fc']] : []), ['Best house', (d.best || 0) + '%' + (d.newBest ? ' · NEW' : ''), d.newBest ? '#ffd23a' : '#ffffff']].map(([k, v, c]) => ({ k, v, c })),
+      toIntro: e => { blur(e); g && g.toIntro(); },
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -19,6 +19,7 @@ import { buildVisionSpots, visionOverlay } from './gallery-vision.js';
 import { buildSimWalls } from './gallery-simwall.js';
 import { buildBraille, patchOldBraille } from './gallery-braille.js';
 import { buildCampus, CAMPUS_STOPS, SIGN_DEST } from './gallery-campus.js';
+import { buildCommentSpots } from './gallery-comments.js';
 import { stainedGlass } from './gallery-stained.js';
 import { buildElevator } from './gallery-elevator.js';
 import { buildSkywalk } from './gallery-skywalk.js';
@@ -30,7 +31,7 @@ import { buildKiosks, carveWorld, carved, buildEntrance, buildRooms, buildBioWal
 const BASE = 'gallery/';
 const SPAWN = { x: CAMPUS.spawn.x, y: 0.5, z: CAMPUS.spawn.z, face: CAMPUS.spawn.face };   // in the middle of the park beside the big tree, facing the museum (the cinema behind you)
 
-export async function createGallery({ container, onProgress = () => {}, onNear = () => {}, onZone = () => {}, onSplash = () => {} }) {
+export async function createGallery({ container, onProgress = () => {}, onNear = () => {}, onZone = () => {}, onSplash = () => {}, onPad = () => {} }) {
   const lowEnd = /iPhone|iPad|Android/i.test(navigator.userAgent);
   const NOWORLD = new URLSearchParams(location.search).has('noworld');   // (testing) the museum without the lake, flags and city
   const renderer = new THREE.WebGLRenderer({ antialias: !lowEnd || devicePixelRatio < 2, powerPreference: 'high-performance' });
@@ -101,21 +102,23 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     // walls/floors to collide with (skip see-through decals)
     const m0 = mats[0]; if (m0.transparent && m0.opacity < 0.2) return;
     if (o.isInstancedMesh) {
-      for (let i = 0; i < o.count; i++) { const mi = new THREE.Matrix4(); o.getMatrixAt(i, mi); const g = o.geometry.clone(); g.applyMatrix4(new THREE.Matrix4().multiplyMatrices(o.matrixWorld, mi)); colGeos.push(g); }
-    } else { const g = o.geometry.clone(); g.applyMatrix4(o.matrixWorld); colGeos.push(g); }
+      for (let i = 0; i < o.count; i++) { const mi = new THREE.Matrix4(); o.getMatrixAt(i, mi); const g = o.geometry.clone(); g.applyMatrix4(new THREE.Matrix4().multiplyMatrices(o.matrixWorld, mi)); g.userData.lab = 'glb:' + o.name + '#' + i; colGeos.push(g); }
+    } else { const g = o.geometry.clone(); g.applyMatrix4(o.matrixWorld); g.userData.lab = 'glb:' + (o.name || (o.parent && o.parent.name) || '?'); colGeos.push(g); }
   });
   // New Artists Wing: built from Ben's artist pages, entered through a doorway in the main hall (quick fade, like our interiors)
   // joined to the south end of the Wall of Why hallway (x -74..-66), running out over the lawn; walk straight in
   const WING_O = new THREE.Vector3(-69.9, -3.14, 22.0);
   const wing = data.wing ? buildWing({ scene, wing: data.wing, O: WING_O, rotY: Math.PI / 2, doorW: 8.4, wood, resolveImg: RES, L: 124, spacious: true }) : null;
   const doors = [];
-  if (wing) for (const m of wing.col) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); colGeos.push(g); }
+  if (wing) for (const m of wing.col) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); g.userData.lab = 'wing'; colGeos.push(g); }
   const entrance = buildEntrance({ scene, wood });
   const glbRay = new THREE.Raycaster(), DOWN = new THREE.Vector3(0, -1, 0);
   const kiosks = buildKiosks({ scene, resolveImg: RES, groundAt: (x, y, z) => { glbRay.set(new THREE.Vector3(x, y, z), DOWN); glbRay.far = 30; const h = glbRay.intersectObject(world, true)[0]; return h ? h.point.y : -1e9; } });
   const rooms = buildRooms({ scene, data, wood, resolveImg: RES, buildWing });
   // the park campus: BLIND CAN CINEMA, the WHY House, the AMB building's outside, and the museum's signs pointing to them
   const campus = NOWORLD ? null : buildCampus({ scene, wood, woodify, vids: data.vids, resolveImg: RES, lowEnd, camera });
+  // comment spots (11 Oct): the only places a floating note can be left: a raised yellow pad and a YOUR COMMENTS HERE sign
+  const comments = NOWORLD ? null : buildCommentSpots({ THREE, scene });
   const braille = buildBraille({ scene, resolveImg: RES });   // 'Hope Floating in Braille': an island on the welcome plaza, at the end away from the museum
   patchOldBraille({ scene, wood, woodify });
   const lift = buildElevator({ scene, resolveImg: RES });   // the lift from the music room up through the pupil to the eye platform
@@ -138,14 +141,14 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     for (const [x, z] of plan.lanterns) B(0.7, 1.6, 0.7, x, 0.8, z);
     for (const [x, z, ry] of plan.benches) B(2.5, 0.6, 0.7, x, 0.3, z, ry);
     B(1.6, 3, 1.6, RING.x, 1.5, RING.z);                                                    // the big tree's trunk
-    for (const z of [-7.04, 7.04]) B(0.5, 4.4, 0.5, 21, 2.2, z);                           // the name sign's posts
+    for (const z of [-3.08, 3.08]) B(0.5, 4.4, 0.5, 21.6, 2.2, z);                         // the name sign's posts (inside the ring, clear of its path)
     for (const [x, z] of CAMPUS.flags) B(2.6, 1, 2.6, x, 0.5, z);                          // flag bases
   }
   // furnishings: plants at the plaza corners and the main hall entrance, benches on the plaza looking out over the lake
   const propCol = [];
   const propsG = new THREE.Group(); scene.add(propsG);
   const place = (p, x, z, ry = 0) => { const y = (() => { glbRay.set(new THREE.Vector3(x, 4, z), DOWN); glbRay.far = 12; const h = glbRay.intersectObject(world, true)[0]; return h ? h.point.y : 0; })(); p.group.position.set(x, y, z); p.group.rotation.y = ry; propsG.add(p.group); const cb = new THREE.Mesh(new THREE.BoxGeometry(...p.size)); cb.position.set(x, y + p.size[1] / 2, z); cb.rotation.y = ry; cb.updateMatrixWorld(true); propCol.push(cb); };
-  for (const [x, z] of [[6.4, 12.4], [6.4, -12.4], [-12.2, 12.4], [-12.2, -12.4], [-76.4, 11.4], [-76.4, -11.4]]) place(makePlant(2.3), x, z);
+  for (const [x, z] of [[6.4, 12.4], [6.4, -12.4], [-12.2, 12.4], [-12.2, -12.4]]) place(makePlant(2.3), x, z);   // (the two that stood on the main hall's ramps came out, 11 Oct: ramps stay clear)
   for (const z of [7.6, -7.6]) place(makeBench(2.8), 5.6, z, Math.PI / 2);
   // glass in the building's tall wall openings: you see out to the trees and the city, and can't walk out
   const winCol = [];
@@ -162,11 +165,12 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       const c = new THREE.Mesh(new THREE.BoxGeometry(W, H, 0.2)); c.position.set(cx, cy, w.z); c.updateMatrixWorld(true); winCol.push(c);
     }
   }
-  for (const m of [...entrance.col, ...rooms.col, ...kiosks.col, ...bioWalls.col, ...braille.col, ...lift.col, ...skywalk.col, ...simCol, ...edgeCol, ...propCol, ...winCol, ...(campus ? campus.col : [])]) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); colGeos.push(g); }
+  for (const [lab, list] of Object.entries({ entrance: entrance.col, rooms: rooms.col, kiosks: kiosks.col, bioWalls: bioWalls.col, braille: braille.col, lift: lift.col, skywalk: skywalk.col, simKiosks: simCol, edges: edgeCol, props: propCol, windows: winCol, campus: campus ? campus.col : [], comments: comments ? comments.col : [] })) for (const m of list) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); g.userData.lab = lab + (m.name ? ':' + m.name : ''); colGeos.push(g); }
   // one position-only collision mesh with a BVH (fast rays on phones)
   let total = 0; for (const g of colGeos) total += (g.index ? g.index.count : g.attributes.position.count);
   const P = new Float32Array(total * 3); let k = 0;
-  for (const g of colGeos) { const pa = g.attributes.position, ix = g.index; const n = ix ? ix.count : pa.count; for (let i = 0; i < n; i++) { const j = ix ? ix.getX(i) : i; P[k++] = pa.getX(j); P[k++] = pa.getY(j); P[k++] = pa.getZ(j); } g.dispose(); }
+  const colSrc = [];   // (debug: which thing each run of triangles came from, so a walk check can name what's in the way)
+  for (const g of colGeos) { colSrc.push([k / 9, g.userData.lab || '?']); const pa = g.attributes.position, ix = g.index; const n = ix ? ix.count : pa.count; for (let i = 0; i < n; i++) { const j = ix ? ix.getX(i) : i; P[k++] = pa.getX(j); P[k++] = pa.getY(j); P[k++] = pa.getZ(j); } g.dispose(); }
   const colGeo = new THREE.BufferGeometry(); colGeo.setAttribute('position', new THREE.BufferAttribute(P, 3));
   // draw-call saver: inside each built group (rooms, the wing, the walkway, kiosks), merge still meshes that share a material
   function mergeStatic(root) {
@@ -859,14 +863,16 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const lookEye = lookBtn.querySelector('.eye');
   // LEAVE NOTE, just above it: opens the note composer for the spot you're standing on (text, voice, photo)
   const noteBtn = document.createElement('div');
-  noteBtn.setAttribute('role', 'button'); noteBtn.setAttribute('tabindex', '0'); noteBtn.setAttribute('aria-label', 'Leave a note here');
+  noteBtn.setAttribute('role', 'button'); noteBtn.setAttribute('tabindex', '0'); noteBtn.setAttribute('aria-label', 'Leave a note on this comment spot');
   lookBtn.style.bottom = 'calc(84px + env(safe-area-inset-bottom))';   // the ACTION button (gallery.html) sits in the corner below it
   noteBtn.style.cssText = lookBtn.style.cssText; noteBtn.style.bottom = 'calc(152px + env(safe-area-inset-bottom))';
   noteBtn.innerHTML = '<span style="font:800 10px/1 Archivo,Arimo,sans-serif;letter-spacing:.14em;color:#f3f2f2;background:rgba(29,28,27,.72);padding:6px 8px;pointer-events:none">LEAVE NOTE</span>' +
     '<span style="width:56px;height:56px;border-radius:50%;border:2px solid #f3f2f2;background:rgba(29,28,27,.72);display:flex;align-items:center;justify-content:center;pointer-events:none">' +
     '<svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><path d="M5 6 H27 V21 H14 L8 27 V21 H5 Z" fill="none" stroke="#f3f2f2" stroke-width="2.4" stroke-linejoin="round"/><path d="M11 13.5 H21 M16 8.5 V18.5" stroke="#ec3013" stroke-width="2.6" stroke-linecap="round"/></svg></span>';
   document.body.appendChild(noteBtn);
-  const openNote = () => { if (window.NOTES && window.NOTES.openCompose) window.NOTES.openCompose(); };
+  // it only shows while you stand on a comment spot (the yellow pads with a YOUR COMMENTS HERE sign)
+  let padHere = null;
+  const openNote = () => { if (padHere && window.NOTES && window.NOTES.openCompose) window.NOTES.openCompose(padHere); };
   noteBtn.addEventListener('click', e => { e.stopPropagation(); openNote(); });
   noteBtn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openNote(); } });
   const LK = { id: null, t0: 0, x: 0, y: 0, moved: 0, held: false, snap: null };
@@ -886,7 +892,8 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   lookBtn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setFP(!St.fp); } });
   addEventListener('keydown', e => { if (e.code === 'KeyV' && !(e.target.closest && e.target.closest('input,textarea'))) setFP(!St.fp); });
   function lookTick(dt) {
-    lookBtn.style.display = studio ? 'none' : 'flex'; { const ab = document.getElementById('actBtn'); if (ab) ab.style.display = studio ? 'none' : 'flex'; } noteBtn.style.display = studio || V.spot || !window.NOTES ? 'none' : 'flex';
+    lookBtn.style.display = studio ? 'none' : 'flex'; { const ab = document.getElementById('actBtn'); if (ab) ab.style.display = studio ? 'none' : 'flex'; } { const p = comments && !V.spot ? comments.at(Pl.x, Pl.y, Pl.z) : null; if (p !== padHere) { padHere = p; onPad(p); } }
+    noteBtn.style.display = studio || V.spot || !window.NOTES || !padHere ? 'none' : 'flex';
     if (!LK.snap || LK.id != null) return;
     const s = LK.snap; s.t += dt; const k = Math.min(1, s.t / 0.35), e = 1 - Math.pow(1 - k, 3);
     let dy = s.ty - s.fy; dy = Math.atan2(Math.sin(dy), Math.cos(dy));
@@ -992,6 +999,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     for (const e of edu) { const d = e.pos.distanceTo(p); if (d < e.r + 1 && d < bd + 1.5) { bd = d; best = { kind: 'edu', item: e, label: (e.prompt || 'LEARN MORE').replace(/^Press E to /i, '') }; } }
     if (!best) { const b = benchNear(); if (b) best = { kind: 'sit', item: b, label: 'Sit on the bench' }; }
     if (!best && filmHere()) best = { kind: 'film', item: { z: curUrl }, label: 'Watch the film full screen' };   // (z: the film, so the button's words change with it)
+    if (!best && padHere) best = { kind: 'comment', item: { z: padHere.x * 7 + padHere.z, spot: padHere }, label: 'Leave a comment · ' + padHere.name };
     return best;
   }
   let doorT = 0, cineT = 0;
@@ -1028,7 +1036,8 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       const cs = campus.cinema.screen;
       if (curUrl && curUrl === cs.u && video.readyState >= 1 && !window.HUSH) {
         const S = campus.cinema.show();
-        if (S.on) { cineT -= dt; if (cineT <= 0 && Math.abs(video.currentTime - S.t) > 2 && S.t < (video.duration || 1e9) - 1) { cineT = 3; try { video.currentTime = S.t; } catch (e) {} }   // (at most one seek every 3 s, so a slow connection isn't kept seeking) if (video.paused) video.play().catch(() => {}); }
+        if (S.on) { cineT -= dt; if (cineT <= 0 && Math.abs(video.currentTime - S.t) > 2 && S.t < (video.duration || 1e9) - 1) { cineT = 3; try { video.currentTime = S.t; } catch (e) {} }   // (at most one seek every 3 s, so a slow connection isn't kept seeking)
+          if (video.paused) video.play().catch(() => {}); }
         else if (!video.paused || video.currentTime > 0.5) { video.pause(); try { video.currentTime = 0; } catch (e) {} }
       }
     }
@@ -1061,7 +1070,8 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       { const pp2 = new THREE.Vector3(Pl.x, Pl.y + 1, Pl.z); for (const r of rooms.list) r.room.group.visible = r.park || r.room.bounds.distanceToPoint(pp2) < 50; if (wing) wing.group.visible = wing.bounds.distanceToPoint(pp2) < 50; }
       // nearest first, a few per tick (no hitch), far enough out that it all arrives before you can see it
       const want = []; for (const sg of signs) { const d = sg.ctr.distanceTo(p); if (d < NEAR) { if (!sg.mesh) want.push([d, sg]); else sg.mesh.visible = d < ((sg.s.k === 't' || sg.s.k === 'l') ? 38 : 70); } else if (d > FAR) hideSign(sg); }   // loaded far out (no pop-in of images), but only drawn when close enough to matter: labels 38 m, art 70 m
-      want.sort((a, b) => a[0] - b[0]); for (const [, sg] of want.slice(0, firstStream ? 60 : fast ? 4 : 14)) showSign(sg);   // running: a few at a time, nearest first firstStream = false;
+      want.sort((a, b) => a[0] - b[0]); for (const [, sg] of want.slice(0, firstStream ? 60 : fast ? 4 : 14)) showSign(sg);   // running: a few at a time, nearest first
+      firstStream = false;
       lightArt();
       // which video zone are we in?
       let zUrl = null; const pp = new THREE.Vector3(Pl.x, Pl.y + 0.5, Pl.z);
@@ -1112,6 +1122,11 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     },
     palettes: () => PALETTES.map((p, i) => ({ i, fur: p.fur || PLAYER_MALE.fur, dark: p.furDark || PLAYER_MALE.furDark, tip: p.tailTip || '#ffffff' })),
     elevator: { act: n => lift.act(n, Pl), state: lift.state }, ringGlass,
+    comments: comments && {
+      here: () => padHere, list: comments.list,
+      go(id) { const S = comments.list.find(s => s.id === id); if (!S) return; if (V.spot) exitVision(); if (Pl.sit) standUp(); travel({ to: comments.arrive(S) }); },
+      dist: S => Math.hypot(S.x - Pl.x, S.z - Pl.z),
+    },
     campus: campus && {
       go(to) { const t = CAMPUS_STOPS[to]; if (!t) return; if (Pl.sit) standUp(); travel({ to: { x: t.x, z: t.z, y: groundAt(t.x, 3, t.z), face: t.face } }); },
       walk: (to, onEnd) => walkTo(to, onEnd), stopWalk: () => walkStop('stopped'), walking: () => AW.pts ? AW.to : null, dests: SIGN_DEST,
@@ -1131,7 +1146,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     goWing() { const d = doors.find(x => x.wing); if (d) travel(d); },
     // add-ons (notes, guest book): draw into the scene, add things you can walk up to, run each frame
     world: { THREE, scene, camera, groundAt: (x, y, z) => groundAt(x, y, z), pos: () => [Pl.x, Pl.y, Pl.z], addNear: f => nearProviders.push(f), onTick: f => tickers.push(f), refreshNear: () => { nearKey = null; } },
-    debug: { nearest: () => nearest(), guides, THREE, DBG, video, animator, Pl, St, input, scene, camera, renderer, vids, signs, teleport(x, y, z, face) { Pl.x = x; Pl.z = z; Pl.y = y ?? groundAt(x, 30, z); Pl.vy = 0; if (face != null) { Pl.face = face; St.yaw = face + Math.PI; } }, groundAt, cast, info: () => ({ calls: renderer.info.render.calls, tris: renderer.info.render.triangles, tex: renderer.info.memory.textures, geo: renderer.info.memory.geometries }) },
+    debug: { nearest: () => nearest(), guides, THREE, DBG, video, animator, Pl, St, input, scene, camera, renderer, vids, signs, teleport(x, y, z, face) { Pl.x = x; Pl.z = z; Pl.y = y ?? groundAt(x, 30, z); Pl.vy = 0; if (face != null) { Pl.face = face; St.yaw = face + Math.PI; } }, groundAt, cast, colSrc, colWhat: fi => { let lo = 0, hi = colSrc.length - 1; while (lo < hi) { const m = (lo + hi + 1) >> 1; if (colSrc[m][0] <= fi) lo = m; else hi = m - 1; } return colSrc[lo][1]; }, info: () => ({ calls: renderer.info.render.calls, tris: renderer.info.render.triangles, tex: renderer.info.memory.textures, geo: renderer.info.memory.geometries }) },
     destroy() { cancelAnimationFrame(raf); ro.disconnect(); removeEventListener('keydown', onKeyDown); removeEventListener('keyup', onKeyUp); if (hls) hls.destroy(); video.pause(); renderer.dispose(); el.remove(); joyBase.remove(); lookBtn.remove(); noteBtn.remove(); joyKnob.remove(); },
   };
 }

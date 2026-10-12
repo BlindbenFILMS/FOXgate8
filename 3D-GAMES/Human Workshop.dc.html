@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;background:#000000}a{color:var(--color-accent-700)}a:hover{color:var(--color-accent)}button:focus-visible,input:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}input[type=range]{accent-color:#1d4ed8;height:28px}</style>
+</helmet>
+<div style="--color-bg:#000000;--color-text:#7dd3fc;--color-accent-700:#bae6fd;--color-neutral-200:#0f2430;--color-accent:#1d4ed8;--color-accent-600:#1e40af;display:grid;grid-template-columns:{{ L.cols }};grid-template-rows:{{ L.rows }};height:100dvh;background:var(--color-bg);font-family:var(--font-body);color:var(--color-text)" data-screen-label="Human Workshop">
+  <div style="position:relative;min-width:0;min-height:0;border-right:{{ L.stageR }};border-bottom:{{ L.stageB }};display:flex;flex-direction:column">
+    <div style="display:flex;flex-wrap:wrap;align-items:stretch;border-bottom:2px solid var(--color-text)">
+      <div style="padding:10px 14px;display:flex;flex-direction:column;gap:2px;border-right:2px solid var(--color-text);flex:{{ L.titleFlex }};border-bottom:{{ L.titleB }}">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700)">Kyoto · Archery</div>
+        <div style="font-family:var(--font-heading);font-size:20px;font-weight:800;line-height:1;white-space:nowrap">Human Workshop</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(6,minmax(44px,1fr));flex:1 1 260px;min-width:0">
+        <sc-for list="{{ views }}" as="v" hint-placeholder-count="5">
+          <button onClick="{{ v.pick }}" style="min-height:44px;border:0;border-right:2px solid var(--color-text);border-radius:0;background:{{ v.bg }};color:{{ v.fg }};font:800 13px var(--font-heading);text-align:left;padding:0 10px;cursor:pointer;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ v.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div ref="{{ stageRef }}" style="position:relative;flex:1;min-height:0"></div>
+    <sc-if value="{{ stepOn }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:10px;top:58px;max-width:min(420px,calc(100% - 20px));background:var(--color-bg);border:2px solid var(--color-text);display:flex;flex-direction:column;pointer-events:none">
+        <div style="padding:6px 10px;background:var(--color-text);color:var(--color-bg);font:800 14px var(--font-heading);letter-spacing:0.06em">{{ hud.stepName }}</div>
+        <div style="padding:6px 10px;font-size:12px;line-height:1.4;text-wrap:pretty">{{ hud.stepNote }}</div>
+        <div style="display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:2px;padding:0 10px 8px"><sc-for list="{{ stepPips }}" as="p" hint-placeholder-count="8"><span style="height:6px;display:block;background:{{ p.c }}"></span></sc-for></div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ bubbleOn }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:10px;top:58px;max-width:min(420px, calc(100% - 20px));background:var(--color-bg);border:2px solid var(--color-text);display:flex;flex-direction:column;pointer-events:none">
+        <div style="padding:5px 12px;border-bottom:2px solid var(--color-text);font:800 11px var(--font-heading);letter-spacing:0.12em;color:var(--color-accent-700);white-space:nowrap">{{ bubbleName }}</div>
+        <div style="padding:10px 14px;font:700 16px var(--font-body);line-height:1.35;text-wrap:pretty">{{ bubbleTxt }}</div>
+      </div>
+    </sc-if>
+    <div style="position:absolute;left:10px;bottom:10px;right:10px;display:flex;flex-wrap:wrap">
+      <sc-for list="{{ modes }}" as="m" hint-placeholder-count="4">
+        <button onClick="{{ m.pick }}" style="min-height:44px;padding:0 12px;margin:0 -2px -2px 0;border:2px solid var(--color-text);border-radius:0;background:{{ m.bg }};color:{{ m.fg }};font:800 13px var(--font-heading);cursor:pointer;text-align:left">{{ m.label }}</button>
+      </sc-for>
+      <sc-for list="{{ toggles }}" as="m" hint-placeholder-count="4">
+        <button onClick="{{ m.pick }}" style="min-height:44px;padding:0 12px;margin:0 -2px -2px 0;border:2px solid var(--color-text);border-radius:0;background:{{ m.bg }};color:{{ m.fg }};font:700 13px var(--font-body);cursor:pointer;text-align:left">{{ m.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;min-height:0;min-width:0">
+    <div style="display:flex;border-bottom:2px solid var(--color-text)">
+      <sc-for list="{{ tabList }}" as="t" hint-placeholder-count="2">
+        <button onClick="{{ t.pick }}" style="flex:1;min-height:44px;padding:0 14px;border:0;border-right:2px solid var(--color-text);border-radius:0;background:{{ t.bg }};color:{{ t.fg }};font:800 14px var(--font-heading);cursor:pointer;text-align:left">{{ t.label }}</button>
+      </sc-for>
+    </div>
+    <sc-if value="{{ lookTab }}" hint-placeholder-val="{{ true }}">
+    <div style="flex:1;min-height:0;overflow-y:auto">
+      <div style="padding:12px 16px;border-bottom:2px solid var(--color-text);display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700)">Character</div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+          <sc-for list="{{ presets }}" as="p" hint-placeholder-count="4">
+            <button onClick="{{ p.pick }}" style="min-height:44px;margin:0 -2px -2px 0;border:2px solid var(--color-text);border-radius:0;background:{{ p.bg }};color:{{ p.fg }};font:800 13px var(--font-heading);text-align:left;padding:0 12px;cursor:pointer">{{ p.label }}</button>
+          </sc-for>
+        </div>
+        <button onClick="{{ randomise }}" style="min-height:48px;margin-top:6px;padding:0 14px;border:2px solid var(--color-accent);border-radius:0;background:var(--color-accent);color:#ffffff;font:800 14px var(--font-heading);text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center" style-hover="background:var(--color-accent-600)"><span>Randomise a townsfolk</span><span>↻</span></button>
+      </div>
+      <div style="padding:12px 16px 10px;border-bottom:2px solid var(--color-text);display:flex;flex-direction:column;gap:2px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700)">Body</div>
+        <sc-for list="{{ sliders }}" as="c" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:104px minmax(0,1fr) 58px;align-items:center;gap:10px;min-height:44px">
+            <span style="font-size:12px;font-weight:700">{{ c.label }}</span>
+            <input type="range" min="{{ c.min }}" max="{{ c.max }}" step="{{ c.step }}" value="{{ c.value }}" onInput="{{ c.onInput }}" style="width:100%">
+            <span style="font-size:12px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap">{{ c.shown }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="padding:12px 16px 10px;border-bottom:2px solid var(--color-text);display:flex;flex-direction:column;gap:2px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700)">Face</div>
+          <div style="display:flex">
+            <button onClick="{{ faceView }}" style="min-height:44px;padding:0 12px;border:2px solid var(--color-text);border-radius:0;background:var(--color-bg);color:var(--color-text);font:700 12px var(--font-body);cursor:pointer;text-align:left" style-hover="background:var(--color-neutral-200)">Face view</button>
+            <button onClick="{{ faceReset }}" style="min-height:44px;padding:0 12px;margin-left:-2px;border:2px solid var(--color-text);border-radius:0;background:var(--color-bg);color:var(--color-text);font:700 12px var(--font-body);cursor:pointer;text-align:left" style-hover="background:var(--color-neutral-200)">Reset face</button>
+          </div>
+        </div>
+        <sc-for list="{{ faceSliders }}" as="c" hint-placeholder-count="12">
+          <div style="display:grid;grid-template-columns:104px minmax(0,1fr) 58px;align-items:center;gap:10px;min-height:44px">
+            <span style="font-size:12px;font-weight:700">{{ c.label }}</span>
+            <input type="range" min="{{ c.min }}" max="{{ c.max }}" step="{{ c.step }}" value="{{ c.value }}" onInput="{{ c.onInput }}" style="width:100%">
+            <span style="font-size:12px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap">{{ c.shown }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <sc-for list="{{ swatchRows }}" as="s" hint-placeholder-count="6">
+        <div style="padding:10px 16px;border-bottom:2px solid var(--color-text);display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700)">{{ s.label }}</div>
+          <div style="display:flex;flex-wrap:wrap">
+            <sc-for list="{{ s.items }}" as="w" hint-placeholder-count="8">
+              <button onClick="{{ w.pick }}" aria-label="{{ w.c }}" style="width:44px;height:44px;margin:0 -2px -2px 0;border:2px solid var(--color-text);border-radius:0;background:{{ w.c }};cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0"><span style="width:14px;height:14px;display:block;background:{{ w.dot }}"></span></button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+      <sc-for list="{{ choiceRows }}" as="s" hint-placeholder-count="3">
+        <div style="padding:10px 16px;border-bottom:2px solid var(--color-text);display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700)">{{ s.label }}</div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr))">
+            <sc-for list="{{ s.items }}" as="w" hint-placeholder-count="6">
+              <button onClick="{{ w.pick }}" style="min-height:44px;margin:0 -2px -2px 0;border:2px solid var(--color-text);border-radius:0;background:{{ w.bg }};color:{{ w.fg }};font:800 12px var(--font-heading);text-align:left;padding:0 10px;cursor:pointer;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ w.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+      <div style="padding:10px 16px;border-bottom:2px solid var(--color-text);display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700)">Kit</div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+          <sc-for list="{{ kits }}" as="w" hint-placeholder-count="5">
+            <button onClick="{{ w.pick }}" style="min-height:44px;margin:0 -2px -2px 0;border:2px solid var(--color-text);border-radius:0;background:{{ w.bg }};color:{{ w.fg }};font:700 13px var(--font-body);text-align:left;padding:0 12px;cursor:pointer">{{ w.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+      <sc-if value="{{ hasSaved }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:10px 16px;border-bottom:2px solid var(--color-text);display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700)">Saved</div>
+          <div style="display:flex;flex-wrap:wrap">
+            <sc-for list="{{ saved }}" as="w" hint-placeholder-count="2">
+              <button onClick="{{ w.pick }}" style="min-height:44px;margin:0 -2px -2px 0;border:2px solid var(--color-text);border-radius:0;background:var(--color-bg);color:var(--color-text);font:700 13px var(--font-body);text-align:left;padding:0 12px;cursor:pointer" style-hover="background:var(--color-neutral-200)">{{ w.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+    </sc-if>
+    <sc-if value="{{ talkTab }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column">
+      <div style="border-bottom:2px solid var(--color-text);padding:14px 18px 16px;display:flex;flex-direction:column;gap:10px">
+        <div style="font-family:var(--font-heading);font-size:16px;font-weight:800">Talking style</div>
+        <div style="display:flex;flex-wrap:wrap">
+          <sc-for list="{{ styleList }}" as="b" hint-placeholder-count="5">
+            <button onClick="{{ b.pick }}" style="min-height:44px;padding:0 14px;margin:0 -2px -2px 0;border:2px solid var(--color-text);border-radius:0;background:{{ b.bg }};color:{{ b.fg }};font:700 13px var(--font-body);cursor:pointer">{{ b.label }}</button>
+          </sc-for>
+        </div>
+        <div style="font-size:12px;color:var(--color-neutral-700);text-wrap:pretty">{{ styleNote }}</div>
+      </div>
+      <div style="border-bottom:2px solid var(--color-text);padding:14px 18px 16px;display:flex;flex-direction:column;gap:10px">
+        <div style="font-family:var(--font-heading);font-size:16px;font-weight:800">Voice</div>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr))"><sc-for list="{{ vmodes }}" as="v" hint-placeholder-count="3"><button onClick="{{ v.pick }}" style="min-height:44px;padding:0 12px;margin-left:-2px;border:2px solid var(--color-text);border-radius:0;background:{{ v.bg }};color:{{ v.fg }};font:800 13px var(--font-heading);cursor:pointer;text-align:left">{{ v.label }}</button></sc-for></div>
+        <div style="display:flex;align-items:stretch"><button onClick="{{ pitchDn }}" aria-label="Lower voice" style="width:48px;min-height:44px;border:2px solid var(--color-text);border-radius:0;background:var(--color-bg);color:var(--color-text);font:900 18px var(--font-heading);cursor:pointer">−</button><div style="flex:1;display:flex;align-items:center;padding:0 12px;border-top:2px solid var(--color-text);border-bottom:2px solid var(--color-text);font:800 13px var(--font-heading)">PITCH {{ pitchTxt }}</div><button onClick="{{ pitchUp }}" aria-label="Higher voice" style="width:48px;min-height:44px;border:2px solid var(--color-text);border-radius:0;background:var(--color-bg);color:var(--color-text);font:900 18px var(--font-heading);cursor:pointer">+</button><button onClick="{{ pitchTest }}" style="min-height:44px;padding:0 14px;margin-left:8px;border:2px solid var(--color-text);border-radius:0;background:var(--color-text);color:var(--color-bg);font:800 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left">TEST</button></div>
+        <div style="font-family:var(--font-heading);font-size:16px;font-weight:800;margin-top:6px">Say a line</div>
+        <sc-if value="{{ voiceNote }}" hint-placeholder-val="{{ false }}"><div style="border:2px solid var(--color-text);background:#000;color:#7dd3fc;padding:10px 12px;font:700 13px var(--font-body);line-height:1.4;display:flex;flex-direction:column;gap:6px"><span>This preview window has no voices installed, so the character can't speak here. Open the workshop in Chrome, Edge or Safari and the voice will play.</span><a href="Human Workshop.dc.html" target="_blank" style="color:#ffffff;font:800 12px var(--font-heading);letter-spacing:0.08em">OPEN IN A NEW TAB →</a></div></sc-if>
+        <sc-for list="{{ lineList }}" as="l" hint-placeholder-count="5">
+          <button onClick="{{ l.pick }}" style="min-height:44px;padding:8px 14px;border:2px solid var(--color-text);border-radius:0;background:var(--color-bg);color:var(--color-text);font:700 13px var(--font-body);cursor:pointer;text-align:left;text-wrap:pretty" style-hover="background:var(--color-neutral-200)">{{ l.label }}</button>
+        </sc-for>
+        <div style="display:flex">
+          <input value="{{ custom }}" onInput="{{ onCustom }}" placeholder="Type a line…" style="flex:1;min-width:0;min-height:44px;padding:0 12px;border:2px solid var(--color-text);border-radius:0;font:600 14px var(--font-body)">
+          <button onClick="{{ sayCustom }}" style="min-height:44px;padding:0 16px;margin-left:-2px;border:2px solid var(--color-text);border-radius:0;background:var(--color-accent);color:#fff;font:800 13px var(--font-heading);cursor:pointer">Say</button>
+        </div>
+      </div>
+      <div style="padding:14px 18px;display:flex;flex-direction:column;gap:10px">
+        <button onClick="{{ toggleTalk }}" style="min-height:44px;padding:0 14px;border:2px solid var(--color-text);border-radius:0;background:{{ talkBg }};color:{{ talkFg }};font:700 13px var(--font-body);cursor:pointer;text-align:left">{{ loopLabel }}</button>
+      </div>
+    </div>
+    </sc-if>
+    <div style="border-top:2px solid var(--color-text);display:grid;grid-template-columns:1fr 1fr">
+      <button onClick="{{ save }}" style="grid-column:1 / span 2;display:flex;justify-content:space-between;align-items:center;min-height:52px;padding:0 16px;background:var(--color-accent);color:#ffffff;border:0;border-bottom:2px solid var(--color-text);border-radius:0;font:800 16px var(--font-heading);text-align:left;cursor:pointer" style-hover="background:var(--color-accent-600)"><span>{{ saveLabel }}</span><span>→</span></button>
+      <button onClick="{{ copy }}" style="min-height:44px;padding:0 16px;background:var(--color-bg);color:var(--color-text);border:0;border-right:2px solid var(--color-text);border-radius:0;font:700 13px var(--font-body);text-align:left;cursor:pointer" style-hover="background:var(--color-neutral-200)">{{ copyLabel }}</button>
+      <button onClick="{{ reset }}" style="min-height:44px;padding:0 16px;background:var(--color-bg);color:var(--color-text);border:0;border-radius:0;font:700 13px var(--font-body);text-align:left;cursor:pointer" style-hover="background:var(--color-neutral-200)">Reset this preset</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const SL = [['height', 'Height', 1.4, 2.1, 0.01, v => (+v).toFixed(2) + ' m'], ['build', 'Build', 0.7, 2, 0.05, v => (+v).toFixed(2) + '×'], ['belly', 'Belly', 0, 1, 0.05, v => Math.round(v * 100) + '%'], ['head', 'Head ratio', 4, 8, 0.5, v => '1 : ' + v], ['shoulders', 'Shoulders', 0.8, 1.35, 0.01, v => (+v).toFixed(2) + '×'], ['age', 'Age', 0, 1, 0.05, v => Math.round(v * 100) + '%']];
+const FSL = [['fOval', 'Round → oval', 0, 1, 0.05, v => Math.round(v * 100) + '%'], ['fJaw', 'Jaw width', 0.4, 1.6, 0.05, v => (+v).toFixed(2) + '×'], ['fChin', 'Chin', 0, 2.5, 0.05, v => (+v).toFixed(2) + '×'], ['fCheek', 'Cheekbones', 0, 3, 0.1, v => (+v).toFixed(1) + '×'], ['fSocket', 'Eye sockets', 0, 2, 0.05, v => (+v).toFixed(2) + '×'], ['fEyes', 'Eye size', 0.6, 1.5, 0.02, v => (+v).toFixed(2) + '×'], ['fEyeGap', 'Eye spacing', 0.75, 1.2, 0.01, v => (+v).toFixed(2) + '×'], ['fBrow', 'Brows', 0.3, 2, 0.05, v => (+v).toFixed(2) + '×'], ['fNose', 'Nose size', 0.5, 1.8, 0.05, v => (+v).toFixed(2) + '×'], ['fNoseLen', 'Nose length', 0.4, 2, 0.05, v => (+v).toFixed(2) + '×'], ['fEar', 'Ears', 0.5, 1.8, 0.05, v => (+v).toFixed(2) + '×'], ['fMouth', 'Mouth width', 0.4, 1.6, 0.05, v => (+v).toFixed(2) + '×']];
+const FDEF = { fOval: 0.5, fJaw: 1.05, fChin: 1, fCheek: 1.4, fSocket: 1, fEyes: 1, fEyeGap: 1, fBrow: 1.15, fNose: 0.9, fNoseLen: 0.75, fEar: 1, fMouth: 1, eyeShape: 'almond' };
+const KEY = '8gates.humans.v1';
+const TALK = {
+  calm: { label: 'Calm', rate: 0.9, amp: 0.85, base: 0.2, gest: 0.8, note: 'Everyday talk: steady pace, small mouth, a gentle hand.' },
+  chatty: { label: 'Chatty', rate: 1.15, amp: 1, base: 0.25, gest: 1.1, note: 'Friendly and quick, with more hand movement.' },
+  excited: { label: 'Excited', rate: 1.45, amp: 1.15, base: 0.35, gest: 1.5, note: 'Fast, wide mouth, both arms waving.' },
+  shout: { label: 'Shout', rate: 1.05, amp: 1.4, base: 0.45, gest: 1.4, note: 'Big open mouth for battle cries and calling across the map.' },
+  whisper: { label: 'Whisper', rate: 0.75, amp: 0.45, base: 0.1, gest: 0.4, note: 'Small, slow mouth, almost no gesture.' } };
+const LINES = ['This is my voice. I am talking.', 'Welcome to the Kyoto dojo.', 'Hakkeyoi! Nokotta, nokotta!', 'Breathe in. Draw the bow. Hold.', 'That ramen smells amazing.', 'Shh. Someone is coming.'];
+
+class Component extends DCLogic {
+  state = { cfg: null, hud: {}, lab: {}, preset: 'bensumo', narrow: false, land: false, saved: false, copied: false, store: {} };
+  stageRef = React.createRef();
+  async componentDidMount() {
+    this.onResize = () => this.setState({ vw: innerWidth, narrow: innerWidth < 720 && innerHeight > innerWidth, land: innerWidth < 960 && innerHeight < innerWidth }); addEventListener('resize', this.onResize); this.onResize();
+    let store = {}; try { store = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) {}
+    const kit = await import(new URL('engine/human-kit.js', document.baseURI).href), lab = await import(new URL('human-lab.js', document.baseURI).href); this.kit = kit;
+    const cfg = { ...(store.bensumo || kit.HUMAN_PRESETS.bensumo) };
+    this.lab = await lab.createHumanLab({ container: this.stageRef.current, cfg, onState: hud => this.setState({ hud }) });
+    this.setState({ cfg, store, lab: this.lab.state() });
+  }
+  componentDidUpdate() { const st = this.stageRef.current; if (this.lab && st && this.lab.el && this.lab.el.parentNode !== st) this.lab.rebind(st); }
+  componentWillUnmount() { removeEventListener('resize', this.onResize); this.lab && this.lab.destroy(); clearInterval(this.sp); }
+  speak(text, st) { const sy = window.speechSynthesis; if (!sy || !window.SpeechSynthesisUtterance) { this.setState({ voiceNote: true }); return; }
+    const go = () => { const vs = sy.getVoices(); if (!vs.length) { this.setState({ voiceNote: true }); return; } this.setState({ voiceNote: false });
+      const u = new SpeechSynthesisUtterance(text), V = { calm: [1, 1, 0.9], excited: [1.15, 1.25, 1], shout: [1.05, 1.1, 1], whisper: [0.85, 1, 0.35] }[st] || [1, 1, 0.9];
+      u.rate = V[0]; u.pitch = V[1]; u.volume = V[2]; u.lang = 'en-US'; const pick = vs.find(v => /en[-_]US/i.test(v.lang) && /male|david|guy|daniel|alex|fred|mark/i.test(v.name)) || vs.find(v => /^en/i.test(v.lang)) || vs[0]; if (pick) u.voice = pick;
+      if (sy.speaking || sy.pending) sy.cancel(); sy.resume(); setTimeout(() => sy.speak(u), 60); };
+    if (sy.getVoices().length) go(); else { let done = false; const once = () => { if (done) return; done = true; sy.removeEventListener('voiceschanged', once); go(); }; sy.addEventListener('voiceschanged', once); setTimeout(once, 900); } }
+  blip(ch, st) { try { const A = this.ac || (this.ac = new (window.AudioContext || window.webkitAudioContext)()); if (A.state === 'suspended') A.resume(); const t = A.currentTime, c = ch.toLowerCase(), pit = (this.state.cfg && this.state.cfg.voicePitch) ?? 0;
+      const semi = pit + (st === 'excited' ? 3 : st === 'shout' ? 1 : st === 'whisper' ? -1 : 0) + ((c.charCodeAt(0) * 7) % 5) - 2 + (Math.random() - 0.5) * 1.2, f0 = (this.state.cfg && this.state.cfg.height > 1.9 ? 120 : 150) * Math.pow(2, semi / 12);
+      const F = { a: [800, 1200], e: [500, 1900], i: [320, 2300], o: [520, 900], u: [360, 800] }[c] || [600 + (c.charCodeAt(0) % 6) * 90, 1500];
+      const out = A.createGain(), vol = st === 'whisper' ? 0.05 : st === 'shout' ? 0.2 : 0.13, dur = /[aeiou]/.test(c) ? 0.09 : 0.055; out.gain.setValueAtTime(0.0001, t); out.gain.exponentialRampToValueAtTime(vol, t + 0.008); out.gain.exponentialRampToValueAtTime(0.0001, t + dur); out.connect(A.destination);
+      const src = A.createOscillator(); src.type = st === 'shout' ? 'square' : 'sawtooth'; src.frequency.setValueAtTime(f0 * 1.04, t); src.frequency.exponentialRampToValueAtTime(f0 * (st === 'excited' ? 1.12 : 0.96), t + dur);
+      for (const [fq, q, g] of [[F[0], 6, 1], [F[1], 9, 0.5]]) { const bp = A.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = fq; bp.Q.value = q; const gg = A.createGain(); gg.gain.value = g; src.connect(bp); bp.connect(gg); gg.connect(out); }
+      if (st === 'whisper') { const n = A.createBufferSource(), b = A.createBuffer(1, A.sampleRate * 0.1, A.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; n.buffer = b; const bp = A.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = F[1]; bp.Q.value = 2; n.connect(bp); bp.connect(out); n.start(t); n.stop(t + dur); }
+      src.start(t); src.stop(t + dur + 0.02); } catch (e) {} }
+  sayLine(text) { const ws = this.lab; if (!ws || !text) return; ws.setTalkStyle(TALK[this.state.style || 'calm']); ws.say(text); const vm = this.state.vmode || 'babble'; if (vm === 'device') this.speak(text, this.state.style || 'calm'); else if (window.speechSynthesis) window.speechSynthesis.cancel(); this.lastShown = 0; this.blipN = 0; if (vm === 'babble' && this.ac && this.ac.state === 'suspended') this.ac.resume(); this.setState({ speech: { text, shown: 0 } }); clearInterval(this.sp);
+    this.sp = setInterval(() => { const sp = ws.speech(); if (!sp) { clearInterval(this.sp); this.setState({ speech: null }); return; } if ((this.state.vmode || 'babble') === 'babble') { const st = this.state.style || 'calm'; for (let k = this.lastShown; k < sp.shown; k++) { const ch = sp.text[k] || ''; if (/[a-z]/i.test(ch) && (this.blipN++ % 2 === 0 || /[aeiou]/i.test(ch))) { this.blip(ch, st); break; } } this.lastShown = sp.shown; } this.setState({ speech: sp }); }, 60); }
+
+  put(patch) { const cfg = { ...this.state.cfg, ...patch }; this.setState({ cfg, saved: false, copied: false }); clearTimeout(this.tm); this.tm = setTimeout(() => this.lab && this.lab.set(this.state.cfg), 60); }
+  load(id) { const K = this.kit; if (!K) return; const P0 = K.HUMAN_PRESETS[id], sv = this.state.store[id]; let c = { ...(sv || P0 || K.HUMAN_PRESETS.ben) }; if (sv && P0 && (P0.v || 0) > (sv.v || 0)) { const keys = P0.upd || []; c = { ...sv, v: P0.v }; for (const k of keys) if (k in P0) c[k] = P0[k]; else delete c[k]; const store = { ...this.state.store, [id]: c }; try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} this.setState({ store }); } this.setState({ preset: id, cfg: c, saved: false, copied: false }); this.lab && this.lab.set(c); if (this.lab) { this.lab.setMode(id === 'kyudo' ? 'kyudo' : id === 'sumo' || id === 'bensumo' ? 'shiko' : /^monk/.test(id) ? 'gassho' : /^ninja|kunoichi/.test(id) ? 'ninja' : 'idle'); this.setState({ lab: this.lab.state() }); } }
+  renderVals() {
+    const S = this.state, c = S.cfg || {}, K = this.kit, lab = this.lab, on = 'var(--color-text)', off = 'var(--color-bg)', blur = e => e && e.currentTarget && e.currentTarget.blur(), ls = S.lab || {}, h = S.hud || {};
+    const L = S.narrow ? { cols: 'minmax(0,1fr)', rows: '52dvh minmax(0,1fr)', stageR: '0', stageB: '2px solid var(--color-text)' } : { cols: S.land ? 'minmax(0,1fr) 320px' : 'minmax(0,1fr) 380px', rows: 'minmax(0,1fr)', stageR: '2px solid var(--color-text)', stageB: '0' };
+    const slim = S.vw < 560; L.titleFlex = slim ? '1 1 100%' : '0 0 auto'; L.titleB = slim ? '2px solid var(--color-text)' : '0';
+    const tab = (cur, k, l, f) => ({ label: l, bg: cur === k ? on : off, fg: cur === k ? off : on, pick: e => { blur(e); f(); } });
+    const views = [['3d', '3D'], ['front', 'Front'], ['side', 'Side'], ['back', 'Back'], ['face', 'Face'], ['range', 'Range']].map(([k, l]) => ({ ...tab(ls.view, k, l, () => { if (!lab) return; lab.setView(k); this.setState({ lab: lab.state() }); }), bg: ls.view === k ? 'var(--color-accent)' : off, fg: ls.view === k ? '#ffffff' : on }));
+    const modes = [['idle', 'Idle'], ['walk', 'Walk'], ['kyudo', 'Kyudo · 8 steps'], ['shiko', 'Shiko stomp'], ['gassho', 'Gassho · prayer'], ['ninja', 'Ninja · ready']].map(([k, l]) => ({ ...tab(ls.mode, k, l, () => { if (!lab) return; lab.setMode(k); this.setState({ lab: lab.state() }); }), bg: ls.mode === k ? 'var(--color-accent)' : off, fg: ls.mode === k ? '#ffffff' : on }));
+    const tg = (k, l) => ({ label: l, bg: ls[k] ? on : off, fg: ls[k] ? off : on, pick: e => { blur(e); if (!lab) return; lab.toggle(k); this.setState({ lab: lab.state() }); } });
+    const toggles = [tg('slow', 'Slow ×¼'), tg('paused', 'Pause'), tg('dojo', ls.dojo ? 'Dojo' : 'Studio'), tg('crowd', 'Crowd'), { ...tg('orb', ls.orb ? '◉ Back to human' : '◉ Kitsune orb'), bg: ls.orb ? '#e879f9' : 'var(--color-bg)', fg: ls.orb ? '#000000' : 'var(--color-text)' }];
+    const presets = [['ben', 'BEN (blank)'], ['kyudo', 'KYUDO ARCHER'], ['sumo', 'SUMO'], ['bensumo', 'BEN · BIG SUMO'], ['bensumoClothes1', 'BEN · SUMO · CLOTHES 1'], ['samurai', 'SAMURAI'], ['general', 'RED GENERAL'], ['emperor', 'THE EMPEROR'], ['empress', 'THE EMPRESS'], ['monk', 'ZEN MONK'], ['monkSaffron', 'SAFFRON MONK'], ['kabukiActor', 'ACTOR · FOX MASK'], ['oldActor', 'THE OLD ACTOR'], ['ninja', 'NINJA · SHADOW'], ['ninjaNight', 'NINJA · NIGHT BLUE'], ['kunoichi', 'KUNOICHI · CRIMSON'], ['benjinbei', 'BEN · JINBEI'], ['benhappi', 'BEN · HAPPI'], ['bensamue', 'BEN · SAMUE'], ['townsfolk', 'TOWNSFOLK']].map(([k, l]) => tab(S.preset, k, l, () => this.load(k)));
+    const sliders = SL.map(([k, l, min, max, step, f]) => ({ label: l, min, max, step, value: c[k] ?? min, shown: c[k] == null ? '' : f(c[k]), onInput: e => this.put({ [k]: +e.target.value }) }));
+    const faceSliders = FSL.map(([k, l, min, max, step, f]) => { const v = c[k] ?? FDEF[k]; return { label: l, min, max, step, value: v, shown: f(v), onInput: e => this.put({ [k]: +e.target.value }) }; });
+    const sw = (label, key, list) => ({ label, items: (list || []).map(col => ({ c: col, dot: c[key] === col ? (col === '#201e1d' || col === '#141210' || col === '#1f2a44' ? '#f3f2f2' : '#201e1d') : 'transparent', pick: e => { blur(e); this.put({ [key]: col }); } })) });
+    const swatchRows = K ? [sw('Skin', 'skin', K.SKINS), sw('Hair colour', 'hairCol', K.HAIR_COLS), sw('Eyes', 'eyes', K.EYE_COLS), sw('Outfit · top', 'top', K.CLOTH_COLS), sw('Outfit · bottom', 'bottom', K.CLOTH_COLS), sw('Outfit · accent', 'accent', K.CLOTH_COLS)] : [];
+    const ch = (label, key, list) => ({ label, items: list.map(([k, l]) => ({ ...tab(c[key], k, l, () => this.put({ [key]: k })) })) });
+    const choiceRows = K ? [ch('Hair', 'hair', K.HAIRS), ch('Face · mood', 'mood', K.MOODS.map(m => [m, m.toUpperCase()])), ch('Eye shape', 'eyeShape', K.EYE_SHAPES || [['round', 'ROUND'], ['almond', 'ALMOND']]), ch('Outfit', 'outfit', K.OUTFITS)] : [];
+    const kt = (k, l) => ({ label: (c[k] ? '✓ ' : '') + l, bg: c[k] ? on : off, fg: c[k] ? off : on, pick: e => { blur(e); this.put({ [k]: !c[k] }); } });
+    const kits = [kt('bow', 'Yumi bow'), kt('bared', 'Bared shoulder'), kt('glove', 'Yugake glove'), kt('quiver', 'Quiver at hip'), kt('apron', 'Sumo apron'), kt('sandals', 'Setta sandals'), kt('pads', 'Shoulder pads')];
+    const saved = Object.entries(S.store || {}).map(([k, v]) => ({ label: (v && v.name) || k, pick: e => { blur(e); this.load(k); } }));
+    const step = h.step ?? -1;
+    const tabK = S.tab || 'look', st = S.style || 'calm', vp = c.voicePitch ?? 0;
+    const talkVals = {
+      tabList: [['look', 'Look'], ['talk', 'Talking']].map(([k2, l2]) => ({ label: l2, bg: tabK === k2 ? on : off, fg: tabK === k2 ? off : on, pick: () => this.setState({ tab: k2 }) })), lookTab: tabK === 'look', talkTab: tabK === 'talk',
+      styleList: Object.entries(TALK).map(([k2, t]) => ({ label: t.label, bg: st === k2 ? on : off, fg: st === k2 ? off : on, pick: () => { this.setState({ style: k2 }); lab && lab.setTalkStyle(t); } })), styleNote: TALK[st].note,
+      voiceNote: !!S.voiceNote && S.vmode === 'device', vmodes: [['babble', 'BABBLE'], ['device', 'DEVICE VOICE'], ['off', 'OFF']].map(([k2, l2]) => ({ label: l2, bg: (S.vmode || 'babble') === k2 ? on : off, fg: (S.vmode || 'babble') === k2 ? off : on, pick: () => this.setState({ vmode: k2 }) })),
+      pitchTxt: (vp > 0 ? '+' : '') + vp + (vp <= -5 ? ' · DEEP' : vp >= 5 ? ' · HIGH' : ''), pitchDn: () => { this.put({ voicePitch: Math.max(-12, vp - 1) }); setTimeout(() => this.blip('a', st), 10); }, pitchUp: () => { this.put({ voicePitch: Math.min(12, vp + 1) }); setTimeout(() => this.blip('a', st), 10); },
+      pitchTest: () => { this.setState({ vmode: 'babble' }); this.sayLine('This is my voice. I am talking.'); }, lineList: LINES.map(t => ({ label: '“' + t + '”', pick: () => this.sayLine(t) })),
+      custom: S.custom || '', onCustom: e => this.setState({ custom: e.target.value }), sayCustom: () => this.sayLine((S.custom || '').trim()),
+      loopLabel: S.talk ? 'Stop the chatter loop' : 'Chatter loop (no words, for testing)', talkBg: S.talk ? on : off, talkFg: S.talk ? off : on, toggleTalk: () => { this.setState({ talk: !S.talk }); lab && lab.setTalking(!S.talk); },
+      bubbleOn: !!(S.speech && S.speech.text), bubbleTxt: S.speech ? S.speech.text.slice(0, Math.max(1, S.speech.shown)) : '', bubbleName: String(c.name || 'BEN').toUpperCase() };
+    return { ...talkVals,
+      faceSliders, faceReset: e => { blur(e); this.put({ ...FDEF }); }, faceView: e => { blur(e); if (lab) { lab.setView('face'); this.setState({ lab: lab.state() }); } },
+      L, stageRef: this.stageRef, views, modes, toggles, presets, sliders, swatchRows, choiceRows, kits, saved, hasSaved: saved.length > 0, hud: h,
+      stepOn: ls.mode === 'kyudo' && step >= 0, stepPips: Array.from({ length: 8 }, (_, i) => ({ c: i < step ? '#201e1d' : i === step ? '#ec3013' : '#cfcac7' })),
+      randomise: e => { blur(e); if (!K) return; const r = K.randomHuman(); this.setState({ preset: 'townsfolk', cfg: r, saved: false }); lab && lab.set(r); lab && lab.reroll(); },
+      saveLabel: S.saved ? 'Saved as ' + (c.name || S.preset) : 'Save this ' + (S.preset === 'ben' ? 'Ben' : (c.name || 'preset').toLowerCase()),
+      save: e => { blur(e); if (!S.cfg) return; const id = S.preset === 'townsfolk' ? 'townsfolk_' + (Object.keys(S.store).filter(k => k.startsWith('townsfolk_')).length + 1) : S.preset, cfg = { ...S.cfg, name: S.preset === 'townsfolk' ? 'TOWNSFOLK ' + id.split('_')[1] : S.cfg.name }, store = { ...S.store, [id]: cfg }; try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (er) {} this.setState({ store, saved: true, cfg }); },
+      copyLabel: S.copied ? 'Copied' : 'Copy for presets/humans.json',
+      copy: e => { blur(e); const t = JSON.stringify({ ...S.store, [S.preset]: S.cfg }, null, 2); (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).catch(() => prompt('Copy:', t)); this.setState({ copied: true }); },
+      reset: e => { blur(e); if (!K) return; const d = { ...(K.HUMAN_PRESETS[S.preset] || K.HUMAN_PRESETS.ben) }; this.setState({ cfg: d, saved: false }); lab && lab.set(d); },
+    };
+  }
+}
+</script>
+</body>
+</html>

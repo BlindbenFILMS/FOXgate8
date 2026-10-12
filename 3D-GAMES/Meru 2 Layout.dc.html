@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;background:var(--color-bg)}a{color:var(--color-accent-700)}a:hover{color:var(--color-accent)}</style>
+</helmet>
+<div style="min-height:100vh;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);padding:16px;box-sizing:border-box;display:flex;flex-direction:column;gap:16px" data-screen-label="Meru 2 Layout">
+  <div style="display:flex;flex-direction:column;gap:4px;border-bottom:2px solid var(--color-text);padding-bottom:10px">
+    <span style="font:800 12px var(--font-heading);letter-spacing:0.12em;color:var(--color-accent)">MERU 2.0 · STEP 1 DRAFT</span>
+    <span style="font:900 clamp(26px,5vw,40px) var(--font-heading);line-height:1">Map layout + sound check</span>
+    <span style="font:600 14px var(--font-body);color:var(--color-neutral-700)">900 × 900 m. Data: worlds/meru2-layout.js. Rules: SOUND_LAYOUT_RULES.md. Tap a layer to show or hide it.</span>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:0">
+    <sc-for list="{{ layers }}" as="l" hint-placeholder-count="6">
+      <button onClick="{{ l.go }}" aria-pressed="{{ l.pressed }}" style="min-height:44px;padding:0 14px;border:2px solid var(--color-text);margin-right:-2px;border-radius:0;background:{{ l.bg }};color:{{ l.fg }};font:800 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;display:flex;align-items:center;gap:8px;text-align:left"><span style="width:12px;height:12px;background:{{ l.sw }};outline:1px solid #f3f2f2;display:block"></span>{{ l.name }}</button>
+    </sc-for>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:16px;align-items:start">
+    <div style="border:2px solid var(--color-text);background:#fff;position:relative">
+      <canvas ref="{{ cvRef }}" style="display:block;width:100%;aspect-ratio:1/1"></canvas>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+      <div style="border:2px solid var(--color-text);display:flex;flex-direction:column">
+        <div style="padding:8px 12px;border-bottom:2px solid var(--color-text);display:flex;justify-content:space-between;gap:12px;align-items:baseline"><span style="font:900 18px var(--font-heading)">Sound checklist</span><span style="font:800 12px var(--font-heading);letter-spacing:0.08em;color:{{ passC }}">{{ passTxt }}</span></div>
+        <sc-for list="{{ checks }}" as="c" hint-placeholder-count="9">
+          <div style="display:grid;grid-template-columns:44px minmax(0,1fr);border-bottom:2px solid var(--color-neutral-200)">
+            <span style="display:flex;align-items:center;justify-content:center;background:{{ c.bg }};color:{{ c.fg }};font:900 12px var(--font-heading)">{{ c.mark }}</span>
+            <div style="padding:8px 12px;display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font:800 14px var(--font-heading)">{{ c.txt }}</span><span style="font:500 12px/1.4 var(--font-body);color:var(--color-neutral-700);text-wrap:pretty">{{ c.items }}</span></div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="border:2px solid var(--color-text);display:flex;flex-direction:column">
+        <div style="padding:8px 12px;border-bottom:2px solid var(--color-text);display:flex;justify-content:space-between;gap:12px;align-items:baseline"><span style="font:900 18px var(--font-heading)">New avatars (no lines yet)</span><span style="font:800 12px var(--font-heading);color:var(--color-neutral-700)">{{ newCount }}</span></div>
+        <sc-for list="{{ avatars }}" as="a" hint-placeholder-count="8">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:6px 12px;border-bottom:2px solid var(--color-neutral-200);font:600 13px var(--font-body)"><span style="font-family:var(--font-heading);font-weight:800">{{ a.key }}</span><span style="color:var(--color-neutral-700)">{{ a.where }} · {{ a.tier }}</span></div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { L: null, on: { zones: true, surfaces: true, water: true, roads: true, train: true, buildings: true, speakers: true, radii: true } };
+  ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => this.draw()) : null;
+  cvRef = el => { if (el === this.cvEl) return; if (this.cvEl && this.ro) this.ro.unobserve(this.cvEl); this.cvEl = el; if (el) { this.ro && this.ro.observe(el); requestAnimationFrame(this.draw); } };
+  async componentDidMount() { addEventListener('resize', this.draw); const L = await import(new URL('worlds/meru2-layout.js', document.baseURI).href); this.setState({ L }, () => requestAnimationFrame(this.draw)); }
+  componentWillUnmount() { this.dead = true; removeEventListener('resize', this.draw); this.ro && this.ro.disconnect(); }
+  componentDidUpdate() { this.draw(); }
+  draw = () => {
+    if (this.dead) return; const L = this.state.L, cv = this.cvEl;
+    if (!L || !cv || !cv.isConnected || !cv.clientWidth) { if ((this.tries = (this.tries || 0) + 1) < 120) requestAnimationFrame(this.draw); return; } this.tries = 0; const on = this.state.on;
+    const dpr = Math.min(2, devicePixelRatio || 1), W = cv.clientWidth; cv.width = W * dpr; cv.height = W * dpr; const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const k = W / 900, X = x => (x + 450) * k, Z = z => (z + 450) * k, rect = r => [X(r[0]), Z(r[2]), (r[1] - r[0]) * k, (r[3] - r[2]) * k];
+    const SC = { stone: '#d7d3cf', grass: '#cfe3c1', grit: '#d9c6a3', sand: '#f1e2b6', wood: '#c9a77a', rug: '#b9a3c9' };
+    g.fillStyle = SC.grass; g.fillRect(0, 0, W, W);
+    if (on.surfaces) for (const S of L.SURFACES) { g.fillStyle = SC[S.s]; if (S.r) g.fillRect(...rect(S.r)); else { g.beginPath(); g.arc(X(S.c[0]), Z(S.c[1]), S.c[2] * k, 0, 7); g.fill(); } }
+    if (on.water) { g.fillStyle = '#9fd0ee'; for (const w of L.WATER) { g.beginPath(); g.ellipse(X(w.e[0]), Z(w.e[1]), w.e[2] * k, w.e[3] * k, 0, 0, 7); g.fill(); }
+      const I = L.ISLAND; g.fillStyle = SC.sand; g.beginPath(); g.arc(X(I.c[0]), Z(I.c[1]), I.c[2] * k, 0, 7); g.fill(); g.fillStyle = '#9cc58a'; g.beginPath(); g.arc(X(I.hills[0]), Z(I.hills[1]), I.hills[2] * k, 0, 7); g.fill(); g.fillStyle = '#1f6fa8'; g.beginPath(); g.arc(X(I.pond.x), Z(I.pond.z), I.pond.r * k, 0, 7); g.fill(); }
+    if (on.roads) { g.strokeStyle = '#4a4745'; g.lineJoin = 'round'; for (const r of L.ROADS) { g.lineWidth = r.w * k; g.beginPath(); r.p.forEach(([x, z], i) => i ? g.lineTo(X(x), Z(z)) : g.moveTo(X(x), Z(z))); g.stroke(); } }
+    if (on.train) { g.strokeStyle = '#ec3013'; g.lineWidth = 3; g.setLineDash([8, 5]); g.beginPath(); L.TRAIN.line.forEach(([x, z], i) => i ? g.lineTo(X(x), Z(z)) : g.moveTo(X(x), Z(z))); g.stroke(); g.setLineDash([]); }
+    if (on.zones) { g.lineWidth = 1.5; g.font = '700 ' + Math.max(9, 11 * k * 1.6) + 'px Archivo, sans-serif'; for (const z of L.ZONES) { g.strokeStyle = z.busy ? '#ec3013' : '#201e1d'; g.setLineDash([4, 4]); if (z.r) g.strokeRect(...rect(z.r)); else { g.beginPath(); g.arc(X(z.c[0]), Z(z.c[1]), z.c[2] * k, 0, 7); g.stroke(); } g.setLineDash([]); g.fillStyle = '#201e1d'; const [lx, lz] = z.r ? [z.r[0] + 3, z.r[2] + 10] : [z.c[0] - z.c[2] + 6, z.c[1] - z.c[2] + 14]; g.fillText(z.label.toUpperCase(), X(lx), Z(lz)); } }
+    if (on.buildings) for (const b of L.BUILDINGS) { g.fillStyle = b.key.startsWith('station') ? '#ec3013' : '#201e1d'; g.fillRect(...rect(b.f)); if (b.door) { g.fillStyle = '#ffd23a'; g.fillRect(X(b.door[0]) - 3, Z(b.door[1]) - 3, 6, 6); } if (b.hiring && b.door) { g.fillStyle = '#22c55e'; g.strokeStyle = '#201e1d'; g.lineWidth = 1.5; g.beginPath(); g.moveTo(X(b.door[0]) + 6, Z(b.door[1]) - 10); g.lineTo(X(b.door[0]) + 14, Z(b.door[1]) - 10); g.lineTo(X(b.door[0]) + 14, Z(b.door[1]) - 4); g.lineTo(X(b.door[0]) + 6, Z(b.door[1]) - 4); g.closePath(); g.fill(); g.stroke(); } }
+    if (on.speakers) { const out = L.SPEAKERS.filter(s => Array.isArray(s.at) && s.tier < 3);
+      for (const s of out) { const x = X(s.at[0]), z = Z(s.at[1]); if (on.radii) { g.strokeStyle = 'rgba(236,48,19,0.55)'; g.lineWidth = 1; g.beginPath(); g.arc(x, z, 7 * k, 0, 7); g.stroke(); g.strokeStyle = 'rgba(32,30,29,0.25)'; g.setLineDash([2, 3]); g.beginPath(); g.arc(x, z, 8 * k, 0, 7); g.stroke(); g.setLineDash([]); }
+        g.fillStyle = s.newAvatar ? '#ffffff' : s.tier === 1 ? '#ec3013' : '#201e1d'; g.strokeStyle = '#201e1d'; g.lineWidth = 1.5; g.beginPath(); g.arc(x, z, 3.2, 0, 7); g.fill(); g.stroke(); } }
+  };
+  renderVals() {
+    const L = this.state.L, on = this.state.on, ck = L ? L.checkLayout() : [], pass = ck.filter(c => c.ok).length;
+    const LY = [['zones', 'ZONES', '#201e1d'], ['surfaces', 'GROUND', '#d9c6a3'], ['water', 'LAKE + ISLAND', '#9fd0ee'], ['roads', 'ROADS', '#4a4745'], ['train', 'TRAIN', '#ec3013'], ['buildings', 'BUILDINGS + DOORS + HIRING', '#22c55e'], ['speakers', 'SPEAKERS', '#ec3013'], ['radii', '7 M TRIGGERS', '#f3c1b6']];
+    const tierN = { 1: 'talker', 2: 'greeter' };
+    return {
+      cvRef: this.cvRef,
+      layers: LY.map(([id, name, sw]) => ({ name, sw, pressed: on[id] ? 'true' : 'false', bg: on[id] ? 'var(--color-text)' : 'var(--color-bg)', fg: on[id] ? 'var(--color-bg)' : 'var(--color-text)', go: () => this.setState(s => ({ on: { ...s.on, [id]: !s.on[id] } })) })),
+      checks: ck.map(c => ({ txt: c.txt, items: c.items.join(' · ') || (c.ok ? 'All clear.' : ''), mark: c.ok ? 'OK' : 'FIX', bg: c.ok ? 'var(--color-text)' : 'var(--color-accent)', fg: '#ffffff' })),
+      passTxt: L ? pass + ' / ' + ck.length + ' PASS' : 'LOADING…', passC: pass === ck.length ? 'var(--color-text)' : 'var(--color-accent)',
+      avatars: (L ? L.NEW_AVATARS : []).map(a => ({ key: a.key, tier: tierN[a.tier] || 'crowd', where: Array.isArray(a.at) ? 'outdoors ' + a.at.join(', ') : a.at.room })),
+      newCount: L ? L.NEW_AVATARS.length + ' TO WRITE' : '',
+    };
+  }
+}
+</script>
+</body>
+</html>

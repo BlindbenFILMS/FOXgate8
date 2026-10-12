@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000;touch-action:none}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible,input:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}input[type=range]{accent-color:#ec3013}@keyframes scopePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}@keyframes scSpin{to{transform:rotate(360deg)}}@keyframes shuttleGo{0%,52%{transform:translateY(0);opacity:1}55%{transform:translateY(1px)}64%{transform:translateY(-6px);opacity:1}74%{transform:translateY(-22px);opacity:0}75%{transform:translateY(6px);opacity:0}90%,100%{transform:translateY(0);opacity:1}}@keyframes shuttleFlame{0%,50%{transform:scaleY(0);opacity:0}54%{transform:scaleY(0.6);opacity:1}58%{transform:scaleY(0.9)}62%{transform:scaleY(0.7)}66%{transform:scaleY(1.2);opacity:1}74%{transform:scaleY(1.4);opacity:0}100%{transform:scaleY(0);opacity:0}}@keyframes scSweep{0%{top:0}100%{top:100%}}</style>
+</helmet>
+<div style="position:relative;height:100vh;height:100dvh;overflow:hidden;background:#000;font-family:var(--font-body);color:#fff;user-select:none;-webkit-user-select:none;touch-action:none">
+  <div ref="{{ stageRef }}" style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0;overflow:hidden"></div>
+  <div data-hud-host="1" style="position:absolute;inset:0;pointer-events:none"><dc-import name="Game HUD" game="{{ engine }}" hud="{{ hud }}" started="{{ started }}" busy="{{ hudBusy }}" on-hud="{{ onHud }}" world="Meru" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  <div style="position:absolute;left:0;right:0;top:{{ regionTop }};bottom:0;pointer-events:none">
+    <sc-if value="{{ showFight }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:{{ fightTop }};width:min(260px, calc(100% - 140px));background:{{ fightBg }};border:2px solid var(--color-text);display:flex;flex-direction:column;pointer-events:none;z-index:2">
+        <div style="display:grid;grid-template-columns:56px 1fr 34px;align-items:center;gap:8px;padding:7px 10px;border-bottom:2px solid var(--color-text)">
+          <span style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-text)">Health</span>
+          <div style="height:10px;border:2px solid var(--color-text);background:var(--color-neutral-200)"><div style="height:100%;background:var(--color-accent);width:{{ fightHpW }}"></div></div>
+          <span style="font-size:12px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums;color:var(--color-text)">{{ hud.fight.hp }}</span>
+        </div>
+        <sc-if value="{{ showBoss }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:56px 1fr 34px;align-items:center;gap:8px;padding:7px 10px;border-bottom:2px solid var(--color-text)">
+            <span style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-accent-700)">{{ bossName }}</span>
+            <div style="height:10px;border:2px solid var(--color-text);background:var(--color-neutral-200)"><div style="height:100%;background:var(--color-text);width:{{ bossHpW }}"></div></div>
+            <span style="font-size:12px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums;color:var(--color-text)">{{ bossHp }}</span>
+          </div>
+        </sc-if>
+        <div style="padding:6px 10px;font-size:12px;font-weight:700;color:var(--color-text)">{{ fightFoes }}</div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ showLock }}" hint-placeholder-val="{{ false }}">
+      <div style="pointer-events:auto;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box;background:rgba(10,8,14,0.5);z-index:9">
+        <div style="width:min(420px,100%);background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding:10px 16px;border-bottom:2px solid #3a3836;background:#000;color:#fff">
+            <span style="font:800 20px var(--font-heading)">Pick the lock</span>
+            <span style="font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#ffd23a">{{ lockPins }}</span>
+          </div>
+          <div style="padding:18px 16px 10px;display:flex;flex-direction:column;gap:12px">
+            <div style="position:relative;height:36px;border:2px solid #ffd23a;background:#2a2826">
+              <div style="position:absolute;top:0;bottom:0;left:{{ lockZoneL }};width:{{ lockZoneW }};background:#4ade80"></div>
+              <div style="position:absolute;top:-8px;bottom:-8px;left:{{ lockPickL }};width:6px;margin-left:-3px;background:#000"></div>
+            </div>
+            <div style="font-size:14px;font-weight:700;color:#fff">{{ hud.lock.msg }}</div>
+          </div>
+          <button onPointerDown="{{ lockPress }}" style="min-height:64px;margin:0 16px 16px;border:2px solid #ffd23a;border-radius:0;background:var(--color-accent);color:#fff;font:800 20px var(--font-heading);text-align:left;padding:0 18px;cursor:pointer" style-active="background:var(--color-accent-600)">{{ lockKey }}</button>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ showJuke }}" hint-placeholder-val="{{ false }}">
+      <div style="pointer-events:auto;position:absolute;right:max(12px, env(safe-area-inset-right));top:{{ belowBar }};width:min(380px,calc(100% - 24px));max-height:calc(100% - 130px);overflow:auto;background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column;z-index:6">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:2px solid #3a3836;background:#000;color:#fff">
+          <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#ff8ae6">Meru Tavern</span><span style="font:800 22px var(--font-heading);line-height:1">Jukebox</span></div>
+          <button onClick="{{ jukeClose }}" style="height:44px;padding:0 14px;border:2px solid #3a3836;border-radius:0;background:transparent;color:#fff;font:700 13px var(--font-body);cursor:pointer">Close</button>
+        </div>
+        <sc-for list="{{ songList }}" as="s" hint-placeholder-count="5">
+          <button onClick="{{ s.pick }}" style="display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:12px;padding:12px 16px;min-height:56px;border:0;border-bottom:2px solid #3a3836;border-radius:0;background:{{ s.bg }};color:{{ s.fg }};text-align:left;cursor:pointer" style-hover="background:#1d1b1a">
+            <span style="font:800 18px var(--font-heading)">{{ s.n }}</span>
+            <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:800 15px var(--font-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.title }}</span><span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;opacity:0.8">{{ s.genre }}</span></span>
+            <span style="font-size:12px;font-weight:700;white-space:nowrap">{{ s.state }}</span>
+          </button>
+        </sc-for>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;gap:10px">
+          <span style="font-size:12px;color:#cfcac4">{{ jukeFoot }}</span>
+          <button onClick="{{ jukeStop }}" style="height:44px;padding:0 14px;border:2px solid #ffd23a;border-radius:0;background:#000;color:#fff;font:700 13px var(--font-body);cursor:pointer;white-space:nowrap">Stop</button>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ showNowPlaying }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;right:max(12px, env(safe-area-inset-right));top:{{ belowBar }};display:flex;align-items:stretch;background:#000;border:2px solid #ffd23a;pointer-events:none;max-width:min(260px, calc(100% - 24px))">
+        <div style="background:#ff3bd4;color:#fff;font:800 16px var(--font-heading);padding:8px 10px;display:flex;align-items:center">♪</div>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#cfcac4">Now playing</span><span style="font:800 14px var(--font-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff">{{ hud.juke.title }}</span></div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ showDarts }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;right:max(12px, env(safe-area-inset-right));top:50%;transform:translateY(-50%);display:flex;align-items:stretch;gap:0;pointer-events:none">
+        <div style="background:#000;border:2px solid #ffd23a;border-right:0;padding:10px 12px;display:flex;flex-direction:column;justify-content:space-between;gap:8px;min-width:110px">
+          <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#ffd23a">Darts</span><span style="font:800 26px var(--font-heading);line-height:1;color:#fff">{{ dartsN }}</span></div>
+          <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#fff">Score</span><span style="font:800 22px var(--font-heading);line-height:1;font-variant-numeric:tabular-nums;color:#fff">{{ hud.darts.score }}</span></div>
+          <div style="font-size:11px;color:#cfcac4">Best {{ hud.darts.best }}</div>
+          <div style="font-size:12px;font-weight:700;color:#fff">{{ dartsHint }}</div>
+        </div>
+        <div style="position:relative;width:34px;height:min(240px, 52vh);border:2px solid #ffd23a;background:#2a2826">
+          <div style="position:absolute;left:0;right:0;bottom:0;height:{{ dartsPowerH }};background:var(--color-accent)"></div>
+          <div style="position:absolute;left:-8px;right:-8px;bottom:{{ dartsPerfectB }};height:4px;background:#000;border-top:2px solid #3a3836;border-bottom:2px solid #3a3836"></div>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+  <sc-if value="{{ showGame }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:rgba(10,8,14,0.72);display:flex;align-items:center;justify-content:center;padding:{{ gamePad }};box-sizing:border-box;z-index:20">
+      <div style="width:min(1100px,100%);height:min(760px,100%);background:var(--color-bg);border:2px solid var(--color-text);display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:6px 6px 6px 14px;border-bottom:2px solid var(--color-text);background:var(--color-text);color:var(--color-bg)">
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#ffd23a">{{ gameKicker }}</span><span style="font:800 18px var(--font-heading);line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ gameLabel }}</span></div>
+          <button onClick="{{ closeGameBtn }}" style="height:48px;min-width:120px;padding:0 16px;border:2px solid var(--color-bg);border-radius:0;background:var(--color-accent);color:var(--color-bg);font:800 15px var(--font-heading);cursor:pointer;text-align:left;flex:none">Leave table</button>
+        </div>
+        <iframe src="{{ gameSrc }}" style="flex:1;width:100%;border:0;background:#000"></iframe>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ showIntro }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;top:0;left:0;bottom:0;width:min(520px,100%);overflow:auto;background:var(--color-accent);color:var(--color-bg);display:flex;flex-direction:column;justify-content:space-between;gap:20px;padding:clamp(20px, 5vh, 40px) clamp(20px, 5vw, 40px);box-sizing:border-box;border-right:2px solid var(--color-text)">
+      <div style="font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase">Planet Gaya · Meru</div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <h1 style="font-family:var(--font-heading);font-weight:800;font-size:clamp(40px, min(11vw, 13vh), 104px);line-height:0.9;letter-spacing:-0.04em;margin:0;color:var(--color-bg)">Meru<br>Town Square</h1>
+        <p style="font-size:16px;line-height:1.5;margin:0;max-width:360px;text-wrap:pretty">The square from the 2D map, rebuilt in 3D: casino, tavern, item shop, fortune teller, Meru Lanes and the armory, with seven foxes walking their usual routes.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <button onClick="{{ enter }}" style="display:flex;justify-content:space-between;align-items:center;width:100%;min-height:56px;padding:16px 20px;background:var(--color-bg);color:var(--color-text);border:2px solid var(--color-text);border-radius:0;font:800 18px var(--font-heading);text-align:left;cursor:pointer" style-hover="background:var(--color-neutral-200)"><span>{{ enterLabel }}</span><span>→</span></button>
+        <a href="Meru Spacedock.dc.html" style="display:flex;justify-content:space-between;align-items:center;min-height:48px;padding:12px 20px;border:2px solid var(--color-bg);color:var(--color-bg);font:800 16px var(--font-heading);text-decoration:none;margin-top:-6px" style-hover="background:var(--color-accent-600);color:var(--color-bg)"><span>Start the game at the space dock</span><span>→</span></a>
+        <div style="display:grid;grid-template-columns:1fr 1fr;border-top:2px solid var(--color-bg);font-size:13px">
+          <div style="padding-top:10px;display:flex;flex-direction:column;gap:2px"><b>Desktop</b><span>WASD, EYE button: hold for 360 view, tap for POV, E to talk, 1–4 actions</span></div>
+          <div style="padding-top:10px;display:flex;flex-direction:column;gap:2px"><b>Touch</b><span>Left thumb moves, EYE: hold for 360 view, tap for POV</span></div>
+        </div>
+        <sc-if value="{{ error }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:13px;background:var(--color-text);color:var(--color-bg);padding:8px 10px">{{ error }}</div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;followCam&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Camera&quot;},&quot;timeScale&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:30,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;min/s&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;World&quot;},&quot;startHour&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:19.5,&quot;min&quot;:0,&quot;max&quot;:23.5,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;h&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;World&quot;},&quot;outlines&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;quality&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;high&quot;,&quot;options&quot;:[&quot;high&quot;,&quot;low&quot;],&quot;tsType&quot;:&quot;'high'|'low'&quot;,&quot;section&quot;:&quot;Look&quot;}}">
+const QSTEPS = [['Go EAST to ARENA, talk to KING MIGHT', 'tournamentEntered'], ['WIN the TOURNAMENT', 'tournamentWon'], ['Search the RUINS for PRINCE MAX', 'maxFreed'], ['Tell MAX you are ready to go', 'maxFollowing'], ['Take MAX NORTH to the CASTLE', 'maxHome'], ['Take the FLAGSHIP up from the CREST PAD in the TOWN SQUARE', 'finaleBriefed'], ['Hold the PLANET DEFENSE BASE: the road up behind the BARRACKS', 'finaleWon']];
+const IC = { sword: 'M14.5 17.5L3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2', laser: 'M2 9h14v6H2zM16 12h6M5 15v4', armor: 'M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z', harpoon: 'M2 10h14l5 2-5 2H2zM6 10V7M6 14v3', cane: 'M8 21V7a4 4 0 0 1 8 0', bow: 'M6 3c9 3 9 15 0 18M6 3v18', glasses: 'M2 10h8v4H2zM14 10h8v4h-8zM10 12h4', chair: 'M6 4v9h10l2 7M6 13l-2 7M8 20a2 2 0 1 0 0.1 0', shoe: 'M4 6h6v7l8 2v4H4zM4 16h14' };
+const LOADOUT = {
+  player: { melee: [['sword', "FATHER'S SWORD", 'The blade you left home with.', 'EQUIPPED']], ranged: [['laser', 'LASER', 'Fires where you face.', 'EQUIPPED'], ['harpoon', 'HARPOON GUN', 'On the bow of the boat. 1 or 2 fires while sailing.', 'BOAT']], wear: [['armor', '8 ARMOUR', 'Worn by Ben, Hope and Noble.', 'WORN']] },
+  hope: { melee: [['cane', 'LONG CANE', 'Cane swing + pulse.', 'EQUIPPED']], ranged: [['bow', 'WHITE BOW', "Hope's bow.", 'EQUIPPED']], wear: [['armor', '8 ARMOUR', 'Worn by Ben, Hope and Noble.', 'WORN'], ['glasses', 'SUNGLASSES', 'Always on.', 'WORN']] },
+  noble: { melee: [['chair', 'FUTURISTIC CHAIR', 'Hands on the wheels.', 'EQUIPPED']], ranged: [['shoe', 'SHOEMERANG', 'Off his right boot.', 'EQUIPPED']], wear: [['armor', '8 ARMOUR', 'Worn by Ben, Hope and Noble.', 'WORN']] } };
+const ITEM_NOTE = { erToGo: '+40 HP', healingCharges: '+40 HP', splint: '+60 HP', amber: 'A treat', chocolates: 'A treat' };
+const ls = (k, d) => { try { const v = localStorage.getItem(k); return v == null ? d : v; } catch (e) { return d; } };
+class Component extends DCLogic {
+  state = { game: null, started: false, ready: false, error: null, vw: 1200, vh: 800, hud: { clock: '--:--', period: '', weather: 'Clear', muted: false, prompt: null, dialog: null }, hi: { pad: false, menu: false, split: false, bar: 0 } };
+  stageRef = React.createRef();
+  opts() {
+    const p = this.props;
+    return { timeScale: p.timeScale ?? 2, startHour: p.startHour ?? 19.5, outlines: p.outlines ?? true, quality: p.quality ?? (window.matchMedia && matchMedia('(pointer: coarse)').matches ? 'low' : 'high'), followCam: p.followCam ?? true };
+  }
+  onResize = () => this.setState({ vw: window.innerWidth, vh: window.innerHeight });
+  async componentDidMount() {
+    window.addEventListener('message', this.onMsg); window.addEventListener('resize', this.onResize); this.onResize();
+    try {
+      const mod = await import(new URL('meru-game.js', document.baseURI).href);
+      if (this.unmounted) return;
+      this.game = await mod.createGame({ container: this.stageRef.current, options: this.opts(), onState: hud => this.setState({ hud }), onNavigate: url => { window.location.href = encodeURI(url); }, onPlayGame: (key, label, src, where) => this.setState({ game: { key, label, src, where } }) });
+      this.setState({ ready: true }); this.bindZoom(); window.__meruGame = this.game;
+      if (/[?&]talkdemo=1/.test(location.search)) { this.game.start(); this.setState({ started: true }); setTimeout(() => this.game && this.game.talkDemo && this.game.talkDemo(), 1800); }
+    } catch (e) { console.error(e); this.setState({ error: 'Could not start 3D: ' + (e && e.message || e) }); }
+  }
+  bindZoom() { const el = this.stageRef.current; if (!el || this.zoomBound) return; this.zoomBound = true; let pd = 0; const dist = t => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY), onCv = e => [...e.touches].every(tt => tt.target && tt.target.tagName === 'CANVAS' && el.contains(tt.target));
+    el.addEventListener('touchstart', e => { if (e.touches.length === 2 && onCv(e)) pd = dist(e.touches); }, { passive: true });
+    el.addEventListener('touchmove', e => { if (e.touches.length === 2 && pd && onCv(e)) { const nd = dist(e.touches); if (nd > 0 && this.game) this.game.zoomBy(pd / nd); pd = nd; } }, { passive: true });
+    el.addEventListener('touchend', e => { if (e.touches.length < 2) pd = 0; }, { passive: true });
+    el.addEventListener('wheel', e => { if (this.game && this.state.started && !this.state.hi.menu) this.game.zoomBy(1 + Math.max(-0.2, Math.min(0.2, e.deltaY * 0.0015))); }, { passive: true }); }
+  componentDidUpdate() { this.game && this.game.setOptions(this.opts()); }
+  onMsg = e => { const m = e.data; if (typeof m === 'string' && /^backTo/.test(m)) { this.closeGame(); return; } if (m && typeof m === 'object' && m.pd && this.game && this.game.defence) { if (this.game.defence(m) === 'won') this.setState({ game: null }); } };
+  closeGame = () => { this.setState({ game: null }); this.game && this.game.gameClosed(); };
+  componentWillUnmount() { window.removeEventListener('message', this.onMsg); window.removeEventListener('resize', this.onResize); this.unmounted = true; if (this.game) this.game.destroy(); }
+  onHud = hi => this.setState({ hi });
+  renderVals() {
+    const S = this.state, { started, ready, hud, error, vw, vh } = S, G = this.game, d = hud.dialog, phone = Math.min(vw, vh) < 520, land = phone && vw > vh, pad = !!S.hi.pad, below = '40px', bar = S.hi.bar || 0;
+    return {
+      stageRef: this.stageRef, engine: this.game, hud, started, showIntro: !started, error, hudBusy: !!S.game, onHud: this.onHud,
+      enterLabel: ready ? 'Enter the square' : 'Landing on Meru…',
+      enter: () => { if (!this.game) return; this.game.start(); this.setState({ started: true }); },
+      stageTop: S.hi.split ? 'calc(' + bar + 'px + (100% - ' + bar + 'px) / 2)' : bar + 'px', regionTop: bar + 'px',
+      gamePad: phone ? '0' : '16px',
+      showGame: !!S.game, gameSrc: S.game ? (S.game.src || 'casino/' + S.game.key + '.html') : 'about:blank', gameKicker: S.game && S.game.where || 'Meru Casino', gameLabel: S.game ? S.game.label : '', closeGameBtn: () => this.closeGame(),
+      showJuke: !!(hud.juke && hud.juke.open) && !d, showNowPlaying: !!(hud.juke && hud.juke.title && hud.juke.here && !hud.juke.open) && !phone,
+      songList: (G ? G.songs : []).map((s, i) => { const on = hud.juke && hud.juke.playing === i; return { n: s.n, title: s.title, genre: s.genre, bg: on ? '#ffd23a' : '#000', fg: on ? '#000' : '#fff', state: on ? '♪ Playing' : (pad ? 'Tap' : 'Key ' + (i + 1)), pick: e => { e.currentTarget.blur(); G && G.playSong(i); } }; }),
+      jukeClose: e => { e.currentTarget.blur(); G && G.closeJuke(); }, jukeStop: e => { e.currentTarget.blur(); G && G.stopSong(); },
+      jukeFoot: hud.juke && hud.juke.synth ? 'Tavern MP3s not found here, so a stand-in groove plays' : (hud.juke && hud.juke.playing >= 0 ? 'Plays on until you leave the tavern' : 'Pick a record'),
+      showDarts: !!hud.darts && !d, dartsN: hud.darts ? hud.darts.n + ' / 3' : '', dartsPowerH: (hud.darts ? hud.darts.power : 0) + '%', dartsPerfectB: 'calc(' + (hud.darts ? hud.darts.perfect : 72) + '% - 4px)', dartsHint: pad ? 'Tap anywhere to throw' : 'Click or E to throw',
+      showFight: !!hud.fight && !d && !hud.lock, fightTop: below, fightBg: hud.fight && hud.fight.hurt ? 'var(--color-accent-200)' : 'var(--color-bg)',
+      fightHpW: (hud.fight ? Math.round(hud.fight.hp / hud.fight.max * 100) : 0) + '%', fightFoes: hud.fight ? (hud.fight.boss ? 'Phase ' + hud.fight.boss.phase + ' of 3 \u00b7 ' + hud.fight.hint : hud.fight.foes ? hud.fight.foes + ' still standing' : 'All clear') : '',
+      showBoss: !!(hud.fight && hud.fight.boss), bossName: hud.fight && hud.fight.boss ? hud.fight.boss.name : '', bossHp: hud.fight && hud.fight.boss ? hud.fight.boss.hp : '', bossHpW: (hud.fight && hud.fight.boss ? Math.round(hud.fight.boss.hp / hud.fight.boss.max * 100) : 0) + '%',
+      showLock: !!hud.lock, lockPins: hud.lock ? hud.lock.set + ' / ' + hud.lock.pins + ' pins' : '', lockZoneL: (hud.lock ? (0.5 - hud.lock.zone / 2) * 100 : 0) + '%', lockZoneW: (hud.lock ? hud.lock.zone * 100 : 0) + '%', lockPickL: (hud.lock ? hud.lock.pos * 100 : 0) + '%',
+      lockPress: e => { e.preventDefault(); G && G.talk(); }, lockKey: pad ? 'Press' : 'Press (E)',
+      belowBar: below,
+    };
+  }
+}
+</script>
+</body>
+</html>

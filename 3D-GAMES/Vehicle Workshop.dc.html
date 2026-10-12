@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body)">
+  <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836;flex:none">
+    <div style="padding:10px 14px;display:{{ titleDisp }};flex-direction:column;gap:2px;border-right:2px solid #3a3836">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#ffd23a">8 Gates</div>
+      <div style="font-family:var(--font-heading);font-size:clamp(14px,4vw,20px);font-weight:800;line-height:1.05">Vehicle Workshop</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat({{ statCols }},minmax(0,1fr));flex:1;min-width:0">
+      <div style="padding:8px 14px;border-right:2px solid #3a3836;display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;font-weight:700;letter-spacing:0.1em">KM/H</span><span style="font:800 22px var(--font-heading);font-variant-numeric:tabular-nums">{{ hud.kmh }}</span></div>
+      <sc-if value="{{ hasAmmo }}" hint-placeholder-val="{{ true }}"><div style="padding:8px 14px;border-right:2px solid #3a3836;display:flex;flex-direction:column;gap:6px"><span style="font-size:11px;font-weight:700;letter-spacing:0.1em">ROCKETS</span><span style="display:flex;gap:4px"><sc-for list="{{ pips }}" as="p" hint-placeholder-count="4"><span style="width:12px;height:18px;background:{{ p.c }};display:block"></span></sc-for></span></div></sc-if>
+      <sc-if value="{{ hasLap }}" hint-placeholder-val="{{ false }}"><div style="padding:8px 14px;border-right:2px solid #3a3836;display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:11px;font-weight:700;letter-spacing:0.1em;white-space:nowrap;overflow:hidden">BEST LAP</span><span style="font:800 20px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap">{{ lapBest }}</span><span style="display:block;height:4px;background:#2a2826"><span style="display:block;height:100%;width:{{ lapPct }};background:#ec3013"></span></span></div></sc-if>
+      <sc-if value="{{ hasAlt }}" hint-placeholder-val="{{ false }}"><div style="padding:8px 14px;border-right:2px solid #3a3836;display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;font-weight:700;letter-spacing:0.1em">ALT</span><span style="font:800 22px var(--font-heading);font-variant-numeric:tabular-nums">{{ altV }}</span></div></sc-if>
+      <div style="padding:8px 14px;display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;font-weight:700;letter-spacing:0.1em">SCORE</span><span style="font:800 22px var(--font-heading);font-variant-numeric:tabular-nums">{{ hud.score }}</span></div>
+    </div>
+  </div>
+  <div ref="{{ tabRef }}" style="display:flex;flex-wrap:{{ tabWrap }};overflow-x:{{ tabOverflow }};border-bottom:2px solid #3a3836;flex:none;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:#ec3013 #000">
+    <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="7">
+      <button onClick="{{ t.pick }}" data-sel="{{ t.sel }}" style="flex:none;min-height:48px;padding:6px 14px;border-bottom:{{ t.bb }};margin-bottom:-2px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:2px;border:0;border-right:2px solid #3a3836;border-radius:0;background:{{ t.bg }};color:{{ t.fg }};text-align:left;cursor:{{ t.cur }};opacity:{{ t.op }}"><span style="font:800 9px var(--font-heading);letter-spacing:0.14em;white-space:nowrap">{{ t.n }}</span><span style="font:800 13px var(--font-heading);letter-spacing:0.06em;white-space:nowrap">{{ t.label }}</span></button>
+    </sc-for>
+  </div>
+  <div style="position:relative;flex:1;min-height:0;overflow:hidden">
+    <div ref="{{ stageRef }}" style="position:absolute;inset:0;overflow:hidden"></div>
+    <button onClick="{{ infoToggle }}" style="position:absolute;left:12px;top:12px;max-width:min(420px,calc(100% - 184px));background:#000;border:2px solid #3a3836;border-radius:0;padding:8px 12px;min-height:44px;font:400 12px var(--font-body);line-height:1.4;color:#fff;text-align:left;cursor:pointer;z-index:4"><b style="font-family:var(--font-heading);letter-spacing:0.08em;color:#ffd23a">{{ hud.name }}</b> <span style="color:#fff">{{ infoLine }}</span></button>
+    <sc-if value="{{ hud.drift }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:50%;top:22%;transform:translateX(-50%);padding:6px 14px;background:{{ driftBg }};color:#000;font:900 18px var(--font-heading);letter-spacing:0.12em;pointer-events:none">{{ driftLabel }}</div>
+    </sc-if>
+    <sc-if value="{{ showKeys }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute;left:12px;bottom:12px;display:flex;flex-wrap:wrap;max-width:calc(100% - 24px);pointer-events:none;font-size:12px">
+        <sc-for list="{{ keysList }}" as="k" hint-placeholder-count="6">
+          <div style="background:#000;border:2px solid #3a3836;margin:0 -2px -2px 0;padding:5px 9px;white-space:nowrap"><b>{{ k.key }}</b> {{ k.label }}</div>
+        </sc-for>
+      </div>
+    </sc-if>
+    <sc-if value="{{ padOn }}" hint-placeholder-val="{{ false }}">
+      <div onPointerDown="{{ stDown }}" onPointerMove="{{ stMove }}" onPointerUp="{{ stUp }}" onPointerCancel="{{ stUp }}" style="position:absolute;left:0;top:70px;bottom:0;width:50%;touch-action:none;z-index:2">
+        <sc-if value="{{ stOn }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;left:{{ stBx }};top:{{ stBy }};width:120px;height:120px;margin:-60px 0 0 -60px;border-radius:50%;border:2px solid rgba(255,255,255,0.55);background:rgba(0,0,0,0.35);pointer-events:none"></div>
+          <div style="position:absolute;left:{{ stKx }};top:{{ stKy }};width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;background:#ffffff;opacity:0.85;pointer-events:none"></div>
+        </sc-if>
+        <sc-if value="{{ stHint }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;left:20px;bottom:24px;font:800 11px var(--font-heading);letter-spacing:0.1em;color:#fff;pointer-events:none;line-height:1.5;background:#000;padding:6px 8px">DRAG: UP = GAS · DOWN = BRAKE<br>LEFT / RIGHT = STEER</div>
+        </sc-if>
+      </div>
+      <div style="position:absolute;right:max(14px, env(safe-area-inset-right));bottom:max(14px, env(safe-area-inset-bottom));width:190px;height:180px;z-index:3;touch-action:none;user-select:none;-webkit-user-select:none">
+        <sc-for list="{{ pad }}" as="b" hint-placeholder-count="3">
+          <div onPointerDown="{{ b.down }}" onPointerUp="{{ b.up }}" onPointerCancel="{{ b.up }}" style="position:absolute;right:{{ b.r }};bottom:{{ b.b }};width:{{ b.s }};height:{{ b.s }};border-radius:50%;background:{{ b.ring }};display:flex;align-items:center;justify-content:center;touch-action:none;cursor:pointer">
+            <div style="width:86%;height:86%;border-radius:50%;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;pointer-events:none">
+              <span style="font:900 24px var(--font-heading);line-height:1">{{ b.n }}</span>
+              <span style="font:800 9px var(--font-heading);letter-spacing:0.08em">{{ b.label }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+    <div style="position:absolute;right:12px;top:12px;display:flex;z-index:4">
+      <button onClick="{{ padToggle }}" style="height:44px;padding:0 14px;border-radius:0;background:#000;color:#fff;font:800 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;border:2px solid {{ padBorder }};margin-left:-2px" style-hover="background:#2a2826">PAD</button>
+      <button onClick="{{ reset }}" style="height:44px;padding:0 14px;border-radius:0;background:#000;color:#fff;font:800 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;border:2px solid #3a3836;margin-left:-2px" style-hover="background:#2a2826">RESET</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { narrow: typeof innerWidth !== 'undefined' && innerWidth < 600, infoOpen: typeof innerWidth !== 'undefined' && innerWidth >= 700 && innerHeight >= 500, hud: { kmh: 0, score: 0, name: '', line: '', btn: ['', '', ''], key: 'tank', nitro: 1 }, list: null, pad: (typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches) || innerWidth < 900, st: null, used: false };
+  stageRef = React.createRef(); tabRef = React.createRef();
+  componentDidUpdate() { const k = this.state.hud.key + '|' + this.state.narrow; if (k !== this.lastTabK) { this.lastTabK = k; this.followTab(); } }
+  followTab() { const row = this.tabRef.current, el = row && row.querySelector('[data-sel="1"]'); if (row && el && row.scrollWidth > row.clientWidth) row.scrollLeft = Math.max(0, el.offsetLeft - row.offsetLeft - 12); }
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs();
+    try {
+      const mod = await import(new URL('vehicle-lab.js', document.baseURI).href);
+      this.lab = await mod.createVehicleLab({ container: this.stageRef.current, onState: hud => this.setState({ hud }) });
+      this.setState({ list: mod.VEHICLES }, () => this.followTab());
+      try { const want = new URLSearchParams(location.search).get('v'); if (want && this.lab.setVehicle) this.lab.setVehicle(want); } catch (e) {}
+    } catch (e) { console.warn('vehicle lab failed: ' + (e && e.stack || String(e))); }
+  }
+  componentWillUnmount() { this.lab && this.lab.destroy(); removeEventListener('resize', this.onRs); }
+  onRs = () => this.setState({ narrow: innerWidth < 600 });
+  renderVals() {
+    const S = this.state, h = S.hud, lab = this.lab, L = S.list || {}, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const order = ['tank', 'moto', 'truck', 'racecar', 'mech', 'boat', 'bike', 'skate', 'heli', 'jetski', 'surf', 'chute', 'glider', 'pogo', 'hopper', 'kroo', 'jetpack', 'hover', 'unicycle', 'turtle', 'ostrich', 'dragon', 'cart', 'hamster', 'bumper', 'rskates', 'crane', 'balloon', 'spider'];
+    const tabs = order.map((k, i) => { const v = L[k] || { name: k.toUpperCase() }, sel = h.key === k, built = !!v.built; return { sel: sel ? '1' : '0', bb: '2px solid #3a3836', n: built ? (i + 1) + (v.draft ? ' · DRAFT' : '') : (i + 1) + ' · SOON', label: v.name, bg: sel ? 'var(--color-accent)' : '#000', fg: sel ? '#fff' : built ? '#fff' : '#8a847e', op: built ? '1' : '0.55', cur: built ? 'pointer' : 'default', pick: e => { blur(e); if (built && lab) lab.setVehicle(k); } }; });
+    const btn = h.btn || ['', '', ''], cap = e => { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); };
+    const rg = (v, c) => v != null && v < 1 ? 'conic-gradient(' + c + ' ' + Math.round(Math.max(0, v) * 360) + 'deg, #3a3836 0)' : c, tank = h.key === 'tank', truck = h.key === 'truck', race = h.key === 'racecar', mech = h.key === 'mech', bk = h.key === 'bike', heli = h.key === 'heli';
+    const pad = [
+      { n: '1', label: btn[0], r: '104px', b: '8px', s: '76px', ring: rg(h.r1, '#ec3013'), down: e => { cap(e); lab && lab.press1(true); }, up: () => lab && lab.press1(false) },
+      { n: '2', label: btn[1], r: '0', b: '0', s: '92px', ring: tank ? rg(h.r2, '#ffd23a') : truck ? rg(h.r2, '#8a847e') : heli ? rg(h.r2, '#ffb347') : bk ? '#ffd23a' : mech ? '#7dd3fc' : race ? '#7dd3fc' : rg(h.r3, '#38bdf8'), down: e => { cap(e); lab && lab.press2(true); }, up: () => lab && lab.press2(false) },
+      { n: '3', label: btn[2], r: '8px', b: '104px', s: '76px', ring: tank || truck || race || mech ? rg(h.r3, '#38bdf8') : '#3a3836', down: e => { cap(e); lab && lab.press3(true); }, up: () => lab && lab.press3(false) }];
+    return {
+      driftBg: h.drift === 'SUPER' ? '#ff8a1a' : h.drift === 'READY' ? '#38bdf8' : '#ffffff', driftLabel: h.drift === 'SUPER' ? 'SUPER DRIFT · RELEASE' : h.drift === 'READY' ? 'DRIFT · BOOST READY' : 'DRIFT',
+      hasLap: !!h.lap, lapCur: h.lap && h.lap.cur != null ? h.lap.cur.toFixed(1) : '—', lapBest: h.lap && h.lap.best != null ? h.lap.best.toFixed(2) : '—', lapLast: h.lap && h.lap.last != null ? h.lap.last.toFixed(2) + ' s' : '—', lapPct: (h.lap ? h.lap.pct : 0) + '%',
+      tabRef: this.tabRef, tabWrap: S.narrow ? 'nowrap' : 'wrap', tabOverflow: S.narrow ? 'auto' : 'visible', titleDisp: S.narrow ? 'none' : 'flex', infoLine: S.infoOpen ? h.line : 'tap for controls', infoToggle: e => { blur(e); this.setState({ infoOpen: !S.infoOpen }); },
+      stageRef: this.stageRef, hud: h, tabs, pad, hasAmmo: h.ammo != null, statCols: 2 + (h.ammo != null ? 1 : 0) + (h.lap ? 1 : 0) + (h.alt != null ? 1 : 0), hasAlt: h.alt != null, altV: (h.alt || 0) + ' m', pips: [0, 1, 2, 3].map(i => ({ c: i < (h.ammo || 0) ? '#ec3013' : '#3a3836' })),
+      keysList: [['WASD / arrows', 'drive'], ['J', btn[0].toLowerCase() + (h.key === 'pogo' ? '' : h.key === 'jetski' ? ' (hold)' : h.key === 'boat' ? ' · hold = spread' : tank ? ' · hold = salvo' : truck ? ' · hold = auto' : h.key === 'moto' ? ' · hold = blast' : race ? ' · hold = charge' : mech ? ' · hold = spin' : bk ? ' · hold = beam' : heli ? ' · hold = auto' : '')], ['K', btn[1].toLowerCase() + (race || mech ? ' · hold = auto' : '')], ['Space', heli ? 'hold = climb · tap = land' : btn[2].toLowerCase() + (race ? ' · hold = drift' : '')], ['1-9 · 0', 'vehicle'], ['R', 'reset'], ['drag', 'look']].map(([key, label]) => ({ key, label })),
+      showKeys: !S.pad, padOn: S.pad, padBorder: S.pad ? '#ffd23a' : '#3a3836', padToggle: e => { blur(e); this.setState({ pad: !S.pad }); }, reset: e => { blur(e); lab && lab.reset(); },
+      stOn: !!S.st, stHint: !S.used, stBx: S.st ? S.st.bx + 'px' : '0', stBy: S.st ? S.st.by + 'px' : '0', stKx: S.st ? S.st.kx + 'px' : '0', stKy: S.st ? S.st.ky + 'px' : '0',
+      stDown: e => { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); const r = e.currentTarget.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top; this.setState({ st: { id: e.pointerId, bx: x, by: y, kx: x, ky: y }, used: true }); lab && lab.setStick(0, 0); },
+      stMove: e => { const st = this.state.st; if (!st || st.id !== e.pointerId) return; const r = e.currentTarget.getBoundingClientRect(); let dx = e.clientX - r.left - st.bx, dy = e.clientY - r.top - st.by; const R = 52, l = Math.hypot(dx, dy); if (l > R) { dx *= R / l; dy *= R / l; } this.setState({ st: { ...st, kx: st.bx + dx, ky: st.by + dy } }); lab && lab.setStick(dx / R, -dy / R); },
+      stUp: () => { this.setState({ st: null }); lab && lab.setStick(0, 0); },
+    };
+  }
+}
+</script>
+</body>
+</html>

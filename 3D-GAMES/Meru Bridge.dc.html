@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#03060a}a{color:var(--color-accent-700)}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#03060a;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="The Bridge">
+  <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+
+  <sc-if value="{{ showHud }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;top:max(12px, env(safe-area-inset-top));left:max(12px, env(safe-area-inset-left));display:flex;flex-direction:column;gap:8px;pointer-events:none;width:{{ colW }}">
+      <div style="background:var(--color-bg);border:2px solid var(--color-text);display:flex;flex-direction:column">
+        <div style="padding:{{ cardPad }};display:flex;flex-direction:column;gap:4px;border-bottom:2px solid var(--color-text)">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700);white-space:nowrap">The Bridge · meruBridge</div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px">
+            <div style="font-family:var(--font-heading);font-size:{{ waveSize }};font-weight:800;line-height:1;letter-spacing:-0.02em;color:var(--color-text);white-space:nowrap">{{ waveTitle }}</div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><span style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-neutral-700)">Gates</span><span style="font:800 18px var(--font-heading);font-variant-numeric:tabular-nums;color:var(--color-text)">{{ gatesLabel }}</span></div>
+          </div>
+          <div style="font-size:12px;color:var(--color-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ objective }}</div>
+        </div>
+        <div style="display:grid;grid-template-columns:52px 1fr 40px;align-items:center;gap:8px;padding:6px 10px;background:{{ screenRowBg }}">
+          <span style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-text)">Screen</span>
+          <div style="height:10px;border:2px solid var(--color-text);background:var(--color-neutral-200)"><div style="height:100%;background:{{ screenCol }};width:{{ screenW }}"></div></div>
+          <span style="font-size:11px;font-weight:800;text-align:right;color:var(--color-text)">{{ screenTag }}</span>
+        </div>
+      </div>
+      <sc-if value="{{ showTargetTop }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--color-bg);border:2px solid var(--color-text)">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:5px 10px;border-bottom:2px solid var(--color-text)"><span style="font:800 14px var(--font-heading);color:var(--color-text);white-space:nowrap">{{ hud.target.name }}</span><span style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-accent-700);white-space:nowrap">{{ targetTag }}</span></div>
+          <div style="height:10px;background:var(--color-neutral-200)"><div style="height:100%;background:var(--color-accent);width:{{ targetW }}"></div></div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ vitalsTop }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--color-bg);border:2px solid var(--color-text);display:flex;flex-direction:column">
+          <div style="display:grid;grid-template-columns:52px 1fr 34px;align-items:center;gap:8px;padding:6px 10px;border-bottom:2px solid var(--color-text)"><span style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-text)">Health</span><div style="height:10px;border:2px solid var(--color-text);background:var(--color-neutral-200)"><div style="height:100%;background:var(--color-accent);width:{{ hpW }}"></div></div><span style="font-size:12px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums;color:var(--color-text)">{{ hud.hp }}</span></div>
+          <div style="display:grid;grid-template-columns:52px 1fr 34px;align-items:center;gap:8px;padding:6px 10px;border-bottom:2px solid var(--color-text)"><span style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-text)">{{ enLabel }}</span><div style="height:10px;border:2px solid var(--color-text);background:var(--color-neutral-200)"><div style="height:100%;background:var(--color-text);width:{{ enW }}"></div></div><span style="font-size:12px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums;color:var(--color-text)">{{ enVal }}</span></div>
+          <div style="display:grid;grid-template-columns:52px 1fr 34px;align-items:center;gap:8px;padding:6px 10px;background:{{ burstRowBg }}"><span style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-text)">Burst</span><div style="height:10px;border:2px solid var(--color-text);background:var(--color-neutral-200)"><div style="height:100%;background:#38bdf8;width:{{ superW }}"></div></div><span style="font-size:11px;font-weight:800;text-align:right;color:var(--color-text)">{{ burstKey }}</span></div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ showHint }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-wrap:wrap;max-width:300px;font-size:12px;color:var(--color-text);white-space:nowrap">
+          <div style="background:var(--color-bg);border:2px solid var(--color-text);margin:0 -2px -2px 0;padding:5px 9px"><b>WASD</b> move</div>
+          <div style="background:var(--color-bg);border:2px solid var(--color-text);margin:0 -2px -2px 0;padding:5px 9px"><b>Click / F</b> attack</div>
+          <div style="background:var(--color-bg);border:2px solid var(--color-text);margin:0 -2px -2px 0;padding:5px 9px"><b>1</b> sword · <b>2</b> laser</div>
+          <div style="background:var(--color-bg);border:2px solid var(--color-text);margin:0 -2px -2px 0;padding:5px 9px"><b>Shift</b> dodge</div>
+          <div style="background:var(--color-bg);border:2px solid var(--color-text);margin:0 -2px -2px 0;padding:5px 9px"><b>C</b> lock · <b>Tab</b> next</div>
+          <div style="background:var(--color-bg);border:2px solid var(--color-text);margin:0 -2px -2px 0;padding:5px 9px"><b>Space</b> jump</div>
+          <div style="background:var(--color-bg);border:2px solid var(--color-text);margin:0 -2px -2px 0;padding:5px 9px"><b>R</b> burst · <b>E</b> turret</div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <div style="position:absolute;top:max(12px, env(safe-area-inset-top));right:max(12px, env(safe-area-inset-right));display:flex;flex-direction:column;align-items:flex-end;gap:8px;z-index:6">
+    <sc-if value="{{ phone }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ toggleMenu }}" aria-label="Menu" style="width:44px;height:44px;border:2px solid var(--color-text);border-radius:0;background:var(--color-bg);color:var(--color-text);font:800 18px var(--font-heading);text-align:left;padding:8px;cursor:pointer">{{ menuGlyph }}</button>
+    </sc-if>
+    <sc-if value="{{ showMenu }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex">
+        <button class="btn btn-secondary" onClick="{{ toTown }}" style="min-height:44px;background:var(--color-bg);border:2px solid var(--color-text);border-right:0;justify-content:flex-start">← Town square</button>
+        <button class="btn btn-secondary" onClick="{{ toggleSound }}" style="min-height:44px;background:var(--color-bg);border:2px solid var(--color-text);justify-content:flex-start;min-width:100px">{{ soundLabel }}</button>
+      </div>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{ showTargetMid }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;transform:translateX(-50%);top:16px;width:min(480px,calc(100% - 640px));min-width:260px;background:var(--color-bg);border:2px solid var(--color-text);pointer-events:none">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;padding:6px 12px;border-bottom:2px solid var(--color-text)"><span style="font:800 16px var(--font-heading);color:var(--color-text)">{{ hud.target.name }}</span><span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700)">{{ targetTag }}</span></div>
+      <div style="height:14px;background:var(--color-neutral-200)"><div style="height:100%;background:var(--color-accent);width:{{ targetW }}"></div></div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showCallout }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:{{ coL }};right:{{ coR }};top:{{ coTop }};display:flex;justify-content:{{ coJ }};pointer-events:none;z-index:2">
+      <div style="background:#000;border:2px solid #ffd23a;padding:8px 14px 10px;display:flex;align-items:center;gap:10px;max-width:100%"><span style="width:12px;height:12px;flex-shrink:0;background:{{ hud.callout.col }}"></span><span style="font-family:var(--font-heading);font-size:{{ coSize }};font-weight:800;line-height:1.05;letter-spacing:-0.01em;color:#fff">{{ hud.callout.text }}</span></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ showLull }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:{{ coL }};right:{{ coR }};top:{{ coTop }};display:flex;justify-content:{{ coJ }};pointer-events:none;z-index:2">
+      <div style="background:#000;color:#fff;border:2px solid #ffd23a;padding:8px 14px 10px;display:flex;align-items:baseline;gap:12px"><span style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase">{{ lullLabel }}</span><span style="font-family:var(--font-heading);font-size:{{ coSize }};font-weight:800;line-height:1">{{ hud.lull }}</span></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ showNote }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:{{ coL }};right:{{ coR }};top:{{ noteTop }};display:flex;justify-content:{{ coJ }};pointer-events:none;z-index:2">
+      <div style="background:#000;border:2px solid #ffd23a;padding:8px 14px;display:flex;flex-direction:column;gap:2px;max-width:min(420px,100%)"><span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#ffd23a">{{ hud.note.title }}</span><span style="font-size:14px;line-height:1.35;color:#fff;text-wrap:pretty">{{ hud.note.sub }}</span></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ showToast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;bottom:{{ toastB }};left:50%;transform:translateX(-50%);max-width:calc(100% - 24px);background:#000;color:#fff;border:2px solid #ffd23a;padding:10px 14px;font:700 14px var(--font-body);pointer-events:none;z-index:4">{{ hud.toast }}</div>
+  </sc-if>
+
+  <sc-if value="{{ vitalsBottom }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:16px;bottom:16px;width:min(300px,calc(100% - 32px));background:var(--color-bg);border:2px solid var(--color-text);display:flex;flex-direction:column;pointer-events:none">
+      <div style="display:grid;grid-template-columns:64px 1fr 40px;align-items:center;gap:10px;padding:10px 12px;border-bottom:2px solid var(--color-text)"><span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-text)">Health</span><div style="height:12px;border:2px solid var(--color-text);background:var(--color-neutral-200)"><div style="height:100%;background:var(--color-accent);width:{{ hpW }}"></div></div><span style="font-size:13px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums;color:var(--color-text)">{{ hud.hp }}</span></div>
+      <div style="display:grid;grid-template-columns:64px 1fr 40px;align-items:center;gap:10px;padding:10px 12px;border-bottom:2px solid var(--color-text)"><span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-text)">{{ enLabel }}</span><div style="height:12px;border:2px solid var(--color-text);background:var(--color-neutral-200)"><div style="height:100%;background:var(--color-text);width:{{ enW }}"></div></div><span style="font-size:13px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums;color:var(--color-text)">{{ enVal }}</span></div>
+      <div style="display:grid;grid-template-columns:64px 1fr 40px;align-items:center;gap:10px;padding:10px 12px;background:{{ burstRowBg }}"><span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-text)">Burst</span><div style="height:12px;border:2px solid var(--color-text);background:var(--color-neutral-200)"><div style="height:100%;background:#38bdf8;width:{{ superW }}"></div></div><span style="font-size:12px;font-weight:800;text-align:right;color:var(--color-text)">{{ burstKey }}</span></div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showWeapons }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;right:16px;bottom:16px;display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+      <sc-if value="{{ showUse }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ use }}" style="min-width:224px;height:52px;border:2px solid var(--color-text);border-radius:0;background:var(--color-accent);color:var(--color-bg);font:800 15px var(--font-heading);text-align:left;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;cursor:pointer"><span>{{ useLabel }}</span><span style="font-size:11px;letter-spacing:0.1em">E</span></button>
+      </sc-if>
+      <div style="display:flex">
+        <button onClick="{{ pickSword }}" style="width:112px;height:56px;border:2px solid var(--color-text);border-radius:0;padding:6px 10px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;cursor:pointer;background:{{ swordBg }};color:{{ swordFg }}"><span style="font-size:10px;font-weight:700;letter-spacing:0.1em">1</span><span style="font:800 15px var(--font-heading)">Sword</span></button>
+        <button onClick="{{ pickLaser }}" style="width:112px;height:56px;border:2px solid var(--color-text);border-left:0;border-radius:0;padding:6px 10px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;cursor:pointer;background:{{ laserBg }};color:{{ laserFg }}"><span style="font-size:10px;font-weight:700;letter-spacing:0.1em">2</span><span style="font:800 15px var(--font-heading)">{{ laserName }}</span></button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showPad }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;right:max(12px, env(safe-area-inset-right));bottom:max(12px, env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:flex-end;gap:10px">
+      <sc-if value="{{ showUse }}" hint-placeholder-val="{{ false }}">
+        <button onPointerDown="{{ usePad }}" style="height:52px;min-width:136px;border:2px solid var(--color-text);border-radius:0;background:var(--color-accent);color:var(--color-bg);font:800 15px var(--font-heading);text-align:left;padding:8px 12px;cursor:pointer">{{ useLabel }}</button>
+      </sc-if>
+      <div style="display:flex;align-items:flex-end;gap:10px">
+        <div style="display:flex;flex-direction:column">
+          <button onPointerDown="{{ lock }}" style="width:56px;height:56px;border:2px solid var(--color-text);border-radius:0;background:{{ lockBg }};color:{{ lockFg }};font:800 12px var(--font-heading);text-align:left;padding:7px;display:flex;align-items:flex-end;cursor:pointer">Lock</button>
+          <button onPointerDown="{{ dodge }}" style="width:56px;height:56px;border:2px solid var(--color-text);border-top:0;border-radius:0;background:var(--color-bg);color:var(--color-text);font:800 12px var(--font-heading);text-align:left;padding:7px;display:flex;align-items:flex-end;cursor:pointer" style-active="background:var(--color-accent-200)">Dodge</button>
+          <button onPointerDown="{{ burst }}" style="width:56px;height:56px;border:2px solid var(--color-text);border-top:0;border-radius:0;background:{{ burstBtnBg }};color:var(--color-text);font:800 12px var(--font-heading);text-align:left;padding:7px;display:flex;align-items:flex-end;cursor:pointer">Burst</button>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+          <button onPointerDown="{{ melee }}" onPointerUp="{{ release }}" onPointerLeave="{{ release }}" style="width:{{ roundSize }};height:{{ roundSize }};border:3px solid var(--color-text);border-radius:50%;background:{{ meleeBg }};color:{{ meleeFg }};opacity:{{ meleeOp }};padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;touch-action:none"><span style="font:900 40px/0.9 var(--font-heading)">1</span><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;text-transform:uppercase">Melee</span></button>
+          <button onPointerDown="{{ ranged }}" onPointerUp="{{ release }}" onPointerLeave="{{ release }}" style="width:{{ roundSize }};height:{{ roundSize }};border:3px solid var(--color-text);border-radius:50%;background:{{ rangeBg }};color:{{ rangeFg }};padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;touch-action:none"><span style="font:900 40px/0.9 var(--font-heading)">2</span><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;text-transform:uppercase">{{ rangeName }}</span></button>
+          <div style="display:flex;flex-direction:column">
+          <button onPointerDown="{{ jump }}" style="width:{{ padSize }};height:{{ padSize }};border:2px solid var(--color-text);background:var(--color-bg);color:var(--color-text);font:800 13px var(--font-heading);text-align:left;padding:7px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;border-radius:0;cursor:pointer" style-active="background:var(--color-accent-200)"><span style="color:var(--color-accent-700)">3</span><span>Jump</span></button>
+          <button onPointerDown="{{ item }}" style="width:{{ padSize }};height:{{ padSize }};border:2px solid var(--color-text);border-top:0;background:var(--color-bg);color:var(--color-text);font:800 13px var(--font-heading);text-align:left;padding:7px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;border-radius:0;cursor:pointer" style-active="background:var(--color-accent-200)"><span style="color:var(--color-accent-700)">4</span><span>Item</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showWheel }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeWheel }}" style="position:absolute;inset:0;background:rgba(10,8,14,0.45);z-index:8">
+      <div style="position:absolute;left:50%;top:50%;width:264px;height:264px;transform:translate(-50%,-50%)">
+        <sc-for list="{{ wheelSlots }}" as="w" hint-placeholder-count="8">
+          <button onClick="{{ w.pick }}" disabled="{{ w.empty }}" style="position:absolute;left:{{ w.x }};top:{{ w.y }};width:72px;height:72px;transform:translate(-50%,-50%);border:2px solid var(--color-text);border-radius:0;background:var(--color-bg);color:var(--color-text);font:700 11px/1.2 var(--font-body);text-align:left;padding:6px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;cursor:pointer" style-hover="background:var(--color-neutral-200)">
+            <span style="font:800 13px var(--font-heading);color:var(--color-accent-700)">{{ w.n }}</span>
+            <span>{{ w.label }}</span>
+          </button>
+        </sc-for>
+        <button onClick="{{ closeWheel }}" style="position:absolute;left:50%;top:50%;width:88px;height:88px;transform:translate(-50%,-50%);border:2px solid var(--color-text);border-radius:0;background:var(--color-text);color:var(--color-bg);font:800 14px var(--font-heading);text-align:left;padding:10px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;cursor:pointer"><span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-accent-300)">Items</span><span>{{ wheelCenter }}</span></button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showPrompt }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;display:flex;align-items:{{ prAlign }};justify-content:flex-start;padding:{{ prPad }};box-sizing:border-box;overflow:auto;background:rgba(3,6,10,0.45);z-index:9">
+      <div style="width:min(480px,100%);max-height:100%;overflow:auto;box-sizing:border-box;background:#000;color:#fff;border:2px solid #ffd23a;padding:{{ prInner }};display:flex;flex-direction:column;gap:14px">
+        <div style="font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase">The Bridge · Transport</div>
+        <h2 style="font-family:var(--font-heading);font-weight:800;font-size:{{ prTitle }};line-height:0.95;letter-spacing:-0.03em;margin:0;color:#ffd23a;text-wrap:balance">{{ hud.prompt.title }}</h2>
+        <p style="font-size:16px;line-height:1.45;margin:0;border-top:2px solid #3a3836;padding-top:12px;text-wrap:pretty">{{ hud.prompt.body }}</p>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ promptButtons }}" as="b" hint-placeholder-count="1">
+            <button onClick="{{ b.pick }}" style="display:flex;justify-content:space-between;align-items:center;width:100%;min-height:52px;padding:14px 20px;background:{{ b.bg }};color:{{ b.fg }};border:2px solid {{ b.bd }};border-radius:0;font:800 17px var(--font-heading);text-align:left;cursor:pointer"><span style="flex:1;white-space:nowrap">{{ b.label }}</span><span>→</span></button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showLoading }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;left:max(16px, env(safe-area-inset-left));bottom:max(16px, env(safe-area-inset-bottom));background:var(--color-bg);border:2px solid var(--color-text);padding:10px 14px;font:700 14px var(--font-body);color:var(--color-text)">{{ loadingText }}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;followCam&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Camera&quot;},&quot;outlines&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;quality&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;high&quot;,&quot;options&quot;:[&quot;high&quot;,&quot;low&quot;],&quot;tsType&quot;:&quot;'high'|'low'&quot;,&quot;section&quot;:&quot;Look&quot;}}">
+class Component extends DCLogic {
+  state = { ready: false, error: null, isTouch: false, vw: 1200, vh: 800, menu: false, wheel: false, hud: null };
+  stageRef = React.createRef();
+  coarse() { return !!(window.matchMedia && matchMedia('(pointer: coarse)').matches); }
+  opts() { return { outlines: this.props.outlines ?? true, followCam: this.props.followCam ?? true, quality: this.props.quality ?? (this.coarse() ? 'low' : 'high') }; }
+  onResize = () => this.setState({ vw: window.innerWidth, vh: window.innerHeight });
+  async componentDidMount() {
+    window.addEventListener('resize', this.onResize); this.onResize();
+    this.setState({ isTouch: this.coarse() });
+    try {
+      const mod = await import(new URL('meru-bridge.js', document.baseURI).href);
+      if (this.unmounted) return;
+      this.game = await mod.createBridge({ container: this.stageRef.current, options: this.opts(), onState: hud => this.setState({ hud }), onNavigate: url => { window.location.href = encodeURI(url); } });
+      this.setState({ ready: true });
+    } catch (e) { console.error(e); this.setState({ error: 'Could not start 3D: ' + (e && e.message || e) }); }
+  }
+  componentDidUpdate() { if (!this.game) return; this.game.setOptions(this.opts()); const h = this.state.hud; this.game.setJoy(this.state.isTouch && !!h && !!h.playing && !h.prompt && !this.state.wheel); }
+  componentWillUnmount() { window.removeEventListener('resize', this.onResize); this.unmounted = true; if (this.game) this.game.destroy(); }
+  renderVals() {
+    const { hud, isTouch, vw, vh, error } = this.state, g = this.game;
+    const h = hud || { core: {}, turret: {}, items: [] };
+    const blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const phone = Math.min(vw, vh) < 520, land = phone && vw > vh, pad = isTouch || phone;
+    const pr = h.prompt, inT = h.turret && h.turret.in, play = !!h.playing && !pr;
+    const on = 'var(--color-text)', off = 'var(--color-bg)';
+    const items = h.items || [];
+    const wheelSlots = Array.from({ length: 8 }, (_, i) => { const a = -Math.PI / 2 + i * Math.PI / 4, it = items[i]; return { x: (132 + Math.cos(a) * 100) + 'px', y: (132 + Math.sin(a) * 100) + 'px', n: i + 1, label: it ? it.label + (it.n > 1 ? ' ×' + it.n : '') : '—', empty: !it, pick: e => { e.stopPropagation(); this.setState({ wheel: false }); it && g && g.useItem(it.id); } }; });
+    const fire = w => e => { e.preventDefault(); if (!g) return; if (!inT && h.weapon !== w) g.select(w); g.attack(); g.hold(true); };
+    const waveTitle = !h.briefed || !h.wave ? (h.waveState === 'lull' ? 'Wave 1 incoming' : 'Transport') : h.waveState === 'done' ? (h.gatesLeft ? 'Waves stopped' : 'Gates down') : h.waveState === 'lull' ? 'Wave ' + (h.wave + 1) + ' next' : 'Wave ' + h.wave;
+    const objective = h.wave >= h.waves ? (h.gatesLeft ? 'Waves broken · gates for the bonus' : 'All objectives complete') : 'Survive ' + h.waves + ' waves · ' + Math.min(h.waveState === 'fight' ? (h.wave || 1) - 1 : h.wave || 0, h.waves) + ' / ' + h.waves + ' broken';
+    const c = h.core || {}, t = h.target;
+    const coTop = phone ? (land ? '12px' : '42%') : '84px';
+    return {
+      stageRef: this.stageRef, hud: h, phone,
+      showHud: !!hud && h.briefed && !pr,
+      colW: phone ? (land ? '232px' : 'min(250px, calc(100% - 80px))') : '268px', cardPad: phone ? '8px 10px 8px' : '12px 14px 12px', waveSize: phone ? '20px' : '28px',
+      waveTitle, objective, gatesLabel: (h.gatesLeft ?? 4) + ' / ' + (h.gatesTotal || 4),
+      screenW: (c.hp ?? 100) + '%', screenCol: c.dead ? 'var(--color-neutral-500)' : c.up ? '#7cff9b' : 'var(--color-accent)',
+      screenTag: c.dead ? 'LOST' : !c.up ? 'DOWN' : c.breach > 0 ? c.breach + '%' : (c.hp ?? 100) + '%', screenRowBg: c.breach > 0 || (c.up === false && !c.dead) ? 'var(--color-accent-200)' : 'transparent',
+      showTargetTop: phone && !!t && !pr && !land, showTargetMid: !phone && !!t && !pr && h.briefed,
+      targetW: (t ? t.hp : 0) + '%', targetTag: t ? (t.boss ? 'Boss' : t.name === 'Gate' ? 'Gate' : 'Locked') : '',
+      vitalsTop: phone && h.briefed && !pr, vitalsBottom: !phone && h.briefed && !pr,
+      hpW: (h.hp ?? 100) + '%',
+      enLabel: inT ? 'Turret' : 'Energy', enW: (inT ? h.turret.shield : h.en ?? 100) + '%', enVal: inT ? h.turret.shield : (h.rapid ? '∞' : h.en ?? 100),
+      superW: (h.super || 0) + '%', burstKey: h.superReady ? (pad ? 'READY' : 'R') : (h.super || 0) + '%', burstRowBg: h.superReady ? '#38bdf8' : 'transparent', burstBtnBg: h.superReady ? '#38bdf8' : 'var(--color-neutral-200)',
+      showHint: !pad && play && (h.wave || 0) < 2,
+      menuGlyph: this.state.menu ? '×' : '☰', toggleMenu: e => { blur(e); this.setState(s => ({ menu: !s.menu })); }, showMenu: !phone || this.state.menu,
+      soundLabel: h.muted ? 'Sound off' : 'Sound on', toggleSound: e => { blur(e); g && g.toggleSound(); },
+      toTown: e => { blur(e); if (g) g.toTown(); else window.location.href = encodeURI('Meru Town Square.dc.html'); },
+      showCallout: !!h.callout && !pr, showLull: !h.callout && !pr && h.waveState === 'lull' && h.lull > 0 && !!h.playing, lullLabel: 'Wave ' + ((h.wave || 0) + 1) + ' in',
+      showNote: !!h.note && !pr, coTop, noteTop: phone ? (land ? '64px' : 'calc(42% + 56px)') : '140px',
+      coL: phone ? (land ? '256px' : '12px') : '300px', coR: phone ? (land ? '200px' : '12px') : '300px', coJ: phone && !land ? 'flex-start' : 'center', coSize: phone ? '20px' : '30px',
+      showToast: !!h.toast, toastB: phone ? (land ? '12px' : '330px') : '96px',
+      showUse: play && (h.turret.near || inT), useLabel: inT ? 'Get out' : 'Man the turret',
+      use: e => { blur(e); g && g.use(); }, usePad: e => { e.preventDefault(); g && g.use(); },
+      showWeapons: !pad && play, showPad: pad && play && !this.state.wheel, padSize: land ? '52px' : '58px', roundSize: land ? '68px' : '78px',
+      swordBg: !inT && h.weapon === 'SWORD' ? on : off, swordFg: !inT && h.weapon === 'SWORD' ? off : on,
+      laserBg: inT || h.weapon === 'RAYGUN' ? on : off, laserFg: inT || h.weapon === 'RAYGUN' ? off : on, laserName: inT ? 'Turret' : h.rapid ? 'Laser · rapid' : h.triple ? 'Laser · ×3' : 'Laser',
+      pickSword: e => { blur(e); g && g.select('SWORD'); }, pickLaser: e => { blur(e); g && g.select('RAYGUN'); },
+      meleeBg: !inT && h.weapon === 'SWORD' ? 'var(--color-accent)' : 'var(--color-bg)', meleeFg: !inT && h.weapon === 'SWORD' ? 'var(--color-bg)' : 'var(--color-text)', meleeOp: inT ? 0.45 : 1,
+      rangeBg: inT || h.weapon === 'RAYGUN' ? 'var(--color-accent)' : 'var(--color-bg)', rangeFg: inT || h.weapon === 'RAYGUN' ? 'var(--color-bg)' : 'var(--color-text)', rangeName: inT ? 'Fire' : 'Range',
+      melee: fire('SWORD'), ranged: fire('RAYGUN'), release: () => g && g.hold(false),
+      lock: e => { e.preventDefault(); g && g.toggleLock(); }, lockBg: h.locked ? 'var(--color-accent)' : 'var(--color-bg)', lockFg: h.locked ? 'var(--color-bg)' : 'var(--color-text)',
+      dodge: e => { e.preventDefault(); g && g.dodge(); }, jump: e => { e.preventDefault(); g && g.jump(); }, burst: e => { e.preventDefault(); g && g.burst(); },
+      item: e => { e.preventDefault(); this.setState({ wheel: true }); },
+      showWheel: this.state.wheel, wheelSlots, wheelCenter: items.length ? 'Close' : 'None yet', closeWheel: () => this.setState({ wheel: false }),
+      showPrompt: !!pr, prAlign: phone && !land ? 'flex-end' : 'center', prPad: phone ? '12px' : '32px', prInner: phone ? '20px' : '32px', prTitle: land ? '30px' : phone ? '36px' : '52px',
+      promptButtons: pr ? pr.buttons.map((label, i) => ({ label, bg: i ? '#ec3013' : '#000', fg: '#fff', bd: i ? '#ec3013' : '#ffd23a', pick: e => { blur(e); g && g.promptPick(i); } })) : [],
+      showLoading: !hud || !!error, loadingText: error || 'Opening the transport…',
+    };
+  }
+}
+</script>
+</body>
+</html>

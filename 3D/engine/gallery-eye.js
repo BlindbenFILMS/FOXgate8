@@ -190,7 +190,7 @@ export function buildEye({ scene, lowEnd }) {
   }
   // ------------------------------------------------ the name sign, up on two posts in the water in front of the museum
   {
-    const SW = 22, SH = 3.0, X = 21, Y0 = 4.4;
+    const SW = 14, SH = 3.0, X = 21.6, Y0 = 4.4;   // (11 Oct: narrower, posts just inside the ring so the ring path is clear; the walk to the museum passes between them)
     const cv = document.createElement('canvas'); cv.width = 2048; cv.height = Math.round(2048 * SH / SW); const c = cv.getContext('2d');
     const draw = () => {
       c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, cv.width, cv.height); c.fillStyle = '#ec3013'; c.fillRect(0, cv.height - 18, cv.width, 18);
@@ -209,7 +209,7 @@ export function buildEye({ scene, lowEnd }) {
       const face = new THREE.Mesh(new THREE.PlaneGeometry(SW, SH), new THREE.MeshBasicMaterial({ map: t, fog: true }));
       face.position.set(0.21 * s, Y0 + SH / 2, 0); face.rotation.y = s * Math.PI / 2; g.add(face);
     }
-    for (const z of [-SW * 0.32, SW * 0.32]) {
+    for (const z of [-SW * 0.22, SW * 0.22]) {
       const post = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.26, Y0, 14), steel); post.position.set(0, Y0 / 2, z); g.add(post);   // standing in the cherry garden; the walk passes under the sign
       const foot = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.5, 0.3, 20), new THREE.MeshLambertMaterial({ color: 0xd8d2c8 })); foot.position.set(0, 0.15, z); g.add(foot);
     }

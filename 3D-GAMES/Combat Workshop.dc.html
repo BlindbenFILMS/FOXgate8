@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible,input:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}input[type=range]{accent-color:#ec3013}@keyframes scopePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}@keyframes scSpin{to{transform:rotate(360deg)}}@keyframes shuttleGo{0%,52%{transform:translateY(0);opacity:1}55%{transform:translateY(1px)}64%{transform:translateY(-6px);opacity:1}74%{transform:translateY(-22px);opacity:0}75%{transform:translateY(6px);opacity:0}90%,100%{transform:translateY(0);opacity:1}}@keyframes shuttleFlame{0%,50%{transform:scaleY(0);opacity:0}54%{transform:scaleY(0.6);opacity:1}58%{transform:scaleY(0.9)}62%{transform:scaleY(0.7)}66%{transform:scaleY(1.2);opacity:1}74%{transform:scaleY(1.4);opacity:0}100%{transform:scaleY(0);opacity:0}}@keyframes scSweep{0%{top:0}100%{top:100%}}</style>
+</helmet>
+<div style="display:grid;grid-template-columns:{{ cols }};grid-template-rows:minmax(0,1fr);height:100vh;height:100dvh;overflow:hidden;background:#000;font-family:var(--font-body);color:#fff">
+  <div style="position:relative;min-width:0;min-height:0;overflow:hidden;border-right:2px solid #3a3836;display:flex;flex-direction:column">
+    <div style="flex:none;z-index:4;background:#000;border-bottom:2px solid #ffd23a;padding:max(0px, env(safe-area-inset-top)) max(0px, env(safe-area-inset-right)) 0 max(0px, env(safe-area-inset-left));display:flex;flex-wrap:wrap;align-items:stretch;color:#fff;font-family:var(--font-body)">
+      <div style="order:1;flex:{{ barHpFlex }};min-width:120px;display:flex;flex-direction:column;justify-content:center;gap:5px;padding:8px 12px;border-right:2px solid #3a3836;pointer-events:none">
+        <div style="display:grid;grid-template-columns:22px 1fr 30px;align-items:center;gap:6px"><span style="font:800 11px var(--font-heading);letter-spacing:0.08em;color:#ffd23a">HP</span><div style="height:8px;background:#3a3836"><div style="height:100%;background:#ec3013;width:{{ barHpW }}"></div></div><span style="font:700 12px var(--font-body);text-align:right;font-variant-numeric:tabular-nums">{{ barHp }}</span></div>
+        <div style="display:grid;grid-template-columns:22px 1fr 30px;align-items:center;gap:6px"><span style="font:800 11px var(--font-heading);letter-spacing:0.08em;color:#ffd23a">EN</span><div style="height:8px;background:#3a3836"><div style="height:100%;background:#38bdf8;width:{{ barEnW }}"></div></div><span style="font:700 12px var(--font-body);text-align:right;font-variant-numeric:tabular-nums">{{ barEn }}</span></div>
+      </div>
+      <button onClick="{{ barQuestTap }}" aria-label="Open journal" style="order:{{ barQuestOrder }};flex:1 1 {{ barQuestBasis }};min-width:0;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:2px;padding:8px 12px;border:0;border-right:2px solid #3a3836;border-top:{{ barQuestTop }};border-radius:0;background:#000;color:#fff;cursor:pointer;text-align:left" style-hover="background:#1d1b1a">
+        <div style="max-width:100%;font:800 10px var(--font-heading);letter-spacing:0.12em;text-transform:uppercase;color:#ffd23a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ barQuestLabel }}</div>
+        <div style="font:700 14px var(--font-body);line-height:1.25;color:#fff;text-wrap:pretty">{{ barQuestText }}</div>
+      </button>
+      <button onClick="{{ barSpeed }}" aria-label="Skip ahead one hour" style="order:{{ barTimeOrder }};display:flex;flex-direction:column;justify-content:center;align-items:{{ tAlign }};gap:2px;padding:{{ tPad }};min-width:{{ tMinW }};border:0;border-right:{{ tBorderR }};border-top:{{ barQuestTop }};border-radius:0;background:{{ barSpeedBg }};color:#fff;cursor:pointer;text-align:left" style-hover="background:#2a2826">
+        <div style="display:flex;flex-direction:column;align-items:flex-start;gap:2px">
+        <div style="display:flex;align-items:baseline;gap:4px"><span style="font:800 {{ tClkFs }} var(--font-heading);line-height:1;letter-spacing:-0.01em;color:#fff;font-variant-numeric:tabular-nums">{{ barClock }}</span><span style="font:800 {{ tAmFs }} var(--font-heading);letter-spacing:0.06em;color:#ffd23a">{{ barAmPm }}</span></div>
+        <div style="font:800 {{ tLblFs }} var(--font-heading);letter-spacing:0.1em;text-transform:uppercase;color:#ffd23a;white-space:nowrap">{{ barDateLabel }}</div>
+        </div>
+      </button>
+      <button onClick="{{ camOpen }}" aria-label="Camera" style="order:3;width:{{ camBtnW }};flex:none;min-height:48px;border:0;border-right:2px solid #3a3836;border-radius:0;background:{{ camBtnBg }};color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0 8px" style-hover="background:#2a2826">
+        <span style="display:flex;align-items:center;justify-content:center;width:100%;height:30px">
+          <sc-if value="{{ camIcon }}" hint-placeholder-val="{{ true }}"><svg width="24" height="18" viewBox="0 0 24 18" fill="none" stroke="#ffd23a" stroke-width="2.2" stroke-linejoin="miter"><rect x="1.5" y="3" width="14" height="12"></rect><path d="M15.5 7.5 L22.5 3.5 V14.5 L15.5 10.5 Z"></path><circle cx="5" cy="6.5" r="1" fill="#ec3013" stroke="none"></circle></svg></sc-if>
+          <sc-if value="{{ camWord }}" hint-placeholder-val="{{ false }}"><span style="font:900 10px var(--font-heading);letter-spacing:0.08em;color:#ffd23a">{{ camWordTxt }}</span></sc-if>
+        </span>
+      </button>
+      <div style="order:2;display:flex;flex-direction:column;justify-content:center;gap:2px;padding:8px 12px;border-right:2px solid #3a3836;pointer-events:none">
+        <div style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">CR</div>
+        <div style="font:800 18px var(--font-heading);line-height:1;color:#fff;font-variant-numeric:tabular-nums">{{ barCr }}</div>
+      </div>
+      <button onClick="{{ barWeapons }}" aria-label="Weapons" style="order:2;min-width:44px;min-height:48px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:flex-start;gap:8px;padding:0 12px;font:800 12px var(--font-heading);letter-spacing:0.1em" style-hover="background:#2a2826">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffd23a" stroke-width="2.2" stroke-linecap="square"><circle cx="12" cy="12" r="8"></circle><circle cx="12" cy="12" r="2"></circle><line x1="12" y1="1" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="23"></line><line x1="1" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="23" y2="12"></line></svg>
+        <sc-if value="{{ showWeaponsWord }}" hint-placeholder-val="{{ true }}"><span>WEAPONS</span></sc-if>
+      </button>
+      <button onClick="{{ barMap }}" aria-label="Map" style="order:2;width:{{ wordBtnW }};flex:none;min-height:48px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0 10px" style-hover="background:#2a2826"><sc-if value="{{ mapIcon }}" hint-placeholder-val="{{ true }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffd23a" stroke-width="2.2" stroke-linejoin="miter"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"></path><path d="M9 3v15M15 6v15"></path></svg></sc-if><sc-if value="{{ mapWord }}" hint-placeholder-val="{{ false }}"><span style="font:900 11px var(--font-heading);letter-spacing:0.08em;color:#ffd23a">MAP</span></sc-if></button>
+      <button onClick="{{ barMenu }}" aria-label="Menu" style="order:3;width:{{ wordBtnW }};flex:none;min-height:48px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:800 20px var(--font-heading);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0 10px" style-hover="background:#2a2826"><sc-if value="{{ menuIcon }}" hint-placeholder-val="{{ true }}"><span>☰</span></sc-if><sc-if value="{{ menuWord }}" hint-placeholder-val="{{ false }}"><span style="font:900 11px var(--font-heading);letter-spacing:0.08em;color:#ffd23a">MENU</span></sc-if></button>
+    </div>
+    <div style="position:relative;flex:1;min-height:0;overflow:hidden"><div ref="{{ stageRef }}" style="position:absolute;left:0;right:0;top:{{ stageT }};bottom:0;overflow:hidden"></div>
+      <sc-if value="{{ cbOn }}" hint-placeholder-val="{{ true }}">
+        <div onClick="{{ cbTap }}" role="button" aria-label="Open minimap" title="Tap for minimap" style="position:absolute;left:0;right:0;top:0;height:30px;z-index:3;background:#000;border-bottom:2px solid #3a3836;overflow:hidden;cursor:pointer">
+          <div style="position:absolute;inset:0;background:linear-gradient(90deg,#000 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,0) 78%,#000 100%);z-index:2"></div>
+          <sc-for list="{{ cbTicks }}" as="tk" hint-placeholder-count="12"><div style="position:absolute;left:{{ tk.l }};bottom:0;width:2px;height:{{ tk.h }};margin-left:-1px;background:{{ tk.c }}"></div></sc-for>
+          <sc-for list="{{ cbDirs }}" as="cd" hint-placeholder-count="4"><div style="position:absolute;left:{{ cd.l }};top:5px;transform:translateX(-50%);font:900 {{ cd.fs }} var(--font-heading);letter-spacing:0.06em;color:{{ cd.c }};white-space:nowrap">{{ cd.t }}</div></sc-for>
+          <sc-for list="{{ cbBld }}" as="bd" hint-placeholder-count="0"><div style="position:absolute;left:{{ bd.l }};top:8px;display:flex;align-items:center;gap:5px;transform:translateX(-5px)"><span style="width:10px;height:10px;transform:rotate(45deg);background:{{ bd.c }};flex:none"></span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;color:#fff;opacity:{{ bd.lo }};white-space:nowrap">{{ bd.t }}</span></div></sc-for>
+          <sc-for list="{{ cbNpc }}" as="np" hint-placeholder-count="0"><div style="position:absolute;left:{{ np.l }};top:9px;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:{{ np.c }};opacity:{{ np.o }};animation:{{ np.anim }}"></div></sc-for>
+          <div style="position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:#ffd23a;z-index:3"></div>
+          <div style="position:absolute;left:50%;top:0;width:0;height:0;margin-left:-6px;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #ffd23a;z-index:3"></div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ scOver }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:{{ sbL }};top:{{ sbT }};right:0;bottom:{{ sbB }};z-index:5;pointer-events:none;overflow:hidden">
+          <div style="position:absolute;inset:0;box-shadow:inset 0 0 90px 20px rgba(0,0,0,0.75);background:repeating-linear-gradient(0deg, rgba(0,0,0,0.10) 0 2px, transparent 2px 4px)"></div>
+          <div style="position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(255,210,58,0.5),transparent);animation:scSweep 2.6s linear infinite"></div>
+          <div style="position:absolute;left:10px;top:10px;display:flex;flex-direction:column;gap:0;background:#000;border:2px solid #ffd23a">
+            <div style="display:flex;align-items:center;gap:8px;padding:5px 10px;border-bottom:2px solid #3a3836"><span style="width:8px;height:8px;border-radius:50%;background:#ec3013;animation:scopePulse 0.9s ease-in-out infinite"></span><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap">CALLED SHOT</span></div>
+            <div style="padding:6px 10px;display:flex;flex-direction:column;gap:5px"><span style="font:900 15px var(--font-heading);letter-spacing:0.04em;white-space:nowrap">{{ scName }}</span>
+              <span style="position:relative;display:block;width:120px;height:6px;background:#2a2826"><span style="position:absolute;left:{{ scSweetL }};top:-3px;width:2px;height:12px;background:#7cff9b"></span><span style="position:absolute;left:0;top:0;height:100%;width:{{ scDistW }};background:{{ scDistC }}"></span></span>
+              <span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:{{ scDistC }};white-space:nowrap">{{ scDistTxt }}</span></div>
+          </div>
+          <sc-for list="{{ scMarks }}" as="m" hint-placeholder-count="4">
+            <div style="position:absolute;left:{{ mkL }};right:8px;top:{{ m.y }};display:flex;align-items:center;transform:translateY(-50%)">
+              <span style="width:8px;height:8px;flex:none;margin-left:-4px;border-radius:50%;background:{{ m.col }};box-shadow:0 0 0 2px #000"></span><span style="flex:1;min-width:8px;height:2px;background:{{ m.col }}"></span>
+              <button onClick="{{ m.pick }}" style="pointer-events:auto;flex:0 1 auto;min-width:0;overflow:hidden;min-height:{{ mkH }};padding:0 {{ mkPad }};display:flex;align-items:center;gap:5px;border:2px solid {{ m.col }};border-radius:0;background:rgba(0,0,0,0.85);color:#fff;font:800 {{ mkFs }} var(--font-heading);letter-spacing:0.04em;cursor:pointer;white-space:nowrap" style-hover="background:#1d1b1a"><span style="color:{{ m.col }}">{{ m.name }}</span><span style="font-variant-numeric:tabular-nums">{{ m.pct }}</span><span style="color:#ffd23a">{{ m.q }}</span></button>
+            </div>
+          </sc-for>
+          <div style="position:absolute;left:{{ tbX }};top:50%;width:{{ tbW }};height:{{ tbH }};transform:translate(-50%,-50%)">
+            <div style="position:absolute;left:-10px;top:-10px;width:26px;height:26px;border-left:3px solid #ffd23a;border-top:3px solid #ffd23a"></div>
+            <div style="position:absolute;right:-10px;top:-10px;width:26px;height:26px;border-right:3px solid #ffd23a;border-top:3px solid #ffd23a"></div>
+            <div style="position:absolute;left:-10px;bottom:-10px;width:26px;height:26px;border-left:3px solid #ffd23a;border-bottom:3px solid #ffd23a"></div>
+            <div style="position:absolute;right:-10px;bottom:-10px;width:26px;height:26px;border-right:3px solid #ffd23a;border-bottom:3px solid #ffd23a"></div>
+            <div style="position:absolute;left:50%;top:50%;width:{{ ringS }};height:{{ ringS }};margin-left:{{ ringM }};margin-top:{{ ringM }};border-radius:50%;border:2px dashed rgba(236,48,19,0.8);animation:scSpin 6s linear infinite"></div>
+            <div style="position:absolute;left:50%;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px"><div style="position:absolute;left:8px;top:0;width:2px;height:18px;background:#ec3013"></div><div style="position:absolute;top:8px;left:0;height:2px;width:18px;background:#ec3013"></div></div>
+
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ camOn }}" hint-placeholder-val="{{ false }}">
+        <div onPointerDown="{{ cvDown }}" onPointerMove="{{ cvMove }}" onPointerUp="{{ cvUp }}" onPointerCancel="{{ cvUp }}" onWheel="{{ cvWheel }}" style="position:absolute;inset:0;z-index:6;touch-action:none;cursor:grab">
+          <div style="position:absolute;left:33.33%;top:0;bottom:0;width:1px;background:rgba(255,255,255,0.28);pointer-events:none"></div>
+          <div style="position:absolute;left:66.66%;top:0;bottom:0;width:1px;background:rgba(255,255,255,0.28);pointer-events:none"></div>
+          <div style="position:absolute;top:33.33%;left:0;right:0;height:1px;background:rgba(255,255,255,0.28);pointer-events:none"></div>
+          <div style="position:absolute;top:66.66%;left:0;right:0;height:1px;background:rgba(255,255,255,0.28);pointer-events:none"></div>
+          <div style="position:absolute;left:14px;top:14px;width:34px;height:34px;border-left:4px solid #ffd23a;border-top:4px solid #ffd23a;pointer-events:none"></div>
+          <div style="position:absolute;right:14px;top:14px;width:34px;height:34px;border-right:4px solid #ffd23a;border-top:4px solid #ffd23a;pointer-events:none"></div>
+          <div style="position:absolute;left:14px;bottom:{{ camBrB }};width:34px;height:34px;border-left:4px solid #ffd23a;border-bottom:4px solid #ffd23a;pointer-events:none"></div>
+          <div style="position:absolute;right:14px;bottom:{{ camBrB }};width:34px;height:34px;border-right:4px solid #ffd23a;border-bottom:4px solid #ffd23a;pointer-events:none"></div>
+          <div style="position:absolute;left:50%;top:{{ camMidY }};width:26px;height:26px;margin:-13px 0 0 -13px;pointer-events:none"><div style="position:absolute;left:12px;top:0;width:2px;height:26px;background:#fff"></div><div style="position:absolute;top:12px;left:0;height:2px;width:26px;background:#fff"></div></div>
+          <div style="position:absolute;left:58px;top:18px;display:flex;align-items:center;gap:8px;background:#000;border:2px solid #ec3013;padding:5px 10px;pointer-events:none"><span style="width:10px;height:10px;border-radius:50%;background:#ec3013;animation:scopePulse 1s ease-in-out infinite"></span><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;white-space:nowrap">PAUSED · CAMERA</span></div>
+        </div>
+        <div onPointerDown="{{ stopProp }}" style="position:absolute;left:0;right:0;bottom:0;z-index:7;background:#0b0a0a;border-top:2px solid #ffd23a;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom)">
+          <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+            <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;padding:10px 14px">
+              <span style="font:900 clamp(14px,4vw,18px) var(--font-heading);letter-spacing:0.06em;line-height:1.1">SET &amp; LOCK CAMERA VIEW AND ZOOM</span>
+              <span style="font:600 12px var(--font-body);color:#cfcac4;line-height:1.3;text-wrap:pretty">{{ camHint }}</span>
+            </div>
+            <div style="display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:8px 14px;border-left:2px solid #3a3836;min-width:84px"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">ZOOM · TILT</span><span style="font:800 16px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap">{{ camRead }}</span></div>
+            <button onClick="{{ camCancel }}" aria-label="Cancel" style="width:52px;min-height:44px;flex:none;border:0;border-left:2px solid #3a3836;border-radius:0;background:#0b0a0a;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0" style-hover="background:#2a2826"><span style="width:30px;height:30px;background:#ec3013;color:#fff;display:flex;align-items:center;justify-content:center;font:900 16px var(--font-heading);line-height:1">✕</span></button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-bottom:2px solid #3a3836">
+            <div style="display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;border-right:2px solid #3a3836">
+              <button onClick="{{ zoomOut }}" aria-label="Zoom out" style="height:48px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#0b0a0a;color:#fff;font:800 20px var(--font-heading);cursor:pointer" style-hover="background:#2a2826">−</button>
+              <div style="display:flex;flex-direction:column;gap:4px;padding:6px 10px;min-width:0"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">ZOOM</span><span style="display:block;height:6px;background:#2a2826"><span style="display:block;height:100%;width:{{ zoomW }};background:#ffd23a"></span></span></div>
+              <button onClick="{{ zoomIn }}" aria-label="Zoom in" style="height:48px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#0b0a0a;color:#fff;font:800 20px var(--font-heading);cursor:pointer" style-hover="background:#2a2826">+</button>
+            </div>
+            <div style="display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center">
+              <button onClick="{{ tiltDown }}" aria-label="Lower" style="height:48px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#0b0a0a;color:#fff;font:800 16px var(--font-heading);cursor:pointer" style-hover="background:#2a2826">▼</button>
+              <div style="display:flex;flex-direction:column;gap:4px;padding:6px 10px;min-width:0"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">TILT</span><span style="display:block;height:6px;background:#2a2826"><span style="display:block;height:100%;width:{{ tiltW }};background:#38bdf8"></span></span></div>
+              <button onClick="{{ tiltUp }}" aria-label="Higher" style="height:48px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#0b0a0a;color:#fff;font:800 16px var(--font-heading);cursor:pointer" style-hover="background:#2a2826">▲</button>
+            </div>
+          </div>
+          <div style="display:flex;align-items:stretch;flex-wrap:wrap">
+            <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));flex:1 1 280px;min-width:0">
+              <sc-for list="{{ camPresets }}" as="p" hint-placeholder-count="4">
+                <button onClick="{{ p.pick }}" style="min-height:48px;padding:0 10px;border:0;border-right:2px solid #3a3836;border-radius:0;background:{{ p.bg }};color:{{ p.fg }};font:800 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">{{ p.label }}</button>
+              </sc-for>
+            </div>
+            <button onClick="{{ camLock }}" style="flex:1 1 140px;min-height:52px;padding:0 18px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 15px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px" style-hover="background:#c82a10"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="square"><rect x="5" y="11" width="14" height="10"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>LOCK CAMERA</button>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+    <sc-if value="{{ showKeys }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;left:16px;top:{{ btnTop }};max-height:calc(100% - {{ btnTop }} - 150px);overflow:hidden;align-content:flex-start;display:flex;flex-wrap:wrap;max-width:min(330px, calc(100% - 380px));pointer-events:none;font-size:12px">
+      <sc-for list="{{ keysList }}" as="k" hint-placeholder-count="8">
+        <div style="background:#000;border:2px solid #3a3836;color:#fff;margin:0 -2px -2px 0;padding:5px 9px;white-space:nowrap"><b>{{ k.key }}</b> {{ k.label }}</div>
+      </sc-for>
+    </div>
+    </sc-if>
+    <sc-if value="{{ padOn }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:0;right:0;top:{{ bandTop }};height:{{ bandH }};display:{{ splitDisp }};z-index:1;background:#0b0a0a;border-bottom:2px solid #ffd23a;box-sizing:border-box;pointer-events:none"></div>
+      <div style="position:absolute;display:{{ splitDisp }};left:{{ mmL }};right:{{ mmR }};top:{{ mmT }};bottom:{{ mmB }};z-index:2;background:#0b0a0a;border:0;box-sizing:border-box;overflow:hidden;pointer-events:none">
+        <sc-if value="{{ mmShowMap }}" hint-placeholder-val="{{ true }}"><div style="position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);aspect-ratio:1;max-width:100%;border:2px solid #ffd23a;overflow:hidden;background:#0f1412;background-image:linear-gradient(rgba(255,255,255,0.10) 2px, transparent 2px),linear-gradient(90deg,rgba(255,255,255,0.10) 2px, transparent 2px),linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.04) 1px, transparent 1px);background-size:16.666% 16.666%,16.666% 16.666%,4.1666% 4.1666%,4.1666% 4.1666%">
+                    <div style="position:absolute;left:50%;top:50%;width:10%;aspect-ratio:1;transform:translate(-50%,-50%);border:2px solid rgba(255,255,255,0.18);pointer-events:none"></div>
+                    <div style="position:absolute;left:{{ mapPl }};top:{{ mapPt }};width:110%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:2px dashed rgba(236,48,19,0.55);pointer-events:none"></div>
+                    <div style="position:absolute;left:{{ mapPl }};top:{{ mapPt }};width:49.5%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:2px solid rgba(124,255,155,0.35);pointer-events:none"></div>
+                    <sc-for list="{{ mapCrates }}" as="c" hint-placeholder-count="0">
+                      <div style="position:absolute;left:{{ c.l }};top:{{ c.t }};width:12px;height:12px;margin:-6px 0 0 -6px;background:#9a6b3c;box-shadow:0 0 0 2px #000, inset 0 0 0 2px #6b4a2c"></div>
+                    </sc-for>
+                    <sc-for list="{{ mapDummies }}" as="dm" hint-placeholder-count="0">
+                      <div style="position:absolute;left:{{ dm.l }};top:{{ dm.t }};width:0;height:0">
+                        <div style="position:absolute;left:-8px;top:-8px;width:16px;height:16px;transform:rotate(45deg);background:{{ dm.c }};box-shadow:0 0 0 2px #000"></div>
+                        <div style="position:absolute;left:12px;top:-9px;font:900 11px var(--font-heading);color:{{ dm.c }};text-shadow:0 0 3px #000">{{ dm.n }}</div>
+                      </div>
+                    </sc-for>
+                    <div style="position:absolute;left:{{ mapPl }};top:{{ mapPt }};width:0;height:0">
+                      <div style="position:absolute;left:-46px;top:-46px;width:92px;height:92px;border-radius:50%;background:conic-gradient(from -32deg, rgba(255,210,58,0.32) 0 64deg, transparent 64deg);transform:rotate({{ mapRot }})"></div>
+                      <div style="position:absolute;left:-13px;top:-13px;width:26px;height:26px;border-radius:50%;border:2px solid #ffd23a;animation:scopePulse 1.4s ease-in-out infinite"></div>
+                      <svg width="22" height="22" viewBox="0 0 22 22" style="position:absolute;left:-11px;top:-11px;transform:rotate({{ mapRot }});overflow:visible"><path d="M11 1 L19 19 L11 14.5 L3 19 Z" fill="#ffd23a" stroke="#000" stroke-width="2" stroke-linejoin="miter"></path></svg>
+                    </div>
+                    <div style="position:absolute;right:8px;top:8px;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,0.65);border:2px solid #3a3836;display:flex;align-items:center;justify-content:center;pointer-events:none"><svg width="22" height="22" viewBox="0 0 22 22"><path d="M11 2 L15 11 L11 9.5 L7 11 Z" fill="#ec3013"></path><path d="M11 20 L7 11 L11 12.5 L15 11 Z" fill="#cfcac4"></path></svg><span style="position:absolute;top:-16px;font:900 10px var(--font-heading);color:#ec3013">N</span></div>
+                    <div style="position:absolute;left:8px;bottom:8px;display:flex;flex-direction:column;gap:3px;pointer-events:none"><span style="display:block;width:min(25%,999px);min-width:40px;height:6px;background:repeating-linear-gradient(90deg,#fff 0 50%,#000 50% 100%);border:1px solid #000"></span><span style="font:800 10px var(--font-heading);color:#fff;text-shadow:0 0 3px #000">10 m</span></div>
+                  </div></sc-if>
+        <button onClick="{{ splitClose }}" aria-label="Close minimap" style="position:absolute;right:6px;top:6px;z-index:3;width:36px;height:36px;padding:0;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);display:flex;align-items:center;justify-content:center;cursor:pointer;pointer-events:auto">✕</button>
+        <sc-if value="{{ mmShowMsg }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:4px;background:{{ mmMsgBg }};text-align:center"><span style="font:900 {{ mmMsgFs }} var(--font-heading);letter-spacing:0.06em;color:{{ mmMsgFg }};line-height:1.05">{{ mmMsg }}</span><span style="font:800 8px var(--font-heading);letter-spacing:0.1em;color:{{ mmMsgFg }};opacity:0.8">{{ mmSub }}</span></div>
+        </sc-if>
+      </div>
+      <div onPointerDown="{{ stDown }}" onPointerMove="{{ stMove }}" onPointerUp="{{ stUp }}" onPointerCancel="{{ stUp }}" style="position:absolute;left:0;top:{{ stickTop }};bottom:0;width:55%;touch-action:none;z-index:2">
+        <div style="position:absolute;left:max(22px, env(safe-area-inset-left));bottom:max(22px, env(safe-area-inset-bottom));width:113px;height:113px;border-radius:50%;border:2px solid rgba(255,255,255,0.6);background:rgba(0,0,0,0.32);pointer-events:none">
+          <svg viewBox="0 0 150 150" width="113" height="113" style="position:absolute;inset:0;display:block">
+            <g fill="rgba(255,255,255,0.88)" stroke="#000" stroke-width="1.5" stroke-linejoin="round">
+              <path d="M75 9 L88 26 L62 26 Z"></path>
+              <path d="M141 75 L124 88 L124 62 Z"></path>
+              <path d="M75 141 L62 124 L88 124 Z"></path>
+              <path d="M9 75 L26 62 L26 88 Z"></path>
+            </g>
+          </svg>
+          <div style="position:absolute;left:{{ stKx }};top:{{ stKy }};width:45px;height:45px;margin:-22.5px 0 0 -22.5px;border-radius:50%;background:#ffffff;opacity:{{ stKo }};box-shadow:0 0 0 2px #000"></div>
+        </div>
+      </div>
+      <div onPointerDown="{{ eyeDown }}" onPointerMove="{{ eyeMove }}" onPointerUp="{{ eyeUp }}" onPointerCancel="{{ eyeUp }}" title="Hold + drag to look (snaps back) · tap for POV" style="position:absolute;left:{{ eyeL }};bottom:{{ eyeB }};width:40px;height:40px;border-radius:50%;background:{{ eyeBg }};box-shadow:0 0 0 2px {{ eyeRing }};display:flex;align-items:center;justify-content:center;z-index:4;touch-action:none;cursor:move;user-select:none;-webkit-user-select:none">
+        <sc-if value="{{ eyeIconOn }}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="{{ eyeStroke }}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;display:block"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg></sc-if><sc-if value="{{ eyeWordOn }}" hint-placeholder-val="{{ false }}"><span style="font:900 9px var(--font-heading);letter-spacing:0.04em;color:{{ eyeStroke }};pointer-events:none">VIEW</span></sc-if>
+      </div>
+      <button onClick="{{ heroSwap }}" aria-label="Switch character" title="Switch character: Ben · Hope · Noble" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(max(22px, env(safe-area-inset-bottom)) + 118px);width:52px;height:52px;padding:0;border:0;border-radius:50%;background:transparent;z-index:4;cursor:pointer;touch-action:manipulation;overflow:visible" style-active="transform:scale(0.92)">
+        <svg width="64" height="22" viewBox="0 0 64 22" style="position:absolute;left:-6px;top:-13px;pointer-events:none;overflow:visible"><path d="M6 21 L10 1 L24 15 Z" fill="#000" stroke="#fff" stroke-width="2" stroke-linejoin="miter"></path><path d="M11 16 L12.5 7 L19 13.5 Z" fill="#ffd23a"></path><path d="M58 21 L54 1 L40 15 Z" fill="#000" stroke="#fff" stroke-width="2" stroke-linejoin="miter"></path><path d="M53 16 L51.5 7 L45 13.5 Z" fill="#ffd23a"></path></svg>
+        <span style="position:absolute;inset:0;border-radius:50%;overflow:hidden;box-shadow:0 0 0 2px #000, 0 0 0 4px #fff;display:flex;flex-direction:column;pointer-events:none">
+          <span style="flex:0 0 25px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:3px;background:#fff;color:#000;font:900 11px var(--font-heading);letter-spacing:0.12em;line-height:1">FOX</span>
+          <span style="flex:0 0 2px;background:#ffd23a"></span>
+          <span style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;padding-top:3px;background:#000;color:#fff;font:900 10.5px var(--font-heading);letter-spacing:0.08em;line-height:1"><span>SWAP</span><span style="display:flex;gap:3px"><sc-for list="{{ heroPips }}" as="hp" hint-placeholder-count="3"><span style="width:5px;height:5px;border-radius:50%;background:{{ hp.c }}"></span></sc-for></span></span>
+        </span>
+      </button>
+      <div onPointerDown="{{ bagDown }}" onPointerUp="{{ bagUp }}" onPointerCancel="{{ bagCancel }}" aria-label="Item bag" title="Tap: open items · hold 1 s: use pinned item" style="position:absolute;left:{{ bagL }};bottom:{{ bagB }};width:44px;height:44px;border-radius:50%;background:{{ bagBg }};box-shadow:0 0 0 2px {{ bagRing }};display:flex;align-items:center;justify-content:center;z-index:4;touch-action:none;cursor:pointer;user-select:none;-webkit-user-select:none">
+        <sc-if value="{{ bagIconOn }}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ffffff" stroke-width="2.1" stroke-linejoin="miter" style="pointer-events:none;display:block"><path d="M5 8h14l-1.2 13H6.2z"></path><path d="M9 8V6a3 3 0 0 1 6 0v2"></path></svg></sc-if><sc-if value="{{ bagWordOn }}" hint-placeholder-val="{{ false }}"><span style="font:900 9px var(--font-heading);letter-spacing:0.04em;color:#fff;pointer-events:none">ITEM</span></sc-if>
+      </div>
+      <div style="position:absolute;right:max(14px, env(safe-area-inset-right));bottom:max(14px, env(safe-area-inset-bottom));width:143px;height:135px;z-index:3;touch-action:none;user-select:none;-webkit-user-select:none">
+        <div onPointerDown="{{ b1d }}" onPointerUp="{{ b1u }}" onPointerCancel="{{ b1u }}" style="position:absolute;right:78px;bottom:0;width:57px;height:57px;border-radius:50%;background:{{ ring1 }};display:flex;align-items:center;justify-content:center;touch-action:none;cursor:pointer">
+          <div style="width:49px;height:49px;border-radius:50%;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;pointer-events:none">
+            <span style="font:900 {{ w1Fs }} var(--font-heading);line-height:1;color:#fff;letter-spacing:0.02em">{{ w1 }}</span>
+          </div>
+        </div>
+        <div onPointerDown="{{ b2d }}" onPointerUp="{{ b2u }}" onPointerCancel="{{ b2u }}" style="position:absolute;right:0;bottom:0;width:69px;height:69px;border-radius:50%;background:{{ ring2 }};display:flex;align-items:center;justify-content:center;touch-action:none;cursor:pointer">
+          <div style="width:59px;height:59px;border-radius:50%;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;pointer-events:none">
+            <span style="font:900 {{ w2Fs }} var(--font-heading);line-height:1;color:#fff;letter-spacing:0.02em">{{ w2 }}</span>
+          </div>
+        </div>
+        <div onPointerDown="{{ bsd }}" onPointerUp="{{ bsu }}" onPointerCancel="{{ bsc }}" aria-label="{{ bsLabel }}" style="position:absolute;right:58px;bottom:58px;width:38px;height:38px;border-radius:50%;background:{{ bsRing }};animation:{{ bsAnim }};display:flex;align-items:center;justify-content:center;touch-action:none;cursor:pointer">
+          <div style="width:31px;height:31px;border-radius:50%;background:#000;display:flex;align-items:center;justify-content:center;pointer-events:none">
+            <sc-if value="{{ bsScope }}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{ bsIcon }}" stroke-width="2.2" stroke-linecap="square"><circle cx="12" cy="12" r="8"></circle><circle cx="12" cy="12" r="2"></circle><line x1="12" y1="1" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="23"></line><line x1="1" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="23" y2="12"></line></svg></sc-if>
+            <sc-if value="{{ bsMenuWord }}" hint-placeholder-val="{{ false }}"><span style="font:900 8px var(--font-heading);letter-spacing:0.02em;color:#ffd23a">MENU</span></sc-if><sc-if value="{{ bsMenuIcon }}" hint-placeholder-val="{{ true }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffd23a" stroke-width="2.4" stroke-linecap="square"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg></sc-if>
+          </div>
+        </div>
+        <div onPointerDown="{{ b3d }}" onPointerUp="{{ b3u }}" onPointerCancel="{{ b3u }}" style="position:absolute;right:0;bottom:78px;width:57px;height:57px;border-radius:50%;background:#3a3836;display:flex;align-items:center;justify-content:center;touch-action:none;cursor:pointer">
+          <div style="width:49px;height:49px;border-radius:50%;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;pointer-events:none">
+            <span style="font:900 {{ w3Fs }} var(--font-heading);line-height:1;color:#fff;letter-spacing:0.02em">{{ w3 }}</span>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+    <div style="position:absolute;right:16px;top:{{ btnTop }};display:{{ topBtnDisp }};z-index:4">
+      <button onClick="{{ openMenu }}" aria-label="Menu" style="height:48px;padding:0 14px;display:flex;align-items:center;gap:8px;border-radius:0;background:#000;color:#fff;font:800 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;margin-left:-2px;border:2px solid #3a3836" style-hover="background:#2a2826"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffd23a" stroke-width="2.4" stroke-linecap="square"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg><span>MENU</span></button>
+      <button onClick="{{ padToggle }}" aria-label="Phone pad" style="height:48px;padding:0 14px;display:flex;align-items:center;gap:8px;border-radius:0;background:#000;color:#fff;font:800 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;margin-left:-2px;border:2px solid {{ padBorder }}" style-hover="background:#2a2826">PAD</button>
+      <button onClick="{{ scopeToggle }}" aria-label="Scope" style="height:48px;padding:0 14px;display:flex;align-items:center;gap:8px;border-radius:0;background:#000;color:#fff;font:800 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;margin-left:-2px;border:2px solid {{ scopeBorder }}" style-hover="background:#2a2826"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffd23a" stroke-width="2.2" stroke-linecap="square"><circle cx="12" cy="12" r="8"></circle><circle cx="12" cy="12" r="2"></circle><line x1="12" y1="1" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="23"></line><line x1="1" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="23" y2="12"></line></svg><span>SCOPE</span></button>
+    </div>
+    <sc-if value="{{ menuOn }}" hint-placeholder-val="{{ false }}">
+      <div onPointerDown="{{ menuBackdrop }}" style="position:absolute;inset:0;z-index:8;background:{{ menuBd }};display:flex;justify-content:{{ menuJ }};align-items:{{ menuA }};pointer-events:{{ menuPe }}">
+        <div id="{{ menuId }}" onPointerDown="{{ stopProp }}" style="width:{{ menuW }};height:{{ menuH }};max-height:{{ menuMaxH }};overflow-y:auto;background:#0b0a0a;border-left:2px solid #3a3836;border-top:{{ menuBt }};color:#fff;display:flex;flex-direction:column;pointer-events:auto">
+          <sc-if value="{{ tabJournal }}" hint-placeholder-val="{{ false }}"><div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border-bottom:2px solid #3a3836">
+              <button onClick="{{ jOrbit }}" style="min-height:58px;padding:6px 4px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:800 10px var(--font-heading);letter-spacing:0.04em;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center;line-height:1.1;min-width:0;overflow:hidden" style-hover="background:#2a2826"><span style="position:relative;display:block;width:22px;height:22px;animation:shuttleGo 4.5s ease-in infinite"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffd23a" stroke-width="2" stroke-linejoin="miter" style="display:block"><path d="M12 2c2.6 2.2 3.6 5.4 3.6 9v5H8.4v-5c0-3.6 1-6.8 3.6-9z"></path><path d="M8.4 12.5L5 16v2h3.4M15.6 12.5L19 16v2h-3.4"></path><circle cx="12" cy="8.5" r="1.3"></circle></svg><span style="position:absolute;left:50%;top:18px;width:6px;height:9px;margin-left:-3px;border-radius:50% 50% 50% 50% / 30% 30% 70% 70%;background:linear-gradient(#fff,#ffd23a 40%,#ec3013);transform-origin:50% 0;animation:shuttleFlame 4.5s ease-in infinite"></span></span><span>BACK TO ORBIT</span></button>
+              <button onClick="{{ jOpts }}" style="min-height:58px;padding:6px 4px;border:0;border-right:2px solid #3a3836;border-radius:0;background:{{ jOptsBg }};color:#fff;font:800 10px var(--font-heading);letter-spacing:0.04em;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center;line-height:1.1;min-width:0" style-hover="background:#2a2826"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffd23a" stroke-width="2.2" stroke-linejoin="miter"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"></path></svg><span>OPTIONS</span></button>
+              <button onClick="{{ jHelp }}" style="min-height:58px;padding:6px 4px;border:0;border-right:2px solid #3a3836;border-radius:0;background:{{ jHelpBg }};color:#fff;font:800 10px var(--font-heading);letter-spacing:0.04em;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center;line-height:1.1;min-width:0" style-hover="background:#2a2826"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffd23a" stroke-width="2.2" stroke-linejoin="miter"><rect x="4" y="3" width="16" height="18"></rect><path d="M8 8h8M8 12h8M8 16h5"></path></svg><span>HOW TO</span></button>
+              <button onClick="{{ jLoad }}" style="min-height:58px;padding:6px 4px;border:0;border-right:2px solid #3a3836;border-radius:0;background:{{ jLoadBg }};color:#fff;font:800 10px var(--font-heading);letter-spacing:0.04em;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center;line-height:1.1;min-width:0" style-hover="background:#2a2826"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffd23a" stroke-width="2.2" stroke-linejoin="miter"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 3v6h6"></path></svg><span>LOAD</span></button>
+              <button onClick="{{ jSave }}" style="min-height:58px;padding:6px 4px;border:0;border-radius:0;background:{{ jSaveBg }};color:#fff;font:800 10px var(--font-heading);letter-spacing:0.04em;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center;line-height:1.1;min-width:0" style-hover="background:#2a2826"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffd23a" stroke-width="2.2" stroke-linejoin="miter"><path d="M4 3h13l3 3v15H4z"></path><path d="M8 3v6h8V3"></path><rect x="7" y="13" width="10" height="8"></rect></svg><span>SAVE</span></button>
+            </div>
+            <sc-if value="{{ jMsgOn }}" hint-placeholder-val="{{ false }}"><div style="padding:8px 14px;border-bottom:2px solid #3a3836;background:#141312;font:800 12px var(--font-heading);letter-spacing:0.08em;color:#7cff9b">{{ jMsg }}</div></sc-if></sc-if>
+          
+          <sc-if value="{{ tabScope }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:stretch;justify-content:space-between;border-bottom:2px solid #3a3836"><span style="display:flex;align-items:center;gap:8px;padding:0 14px;font:800 11px var(--font-heading);letter-spacing:0.1em;color:#ffd23a;white-space:nowrap"><span style="width:8px;height:8px;border-radius:50%;background:#ec3013;animation:scopePulse 1s ease-in-out infinite"></span>SCOPE · TIME STOPPED</span><button onClick="{{ menuClose }}" aria-label="Close scope" style="width:52px;min-height:44px;flex:none;border:0;border-left:2px solid #3a3836;border-radius:0;background:#0b0a0a;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0" style-hover="background:#2a2826"><span style="width:30px;height:30px;background:#ec3013;color:#fff;display:flex;align-items:center;justify-content:center;font:900 16px var(--font-heading);line-height:1">✕</span></button></div></sc-if>
+          <div style="display:grid;grid-template-columns:repeat({{ tabN }},minmax(0,1fr));border-bottom:2px solid #3a3836">
+            <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+              <button onClick="{{ t.pick }}" style="height:{{ tabH }};padding:0 {{ tabPad }};display:flex;align-items:center;justify-content:center;text-align:center;border:0;border-right:2px solid #3a3836;border-radius:0;font:800 {{ tabFs }} var(--font-heading);letter-spacing:{{ tabLs }};min-width:0;overflow:hidden;white-space:nowrap;cursor:pointer;background:{{ t.bg }};color:{{ t.fg }}">{{ t.label }}</button>
+            </sc-for>
+          </div>
+          <sc-if value="{{ notScopeTab }}" hint-placeholder-val="{{ true }}"><div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 52px;border-bottom:2px solid #3a3836">
+            <div style="padding:10px 14px;border-right:2px solid #3a3836;display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;justify-content:space-between;font-family:var(--font-heading);font-weight:800;letter-spacing:0.12em;font-size:11px;line-height:1.2;color:#ffd23a"><span>HP</span><span style="color:#fff;font-variant-numeric:tabular-nums">{{ mHp }}</span></div>
+              <div style="height:6px;background:#2a2826"><div style="height:100%;width:{{ mHpW }};background:#7cff9b"></div></div>
+            </div>
+            <div style="padding:10px 14px;border-right:2px solid #3a3836;display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;justify-content:space-between;font-family:var(--font-heading);font-weight:800;letter-spacing:0.12em;font-size:11px;line-height:1.2;color:#ffd23a"><span>EN</span><span style="color:#fff;font-variant-numeric:tabular-nums">{{ mEn }}</span></div>
+              <div style="height:6px;background:#2a2826"><div style="height:100%;width:{{ mEnW }};background:#38bdf8"></div></div>
+            </div>
+            <button onClick="{{ menuClose }}" aria-label="Close" style="width:auto;min-height:44px;border:0;border-radius:0;background:#0b0a0a;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0" style-hover="background:#2a2826"><span style="width:30px;height:30px;background:#ec3013;color:#fff;display:flex;align-items:center;justify-content:center;font:900 16px var(--font-heading);line-height:1">✕</span></button>
+          </div></sc-if>
+          <sc-if value="{{ scopeReady }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ toScope }}" style="display:flex;justify-content:space-between;align-items:center;padding:0 14px;height:48px;border:0;border-bottom:2px solid #3a3836;border-radius:0;background:#1a0b09;color:#fff;font:800 13px var(--font-heading);letter-spacing:0.08em;text-align:left;cursor:pointer" style-hover="background:#2a1310"><span style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="width:10px;height:10px;flex:none;border-radius:50%;background:var(--color-accent);animation:scopePulse 0.8s ease-in-out infinite"></span>ENTER SCOPE</span><span style="flex:none;white-space:nowrap;color:#ff8a78">{{ nearLabel }}</span></button>
+          </sc-if>
+          <sc-if value="{{ tabScope }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;justify-content:space-between;align-items:stretch;border-bottom:2px solid #3a3836">
+              <div style="display:flex;flex-direction:column;gap:4px;padding:{{ scRowPad }};min-width:0">
+                <span style="font-family:var(--font-heading);font-weight:800;letter-spacing:0.12em;font-size:11px;line-height:1.2;color:#ffd23a;white-space:nowrap">CALLED SHOTS</span>
+                <span style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span style="font-family:var(--font-heading);font-weight:800;font-size:18px;line-height:1.1;white-space:nowrap">{{ scTarget }}</span><span style="padding:3px 7px;font:800 10px var(--font-heading);letter-spacing:0.1em;background:{{ scChipBg }};color:{{ scChipFg }};white-space:nowrap">{{ scChip }}</span></span>
+              </div>
+              <div style="display:flex">
+                <button onClick="{{ scopePrev }}" aria-label="Previous target" style="width:52px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#0b0a0a;color:#fff;font:800 16px var(--font-heading);cursor:pointer" style-hover="background:#1d1b1a">◀</button>
+                <button onClick="{{ scopeNext }}" aria-label="Next target" style="width:52px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#0b0a0a;color:#fff;font:800 16px var(--font-heading);cursor:pointer" style-hover="background:#1d1b1a">▶</button>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-bottom:2px solid #3a3836">
+              <sc-for list="{{ scopeZones }}" as="z" hint-placeholder-count="4">
+                <button onClick="{{ z.pick }}" style="position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:{{ zGap }};padding:{{ zPad }};min-height:{{ zMinH }};border:0;border-right:2px solid #3a3836;border-top:4px solid {{ z.col }};border-radius:0;background:#0b0a0a;color:#fff;text-align:left;cursor:pointer;min-width:0" style-hover="background:#1d1b1a">
+                  <span style="display:flex;justify-content:space-between;width:100%;font-family:var(--font-heading);font-weight:800;font-size:12px;letter-spacing:0.1em;line-height:1.2;color:{{ z.col }}"><span>{{ z.name }}</span><span style="color:#fff">{{ z.q }}</span></span>
+                  <span style="font-family:var(--font-heading);font-weight:800;font-size:{{ zPctFs }};line-height:1;font-variant-numeric:tabular-nums">{{ z.pct }}</span>
+                  <span style="display:block;width:100%;height:4px;background:#2a2826"><span style="display:block;height:100%;width:{{ z.pct }};background:{{ z.col }}"></span></span>
+                  <span style="display:{{ zCap }};font-size:11px;color:#cfcac4;line-height:1.25">{{ z.line }}</span>
+                </button>
+              </sc-for>
+            </div>
+            <div style="display:flex;align-items:stretch;justify-content:space-between;gap:10px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;min-width:0;flex-wrap:wrap">
+                <span style="font-family:var(--font-heading);font-weight:800;letter-spacing:0.12em;font-size:11px;line-height:1.2;color:#ffd23a;white-space:nowrap">QUEUE · {{ scopeCost }} EN EACH</span>
+                <span style="display:flex;gap:6px">
+                  <sc-for list="{{ scSlots }}" as="q" hint-placeholder-count="3">
+                    <span style="min-width:52px;height:30px;padding:0 8px;display:flex;align-items:center;border:2px solid {{ q.col }};font:800 11px var(--font-heading);letter-spacing:0.08em;color:{{ q.fg }}">{{ q.label }}</span>
+                  </sc-for>
+                </span>
+              </div>
+              <div style="display:flex;margin-left:auto">
+                <button onClick="{{ scopeClear }}" style="padding:0 16px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#0b0a0a;color:#fff;font:800 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer" style-hover="background:#1d1b1a">CLEAR</button>
+                <button onClick="{{ scopeExecTab }}" style="padding:0 18px;min-width:112px;min-height:{{ execH }};border:0;border-radius:0;background:{{ execBg }};color:#fff;font:800 14px var(--font-heading);letter-spacing:0.08em;text-align:left;cursor:pointer">{{ execLabel }}</button>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ tabWeapons }}" hint-placeholder-val="{{ true }}">
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-bottom:2px solid #3a3836">
+              <sc-for list="{{ heroTabs }}" as="t" hint-placeholder-count="3">
+                <button onClick="{{ t.pick }}" style="min-height:52px;padding:0 14px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:3px;border:0;border-right:2px solid #3a3836;border-radius:0;background:{{ t.bg }};color:{{ t.fg }};text-align:left;cursor:pointer"><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;text-transform:none">fox:</span><span style="font:800 14px var(--font-heading);letter-spacing:0.08em">{{ t.label }}</span></button>
+              </sc-for>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:10px 12px;border-bottom:2px solid #3a3836;background:#141312">
+              <sc-for list="{{ subTabs }}" as="t" hint-placeholder-count="3">
+                <button onClick="{{ t.pick }}" style="height:38px;padding:0 10px;display:flex;align-items:center;border:2px solid #ffd23a;border-radius:0;background:{{ t.bg }};color:{{ t.fg }};font:800 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer">{{ t.label }}</button>
+              </sc-for>
+            </div>
+            <div style="flex:1;min-height:0;overflow-y:auto">
+              <sc-if value="{{ twoNote }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:12px 14px;border-bottom:2px solid #3a3836;font-size:12px;line-height:1.45;color:#ffd23a">{{ twoLine }}</div>
+              </sc-if>
+              <sc-for list="{{ subList }}" as="w" hint-placeholder-count="5">
+                <button onClick="{{ w.pick }}" style="display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:start;width:100%;padding:12px 14px;border:0;border-bottom:2px solid #3a3836;border-radius:0;text-align:left;cursor:pointer;background:{{ w.bg }};color:#fff;opacity:{{ w.op }}" style-hover="background:#1d1b1a">
+                  <span style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;border:2px solid {{ w.ic }};background:#0b0a0a"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="{{ w.ic }}" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><path d="{{ w.icon }}"></path></svg></span>
+                  <span style="display:flex;flex-direction:column;gap:6px;min-width:0">
+                    <span style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-family:var(--font-heading);font-weight:800;font-size:14px;letter-spacing:0.05em;line-height:1.2;color:{{ w.nc }}">{{ w.name }}</span><span style="flex:none;padding:3px 6px;font:800 10px var(--font-heading);letter-spacing:0.1em;background:{{ w.tagBg }};color:{{ w.tagFg }}">{{ w.tag }}</span></span>
+                    <span style="font-size:12px;line-height:1.35;color:#cfcac4">{{ w.line }}</span>
+                    <span style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+                      <sc-for list="{{ w.stats }}" as="s" hint-placeholder-count="0">
+                        <span style="display:flex;flex-direction:column;gap:3px"><span style="font:800 9px var(--font-heading);letter-spacing:0.12em;color:#8a847e">{{ s.k }}</span><span style="height:4px;background:#2a2826;display:block"><span style="display:block;height:100%;width:{{ s.w }};background:#ffd23a"></span></span></span>
+                      </sc-for>
+                    </span>
+                  </span>
+                </button>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ tabItems }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1;min-height:0;overflow-y:auto">
+              <div style="display:flex;flex-direction:column;gap:8px;padding:10px 14px;border-bottom:2px solid #3a3836;background:#141312">
+                <span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">PINNED ITEM · HOLD THE BAG 1 S TO USE</span>
+                <span style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px">
+                  <sc-for list="{{ hotList }}" as="it" hint-placeholder-count="3">
+                    <button onClick="{{ it.pick }}" style="min-height:44px;padding:0 10px;display:flex;align-items:center;gap:8px;border:2px solid {{ it.col }};border-radius:0;background:{{ it.bg }};color:{{ it.fg }};font:800 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;min-width:0"><span style="width:10px;height:10px;flex:none;border-radius:50%;background:{{ it.col }}"></span><span style="white-space:nowrap;overflow:hidden">{{ it.label }}</span></button>
+                  </sc-for>
+                </span>
+              </div>
+              <div style="display:flex;flex-direction:column;border-bottom:2px solid #3a3836">
+                <button onClick="{{ useHealth }}" style="display:grid;grid-template-columns:52px minmax(0,1fr) auto;grid-template-rows:auto auto;column-gap:12px;row-gap:2px;align-items:center;padding:12px 14px;min-height:76px;border:0;border-bottom:2px solid #3a3836;border-radius:0;background:#0b0a0a;color:#fff;text-align:left;cursor:pointer;opacity:{{ opHealth }}" style-hover="background:#1d1b1a">
+                  <span style="grid-row:1 / span 2;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border:2px solid #7cff9b"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7cff9b" stroke-width="2" stroke-linecap="square"><rect x="2" y="8" width="20" height="8"></rect><line x1="7" y1="8" x2="7" y2="16"></line><line x1="12" y1="10" x2="12" y2="14"></line><line x1="10" y1="12" x2="14" y2="12"></line></svg></span>
+                  <span style="grid-column:2;grid-row:1;display:block;font-family:var(--font-heading);font-weight:800;font-size:14px;letter-spacing:0.04em;line-height:1.2">HEALTH BAR</span>
+                  <span style="grid-column:2;grid-row:2;display:block;font-size:12px;line-height:1.3;color:#cfcac4">+50 HP</span>
+                  <span style="grid-column:3;grid-row:1 / span 2;display:flex;flex-direction:column;align-items:flex-start;gap:4px"><span style="font:800 18px var(--font-heading);font-variant-numeric:tabular-nums">×{{ nHealth }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">USE</span></span>
+                </button>
+                <button onClick="{{ usePep }}" style="display:grid;grid-template-columns:52px minmax(0,1fr) auto;grid-template-rows:auto auto;column-gap:12px;row-gap:2px;align-items:center;padding:12px 14px;min-height:76px;border:0;border-bottom:2px solid #3a3836;border-radius:0;background:#0b0a0a;color:#fff;text-align:left;cursor:pointer;opacity:{{ opPep }}" style-hover="background:#1d1b1a">
+                  <span style="grid-row:1 / span 2;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border:2px solid #ffd23a"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ffd23a" stroke-width="2" stroke-linecap="square"><path d="M7 4h10l-1.5 17h-7z"></path><line x1="7.4" y1="9" x2="16.6" y2="9"></line><path d="M13 11l-2 3h3l-2 3"></path></svg></span>
+                  <span style="grid-column:2;grid-row:1;display:block;font-family:var(--font-heading);font-weight:800;font-size:14px;letter-spacing:0.04em;line-height:1.2">PEP DRINK</span>
+                  <span style="grid-column:2;grid-row:2;display:block;font-size:12px;line-height:1.3;color:#cfcac4">{{ pepLine }}</span>
+                  <span style="grid-column:3;grid-row:1 / span 2;display:flex;flex-direction:column;align-items:flex-start;gap:4px"><span style="font:800 18px var(--font-heading);font-variant-numeric:tabular-nums">×{{ nPep }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">USE</span></span>
+                </button>
+                <button onClick="{{ useCell }}" style="display:grid;grid-template-columns:52px minmax(0,1fr) auto;grid-template-rows:auto auto;column-gap:12px;row-gap:2px;align-items:center;padding:12px 14px;min-height:76px;border:0;border-radius:0;background:#0b0a0a;color:#fff;text-align:left;cursor:pointer;opacity:{{ opCell }}" style-hover="background:#1d1b1a">
+                  <span style="grid-row:1 / span 2;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border:2px solid #38bdf8"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="square"><rect x="2" y="7" width="18" height="10"></rect><line x1="22" y1="10" x2="22" y2="14"></line><path d="M12 9l-3 3h4l-3 3"></path></svg></span>
+                  <span style="grid-column:2;grid-row:1;display:block;font-family:var(--font-heading);font-weight:800;font-size:14px;letter-spacing:0.04em;line-height:1.2">ENERGY CELL</span>
+                  <span style="grid-column:2;grid-row:2;display:block;font-size:12px;line-height:1.3;color:#cfcac4">+50% EN</span>
+                  <span style="grid-column:3;grid-row:1 / span 2;display:flex;flex-direction:column;align-items:flex-start;gap:4px"><span style="font:800 18px var(--font-heading);font-variant-numeric:tabular-nums">×{{ nCell }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">USE</span></span>
+                </button>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ tabJournal }}" hint-placeholder-val="{{ false }}">
+            <sc-if value="{{ jOptsOn }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:10px 14px 4px;font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">OPTIONS</div>
+              <sc-for list="{{ optList }}" as="o" hint-placeholder-count="5">
+                <button onClick="{{ o.f }}" style="display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;min-height:52px;padding:0 14px;border:0;border-bottom:2px solid #3a3836;border-radius:0;background:#0b0a0a;color:#fff;font:800 13px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left" style-hover="background:#1d1b1a"><span style="display:flex;flex-direction:column;gap:2px"><span>{{ o.label }}</span><span style="font:600 11px var(--font-body);letter-spacing:0;color:#8a847e">{{ o.sub }}</span></span><span style="flex:none;min-width:52px;padding:5px 8px;border:2px solid {{ o.col }};color:{{ o.col }};font:900 11px var(--font-heading);letter-spacing:0.08em;text-align:left">{{ o.v }}</span></button>
+              </sc-for>
+            </sc-if>
+            <sc-if value="{{ jHelpOn }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:10px 14px 4px;font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">HOW TO PLAY · PHONE</div>
+              <sc-for list="{{ helpPhone }}" as="hp" hint-placeholder-count="8">
+                <div style="display:grid;grid-template-columns:104px minmax(0,1fr);gap:10px;padding:7px 14px;border-bottom:2px solid #1d1b1a;font-size:12px;line-height:1.35"><b style="font-family:var(--font-heading);letter-spacing:0.04em">{{ hp.k }}</b><span style="color:#cfcac4">{{ hp.v }}</span></div>
+              </sc-for>
+              <div style="padding:14px 14px 4px;font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">KEYBOARD</div>
+              <sc-for list="{{ helpKeys }}" as="hk" hint-placeholder-count="8">
+                <div style="display:grid;grid-template-columns:104px minmax(0,1fr);gap:10px;padding:7px 14px;border-bottom:2px solid #1d1b1a;font-size:12px;line-height:1.35"><b style="font-family:var(--font-heading);letter-spacing:0.04em">{{ hk.k }}</b><span style="color:#cfcac4">{{ hk.v }}</span></div>
+              </sc-for>
+            </sc-if>
+            <sc-if value="{{ jMainOn }}" hint-placeholder-val="{{ true }}">
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:10px 12px;border-bottom:2px solid #3a3836;background:#141312">
+              <sc-for list="{{ jTabs }}" as="t" hint-placeholder-count="2">
+                <button onClick="{{ t.pick }}" style="height:40px;padding:0 10px;display:flex;align-items:center;border:2px solid #ffd23a;border-radius:0;background:{{ t.bg }};color:{{ t.fg }};font:800 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer">{{ t.label }}</button>
+              </sc-for>
+            </div>
+            <div style="flex:1;min-height:0;overflow-y:auto">
+              <sc-if value="{{ jChar }}" hint-placeholder-val="{{ true }}">
+                <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-bottom:2px solid #3a3836">
+                  <sc-for list="{{ jFoxes }}" as="fx" hint-placeholder-count="3">
+                    <button onClick="{{ fx.pick }}" style="display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:10px 10px 12px;min-width:0;border:0;border-right:2px solid #3a3836;border-top:4px solid {{ fx.col }};border-radius:0;background:{{ fx.bg }};color:{{ fx.fg }};cursor:pointer;text-align:left">
+                      <span style="font:800 9px var(--font-heading);letter-spacing:0.08em;opacity:0.8">fox:</span>
+                      <span style="font:900 15px var(--font-heading);letter-spacing:0.06em;line-height:1">{{ fx.name }}</span>
+                      <span style="display:flex;align-items:center;gap:8px;width:100%"><span style="display:flex;align-items:baseline;gap:3px;font:800 10px var(--font-heading);letter-spacing:0.1em;flex:none"><span>LV</span><span style="font:900 20px var(--font-heading);letter-spacing:0;line-height:1">{{ fx.lv }}</span></span><span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px"><span style="display:block;width:100%;height:4px;background:{{ fx.trk }}"><span style="display:block;height:100%;width:{{ fx.xpW }};background:{{ fx.xpC }}"></span></span><span style="font:800 8px var(--font-heading);letter-spacing:0.04em;white-space:nowrap;font-variant-numeric:tabular-nums">XP {{ fx.xpTxt }}</span></span></span>
+                    </button>
+                  </sc-for>
+                </div>
+                <div style="display:flex;align-items:baseline;gap:10px;padding:12px 14px 2px"><span style="font:900 18px var(--font-heading);letter-spacing:0.06em;color:{{ jSelCol }}">{{ jSelName }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em">LV <span style="font-size:16px">{{ jSelLv }}</span></span></div>
+                <div style="padding:6px 14px 4px;font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">ATTRIBUTES</div>
+                <sc-for list="{{ jAttrs }}" as="a" hint-placeholder-count="5">
+                  <div style="display:grid;grid-template-columns:96px minmax(0,1fr) 28px;align-items:center;gap:10px;padding:7px 14px">
+                    <span style="font:800 12px var(--font-heading);letter-spacing:0.08em">{{ a.k }}</span>
+                    <span style="display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:3px"><sc-for list="{{ a.pips }}" as="p" hint-placeholder-count="10"><span style="height:10px;background:{{ p.c }}"></span></sc-for></span>
+                    <span style="font:800 13px var(--font-heading);font-variant-numeric:tabular-nums;text-align:left">{{ a.v }}</span>
+                  </div>
+                </sc-for>
+                <div style="margin-top:8px;border-top:2px solid #3a3836;padding:12px 14px;display:flex;flex-direction:column;gap:7px">
+                  <span style="display:flex;justify-content:space-between;gap:8px;font:800 11px var(--font-heading);letter-spacing:0.1em;color:#ffd23a;white-space:nowrap"><span>REPUTATION · MERU</span><span style="color:#fff">{{ jRepTxt }}</span></span>
+                  <span style="display:block;height:8px;background:#2a2826"><span style="display:block;height:100%;width:{{ jRepW }};background:#38bdf8"></span></span>
+                </div>
+                <div style="border-top:2px solid #3a3836;padding:12px 14px;display:flex;flex-direction:column;gap:7px">
+                  <span style="display:flex;justify-content:space-between;gap:8px;font:800 11px var(--font-heading);letter-spacing:0.1em;color:#ffd23a;white-space:nowrap"><span>KARMA</span><span style="color:#fff">{{ jKarmaTxt }}</span></span>
+                  <span style="position:relative;display:block;height:10px;background:linear-gradient(90deg,#ec3013,#3a3836 50%,#ffd23a)"><span style="position:absolute;left:50%;top:-3px;width:2px;height:16px;background:#fff"></span><span style="position:absolute;left:{{ jKarmaL }};top:-5px;width:14px;height:20px;margin-left:-7px;background:#fff;box-shadow:0 0 0 2px #000"></span></span>
+                  <span style="display:flex;justify-content:space-between;font:700 10px var(--font-heading);letter-spacing:0.1em;color:#8a847e"><span>OUTLAW</span><span>HERO</span></span>
+                </div>
+              </sc-if>
+              <sc-if value="{{ jQuests }}" hint-placeholder-val="{{ false }}">
+                <sc-for list="{{ jQuestList }}" as="qq" hint-placeholder-count="2">
+                  <div style="border-bottom:2px solid #3a3836">
+                    <div style="display:flex;align-items:stretch;justify-content:space-between;background:{{ qq.headBg }}">
+                      <div style="display:flex;flex-direction:column;gap:5px;padding:10px 14px;min-width:0;flex:1">
+                        <span style="display:flex;align-items:center;gap:6px 8px;flex-wrap:wrap;min-height:20px"><span style="font:900 15px var(--font-heading);letter-spacing:0.04em;line-height:1.2;display:block">{{ qq.title }}</span><span style="padding:2px 6px;font:800 9px var(--font-heading);letter-spacing:0.12em;background:{{ qq.kindBg }};color:#000">{{ qq.kind }}</span></span>
+                        <span style="display:flex;align-items:center;gap:8px"><span style="flex:1;display:block;height:6px;background:#2a2826"><span style="display:block;height:100%;width:{{ qq.pctW }};background:#7cff9b"></span></span><span style="font:800 11px var(--font-heading);font-variant-numeric:tabular-nums">{{ qq.prog }}</span></span>
+                      </div>
+                      <button onClick="{{ qq.toggle }}" style="flex:none;width:96px;min-height:56px;padding:0 10px;border:0;border-left:2px solid #3a3836;border-radius:0;background:{{ qq.btnBg }};color:{{ qq.btnFg }};font:800 11px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;display:{{ qq.btnDisp }};align-items:center;gap:6px">{{ qq.btnLabel }}</button>
+                    </div>
+                    <sc-for list="{{ qq.steps }}" as="s" hint-placeholder-count="3">
+                      <div style="display:grid;grid-template-columns:22px minmax(0,1fr);gap:8px;align-items:start;padding:7px 14px 7px 16px;background:{{ s.bg }}">
+                        <span style="width:16px;height:16px;margin-top:1px;border:2px solid {{ s.col }};background:{{ s.fill }};display:flex;align-items:center;justify-content:center;font:900 11px var(--font-heading);color:#000;box-sizing:border-box">{{ s.mark }}</span>
+                        <span style="font:{{ s.font }};line-height:1.35;color:{{ s.fg }};text-wrap:pretty">{{ s.text }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-for>
+              </sc-if>
+            </div>
+            </sc-if>
+          </sc-if>
+          <sc-if value="{{ tabMap }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column">
+              <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;padding:10px 14px"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">MERU · TRAINING GROUNDS</span><span style="font:900 18px var(--font-heading);letter-spacing:0.04em;line-height:1.1">COMBAT YARD</span></div>
+                <div style="display:flex;flex-direction:column;justify-content:center;gap:3px;padding:8px 14px;border-left:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">GRID</span><span style="font:800 16px var(--font-heading);font-variant-numeric:tabular-nums">{{ mapGrid }}</span></div>
+                <div style="display:flex;flex-direction:column;justify-content:center;gap:3px;padding:8px 14px;border-left:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">HEADING</span><span style="font:800 16px var(--font-heading);font-variant-numeric:tabular-nums">{{ mapHead }}</span></div>
+              </div>
+              <button onClick="{{ splitToggle }}" style="margin:10px 12px 0;min-height:52px;padding:0 16px;border:0;border-radius:0;background:{{ splitBtnBg }};color:{{ splitBtnFg }};font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px" style-hover="opacity:0.9"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18"></rect><path d="M3 12h18"></path></svg>{{ splitBtnTxt }}</button>
+              <div style="padding:12px 12px 6px">
+                <div style="display:grid;grid-template-columns:18px minmax(0,1fr);grid-template-rows:18px auto;gap:0">
+                  <div></div>
+                  <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));font:800 10px var(--font-heading);color:#8a847e;letter-spacing:0.1em"><sc-for list="{{ mapCols }}" as="c" hint-placeholder-count="6"><span style="padding-left:4px">{{ c }}</span></sc-for></div>
+                  <div style="display:grid;grid-template-rows:repeat(6,minmax(0,1fr));font:800 10px var(--font-heading);color:#8a847e"><sc-for list="{{ mapRows }}" as="r" hint-placeholder-count="6"><span style="padding-top:3px">{{ r }}</span></sc-for></div>
+                  <div style="position:relative;width:100%;aspect-ratio:1;border:2px solid #ffd23a;overflow:hidden;background:#0f1412;background-image:linear-gradient(rgba(255,255,255,0.10) 2px, transparent 2px),linear-gradient(90deg,rgba(255,255,255,0.10) 2px, transparent 2px),linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.04) 1px, transparent 1px);background-size:16.666% 16.666%,16.666% 16.666%,4.1666% 4.1666%,4.1666% 4.1666%">
+                    <div style="position:absolute;left:50%;top:50%;width:10%;aspect-ratio:1;transform:translate(-50%,-50%);border:2px solid rgba(255,255,255,0.18);pointer-events:none"></div>
+                    <div style="position:absolute;left:{{ mapPl }};top:{{ mapPt }};width:110%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:2px dashed rgba(236,48,19,0.55);pointer-events:none"></div>
+                    <div style="position:absolute;left:{{ mapPl }};top:{{ mapPt }};width:49.5%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:2px solid rgba(124,255,155,0.35);pointer-events:none"></div>
+                    <sc-for list="{{ mapCrates }}" as="c" hint-placeholder-count="0">
+                      <div style="position:absolute;left:{{ c.l }};top:{{ c.t }};width:12px;height:12px;margin:-6px 0 0 -6px;background:#9a6b3c;box-shadow:0 0 0 2px #000, inset 0 0 0 2px #6b4a2c"></div>
+                    </sc-for>
+                    <sc-for list="{{ mapDummies }}" as="dm" hint-placeholder-count="0">
+                      <div style="position:absolute;left:{{ dm.l }};top:{{ dm.t }};width:0;height:0">
+                        <div style="position:absolute;left:-8px;top:-8px;width:16px;height:16px;transform:rotate(45deg);background:{{ dm.c }};box-shadow:0 0 0 2px #000"></div>
+                        <div style="position:absolute;left:12px;top:-9px;font:900 11px var(--font-heading);color:{{ dm.c }};text-shadow:0 0 3px #000">{{ dm.n }}</div>
+                      </div>
+                    </sc-for>
+                    <div style="position:absolute;left:{{ mapPl }};top:{{ mapPt }};width:0;height:0">
+                      <div style="position:absolute;left:-46px;top:-46px;width:92px;height:92px;border-radius:50%;background:conic-gradient(from -32deg, rgba(255,210,58,0.32) 0 64deg, transparent 64deg);transform:rotate({{ mapRot }})"></div>
+                      <div style="position:absolute;left:-13px;top:-13px;width:26px;height:26px;border-radius:50%;border:2px solid #ffd23a;animation:scopePulse 1.4s ease-in-out infinite"></div>
+                      <svg width="22" height="22" viewBox="0 0 22 22" style="position:absolute;left:-11px;top:-11px;transform:rotate({{ mapRot }});overflow:visible"><path d="M11 1 L19 19 L11 14.5 L3 19 Z" fill="#ffd23a" stroke="#000" stroke-width="2" stroke-linejoin="miter"></path></svg>
+                    </div>
+                    <div style="position:absolute;right:8px;top:8px;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,0.65);border:2px solid #3a3836;display:flex;align-items:center;justify-content:center;pointer-events:none"><svg width="22" height="22" viewBox="0 0 22 22"><path d="M11 2 L15 11 L11 9.5 L7 11 Z" fill="#ec3013"></path><path d="M11 20 L7 11 L11 12.5 L15 11 Z" fill="#cfcac4"></path></svg><span style="position:absolute;top:-16px;font:900 10px var(--font-heading);color:#ec3013">N</span></div>
+                    <div style="position:absolute;left:8px;bottom:8px;display:flex;flex-direction:column;gap:3px;pointer-events:none"><span style="display:block;width:min(25%,999px);min-width:40px;height:6px;background:repeating-linear-gradient(90deg,#fff 0 50%,#000 50% 100%);border:1px solid #000"></span><span style="font:800 10px var(--font-heading);color:#fff;text-shadow:0 0 3px #000">10 m</span></div>
+                  </div>
+                </div>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:2px solid #3a3836;margin-top:auto">
+                <div style="display:flex;align-items:center;gap:8px;padding:9px 14px;border-right:2px solid #3a3836;border-bottom:2px solid #3a3836;font:800 11px var(--font-heading);letter-spacing:0.08em"><svg width="14" height="14" viewBox="0 0 22 22"><path d="M11 1 L19 19 L11 14.5 L3 19 Z" fill="#ffd23a"></path></svg>YOU</div>
+                <div style="display:flex;align-items:center;gap:8px;padding:9px 14px;border-bottom:2px solid #3a3836;font:800 11px var(--font-heading);letter-spacing:0.08em"><span style="width:10px;height:10px;transform:rotate(45deg);background:#ec3013"></span>DUMMIES {{ mapUp }}</div>
+                <div style="display:flex;align-items:center;gap:8px;padding:9px 14px;border-right:2px solid #3a3836;font:800 11px var(--font-heading);letter-spacing:0.08em"><span style="width:10px;height:10px;background:#9a6b3c"></span>CRATES {{ mapCrateN }}</div>
+                <div style="display:flex;align-items:center;gap:8px;padding:9px 14px;font:800 11px var(--font-heading);letter-spacing:0.08em"><span style="width:14px;height:14px;border-radius:50%;border:2px dashed #ec3013"></span>LASER RANGE</div>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ notScopeTab }}" hint-placeholder-val="{{ true }}"><button onClick="{{ turretToggle }}" style="margin-top:auto;display:flex;justify-content:space-between;align-items:center;padding:0 14px;min-height:44px;flex:none;gap:10px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#0b0a0a;color:#8a847e;font:800 11px var(--font-heading);letter-spacing:0.1em;text-align:left;cursor:pointer" style-hover="background:#1d1b1a"><span style="white-space:nowrap">DUMMY SHOOTS BACK</span><span style="color:{{ turretFg2 }}">{{ turretLabel }}</span></button></sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showScope }}" hint-placeholder-val="{{ false }}">
+      <div id="scopePanel" style="position:absolute;left:50%;transform:translateX(-50%);bottom:12px;width:min(640px,calc(100% - 24px));background:#0b0a0a;border:2px solid #3a3836;color:#fff;display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;align-items:stretch;border-bottom:2px solid #3a3836">
+          <div style="display:flex;flex-direction:column;gap:4px;padding:10px 14px;min-width:0">
+            <span style="font-family:var(--font-heading);font-weight:800;letter-spacing:0.12em;font-size:11px;line-height:1.2;color:#ffd23a;white-space:nowrap">CALLED SHOTS · TIME STOPPED</span>
+            <span style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span style="font-family:var(--font-heading);font-weight:800;font-size:18px;line-height:1.1;white-space:nowrap">{{ scTarget }}</span><span style="padding:3px 7px;font:800 10px var(--font-heading);letter-spacing:0.1em;background:{{ scChipBg }};color:{{ scChipFg }};white-space:nowrap">{{ scChip }}</span></span>
+          </div>
+          <div style="display:flex">
+            <button onClick="{{ openMenu }}" aria-label="Menu" style="width:52px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#0b0a0a;display:flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:#1d1b1a"><span style="display:flex;animation:scopePulse 1.1s ease-in-out infinite"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffd23a" stroke-width="2.4" stroke-linecap="square"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg></span></button>
+            <button onClick="{{ scopePrev }}" aria-label="Previous target" style="width:52px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#0b0a0a;color:#fff;font:800 16px var(--font-heading);cursor:pointer" style-hover="background:#1d1b1a">◀</button>
+            <button onClick="{{ scopeNext }}" aria-label="Next target" style="width:52px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#0b0a0a;color:#fff;font:800 16px var(--font-heading);cursor:pointer" style-hover="background:#1d1b1a">▶</button>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-bottom:2px solid #3a3836">
+          <sc-for list="{{ scopeZones }}" as="z" hint-placeholder-count="4">
+            <button onClick="{{ z.pick }}" style="position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:12px 12px 10px;min-height:96px;border:0;border-right:2px solid #3a3836;border-top:4px solid {{ z.col }};border-radius:0;background:#0b0a0a;color:#fff;text-align:left;cursor:pointer" style-hover="background:#1d1b1a">
+              <span style="display:flex;justify-content:space-between;width:100%;font-family:var(--font-heading);font-weight:800;font-size:12px;letter-spacing:0.1em;line-height:1.2;color:{{ z.col }}"><span>{{ z.name }}</span><span style="color:#fff">{{ z.q }}</span></span>
+              <span style="font-family:var(--font-heading);font-weight:800;font-size:26px;line-height:1;font-variant-numeric:tabular-nums">{{ z.pct }}</span>
+              <span style="display:block;width:100%;height:4px;background:#2a2826"><span style="display:block;height:100%;width:{{ z.pct }};background:{{ z.col }}"></span></span>
+              <span style="font-size:11px;color:#cfcac4;line-height:1.25">{{ z.line }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="display:flex;align-items:stretch;justify-content:space-between;gap:10px">
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;min-width:0;flex-wrap:wrap">
+            <span style="font-family:var(--font-heading);font-weight:800;letter-spacing:0.12em;font-size:11px;line-height:1.2;color:#ffd23a;white-space:nowrap">QUEUE · {{ scopeCost }} EN EACH</span>
+            <span style="display:flex;gap:6px">
+              <sc-for list="{{ scSlots }}" as="q" hint-placeholder-count="3">
+                <span style="min-width:52px;height:30px;padding:0 8px;display:flex;align-items:center;border:2px solid {{ q.col }};font:800 11px var(--font-heading);letter-spacing:0.08em;color:{{ q.fg }}">{{ q.label }}</span>
+              </sc-for>
+            </span>
+          </div>
+          <div style="display:flex">
+            <button onClick="{{ scopeClear }}" style="padding:0 16px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#0b0a0a;color:#fff;font:800 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer" style-hover="background:#1d1b1a">CLEAR</button>
+            <button onClick="{{ scopeExec }}" style="padding:0 18px;min-width:112px;min-height:52px;border:0;border-radius:0;background:{{ execBg }};color:#fff;font:800 14px var(--font-heading);letter-spacing:0.08em;text-align:left;cursor:pointer">{{ execLabel }}</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ showRows }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;left:16px;right:16px;bottom:16px;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end">
+      <div style="display:flex;flex-wrap:wrap">
+        <span style="height:34px;display:flex;align-items:center;padding:0 10px;margin:0 -2px -2px 0;border:2px solid #3a3836;background:var(--color-accent);color:#fff;font:800 12px var(--font-heading)">Play</span>
+        <sc-for list="{{ demoList }}" as="m" hint-placeholder-count="5">
+          <button onClick="{{ m.pick }}" style="height:34px;padding:0 12px;margin:0 -2px -2px 0;border:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:700 12px var(--font-body);cursor:pointer" style-hover="background:#2a2826">{{ m.label }}</button>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-wrap:wrap">
+        <sc-for list="{{ toggleList }}" as="m" hint-placeholder-count="4">
+          <button onClick="{{ m.pick }}" style="height:34px;padding:0 12px;margin:0 -2px -2px 0;border:2px solid #3a3836;border-radius:0;background:{{ m.bg }};color:{{ m.fg }};font:700 12px var(--font-body);cursor:pointer">{{ m.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+  </div>
+
+  <div style="display:{{ sideDisp }};flex-direction:column;min-height:0">
+    <div style="padding:14px 18px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:10px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#ffd23a">Feel preset</div>
+      <div style="display:flex;flex-wrap:wrap">
+        <sc-for list="{{ presetList }}" as="p" hint-placeholder-count="5">
+          <button onClick="{{ p.pick }}" style="height:32px;padding:0 10px;margin:0 -2px -2px 0;border:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:700 12px var(--font-body);cursor:pointer" style-hover="background:#2a2826">{{ p.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="flex:1;min-height:0;overflow-y:auto">
+      <sc-for list="{{ sections }}" as="sec" hint-placeholder-count="5">
+        <div style="border-bottom:2px solid #3a3836;padding:14px 18px 16px;display:flex;flex-direction:column;gap:10px">
+          <div style="font-family:var(--font-heading);font-size:16px;font-weight:800;color:#ffd23a">{{ sec.title }}</div>
+          <sc-for list="{{ sec.sliders }}" as="c">
+            <div style="display:grid;grid-template-columns:120px minmax(0,1fr) 44px;align-items:center;gap:10px">
+              <span style="font-size:12px;font-weight:700;color:#fff">{{ c.label }}</span>
+              <input type="range" min="{{ c.min }}" max="{{ c.max }}" step="{{ c.step }}" value="{{ c.value }}" onInput="{{ c.onInput }}" style="width:100%">
+              <span style="font-size:12px;text-align:right;font-variant-numeric:tabular-nums">{{ c.shown }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+    </div>
+    <div style="border-top:2px solid #3a3836;display:grid;grid-template-columns:1fr 1fr">
+      <button onClick="{{ save }}" style="grid-column:1 / span 2;display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:var(--color-accent);color:#fff;border:0;border-bottom:2px solid #3a3836;border-radius:0;font:800 16px var(--font-heading);text-align:left;cursor:pointer" style-hover="background:var(--color-accent-600)"><span>{{ saveLabel }}</span><span>→</span></button>
+      <button onClick="{{ copy }}" style="padding:12px 18px;background:#000;color:#fff;border:0;border-right:2px solid #3a3836;border-radius:0;font:700 13px var(--font-body);text-align:left;cursor:pointer" style-hover="background:#2a2826">{{ copyLabel }}</button>
+      <button onClick="{{ reset }}" style="padding:12px 18px;background:#000;color:#fff;border:0;border-radius:0;font:700 13px var(--font-body);text-align:left;cursor:pointer" style-hover="background:#2a2826">Reset to default</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const SECTIONS = [
+  { title: 'Movement', sliders: [['walk', 'Walk speed', 2, 12, 0.1], ['run', 'Run speed', 4, 16, 0.1], ['accel', 'Acceleration', 4, 40, 0.5], ['turn', 'Turn speed', 4, 30, 0.5], ['jump', 'Jump height', 4, 14, 0.1], ['gravity', 'Gravity', 10, 50, 0.5]] },
+  { title: 'Dodge roll', sliders: [['dodgeDist', 'Distance', 1.5, 8, 0.1], ['dodgeDur', 'Duration', 0.1, 0.5, 0.01], ['dodgeCd', 'Cooldown', 0, 1.5, 0.05]] },
+  { title: 'Sword', sliders: [['windup', 'Wind-up', 0, 0.4, 0.01], ['swingTime', 'Swing time', 0.1, 0.6, 0.01], ['reach', 'Reach', 1.2, 4.5, 0.1], ['arc', 'Arc width', 0.5, 3, 0.05], ['lunge', 'Lunge distance', 0, 6, 0.1], ['comboWindow', 'Combo window', 0.2, 1.5, 0.05], ['swordDmg', 'Damage', 5, 60, 1], ['finisher', 'Third hit ×', 1, 3, 0.05], ['hitStop', 'Hit freeze', 0, 0.2, 0.01], ['trail', 'Slash trail', 0, 1, 1]] },
+  { title: 'Laser pistol', sliders: [['fireRate', 'Shots / second', 1, 15, 0.5], ['boltSpeed', 'Bolt speed', 15, 120, 1], ['homing', 'Homing', 0, 20, 0.5], ['energyCost', 'Energy / shot', 0, 25, 1], ['energyRegen', 'Energy regen', 0, 60, 1], ['recoil', 'Recoil', 0, 2, 0.05], ['laserDmg', 'Damage', 2, 40, 1]] },
+  { title: 'Camera and feel', sliders: [['camDist', 'Distance', 3, 16, 0.1], ['camPitch', 'Height angle', 0.05, 1.2, 0.01], ['camFollow', 'Follow tightness', 2, 20, 0.5], ['fov', 'Field of view', 40, 80, 1], ['shake', 'Screen shake', 0, 1, 0.05]] },
+];
+const PRESETS = {
+  def: { label: 'Default' },
+  snappy: { label: 'Snappy', t: { accel: 32, turn: 24, windup: 0.08, swingTime: 0.18, comboWindow: 0.55, dodgeDur: 0.18, dodgeDist: 3.6, dodgeCd: 0.3, hitStop: 0.05, fireRate: 9, camFollow: 14 } },
+  heavy: { label: 'Heavy', t: { walk: 5, run: 7.5, accel: 9, turn: 8, windup: 0.32, swingTime: 0.36, reach: 3.2, swordDmg: 45, finisher: 1.8, hitStop: 0.14, shake: 0.6, fireRate: 3.5, laserDmg: 28, recoil: 1.8, camFollow: 6 } },
+  arcade: { label: 'Arcade', t: { walk: 8, run: 12, accel: 26, jump: 11, gravity: 30, lunge: 5, arc: 2.2, homing: 16, energyCost: 2, energyRegen: 45, fireRate: 11, dodgeDist: 5.5 } },
+  souls: { label: 'Deliberate', t: { walk: 4.6, run: 7, accel: 10, windup: 0.26, swingTime: 0.3, lunge: 1.2, comboWindow: 0.45, dodgeDur: 0.32, dodgeDist: 4.5, dodgeCd: 0.7, homing: 3, energyCost: 12, energyRegen: 18 } },
+};
+class Component extends DCLogic {
+  state = { trk: (() => { try { return localStorage.getItem('8gates.trackQuest.v1'); } catch (e) { return null; } })(), hot: (() => { try { return localStorage.getItem('meru.hotItem.v1') || 'health'; } catch (e) { return 'health'; } })(), menu: null, pad: (typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches) || innerWidth < 900, st: null, used: false, w: innerWidth, tune: null, hud: { hero: (() => { try { const v = localStorage.getItem('meru.combatHero.v1'); return v === 'hope' || v === 'noble' ? v : 'player'; } catch (e) { return 'player'; } })(), en: 100, combo: 0, hits: 0, dps: 0, best: 0, slow: false, lock: true, moving: false }, saved: false, copied: false };
+  stageRef = React.createRef();
+  async componentDidMount() {
+    const mod = await import(new URL('move-lab.js', document.baseURI).href);
+    this.mod = mod; this.lab = await mod.createLab({ container: this.stageRef.current, onState: hud => this.setState({ hud }) });
+    this.setState({ tune: this.lab.getTune() }); addEventListener('resize', this.onRs);
+    this.onKey = e => { if (e.code === 'KeyI') { this.state.menu ? this.closeMenu() : this.openMenu(); } else if (e.code === 'Escape' && this.state.menu) this.closeMenu(); }; addEventListener('keydown', this.onKey);
+  }
+  bindZoom() { const el = this.stageRef.current; if (!el || this.zoomBound) return; this.zoomBound = true; let pd = 0; const cv = () => el.querySelector('canvas'), dist = t => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY), onCv = e => [...e.touches].every(tt => tt.target === cv());
+    el.addEventListener('touchstart', e => { if (e.touches.length === 2 && onCv(e)) pd = dist(e.touches); }, { passive: true });
+    el.addEventListener('touchmove', e => { if (e.touches.length === 2 && pd && onCv(e)) { const nd = dist(e.touches); if (nd > 0 && this.lab && this.lab.zoomBy) this.lab.zoomBy(pd / nd); pd = nd; } }, { passive: true });
+    el.addEventListener('touchend', e => { if (e.touches.length < 2) pd = 0; }, { passive: true }); }
+  componentDidUpdate() { if (this.lab && !this.zoomBound) this.bindZoom(); if (!this.bsIv) this.bsIv = setInterval(() => this.setState({ bsAlt: !this.state.bsAlt }), 3000); if (!this.camIv) { const t0 = performance.now(); this.camIv = setInterval(() => { const c = Math.round(((performance.now() - t0) / 1000 % 40) * 5) / 5, pt = Math.floor((performance.now() - t0) / 1000 % 70); if (c !== this.state.ct || pt !== this.state.pt) this.setState({ ct: c, pt }); }, 200); } if (!this.clkIv) this.clkIv = setInterval(() => { if (this.state.cam || this.state.menu) return; this.setState(s => { const c = s.clk || { min: 600, day: 1, spd: 1 }, m = c.min + c.spd; return { clk: { ...c, min: m % 1440, day: c.day + (m >= 1440 ? 1 : 0) } }; }); }, 1000); }
+  componentWillUnmount() { clearInterval(this.bsIv); clearInterval(this.clkIv); clearInterval(this.camIv); this.lab && this.lab.destroy(); removeEventListener('resize', this.onRs); removeEventListener('keydown', this.onKey); }
+  onRs = () => this.setState({ w: innerWidth });
+  openMenu(tab = 'items') { this.setState({ menu: { tab, sub: (this.state.menu && this.state.menu.sub) || 'melee' } }); if (this.lab) this.lab.setPaused(tab !== 'scope'); }
+  closeMenu() { const h = this.state.hud; this.setState({ menu: null }); if (!this.lab) return; this.lab.setPaused(false); if (h && h.scope && h.scope.on) this.lab.toggleScope(); }
+  camCancel() { const p = this.camPrev; if (p) { this.set('camDist', p.dist); this.set('camPitch', p.pitch); } this.setState({ cam: false }); this.lab && this.lab.setPaused(false); }
+  enterScopeTab() { const h = this.state.hud; if (this.lab && !(h.scope && h.scope.on)) this.lab.toggleScope(); this.openMenu('scope'); }
+  set(k, v) { const tune = { ...this.state.tune, [k]: v }; this.setState({ tune, saved: false }); this.lab && this.lab.setTune({ [k]: v }); }
+  renderVals() {
+    const S = this.state, t = S.tune || {}, h = S.hud, lab = this.lab, mod = this.mod, on = '#ffffff', off = '#000000';
+    const ndLive = (() => { if (!lab || !lab.mapData) return 999; try { const m = lab.mapData(); let b = 999; for (const [x, z, dn] of m.d) if (!dn) b = Math.min(b, Math.hypot(x - m.p[0], z - m.p[1])); return Math.round(b); } catch (e) { return 999; } })(), nd = Math.min(h.nd ?? 999, ndLive), scopeMode = nd <= 30 && !h.two && (h.hero || 'player') === 'player', inLaser = nd <= (h.laserR || 22), pulse = nd < 8 ? '0.45s' : nd < 15 ? '0.75s' : nd < 22 ? '1.05s' : '1.6s';
+    const shortH = (typeof innerHeight !== 'undefined' ? innerHeight : 800) < 560, sideSheet = shortH && (typeof innerWidth !== 'undefined' ? innerWidth : 0) > (typeof innerHeight !== 'undefined' ? innerHeight : 0) * 1.4, scopeAvail = scopeMode || !!(h.scope && h.scope.on), MU = S.menu, mapD = ((MU && MU.tab === 'map') || S.split) && lab ? lab.mapData() : null, mp = v => (50 + v / 40 * 100).toFixed(1) + '%';
+    const blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    return {
+      stageRef: this.stageRef, hud: h,
+      ...(() => { const m = lab && lab.mapData ? lab.mapData() : null; if (!m || S.cam || S.menu) return { cbOn: !S.cam && !S.menu, cbTicks: [], cbDirs: [], cbBld: [], cbNpc: [] }; const [px, pz, f] = m.p, FOV = Math.PI / 2, wr = a => Math.atan2(Math.sin(a), Math.cos(a)), X = rel => (50 + rel / FOV * 50);
+        const DIRS = [['N', Math.PI], ['NE', 3 * Math.PI / 4], ['E', Math.PI / 2], ['SE', Math.PI / 4], ['S', 0], ['SW', -Math.PI / 4], ['W', -Math.PI / 2], ['NW', -3 * Math.PI / 4]];
+        const cbDirs = DIRS.map(([t, b]) => { const rel = wr(b - f); return Math.abs(rel) > FOV ? null : { t, l: X(rel).toFixed(1) + '%', fs: t.length === 1 ? '13px' : '10px', c: t.length === 1 ? '#ffd23a' : '#8a847e' }; }).filter(Boolean);
+        const cbTicks = []; for (let k = 0; k < 72; k++) { const b = k * Math.PI / 36, rel = wr(b - f); if (Math.abs(rel) <= FOV) cbTicks.push({ l: X(rel).toFixed(1) + '%', h: k % 9 === 0 ? '0px' : k % 3 === 0 ? '8px' : '4px', c: '#3a3836' }); }
+        const BLD = [['BARRACKS', 0, -34], ['ARMORY', 30, -6], ['GATE', -30, 8]];
+        const cbBld = BLD.map(([t, x, z]) => { const dd = Math.hypot(x - px, z - pz), rel = wr(Math.atan2(x - px, z - pz) - f); if (Math.abs(rel) > FOV) return null; const near = Math.max(0, Math.min(1, 1 - (dd - 10) / 40)); return { t, l: X(rel).toFixed(1) + '%', c: near > 0.5 ? '#fff' : '#8a847e', lo: Math.max(0, 1 - Math.abs(rel) / 0.45).toFixed(2) }; }).filter(Boolean);
+        const cbNpc = m.d.filter(q => !q[2]).map(([x, z]) => { const dd = Math.hypot(x - px, z - pz), rel = wr(Math.atan2(x - px, z - pz) - f); if (Math.abs(rel) > FOV) return null; const o = Math.max(0.3, Math.min(1, 1 - (dd - 4) / 26)), dur = Math.max(0.3, Math.min(2.4, 0.25 + dd * 0.06 + Math.abs(rel) * 0.9)); return { l: X(rel).toFixed(1) + '%', c: '#ec3013', o: o.toFixed(2), anim: 'scopePulse ' + dur.toFixed(2) + 's ease-in-out infinite' }; }).filter(Boolean);
+        return { cbOn: true, cbTicks, cbDirs, cbBld, cbNpc }; })(),
+      cbTap: () => this.setState(s => ({ split: !s.split, pad: !s.split ? true : s.pad })),
+      mHp: h.hp ?? 100, mHpW: (h.hp ?? 100) + '%', mEn: h.en ?? 100, mEnW: (h.en ?? 100) + '%',
+      scTarget: h.scope && h.scope.target ? h.scope.target + ' · ' + h.scope.dist + ' m' : 'NO TARGET', scChip: !h.scope || !h.scope.target ? 'NONE IN RANGE' : h.scope.inRange ? (h.scope.sweet ? 'SWEET SPOT' : 'IN RANGE') : 'OUT OF RANGE',
+      scChipBg: h.scope && h.scope.inRange ? (h.scope.sweet ? '#7cff9b' : '#ffd23a') : 'var(--color-accent)', scChipFg: h.scope && h.scope.inRange ? '#000000' : '#ffffff',
+      scSlots: [0, 1, 2].map(i => { const n = h.scope && h.scope.queue[i], z = n && h.scope.zones.find(q => q.name === n); return { label: n || '—', col: z ? z.col : '#3a3836', fg: z ? z.col : '#5a5550' }; }),
+      menuOn: !!MU, menuBackdrop: () => this.closeMenu(), stopProp: e => e.stopPropagation(), menuClose: e => { blur(e); this.closeMenu(); }, openMenu: e => { blur(e); this.openMenu(); },
+      tabs: [...(scopeAvail ? [['scope', 'SCOPE']] : []), ['items', 'ITEMS'], ['weapons', 'WEAPONS'], ['journal', 'JOURNAL'], ['map', 'MAP']].map(([k, l]) => { const on = MU && MU.tab === k; return { label: l, bg: on ? 'var(--color-accent)' : '#0b0a0a', fg: '#ffffff', pick: e => { blur(e); if (k === 'scope') { this.enterScopeTab(); return; } if (lab) lab.setPaused(true); this.setState({ menu: { ...MU, tab: k } }); } }; }),
+      notScopeTab: !(MU && MU.tab === 'scope'), turretDisp: MU && MU.tab === 'scope' ? 'none' : 'flex', topBtnDisp: (MU && MU.tab === 'scope') || S.pad ? 'none' : 'flex',
+      menuMaxH: MU && MU.tab === 'scope' ? (sideSheet ? '100%' : '62%') : '100%', tabH: MU && MU.tab === 'scope' && shortH ? '38px' : '54px', zMinH: shortH ? '52px' : '84px', zPad: shortH ? '6px 8px 6px' : '10px 10px 8px', zGap: shortH ? '4px' : '6px', zPctFs: shortH ? '18px' : '24px', zCap: shortH ? 'none' : 'block', scRowPad: shortH ? '6px 12px' : '10px 14px', execH: shortH ? '42px' : '52px',
+      tabLs: scopeAvail ? '0.02em' : '0.06em', tabN: scopeAvail ? 5 : 4, tabPad: scopeAvail ? '4px' : '10px', tabFs: scopeAvail ? (MU && MU.tab === 'scope' && sideSheet ? '9px' : '11px') : '12px', tabScope: !!MU && MU.tab === 'scope', menuId: MU && MU.tab === 'scope' ? (sideSheet ? 'scopeSide' : 'scopePanel') : 'menuPanel',
+      menuBd: MU && MU.tab === 'scope' ? 'transparent' : 'rgba(0,0,0,0.55)', menuJ: MU && MU.tab === 'scope' ? 'flex-start' : 'flex-end', menuA: MU && MU.tab === 'scope' ? 'flex-end' : 'stretch', menuPe: MU && MU.tab === 'scope' ? 'none' : 'auto',
+      menuW: MU && MU.tab === 'scope' ? (sideSheet ? 'min(54%,470px)' : 'min(640px,100%)') : 'min(440px,100%)', menuH: MU && MU.tab === 'scope' ? (sideSheet ? 'calc(100% - 70px)' : 'auto') : '100%', menuBt: MU && MU.tab === 'scope' ? '2px solid #3a3836' : '0',
+      scopeExecTab: e => { blur(e); if (!lab) return; lab.scopeExecute(); this.setState({ scoped: true }); this.setState({ menu: null }); lab.setPaused(false); },
+      tabJournal: !!MU && MU.tab === 'journal', jOptsOn: !!MU && MU.jv === 'opts', jHelpOn: !!MU && MU.jv === 'help', jMainOn: !(MU && (MU.jv === 'opts' || MU.jv === 'help')),
+      jOptsBg: MU && MU.jv === 'opts' ? '#2a2826' : '#0b0a0a', jHelpBg: MU && MU.jv === 'help' ? '#2a2826' : '#0b0a0a', jLoadBg: '#0b0a0a', jSaveBg: '#0b0a0a',
+      jOpts: e => { blur(e); this.setState({ menu: { ...MU, jv: MU && MU.jv === 'opts' ? null : 'opts' } }); }, jHelp: e => { blur(e); this.setState({ menu: { ...MU, jv: MU && MU.jv === 'help' ? null : 'help' } }); },
+      optList: [
+        { label: 'SOUND', sub: 'Music and effects', v: S.muted ? 'OFF' : 'ON', col: S.muted ? '#8a847e' : '#7cff9b', f: e => { blur(e); const m = !S.muted; this.setState({ muted: m }); lab && lab.setMuted && lab.setMuted(m); } },
+        { label: 'PHONE CONTROLS', sub: 'Joystick and on-screen buttons', v: S.pad ? 'ON' : 'OFF', col: S.pad ? '#7cff9b' : '#8a847e', f: e => { blur(e); this.setState({ pad: !S.pad }); } },
+        { label: 'CAMERA', sub: 'Set and lock the view and zoom', v: 'SET', col: '#ffd23a', f: e => { blur(e); this.closeMenu(); setTimeout(() => { const b = document.querySelector('[aria-label=Camera]'); b && b.click(); }, 50); } },
+        { label: 'RESET CAMERA', sub: 'Back to the classic view', v: 'RESET', col: '#ffd23a', f: e => { blur(e); this.set('camDist', 8.2); this.set('camPitch', 0.42); try { const k = 'meru.combatTune.v1', o = JSON.parse(localStorage.getItem(k) || '{}'); localStorage.setItem(k, JSON.stringify({ ...o, camDist: 8.2, camPitch: 0.42 })); } catch (er) {} } },
+        { label: 'SLOW MOTION', sub: 'Everything at 25% speed', v: h.slow ? 'ON' : 'OFF', col: h.slow ? '#7cff9b' : '#8a847e', f: e => { blur(e); lab && lab.setSlow && lab.setSlow(!h.slow); } }],
+      helpPhone: [['JOYSTICK', 'Drag anywhere on the left half to move'], ['EYE', 'Hold + drag to look around (snaps back) · tap for first-person'], ['BAG', 'Tap = items · hold 1 s = use pinned item'], ['SWITCH', 'Swap fox: Ben · Hope · Noble'], ['1', 'Melee · hold = power hit'], ['2', 'Range · hold = power shot'], ['3', 'Jump · twice = double jump · hold + push = roll'], ['SCOPE / ☰', 'Between 1 and 3: weapons, or the scope when it flashes'], ['PINCH', 'Zoom the camera']].map(([k, v]) => ({ k, v })),
+      helpKeys: [['WASD', 'Move · E run'], ['J / click', 'Melee · hold = power'], ['K / right-click', 'Shoot · hold = power'], ['Space', 'Jump · 2× double'], ['Shift', 'Roll'], ['Q', 'Scope'], ['I', 'Menu'], ['N', 'Switch fox']].map(([k, v]) => ({ k, v })),
+      jMsgOn: !!S.jMsg, jMsg: S.jMsg || '',
+      jSave: e => { blur(e); try { const cur = localStorage.getItem('8gates.save.v1') || '{}'; localStorage.setItem('8gates.save.slot1', cur); localStorage.setItem('8gates.save.slot1.at', new Date().toLocaleString()); this.setState({ jMsg: 'SAVED · ' + new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) }); } catch (er) { this.setState({ jMsg: 'COULD NOT SAVE' }); } clearTimeout(this.jMsgT); this.jMsgT = setTimeout(() => this.setState({ jMsg: '' }), 2500); },
+      jLoad: e => { blur(e); let s = null; try { s = localStorage.getItem('8gates.save.slot1'); } catch (er) {} if (!s) { this.setState({ jMsg: 'NO SAVE YET · PRESS SAVE FIRST' }); clearTimeout(this.jMsgT); this.jMsgT = setTimeout(() => this.setState({ jMsg: '' }), 2500); return; } try { localStorage.setItem('8gates.save.v1', s); } catch (er) {} location.reload(); },
+      jOrbit: e => { blur(e); location.href = encodeURI('Meru Spacedock.dc.html'); }, ...(() => { if (!(MU && MU.tab === 'journal')) return { jTabs: [], jChar: false, jQuests: false, jQuestList: [], jAttrs: [] };
+          let sv = {}; try { sv = JSON.parse(localStorage.getItem('8gates.save.v1') || '{}') || {}; } catch (e) {} const fl = sv.flags || {}, st = sv.stats || {}, xp = sv.xp || 0; let lv = 1; while (xp >= 50 * lv * (lv + 1)) lv++; const lo = 50 * (lv - 1) * lv, hi = 50 * lv * (lv + 1);
+          const jt = MU.jt || 'char', selK = h.hero || 'player', BASE = { player: { str: 7, spd: 5, smt: 6, aim: 5, hrt: 8 }, hope: { str: 4, spd: 3, smt: 8, aim: 3, hrt: 7 }, noble: { str: 5, spd: 8, smt: 6, aim: 8, hrt: 7 } }, AT = { ...BASE[selK], ...((st.attrParty || {})[selK] || {}) }, attrs = [['STRENGTH', AT.str], ['SPEED', AT.spd], ['SMARTS', AT.smt], ['AIM', AT.aim], ['HEART', AT.hrt]];
+          const rep = st.repMeru ?? 10, rTier = rep < 15 ? 'NEWCOMER' : rep < 40 ? 'KNOWN' : rep < 70 ? 'TRUSTED' : 'HERO OF MERU', ka = ((st.karmaParty || {})[selK]) ?? (selK === 'player' ? (st.karma ?? 0) : 10), kTier = ka <= -60 ? 'OUTLAW' : ka <= -20 ? 'ROUGH' : ka < 20 ? 'NEUTRAL' : ka < 60 ? 'GOOD' : 'HERO';
+          const TR = S.trk || null, trSteps = [['Hit a dummy', (h.hits || 0) > 0], ['Land a 3-hit combo', (h.best || 0) >= 3], ['Equip the STAFF (WEAPONS · RANGED)', h.wr === 'staff'], ['Fire a called shot from the SCOPE', !!S.scoped]];
+          const QS = [{ id: 'training', title: 'TRAINING GROUNDS', kind: 'TUTORIAL', kindBg: '#38bdf8', steps: trSteps.map(([text, done]) => ({ text, done })) },
+            { id: 'meru', title: 'MERU', kind: 'MAIN', kindBg: '#ffd23a', steps: [['Go EAST to ARENA, talk to KING MIGHT', 'tournamentEntered'], ['WIN the TOURNAMENT', 'tournamentWon'], ['Search the RUINS for PRINCE MAX', 'maxFreed'], ['Tell MAX you are ready to go', 'maxFollowing'], ['Take MAX NORTH to the CASTLE', 'maxHome'], ['Take the FLAGSHIP up from the CREST PAD in the TOWN SQUARE', 'finaleBriefed'], ['Hold the PLANET DEFENSE BASE: the road up behind the BARRACKS', 'finaleWon']].map(([text, f]) => ({ text, done: !!fl[f] })) }];
+          return { jTabs: [['char', 'CHARACTER'], ['quests', 'QUESTS']].map(([k, l]) => ({ label: l, bg: jt === k ? '#ffd23a' : '#141312', fg: jt === k ? '#000' : '#ffd23a', pick: e => { blur(e); this.setState({ menu: { ...MU, jt: k } }); } })), jChar: jt === 'char', jQuests: jt === 'quests',
+            jSelName: selK === 'hope' ? 'HOPE' : selK === 'noble' ? 'NOBLE' : 'BEN', jSelCol: '#ffd23a', jSelLv: (() => { const px = selK === 'player' ? xp : ((st.xpParty || {})[selK] ?? 0); let l2 = 1; while (px >= 50 * l2 * (l2 + 1)) l2++; return l2; })(),
+            jFoxes: [['player', 'BEN', '#ffd23a'], ['hope', 'HOPE', '#38bdf8'], ['noble', 'NOBLE', '#ec3013']].map(([k, nm, col]) => { const sel = (h.hero || 'player') === k, px = k === 'player' ? xp : ((st.xpParty || {})[k] ?? 0); let l2 = 1; while (px >= 50 * l2 * (l2 + 1)) l2++; const lo2 = 50 * (l2 - 1) * l2, hi2 = 50 * l2 * (l2 + 1), hp = sel ? (h.hp ?? 100) : ((st.hpParty || {})[k] ?? 100);
+            return { name: nm, col, lv: l2, hp: hp + ' / 100', hpW: hp + '%', xpTxt: (px - lo2) + ' / ' + (hi2 - lo2), xpW: Math.round((px - lo2) / (hi2 - lo2) * 100) + '%', bg: sel ? '#ffd23a' : '#0b0a0a', fg: sel ? '#000' : '#fff', trk: sel ? 'rgba(0,0,0,0.25)' : '#2a2826', hpC: sel ? '#000' : '#7cff9b', xpC: sel ? '#000' : '#ffd23a', col: '#ffd23a',
+              pick: e => { blur(e); if (lab && lab.setHero) { lab.setHero(k); try { localStorage.setItem('meru.combatHero.v1', k); } catch (er) {} } } }; }),
+            jAttrs: attrs.map(([k, v]) => ({ k, v, pips: Array.from({ length: 10 }, (_, i) => ({ c: i < v ? '#ffffff' : '#2a2826' })) })),
+            jRepTxt: rTier + ' · ' + rep, jRepW: Math.max(2, rep) + '%', jKarmaTxt: kTier + ' · ' + (ka > 0 ? '+' : '') + ka, jKarmaL: (50 + ka / 2) + '%',
+            jQuestList: QS.map(Q => { const n = Q.steps.filter(s => s.done).length, next = Q.steps.findIndex(s => !s.done), on = TR === Q.id, all = next < 0;
+              return { title: Q.title, kind: Q.kind, kindBg: Q.kindBg, prog: n + ' / ' + Q.steps.length, pctW: Math.round(n / Q.steps.length * 100) + '%', headBg: on ? '#1a0b09' : '#0b0a0a', btnDisp: all ? 'none' : 'flex', btnLabel: on ? '✕ UNSET COURSE' : '➤ SET COURSE', btnBg: on ? '#2a2826' : '#ec3013', btnFg: '#fff',
+                toggle: e => { blur(e); const v = on ? null : Q.id; try { v ? localStorage.setItem('8gates.trackQuest.v1', v) : localStorage.removeItem('8gates.trackQuest.v1'); } catch (er) {} this.setState({ trk: v }); },
+                steps: Q.steps.map((s, i) => { const isNext = i === next; return { text: s.text, mark: s.done ? '✓' : isNext && on ? '➤' : '', col: s.done ? '#7cff9b' : isNext ? (on ? '#ec3013' : '#ffd23a') : '#3a3836', fill: s.done ? '#7cff9b' : 'transparent', fg: s.done ? '#8a847e' : isNext ? '#fff' : '#8a847e', font: isNext ? '800 13px var(--font-body)' : '600 12px var(--font-body)', bg: isNext && on ? '#140807' : 'transparent' }; }) }; }) }; })(),
+      tabWeapons: !!MU && MU.tab === 'weapons', tabItems: !!MU && MU.tab === 'items', tabMap: !!MU && MU.tab === 'map',
+      scopeReady: false, nearLabel: nd + ' m', toScope: e => { blur(e); this.closeMenu(); if (lab && !(h.scope && h.scope.on)) lab.toggleScope(); },
+      subTabs: [['melee', 'MELEE'], ['ranged', 'RANGED'], ['wear', 'WEARABLE']].map(([k, l]) => { const on = MU && MU.sub === k; return { label: l, bg: on ? '#ffd23a' : '#141312', fg: on ? '#000000' : '#ffd23a', pick: e => { blur(e); this.setState({ menu: { ...MU, sub: k } }); } }; }),
+      heroTabs: [['player', 'BEN'], ['hope', 'HOPE'], ['noble', 'NOBLE']].map(([k, l]) => { const sel = (h.hero || 'player') === k; return { label: l, bg: sel ? '#ffffff' : '#0b0a0a', fg: sel ? '#000000' : '#8a847e', pick: e => { blur(e); lab && lab.setHero(k); } }; }),
+      twoNote: !!MU && ((MU.sub === 'ranged' && !!h.two && h.hero !== 'noble') || (h.hero !== 'player' && h.hero && MU.sub !== 'wear')), twoLine: h.hero === 'hope' ? 'Hope is blind: she fights by sound and touch. Holds: 1 = ECHOLOCATION PULSE · 2 = WAVE OF SOUND · 3 in the air = CANE VAULT · 3 on the ground, stick still = FEEDBACK SHIELD. Always on: SIXTH SENSE (roll on the tell = perfect dodge) · STEADY GROUND · SUNGLASSES.' : h.hero === 'noble' ? 'Noble keeps his hands on the wheels. 3 = rocket jump. In the air: tap 3 = CRASH (more damage the higher he is), hold 3 = HOVER. Holds: 1 = SPIN-OUT · 2 = ARMREST LAUNCHERS.' : 'Two-handed: button 2 is ' + (h.wm === 'racket' ? 'the 360° return spin' : 'the left-hand punch') + '. Pick another melee weapon to use a ranged one.',
+      subList: !MU ? [] : ((h.hero === 'noble' || h.hero === 'hope') && MU.sub !== 'wear' && lab) ? Object.entries((h.hero === 'hope' ? lab.hopeSets() : lab.nobleSets())[MU.sub === 'melee' ? 'melee' : 'ranged']).map(([k, o]) => { const hp = h.hero === 'hope', sel = (MU.sub === 'melee' ? (hp ? h.hm : h.nm) : (hp ? h.hr : h.nr)) === k, m = MU.sub === 'melee'; return { name: o.name, line: o.line, tag: sel ? 'EQUIPPED' : '', op: '1', key: k, st: m ? [['DAMAGE', o.stats[0]], ['SPEED', o.stats[1] / 4], ['REACH', o.stats[2] / 1.5]] : [['DAMAGE', o.stats[0]], ['RATE', o.stats[1]], ['RANGE', o.stats[2]]], pick: e => { blur(e); hp ? lab.equipHope(m ? k : null, m ? null : k) : lab.equipNoble(m ? k : null, m ? null : k); } }; }).map(w => { const IC = {"spike":"M12 5a7 7 0 1 0 0 14a7 7 0 1 0 0-14zM12 1v4M12 19v4M1 12h4M19 12h4M4 4l3 3M17 17l3 3M4 20l3-3M17 7l3-3","ram":"M3 9h10l8 3-8 3H3zM3 15v5M13 9V5","horn":"M3 10v4h4l6 5V5L7 10zM16 8a5 5 0 0 1 0 8M19 5a9 9 0 0 1 0 14","shoe":"M4 6h6v7l8 2v4H4zM4 16h14","boot":"M3 3h7v9l10 3v6H3zM3 17h17","homing":"M12 2v4M12 18v4M2 12h4M18 12h4M12 8a4 4 0 1 0 0 8a4 4 0 1 0 0-8z","sweep":"M4 4l12 16M3 18c4 3 10 3 16-1","staff":"M4 20L20 4M7 21l-4-4M21 7l-4-4","tap":"M8 2v14M4 20h4M11 20h3M17 20h3","beat":"M9 18V5l11-2v13M9 18a3 3 0 1 1-6 0a3 3 0 1 1 6 0M20 16a3 3 0 1 1-6 0a3 3 0 1 1 6 0","echo":"M3 12h6M13 8a5 5 0 0 1 0 8M17 5a9 9 0 0 1 0 14","tip":"M3 21L13 11M16 8a2 2 0 1 0 0.1 0M13 11c3 3 6 3 8 1","bell":"M6 17V11a6 6 0 0 1 12 0v6l2 2H4zM10 21h4","drone":"M3 12c3-4 6-4 9 0c3-4 6-4 9 0M12 12v4M10 18h4"}, sel = w.tag === 'EQUIPPED', pc = v => Math.round(Math.max(0, Math.min(1, v)) * 100) + '%'; return { ...w, icon: IC[w.key], stats: w.st.map(([k, v]) => ({ k, w: pc(v) })), bg: sel ? '#1d1b1a' : '#0b0a0a', nc: sel ? '#ffd23a' : '#ffffff', ic: sel ? '#ffd23a' : '#8a847e', tagBg: sel ? '#ffd23a' : 'transparent', tagFg: sel ? '#000000' : '#8a847e' }; }) : (MU.sub === 'melee' ? [['sword', 'SWORD', 'Balanced. 3-hit rhythm combo.'], ['racket', 'TENNIS RACKET', 'Sword damage. 2 = 360° spin that returns shots. Two-handed.'], ['gloves', 'BOXING GLOVES', '4× faster, half damage, 25% less reach. 2 = left punch. Two-handed.'], ['spear', 'SPEAR', 'Sword speed, 50% more reach, 25% less damage.'], ['hammer', 'WAR HAMMER', 'Half speed, 25% more reach. Smashes crates.']].map(([k, name, line]) => { const sel = h.wm === k; return { name, line, tag: sel ? 'EQUIPPED' : '', op: '1', bg: sel ? '#ffffff' : '#000000', fg: sel ? '#000000' : '#ffffff', pick: e => { blur(e); lab && lab.equip(k, null); }, key: k }; })
+        : MU.sub === 'ranged' ? [['laser', 'LASER', 'Fast homing bolts.'], ['staff', 'STAFF', 'Exploding fireballs. +25% damage, half the rate. Half damage to anyone right beside the blast.'], ['scatter', 'SCATTER GUN', '5 short beams at half damage each. Short range, half the rate.'], ['ice', 'ICE GUN', '20% damage, 25% slower. Slows and sticks. Freezes 5 s at half and at 20% life.'], ['rocket', 'ROCKET LAUNCHER', 'Triple damage, blast area, 3 s of fire. 4× slower.']].map(([k, name, line]) => { const sel = h.wr === k && !h.two; return { name, line, tag: sel ? 'EQUIPPED' : '', op: h.two ? '0.4' : '1', bg: sel ? '#ffffff' : '#000000', fg: sel ? '#000000' : '#ffffff', pick: e => { blur(e); if (!h.two && lab) lab.equip(null, k); }, key: k }; })
+        : [['armor', 'LIGHT ARMOR', 'Takes 15% less damage.'], ['gauntlets', 'LIGHT GAUNTLETS', 'Melee hits 10% harder.'], ['boots', 'LIGHT BOOTS', 'Moves 10% faster.']].map(([k, name, line]) => { const on = !!(h.wear && h.wear[k]); return { name, line, tag: on ? 'WORN' : 'TAP TO WEAR', op: '1', bg: on ? '#ffffff' : '#000000', fg: on ? '#000000' : '#ffffff', pick: e => { blur(e); lab && lab.wear(k, !on); }, key: k }; })).map(w => { const IC = {"sword":"M14.5 17.5L3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2","racket":"M15 3a6 6 0 1 0 0 12a6 6 0 1 0 0-12zM10.8 13.2L3 21","gloves":"M6 10V7a4 4 0 0 1 8 0v1h1a3 3 0 0 1 3 3v3a6 6 0 0 1-6 6H9a3 3 0 0 1-3-3zM6 17h11","spear":"M3 21L16 8M14 4l6-1-1 6z","hammer":"M3 21l9-9M9 6l6-3 6 6-3 6z","laser":"M2 9h14v6H2zM16 12h6M5 15v4","staff":"M5 21L14 12M17 3a4 4 0 1 1 0 8a4 4 0 1 1 0-8z","scatter":"M2 10h9v5H2zM11 11l10-5M11 12.5h10M11 14l10 5","ice":"M12 2v20M4 6l16 12M20 6L4 18","rocket":"M2 10h14l5 2-5 2H2zM6 10V7M6 14v3","armor":"M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z","gauntlets":"M7 21v-8l-3-3V6h4v4M8 6V3h3v7M11 4h3v6M14 5h3v8l-2 8","boots":"M7 3h5v9l7 3v4H5V3zM5 19h14"}, SM = {"sword":[1,1,1],"racket":[1,1,1],"gloves":[0.5,4,0.75],"spear":[0.75,1,1.5],"hammer":[1,0.5,1.25]}, SR = {"laser":[1,1,1],"staff":[1.25,0.5,1],"scatter":[2.5,0.5,0.3],"ice":[0.2,0.75,1],"rocket":[3,0.25,1]}, sel = w.tag === 'EQUIPPED' || w.tag === 'WORN', pc = v => Math.round(Math.min(1, v) * 100) + '%';
+        const stats = SM[w.key] ? [['DAMAGE', SM[w.key][0]], ['SPEED', SM[w.key][1] / 4], ['REACH', SM[w.key][2] / 1.5]] : SR[w.key] ? [['DAMAGE', SR[w.key][0] / 3], ['RATE', SR[w.key][1]], ['RANGE', SR[w.key][2]]] : [];
+        return { ...w, icon: IC[w.key], stats: stats.map(([k, v]) => ({ k, w: pc(v) })), bg: sel ? '#1d1b1a' : '#0b0a0a', nc: sel ? '#ffd23a' : '#ffffff', ic: sel ? '#ffd23a' : '#8a847e', tagBg: sel ? '#ffd23a' : 'transparent', tagFg: sel ? '#000000' : '#8a847e' }; }),
+      nHealth: h.inv ? h.inv.health : 0, nPep: h.inv ? h.inv.pep : 0, nCell: h.inv ? h.inv.cell : 0,
+      opHealth: h.inv && h.inv.health > 0 ? '1' : '0.4', opPep: h.inv && h.inv.pep > 0 ? '1' : '0.4', opCell: h.inv && h.inv.cell > 0 ? '1' : '0.4',
+      pepLine: h.pep > 0 ? 'Active: ' + h.pep + ' s left.' : '30% faster for 30 seconds.',
+      useHealth: e => { blur(e); lab && lab.useItem('health'); }, usePep: e => { blur(e); lab && lab.useItem('pep'); }, useCell: e => { blur(e); lab && lab.useItem('cell'); },
+      mapDummies: mapD ? mapD.d.map(([x, z, dn], n) => ({ l: mp(x), t: mp(z), c: dn ? '#6b6560' : '#ec3013', n: n + 1 })) : [], mapCrates: mapD ? mapD.c.map(([x, z]) => ({ l: mp(x), t: mp(z) })) : [],
+      mapPl: mapD ? mp(mapD.p[0]) : '50%', mapPt: mapD ? mp(mapD.p[1]) : '50%', mapRot: mapD ? (Math.atan2(Math.sin(mapD.p[2]), -Math.cos(mapD.p[2])) * 180 / Math.PI).toFixed(0) + 'deg' : '0deg',
+      splitBtnTxt: S.split ? 'EXIT MINIMAP VIEW' : 'PLAY WITH MINIMAP', splitBtnBg: S.split ? '#2a2826' : '#ffd23a', splitBtnFg: S.split ? '#fff' : '#000', splitClose: e => { blur(e); this.setState({ split: false }); }, splitToggle: e => { blur(e); const v = !S.split; this.setState({ split: v, pad: v ? true : S.pad, menu: null }); lab && lab.setPaused(false); },
+      mapCols: ['A', 'B', 'C', 'D', 'E', 'F'], mapRows: ['1', '2', '3', '4', '5', '6'],
+      mapGrid: mapD ? 'ABCDEF'[Math.max(0, Math.min(5, Math.floor((mapD.p[0] + 20) / (40 / 6))))] + (Math.max(0, Math.min(5, Math.floor((mapD.p[1] + 20) / (40 / 6)))) + 1) : '—',
+      mapHead: mapD ? (() => { const deg = ((Math.atan2(Math.sin(mapD.p[2]), -Math.cos(mapD.p[2])) * 180 / Math.PI) + 360) % 360; return ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.round(deg / 45) % 8] + ' ' + Math.round(deg) + '°'; })() : '—',
+      mapUp: mapD ? mapD.d.filter(x => !x[2]).length + ' / ' + mapD.d.length + ' UP' : '', mapCrateN: mapD ? mapD.c.length : 0,
+      turretToggle: e => { blur(e); lab && lab.setTurret(!h.turret); }, turretBg: h.turret ? '#ffffff' : '#000000', turretFg: h.turret ? '#000000' : '#ffffff', turretFg2: h.turret ? '#7cff9b' : '#8a847e', turretLabel: h.turret ? 'ON' : 'OFF',
+      titleDisp: S.w < 640 ? 'none' : 'flex', ...(() => { const colW = S.w < 900 ? S.w : S.w - 380, wide = colW >= 700, barH = wide ? 58 : 108, now = new Date(), hr = now.getHours(); let cr = 50; try { const sv = JSON.parse(localStorage.getItem('8gates.save.v1') || 'null'); if (sv && sv.gold != null) cr = sv.gold; } catch (e) {}
+        return { barHpFlex: wide ? '0 0 190px' : '1 1 120px', barQuestOrder: wide ? 1 : 5, barTimeOrder: wide ? 2 : 6, barQuestBasis: wide ? '0px' : '60%', barQuestTop: wide ? '0' : '2px solid #3a3836', showWeaponsWord: wide, tPad: wide ? '8px 12px' : '7px 15px 7px 10px', tAlign: wide ? 'flex-start' : 'flex-end', tBorderR: wide ? '2px solid #3a3836' : '0', tMinW: wide ? '112px' : '95px', tLblFs: wide ? '10px' : '8.5px', tClkFs: wide ? '20px' : '17px', tAmFs: wide ? '11px' : '9.5px', wordBtnW: wide ? '58px' : '48px', camBtnW: wide ? '70px' : '58px', btnTop: (barH + 44) + 'px', stickTop: (barH + 70) + 'px',
+          barHp: h.hp ?? 100, barHpW: (h.hp ?? 100) + '%', barEn: h.en ?? 100, barEnW: (h.en ?? 100) + '%', barQuestLabel: S.trk === 'meru' ? 'Course · Meru' : S.trk === 'training' ? 'Course · Training Grounds' : 'Quest · Meru Training Grounds', barQuestText: S.trk === 'meru' ? (() => { let fl = {}; try { fl = (JSON.parse(localStorage.getItem('8gates.save.v1') || '{}') || {}).flags || {}; } catch (e) {} const ST = [['Go EAST to ARENA, talk to KING MIGHT', 'tournamentEntered'], ['WIN the TOURNAMENT', 'tournamentWon'], ['Search the RUINS for PRINCE MAX', 'maxFreed'], ['Tell MAX you are ready to go', 'maxFollowing'], ['Take MAX NORTH to the CASTLE', 'maxHome'], ['Take the FLAGSHIP up from the CREST PAD in the TOWN SQUARE', 'finaleBriefed'], ['Hold the PLANET DEFENSE BASE: the road up behind the BARRACKS', 'finaleWon']]; const nx = ST.find(([, f]) => !fl[f]); return nx ? '➤ ' + nx[0] : 'Meru is done with you. The way on is wherever you left the ship.'; })() : S.trk === 'training' ? '➤ ' + ([['Hit a dummy', (h.hits || 0) > 0], ['Land a 3-hit combo', (h.best || 0) >= 3], ['Equip the STAFF (WEAPONS · RANGED)', h.wr === 'staff'], ['Fire a called shot from the SCOPE', !!S.scoped]].find(([, dn]) => !dn) || ['Training complete!'])[0] : 'Train with the dummies', barCr: Number(cr).toLocaleString('en-US'),
+          ...(() => { const ck = S.clk || { min: 600, day: 1, spd: 1 }, mm = Math.floor(ck.min) % 1440, h24 = Math.floor(mm / 60), h12 = h24 % 12 || 12, MON = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'], dd = ((ck.day - 1) % 336), mon = MON[Math.floor(dd / 28)], dn = dd % 28 + 1;
+            return { barClock: h12 + ':' + String(mm % 60).padStart(2, '0'), barAmPm: h24 < 12 ? 'AM' : 'PM', barDateLabel: S.hourPop ? '+' + S.hourPop + ' HOUR' + (S.hourPop > 1 ? 'S' : '') : ((S.ct || 0) % 40) >= 30 ? 'SPEED TIME' : mon + ' ' + dn, barSpeedBg: S.hourPop ? '#2a1310' : '#000',
+              barSpeed: e => { blur(e); this.setState(s => { const c = s.clk || { min: 600, day: 1, spd: 1 }, m = c.min + 60; return { clk: { ...c, spd: 1, min: m % 1440, day: c.day + (m >= 1440 ? 1 : 0) }, hourPop: (s.hourPop || 0) + 1 }; }); clearTimeout(this.hpT); this.hpT = setTimeout(() => this.setState({ hourPop: 0 }), 1400); } }; })(),
+          ...(() => { const tu = S.tune || {}, cd = tu.camDist ?? 8.2, cp = tu.camPitch ?? 0.42, setC = (k, v) => this.set(k, v), PR = [['CLOSE', 5.8, 0.3], ['CLASSIC', 8.2, 0.42], ['WIDE', 11, 0.55], ['HIGH', 12.5, 0.95]], cur = lab && lab.getCam ? lab.getCam() : { dist: cd, pitch: cp };
+          return { ...(() => { const HOT = { health: ['HEALTH', '#7cff9b'], pep: ['PEP', '#ffd23a'], cell: ['CELL', '#38bdf8'] }, hk = HOT[S.hot] ? S.hot : 'health', inv = h.inv || {};
+          return { ...(() => { const port = S.w < 600, colW0 = S.w < 900 ? S.w : S.w - 380, bH = colW0 >= 700 ? 58 : 108, pw = colW0 - 16, ph = Math.max(80, ((typeof innerHeight !== 'undefined' ? innerHeight : 800) - bH) / 2 - 20), mm = lab && lab.mapData ? lab.mapData() : null, sc = 22, scX = pw > ph ? sc * pw / ph : sc, scZ = ph > pw ? sc * ph / pw : sc, mpx = v => (50 + v / scX * 50).toFixed(1) + '%', mpz = v => (50 + v / scZ * 50).toFixed(1) + '%', mp = mpx;
+            const DIG = [8, 6], CR = mm ? mm.c : [], DM = mm ? mm.d : [], px = mm ? mm.p[0] : 0, pz = mm ? mm.p[1] : 4, near = (a, b, r) => Math.hypot(a - px, b - pz) < r;
+            let msg = null; if (near(DIG[0], DIG[1], 2.2)) msg = ['DIG HERE', 'something is buried', '#ffd23a', '#000']; else if (DM.some(([x, z, dn]) => !dn && near(x, z, 3))) msg = ['STRIKE!', '1 · MELEE', '#ec3013', '#fff']; else if (CR.some(([x, z]) => near(x, z, 2.4))) msg = ['SMASH IT', 'crates break', '#9a6b3c', '#fff'];
+            const dots = [...CR.map(([x, z]) => ({ l: mpx(x), t: mpz(z), s: '6px', m: '-3px', c: '#9a6b3c', r: '0', tf: 'none' })), ...DM.map(([x, z, dn]) => ({ l: mpx(x), t: mpz(z), s: '7px', m: '-3.5px', c: dn ? '#6b6560' : '#ec3013', r: '0', tf: 'rotate(45deg)' })), { l: mpx(DIG[0]), t: mpz(DIG[1]), s: '8px', m: '-4px', c: '#ffd23a', r: '50%', tf: 'none' }];
+            return { stageT: S.split ? '50%' : '0px', bandTop: bH + 'px', bandH: 'calc((100% - ' + bH + 'px) / 2)', splitDisp: S.split ? 'block' : 'none', mmT: (bH + 8) + 'px', eyeL: 'calc(max(22px, env(safe-area-inset-left)) + 125px)', eyeB: 'max(20px, env(safe-area-inset-bottom))', bagL: 'calc(max(22px, env(safe-area-inset-left)) + 123px)', bagB: 'calc(max(20px, env(safe-area-inset-bottom)) + 54px)',
+              mmL: '8px', mmR: '8px', mmB: 'calc((100% - ' + bH + 'px) / 2 + 10px)', mmH: 'auto', mmShowMap: !msg, mmShowMsg: !!msg, mmMsg: msg ? msg[0] : '', mmSub: msg ? msg[1] : '', mmMsgBg: msg ? msg[2] : '#000', mmMsgFg: msg ? msg[3] : '#fff', mmMsgFs: '24px',
+              mmDots: dots, mmPl: mpx(px), mmPt: mpz(pz), mmRot: mm ? (Math.atan2(Math.sin(mm.p[2]), -Math.cos(mm.p[2])) * 180 / Math.PI).toFixed(0) + 'deg' : '0deg' }; })(),
+            heroCol: (h.hero || 'player') === 'hope' ? '#38bdf8' : (h.hero || 'player') === 'noble' ? '#ec3013' : '#ffd23a', heroShort: (h.hero || 'player') === 'hope' ? 'HOPE' : (h.hero || 'player') === 'noble' ? 'NOBLE' : 'BEN', heroNum: (h.hero || 'player') === 'hope' ? '2' : (h.hero || 'player') === 'noble' ? '3' : '1', heroPips: ['player', 'hope', 'noble'].map(k => ({ c: (h.hero || 'player') === k ? '#ffd23a' : '#4a4642' })),
+            heroSwap: e => { blur(e); if (!lab || !lab.setHero) return; const order = ['player', 'hope', 'noble'], cur = h.hero || 'player'; lab.setHero(order[(order.indexOf(cur) + 1) % 3]); try { localStorage.setItem('meru.combatHero.v1', order[(order.indexOf(cur) + 1) % 3]); } catch (er) {} },
+            bagBg: S.bagHeld ? '#ec3013' : '#000', bagRing: S.bagHeld ? '#fff' : 'rgba(255,255,255,0.7)', bagDot: HOT[hk][1], bagN: inv[hk] ?? 0,
+            bagDown: e => { e.preventDefault(); e.stopPropagation(); try { e.currentTarget.setPointerCapture(e.pointerId); } catch (er) {} this.bagFired = false; clearTimeout(this.bagTimer); this.setState({ bagHeld: true }); this.bagTimer = setTimeout(() => { this.bagFired = true; this.setState({ bagHeld: false }); if (lab && lab.useItem) lab.useItem(hk); }, 1000); },
+            bagUp: () => { clearTimeout(this.bagTimer); this.setState({ bagHeld: false }); if (this.bagFired) return; this.openMenu('items'); },
+            bagCancel: () => { clearTimeout(this.bagTimer); this.setState({ bagHeld: false }); },
+            hotList: Object.entries(HOT).map(([k, [l, c]]) => ({ label: l + ' ×' + (inv[k] ?? 0), col: c, bg: k === hk ? c : '#0b0a0a', fg: k === hk ? '#000' : '#fff', pick: e => { blur(e); try { localStorage.setItem('meru.hotItem.v1', k); } catch (er) {} this.setState({ hot: k }); } })) }; })(),
+          ...(() => { const c = S.ct || 0, mapW = c >= 30, menuW = c >= 10 && c < 20, camW = (c >= 3 && c < 6.2) || (c >= 23 && c < 26.2), camTxt = (c >= 3 && c < 4.6) || (c >= 23 && c < 24.6) ? 'CAMERA' : 'ANGLE'; return { mapIcon: !mapW, mapWord: mapW, menuIcon: !menuW, menuWord: menuW, camIcon: !camW, camWord: camW, camWordTxt: camTxt }; })(), camOn: !!S.cam, camBtnBg: S.cam ? '#2a2826' : '#000', camBrB: (S.camSheetH || 200) + 14 + 'px', camMidY: 'calc((100% - ' + (S.camSheetH || 200) + 'px) / 2)',
+            camHint: S.pad ? 'Drag the view to angle it · pinch to zoom · pick a preset, then LOCK' : 'Drag the view to angle it · mouse wheel to zoom · pick a preset, then LOCK',
+            camRead: (8.2 / cur.dist).toFixed(2).replace(/0$/, '') + '× · ' + Math.round(cur.pitch * 57.3) + '°', zoomW: Math.round((1 - (cur.dist - 4) / 12) * 100) + '%', tiltW: Math.round(cur.pitch / 1.2 * 100) + '%',
+            camOpen: e => { blur(e); if (S.cam) { this.camCancel(); return; } if (S.menu) this.setState({ menu: null }); this.camPrev = { dist: cur.dist, pitch: cur.pitch }; this.setState({ cam: true }); lab && lab.setPaused(true); },
+            camCancel: e => { blur(e); this.camCancel(); },
+            zoomIn: e => { blur(e); setC('camDist', Math.max(4, cur.dist - 0.8)); this.forceUpdate(); }, zoomOut: e => { blur(e); setC('camDist', Math.min(16, cur.dist + 0.8)); this.forceUpdate(); },
+            tiltDown: e => { blur(e); setC('camPitch', Math.max(0.06, cur.pitch - 0.08)); }, tiltUp: e => { blur(e); setC('camPitch', Math.min(1.15, cur.pitch + 0.08)); },
+            camPresets: PR.map(([l, dd, pp]) => { const on = Math.abs(cur.dist - dd) < 0.05 && Math.abs(cur.pitch - pp) < 0.02; return { label: l, bg: on ? '#ffd23a' : '#0b0a0a', fg: on ? '#000' : '#fff', pick: e => { blur(e); setC('camDist', dd); setC('camPitch', pp); } }; }),
+            camLock: e => { blur(e); const c = lab && lab.getCam ? lab.getCam() : cur; setC('camDist', c.dist); setC('camPitch', c.pitch); try { const k = 'meru.combatTune.v1', o = JSON.parse(localStorage.getItem(k) || '{}'); localStorage.setItem(k, JSON.stringify({ ...o, camDist: c.dist, camPitch: c.pitch })); } catch (er) {} this.setState({ cam: false, camToast: 3 }); lab && lab.setPaused(false); },
+            cvDown: ev => { ev.preventDefault(); ev.currentTarget.setPointerCapture(ev.pointerId); (this.cvP = this.cvP || new Map()).set(ev.pointerId, { x: ev.clientX, y: ev.clientY }); },
+            cvMove: ev => { const P = this.cvP; if (!P || !P.has(ev.pointerId)) return; const pr = P.get(ev.pointerId); if (P.size >= 2) { const pts = [...P.values()], o = pts.find(p => p !== pr), d0 = Math.hypot(pr.x - o.x, pr.y - o.y), d1 = Math.hypot(ev.clientX - o.x, ev.clientY - o.y); if (d1 > 0 && lab && lab.zoomBy) lab.zoomBy(d0 / d1); } else if (lab) lab.lookBy(ev.clientX - pr.x, ev.clientY - pr.y); P.set(ev.pointerId, { x: ev.clientX, y: ev.clientY }); this.forceUpdate(); },
+            cvUp: ev => { this.cvP && this.cvP.delete(ev.pointerId); }, cvWheel: ev => { if (lab && lab.zoomBy) { lab.zoomBy(1 + Math.max(-0.2, Math.min(0.2, ev.deltaY * 0.0015))); this.forceUpdate(); } } }; })(),
+          barWeapons: e => { blur(e); this.state.menu && this.state.menu.tab === 'weapons' ? this.closeMenu() : this.openMenu('weapons'); }, barQuestTap: e => { blur(e); const MU0 = this.state.menu; if (MU0 && MU0.tab === 'journal') { this.closeMenu(); return; } if (this.state.cam) return; this.setState({ menu: { tab: 'journal', jt: 'quests', sub: (MU0 && MU0.sub) || 'melee' } }); lab && lab.setPaused(true); }, barMap: e => { blur(e); this.state.menu && this.state.menu.tab === 'map' ? this.closeMenu() : this.openMenu('map'); }, barMenu: e => { blur(e); this.state.menu ? this.closeMenu() : this.openMenu('journal'); } }; })(), cols: S.w < 900 ? 'minmax(0,1fr)' : 'minmax(0,1fr) 380px', sideDisp: S.w < 900 ? 'none' : 'flex',
+      padOn: S.pad && !(h.scope && h.scope.on) && !S.cam, padBorder: S.pad ? '#ffd23a' : '#3a3836', padToggle: e => { blur(e); this.setState({ pad: !S.pad }); },
+      showKeys: !(h.scope && h.scope.on) && !S.pad && !S.cam, showRows: !(h.scope && h.scope.on) && !S.pad && !S.cam,
+      stHint: !S.used, stKx: (56.5 + (S.st ? (S.st.kx - S.st.bx) * 0.75 : 0)) + 'px', stKy: (56.5 + (S.st ? (S.st.ky - S.st.by) * 0.75 : 0)) + 'px', stKo: S.st ? '0.95' : '0.7',
+      eyeBg: S.eye ? '#ec3013' : S.pov ? '#ffd23a' : '#000', eyeRing: S.eye || S.pov ? '#ffffff' : 'rgba(255,255,255,0.7)', eyeStroke: S.pov && !S.eye ? '#000000' : '#ffffff',
+      eyeDown: e => { e.preventDefault(); e.stopPropagation(); e.currentTarget.setPointerCapture(e.pointerId); this.eyeX = e.clientX; this.eyeY = e.clientY; this.eye0 = { x: e.clientX, y: e.clientY, t: performance.now() }; this.setState({ eye: true }); },
+      eyeMove: e => { if (this.eyeX == null) return; const dx = e.clientX - this.eyeX, dy = e.clientY - this.eyeY; this.eyeX = e.clientX; this.eyeY = e.clientY; lab && lab.eyeLook && lab.eyeLook(dx, dy); },
+      eyeUp: e => { const s = this.eye0; this.eyeX = null; this.eye0 = null; lab && lab.eyeRelease && lab.eyeRelease(); this.setState({ eye: false }); if (s && e && e.clientX != null && performance.now() - s.t < 260 && Math.hypot(e.clientX - s.x, e.clientY - s.y) < 10 && lab && lab.togglePov) this.setState({ pov: lab.togglePov() }); },
+      stDown: e => { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); const r = e.currentTarget.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top; this.setState({ st: { id: e.pointerId, bx: x, by: y, kx: x, ky: y }, used: true }); lab && lab.setStick(0, 0); },
+      stMove: e => { const st = this.state.st; if (!st || st.id !== e.pointerId) return; const r = e.currentTarget.getBoundingClientRect(); let dx = e.clientX - r.left - st.bx, dy = e.clientY - r.top - st.by; const R = 52, l = Math.hypot(dx, dy); if (l > R) { dx *= R / l; dy *= R / l; } this.setState({ st: { ...st, kx: st.bx + dx, ky: st.by + dy } }); lab && lab.setStick(dx / R, -dy / R); },
+      stUp: e => { this.setState({ st: null }); lab && lab.setStick(0, 0); },
+      ring1: h.ch1 >= 0 ? 'conic-gradient(' + (h.ch1 >= 1 ? '#ffd23a' : '#ffffff') + ' ' + Math.round(Math.max(0, h.ch1) * 360) + 'deg, #3a3836 0)' : 'var(--color-accent)',
+      ring2: h.ch2 >= 0 ? 'conic-gradient(' + (h.ch2 >= 1 ? '#ffd23a' : '#ffffff') + ' ' + Math.round(Math.max(0, h.ch2) * 360) + 'deg, #3a3836 0)' : '#38bdf8',
+      b1d: e => { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); lab && lab.press1(true); }, b1u: e => { lab && lab.press1(false); },
+      b2d: e => { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); lab && lab.press2(true); }, b2u: e => { lab && lab.press2(false); },
+      bsd: e => { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); this.bsFired = false; clearTimeout(this.bsTimer); this.bsTimer = setTimeout(() => { this.bsFired = true; this.openMenu('weapons'); }, 1000); },
+      bsu: e => { clearTimeout(this.bsTimer); if (this.bsFired) return; if (scopeMode) this.enterScopeTab(); else this.openMenu('weapons'); }, bsc: () => clearTimeout(this.bsTimer),
+      ...(() => { const pt = S.pt || 0, slot = pt < 60 ? Math.floor(pt / 10) : -1; return { w1: slot === 0 ? 'MELEE' : '1', w1Fs: slot === 0 ? '10px' : '20px', w2: slot === 1 ? 'RANGED' : '2', w2Fs: slot === 1 ? '11px' : '23px', w3: slot === 2 ? 'JUMP' : '3', w3Fs: slot === 2 ? '11px' : '20px', bsMenuWord: (!scopeMode || !!S.bsAlt) && slot === 3, bsMenuIcon: (!scopeMode || !!S.bsAlt) && slot !== 3, eyeIconOn: slot !== 4, eyeWordOn: slot === 4, bagIconOn: slot !== 5, bagWordOn: slot === 5 }; })(),
+      bsScope: scopeMode && !S.bsAlt, bsMenu: !scopeMode || !!S.bsAlt, bsLabel: scopeMode ? 'Scope' : 'Menu', bsRing: scopeMode ? (inLaser ? '#ec3013' : '#ffd23a') : '#3a3836', bsIcon: '#ffffff',
+      bsAnim: scopeMode ? 'scopePulse ' + pulse + ' ease-in-out infinite' : 'none',
+      b3d: e => { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); lab && lab.press3(true); }, b3u: e => { lab && lab.press3(false); },
+      scopeToggle: e => { blur(e); lab && lab.toggleScope(); }, scopeBorder: h.scope && h.scope.on ? '#ffd23a' : '#3a3836', showScope: !!(h.scope && h.scope.on) && !(MU && MU.tab === 'scope'), notScope: !(h.scope && h.scope.on),
+      scopeTarget: h.scope ? (h.scope.target ? h.scope.target + ' · ' + h.scope.dist + ' m' + (h.scope.inRange ? (h.scope.sweet ? ' · sweet spot' : '') : ' · OUT OF RANGE') : 'No target in range') : '',
+      scopePrev: e => { blur(e); lab && lab.scopeCycle(-1); }, scopeNext: e => { blur(e); lab && lab.scopeCycle(1); },
+      ...(() => { const B = h.scope && h.scope.on && lab && lab.scopeBand ? lab.scopeBand() : null; if (!B) return { scOver: false, scMarks: [] }; const band = Math.max(120, B.Hh - B.top - B.bot), th = band / 1.15, tw = Math.max(70, th * 0.42), dist = h.scope.dist || 0, R = h.laserR || 22, sweet = R * 0.45, rs = Math.min(tw, th) * 0.9, Y = { HEAD: '9%', ARM: '36%', BODY: '56%', LEGS: '86%' };
+          return { scOver: true, sbL: B.left + 'px', sbT: B.top + 'px', sbB: B.bot + 'px', tbW: tw.toFixed(0) + 'px', tbH: th.toFixed(0) + 'px', ...(() => { const ow = B.Ww - B.left, need = ow < 420 ? 96 : 118, cx = Math.min(ow / 2, ow - need - tw / 2 - 8), cxx = Math.max(tw / 2 + 6, cx); return { tbX: cxx.toFixed(0) + 'px', mkL: (cxx + tw / 2 + 4).toFixed(0) + 'px', mkH: ow < 420 ? '28px' : '34px', mkPad: ow < 420 ? '5px' : '8px', mkFs: ow < 420 ? '9.5px' : '11px' }; })(), ringS: rs.toFixed(0) + 'px', ringM: (-rs / 2).toFixed(0) + 'px',
+            scName: h.scope.target || 'NO TARGET', scSweetL: Math.round(sweet / R * 100) + '%', scDistW: Math.min(100, Math.round(dist / R * 100)) + '%', scDistC: h.scope.inRange ? (h.scope.sweet ? '#7cff9b' : '#ffd23a') : '#ec3013', scDistTxt: h.scope.target ? dist + ' M · ' + (h.scope.inRange ? (h.scope.sweet ? 'SWEET SPOT' : 'IN RANGE') : 'OUT OF RANGE') : 'NO TARGET IN RANGE',
+            scMarks: (h.scope.zones || []).map(z => ({ y: 'calc(50% + ' + ((parseFloat(Y[z.name] || '50') / 100 - 0.5) * th).toFixed(0) + 'px)', col: z.col, name: z.name, pct: z.pct + '%', q: (() => { const c = h.scope.queue.filter(qq => qq === z.name).length; return c ? '×' + c : ''; })(), pick: e => { blur(e); lab && lab.scopeAdd(z.key); } })) }; })(),
+      scopeZones: (h.scope ? h.scope.zones : []).map((z, i) => ({ n: i + 1, name: (i + 1) + ' · ' + z.name, q: (() => { const c = h.scope.queue.filter(q => q === z.name).length; return c ? '×' + c : ''; })(), col: z.col, line: z.line, pct: z.pct + '%', pick: e => { blur(e); lab && lab.scopeAdd(z.key); } })),
+      scopeCount: h.scope ? h.scope.queue.length : 0, scopeCost: h.scope ? h.scope.cost : 0, scopeQueue: h.scope && h.scope.queue.length ? h.scope.queue.join('  →  ') : 'Pick up to three shots (1-4)',
+      scopeClear: e => { blur(e); lab && lab.scopeClear(); }, scopeExec: e => { blur(e); if (!lab) return; if (h.scope && h.scope.queue.length) lab.scopeExecute(); else lab.toggleScope(); }, execLabel: h.scope && h.scope.queue.length ? 'ATTACK ↵' : 'BACK', execBg: h.scope && h.scope.queue.length ? 'var(--color-accent)' : '#3a3836', comboLabel: h.combo ? h.combo + ' / 3' + (h.rhythm ? ' · ' + h.rhythm + ' on beat' : '') : '—',
+      keysList: [['WASD', 'move'], ['E', 'run'], ['J / click', 'slash, hold = power'], ['K / right-click', 'shoot, hold = power'], ['Space', 'jump, 2× = double'], ['Hold Space + WASD', 'roll'], ['J Space J', 'sky splitter'], ['Shift', 'roll · Tab target'], ['Arrows / mid-drag', 'camera'], ['Q', 'scope'], ['I', 'menu'], ['N', 'fighter'], ['R', 'reset']].map(([key, label]) => ({ key, label })),
+      demoList: (h.hero === 'hope' ? [['hmelee', 'Melee'], ['hrange', 'Ranged'], ['hecho', 'Hold 1 · Echolocation'], ['hwave', 'Hold 2 · Wave of sound'], ['hvault', 'Hold 3 in air · Vault'], ['hshield', 'Hold 3 · Shield (turret on)']] : h.hero === 'noble' ? [['nmelee', 'Melee'], ['nthrow', 'Throw'], ['spinout', 'Hold 1 · Spin-out'], ['launch', 'Hold 2 · Launchers'], ['hover', 'Hold 3 in air · Hover'], ['crash', 'Tap 3 in air · Crash']] : [['combo', '3-hit rhythm combo'], ['131', '1-3-1 Sky Splitter'], ['power', 'Power hit'], ['pshot', 'Power shot'], ['dodge', 'Roll'], ['jump', 'Double jump']]).map(([k, l]) => ({ label: l, pick: e => { blur(e); lab && lab.demo(k); } })),
+      toggleList: [
+        { label: 'Slow motion 25%', v: h.slow, f: v => lab.setSlow(v) }, { label: 'Lock-on', v: h.lock, f: v => lab.setLock(v) },
+        { label: 'Moving target', v: h.moving, f: v => lab.setMoving(v) }, { label: 'Flick to roll', v: h.flick !== false, f: v => lab.setFlick(v) },
+      ].map(o => ({ label: o.label, bg: o.v ? on : off, fg: o.v ? off : on, pick: e => { blur(e); lab && o.f(!o.v); } })).concat([{ label: 'Reset dummies', bg: off, fg: on, pick: e => { blur(e); lab && lab.resetDummies(); } }]),
+      presetList: Object.entries(PRESETS).map(([k, p]) => ({ label: p.label, pick: e => { blur(e); if (!mod) return; const tune = { ...mod.DEFAULT_TUNE, ...(p.t || {}) }; this.setState({ tune, saved: false }); lab.setTune(tune); } })),
+      sections: SECTIONS.map(sec => ({ title: sec.title, sliders: sec.sliders.map(([k, l, min, max, step]) => { const v = t[k] ?? min; return { label: l, min, max, step, value: v, shown: (max === 1 && min === 0 && step === 1) ? (v ? 'On' : 'Off') : step >= 1 ? String(Math.round(v)) : Number(v).toFixed(step < 0.1 ? 2 : 1), onInput: e => this.set(k, parseFloat(e.target.value)) }; }) })),
+      saveLabel: S.saved ? 'Saved' : 'Save these settings',
+      save: e => { blur(e); lab && lab.save(S.tune); this.setState({ saved: true }); },
+      copyLabel: S.copied ? 'Copied' : 'Copy settings for chat',
+      copy: e => { blur(e); const txt = JSON.stringify(S.tune); (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).catch(() => { const a = document.createElement('textarea'); a.value = txt; document.body.appendChild(a); a.select(); document.execCommand('copy'); a.remove(); }); this.setState({ copied: true }); setTimeout(() => this.setState({ copied: false }), 1600); },
+      reset: e => { blur(e); if (!mod) return; const tune = { ...mod.DEFAULT_TUNE }; this.setState({ tune, saved: false }); lab.setTune(tune); },
+    };
+  }
+}
+</script>
+</body>
+</html>

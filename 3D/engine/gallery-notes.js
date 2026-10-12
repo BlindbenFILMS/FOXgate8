@@ -1,5 +1,5 @@
 // Blind Canvas gallery: visitors' notes and the guest book.
-//  • Leave a note anywhere (☰ → Leave a note here): it floats at that spot as a little card; anyone who walks by sees it
+//  • Leave a note on a COMMENT SPOT (11 Oct: the yellow pads with a YOUR COMMENTS HERE sign, gallery-comments.js; nowhere else): it floats there as a little card; anyone who walks by sees it
 //    open up, and (if "Read notes aloud" is on) hears it read out.
 //  • Leave a note on an artwork: it shows in that artwork's panel, and the artwork's prompt says how many notes it has.
 //  • The guest book: a lectern on the WHY House's porch (it was on the welcome plaza). Sign it; the latest signatures show on its page.
@@ -373,18 +373,27 @@ export async function setupNotes({ G, net, cfg, myName, announce, esc, readAloud
     list.slice(0, 60).forEach(n => wrap.appendChild(noteRow(n, () => openBook())));
     showPanel('Guest book', 'Sign the guest book', wrap, () => { bookOpen = false; });
   }
-  function openCompose() {
-    const [x, y, z] = W.pos();
-    const wrap = el('div'); wrap.appendChild(el('p', 'margin:0;font:400 15px/1.5 ' + FONT, 'Your note stays right here. Anyone who walks by sees it open up and hears it. Add your voice and a photo of yourself if you like; those show once the gallery team approves them.'));
-    const c = composer('What would you like to leave here?', 'Leave the note', async (t, a) => { const r = await post('spot', t, { ...a, p: [+x.toFixed(2), +y.toFixed(2), +z.toFixed(2)] }); return r; });
-    wrap.appendChild(c.f); showPanel('Leave a note', 'A note for this spot', wrap); setTimeout(() => c.ta.focus(), 50);
+  // comments can only be left on a comment spot (the yellow pads with a YOUR COMMENTS HERE sign); each lands somewhere on the pad
+  const padHere = () => (G.comments && G.comments.here()) || null;
+  const onPad = S => { const p = W.pos(), c = Math.cos(S.face), s = Math.sin(S.face); const a = Math.random() * Math.PI * 2, r = Math.random() * Math.min(S.w, S.d) * 0.3;
+    const lx = Math.cos(a) * r, lz = Math.sin(a) * r * 0.6 + 0.15;   // a little towards the front of the pad, away from the sign
+    return [+(S.x + lx * c + lz * s).toFixed(2), +(S.top != null ? S.top : p[1]).toFixed(2), +(S.z - lx * s + lz * c).toFixed(2)]; };
+  function openCompose(S = padHere()) {
+    if (!S) { if (G.openCommentSpots) G.openCommentSpots(); return; }
+    const wrap = el('div'); wrap.appendChild(el('p', 'margin:0;font:400 15px/1.5 ' + FONT, 'Your comment stays here, on the comment spot at ' + S.name + '. Anyone who steps up sees it open and hears it. Add your voice and a photo of yourself if you like; those show once the gallery team approves them.'));
+    const here = visible('spot').filter(q => Math.hypot(q.p[0] - S.x, q.p[2] - S.z) < Math.max(S.w, S.d));
+    if (here.length) { wrap.appendChild(el('div', 'font:800 11px/1 ' + FONT + ';letter-spacing:.14em;text-transform:uppercase;color:#ff9783;margin:14px 0 4px', here.length + (here.length === 1 ? ' comment here' : ' comments here'))); here.slice(0, 30).forEach(q => wrap.appendChild(noteRow(q, () => openCompose(S)))); }
+    const c = composer('What would you like to say?', 'Leave my comment', async (t, a) => { const r = await post('spot', t, { ...a, p: onPad(S) }); return r; });
+    wrap.appendChild(c.f); showPanel('Your comments here 🙂', 'Leave a comment', wrap); setTimeout(() => c.ta.focus(), 50);
   }
   function openSpot(item) {
     const n = notes.get(item.id); if (!n) return;
     const here = visible('spot').filter(q => Math.hypot(q.p[0] - n.p[0], q.p[2] - n.p[2]) < 1.5);
     const wrap = el('div'); here.forEach(q => wrap.appendChild(noteRow(q, () => openSpot(item))));
-    const [x, y, z] = n.p; const c = composer('Reply with a note here…', 'Leave a note', (t, a) => post('spot', t, { ...a, p: [x + (Math.random() - 0.5) * 0.4, y, z + (Math.random() - 0.5) * 0.4] }));
-    wrap.appendChild(c.f); showPanel('Notes left here', here.length > 1 ? here.length + ' notes' : 'A note from ' + n.name, wrap);
+    const S = padHere();   // replying is only on a comment spot; elsewhere you can read old notes
+    if (S) { const c = composer('Reply with a comment here…', 'Leave my comment', (t, a) => post('spot', t, { ...a, p: onPad(S) })); wrap.appendChild(c.f); }
+    else wrap.appendChild(el('p', 'margin:12px 0 0;font:400 14px/1.5 ' + FONT + ';color:' + MUTED, 'To leave your own comment, step onto a comment spot: a yellow pad with a YOUR COMMENTS HERE sign. ☰ → Comment spots takes you to one.'));
+    showPanel('Notes left here', here.length > 1 ? here.length + ' notes' : 'A note from ' + n.name, wrap);
   }
   // artworks: a notes section inside the artwork's panel
   const artKey = a => 'art:' + String(a.title || 'untitled').slice(0, 40) + '@' + Math.round(a.ctr.x) + ',' + Math.round(a.ctr.z);

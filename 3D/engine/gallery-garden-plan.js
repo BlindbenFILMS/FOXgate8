@@ -1,7 +1,7 @@
 // Blind Canvas gallery: the cherry blossom garden's layout (shared by the scenery, which draws it, and the game, which
 // makes it solid). A raised lawn terrace level with the welcome plaza, east of it where the lake used to be.
 export const GARDEN = { x0: -12.4, x1: 92, z0: -58, z1: 58, y: 0, plaza: { x0: -13.2, x1: 7.3, z: 13.6 } };
-export const RING = { x: 40, z: 0, r: 21 };   // the ring path: the name sign arches over its west end, the flags stand on it either side of the way to the museum
+export const RING = { x: 40, z: 0, r: 21 };   // the ring path: the name sign arches over its west end, the flags stand just outside it, either side of the way to the museum
 // the park campus (4 Oct): you start beside the big tree facing the museum; BLIND CAN CINEMA behind you (east), the WHY House on
 // your left (north), the Academy of Music for the Blind on your right (south); two Hope pools either side of the walk to the museum
 export const CAMPUS = {
@@ -10,7 +10,8 @@ export const CAMPUS = {
   amb: { x0: 30.6, x1: 49.4, z0: -57.4, z1: -23.6, O: [40, 0, -24] },   // the AMB building (a buildWing room; door on its north face)
   cinema: { x0: 74, x1: 90, z0: -11, z1: 11 },              // BLIND CAN CINEMA (door on its west face)
   pools: [{ x: 13.5, z: 4.75, yaw: 0 }, { x: 13.5, z: -4.75, yaw: Math.PI }],   // 'Hope Floating in Braille', either side of the walk
-  flags: [[25.15, -14.85, 'bcp'], [25.15, 14.85, 'ora']],
+  flags: [[22.32, -17.68, 'bcp'], [22.32, 17.68, 'ora']],   // (11 Oct: just outside the ring path, not on it)
+  oldFlags: [[25.15, -14.85], [25.15, 14.85]],   // (where they stood: the trees and lanterns were laid out round these; kept so that layout doesn't reshuffle)
 };
 const inRect = (x, z, r, m = 0) => x > r.x0 - m && x < r.x1 + m && z > r.z0 - m && z < r.z1 + m;
 export const onCampus = (x, z, m = 0) => inRect(x, z, CAMPUS.why, m) || inRect(x, z, CAMPUS.amb, m) || inRect(x, z, { x0: CAMPUS.cinema.x0 - 3.2, x1: CAMPUS.cinema.x1, z0: CAMPUS.cinema.z0, z1: CAMPUS.cinema.z1 }, m)
@@ -39,13 +40,13 @@ export function planGarden() {
   // lanterns along the walks, benches round the ring facing the centre tree
   const lanterns = [], benches = [];
   for (const p of paths) { let acc = 6, side = 1; for (let i = 0; i < p.pts.length - 1; i++) { const [ax, az] = p.pts[i], [bx, bz] = p.pts[i + 1], L = Math.hypot(bx - ax, bz - az); for (; acc < L; acc += 11) { const t = acc / L, x = ax + (bx - ax) * t, z = az + (bz - az) * t, nx = -(bz - az) / L, nz = (bx - ax) / L, off = p.w / 2 + 1.1;
-    const lx = x + nx * off * side, lz = z + nz * off * side; side = -side; if (!inPlaza(lx, lz) && !onCampus(lx, lz, 1.2) && !(lx > 64 && Math.abs(lz) < 9) && CAMPUS.flags.every(f => Math.hypot(lx - f[0], lz - f[1]) > 4) && !(Math.abs(lx - 21) < 2 && Math.abs(Math.abs(lz) - 7) < 2)) lanterns.push([lx, lz]); } acc -= L; } }
+    const lx = x + nx * off * side, lz = z + nz * off * side; side = -side; if (!inPlaza(lx, lz) && !onCampus(lx, lz, 1.2) && !(lx > 64 && Math.abs(lz) < 9) && CAMPUS.oldFlags.every(f => Math.hypot(lx - f[0], lz - f[1]) > 4) && !(Math.abs(lx - 21) < 2 && Math.abs(Math.abs(lz) - 7) < 2)) lanterns.push([lx, lz]); } acc -= L; } }
   for (const a of [0.55, 1.35, 2.35, 3.93, 4.71, 5.6]) { const r = RING.r - 2.6; benches.push([RING.x + Math.cos(a) * r, RING.z + Math.sin(a) * r, Math.atan2(-Math.cos(a), -Math.sin(a))]); }
   // the trees: a big old one in the middle of the ring, then many round the walks
   const trees = [[RING.x, RING.z, 19, true]];
   for (let tries = 0; trees.length < 78 && tries < 9000; tries++) {
     const x = -10 + rnd() * 100, z = -56 + rnd() * 112;
-    if (inPlaza(x, z) || pathDist(x, z) < 2.6 || riverDist(x, z) < 3.2 || onCampus(x, z, 3.5) || CAMPUS.flags.some(f => Math.hypot(x - f[0], z - f[1]) < 4)) continue;
+    if (inPlaza(x, z) || pathDist(x, z) < 2.6 || riverDist(x, z) < 3.2 || onCampus(x, z, 3.5) || CAMPUS.oldFlags.some(f => Math.hypot(x - f[0], z - f[1]) < 4)) continue;
     if (Math.hypot(x - RING.x, z - RING.z) < RING.r - 3.5) continue;                      // keep the court round the big tree open
     if (Math.abs(x - 21) < 3 && Math.abs(z) < 12) continue;                               // the sign
     if (trees.some(t => Math.hypot(t[0] - x, t[1] - z) < 6.2) || lanterns.some(l => Math.hypot(l[0] - x, l[1] - z) < 2.5) || benches.some(b => Math.hypot(b[0] - x, b[1] - z) < 3)) continue;

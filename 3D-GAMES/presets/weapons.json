@@ -1,0 +1,31 @@
+{
+  "note": "Weapon-in-hand placement, as coded in fox-kit.js (search \"gear ===\"). Positions are local to the arm group (shoulder pivot), metres; the fox is ~1.6 m tall.",
+  "gearOptions": [
+    "none",
+    "laser",
+    "sword",
+    "both"
+  ],
+  "sword": {
+    "arm": "right (P.arms[1])",
+    "position": [
+      0,
+      -0.42,
+      0.04
+    ],
+    "scale": 0.8,
+    "rotationEachFrame": "x = 0.95 - arm.rotation.x, y = 0, z = -0.5 (blade stays level while the arm swings)",
+    "blade": "emissive pulse 0.4..2.0 at 3.2 rad/s; colour lerps white → armorAccent"
+  },
+  "laser": {
+    "arm": "left",
+    "position": [
+      0,
+      -0.44,
+      0.1
+    ],
+    "scale": 0.8,
+    "rotationEachFrame": "x = -arm.rotation.x - 0.05 (barrel stays forward)"
+  },
+  "town": "In the town square the player carries the sword holstered-look (gear sword); melee/range buttons only toast there."
+}

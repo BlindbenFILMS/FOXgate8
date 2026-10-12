@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Arcade Coin Pusher">
+  <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+
+  <sc-if value="{{ topOn }}" hint-placeholder-val="{{ true }}">
+  <div data-safe="top" style="position:absolute;left:0;right:0;top:0;z-index:3;pointer-events:none;display:flex;flex-direction:column">
+    <div style="background:#000;border-bottom:2px solid #ffd23a;display:flex;align-items:stretch;padding-top:env(safe-area-inset-top);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)">
+      <sc-if value="{{ embedOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ back }}" aria-label="Leave the coin pusher" style="pointer-events:auto;flex:none;min-width:60px;min-height:48px;padding:0 12px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">BACK</button></sc-if>
+      <div style="padding:{{ cellPad }};display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836;min-width:0"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap">{{ tokLbl }}</span><span style="font:900 {{ bigFs }} var(--font-heading);font-variant-numeric:tabular-nums;line-height:1.05;color:{{ tokCol }}">{{ h.tokens }}</span></div>
+      <div style="padding:{{ cellPad }};display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836;min-width:0"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4;white-space:nowrap">{{ midLbl }}</span><span style="font:900 {{ midFs }} var(--font-heading);font-variant-numeric:tabular-nums;line-height:1.05;color:{{ midCol }}">{{ midVal }}</span></div>
+      <div style="padding:{{ cellPad }};display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836;min-width:0"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#ec3013;white-space:nowrap">JACKPOT</span><span style="font:900 {{ midFs }} var(--font-heading);font-variant-numeric:tabular-nums;line-height:1.05;color:#fff">{{ h.pot }}</span></div>
+      <div style="margin-left:auto;display:flex;align-items:stretch">
+        <button onClick="{{ muteToggle }}" aria-label="{{ muteAria }}" style="pointer-events:auto;min-width:48px;min-height:48px;padding:0 10px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:{{ muteCol }};font:900 10px var(--font-heading);letter-spacing:0.08em;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px" style-hover="background:#2a2826"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M4 9h4l5-4v14l-5-4H4z"></path><sc-if value="{{ soundOn }}" hint-placeholder-val="{{ true }}"><path d="M16 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"></path></sc-if><sc-if value="{{ h.muted }}" hint-placeholder-val="{{ false }}"><path d="M16 9l5 6M21 9l-5 6"></path></sc-if></svg>{{ muteTxt }}</button>
+        <sc-if value="{{ menuOn }}" hint-placeholder-val="{{ true }}"><button onClick="{{ toIntro }}" aria-label="Open the coin pusher menu" style="pointer-events:auto;min-width:60px;min-height:48px;padding:0 12px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#ffd23a;color:#000;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#ffe27a">MENU</button></sc-if>
+      </div>
+    </div>
+    <sc-if value="{{ stripOn }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:repeat({{ stripCols }},minmax(0,1fr));background:rgba(0,0,0,0.88);border-bottom:2px solid #3a3836">
+        <sc-for list="{{ raceRows }}" as="r" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:5px;padding:4px 6px;min-width:0;background:{{ r.bg }};border-right:1px solid #2a2826;opacity:{{ r.op }}"><span style="flex:none;width:8px;height:8px;background:{{ r.col }};display:block"></span><span style="font:900 10px var(--font-heading);letter-spacing:0.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0">{{ r.name }}</span><span style="margin-left:auto;font:900 13px var(--font-heading);font-variant-numeric:tabular-nums;color:{{ r.vc }}">{{ r.s }}</span></div>
+        </sc-for>
+      </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ sideBoardOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="left" style="position:absolute;left:max(8px, env(safe-area-inset-left));top:{{ belowTop }};width:150px;z-index:3;pointer-events:none;background:rgba(0,0,0,0.88);border:2px solid #3a3836;display:flex;flex-direction:column">
+      <span style="padding:4px 8px;font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;border-bottom:2px solid #3a3836">TOKEN RACE</span>
+      <sc-for list="{{ raceRows }}" as="r" hint-placeholder-count="3">
+        <div style="display:grid;grid-template-columns:8px minmax(0,1fr) auto;gap:6px;align-items:center;padding:4px 8px;background:{{ r.bg }};opacity:{{ r.op }}"><span style="width:8px;height:8px;background:{{ r.col }};display:block"></span><span style="font:900 11px var(--font-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.name }}</span><span style="font:900 13px var(--font-heading);font-variant-numeric:tabular-nums;color:{{ r.vc }}">{{ r.s }}</span></div>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ ctrlPort }}" hint-placeholder-val="{{ true }}">
+    <div data-safe="bottom" style="position:absolute;left:0;right:0;bottom:0;z-index:3;pointer-events:none;display:flex;flex-direction:column">
+      <div style="display:flex;flex-wrap:wrap;gap:6px;padding:0 10px 6px max(10px, env(safe-area-inset-left));align-items:flex-end">
+        <sc-for list="{{ fxChips }}" as="f" hint-placeholder-count="1"><span style="background:#000;border:2px solid {{ f.col }};padding:3px 8px;font:900 11px var(--font-heading);letter-spacing:0.06em;color:{{ f.col }};white-space:nowrap">{{ f.txt }}</span></sc-for>
+        <span style="background:rgba(0,0,0,0.75);padding:3px 8px;font:800 11px var(--font-heading);letter-spacing:0.06em;color:#e8e4de;white-space:nowrap">{{ hint }}</span>
+      </div>
+      <div style="display:flex;align-items:stretch;background:#000;border-top:2px solid #ffd23a;padding-bottom:env(safe-area-inset-bottom);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);pointer-events:auto">
+        <button onPointerDown="{{ leftDown }}" onPointerUp="{{ aimUp }}" onPointerLeave="{{ aimUp }}" onPointerCancel="{{ aimUp }}" onContextMenu="{{ noMenu }}" aria-label="Aim left" style="flex:none;width:60px;min-height:68px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center" style-active="background:#2a2826"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffd23a" stroke-width="3" stroke-linecap="square"><path d="M15 5l-7 7 7 7"></path></svg></button>
+        <button onPointerDown="{{ rightDown }}" onPointerUp="{{ aimUp }}" onPointerLeave="{{ aimUp }}" onPointerCancel="{{ aimUp }}" onContextMenu="{{ noMenu }}" aria-label="Aim right" style="flex:none;width:60px;min-height:68px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center" style-active="background:#2a2826"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffd23a" stroke-width="3" stroke-linecap="square"><path d="M9 5l7 7-7 7"></path></svg></button>
+        <sc-if value="{{ buyOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ buy }}" style="flex:1;min-width:0;min-height:68px;padding:4px 12px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px" style-hover="background:#2a2826"><span style="font:900 14px var(--font-heading);letter-spacing:0.06em;white-space:nowrap">{{ buyTxt }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.06em;color:#cfcac4;white-space:nowrap">{{ goldTxt }}</span></button></sc-if>
+        <sc-if value="{{ buyOff }}" hint-placeholder-val="{{ true }}"><div style="flex:1;min-width:0;padding:4px 12px;display:flex;flex-direction:column;justify-content:center;gap:2px;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.08em;color:#cfcac4;white-space:nowrap">{{ subLbl }}</span><span style="font:900 14px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ subVal }}</span></div></sc-if>
+        <button onPointerDown="{{ dropDown }}" onPointerUp="{{ dropUp }}" onPointerLeave="{{ dropUp }}" onPointerCancel="{{ dropUp }}" onContextMenu="{{ noMenu }}" aria-label="Drop a token. Hold to keep dropping." style="flex:none;width:{{ dropW }};min-height:68px;padding:0 14px;border:0;border-radius:0;background:{{ dropBg }};color:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px" style-active="filter:brightness(0.85)"><span style="font:900 22px var(--font-heading);letter-spacing:0.08em;line-height:1">DROP</span><span style="font:800 10px var(--font-heading);letter-spacing:0.08em;opacity:0.9;white-space:nowrap">{{ dropSub }}</span></button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ ctrlLand }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="right" style="position:absolute;right:0;top:{{ belowTop }};bottom:0;width:{{ colW }};z-index:3;pointer-events:none;display:flex;flex-direction:column;justify-content:flex-end;padding-right:env(safe-area-inset-right);padding-bottom:env(safe-area-inset-bottom);box-sizing:border-box">
+      <div style="display:flex;flex-direction:column;gap:4px;padding:0 6px 6px 0;align-items:flex-end">
+        <sc-for list="{{ fxChips }}" as="f" hint-placeholder-count="1"><span style="background:#000;border:2px solid {{ f.col }};padding:3px 8px;font:900 10px var(--font-heading);letter-spacing:0.06em;color:{{ f.col }};white-space:nowrap">{{ f.txt }}</span></sc-for>
+      </div>
+      <div style="display:flex;flex-direction:column;background:#000;border:2px solid #ffd23a;border-right:0;border-bottom:0;pointer-events:auto">
+        <sc-if value="{{ buyOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ buy }}" style="min-height:48px;padding:4px 10px;border:0;border-bottom:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:1px" style-hover="background:#2a2826"><span style="font:900 12px var(--font-heading);letter-spacing:0.04em;white-space:nowrap">{{ buyTxt }}</span><span style="font:800 9px var(--font-heading);letter-spacing:0.06em;color:#cfcac4;white-space:nowrap">{{ goldTxt }}</span></button></sc-if>
+        <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:2px solid #3a3836">
+          <button onPointerDown="{{ leftDown }}" onPointerUp="{{ aimUp }}" onPointerLeave="{{ aimUp }}" onPointerCancel="{{ aimUp }}" onContextMenu="{{ noMenu }}" aria-label="Aim left" style="min-height:52px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;cursor:pointer;display:flex;align-items:center;justify-content:center" style-active="background:#2a2826"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffd23a" stroke-width="3" stroke-linecap="square"><path d="M15 5l-7 7 7 7"></path></svg></button>
+          <button onPointerDown="{{ rightDown }}" onPointerUp="{{ aimUp }}" onPointerLeave="{{ aimUp }}" onPointerCancel="{{ aimUp }}" onContextMenu="{{ noMenu }}" aria-label="Aim right" style="min-height:52px;border:0;border-radius:0;background:#000;cursor:pointer;display:flex;align-items:center;justify-content:center" style-active="background:#2a2826"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffd23a" stroke-width="3" stroke-linecap="square"><path d="M9 5l7 7-7 7"></path></svg></button>
+        </div>
+        <button onPointerDown="{{ dropDown }}" onPointerUp="{{ dropUp }}" onPointerLeave="{{ dropUp }}" onPointerCancel="{{ dropUp }}" onContextMenu="{{ noMenu }}" aria-label="Drop a token. Hold to keep dropping." style="min-height:84px;padding:0 12px;border:0;border-radius:0;background:{{ dropBg }};color:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:3px" style-active="filter:brightness(0.85)"><span style="font:900 24px var(--font-heading);letter-spacing:0.08em;line-height:1">DROP</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;opacity:0.9;white-space:nowrap">{{ dropSub }}</span></button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ bonusOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:{{ popLeft }};top:{{ bonusTop }};transform:{{ popTf }};z-index:5;pointer-events:none;min-width:220px;max-width:calc(100% - 24px);background:#000;border:3px solid {{ bonusCol }};display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 12px;background:{{ bonusCol }};color:#000"><span style="width:8px;height:8px;background:#000;display:block"></span><span style="font:900 11px var(--font-heading);letter-spacing:0.16em">BONUS REEL</span></div>
+      <span style="padding:8px 14px 2px;font:900 clamp(22px,6.4vw,30px) var(--font-heading);letter-spacing:0.02em;line-height:1.05;white-space:nowrap;color:{{ bonusTxtCol }}">{{ bonusName }}</span>
+      <span style="padding:0 14px 8px;font:800 11px var(--font-heading);letter-spacing:0.1em;color:#cfcac4;white-space:nowrap">{{ bonusSub }}</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ flashOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:{{ popLeft }};top:{{ flashTop }};transform:{{ popTf }};z-index:5;pointer-events:none;max-width:{{ flashMaxW }};background:rgba(0,0,0,0.9);border:2px solid {{ flashCol }};display:flex;align-items:stretch">
+      <span style="flex:none;width:10px;background:{{ flashCol }};display:block"></span>
+      <span style="padding:7px 14px;font:900 clamp(14px,4vw,20px) var(--font-heading);letter-spacing:0.04em;line-height:1.15;color:#fff;text-wrap:balance">{{ flashTxt }}</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ countOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);z-index:6;pointer-events:none;display:flex;flex-direction:column;align-items:stretch">
+      <div style="background:#ffd23a;color:#000;padding:4px 10px;font:900 11px var(--font-heading);letter-spacing:0.14em;text-align:left">TOKEN RACE · SAME BOARD FOR ALL</div>
+      <div style="width:100%;height:120px;background:#000;border:3px solid #ffd23a;border-top:0;display:flex;align-items:center;justify-content:center;font:900 84px var(--font-heading);color:#ffd23a;font-variant-numeric:tabular-nums">{{ countTxt }}</div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ introOn }}" hint-placeholder-val="{{ true }}">
+    <div data-safe="{{ introSafe }}" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:10;width:{{ cardW }};max-height:{{ cardMaxH }};background:#000;border:2px solid #3a3836;display:flex;flex-direction:column;box-sizing:border-box">
+      <div style="flex:none;padding:8px 8px 8px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:2px solid #3a3836">
+        <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ placeLbl }}</span><span style="font:900 {{ titleFs }} var(--font-heading);line-height:1;letter-spacing:-0.01em;white-space:nowrap">Coin Pusher</span></div>
+        <div style="flex:none;display:flex;gap:6px">
+          <button onClick="{{ muteToggle }}" aria-label="{{ muteAria }}" style="min-width:48px;min-height:44px;padding:0 8px;border:2px solid #3a3836;border-radius:0;background:#000;color:{{ muteCol }};font:900 10px var(--font-heading);letter-spacing:0.08em;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px" style-hover="background:#2a2826"><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;color:#8a847e">SOUND</span>{{ muteTxt }}</button>
+          <sc-if value="{{ embedOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ back }}" style="min-width:64px;min-height:44px;padding:0 12px;border:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">LEAVE</button></sc-if>
+        </div>
+      </div>
+      <div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column">
+      <sc-if value="{{ introTextOn }}" hint-placeholder-val="{{ true }}"><span style="padding:8px 14px;font:700 14px var(--font-body);line-height:1.4;color:#e8e4de;text-wrap:pretty;border-bottom:2px solid #3a3836">{{ introText }}</span></sc-if>
+      <div style="flex:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-bottom:2px solid #3a3836">
+        <div style="padding:6px 10px 6px 14px;display:flex;flex-direction:column;gap:1px;border-right:2px solid #3a3836;min-width:0"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">TOKENS</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;color:#ffd23a">{{ h.tokens }}</span></div>
+        <div style="padding:6px 10px;display:flex;flex-direction:column;gap:1px;border-right:2px solid #3a3836;min-width:0"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">GOLD</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;color:#e6b45a">{{ goldShort }}</span></div>
+        <div style="padding:6px 10px;display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#ec3013">JACKPOT</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums">{{ h.pot }}</span></div>
+      </div>
+      <div style="flex:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-bottom:2px solid #3a3836">
+        <button onClick="{{ buy }}" style="min-height:52px;padding:4px 14px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px" style-hover="background:#2a2826"><span style="font:900 14px var(--font-heading);letter-spacing:0.06em;white-space:nowrap">{{ buyTxt }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.06em;color:#cfcac4;white-space:nowrap">AT THE TOKEN DESK</span></button>
+        <button onClick="{{ cashOut }}" disabled="{{ cashOff }}" style="min-height:52px;padding:4px 14px;border:0;border-radius:0;background:#000;color:{{ cashCol }};cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px" style-hover="background:#2a2826"><span style="font:900 14px var(--font-heading);letter-spacing:0.06em;white-space:nowrap">{{ cashTxt }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.06em;color:#cfcac4;white-space:nowrap">{{ cashSub }}</span></button>
+      </div>
+      <button onClick="{{ netOpen }}" style="flex:none;min-height:52px;padding:4px 14px;border:0;border-bottom:2px solid #3a3836;border-radius:0;background:#000;color:#fff;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;box-shadow:inset 6px 0 0 #7dd3fc" style-hover="background:#2a2826"><span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:900 15px var(--font-heading);letter-spacing:0.06em">ONLINE TOKEN RACE</span><span style="font:800 10px var(--font-heading);letter-spacing:0.06em;color:#7dd3fc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">2–5 PLAYERS · SAME BOARD · SHARED JACKPOT</span></span></button>
+      <button onClick="{{ helpOpen }}" style="flex:none;min-height:48px;padding:4px 14px;border:0;border-bottom:2px solid #3a3836;border-radius:0;background:#000;color:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px" style-hover="background:#2a2826"><span style="font:900 14px var(--font-heading);letter-spacing:0.06em">HOW TO PLAY</span><span style="font:800 10px var(--font-heading);letter-spacing:0.06em;color:#cfcac4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ statsLine }}</span></button>
+      </div>
+      <button onClick="{{ play }}" style="flex:none;min-height:58px;padding:0 16px;border:0;border-radius:0;background:#ec3013;color:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px" style-hover="background:#c82a10"><span style="font:900 18px var(--font-heading);letter-spacing:0.1em">{{ playTxt }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.08em;opacity:0.9;white-space:nowrap">{{ playSub }}</span></button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ helpOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;background:rgba(0,0,0,0.86);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #ffd23a;width:min(560px,100%);max-height:100%;display:flex;flex-direction:column;margin:auto 0">
+        <div style="flex:none;padding:10px 14px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">HOW TO PLAY</span><span style="font:900 24px var(--font-heading);line-height:1">Penny falls</span></div>
+        <div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column">
+        <sc-for list="{{ helpRows }}" as="r" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px;padding:8px 14px;border-bottom:2px solid #2a2826"><span style="font:900 12px var(--font-heading);letter-spacing:0.06em;color:{{ r.c }}">{{ r.k }}</span><span style="font:600 13px var(--font-body);line-height:1.4;color:#e8e4de;text-wrap:pretty">{{ r.v }}</span></div>
+        </sc-for>
+        </div>
+        <button onClick="{{ helpClose }}" style="flex:none;min-height:52px;padding:0 16px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 15px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">GOT IT</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ netOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="{{ introSafe }}" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:10;width:{{ cardW }};max-height:{{ cardMaxH }};overflow-y:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column;box-sizing:border-box;pointer-events:auto">
+      <div style="padding:10px 14px 8px;display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-bottom:2px solid #3a3836"><span style="display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">TOKEN RACE</span><span style="font:900 24px var(--font-heading);line-height:1;white-space:nowrap">Online</span></span><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:{{ netStatC }};white-space:nowrap">{{ netStat }}</span></div>
+      <sc-if value="{{ netCodeOn }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:10px 14px;border-bottom:2px solid #3a3836;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:12px"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#8a847e">ROOM</span><span style="font:900 44px var(--font-heading);line-height:1;letter-spacing:0.12em;color:#ffd23a">{{ netCode }}</span></div><button onClick="{{ netShare }}" style="min-height:44px;padding:0 14px;border:2px solid #ffd23a;border-radius:0;background:#000;color:#ffd23a;font:900 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;white-space:nowrap" style-hover="background:#2a2826">{{ netShareTxt }}</button></div>
+      </sc-if>
+      <span style="padding:8px 14px;border-bottom:2px solid #3a3836;font:700 14px var(--font-body);line-height:1.4;color:#e8e4de;text-wrap:pretty">{{ netMsg }}</span>
+      <sc-if value="{{ netRowsOn }}" hint-placeholder-val="{{ false }}">
+        <sc-for list="{{ netRows }}" as="r" hint-placeholder-count="2">
+          <div style="min-height:44px;padding:4px 14px;border-bottom:2px solid #2a2826;display:grid;grid-template-columns:12px minmax(0,1fr) auto;align-items:center;gap:10px"><span style="width:12px;height:12px;background:{{ r.col }};display:block"></span><span style="display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font:900 14px var(--font-heading);letter-spacing:0.05em;white-space:nowrap">{{ r.name }}</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;color:#8a847e;white-space:nowrap">{{ r.sub }}</span></span><span style="font:900 10px var(--font-heading);letter-spacing:0.1em;color:{{ r.tagC }}">{{ r.tag }}</span></div>
+        </sc-for>
+      </sc-if>
+      <sc-if value="{{ netJoinOn }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ netCreate }}" style="min-height:52px;padding:4px 14px;border:0;border-bottom:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:1px" style-hover="background:#c82a10"><span style="font:900 16px var(--font-heading);letter-spacing:0.08em">CREATE ROOM</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;opacity:0.9;white-space:nowrap">GET A CODE TO SHARE · UP TO 5</span></button>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;border-bottom:2px solid #3a3836">
+          <input value="{{ netCodeIn }}" onChange="{{ netCodeType }}" onKeyDown="{{ netCodeKey }}" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Room code" placeholder="CODE" style="min-width:0;min-height:52px;padding:0 14px;border:0;border-radius:0;background:#1a1918;color:#ffd23a;font:900 24px var(--font-heading);letter-spacing:0.2em;text-transform:uppercase;outline:none;box-sizing:border-box;user-select:text;-webkit-user-select:text" style-focus="background:#2a2826"></input>
+          <button onClick="{{ netJoinGo }}" style="min-height:52px;padding:0 18px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">JOIN</button>
+        </div>
+      </sc-if>
+      <div style="flex:none;display:grid;grid-template-columns:{{ netBtnCols }}">
+        <sc-if value="{{ netReadyOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ netReady }}" style="min-height:52px;padding:4px 14px;border:0;border-right:2px solid #3a3836;border-radius:0;background:{{ netReadyBg }};color:{{ netReadyFg }};cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:1px" style-hover="filter:brightness(1.1)"><span style="font:900 16px var(--font-heading);letter-spacing:0.08em">{{ netReadyTxt }}</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;opacity:0.9;white-space:nowrap">{{ netReadySub }}</span></button></sc-if>
+        <button onClick="{{ netBack }}" style="min-height:52px;padding:0 14px;border:0;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">{{ netBackTxt }}</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ resOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:11;background:rgba(0,0,0,0.82);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #3a3836;width:min(460px,100%);display:flex;flex-direction:column;margin:auto 0">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+          <div style="padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">TOKEN RACE · RESULT</span><span style="font:900 24px var(--font-heading);line-height:1.05">{{ resTitle }}</span><span style="font:700 12px var(--font-body);color:#cfcac2">{{ resSub }}</span></div>
+          <div style="width:88px;display:flex;align-items:center;justify-content:center;background:{{ resBg }};color:{{ resFg }};font:900 40px var(--font-heading)">{{ resPlace }}</div>
+        </div>
+        <sc-for list="{{ resRows }}" as="r" hint-placeholder-count="3">
+          <div style="display:grid;grid-template-columns:22px 12px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 16px;border-bottom:2px solid #2a2826;background:{{ r.bg }}"><span style="font:900 14px var(--font-heading);color:#8a847e">{{ r.n }}</span><span style="width:12px;height:12px;background:{{ r.col }};display:block"></span><span style="font:900 14px var(--font-heading);letter-spacing:0.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.name }}</span><span style="font:900 16px var(--font-heading);font-variant-numeric:tabular-nums;color:{{ r.vc }}">{{ r.s }}</span></div>
+        </sc-for>
+        <sc-for list="{{ resStats }}" as="r" hint-placeholder-count="3">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:6px 16px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body)"><span style="color:#cfcac4">{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;font-variant-numeric:tabular-nums">{{ r.v }}</span></div>
+        </sc-for>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+          <button onClick="{{ resAgain }}" style="min-height:52px;padding:0 16px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">{{ resAgainTxt }}</button>
+          <button onClick="{{ resLeave }}" style="min-height:52px;padding:0 16px;border:0;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">FREE PLAY</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { h: null, vw: 1200, vh: 800, safeTop: 0, help: false, net: null, netCard: false };
+  stageRef = React.createRef(); lastSeen = {};
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs(); try { this.ro = new ResizeObserver(this.onRs); this.stageRef.current && this.ro.observe(this.stageRef.current.parentElement); } catch (e) {}
+    this.q = new URLSearchParams(location.search); this.embed = this.q.get('embed') === '1';
+    try { const m = await import(new URL('minigames/arcade/coin-pusher.js', document.baseURI).href); this.M = m;
+      this.g = await m.createCoinPusher({ container: this.stageRef.current, world: (this.q.get('world') || 'meru').toLowerCase(), onState: h => this.setState({ h }) }); window.__coinPusher = this.g;
+      const rm = /[?&]room=([A-Za-z0-9]{4})/.exec(location.search); if (rm) { this.netOpen(); this.netJoin(rm[1]); } else if (this.q.get('play') === '1') this.g.start();
+    } catch (e) { console.warn('coin pusher failed: ' + (e && e.stack || String(e))); }
+  }
+  componentDidUpdate() { const root = this.stageRef.current && this.stageRef.current.parentElement; if (!root || !this.g) return; const rb = root.getBoundingClientRect(); let top = 0, bot = 0, left = 0, right = 0;
+    root.querySelectorAll('[data-safe]').forEach(el => { const r = el.getBoundingClientRect(); if (!r.height || !r.width) return; const k = el.dataset.safe; if (k === 'top') top = Math.max(top, r.bottom - rb.top); else if (k === 'left') left = Math.max(left, r.right - rb.left); else if (k === 'right') right = Math.max(right, rb.right - r.left); else if (k === 'bottom') bot = Math.max(bot, rb.bottom - r.top); });
+    const W = rb.width, H = rb.height; this.g.setSafe(Math.round(Math.min(top, H * 0.3)), Math.round(Math.min(bot, H * 0.62)), Math.round(Math.min(left, W * 0.6)), Math.round(Math.min(right, W * 0.3)));
+    const bar = root.querySelector('[data-safe="top"]'); const st = bar ? Math.round(bar.getBoundingClientRect().bottom - rb.top) : 0; if (Math.abs(st - this.state.safeTop) > 1) this.setState({ safeTop: st }); }
+  componentWillUnmount() { this.netLeave(); clearInterval(this.aimTimer); removeEventListener('resize', this.onRs); this.ro && this.ro.disconnect(); this.g && this.g.destroy(); }
+  onRs = () => { const el = this.stageRef.current, r = el && el.parentElement ? el.parentElement.getBoundingClientRect() : null; this.setState({ vw: r && r.width ? r.width : innerWidth, vh: r && r.height ? r.height : innerHeight }); };
+  blur = e => { e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur(); };
+  back = e => { this.blur(e); this.netLeave(); this.g && this.g.toIntro(); try { parent !== window && parent.postMessage({ type: '8gates:minigame', action: 'back', game: 'arcadeCoinPusher' }, '*'); } catch (er) {} };
+  aim(dir) { clearInterval(this.aimTimer); if (!this.g) return; this.g.nudge(dir * 0.06); this.aimTimer = setInterval(() => this.g && this.g.nudge(dir * 0.03), 45); }
+  aimUp = () => clearInterval(this.aimTimer);
+  // ---------- ONLINE (up to 5; engine/duel-net.js via coin-pusher.js connectNet). Room = the 5 earliest joiners; host = lowest id; the race runs in coin-pusher.js ----------
+  netSet = p => this.setState(s => ({ net: s.net ? { ...s.net, ...p } : s.net }));
+  peerSet = (id, p) => this.setState(s => s.net ? { net: { ...s.net, peers: { ...s.net.peers, [id]: { ...(s.net.peers[id] || {}), ...p } } } } : null);
+  netOpen = e => { this.blur(e); this.setState({ net: { st: 'menu', code: '', codeIn: '', peers: {}, ready: false, j: 0, status: '', msg: '', copied: false, ping: null }, netCard: true, help: false }); };
+  members() { const n = this.state.net; if (!n || !this.net) return []; const all = [{ id: this.net.id, j: n.j, ready: n.ready, playing: n.st === 'play', me: true }, ...Object.entries(n.peers).map(([id, p]) => ({ id, ...p, me: false }))]; all.sort((a, b) => a.j - b.j || (a.id < b.id ? -1 : 1)); return all.slice(0, 5); }
+  inRoom() { return this.members().some(m => m.me); }
+  hostId = (match = true) => { let m = this.members(); if (match && this.matchIds) m = m.filter(x => this.matchIds.includes(x.id)); return m.length ? m.reduce((a, b) => a.id < b.id ? a : b).id : (this.net ? this.net.id : null); };
+  playerList(ids) { const s = ids.slice().sort(), C = (this.M && this.M.NET_COLS) || [['RED', '#ec3013'], ['BLUE', '#38bdf8'], ['GOLD', '#ffd23a'], ['GREEN', '#22c55e'], ['VIOLET', '#a78bfa']], me = this.net && this.net.id; return s.map((id, slot) => ({ id, slot, col: C[slot][1], name: s.length > 2 ? (id === me ? C[slot][0] + ' · YOU' : C[slot][0]) : id === me ? 'YOU' : 'RIVAL' })); }
+  async netJoin(code) { code = String(code || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4); if (code.length < 4) { this.netSet({ msg: 'Type the 4-letter room code from your friend.' }); return; }
+    this.netLeave(); if (!this.state.net) this.netOpen(); this.lastSeen = {}; this.netSet({ st: 'room', code, status: 'connecting', peers: {}, ready: false, j: Date.now(), msg: '', copied: false, ping: null });
+    const tok = this.netTok = (this.netTok || 0) + 1; let N;
+    try { N = await this.M.connectNet({ code, onJoin: id => this.nHello(id), onLeave: id => this.nGone(id), onMsg: (t, d, id) => this.nMsg(t, d, id), onStatus: s => this.netSet({ status: s }) }); } catch (e) { this.netSet({ status: 'offline', msg: 'Online play could not load. Check your connection.' }); return; }
+    if (tok !== this.netTok) { N.leave(); return; } this.net = N; this.nHello(); this.forceUpdate();
+    try { const u = new URL(location.href); u.searchParams.set('room', code); history.replaceState(null, '', u.href); } catch (e) {}
+    clearInterval(this.nTimer); this.nTimer = setInterval(this.nTick, 1000); }
+  netLeave() { this.starting = false; this.netTok = (this.netTok || 0) + 1; clearInterval(this.nTimer); if (this.net) { this.net.send('ev', { k: 'bye' }); this.net.leave(); } this.net = null; this.matchIds = null; this.lastSeen = {}; if (this.g && this.g.netOn()) this.g.netEnd(); try { const u = new URL(location.href); if (u.searchParams.has('room')) { u.searchParams.delete('room'); history.replaceState(null, '', u.href); } } catch (e) {} }
+  nHello(to) { const n = this.state.net; if (!this.net || !n) return; this.net.send('hi', { v: 1, j: n.j, ready: n.ready, playing: n.st === 'play' }, to); }
+  nMsg(t, d, id) { const n = this.state.net; if (!n || !this.net || !d) return; const now = performance.now(), known = !!this.lastSeen[id];
+    if (t === 'hi') { this.lastSeen[id] = now; this.peerSet(id, { j: +d.j || Date.now(), ready: !!d.ready, playing: !!d.playing }); if (!known) setTimeout(() => this.nHello(id), 0); setTimeout(this.nMaybeStart, 0); return; }
+    if (!known) return; this.lastSeen[id] = now; const inMatch = !!(this.matchIds && this.matchIds.includes(id));
+    if (t === 'sn') { if (inMatch && this.g) this.g.netRecv('sn', d, id); return; }
+    if (t === 'pg') { if (d.t != null) this.net.send('pg', { e: d.t }, id); else if (d.e != null) this.netSet({ ping: Math.max(1, Math.round(now - d.e)) }); return; }
+    if (t !== 'ev') return;
+    if (d.k === 'ready') { this.peerSet(id, { ready: !!d.on }); setTimeout(this.nMaybeStart, 0); }
+    else if (d.k === 'start') this.nStart(d);
+    else if (d.k === 'playing') this.peerSet(id, { playing: !!d.on });
+    else if (d.k === 'bye') this.nGone(id);
+    else if (inMatch && this.g) this.g.netRecv('ev', d, id); }
+  nGone(id) { if (!this.lastSeen[id]) return; delete this.lastSeen[id]; this.setState(s => { if (!s.net) return null; const peers = { ...s.net.peers }; delete peers[id]; return { net: { ...s.net, peers } }; }); if (this.matchIds && this.matchIds.includes(id) && this.g) this.g.netDrop(id); }
+  nTick = () => { if (!this.net) return; this.net.send('pg', { t: performance.now() }); const now = performance.now(); for (const id of Object.keys(this.lastSeen)) if (now - this.lastSeen[id] > 25000) this.nGone(id); };
+  nMaybeStart = () => { const n = this.state.net; if (!n || !this.net || n.st !== 'room' || this.starting || !this.inRoom() || this.hostId(false) !== this.net.id) return; const m = this.members(); if (m.length < 2 || !m.every(x => x.ready && !x.playing)) return; this.starting = true; this.mid = (this.mid || 0) + 1;
+    const dur = Math.max(15, Math.min(300, +this.q.get('race') || (this.M && this.M.ECON.raceSecs) || 90)), d = { k: 'start', t0: Date.now() + 3500, seed: Math.floor(Math.random() * 2 ** 31), dur, mid: this.net.id + ':' + this.mid, ids: m.map(x => x.id) }; this.net.send('ev', d); this.nStart(d); };
+  nStart(d) { const n = this.state.net; if (!n || !this.net || !this.g || !Array.isArray(d.ids)) return; if (d.mid && d.mid === this.lastMid) return; this.lastMid = d.mid; if (!d.ids.includes(this.net.id)) { this.netSet({ msg: 'A race started without you. You join the next one.' }); return; }
+    this.matchIds = d.ids.slice(); let t0 = +d.t0; const w = t0 - Date.now(); if (!(w >= 0 && w <= 5000)) t0 = Date.now() + 3000;
+    this.setState(s => s.net ? { netCard: false, help: false, net: { ...s.net, st: 'play', ready: false, msg: '', peers: Object.fromEntries(Object.entries(s.net.peers).map(([k, p]) => [k, { ...p, ready: false, playing: d.ids.includes(k) }])) } } : null);
+    this.g.raceBegin({ t0, seed: +d.seed || 1, dur: Math.max(15, Math.min(300, +d.dur || 90)), players: this.playerList(d.ids), me: this.net.id, send: (t, x, to) => this.net && this.net.send(t, x, to), hostId: () => this.hostId(true), onEnd: () => { this.starting = false; this.netSet({ st: 'room', ready: false }); if (this.net) this.net.send('ev', { k: 'playing', on: false }); } }); }
+  netReadyToggle = () => { const n = this.state.net; if (!n || !this.net) return; const on = !n.ready; this.netSet({ ready: on }); this.net.send('ev', { k: 'ready', on }); setTimeout(this.nMaybeStart, 0); };
+  renderVals() {
+    const S = this.state, g = this.g, blur = this.blur, port = S.vh > S.vw, short = S.vh < 520, land = !port && short;
+    const h = S.h || { phase: 'intro', mode: 'free', tokens: 0, won: 0, spent: 0, lost: 0, pot: 20, gold: 0, fx: { walls: 0, push: 0 }, econ: { buyCost: 5, buyTokens: 25, cashRate: 10, cashCap: 30, raceSecs: 90 }, cashGold: 0, cashLeft: 30, place: 'ARCADE', best: 0, lifetime: 0, charms: 0, race: null, results: null, bonus: null, flash: null };
+    const E = h.econ, play = h.phase === 'play' || h.phase === 'race', inRace = h.mode === 'race', R = h.race, N = S.net;
+    const intro = h.phase === 'intro' && !N && !S.help, netPanel = !!N && N.st !== 'play' && h.phase !== 'results' && (h.phase === 'intro' || S.netCard);
+    const rows = R ? R.rows.map(r => ({ name: r.name, col: r.col, s: String(r.s), bg: r.me ? '#2a2826' : 'transparent', vc: r.me ? '#ffd23a' : '#ffffff', op: r.gone ? 0.45 : 1 })) : [];
+    const fxChips = [...(h.fx.walls ? [{ txt: 'WALLS UP · ' + h.fx.walls + 'S', col: '#22c55e' }] : []), ...(h.fx.push ? [{ txt: 'POWER PUSH · ' + h.fx.push + 'S', col: '#38bdf8' }] : [])];
+    const buyOn = play && !inRace && h.tokens < 5, m = N ? this.members() : [], pl = this.playerList(m.map(x => x.id)), host = this.hostId(false), full = !!N && N.st !== 'menu' && !!this.net && m.length === 5 && !m.some(x => x.me);
+    const racing = !!N && N.st !== 'play' && m.some(x => !x.me && x.playing), allReady = m.length >= 2 && m.every(x => x.ready), rc = m.filter(x => x.ready).length;
+    const res = h.results, place = res ? res.place : 0, ord = n => n + (n === 1 ? 'ST' : n === 2 ? 'ND' : n === 3 ? 'RD' : 'TH');
+    const cw = land ? 'min(400px, calc(50% - 12px))' : 'min(440px, calc(100% - 24px))';
+    return {
+      stageRef: this.stageRef, h, embedOn: this.embed, back: this.back,
+      topOn: h.phase !== 'intro', titleFs: land ? '22px' : '28px', introTextOn: !land, soundOn: !h.muted, cellPad: land ? '3px 10px' : '5px 12px', bigFs: land ? '19px' : '22px', midFs: land ? '16px' : '18px',
+      tokLbl: inRace ? 'RACE TOKENS' : 'TOKENS', tokCol: h.tokens < 5 && play ? '#ff9a8a' : '#ffffff',
+      midLbl: inRace ? 'TIME' : 'WON', midVal: inRace && R ? (h.phase === 'final' || h.phase === 'results' ? '0:00' : Math.floor(R.left / 60) + ':' + String(R.left % 60).padStart(2, '0')) : '+' + h.won, midCol: inRace ? (R && R.left <= 10 ? '#ff9a8a' : '#ffffff') : '#ffd23a',
+      muteToggle: e => { blur(e); g && g.mute(); }, muteTxt: h.muted ? 'OFF' : 'ON', muteCol: h.muted ? '#8a847e' : '#ffffff', muteAria: h.muted ? 'Turn sound on' : 'Turn sound off',
+      menuOn: h.phase === 'play', toIntro: e => { blur(e); g && g.toIntro(); },
+      stripOn: inRace && !land && rows.length > 0 && h.phase !== 'results', stripCols: Math.min(5, Math.max(1, rows.length)), raceRows: rows, sideBoardOn: inRace && land && rows.length > 0 && h.phase !== 'results', belowTop: S.safeTop + 'px',
+      ctrlPort: (play || h.phase === 'count' || h.phase === 'final') && !land, ctrlLand: (play || h.phase === 'count' || h.phase === 'final') && land, colW: '150px',
+      fxChips, hint: h.phase === 'final' ? 'TIME! WATCH THE LAST COINS FALL' : h.phase === 'count' ? 'GET READY…' : 'DRAG TO AIM · TAP THE BOARD TO DROP',
+      noMenu: e => e.preventDefault(), leftDown: e => { blur(e); this.aim(-1); }, rightDown: e => { blur(e); this.aim(1); }, aimUp: this.aimUp,
+      dropDown: e => { e.preventDefault(); blur(e); if (!g) return; g.drop(); g.hold(true); }, dropUp: () => { g && g.hold(false); },
+      dropBg: play && h.tokens > 0 ? '#ec3013' : '#3a3836', dropSub: h.holding ? 'AUTO-DROPPING' : 'HOLD = AUTO', dropW: S.vw < 360 ? '104px' : '128px',
+      buyOn, buyOff: !buyOn, buy: e => { blur(e); g && g.buy(); }, buyTxt: 'BUY ' + E.buyTokens + ' · ' + E.buyCost + 'g', goldTxt: 'YOU HAVE ' + h.gold + 'g',
+      subLbl: inRace ? 'YOUR SCORE' : h.lost ? 'LOST TO DRAINS' : 'DROPPED', subVal: inRace && R ? R.score + ' · ' + ord(Math.max(1, R.rows.findIndex(r => r.me) + 1)) : h.lost ? String(h.lost) : String(h.spent),
+      bonusOn: !!h.bonus, bonusTop: (S.safeTop + 10 + (land && inRace ? 6 + 26 * Math.min(5, rows.length) + 24 : 0)) + 'px', popLeft: land ? 'max(12px, env(safe-area-inset-left))' : '50%', popTf: land ? 'none' : 'translateX(-50%)', flashMaxW: land ? 'min(240px, calc(50% - 150px))' : 'calc(100% - 24px)', bonusCol: h.bonus && h.bonus.done ? h.bonus.col : '#ffd23a', bonusTxtCol: h.bonus ? h.bonus.col : '#fff', bonusName: h.bonus ? h.bonus.name : '', bonusSub: h.bonus ? h.bonus.sub : '',
+      flashOn: !!h.flash, flashTxt: h.flash ? h.flash.txt : '', flashCol: h.flash ? h.flash.col : '#ffd23a', flashTop: (S.safeTop + (h.bonus ? 104 : 10) + (land && inRace ? 6 + 26 * Math.min(5, rows.length) + 24 : 0)) + 'px',
+      countOn: h.phase === 'count' && !!R, countTxt: R ? String(R.count) : '',
+      introOn: intro, introSafe: land ? 'left' : 'bottom', cardW: cw, cardMaxH: land ? 'calc(100% - 24px - env(safe-area-inset-bottom))' : 'calc(100% - 140px)', placeLbl: h.place + ' · PENNY FALLS',
+      introText: h.welcome ? 'The attendant slid you a free cup of tokens. Drop them down the back wall: the moving shelf pushes coins over the front edge into your tray.' : 'Drop tokens down the back wall. The moving shelf pushes coins over the front edge into your tray. Hit the BONUS gate for showers, big coins and the jackpot.',
+      goldShort: h.gold + 'g', cashOut: e => { blur(e); g && g.cashOut(); }, cashOff: h.cashGold <= 0, cashCol: h.cashGold > 0 ? '#ffffff' : '#8a847e', cashTxt: h.cashGold > 0 ? 'CASH OUT · +' + h.cashGold + 'g' : 'CASH OUT', cashSub: h.cashLeft <= 0 ? 'DESK CLOSED TODAY' : E.cashRate + ' = 1g · ' + h.cashLeft + 'g LEFT TODAY',
+      netOpen: this.netOpen, helpOpen: e => { blur(e); this.setState({ help: true }); }, helpClose: e => { blur(e); this.setState({ help: false }); }, helpOn: S.help,
+      statsLine: 'LIFETIME WON ' + (h.lifetime || 0) + ' · BEST RACE ' + (h.best || 0) + (h.charms ? ' · CHARMS ' + h.charms : ''),
+      play: e => { blur(e); g && g.start(); }, playTxt: 'FREE PLAY', playSub: 'YOUR CUP · ' + h.tokens + ' TOKENS · THIS BOARD IS SAVED',
+      helpRows: [['AIM', 'Drag across the board, or hold the arrow buttons. The yellow line shows where the token falls.', '#ffd23a'], ['DROP', 'Tap the board or tap DROP. Hold DROP to keep feeding tokens. Space and arrows work on a keyboard.', '#ffd23a'], ['THE SHELF', 'Tokens land on the moving shelf. The back wall holds them as the shelf slides back, so they creep forward and fall onto the bed.', '#ffffff'], ['WIN', 'The shelf shoves the bed. Coins that tip over the front edge land in your tray.', '#22c55e'], ['DRAINS', 'The red slots at the front corners swallow coins. Every lost coin goes into the JACKPOT pot.', '#ec3013'], ['BONUS GATE', 'Time your drop so the token falls through the moving BONUS gate on the back wall: COIN SHOWER, BIG COIN (8), WALLS UP, POWER PUSH, PRIZE DROP or JACKPOT.', '#f472b6'], ['PRIZES', 'Gems are 5 tokens. Gold bars are 3 gold. Fox charms go to your bag.', '#22d3ee'], ['TOKEN RACE', '2 to 5 players get the same board and 30 tokens for 90 seconds. Most tokens wins. The jackpot pot is shared.', '#7dd3fc']].map(([k, v, c]) => ({ k, v, c })),
+      // lobby
+      netOn: netPanel, netStat: !N ? '' : full ? 'ROOM FULL' : N.status === 'local' ? 'TEST · TABS' : N.status === 'offline' ? 'OFFLINE' : N.status === 'off' ? 'NETWORK OFF' : N.status === 'online' ? (m.length > 1 ? m.length + ' AT THE CABINET' + (N.ping ? ' · ' + N.ping + ' MS' : '') : 'ONLINE') : N.st === 'menu' ? 'NO SERVER NEEDED' : 'CONNECTING…', netStatC: N && (N.status === 'offline' || full) ? '#ec3013' : '#ffd23a',
+      netCodeOn: !!N && !!N.code && N.st !== 'menu', netCode: N ? N.code : '',
+      netShare: async e => { blur(e); if (!N) return; let u; try { u = new URL(location.href); u.searchParams.set('room', N.code); u.searchParams.delete('embed'); } catch (er) { return; } try { if (navigator.share && port) await navigator.share({ title: '8 GATES · Coin Pusher', text: 'Token race with me in 8 GATES. Room ' + N.code, url: u.href }); else { await navigator.clipboard.writeText(u.href); this.netSet({ copied: true }); setTimeout(() => this.netSet({ copied: false }), 2000); } } catch (er) {} }, netShareTxt: N && N.copied ? 'LINK COPIED' : 'SHARE LINK',
+      netMsg: !N ? '' : N.msg ? N.msg : N.st === 'menu' ? 'Up to 5 friends race on the same board. Make a room and send the link, or type a friend’s code.' : full ? 'Five players are already in room ' + N.code + '. Try another code.' : N.status === 'offline' ? 'Could not reach the network. Some school or work Wi-Fi blocks this.' : racing ? 'A race is on. You join the next one.' : m.length < 2 ? 'Waiting for friends… Send them the link, or tell them the code.' : allReady ? 'Everyone is ready. Starting…' : 'Everyone taps READY. The race starts when all are ready.',
+      netRowsOn: !!N && N.st !== 'menu' && m.length > 0, netRows: m.map(x => { const p = pl.find(q => q.id === x.id) || {}; return { col: p.col || '#8a847e', name: p.name || '?', sub: (x.id === host ? 'HOST · ' : '') + (x.me ? 'THIS PHONE' : 'JOINED'), tag: x.playing ? 'RACING' : x.ready ? 'READY' : 'NOT READY', tagC: x.ready ? '#22c55e' : '#8a847e' }; }),
+      netJoinOn: !!N && N.st === 'menu', netCreate: e => { blur(e); const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let c = ''; for (let i = 0; i < 4; i++) c += A[Math.floor(Math.random() * A.length)]; this.netJoin(c); },
+      netCodeIn: N ? N.codeIn : '', netCodeType: e => this.netSet({ codeIn: String(e.target.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4) }), netCodeKey: e => { if (e.key === 'Enter') { e.preventDefault(); this.netJoin(N && N.codeIn); } }, netJoinGo: e => { blur(e); this.netJoin(N && N.codeIn); },
+      netReadyOn: !!N && N.st === 'room' && !!this.net && !full, netReady: e => { blur(e); this.netReadyToggle(); }, netReadyBg: N && N.ready ? '#22c55e' : '#ec3013', netReadyFg: N && N.ready ? '#000000' : '#ffffff', netReadyTxt: N && N.ready ? 'READY ✓' : 'READY', netReadySub: m.length < 2 ? 'NEED 2+ PLAYERS' : rc + ' / ' + m.length + ' READY · 90 S RACE',
+      netBtnCols: N && N.st === 'room' && this.net && !full ? 'minmax(0,1fr) minmax(0,1fr)' : 'minmax(0,1fr)', netBackTxt: N && N.st === 'room' ? 'LEAVE ROOM' : 'BACK',
+      netBack: e => { blur(e); if (N && N.st === 'room') { this.netLeave(); this.netSet({ st: 'menu', code: '', peers: {}, ready: false, msg: '' }); } else { this.netLeave(); this.setState({ net: null, netCard: false }); } },
+      // results
+      resOn: h.phase === 'results' && !!res, resTitle: res ? (res.of < 2 ? 'Race over' : place === 1 ? 'You win!' : ord(place) + ' of ' + res.of) : '', resSub: res ? 'Best race ' + res.best + (res.gold ? ' · +' + res.gold + 'g' : '') + (res.xp ? ' · +' + res.xp + ' XP' : '') : '',
+      resPlace: res ? ord(place) : '', resBg: place === 1 ? '#ffd23a' : '#2a2826', resFg: place === 1 ? '#000000' : '#ffffff',
+      resRows: res ? res.rows.map((r, i) => ({ n: String(i + 1), col: r.col, name: r.name + (r.gone ? ' · LEFT' : ''), s: String(r.s), bg: r.me ? '#2a2826' : '#000000', vc: r.me ? '#ffd23a' : '#ffffff' })) : [],
+      resStats: res ? [['Your score (tokens + prize points)', String(res.score)], ['Coins won · lost to drains', res.won + ' · ' + res.lost], ['Prizes', res.prizes.length ? res.prizes.join(', ') : '—']].map(([k, v]) => ({ k, v })) : [],
+      resAgainTxt: this.net ? 'RACE AGAIN' : 'BACK', resAgain: e => { blur(e); if (this.net && this.state.net) { this.setState({ netCard: true }); this.g && this.g.netEnd(); this.netSet({ st: 'room', ready: false }); } else { this.g && this.g.netEnd(); } },
+      resLeave: e => { blur(e); this.netLeave(); this.setState({ net: null, netCard: false }); this.g && this.g.toIntro(); },
+    };
+  }
+}
+</script>
+</body>
+</html>

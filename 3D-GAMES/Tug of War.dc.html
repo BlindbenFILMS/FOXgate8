@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tug of War</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}button:focus-visible,input:focus-visible{outline:2px solid #ffd23a;outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:none" data-screen-label="Tug of War">
+  <div ref="{{ stageRef }}" style="position:absolute;inset:0;overflow:hidden"></div>
+
+  <sc-if value="{{ topOn }}" hint-placeholder-val="{{ true }}">
+  <div data-safe="top" style="position:absolute;left:max(8px, env(safe-area-inset-left));right:max(8px, env(safe-area-inset-right));top:calc(8px + env(safe-area-inset-top));display:flex;align-items:flex-start;gap:8px;z-index:3;pointer-events:none">
+    <button onClick="{{ menuBtn }}" aria-label="{{ menuAria }}" style="flex:none;pointer-events:auto;min-width:{{ sideW }};height:48px;padding:0 {{ sidePad }};border:2px solid #ffd23a;border-radius:0;background:#000;color:#fff;font:900 {{ sideFs }} var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">{{ menuTxt }}</button>
+    <div style="flex:1;min-width:0;max-width:560px;margin:0 auto;background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:8px;padding:5px 8px">
+        <div style="display:flex;flex-direction:column;gap:3px;min-width:0">
+          <span style="display:flex;align-items:center;gap:6px;min-width:0"><span style="flex:none;width:10px;height:10px;background:{{ col0 }};display:block"></span><span style="font:900 {{ nameFs }} var(--font-heading);letter-spacing:0.04em;line-height:1.1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere">{{ name0 }}</span></span>
+          <span style="display:flex;gap:3px"><sc-for list="{{ pips0 }}" as="p" hint-placeholder-count="2"><span style="width:16px;height:7px;background:{{ p.c }};display:block"></span></sc-for></span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:1px"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#cfcac4;white-space:nowrap">{{ roundTxt }}</span><span style="font:900 20px var(--font-heading);font-variant-numeric:tabular-nums;line-height:1;color:{{ timeCol }}">{{ timeTxt }}</span></div>
+        <div style="display:flex;flex-direction:column;gap:3px;min-width:0;align-items:flex-end">
+          <span style="display:flex;align-items:center;gap:6px;min-width:0;max-width:100%"><span style="font:900 {{ nameFs }} var(--font-heading);letter-spacing:0.04em;line-height:1.1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;text-align:right;overflow-wrap:anywhere">{{ name1 }}</span><span style="flex:none;width:10px;height:10px;background:{{ col1 }};display:block"></span></span>
+          <span style="display:flex;gap:3px"><sc-for list="{{ pips1 }}" as="p" hint-placeholder-count="2"><span style="width:16px;height:7px;background:{{ p.c }};display:block"></span></sc-for></span>
+        </div>
+      </div>
+      <div role="img" aria-label="{{ meterAria }}" style="position:relative;height:16px;border-top:2px solid #3a3836;background:linear-gradient(90deg, {{ col0 }} 0%, {{ col0 }} 10%, #2a2826 10%, #2a2826 90%, {{ col1 }} 90%, {{ col1 }} 100%)">
+        <span style="position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:#8a847e;display:block"></span>
+        <span ref="{{ markRef }}" style="position:absolute;left:50%;top:-3px;bottom:-3px;width:10px;margin-left:-5px;background:#ec3013;border:2px solid #fff;box-sizing:border-box;display:block"></span>
+      </div>
+    </div>
+    <button onClick="{{ soundBtn }}" aria-label="{{ soundAria }}" aria-pressed="{{ soundPressed }}" style="flex:none;pointer-events:auto;min-width:{{ sideW }};height:48px;padding:0 {{ sidePad }};border:2px solid #ffd23a;border-radius:0;background:#000;color:{{ soundCol }};font:900 {{ sideFs }} var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">{{ soundTxt }}</button>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ countOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ midTop }};transform:translate(-50%,-50%);z-index:5;pointer-events:none;width:112px;height:112px;background:#000;border:3px solid #ffd23a;display:flex;align-items:center;justify-content:center;font:900 72px var(--font-heading);color:#ffd23a;font-variant-numeric:tabular-nums">{{ countTxt }}</div>
+  </sc-if>
+  <sc-if value="{{ flashOn }}" hint-placeholder-val="{{ false }}">
+    <div role="status" style="position:absolute;left:50%;top:{{ flashTop }};transform:translateX(-50%);z-index:5;pointer-events:none;max-width:calc(100% - 24px);background:rgba(0,0,0,0.9);border:2px solid {{ flashCol }};display:flex;align-items:stretch">
+      <span style="flex:none;width:12px;background:{{ flashCol }};display:block"></span>
+      <span style="padding:8px 16px;font:900 clamp(18px,5vw,30px) var(--font-heading);letter-spacing:0.05em;line-height:1.1;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ flashTxt }}</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ rotOn }}" hint-placeholder-val="{{ false }}">
+    <div role="note" style="position:absolute;left:12px;right:12px;top:{{ rotTop }};z-index:5;pointer-events:none;background:#000;border:2px solid #ffd23a;padding:8px 12px;display:flex;flex-direction:column;gap:2px">
+      <span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a">TWO PLAYERS</span>
+      <span style="font:900 16px var(--font-heading);letter-spacing:0.04em;line-height:1.15;color:#fff">Turn the phone sideways for a bigger rope.</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ surgeOn }}" hint-placeholder-val="{{ false }}">
+    <div role="alert" style="position:absolute;left:50%;bottom:{{ surgeBot }};transform:translateX(-50%);z-index:5;pointer-events:none;background:#ec3013;border:2px solid #fff;padding:8px 14px;display:flex;flex-direction:column;align-items:flex-start;gap:2px;max-width:calc(100% - 24px)">
+      <span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#fff">THEY'RE ABOUT TO HEAVE</span>
+      <span style="font:900 clamp(18px,5vw,26px) var(--font-heading);letter-spacing:0.05em;line-height:1;color:#fff;white-space:nowrap">HOLD DIG IN!</span>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ padsOn }}" hint-placeholder-val="{{ true }}">
+  <div data-safe="bottom" style="position:absolute;left:max(12px, env(safe-area-inset-left));right:max(12px, env(safe-area-inset-right));bottom:calc(12px + env(safe-area-inset-bottom));z-index:4;display:flex;justify-content:space-between;align-items:flex-end;gap:10px;pointer-events:none">
+    <sc-for list="{{ pads }}" as="pd" hint-placeholder-count="2">
+      <div style="display:flex;flex-direction:{{ pd.dir }};align-items:flex-end;justify-content:space-between;gap:{{ pd.gap }};flex:{{ pd.flex }}">
+        <div style="display:flex;flex-direction:column;gap:4px;width:{{ pd.pullW }}">
+          <div style="background:#000;border:2px solid #3a3836;display:flex;flex-direction:column">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:3px 6px;min-height:20px">
+              <span style="font:900 13px var(--font-heading);letter-spacing:0.04em;color:{{ pd.qCol }};white-space:nowrap;overflow:hidden">{{ pd.qTxt }}</span>
+              <span style="font:900 12px var(--font-heading);font-variant-numeric:tabular-nums;color:#ffd23a;white-space:nowrap">{{ pd.combo }}</span>
+            </div>
+            <div style="height:6px;background:#2a2826"><div ref="{{ pd.stamRef }}" style="height:100%;width:100%;background:#ffd23a"></div></div>
+          </div>
+          <button aria-label="{{ pd.pullAria }}" onPointerDown="{{ pd.pullDown }}" onContextMenu="{{ noMenu }}" style="position:relative;width:{{ pd.pullW }};height:{{ pd.pullW }};padding:0;border:3px solid #000;border-radius:0;background:{{ pd.col }};color:#fff;cursor:pointer;pointer-events:auto;touch-action:none;box-shadow:{{ pd.glow }};display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;gap:2px;padding:10px;box-sizing:border-box;text-align:left">
+            <span ref="{{ pd.ringRef }}" style="position:absolute;inset:-3px;border:4px solid #ffd23a;box-sizing:border-box;pointer-events:none;opacity:0;display:block;transform-origin:50% 50%"></span>
+            <span style="font:800 10px var(--font-heading);letter-spacing:0.12em;opacity:0.9">{{ pd.who }}</span>
+            <span style="font:900 {{ pd.pullFs }} var(--font-heading);letter-spacing:0.04em;line-height:1">PULL</span>
+            <span style="font:700 10px var(--font-heading);letter-spacing:0.08em;opacity:0.85">{{ pd.pullKey }}</span>
+          </button>
+        </div>
+        <button aria-label="{{ pd.digAria }}" aria-pressed="{{ pd.digPressed }}" onPointerDown="{{ pd.digDown }}" onPointerUp="{{ pd.digUp }}" onPointerCancel="{{ pd.digUp }}" onPointerLeave="{{ pd.digUp }}" onContextMenu="{{ noMenu }}" style="width:{{ pd.digW }};height:{{ pd.digW }};padding:8px;border:2px solid {{ pd.digBd }};border-radius:0;background:{{ pd.digBg }};color:{{ pd.digFg }};cursor:pointer;pointer-events:auto;touch-action:none;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;gap:2px;box-sizing:border-box;text-align:left">
+          <span style="font:900 {{ pd.digFs }} var(--font-heading);letter-spacing:0.04em;line-height:1">DIG<br>IN</span>
+          <span style="font:700 10px var(--font-heading);letter-spacing:0.08em;opacity:0.8">{{ pd.digKey }}</span>
+        </button>
+      </div>
+    </sc-for>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}">
+  <button onPointerDown="{{ demoTap }}" aria-label="Demo playing. Tap to play yourself" style="position:absolute;inset:0;z-index:9;border:0;border-radius:0;padding:0;margin:0;background:transparent;cursor:pointer;touch-action:none;display:flex;align-items:{{ demoAlign }};justify-content:center">
+    <span style="margin:0 12px {{ demoBot }};background:#000;border:2px solid #ffd23a;display:flex;align-items:stretch;max-width:calc(100% - 24px)">
+      <span style="flex:none;width:12px;background:#ec3013;display:block"></span>
+      <span style="padding:10px 16px;display:flex;flex-direction:column;align-items:flex-start;gap:3px">
+        <span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a">DEMO · YOUR FOX IS ON AUTO</span>
+        <span style="font:900 clamp(20px,6vw,28px) var(--font-heading);letter-spacing:0.04em;line-height:1;color:#fff">TAP TO PLAY</span>
+      </span>
+    </span>
+  </button>
+  </sc-if>
+
+  <sc-if value="{{ menuOn }}" hint-placeholder-val="{{ true }}">
+  <div style="position:absolute;inset:0;z-index:10;display:flex;align-items:{{ cardAlign }};justify-content:center;padding:calc(12px + env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));box-sizing:border-box;background:rgba(0,0,0,0.35)">
+    <div style="width:{{ menuW }};max-height:100%;overflow-y:auto;background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column;box-sizing:border-box">
+      <div style="padding:12px 14px 10px;border-bottom:2px solid #3a3836;display:flex;justify-content:space-between;align-items:flex-end;gap:12px">
+        <div style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ placeKicker }}</span><span style="font:900 clamp(26px,7vw,34px) var(--font-heading);line-height:1;letter-spacing:-0.01em">Tug of War</span></div>
+        <sc-if value="{{ embedOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ backOut }}" style="flex:none;min-height:44px;padding:0 14px;border:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">BACK</button></sc-if>
+      </div>
+      <div style="display:grid;grid-template-columns:{{ menuCols }}">
+        <div style="display:flex;flex-direction:column;border-right:{{ menuDiv }}">
+          <span style="padding:8px 14px 6px;font:800 10px var(--font-heading);letter-spacing:0.14em;color:#8a847e">SOLO · BEAT THE LADDER</span>
+          <sc-for list="{{ rivalRows }}" as="r" hint-placeholder-count="4">
+            <button onClick="{{ r.go }}" disabled="{{ r.locked }}" aria-label="{{ r.aria }}" style="width:100%;min-height:52px;padding:6px 14px;border:0;border-top:2px solid #2a2826;border-radius:0;background:#000;color:#fff;cursor:pointer;text-align:left;display:grid;grid-template-columns:12px minmax(0,1fr) auto;align-items:center;gap:10px;opacity:{{ r.op }}" style-hover="background:#1a1918">
+              <span style="width:12px;height:28px;background:{{ r.col }};display:block"></span>
+              <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:900 15px var(--font-heading);letter-spacing:0.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.name }}</span><span style="font:600 12px var(--font-body);color:#cfcac4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.line }}</span></span>
+              <span style="font:800 11px var(--font-heading);letter-spacing:0.08em;color:{{ r.tagCol }};white-space:nowrap">{{ r.tag }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="display:flex;flex-direction:column;border-top:{{ menuDivTop }}">
+          <span style="padding:8px 14px 6px;font:800 10px var(--font-heading);letter-spacing:0.14em;color:#8a847e">WITH FRIENDS</span>
+          <button onClick="{{ goLocal }}" style="width:100%;min-height:56px;padding:6px 14px;border:0;border-top:2px solid #2a2826;border-radius:0;background:#000;color:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px" style-hover="background:#1a1918"><span style="font:900 15px var(--font-heading);letter-spacing:0.05em">2 PLAYERS · ONE PHONE</span><span style="font:600 12px var(--font-body);color:#cfcac4">Hold the phone sideways between you. Left vs right.</span></button>
+          <button onClick="{{ goOnline }}" style="width:100%;min-height:56px;padding:6px 14px;border:0;border-top:2px solid #2a2826;border-radius:0;background:#000;color:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px" style-hover="background:#1a1918"><span style="font:900 15px var(--font-heading);letter-spacing:0.05em;color:#7dd3fc">ONLINE · 2 TO 5 PLAYERS</span><span style="font:600 12px var(--font-body);color:#cfcac4">Red vs blue. CPU foxes fill each side to four.</span></button>
+          <button onClick="{{ goHelp }}" style="width:100%;min-height:52px;padding:6px 14px;border:0;border-top:2px solid #2a2826;border-radius:0;background:#000;color:#ffd23a;cursor:pointer;text-align:left;font:900 14px var(--font-heading);letter-spacing:0.08em" style-hover="background:#1a1918">HOW TO PLAY</button>
+          <div style="padding:8px 14px 10px;border-top:2px solid #2a2826;font:600 12px var(--font-body);line-height:1.4;color:#8a847e">{{ statLine }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ helpOn }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;inset:0;z-index:11;display:flex;align-items:{{ cardAlign }};justify-content:center;padding:calc(12px + env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));box-sizing:border-box;background:rgba(0,0,0,0.55)">
+    <div style="width:min(520px, 100%);max-height:100%;overflow-y:auto;background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="padding:12px 14px 10px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:3px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">HOW TO PLAY</span><span style="font:900 26px var(--font-heading);line-height:1">Pull together</span></div>
+      <sc-for list="{{ helpRows }}" as="h" hint-placeholder-count="4">
+        <div style="display:grid;grid-template-columns:40px minmax(0,1fr);gap:12px;align-items:start;padding:10px 14px;border-bottom:2px solid #2a2826">
+          <span style="width:40px;height:40px;background:{{ h.bg }};color:{{ h.fg }};display:flex;align-items:center;justify-content:center;font:900 18px var(--font-heading)">{{ h.n }}</span>
+          <span style="display:flex;flex-direction:column;gap:2px"><span style="font:900 15px var(--font-heading);letter-spacing:0.04em">{{ h.k }}</span><span style="font:600 14px var(--font-body);line-height:1.4;color:#e8e4de;text-wrap:pretty">{{ h.v }}</span></span>
+        </div>
+      </sc-for>
+      <div style="padding:8px 14px;font:600 12px var(--font-body);line-height:1.4;color:#8a847e">{{ keysLine }}</div>
+      <button onClick="{{ helpClose }}" style="min-height:56px;padding:0 18px;border:0;border-top:2px solid #ec3013;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">GOT IT</button>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ netOn }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;inset:0;z-index:11;display:flex;align-items:{{ cardAlign }};justify-content:center;padding:calc(12px + env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));box-sizing:border-box;background:rgba(0,0,0,0.45)">
+    <div style="width:min(460px, 100%);max-height:100%;overflow-y:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column;box-sizing:border-box">
+      <div style="padding:10px 14px 8px;display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-bottom:2px solid #3a3836"><span style="display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">TUG OF WAR</span><span style="font:900 24px var(--font-heading);line-height:1">Online</span></span><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:{{ netStatC }};white-space:nowrap">{{ netStat }}</span></div>
+      <sc-if value="{{ netCodeOn }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:10px 14px;border-bottom:2px solid #3a3836;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:12px"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#8a847e">ROOM</span><span style="font:900 44px var(--font-heading);line-height:1;letter-spacing:0.12em;color:#ffd23a">{{ netCode }}</span></div><button onClick="{{ netShare }}" style="min-height:44px;padding:0 14px;border:2px solid #ffd23a;border-radius:0;background:#000;color:#ffd23a;font:900 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;white-space:nowrap" style-hover="background:#2a2826">{{ netShareTxt }}</button></div>
+      </sc-if>
+      <span style="padding:8px 14px;border-bottom:2px solid #3a3836;font:700 14px var(--font-body);line-height:1.4;color:#e8e4de;text-wrap:pretty">{{ netMsg }}</span>
+      <sc-for list="{{ netRows }}" as="r" hint-placeholder-count="2">
+        <div style="min-height:44px;padding:4px 14px;border-bottom:2px solid #2a2826;display:grid;grid-template-columns:12px minmax(0,1fr) auto;align-items:center;gap:10px"><span style="width:12px;height:24px;background:{{ r.col }};display:block"></span><span style="display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font:900 14px var(--font-heading);letter-spacing:0.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.name }}</span><span style="font:700 10px var(--font-heading);letter-spacing:0.1em;color:#8a847e">{{ r.sub }}</span></span><span style="font:900 11px var(--font-heading);letter-spacing:0.1em;color:{{ r.tagC }}">{{ r.tag }}</span></div>
+      </sc-for>
+      <sc-if value="{{ netJoinOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column">
+          <button onClick="{{ netCreate }}" style="min-height:56px;padding:0 18px;border:0;border-bottom:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">MAKE A ROOM</button>
+          <label for="tug-code" style="padding:8px 14px 4px;font:800 10px var(--font-heading);letter-spacing:0.12em;color:#8a847e">OR TYPE A FRIEND'S CODE</label>
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;border-top:2px solid #3a3836">
+            <input id="tug-code" value="{{ netCodeIn }}" onInput="{{ netCodeType }}" onKeyDown="{{ netCodeKey }}" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCD" style="min-width:0;min-height:52px;padding:0 14px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#111;color:#ffd23a;font:900 28px var(--font-heading);letter-spacing:0.2em;text-transform:uppercase;user-select:text;-webkit-user-select:text">
+            <button onClick="{{ netJoinGo }}" style="min-height:52px;padding:0 18px;border:0;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">JOIN</button>
+          </div>
+        </div>
+      </sc-if>
+      <div style="display:grid;grid-template-columns:{{ netBtnCols }};border-top:2px solid #3a3836">
+        <sc-if value="{{ netReadyOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ netReady }}" aria-pressed="{{ netReadyPressed }}" style="min-height:56px;padding:4px 16px;border:0;border-right:2px solid #3a3836;border-radius:0;background:{{ netReadyBg }};color:{{ netReadyFg }};cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px"><span style="font:900 16px var(--font-heading);letter-spacing:0.1em">{{ netReadyTxt }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.08em;opacity:0.85">{{ netReadySub }}</span></button></sc-if>
+        <button onClick="{{ netBack }}" style="min-height:56px;padding:0 16px;border:0;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">{{ netBackTxt }}</button>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;inset:0;z-index:10;display:flex;align-items:{{ cardAlign }};justify-content:center;padding:calc(12px + env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));box-sizing:border-box;background:rgba(0,0,0,0.3)">
+    <div style="width:min(440px, 100%);max-height:100%;overflow-y:auto;background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:stretch;border-bottom:2px solid #3a3836">
+        <div style="padding:12px 14px 10px;display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ doneKicker }}</span><span style="font:900 clamp(26px,7vw,34px) var(--font-heading);line-height:1">{{ doneTitle }}</span></div>
+        <span style="width:16px;background:{{ doneCol }};display:block"></span>
+      </div>
+      <sc-for list="{{ doneRows }}" as="r" hint-placeholder-count="4">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:7px 14px;border-bottom:2px solid #2a2826"><span style="font:800 11px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">{{ r.k }}</span><span style="font:900 16px var(--font-heading);font-variant-numeric:tabular-nums">{{ r.v }}</span></div>
+      </sc-for>
+      <sc-if value="{{ itemOn }}" hint-placeholder-val="{{ false }}"><div style="padding:10px 14px;background:#ffd23a;color:#000;font:900 15px var(--font-heading);letter-spacing:0.06em">NEW ITEM · {{ itemTxt }}</div></sc-if>
+      <div style="display:grid;grid-template-columns:{{ doneCols }}">
+        <button onClick="{{ doneMain }}" style="min-height:56px;padding:0 16px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 15px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">{{ doneMainTxt }}</button>
+        <sc-if value="{{ nextOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ doneNext }}" style="min-height:56px;padding:0 16px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ffd23a;color:#000;font:900 15px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#ffe27a">NEXT RIVAL</button></sc-if>
+        <button onClick="{{ doneMenu }}" style="min-height:56px;padding:0 16px;border:0;border-radius:0;background:#000;color:#fff;font:900 15px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">MENU</button>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["hall","stone","tech","sand"],"default":"hall"},"demo":{"editor":"boolean","default":false},"$preview":{"width":844,"height":390}}'>
+class Component extends DCLogic {
+  state = { h: null, vw: 1200, vh: 800, help: false };
+  stageRef = React.createRef(); markRef = React.createRef(); ring0 = React.createRef(); ring1 = React.createRef(); stam0 = React.createRef(); stam1 = React.createRef();
+  q = new URLSearchParams(location.search); embed = this.q.get('embed') === '1';
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); addEventListener('keydown', this.onKey); addEventListener('keyup', this.onKeyUp); addEventListener('blur', this.onBlur); this.onRs();
+    try { const m = window.TugOfWar && window.TugOfWar.createTugOfWar ? window.TugOfWar : await import(new URL('minigames/tug/tug-of-war.js', document.baseURI).href);
+      const theme = this.q.get('theme') || this.props.theme || 'hall', place = (this.q.get('place') || '').slice(0, 40).toUpperCase();
+      this.g = await m.createTugOfWar({ container: this.stageRef.current, onState: h => this.setState({ h }), theme, place }); window.__tug = this.g;
+      this.g.bindEls(() => ({ mark: this.markRef.current, ring0: this.ring0.current, ring1: this.ring1.current, stam0: this.stam0.current, stam1: this.stam1.current }));
+      const rm = /[?&]room=([A-Za-z0-9]{4})/.exec(location.search); if (rm) { this.g.netOpen(); this.g.netJoin(rm[1]); }
+      else if (this.q.get('demo') === '1' || (this.q.get('demo') !== '0' && this.props.demo === true)) this.g.startDemo();
+    } catch (e) { console.warn('tug of war failed: ' + (e && e.stack || String(e))); }
+  }
+  componentDidUpdate() { const root = this.stageRef.current && this.stageRef.current.parentElement; if (!root || !this.g) return; const rb = root.getBoundingClientRect(); let top = 0, bot = 0;
+    root.querySelectorAll('[data-safe]').forEach(el => { const r = el.getBoundingClientRect(); if (!r.height) return; if (el.dataset.safe === 'top') top = Math.max(top, r.bottom - rb.top); else bot = Math.max(bot, rb.bottom - r.top); });
+    const H = rb.height || 1, port = rb.height > rb.width; this.g.setSafe(Math.round(Math.min(top + 6, H * 0.3)), Math.round(Math.min(bot * (port ? 1 : 0.35), H * (port ? 0.36 : 0.2)))); }
+  componentWillUnmount() { removeEventListener('resize', this.onRs); removeEventListener('keydown', this.onKey); removeEventListener('keyup', this.onKeyUp); removeEventListener('blur', this.onBlur); this.g && this.g.destroy(); }
+  onRs = () => this.setState({ vw: innerWidth, vh: innerHeight });
+  onBlur = () => { if (this.g) { this.g.brace(0, false); this.g.brace(1, false); } };
+  keyMap() { const h = this.state.h; if (!h) return {}; if (h.mode === 'local') return { KeyA: ['pull', 0], KeyS: ['brace', 0], KeyL: ['pull', 1], KeyK: ['brace', 1] }; return { Space: ['pull', 0], KeyJ: ['pull', 0], KeyK: ['brace', 0], ShiftLeft: ['brace', 0], ShiftRight: ['brace', 0] }; }
+  onKey = e => { const h = this.state.h; if (!h || !this.g || (e.target && e.target.tagName === 'INPUT')) return; if (e.code === 'Escape') { if (this.state.help) this.setState({ help: false }); else if (h.mode !== 'menu') this.g.toMenu(); return; }
+    if (h.mode === 'menu') return; const a = this.keyMap()[e.code]; if (!a) return; e.preventDefault(); if (e.repeat) return; if (a[0] === 'pull') this.g.pull(a[1]); else this.g.brace(a[1], true); };
+  onKeyUp = e => { if (!this.g) return; const a = this.keyMap()[e.code]; if (a && a[0] === 'brace') this.g.brace(a[1], false); };
+  backOut = () => { try { parent.postMessage({ type: '8gates:minigame', action: 'back', game: 'tugWar' }, '*'); } catch (e) {} };
+  renderVals() {
+    const S = this.state, g = this.g, vw = S.vw, vh = S.vh, port = vh > vw, phone = Math.min(vw, vh) < 520, land = !port && vh < 520, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const h = S.h || { mode: 'menu', phase: 'menu', score: [0, 0], teamName: ['', ''], teamCol: ['#ec3013', '#38bdf8'], locals: [], rivals: [], round: 1, time: 45, sound: true, place: 'THE HALL', net: null };
+    const playing = h.mode !== 'menu', N = h.net, local = h.mode === 'local';
+    const pips = t => [0, 1].map(i => ({ c: h.score[t] > i ? h.teamCol[t] : '#3a3836' }));
+    // touch pads: one set (solo / online) or two mirrored sets (two players on one phone)
+    const pullW = local ? Math.round(Math.max(84, Math.min(116, (vw - 64) / 2 - 76))) : Math.round(port ? Math.min(148, vw * 0.36) : Math.min(132, vh * 0.34)), digW = local ? Math.round(Math.max(64, Math.min(84, pullW * 0.72))) : Math.round(pullW * 0.72);
+    const pads = (h.locals || []).map((L, k) => { const right = local ? k === 1 : true, refs = [[this.ring0, this.stam0], [this.ring1, this.stam1]][k];
+      const pad = { dir: local ? (right ? 'row-reverse' : 'row') : 'row', gap: '8px', pullW: pullW + 'px', digW: digW + 'px', pullFs: pullW > 110 ? '30px' : '24px', digFs: digW > 80 ? '20px' : '16px', col: L.frenzy ? '#ff7a00' : L.col, glow: L.frenzy ? '0 0 0 4px #ffd23a, 0 0 28px 6px rgba(255,122,0,0.75)' : 'none', who: local ? 'P' + (k + 1) : 'YOU', ringRef: refs[0], stamRef: refs[1],
+        qTxt: L.q ? L.q.txt : L.tired ? 'TIRED · DIG IN' : L.brace ? 'DUG IN' : L.frenzy ? 'FRENZY' : '', qCol: L.q ? L.q.col : L.tired ? '#ff9a8a' : L.frenzy ? '#ff7a00' : '#22c55e', combo: L.combo ? '×' + L.combo : '',
+        pullKey: phone ? '' : local ? (k ? 'L' : 'A') : 'SPACE', digKey: phone ? 'HOLD' : local ? (k ? 'HOLD K' : 'HOLD S') : 'HOLD K', pullAria: (local ? 'Player ' + (k + 1) + ' ' : '') + 'Pull on the beat', digAria: (local ? 'Player ' + (k + 1) + ' ' : '') + 'Hold to dig in',
+        digPressed: L.brace ? 'true' : 'false', digBg: L.brace ? '#22c55e' : '#000000', digFg: L.brace ? '#000000' : '#ffffff', digBd: L.brace ? '#22c55e' : '#ffd23a',
+        pullDown: e => { e.preventDefault(); g && g.pull(k); }, digDown: e => { e.preventDefault(); try { e.currentTarget.setPointerCapture(e.pointerId); } catch (er) {} g && g.brace(k, true); }, digUp: () => { g && g.brace(k, false); } };
+      return pad; });
+    // solo/online: DIG IN on the left thumb, PULL on the right thumb
+    const padsLaid = local ? pads.map(p => ({ ...p, flex: '0 0 auto' })) : pads.length ? [{ ...pads[0], dir: 'row-reverse', gap: '12px', flex: '1 1 auto' }] : [];
+    const R = h.result, n = N || {}, full = !!n.full, mcount = n.count || 0, allReady = mcount >= 2 && n.readyCount === mcount;
+    const helpRows = [
+      { n: '1', bg: '#ec3013', fg: '#fff', k: 'PULL ON THE BEAT', v: 'A ring closes on the PULL button. Tap when it lands: green is PERFECT. The drum and a buzz mark the beat too.' },
+      { n: '2', bg: '#ffd23a', fg: '#000', k: 'BUILD A COMBO · FRENZY', v: 'Perfect pulls in a row grow your combo and your teammates pull harder. Hit 8 in a row for FRENZY: the rope glows, the crowd goes wild and every pull hits harder. One slip ends it.' },
+      { n: '3', bg: '#22c55e', fg: '#000', k: 'HOLD DIG IN', v: 'Brace your feet. The rope barely moves against you and your breath comes back fast. Hold it when the rivals are about to heave (red warning and a horn) to BLOCK them.' },
+      { n: '4', bg: '#38bdf8', fg: '#000', k: 'WIN THE ROPE', v: 'Drag the red ribbon past your coloured tape and the other team goes face-first into the mud. First to two rounds wins. A blip sounds every bar from the side the ribbon is on.' } ];
+    const statSv = (() => { try { const sv = window.__8G_SAVE; if (!sv) return ''; return 'WINS ' + sv.stat('tugWar.wins') + ' · BEST COMBO ×' + sv.stat('tugWar.bestCombo') + ' · GOLD ' + sv.data.gold; } catch (e) { return ''; } })();
+    return {
+      stageRef: this.stageRef, markRef: this.markRef, noMenu: e => e.preventDefault(),
+      demoOn: !!h.demo, demoAlign: 'flex-end', demoBot: port ? 'calc(' + (pullW + 96) + 'px + env(safe-area-inset-bottom))' : 'calc(16px + env(safe-area-inset-bottom))', demoTap: e => { e.preventDefault(); g && g.toMenu(); },
+      topOn: playing && h.phase !== 'done', menuTxt: this.embed ? 'BACK' : 'MENU', menuAria: 'Leave the match, back to the menu', menuBtn: e => { blur(e); g && g.toMenu(); },
+      name0: h.teamName[0], name1: h.teamName[1], col0: h.teamCol[0], col1: h.teamCol[1], pips0: pips(0), pips1: pips(1), nameFs: phone && port ? '11px' : '13px', sideW: phone && port ? '48px' : '56px', sidePad: phone && port ? '6px' : '10px', sideFs: phone && port ? '10px' : '11px',
+      rotOn: local && port && phone && h.phase === 'count', rotTop: 'calc(96px + env(safe-area-inset-top))',
+      roundTxt: 'ROUND ' + h.round, timeTxt: Math.floor(h.time / 60) + ':' + String(h.time % 60).padStart(2, '0'), timeCol: h.time <= 10 && h.phase === 'play' ? '#ff9a8a' : '#ffffff',
+      meterAria: 'Rope: ' + (Math.abs(h.x || 0) < 0.1 ? 'even' : ((h.x || 0) < 0 ? h.teamName[0] : h.teamName[1]) + ' side'),
+      soundTxt: h.sound ? 'SOUND' : 'MUTED', soundCol: h.sound ? '#fff' : '#8a847e', soundPressed: h.sound ? 'true' : 'false', soundAria: h.sound ? 'Sound on. Tap to mute' : 'Sound off. Tap to turn on', soundBtn: e => { blur(e); g && g.toggleSound(); },
+      countOn: playing && h.phase === 'count', countTxt: String(h.count || ''), midTop: port ? '40%' : '45%',
+      flashOn: playing && !!h.flash && h.phase !== 'done', flashTxt: h.flash ? h.flash.txt : '', flashCol: h.flash ? h.flash.col : '#ffd23a', flashTop: 'calc(' + (port ? 92 : 84) + 'px + env(safe-area-inset-top))',
+      surgeOn: playing && !!h.surge, surgeBot: port ? 'calc(' + (pullW + 70) + 'px + env(safe-area-inset-bottom))' : 'calc(12px + env(safe-area-inset-bottom))',
+      padsOn: playing && (h.phase === 'play' || h.phase === 'count' || h.phase === 'round'), pads: padsLaid,
+      menuOn: h.mode === 'menu' && !N && !S.help, cardAlign: 'center', menuW: land ? 'min(780px, 100%)' : 'min(460px, 100%)', menuCols: land ? 'minmax(0,1fr) minmax(0,1fr)' : 'minmax(0,1fr)', menuDiv: land ? '2px solid #3a3836' : '0', menuDivTop: land ? '0' : '2px solid #3a3836',
+      placeKicker: (h.place || 'THE HALL') + ' · STRENGTH + SPECTACLE', embedOn: this.embed, backOut: e => { blur(e); this.backOut(); },
+      rivalRows: (h.rivals || []).map(r => ({ name: (r.i + 1) + ' · ' + r.name, line: r.locked ? 'Beat ' + h.rivals[r.i - 1].name + ' first.' : r.line, col: r.col, op: r.locked ? 0.5 : 1, locked: r.locked, tag: r.locked ? 'LOCKED' : r.beaten ? 'BEATEN ✓' : '+' + r.gold + ' GOLD', tagCol: r.beaten ? '#22c55e' : r.locked ? '#8a847e' : '#ffd23a', aria: r.name + (r.locked ? ', locked' : r.beaten ? ', beaten' : ''), go: e => { blur(e); g && g.startSolo(r.i); } })),
+      goLocal: e => { blur(e); g && g.startLocal(); }, goOnline: e => { blur(e); g && g.netOpen(); }, goHelp: e => { blur(e); this.setState({ help: true }); }, statLine: statSv || 'Every win pays gold into your 8 GATES save.',
+      helpOn: S.help, helpRows, helpClose: e => { blur(e); this.setState({ help: false }); }, keysLine: phone ? 'Use both thumbs: DIG IN on the left, PULL on the right.' : 'Keys: SPACE or J pull · hold K or SHIFT dig in. Two players: A / hold S (left) · L / hold K (right). ESC menu.',
+      // online lobby
+      netOn: !!N && h.mode === 'menu', netStat: !N ? '' : full ? 'ROOM FULL' : n.status === 'local' ? 'TEST · SAME DEVICE' : n.status === 'offline' ? 'OFFLINE' : n.status === 'online' ? (mcount > 1 ? mcount + ' IN THE ROOM' + (n.ping ? ' · ' + n.ping + ' MS' : '') : 'ONLINE') : n.st === 'menu' ? 'NO SERVER NEEDED' : 'CONNECTING…', netStatC: n.status === 'offline' || full ? '#ec3013' : '#ffd23a',
+      netCodeOn: !!N && !!n.code && n.st !== 'menu', netCode: n.code || '', netShareTxt: n.copied ? 'LINK COPIED' : 'SHARE LINK',
+      netShare: async e => { blur(e); let u; try { u = new URL(location.href); u.searchParams.set('room', n.code); u.searchParams.delete('embed'); } catch (er) { return; } try { if (navigator.share && phone) await navigator.share({ title: '8 GATES · Tug of War', text: 'Tug of war with me in 8 GATES. Room ' + n.code, url: u.href }); else { await navigator.clipboard.writeText(u.href); g.netCopied(true); setTimeout(() => g && g.netCopied(false), 2000); } } catch (er) {} },
+      netMsg: !N ? '' : n.msg ? n.msg : n.st === 'menu' ? 'Up to 5 friends: red vs blue, CPU foxes fill each side to four. Make a room and send the link, or type a friend’s code.' : full ? 'Five pullers are already in room ' + n.code + '. Try another code.' : n.status === 'offline' ? 'Could not reach the network. Some school or work Wi-Fi blocks this.' : n.racing ? 'A match is on. You join the next one.' : mcount < 2 ? 'Waiting for friends… Send them the link, or tell them the code.' : allReady ? 'Everyone is ready. Starting…' : 'Everyone taps READY. The match starts when all are ready.',
+      netRows: !N || n.st === 'menu' || full ? [] : (n.rows || []).map(r => ({ col: r.col, name: r.name, sub: r.host ? 'HOST · RUNS THE ROPE' : 'PULLER', tag: r.playing ? 'PLAYING' : r.ready ? 'READY' : '', tagC: r.ready ? '#22c55e' : '#8a847e' })),
+      netJoinOn: !!N && n.st === 'menu', netCodeIn: n.codeIn || '', netCodeType: e => g && g.netCodeIn(e.target.value), netCodeKey: e => { e.stopPropagation(); if (e.key === 'Enter') { e.preventDefault(); g && g.netJoin(n.codeIn); } },
+      netJoinGo: e => { blur(e); g && g.netJoin(n.codeIn); }, netCreate: e => { blur(e); g && g.netCreate(); },
+      netReadyOn: !!N && n.st !== 'menu' && !full && mcount >= 2, netReady: e => { blur(e); g && g.netReady(); }, netReadyPressed: n.ready ? 'true' : 'false', netReadyTxt: n.ready ? 'READY ✓' : 'READY', netReadySub: n.ready ? (allReady ? 'STARTING…' : 'WAITING · ' + n.readyCount + '/' + mcount + ' READY') : mcount + ' PULLERS · BEST OF 3', netReadyBg: n.ready ? '#22c55e' : '#ec3013', netReadyFg: n.ready ? '#000000' : '#ffffff',
+      netBtnCols: !!N && n.st !== 'menu' && !full && mcount >= 2 ? 'minmax(0,2fr) minmax(0,1fr)' : 'minmax(0,1fr)', netBackTxt: !N ? '' : n.st === 'menu' ? 'BACK' : 'LEAVE', netBack: e => { blur(e); g && g.netLeave(); },
+      // result
+      doneOn: h.phase === 'done' && !!R, doneKicker: R ? R.kicker : '', doneTitle: R ? R.title : '', doneCol: R ? (R.mode === 'local' ? h.teamCol[R.w] : R.won ? '#22c55e' : '#ec3013') : '#ffd23a',
+      doneRows: R ? R.rows.map(([k, v]) => ({ k, v })) : [], itemOn: !!(R && R.item), itemTxt: R ? R.item : '', nextOn: !!(R && R.next != null && R.won),
+      doneCols: R && R.next != null && R.won ? 'minmax(0,1fr) minmax(0,1fr) auto' : 'minmax(0,1fr) auto', doneMainTxt: R && R.mode === 'online' ? 'REMATCH' : 'AGAIN',
+      doneMain: e => { blur(e); g && g.again(); }, doneNext: e => { blur(e); g && g.nextRival(); }, doneMenu: e => { blur(e); g && g.toMenu(); },
+    };
+  }
+}
+</script>
+</body>
+</html>

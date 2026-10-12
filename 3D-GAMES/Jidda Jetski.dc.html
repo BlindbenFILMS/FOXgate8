@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}@keyframes coinSpin{from{transform:rotateY(0deg)}to{transform:rotateY(360deg)}}@keyframes coinPulse{0%,100%{opacity:1}50%{opacity:0.3}}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Jidda Jetski">
+  <div ref="{{ stageRef }}" style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0;overflow:hidden"></div>
+  <div style="position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 120px 30px #ec3013;opacity:{{ hurtOp }};z-index:1"></div>
+  <sc-if value="{{ edgeOn }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0;pointer-events:none;z-index:3">
+    <div style="position:absolute;left:{{ edgeL }};top:{{ edgeT }};transform:translate(-50%,-50%);transition:left 0.15s linear,top 0.15s linear;display:flex;flex-direction:column;align-items:center">
+      <div style="width:46px;height:46px;box-sizing:border-box;background:#000;border:2px solid #ffd23a;display:flex;align-items:center;justify-content:center"><svg width="28" height="28" viewBox="0 0 24 24" style="transform:rotate({{ edgeRot }})"><path d="M4 12h13M12 5l7 7-7 7" fill="none" stroke="#ffd23a" stroke-width="3" stroke-linecap="square"></path></svg></div>
+      <div style="background:#000;border:2px solid #ffd23a;border-top:0;padding:2px 6px;font:800 10px var(--font-heading);letter-spacing:0.08em;color:#fff;white-space:nowrap">{{ edgeTxt }}</div>
+    </div>
+  </div>
+  </sc-if>
+  <div data-hud-host="1" style="position:absolute;left:0;right:0;top:0;bottom:0;pointer-events:none"><dc-import name="Game HUD" game="{{ engine }}" hud="{{ stdHud }}" started="{{ started }}" busy="{{ hudBusy }}" on-hud="{{ onHud }}" world="Jidda" vehicle="jetski" full-armory="{{ true }}" keys="{{ keysList }}" skip-keys="{{ skipKeys }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  <sc-if value="{{ showCard }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:{{ cardTop }};width:{{ colW }};display:flex;flex-direction:column;pointer-events:none;z-index:2">
+    <sc-if value="{{ showStats }}" hint-placeholder-val="{{ true }}"><div style="background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="padding:{{ cardPad }};display:flex;flex-direction:column;gap:4px;border-bottom:2px solid #3a3836">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#ffd23a;white-space:nowrap">Corsair Reach · jidda jetski</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px">
+          <div style="font-family:var(--font-heading);font-size:{{ titleSize }};font-weight:800;line-height:1;letter-spacing:-0.02em;white-space:nowrap">Jetski Run</div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><span style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#cfcac4">SCORE</span><span style="font:800 18px var(--font-heading);font-variant-numeric:tabular-nums">{{ scoreTxt }}</span></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-bottom:2px solid #3a3836">
+        <div style="padding:5px 10px;display:flex;flex-direction:column;gap:1px;border-right:2px solid #3a3836"><span style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#cfcac4">TOKENS</span><span style="font:800 15px var(--font-heading);font-variant-numeric:tabular-nums;color:#e6b45a;white-space:nowrap">{{ tokTxt }}</span></div>
+        <div style="padding:5px 10px;display:flex;flex-direction:column;gap:1px;border-right:2px solid #3a3836"><span style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#cfcac4">PIRATES</span><span style="font:800 15px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap">{{ botTxt }}</span></div>
+        <div style="padding:5px 10px;display:flex;flex-direction:column;gap:1px"><span style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#cfcac4">{{ timeLbl }}</span><span style="font:800 15px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap;color:{{ timeCol }}">{{ timeTxt }}</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:6px 10px">
+        <span style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#7dd3fc">HOSE</span>
+        <span style="display:flex;gap:3px"><sc-for list="{{ pips }}" as="p" hint-placeholder-count="8"><span style="width:7px;height:14px;background:{{ p.c }};display:block"></span></sc-for></span>
+        <span style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#e6b45a;white-space:nowrap">CHEST {{ chestTxt }}</span>
+        <sc-if value="{{ hasWave }}" hint-placeholder-val="{{ false }}"><span style="margin-left:auto;font:800 11px var(--font-heading);letter-spacing:0.1em;color:#ec3013;white-space:nowrap">{{ waveTxt }}</span></sc-if>
+      </div>
+    </div></sc-if>
+    <sc-if value="{{ hasBanner }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:-2px;background:#000;border:2px solid #ffd23a;padding:8px 12px;font:800 clamp(13px,3.4vw,16px) var(--font-heading);letter-spacing:0.04em;line-height:1.3;color:#ffd23a;text-wrap:pretty">{{ c.banner }}</div>
+    </sc-if>
+    <sc-if value="{{ hasRadio }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:-2px;background:#000;border:2px solid #ffd23a;padding:8px 12px;display:flex;flex-direction:column;gap:3px">
+        <span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;background:#ec3013;display:block"></span>RADIO · JAMOS</span>
+        <span style="font:700 clamp(13px,3.4vw,15px) var(--font-body);line-height:1.3;color:#fff;text-wrap:pretty">{{ c.radio }}</span>
+      </div>
+    </sc-if>
+  </div>
+  </sc-if>
+  <sc-if value="{{ showActions }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;right:max(12px, env(safe-area-inset-right));top:{{ actTop }};display:flex;flex-direction:column;pointer-events:auto;z-index:4">
+      <button onClick="{{ boardOpen }}" aria-label="Open the board" style="width:64px;height:48px;padding:0;border:2px solid #ffd23a;border-radius:0;background:#000;color:#fff;font:900 11px var(--font-heading);letter-spacing:0.08em;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer" style-hover="background:#2a2826">BOARD<span style="font:700 9px var(--font-heading);color:#8a847e">{{ boardKey }}</span></button>
+      <button onClick="{{ reset }}" aria-label="Unstuck" style="width:64px;height:48px;padding:0;border:2px solid #ffd23a;border-top:0;border-radius:0;background:#000;color:#fff;font:900 10px var(--font-heading);letter-spacing:0.06em;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer" style-hover="background:#2a2826">UNSTUCK<span style="font:700 9px var(--font-heading);color:#8a847e">{{ resetKey }}</span></button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}">
+    <button onClick="{{ demoStop }}" aria-label="Stop the demo and take over" style="position:absolute;left:50%;transform:translateX(-50%);top:{{ demoTop }};z-index:6;pointer-events:auto;max-width:calc(100% - 24px);min-height:52px;padding:8px 18px;border:3px solid #000;border-radius:0;background:#ffd23a;color:#000;font:900 clamp(16px,4.4vw,24px) var(--font-heading);letter-spacing:0.06em;line-height:1.15;text-align:left;cursor:pointer;display:flex;align-items:center;gap:12px;box-shadow:0 0 0 3px #ffd23a" style-hover="background:#ffe27a"><span style="width:14px;height:14px;background:#ec3013;display:block;flex:none"></span>DEMO · TAP TO TAKE OVER</button>
+  </sc-if>
+  <sc-if value="{{ wcOn }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:10;width:min(420px, calc(100% - 24px));max-height:calc(100% - 24px);display:flex;pointer-events:none"><dc-import name="Welcome Card" kicker="JIDDA · CANALS" title="Jetski Run" text="Race the canals and splash through the ride scenes." rows="{{ wcRows }}" play-label="{{ wcPlay }}" on-play="{{ wcGo }}" on-tutorial="{{ wcTut }}" on-demo="{{ wcDemo }}" hint-size="100%,340px" style="width:100%"></dc-import></div>
+  </sc-if>
+  <sc-if value="{{ boardOn }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;inset:0;z-index:10;background:rgba(0,0,0,0.9);display:flex;flex-direction:{{ ovDir }};align-items:stretch;padding:12px;gap:10px;box-sizing:border-box">
+      <div style="flex:1;min-height:0;display:flex;align-items:center;justify-content:flex-start;container-type:size">
+        <div style="position:relative;width:{{ bdW }};aspect-ratio:{{ bdAR }};border:2px solid #3a3836;box-sizing:border-box;background:#1f2b27">
+          <img ref="{{ boardRef }}" alt="Jetski Canal Run harbour board" style="display:block;width:100%;height:100%;object-fit:fill">
+          <div style="position:absolute;left:{{ coinL }};top:{{ coinT }};width:{{ coinW }};aspect-ratio:1;transform:translate(-50%,-50%);perspective:400px;pointer-events:none">{{ coinEl }}</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;flex:none;width:{{ btnW }}">
+        <button onClick="{{ boardGo }}" style="width:100%;min-height:56px;padding:0 22px;border-radius:0;border:2px solid #ec3013;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">{{ boardBtn }}</button>
+        <sc-if value="{{ showDemoBtn }}" hint-placeholder-val="{{ true }}"><button onClick="{{ demoGo }}" style="width:100%;min-height:52px;padding:0 22px;border-radius:0;border:2px solid #ffd23a;border-top:0;background:#000;color:#ffd23a;font:900 16px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WATCH THE DEMO</button></sc-if>
+        <div style="min-height:44px;display:flex;align-items:center;padding:8px 14px;font:700 13px var(--font-body);line-height:1.35;color:#cfcac2;border:2px solid #3a3836;border-top:0;text-wrap:pretty">{{ boardNote }}</div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:11;background:rgba(0,0,0,0.82);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #3a3836;width:min(460px,100%);display:flex;flex-direction:column">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+          <div style="padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">JETSKI CANAL RUN</span><span style="font:900 26px var(--font-heading);line-height:1.05">Hideout reached</span><span style="font:700 12px var(--font-body);color:#cfcac2">{{ bestTxt }}</span></div>
+          <div style="width:96px;display:flex;align-items:center;justify-content:center;background:#ec3013;font:900 60px var(--font-heading)">{{ d.grade }}</div>
+        </div>
+        <sc-for list="{{ rows }}" as="r" hint-placeholder-count="6">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;padding:9px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;font-variant-numeric:tabular-nums">{{ r.v }}</span></div>
+        </sc-for>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;padding:12px 16px;font:900 18px var(--font-heading)"><span>TOTAL</span><span style="font-variant-numeric:tabular-nums;color:#ffd23a">{{ d.total }}</span></div>
+        <sc-if value="{{ demoNext }}" hint-placeholder-val="{{ false }}"><div style="padding:12px 16px;border-top:2px solid #3a3836;font:900 18px var(--font-heading);letter-spacing:0.06em;color:#ffd23a">DEMO RESTARTS IN {{ demoLeft }} S</div></sc-if>
+        <button onClick="{{ again }}" style="min-height:52px;padding:0 18px;border-radius:0;border:0;border-top:2px solid #3a3836;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">PLAY AGAIN</button>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { vw: 1200, vh: 800, hud: { course: null, btn: ['HOSE', 'SWORD', 'HOP'] }, hi: { pad: false, menu: false, split: false, bar: 0 } };
+  stageRef = React.createRef(); boardRef = React.createRef();
+  coinEl = React.createElement('span', { style: { display: 'block', width: '100%', height: '100%', animation: 'coinPulse 1.2s ease-in-out infinite' } }, React.createElement('span', { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', borderRadius: '50%', background: '#e6b45a', boxShadow: 'inset 0 0 0 3px #a8792e, 0 0 0 3px #f5e08a', color: '#201e1d', font: '900 clamp(10px, 2.2cqw, 30px) Archivo, sans-serif', animation: 'coinSpin 1.6s linear infinite' } }, '8'));
+  onHud = hi => this.setState({ hi });
+  componentDidUpdate() { const im = this.boardRef.current, cr = this.lab && this.lab.course && this.lab.course(), u = cr && (this.state.vh > this.state.vw ? cr.boardURLP : cr.boardURL); if (im && u && this.lastBoard !== u) { this.lastBoard = u; im.src = u; } }
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); addEventListener('keydown', this.onKey); this.onRs(); this.errIv = setInterval(() => { const e = window.__vehErr; if (e && e !== this.lastErr) { this.lastErr = e; console.warn('jetski run: ' + e); } }, 1000);
+    import(new URL('engine/save.js', document.baseURI).href).then(m => { this.save = m.save; this.forceUpdate(); }).catch(() => {});
+    import(new URL('worlds/meru-shops.js', document.baseURI).href).then(m => { this.labels = m.ITEM_LABELS; this.forceUpdate(); }).catch(() => {});
+    try {
+      const base = document.baseURI, mod = await import(new URL('vehicle-lab.js', base).href), cm = await import(new URL('minigames/jidda/jetski-run.js', base).href), touch = matchMedia('(pointer: coarse)').matches;
+      this.lab = await mod.createVehicleLab({ container: this.stageRef.current, onState: hud => this.setState({ hud }), opts: { yard: false, size: 1500, lock: 'jetski', noDrag: true, course: cm.jetskiRun, lake: { ...cm.JET_LAKE, seg: touch ? 60 : 84 } } });
+      window.__jet = this.lab; if (/[?&]demo=1/.test(location.search)) setTimeout(() => this.lab && this.lab.course().setAuto(true), 600);
+      this.engine = Object.assign(Object.create(this.lab), { useItem: id => this.useItem(id) });
+      this.forceUpdate(); this.bindZoom();
+    } catch (e) { console.warn('jetski run failed: ' + (e && e.stack || String(e))); }
+  }
+  bindZoom() { const el = this.stageRef.current; if (!el || this.zoomBound) return; this.zoomBound = true; let pd = 0; const cv = () => el.querySelector('canvas'), dist = t => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY), onCv = e => [...e.touches].every(tt => tt.target === cv());
+    el.addEventListener('touchstart', e => { if (e.touches.length === 2 && onCv(e)) pd = dist(e.touches); }, { passive: true });
+    el.addEventListener('touchmove', e => { if (e.touches.length === 2 && pd && onCv(e)) { const nd = dist(e.touches); if (nd > 0 && this.lab) this.lab.zoomBy(pd / nd); pd = nd; } }, { passive: true });
+    el.addEventListener('touchend', e => { if (e.touches.length < 2) pd = 0; }, { passive: true });
+    el.addEventListener('wheel', e => { if (this.lab) { e.preventDefault(); this.lab.zoomBy(1 + Math.max(-0.2, Math.min(0.2, e.deltaY * 0.0015))); } }, { passive: false }); }
+  componentWillUnmount() { clearInterval(this.errIv); this.lab && this.lab.destroy(); removeEventListener('resize', this.onRs); removeEventListener('keydown', this.onKey); }
+  onRs = () => this.setState({ vw: innerWidth, vh: innerHeight });
+  onKey = e => { const cr0 = this.lab && this.lab.course && this.lab.course(), c = cr0 && cr0.hud ? cr0.hud() : null; if (!c) return; if (c.board && (e.code === 'Enter' || e.code === 'Escape' || e.code === 'Space')) { e.preventDefault(); e.stopPropagation(); this.boardGo(); } else if (e.code === 'KeyB' && !c.board && c.state === 'run' && !this.state.hi.menu) this.lab.course().openBoard(); };
+  // items on the jet ski: heal = ski armour, Energy Fill Pod = full hose tank; chocolates stay for walking
+  useItem(id) { const sv = this.save, cr = this.lab && this.lab.course(); if (!sv || !cr) return; const name = (this.labels && this.labels[id]) || (id === 'repairKit' ? 'Repair Kit' : id);
+    const heal = { repairKit: 40, erToGo: 20, healingCharges: 20, splint: 60, amber: 15 }[id];
+    if (heal != null) { if (cr.armour() >= 100 && id !== 'amber') { cr.say('SKI IS FULL'); return; } if (!sv.take(id)) return; cr.heal(heal); if (id === 'amber') cr.addHose(2); cr.say(name.toUpperCase() + (id === 'amber' ? ': +15 SKI, +2 HOSE' : ': +' + heal + ' SKI')); return; }
+    if (id === 'energyPod') { if (cr.hoseFull()) { cr.say('HOSE TANK IS FULL'); return; } if (!sv.take(id)) return; cr.refill(); cr.say('ENERGY FILL POD: HOSE TANK FULL'); return; }
+    cr.say(name.toUpperCase() + ': SAVE IT FOR WHEN YOU ARE ON FOOT'); }
+  demoTick() { const c = this.state.hud.course; if (c && c.done && c.auto) { if (!this.demoEnd) this.demoEnd = Date.now() + 10000; const left = Math.max(0, Math.ceil((this.demoEnd - Date.now()) / 1000)); if (left <= 0) { const u = new URL(location.href); u.searchParams.set('demo', '1'); location.href = u.href; } return left; } this.demoEnd = 0; return 0; }
+  boardGo = () => { const cr = this.lab && this.lab.course(); if (!cr) return; if (cr.hud().state === 'ready') cr.rollOut(); else cr.closeBoard(); };
+  renderVals() { const v = this.renderVals0(), PB = v.placeBtns || [], isSchool = p => /SCHOOL|LESSON|TRAINING|PRACTICE|TRIALS? 1/i.test(p.name), school = PB.find(isSchool), rest = PB.filter(p => !isSchool(p)), go = () => setTimeout(() => v.boardGo && v.boardGo(), 30);
+    return { ...v, wcRows: rest.map(p => ({ k: p.name, v: p.locked ? 'LOCKED' : p.sub, c: p.locked ? '#8a847e' : '#ffd23a', sel: p.bd === '#ffd23a' || p.bg === '#ffd23a', go: p.locked ? null : p.pick })), wcPlay: v.boardBtn || 'PLAY',
+      wcGo: () => { this.setState({ showBoard: false }); const sel = PB.find(p => p.bd === '#ffd23a' || p.bg === '#ffd23a'); if (school && sel === school && rest.find(p => !p.locked)) rest.find(p => !p.locked).pick(); go(); },
+      wcTut: () => { if (school && !school.locked) { school.pick(); this.setState({ showBoard: false }); go(); } else this.setState({ showBoard: true }); }, wcDemo: v.demoGo || null }; }
+  renderVals0() {
+    const S = this.state, h = S.hud, lab = this.lab, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const c = h.course || { state: 'ready', hp: 100, tokens: 0, totalTokens: 60, kills: 0, totalBots: 17, treasure: 0, totalTreasure: 4, time: 0, clock: 40, score: 0, banner: '', phaseTxt: 'GATE 0/9', hurt: 0, board: true, done: null, hose: 8, quest: '' };
+    const { vw, vh } = S, phone = Math.min(vw, vh) < 520, land = phone && vw > vh, port = vh > vw, lowH = vh < 520, pad = !!S.hi.pad, bar = S.hi.bar || 0, sv = this.save && this.save.data;
+    const d = c.done || { grade: '', total: 0 }, mm = s => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'), play = !c.board && !c.done;
+    const stdHud = { hp: c.hp, hpMax: 100, en: Math.round((c.hose ?? 8) / 8 * 100), gold: sv ? sv.gold : 0, hour: 12, day: sv && sv.stats ? sv.stats.worldDay || 1 : 1, items: sv ? Object.entries(sv.items || {}).filter(([, n]) => n > 0).map(([id, n]) => ({ id, n, label: (this.labels && this.labels[id]) || (id === 'repairKit' ? 'Repair Kit' : id) })) : [], place: 'Jidda · Jetski Canal Run', quest: { text: c.quest || 'Down the canals · gates on the clock · race · galleon · hideout' }, prompt: null, toast: null, muted: false, weather: 'Clear', boat: false, inCave: true, weapons: [], dialog: null, vehicles: ['jetski'], vehAmmo: [c.hose ?? 8, null, null] };
+    return {
+      stageRef: this.stageRef, engine: this.engine, stdHud, started: !!lab && c.state !== 'ready', hudBusy: !play, onHud: this.onHud, c, d,
+      stageTop: S.hi.split ? 'calc(' + bar + 'px + (100% - ' + bar + 'px) / 2)' : bar + 'px',
+      keysList: [['WASD', 'steer'], ['1 / J', 'hose'], ['2 / K', 'sword'], ['Space', 'hop'], ['B', 'board'], ['R', 'unstuck'], ['V', 'POV'], ['M', 'map'], ['I', 'menu'], ['Wheel', 'zoom']],
+      skipKeys: ['KeyJ', 'KeyT', 'KeyN', 'KeyO', 'KeyH'],
+      showCard: play && !S.hi.menu && (!pad || !!c.banner || !!c.radio), hasRadio: !!c.radio,
+      ...(() => { const gq = c.goal; if (!play || S.hi.menu || !gq) return { edgeOn: false }; let x = gq.nx, y = gq.ny; if (gq.behind) { x = -x; y = -y; if (Math.abs(x) < 0.05 && Math.abs(y) < 0.05) y = -1; } if (!gq.behind && Math.abs(x) < 0.92 && Math.abs(y) < 0.88) return { edgeOn: false }; const k = Math.max(Math.abs(x) / 0.86, Math.abs(y) / 0.8, 1e-3), ex = x / k, ey = y / k, top = Math.min(72, Math.max(14, (1 - ey) / 2 * 100)); const cardOn = !pad || !!c.banner || !!c.radio, colPx = phone ? (land ? 232 : Math.min(250, vw - 96)) : 268, lo = cardOn ? 12 + colPx + 66 : 66, hi = vw - (!pad ? 12 + 64 + 66 : 66), xpx = Math.min(Math.max((ex + 1) / 2 * vw, lo), Math.max(lo, hi)); return { edgeOn: true, edgeL: Math.round(xpx) + 'px', edgeT: top.toFixed(1) + '%', edgeRot: (Math.atan2(-ey, ex) * 180 / Math.PI).toFixed(0) + 'deg', edgeTxt: gq.label + ' · ' + gq.dist + ' M' }; })(), showStats: !pad, cardTop: (bar + 42 + (c.auto && !c.done ? 66 : 0)) + 'px', colW: phone ? (land ? '232px' : 'min(250px, calc(100% - 96px))') : '268px', cardPad: phone ? '7px 10px' : '10px 12px', titleSize: phone ? '18px' : '24px',
+      scoreTxt: c.score, tokTxt: c.tokens + '/' + c.totalTokens, botTxt: c.kills + '/' + c.totalBots, timeLbl: c.clock != null ? 'CLOCK' : 'TIME', timeTxt: c.clock != null ? mm(c.clock) : mm(c.time), timeCol: c.clock != null && c.clock <= 10 ? '#ec3013' : '#ffffff',
+      hurtOp: Math.min(0.85, c.hurt * 0.9 + (c.low ? 0.25 : 0)), hasBanner: !!c.banner, waveTxt: c.phaseTxt || '', hasWave: !!c.phaseTxt, chestTxt: (c.treasure || 0) + '/' + (c.totalTreasure || 4),
+      pips: [0, 1, 2, 3, 4, 5, 6, 7].map(i => ({ c: i < (c.hose || 0) ? '#38bdf8' : '#3a3836' })),
+      showActions: play && !S.hi.menu && !pad, actTop: pad && !land ? '30%' : (bar + 42 + (c.auto && !c.done ? 66 : 0)) + 'px', boardKey: pad ? '' : 'B', resetKey: pad ? '' : 'R',
+      boardOpen: e => { blur(e); const cr = lab && lab.course(); if (cr && c.state === 'run') cr.openBoard(); }, reset: e => { blur(e); lab && lab.reset(); },
+      boardOn: !!c.board && !(c.state === 'ready' && !S.showBoard), wcOn: !!c.board && c.state === 'ready' && !S.showBoard, boardRef: this.boardRef, coinEl: this.coinEl, ovDir: !port && lowH ? 'row' : 'column', btnW: !port && lowH ? '220px' : '100%',
+      bdW: port ? 'min(100cqw, 100cqh * 9 / 16)' : 'min(100cqw, 100cqh * 16 / 9)', bdAR: port ? '9/16' : '16/9',
+      coinL: port ? ((lab && lab.course().coinP.x || 0.46) * 100).toFixed(1) + '%' : '93.25%', coinT: port ? ((lab && lab.course().coinP.y || 0.925) * 100).toFixed(1) + '%' : '82.9%', coinW: port ? '8.5%' : '4.2%',
+      boardBtn: c.state === 'ready' ? 'START THE ENGINE' : 'BACK ON THE WATER', boardNote: c.state === 'ready' ? 'Down the canals, gates add time. Hose the pirates, win the race, win the sword showdown, make the hideout.' : 'Enter / Space to close · idle by the harbour board to read it again',
+      boardGo: e => { blur(e); this.boardGo(); },
+      doneOn: !!c.done, bestTxt: c.done ? (c.done.newBest ? 'NEW BEST' : 'BEST ' + c.done.best) : '',
+      rows: c.done ? [['Time', mm(d.time)], ['Tokens', d.tokens + ' / ' + d.totalTokens], ['Pirates', d.kills + ' / ' + d.totalBots], ['Treasure', d.treasure + ' / ' + d.totalTreasure], ['Race', (d.place === 1 ? '1ST' : d.place === 2 ? '2ND' : '-') + (d.tries ? ' · ' + (d.tries + 1) + ' tries' : '')], ['Showdown', d.sd + ' / ' + d.sdTotal + ' pirate skis'], ['Clean sections', '+' + d.bonus], ['Time bonus', '+' + d.timeBonus], ['Knocked out', d.deaths ? d.deaths + ' × -150' : '0']].map(([k, v]) => ({ k, v })) : [],
+      again: e => { blur(e); const u = new URL(location.href); u.searchParams.delete('demo'); location.href = u.href; },
+      demoOn: !!c.auto && !c.done && !c.board, demoTop: (bar + 8) + 'px', demoStop: e => { blur(e); lab && lab.course().setAuto(false); },
+      showDemoBtn: c.state === 'ready', demoGo: e => { blur(e); lab && lab.course().setAuto(true); },
+      demoNext: !!c.done && !!c.auto, demoLeft: this.demoTick(),
+    };
+  }
+}
+</script>
+</body>
+</html>

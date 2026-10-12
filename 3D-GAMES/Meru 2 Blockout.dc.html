@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none" data-screen-label="Meru 2 Blockout">
+  <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+  <sc-if value="{{ walkOn }}" hint-placeholder-val="{{ false }}">
+  <div data-hud-host="1" style="position:absolute;inset:0;pointer-events:none;z-index:4"><dc-import name="Game HUD" game="{{ walker }}" hud="{{ stdHud }}" started="{{ true }}" busy="{{ hireOpen }}" on-hud="{{ onHud }}" world="Meru" vehicle="{{ vehKey }}" keys="{{ keysList }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:{{ chipTop }};display:flex;flex-direction:column;gap:0;pointer-events:none;z-index:5;max-width:{{ chipMax }}">
+    <div style="background:#000;border:2px solid #ffd23a;padding:5px 10px;display:flex;flex-direction:column;gap:1px"><span style="font:900 13px var(--font-heading);letter-spacing:0.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ w.place }}</span><span style="font:700 11px var(--font-heading);letter-spacing:0.06em;color:#cfcac4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">GROUND {{ surfTxt }} · MUSIC {{ musicTxt }}</span></div>
+    <sc-if value="{{ voiceOn }}" hint-placeholder-val="{{ false }}"><div style="margin-top:-2px;background:#ec3013;border:2px solid #000;padding:5px 10px;font:900 12px var(--font-heading);letter-spacing:0.06em">VOICE · {{ voiceTxt }}</div></sc-if>
+    <sc-if value="{{ toastOn }}" hint-placeholder-val="{{ false }}"><div style="margin-top:-2px;background:#ffd23a;color:#000;border:2px solid #000;padding:5px 10px;font:900 12px var(--font-heading);letter-spacing:0.06em">{{ w.toast }}</div></sc-if>
+    <sc-if value="{{ jailOn }}" hint-placeholder-val="{{ false }}"><div style="margin-top:-2px;background:#ec3013;color:#fff;border:2px solid #000;padding:6px 10px;display:flex;flex-direction:column;gap:6px;pointer-events:auto"><span style="font:900 13px var(--font-heading);letter-spacing:0.06em">{{ jailTxt }}</span><span style="font:700 11px var(--font-body)">{{ jailSub }}</span><sc-if value="{{ bailOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ bailGo }}" style="align-self:flex-start;min-height:44px;padding:0 14px;border:2px solid #000;border-radius:0;background:#fff;color:#000;font:900 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left" style-hover="background:#ffd23a">{{ bailTxt }}</button></sc-if></div></sc-if>
+    <sc-if value="{{ trainOn }}" hint-placeholder-val="{{ false }}"><div style="margin-top:-2px;background:#201e1d;color:#fff;border:2px solid #ec3013;padding:5px 10px;font:900 11px var(--font-heading);letter-spacing:0.06em;text-wrap:pretty">{{ w.train }}</div></sc-if>
+  </div>
+  <sc-if value="{{ hireOn }}" hint-placeholder-val="{{ false }}">
+    <button onClick="{{ hireGo }}" style="position:absolute;left:50%;bottom:{{ hireBottom }};transform:translateX(-50%);z-index:6;min-height:56px;padding:6px 18px;border:2px solid #000;border-radius:0;background:#16a34a;color:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:2px;pointer-events:auto" style-hover="background:#15803d"><span style="font:900 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">NOW HIRING · {{ hireLabel }}</span><span style="font:900 18px var(--font-heading);letter-spacing:0.06em">PLAY · TAP OR E</span></button>
+  </sc-if>
+  <sc-if value="{{ rideOn }}" hint-placeholder-val="{{ false }}">
+    <button onClick="{{ rideStop }}" style="position:absolute;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom));z-index:7;min-height:48px;padding:4px 18px;border:2px solid #38bdf8;border-radius:0;background:#000;color:#38bdf8;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:1px" style-hover="background:#1c1a19"><span style="font:900 14px var(--font-heading);letter-spacing:0.08em">TRAIN RIDE · DEMO</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;color:#f3f2f2">TAP TO STOP AND TAKE OVER</span></button>
+  </sc-if>
+  <div style="position:absolute;right:max(12px, env(safe-area-inset-right));top:{{ chipTop }};z-index:6;display:flex;flex-direction:{{ rbDir }};gap:6px;pointer-events:none">
+  <button onClick="{{ walkExit }}" style="width:{{ rbW }};min-height:44px;padding:0 10px;border:2px solid #ec3013;border-radius:0;background:#ec3013;color:#fff;font:900 11px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;pointer-events:auto;white-space:nowrap" style-hover="background:#c82a10">FLY VIEW</button>
+  <button onClick="{{ walkNight }}" style="width:{{ rbW }};min-height:44px;padding:0 10px;border:2px solid #ffd23a;border-radius:0;background:#000;color:#fff;font:900 11px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;pointer-events:auto;white-space:nowrap" style-hover="background:#222">{{ nightTxt }}</button>
+  <sc-if value="{{ taxiOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ taxiGo }}" style="width:{{ rbW }};min-height:44px;padding:0 10px;border:2px solid #000;border-radius:0;background:#ffd23a;color:#000;font:900 11px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;pointer-events:auto;white-space:nowrap" style-hover="background:#f2c200">TAXI</button></sc-if>
+  <sc-if value="{{ testOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ testArrest }}" style="width:{{ rbW }};min-height:44px;padding:0 10px;border:2px solid #ec3013;border-radius:0;background:#000;color:#ec3013;font:900 10px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;pointer-events:auto;white-space:nowrap" style-hover="background:#222">TEST ARREST</button></sc-if>
+  </div>
+  </sc-if>
+  <sc-if value="{{ hireOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:20;background:#000;display:flex;flex-direction:column">
+      <div style="flex:none;display:flex;align-items:stretch;border-bottom:2px solid #ffd23a"><span style="flex:1;padding:10px 14px;font:900 14px var(--font-heading);letter-spacing:0.08em">{{ hireLabel }}{{ hireSuffix }}</span><button onClick="{{ hireClose }}" style="min-width:120px;min-height:44px;border:0;border-left:2px solid #ffd23a;border-radius:0;background:#ec3013;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;padding:0 14px" style-hover="background:#c82a10">BACK TO MERU</button></div>
+      <iframe src="{{ hireUrl }}" title="Job minigame" style="flex:1;width:100%;border:0;background:#000"></iframe>
+    </div>
+  </sc-if>
+  <sc-if value="{{ flyOn }}" hint-placeholder-val="{{ true }}">
+  <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:max(12px, env(safe-area-inset-top));display:flex;flex-direction:column;pointer-events:none;max-width:calc(100% - 146px)">
+    <div style="background:#000;border:2px solid #ffd23a;padding:8px 12px;display:flex;flex-direction:column;gap:2px">
+      <span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a">MERU 2.0 · STEP 2 · TOWN SQUARE CITY</span>
+      <span style="font:900 20px var(--font-heading);line-height:1">The city centre</span>
+      <span style="font:700 11px var(--font-body);color:#cfcac4">{{ countsTxt }}</span>
+    </div>
+  </div>
+  <div style="position:absolute;right:max(12px, env(safe-area-inset-right));top:max(12px, env(safe-area-inset-top));display:flex;flex-direction:column;z-index:3">
+    <sc-for list="{{ toggles }}" as="t" hint-placeholder-count="4">
+      <button onClick="{{ t.go }}" aria-pressed="{{ t.pressed }}" style="min-width:96px;min-height:44px;margin-top:-2px;padding:0 12px;border:2px solid #ffd23a;border-radius:0;background:{{ t.bg }};color:{{ t.fg }};font:900 11px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="filter:brightness(1.15)">{{ t.name }}</button>
+    </sc-for>
+    <a href="minigames/index.html" style="min-width:96px;min-height:44px;margin-top:-2px;padding:0 12px;box-sizing:border-box;border:2px solid #ffd23a;background:#ec3013;color:#fff;font:900 11px var(--font-heading);letter-spacing:0.08em;text-decoration:none;display:flex;align-items:center" style-hover="background:#c82a10">MINIGAMES</a>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;padding:10px max(12px, env(safe-area-inset-left)) calc(10px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:6px;background:linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0));z-index:3">
+    <sc-if value="{{ tourOff }}" hint-placeholder-val="{{ true }}">
+    <button onClick="{{ tourGo }}" style="align-self:flex-start;min-height:48px;padding:4px 18px;border:2px solid #ffd23a;border-radius:0;background:#000;color:#ffd23a;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:1px" style-hover="background:#1c1a19"><span style="font:900 15px var(--font-heading);letter-spacing:0.08em">DEMO TOUR</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;color:#f3f2f2">EVERY AREA · {{ tourCount }} STOPS · AUTO-PLAY</span></button>
+    <button onClick="{{ bowlGo }}" style="align-self:flex-start;min-height:48px;padding:4px 18px;border:2px solid #f3f2f2;border-radius:0;background:#000;color:#f3f2f2;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:1px" style-hover="background:#1c1a19"><span style="font:900 15px var(--font-heading);letter-spacing:0.08em">BOWLING · LANE 4</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;color:#cfcac4">MERU LANES · 3D TENPIN · 10 FRAMES</span></button>
+    <button onClick="{{ rideGo }}" style="align-self:flex-start;min-height:48px;padding:4px 18px;border:2px solid #38bdf8;border-radius:0;background:#000;color:#38bdf8;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:1px" style-hover="background:#1c1a19"><span style="font:900 15px var(--font-heading);letter-spacing:0.08em">TRAIN RIDE</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;color:#f3f2f2">STATION · LIFT · BOARD · WINDOW SEAT · WHOLE LOOP</span></button>
+    <button onClick="{{ walkGo }}" style="align-self:flex-start;min-height:52px;padding:4px 18px;border:2px solid #000;border-radius:0;background:#ec3013;color:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:1px" style-hover="background:#c82a10"><span style="font:900 16px var(--font-heading);letter-spacing:0.08em">WALK IT</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;opacity:0.9">PLAYER + GAME HUD · FOOTSTEPS · VOICE TEST</span></button>
+    <span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">DRAG TO TURN · TWO FINGERS OR RIGHT-DRAG TO PAN · PINCH / WHEEL TO ZOOM · TAP A ZONE TO FLY THERE</span>
+    <div style="display:flex;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none">
+      <sc-for list="{{ zones }}" as="z" hint-placeholder-count="8">
+        <button onClick="{{ z.go }}" style="flex:none;min-height:44px;padding:0 14px;margin-right:-2px;border:2px solid #ffd23a;border-radius:0;background:{{ z.bg }};color:{{ z.fg }};font:900 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;white-space:nowrap" style-hover="filter:brightness(1.15)">{{ z.label }}</button>
+      </sc-for>
+    </div>
+    </sc-if>
+    <sc-if value="{{ tourOn }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;background:#000;border:2px solid #ffd23a;max-width:560px">
+      <div style="height:4px;background:#3d3b3a"><div ref="{{ tourBar }}" style="height:4px;width:0%;background:#ec3013"></div></div>
+      <div style="display:flex;flex-direction:column;gap:2px;padding:8px 12px">
+        <span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a">DEMO TOUR · {{ tourNum }} / {{ tourCount }}</span>
+        <span style="font:900 22px var(--font-heading);line-height:1.05;color:#fff">{{ tourLabel }}</span>
+        <span style="font:700 12px var(--font-body);color:#cfcac4;text-wrap:pretty">{{ tourCap }}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));border-top:2px solid #ffd23a">
+        <button onClick="{{ tourPrev }}" style="min-height:44px;border:0;border-right:2px solid #ffd23a;border-radius:0;background:#000;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;padding:0 12px" style-hover="background:#1c1a19">PREV</button>
+        <button onClick="{{ tourPause }}" style="min-height:44px;border:0;border-right:2px solid #ffd23a;border-radius:0;background:#ffd23a;color:#000;font:900 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;padding:0 12px" style-hover="filter:brightness(1.1)">{{ tourPauseLabel }}</button>
+        <button onClick="{{ tourNext }}" style="min-height:44px;border:0;border-right:2px solid #ffd23a;border-radius:0;background:#000;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;padding:0 12px" style-hover="background:#1c1a19">NEXT</button>
+        <button onClick="{{ tourExit }}" style="min-height:44px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;padding:0 12px" style-hover="background:#c82a10">EXIT</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none">
+      <sc-for list="{{ tourStops }}" as="q" hint-placeholder-count="8">
+        <button onClick="{{ q.go }}" style="flex:none;min-height:44px;padding:0 12px;margin-right:-2px;border:2px solid #ffd23a;border-radius:0;background:{{ q.bg }};color:{{ q.fg }};font:900 11px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;white-space:nowrap" style-hover="filter:brightness(1.15)">{{ q.label }}</button>
+      </sc-for>
+    </div>
+    </sc-if>
+  </div>
+  </sc-if>
+  <sc-if value="{{ panelOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:15;background:rgba(0,0,0,0.6);display:flex;justify-content:center;align-items:flex-start;overflow:auto;padding:max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) 10px max(10px, env(safe-area-inset-left))">
+      <div style="width:100%;max-width:{{ pnMax }};background:#f3f2f2;color:#201e1d;border:2px solid #201e1d;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:stretch;background:#201e1d;color:#fff">
+          <div style="flex:1;min-width:0;padding:10px 14px;display:flex;flex-direction:column;gap:2px"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a">{{ pKicker }}</span><span style="font:900 18px var(--font-heading);line-height:1.1">{{ pTitle }}</span></div>
+          <div style="padding:10px 12px;display:flex;flex-direction:column;justify-content:center;gap:2px"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">GOLD</span><span style="font:900 16px var(--font-heading)">{{ goldTxt }}</span></div>
+          <button onClick="{{ panelClose }}" style="min-width:72px;min-height:44px;border:0;border-left:2px solid #ffd23a;border-radius:0;background:#ec3013;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;padding:0 14px" style-hover="background:#c82a10">CLOSE</button>
+        </div>
+        <sc-if value="{{ pTrain }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:12px 14px;border-bottom:2px solid #201e1d;display:flex;flex-direction:column;gap:8px">
+            <span style="font:900 12px var(--font-heading);letter-spacing:0.08em">YOUR TICKET · {{ ticketTxt }}</span>
+            <div style="display:grid;grid-template-columns:repeat(3, minmax(0, 1fr))">
+              <sc-for list="{{ tickets }}" as="t" hint-placeholder-count="3">
+                <button onClick="{{ t.go }}" disabled="{{ t.off }}" style="min-height:56px;margin-right:-2px;padding:6px 10px;border:2px solid #201e1d;border-radius:0;background:{{ t.bg }};color:{{ t.fg }};cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px;opacity:{{ t.op }}" style-hover="filter:brightness(0.95)"><span style="font:900 15px var(--font-heading);letter-spacing:0.06em">{{ t.name }}</span><span style="font:700 12px var(--font-body)">{{ t.price }}</span></button>
+              </sc-for>
+            </div>
+            <span style="font:600 11px var(--font-body);color:#5c5a58">Draft prices until Ben sets them. Fast travel needs a ticket and a stop you have already ridden to.</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ pRental }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+            <span style="font:900 12px var(--font-heading);letter-spacing:0.08em">{{ rentStatus }}</span>
+            <button onClick="{{ rentGo }}" disabled="{{ rentOff }}" style="align-self:flex-start;min-width:200px;min-height:56px;padding:6px 14px;border:2px solid #201e1d;border-radius:0;background:#ec3013;color:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px;opacity:{{ rentOp }}" style-hover="background:#c82a10"><span style="font:900 15px var(--font-heading);letter-spacing:0.06em">RENT FOR A DAY</span><span style="font:700 12px var(--font-body)">{{ rentPrice }}</span></button>
+            <span style="font:600 12px var(--font-body);color:#5c5a58;text-wrap:pretty">Your car waits in the first bay of the lot next door. Drive on the roads; bring it back to the lot and get out to return it. Draft price until Ben sets it.</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ pPolice }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+            <span style="font:900 12px var(--font-heading);letter-spacing:0.08em">FINES OWED · {{ owedTxt }}</span>
+            <div style="display:flex;flex-direction:column;border-top:2px solid #201e1d">
+              <sc-for list="{{ fineRows }}" as="f" hint-placeholder-count="2"><div style="display:grid;grid-template-columns:minmax(0, 1fr) auto;gap:8px;padding:8px 0;border-bottom:2px solid #201e1d;font:700 13px var(--font-body)"><span>{{ f.why }}</span><span style="font-weight:900">{{ f.amt }}</span></div></sc-for>
+            </div>
+            <button onClick="{{ payGo }}" disabled="{{ payOff }}" style="align-self:flex-start;min-width:200px;min-height:56px;padding:6px 14px;border:2px solid #201e1d;border-radius:0;background:#ec3013;color:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px;opacity:{{ payOp }}" style-hover="background:#c82a10"><span style="font:900 15px var(--font-heading);letter-spacing:0.06em">PAY FINES</span><span style="font:700 12px var(--font-body)">From your gold first, then the bank</span></button>
+            <span style="font:600 12px var(--font-body);color:#5c5a58;text-wrap:pretty">Unpaid fines come out of the bank at the start of each new day. Draft amounts until Ben sets them.</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ pBank }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+            <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));border:2px solid #201e1d"><div style="padding:8px 12px;border-right:2px solid #201e1d;display:flex;flex-direction:column;gap:2px"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em">IN THE BANK</span><span style="font:900 22px var(--font-heading)">{{ bankTxt }}</span></div><div style="padding:8px 12px;display:flex;flex-direction:column;gap:2px"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em">INTEREST</span><span style="font:900 22px var(--font-heading)">{{ rateTxt }}</span></div></div>
+            <span style="font:900 12px var(--font-heading);letter-spacing:0.08em">DEPOSIT</span>
+            <div style="display:grid;grid-template-columns:repeat(3, minmax(0, 1fr))"><button onClick="{{ dep10 }}" style="min-height:52px;margin-right:-2px;padding:6px 10px;border:2px solid #201e1d;border-radius:0;background:#ffffff;color:#201e1d;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px" style-hover="background:#f4d6d0"><span style="font:900 14px var(--font-heading);letter-spacing:0.06em">10</span></button><button onClick="{{ dep50 }}" style="min-height:52px;margin-right:-2px;padding:6px 10px;border:2px solid #201e1d;border-radius:0;background:#ffffff;color:#201e1d;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px" style-hover="background:#f4d6d0"><span style="font:900 14px var(--font-heading);letter-spacing:0.06em">50</span></button><button onClick="{{ depAll }}" style="min-height:52px;margin-right:-2px;padding:6px 10px;border:2px solid #201e1d;border-radius:0;background:#ffffff;color:#201e1d;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px" style-hover="background:#f4d6d0"><span style="font:900 14px var(--font-heading);letter-spacing:0.06em">ALL</span></button></div>
+            <span style="font:900 12px var(--font-heading);letter-spacing:0.08em">WITHDRAW</span>
+            <div style="display:grid;grid-template-columns:repeat(3, minmax(0, 1fr))"><button onClick="{{ wd10 }}" style="min-height:52px;margin-right:-2px;padding:6px 10px;border:2px solid #201e1d;border-radius:0;background:#ffffff;color:#201e1d;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px" style-hover="background:#f4d6d0"><span style="font:900 14px var(--font-heading);letter-spacing:0.06em">10</span></button><button onClick="{{ wd50 }}" style="min-height:52px;margin-right:-2px;padding:6px 10px;border:2px solid #201e1d;border-radius:0;background:#ffffff;color:#201e1d;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px" style-hover="background:#f4d6d0"><span style="font:900 14px var(--font-heading);letter-spacing:0.06em">50</span></button><button onClick="{{ wdAll }}" style="min-height:52px;margin-right:-2px;padding:6px 10px;border:2px solid #201e1d;border-radius:0;background:#ffffff;color:#201e1d;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px" style-hover="background:#f4d6d0"><span style="font:900 14px var(--font-heading);letter-spacing:0.06em">ALL</span></button></div>
+            <span style="font:600 12px var(--font-body);color:#5c5a58;text-wrap:pretty">Gold in the bank is kept when you lose. Interest is paid at the start of each day (T in walk mode). The vault is behind the glass.</span>
+            <div style="display:flex;flex-direction:column;border-top:2px solid #201e1d"><sc-for list="{{ ledger }}" as="l" hint-placeholder-count="2"><span style="padding:6px 0;border-bottom:2px solid #201e1d;font:700 12px var(--font-body)">{{ l.t }}</span></sc-for></div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ pLocker }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr))">
+            <div style="padding:12px 14px;border-right:2px solid #201e1d;display:flex;flex-direction:column;gap:6px"><span style="font:900 12px var(--font-heading);letter-spacing:0.08em">IN YOUR BAG</span><sc-for list="{{ bagRows }}" as="r" hint-placeholder-count="3"><button onClick="{{ r.go }}" style="min-height:48px;padding:6px 10px;border:2px solid #201e1d;border-radius:0;background:#ffffff;color:#201e1d;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:2px" style-hover="background:#f4d6d0"><span style="font:900 13px var(--font-heading)">{{ r.label }} ×{{ r.n }}</span><span style="font:700 11px var(--font-body)">STORE 1 →</span></button></sc-for></div>
+            <div style="padding:12px 14px;display:flex;flex-direction:column;gap:6px"><span style="font:900 12px var(--font-heading);letter-spacing:0.08em">IN THE LOCKER</span><sc-for list="{{ lockRows }}" as="r" hint-placeholder-count="1"><button onClick="{{ r.go }}" style="min-height:48px;padding:6px 10px;border:2px solid #201e1d;border-radius:0;background:#ffffff;color:#201e1d;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:2px" style-hover="background:#f4d6d0"><span style="font:900 13px var(--font-heading)">{{ r.label }} ×{{ r.n }}</span><span style="font:700 11px var(--font-body)">← TAKE 1</span></button></sc-for></div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ pShop }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ shopRows }}" as="r" hint-placeholder-count="3">
+              <div style="display:grid;grid-template-columns:minmax(0, 1fr) auto;align-items:stretch;border-bottom:2px solid #201e1d">
+                <div style="padding:10px 14px;display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:900 14px var(--font-heading)">{{ r.label }}</span><span style="font:700 12px var(--font-body);color:#5c5a58">{{ r.sub }}</span></div>
+                <button onClick="{{ r.go }}" disabled="{{ r.off }}" style="min-width:110px;min-height:56px;border:0;border-left:2px solid #201e1d;border-radius:0;background:{{ r.bg }};color:{{ r.fg }};font:900 13px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;padding:0 14px;opacity:{{ r.op }}" style-hover="filter:brightness(0.95)">{{ r.action }}</button>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ pMap }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:{{ pmDir }};align-items:flex-start">
+        <div style="flex:none;width:{{ pmMapW }};box-sizing:border-box;padding:12px 14px;border-bottom:2px solid #201e1d;display:flex;justify-content:center">
+          <div style="position:relative;width:{{ pmMapSz }};aspect-ratio:1 / 1;background:#1d2a33;border:2px solid #201e1d">
+            <svg viewBox="-300 -360 760 760" style="position:absolute;inset:0;width:100%;height:100%"><rect x="-300" y="-360" width="760" height="760" fill="#3d5a3a"></rect><ellipse cx="0" cy="345" rx="320" ry="105" fill="#3c87b8"></ellipse><circle cx="200" cy="350" r="70" fill="#ead9a6"></circle><rect x="-160" y="-140" width="320" height="290" fill="none" stroke="#cfcac3" stroke-width="10"></rect><polygon points="{{ linePts }}" fill="none" stroke="#ec3013" stroke-width="9"></polygon></svg>
+            <sc-for list="{{ pStops }}" as="s" hint-placeholder-count="6">
+              <button onClick="{{ s.go }}" aria-label="{{ s.label }}" style="position:absolute;left:{{ s.left }};top:{{ s.top }};transform:translate(-50%, -50%);width:44px;height:44px;border:2px solid #201e1d;border-radius:0;background:{{ s.bg }};color:{{ s.fg }};font:900 16px var(--font-heading);cursor:pointer;text-align:left;padding:0 0 0 14px" style-hover="filter:brightness(1.1)">{{ s.n }}</button>
+            </sc-for>
+            <div style="position:absolute;left:{{ youLeft }};top:{{ youTop }};width:14px;height:14px;transform:translate(-50%, -50%);background:#ffd23a;border:2px solid #000;pointer-events:none"></div>
+          </div>
+        </div>
+        <div style="flex:1;min-width:0;width:100%;display:flex;flex-direction:column;border-left:{{ pmLine }}">
+          <sc-for list="{{ pStops }}" as="s" hint-placeholder-count="6">
+            <div style="display:grid;grid-template-columns:44px minmax(0, 1fr) auto;align-items:stretch;border-bottom:2px solid #201e1d">
+              <span style="display:flex;align-items:center;padding-left:14px;background:{{ s.bg }};color:{{ s.fg }};font:900 16px var(--font-heading)">{{ s.n }}</span>
+              <div style="padding:8px 12px;display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:900 14px var(--font-heading)">{{ s.label }}</span><span style="font:700 11px var(--font-body);color:#5c5a58">{{ s.status }}</span></div>
+              <button onClick="{{ s.go }}" disabled="{{ s.off }}" style="min-width:120px;min-height:52px;border:0;border-left:2px solid #201e1d;border-radius:0;background:{{ s.abg }};color:{{ s.afg }};font:900 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;padding:0 14px;opacity:{{ s.op }}" style-hover="filter:brightness(0.95)">{{ s.action }}</button>
+            </div>
+          </sc-for>
+        </div>
+        </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ lpOn }}" hint-placeholder-val="{{ false }}">
+    <div onPointerDown="{{ lpPress }}" style="position:absolute;inset:0;z-index:25;background:rgba(0,0,0,0.78);display:flex;flex-direction:column;justify-content:center;padding:24px max(16px, env(safe-area-inset-left));gap:14px;cursor:pointer">
+      <span style="font:800 11px var(--font-heading);letter-spacing:0.14em;color:#ffd23a">PICK THE LOCK · PIN {{ lpPin }}</span>
+      <span style="font:900 22px var(--font-heading);color:#fff;text-wrap:pretty">{{ lpMsg }}</span>
+      <div style="position:relative;width:100%;max-width:560px;height:56px;background:#3d3b3a;border:2px solid #fff">
+        <div style="position:absolute;top:0;bottom:0;left:{{ lpZoneL }};width:{{ lpZoneW }};background:#16a34a"></div>
+        <div style="position:absolute;top:-8px;bottom:-8px;left:{{ lpPos }};width:6px;margin-left:-3px;background:{{ lpPick }}"></div>
+      </div>
+      <span style="font:700 12px var(--font-body);color:#cfcac4">TAP ANYWHERE OR SPACE</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ fadeOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;z-index:30;background:#000;display:flex;align-items:flex-end;padding:24px"><span style="font:900 20px var(--font-heading);letter-spacing:0.08em;color:#ffd23a">{{ fadeTxt }}</span></div></sc-if>
+  <sc-if value="{{ errOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:12px;right:12px;top:40%;background:#000;border:2px solid #ec3013;padding:12px;font:700 13px var(--font-body);z-index:5">{{ err }}</div></sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { st: null, night: false, rings: true, labels: true, towers: true, zone: 'all', err: '', walk: false, w: null, hire: null, hi: { bar: 0, pad: false }, panel: null, fade: '', tour: null };
+  tourBar = React.createRef();
+  async tourStart(k = 0) { if (!this.g) return; if (!this.walker) await this.ensureWalker();   // the interiors (shops, lanes, casino) are built by the walk module
+    if (!this.tour) { const m = await import(new URL('worlds/meru2-tour.js', document.baseURI).href); this.tour = m.createTour(this.g, { onTick: dt => { if (this.walker && !this.state.walk && this.walker.ambient) this.walker.ambient(dt); }, onStop: q => this.setState({ tour: q }), onProgress: p => { const el = this.tourBar.current; if (el) el.style.width = (p * 100).toFixed(1) + '%'; }, onEnd: () => this.setState({ tour: null }) }); } this.tour.start(k); }
+  travel(key, mode, label) { this.setState({ panel: null, fade: (mode === 'train' ? 'TRAIN · ' : 'TAXI · ') + label.toUpperCase() }); setTimeout(() => { this.walker && this.walker.travel(key, mode); setTimeout(() => this.setState({ fade: '' }), 350); }, 550); }
+  onHud = hi => this.setState({ hi });
+  async walkStart() { if (!this.g) return; if (!this.walker && !(await this.ensureWalker())) return; this.walker.enter(this.state.night); this.setState({ walk: true }); }
+  async ensureWalker() { if (this.walker) return true; { try { const m = await import(new URL('worlds/meru2-walk.js', document.baseURI).href); this.walker = await m.createWalk(this.g, { onState: w => this.setState({ w }), onHire: b => this.setState({ hire: b }), onTicket: st => { this.walker.setPaused(true); this.setState({ panel: { mode: 'train', at: st.key } }); }, onRental: () => { this.walker.setPaused(true); this.setState({ panel: { mode: 'rental' } }); }, onCivic: k => this.setState({ panel: k.startsWith('elev:') ? { mode: 'elev', k: k.split(':')[1], f: +k.split(':')[2] } : k.startsWith('shop:') ? { mode: 'shop', k: k.slice(5) } : { mode: { policeDesk: 'police', bankTeller: 'bank', bankLocker: 'locker' }[k] } }), onPick: () => this.lpStart() }); } catch (e) { console.warn('walk failed: ' + (e && e.stack || e)); this.setState({ err: String(e && e.message || e) }); return false; } } return true; }
+  stageRef = React.createRef();
+  async componentDidMount() {
+    window.__m2page = this;
+    if (new URLSearchParams(location.search).get('phone') === '1' && !window.__fakePhone) { window.__fakePhone = true; const mm = matchMedia.bind(window); window.matchMedia = q => /pointer:\s*coarse|hover:\s*none/.test(q) ? { matches: true, media: q, addEventListener() {}, removeEventListener() {}, addListener() {}, removeListener() {} } : mm(q); }   // phone-budget test in a desktop browser (Meru 2 Phone Check)
+    import(new URL('worlds/meru2-tour.js', document.baseURI).href).then(m => { this.tourN = m.TOUR.length; this.forceUpdate(); }).catch(() => {});
+    addEventListener('resize', this.onResize); this.onResize();
+    try { const m = await import(new URL('worlds/meru2-blockout.js', document.baseURI).href); this.g = await m.createBlockout({ container: this.stageRef.current, onState: st => this.setState({ st }) }); window.__meru2 = this.g; try { const sm = await import(new URL('engine/save.js', document.baseURI).href); this.save = sm.save; this.save.on(() => this.forceUpdate()); } catch (e) {} this.forceUpdate();
+      const q = new URLSearchParams(location.search); if (q.get('night') === '1' && !this.state.night) this.setState({ night: true }); if (q.has('tour')) this.tourStart(+q.get('tour') || 0); else if (q.get('bowl') === '1') setTimeout(async () => { await this.walkStart(); let n = 0; const go = () => { const w = this.walker; if (w && w.bowlGo) w.bowlGo(); if (++n < 8) setTimeout(go, 700); }; setTimeout(go, 1200); }, 800); else if (q.get('walk') === '1') setTimeout(() => { if (!this.state.walk) this.walkStart(); }, 800); }
+    catch (e) { console.warn('blockout failed: ' + (e && e.stack || e)); this.setState({ err: String(e && e.message || e) }); }
+  }
+  onResize = () => this.setState({ vw: innerWidth, vh: innerHeight });
+  componentWillUnmount() { removeEventListener('resize', this.onResize); this.tour && this.tour.stop(); this.componentWillUnmountLp(); this.walker && this.walker.destroy(); this.g && this.g.destroy(); }
+  lpStart() { const L = { pins: 3, set: 0, pos: 0.06, dir: 1, speed: 0.0072 * 60, zone: 0.42, center: 0.5, arm: 0.33, wobble: 0, popped: 0, msg: 'PRESS when the pick is in the GREEN.' }; this.setState({ lp: L }); let last = performance.now();
+    const step = now => { const P = this.state.lp; if (!P) return; const dt = Math.min(0.05, (now - last) / 1000); last = now; const L2 = { ...P }; if (L2.arm > 0) L2.arm -= dt; if (L2.wobble > 0) L2.wobble -= dt;
+      if (L2.popped > 0) { L2.popped -= dt; if (L2.popped <= 0) { this.setState({ lp: null }); this.walker && this.walker.pickDone(true); removeEventListener('keydown', this.lpKey, true); return; } }
+      else { L2.pos += L2.dir * L2.speed * dt; if (L2.pos >= 1) { L2.pos = 1; L2.dir = -1; } if (L2.pos <= 0) { L2.pos = 0; L2.dir = 1; } }
+      this.setState({ lp: L2 }); this.lpRaf = requestAnimationFrame(step); };
+    if (this.lpKey) removeEventListener('keydown', this.lpKey, true); this.lpKey = e => { if (this.state.lp && (e.code === 'Space' || e.code === 'Enter')) { e.preventDefault(); e.stopPropagation(); this.lpPress(); } }; addEventListener('keydown', this.lpKey, true); this.lpRaf = requestAnimationFrame(step); }
+  lpPress() { const L = this.state.lp; if (!L || L.arm > 0 || L.popped > 0) return; const L2 = { ...L };
+    if (Math.abs(L.pos - L.center) <= L.zone / 2) { L2.set++; if (L2.set >= L2.pins) { L2.popped = 1.1; L2.msg = 'CLICK. The lock is open.'; } else { L2.center = 0.42 + Math.random() * 0.16; L2.speed += 0.0009 * 60; L2.msg = L2.set === 1 ? 'ONE DOWN. Two to go.' : 'TWO DOWN. Last pin \u2014 steady.'; } }
+    else { L2.wobble = 0.27; L2.msg = 'The pick slipped. No harm \u2014 try again.'; } this.setState({ lp: L2 }); }
+  componentWillUnmountLp() { cancelAnimationFrame(this.lpRaf); removeEventListener('keydown', this.lpKey, true); }
+  panelVals(S, blur) {
+    const P = S.panel, g = this.g, sv = this.save, T = g && g.train, LY = g && g.K.L;
+    if (!P || !T || !sv) return { panelOn: false, fadeOn: !!S.fade, fadeTxt: S.fade, pStops: [], tickets: [], linePts: '' };
+    const close0 = () => { this.walker && this.walker.setPaused(false); this.setState({ panel: null }); };
+    const LW = this.walker && this.walker.law, base = { panelOn: true, fadeOn: !!S.fade, fadeTxt: S.fade, pTrain: false, pMap: false, pRental: false, goldTxt: String(sv.data.gold), panelClose: e => { blur(e); close0(); }, pStops: [], tickets: [], linePts: '' };
+    const NAMES = { erToGo: 'ER to GO Health Pills', energyPod: 'Energy Fill Pod', chocolates: 'Box of Chocolates', repairKit: 'Repair Kit', splint: 'Field Splint', amber: 'Meru Amber', healingCharges: 'Healing Charge' }, nm = id => NAMES[id] || id;
+    if (P.mode === 'elev' && this.walker) { const go = f => e => { blur(e); this.setState({ panel: null, fade: f ? 'FLOOR ' + f : 'LOBBY' }); setTimeout(() => { this.walker.elevator(P.k, f); setTimeout(() => this.setState({ fade: '' }), 300); }, 450); };
+      return { ...base, pShop: true, pKicker: 'ELEVATOR', pTitle: P.k === 'crest' ? 'Crestview House' : 'Lakeside Tower', shopRows: [[2, 'Floor 2', 'Rooms 201 to 205 \u00b7 the penthouse is 204'], [1, 'Floor 1', 'Rooms 101 to 105'], [0, 'Lobby', 'Street door, realtor']].map(([f, label, sub]) => ({ label, sub, action: f === P.f ? 'HERE' : 'GO', off: f === P.f, op: f === P.f ? 0.45 : 1, bg: f === P.f ? '#e6e3df' : '#ec3013', fg: f === P.f ? '#201e1d' : '#ffffff', go: go(f) })) }; }
+    if (P.mode === 'shop' && this.walker) { const SH = this.walker.shop, lines = SH.STOCK[P.k] || [];
+      return { ...base, pShop: true, pKicker: P.k === 'kia' ? 'ITEM SHOP \u00b7 KIA' : 'ARMORY \u00b7 BRAM', pTitle: 'Buy', shopRows: lines.map(l => { const owned = l.kind === 'gear' && sv.flag('gear.' + l.key), can = !owned && sv.data.gold >= l.price;
+        return { label: l.label, sub: l.price + ' gold' + (l.kind === 'item' ? ' \u00b7 in your bag: ' + sv.count(l.key) : ''), action: owned ? 'OWNED' : 'BUY', off: !can, op: can ? 1 : 0.45, bg: can ? '#ec3013' : '#e6e3df', fg: can ? '#ffffff' : '#201e1d', go: e => { blur(e); if (can) SH.buy(P.k, l.key); } }; }) }; }
+    if (LW && P.mode === 'police') { const f = LW.fines(), o = LW.owed(); return { ...base, pPolice: true, pKicker: 'POLICE DEPARTMENT', pTitle: 'Front desk', owedTxt: o + ' gold', fineRows: f.length ? f.map(x => ({ why: x.why === 'balance' ? 'Unpaid balance' : (LW.why ? '' : '') + ({ fare: 'Riding the train without a ticket', path: 'Driving on a foot path', assault: 'Hitting a townsfolk', theft: 'Stealing from a shop', escape: 'Breaking out of jail' }[x.why] || x.why) + ' \u00b7 day ' + x.day, amt: x.amt + ' gold' })) : [{ why: 'No fines', amt: '' }], payOff: !o, payOp: o ? 1 : 0.45, payGo: e => { blur(e); LW.payFines(); this.forceUpdate(); } }; }
+    if (LW && P.mode === 'bank') { const D = n => e => { blur(e); LW.deposit(n === 'all' ? sv.data.gold : n); }, Wd = n => e => { blur(e); LW.withdraw(n === 'all' ? LW.bank() : n); };
+      return { ...base, pBank: true, pKicker: 'BANK OF MERU', pTitle: 'Teller', bankTxt: LW.bank() + ' gold', rateTxt: '2% a day', dep10: D(10), dep50: D(50), depAll: D('all'), wd10: Wd(10), wd50: Wd(50), wdAll: Wd('all'), ledger: LW.ledger().length ? LW.ledger().map(t => ({ t })) : [{ t: 'No transactions yet' }] }; }
+    if (LW && P.mode === 'locker') { const bag = Object.entries(sv.data.items).filter(([, n]) => n > 0), lk = Object.entries(LW.locker());
+      return { ...base, pLocker: true, pKicker: 'BANK OF MERU', pTitle: 'Storage locker', bagRows: bag.length ? bag.map(([id, n]) => ({ label: nm(id), n, go: e => { blur(e); LW.store(id, 1); } })) : [], lockRows: lk.map(([id, n]) => ({ label: nm(id), n, go: e => { blur(e); LW.takeOut(id, 1); } })) }; }
+    if (P.mode === 'rental') { const r = sv.stat('meru2Rental', null), d0 = sv.stat('meru2Day', 1), has = !!r && r.until >= d0, price = LY.CAR_RENTAL.day, can = !has && sv.data.gold >= price;
+      return { panelOn: true, fadeOn: !!S.fade, fadeTxt: S.fade, pTrain: false, pMap: false, pRental: true, pKicker: 'CAR RENTAL', pTitle: 'Rent a car', goldTxt: String(sv.data.gold), panelClose: e => { blur(e); close0(); }, rentStatus: has ? 'RENTED · until the end of day ' + r.until : 'NO CAR RENTED', rentPrice: price + ' gold', rentOff: !can, rentOp: can ? 1 : 0.45, rentGo: e => { blur(e); if (can && this.walker && this.walker.rent()) close0(); }, pStops: [], tickets: [], linePts: '' }; }
+    const train = P.mode === 'train', gold = sv.data.gold, day = sv.stat('meru2Day', 1), tk = sv.stat('meru2Ticket', null), ok = !!tk && tk.until >= day;
+    const pos = this.walker ? this.walker.pos() : { x: 0, z: 0 }, pr = LY.TRAIN.prices, dd = LY.TRAIN.days, pcx = v => ((v + 300) / 7.6).toFixed(2) + '%', pcz = v => ((v + 360) / 7.6).toFixed(2) + '%';
+    const close = () => { this.walker && this.walker.setPaused(false); this.setState({ panel: null }); };
+    const pStops = T.stops.map((st, i) => { const here = train ? st.key === P.at : Math.hypot(pos.x - st.c[0], pos.z - st.c[1]) < 60, seen = sv.flag('meru2Stop_' + st.key);
+      const q = T.placeAt(st.key, 'taxi'), fare = Math.round(LY.TAXI.base + Math.hypot(pos.x - q.x, pos.z - q.z) * LY.TAXI.perM);
+      const can = here ? false : train ? (seen && ok) : gold >= fare;
+      const status = here ? 'YOU ARE HERE' : train ? (seen ? (ok ? 'VISITED · fast travel' : 'VISITED · needs a ticket') : 'NOT VISITED · ride the train there first') : (gold >= fare ? 'Drops you at the station door' : 'Not enough gold');
+      const go = e => { blur(e); if (!can) return; if (!train && !sv.spend(fare)) return; this.travel(st.key, P.mode, st.label); };
+      return { n: String(i + 1), label: st.label, left: pcx(st.c[0]), top: pcz(st.c[1]), bg: here ? '#ffd23a' : seen ? '#ec3013' : '#f3f2f2', fg: here ? '#000000' : seen ? '#ffffff' : '#201e1d', status, action: here ? 'HERE' : train ? 'FAST TRAVEL' : 'GO · ' + fare + ' GOLD', off: !can, op: can ? 1 : 0.45, abg: can ? '#ec3013' : '#e6e3df', afg: can ? '#ffffff' : '#201e1d', go }; });
+    const tickets = ['day', 'week', 'month'].map(k => { const can = gold >= pr[k]; return { name: k.toUpperCase(), price: pr[k] + ' gold · ' + dd[k] + (dd[k] > 1 ? ' days' : ' day'), off: !can, op: can ? 1 : 0.45, bg: tk && tk.kind === k && ok ? '#201e1d' : '#ffffff', fg: tk && tk.kind === k && ok ? '#ffffff' : '#201e1d', go: e => { blur(e); if (sv.spend(pr[k])) sv.setStat('meru2Ticket', { kind: k, until: Math.max(ok ? tk.until : 0, day + dd[k] - 1) }); } }; });
+    const at = train ? T.stops.find(s => s.key === P.at) : null;
+    return { panelOn: true, fadeOn: !!S.fade, fadeTxt: S.fade, pTrain: train, pMap: true, pRental: false, pKicker: train ? 'TRAIN · TICKETS + FAST TRAVEL' : 'TAXI · TAP A STOP', pTitle: at ? at.label : 'Where to?', goldTxt: String(gold), panelClose: e => { blur(e); close(); },
+      ticketTxt: ok ? tk.kind.toUpperCase() + ' · valid to day ' + tk.until + ' (today: day ' + day + ')' : 'NONE', tickets, pStops, linePts: LY.TRAIN.line.map(p => p.join(',')).join(' '), youLeft: pcx(pos.x), youTop: pcz(pos.z) };
+  }
+  renderVals() {
+    const S = this.state, g = this.g, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur(), c = S.st && S.st.counts;
+    const T = (id, name, fn) => ({ name, pressed: S[id] ? 'true' : 'false', bg: S[id] ? '#ffd23a' : '#000000', fg: S[id] ? '#000000' : '#ffffff', go: e => { blur(e); const v = !S[id]; this.setState({ [id]: v }); g && fn(v); } });
+    const land = S.vw > S.vh && S.vh < 520, rbN = 2 + (S.w && S.w.outdoors && !S.panel ? 1 : 0) + (S.w && S.w.outdoors && !S.w.jail && !S.panel ? 1 : 0);
+    const zs = [{ key: 'all', label: 'WHOLE MAP' }, ...(g ? g.zones : [])];
+    const w = S.w || { place: 'Meru', surface: 'stone', music: '', toast: '', voice: null, hire: null }, bar = S.hi.bar || 0, sv = (() => { try { return JSON.parse(localStorage.getItem('8gates.save.v1') || 'null'); } catch (e) { return null; } })();
+    const stdHud = { hp: w.hp ?? 100, hpMax: w.hpMax ?? 100, en: 100, breath: S.walk ? (w.breath ?? null) : null, gold: sv ? sv.gold : 0, hour: (S.walk ? w.night : S.night) ? 21 : 12, day: 1, items: [], place: w.place, quest: { text: 'MERU 2.0 blockout · walk the map' }, prompt: w.prompt || null, toast: null, muted: false, weather: 'Clear', boat: !!w.swim, inCave: false, weapons: [], dialog: S.walk ? (w.dialog || null) : null, vehicles: [], vehAmmo: [] };
+    return {
+      walkOn: S.walk, flyOn: !S.walk, walker: this.walker, stdHud, onHud: this.onHud, w, keysList: [['WASD', 'walk'], ['Space', 'jump · dive · nitro'], ['E', 'sit · tickets · drive · get out'], ['T', 'day / night']],
+      pmDir: land ? 'row' : 'column', pmMapW: land ? Math.max(180, (S.vh || 390) - 90) + 'px' : '100%', pmMapSz: land ? '100%' : 'min(100%, 48vh)', pmLine: land ? '2px solid #201e1d' : '0', pnMax: land ? '820px' : '560px',
+      chipTop: (bar + 50) + 'px', rbDir: land ? 'row' : 'column', rbW: land ? '96px' : '112px', chipMax: land ? 'min(320px, calc(100% - 24px - ' + (rbN * 102) + 'px))' : 'min(320px, calc(100% - 146px))', surfTxt: (w.surface || '').toUpperCase(), musicTxt: ((w.music || '—') + (w.audioRoom ? ' · ROOM ' + w.audioRoom : '') + (w.leak ? ' · LEAK ' + w.leak : '')).toUpperCase(), voiceOn: !!w.voice, voiceTxt: w.voice ? w.voice.key + ' (' + w.voice.tier + (w.voice.fresh ? ', new avatar' : '') + ')' : '', toastOn: !!w.toast,
+      hireOn: !!w.hire && !S.hire, hireLabel: (S.hire || w.hire || {}).label ? ((S.hire || w.hire).label || '').toUpperCase() : '', hireBottom: S.hi.pad ? 'calc(150px + env(safe-area-inset-bottom))' : 'calc(24px + env(safe-area-inset-bottom))',
+      hireGo: e => { blur(e); const b = this.g && this.walker && w.hire ? (this.g.K.L.BUILDINGS.find(x => x.label === w.hire.label) || null) : null; if (b) { this.walker.setPaused(true); this.setState({ hire: b }); } },
+      hireSuffix: S.hire && S.hire.play ? '' : ' · JOB', hireOpen: !!S.hire, hireUrl: S.hire ? S.hire.hiring.url : 'about:blank', hireClose: e => { blur(e); this.walker && this.walker.setPaused(false); this.setState({ hire: null }); },
+      walkNight: e => { blur(e); this.walker && this.walker.skipTime(); }, nightTxt: w.night ? 'DAY' : 'NIGHT', trainOn: !!w.train,
+      vehKey: w.vehicle || '', taxiOn: !!w.outdoors && !S.panel, taxiGo: e => { blur(e); if (!this.walker) return; this.walker.setPaused(true); this.setState({ panel: { mode: 'taxi' } }); },
+      pPolice: false, pBank: false, pLocker: false, pRental: false, pShop: false, ...this.panelVals(S, blur),
+      jailOn: !!w.jail, jailTxt: w.jail ? (w.jail.escaping ? 'ESCAPING \u00b7 STAY OUT OF THE RED CONE' : 'IN JAIL \u00b7 ' + w.jail.left + ' S LEFT') : '', jailSub: w.jail ? (w.jail.escaping ? 'Get through the gate into the lobby.' : (land ? 'Wait, pay bail or pick the cell lock.' : 'Wait it out, pay bail, or walk to the cell door and pick the lock.')) : '',
+      bailOn: !!w.jail && !w.jail.escaping, bailTxt: w.jail ? 'PAY BAIL \u00b7 ' + w.jail.bail + ' GOLD' : '', bailGo: e => { blur(e); this.walker && this.walker.bailOut(); },
+      testOn: !!w.outdoors && !w.jail && !S.panel, testArrest: e => { blur(e); this.walker && this.walker.arrest('assault'); },
+      lpOn: !!S.lp, lpPress: e => { e && e.preventDefault && e.preventDefault(); this.lpPress(); }, lpPin: S.lp ? (S.lp.set + 1) + ' OF ' + S.lp.pins : '', lpMsg: S.lp ? S.lp.msg : '', lpZoneL: S.lp ? ((S.lp.center - S.lp.zone / 2) * 100).toFixed(1) + '%' : '0%', lpZoneW: S.lp ? (S.lp.zone * 100).toFixed(1) + '%' : '0%', lpPos: S.lp ? ((S.lp.pos + (S.lp.wobble > 0 ? Math.sin(S.lp.wobble * 60) * 0.01 : 0)) * 100).toFixed(1) + '%' : '0%', lpPick: S.lp && S.lp.wobble > 0 ? '#ec3013' : '#ffffff',
+      tourOn: !!S.tour, tourOff: !S.tour, tourCount: this.tour ? this.tour.stops.length : (this.tourN || 29), tourNum: S.tour ? S.tour.i + 1 : 1, tourLabel: S.tour ? S.tour.label : '', tourCap: S.tour ? S.tour.cap : '', tourBar: this.tourBar,
+      tourPauseLabel: S.tour && S.tour.paused ? 'PLAY' : 'PAUSE', tourGo: e => { blur(e); this.tourStart(0); }, tourPrev: e => { blur(e); this.tour && this.tour.prev(); }, tourNext: e => { blur(e); this.tour && this.tour.next(); },
+      tourPause: e => { blur(e); this.tour && this.tour.pause(); }, tourExit: e => { blur(e); this.tour && this.tour.stop(); this.setState({ tour: null }); },
+      tourStops: (this.tour ? this.tour.stops : []).map((label, k) => { const sel = S.tour && S.tour.i === k; return { label: label.toUpperCase(), bg: sel ? '#ffd23a' : '#000000', fg: sel ? '#000000' : '#ffffff', go: e => { blur(e); this.tour && this.tour.go(k); } }; }),
+      bowlGo: async e => { blur(e); this.tour && this.tour.stop(); this.setState({ tour: null }); await this.walkStart(); setTimeout(() => { this.tour && this.tour.stop(); if (this.state.tour) this.setState({ tour: null }); this.walker && this.walker.bowlGo(); }, 1500); },
+      rideGo: async e => { blur(e); this.tour && this.tour.stop(); this.setState({ tour: null }); await this.walkStart(); this.walker && this.walker.rideStart(); },
+      rideOn: !!(S.walk && w && w.ride), rideStop: e => { blur(e); this.walker && this.walker.rideStop(); },
+      walkGo: e => { blur(e); this.tour && this.tour.stop(); this.setState({ tour: null }); this.walkStart(); }, walkExit: e => { blur(e); this.walker && this.walker.exit(); this.setState({ walk: false, hire: null, panel: null, night: !!w.night }); },
+      stageRef: this.stageRef, errOn: !!S.err, err: 'Could not build the map: ' + S.err,
+      countsTxt: c ? c.buildings + ' buildings · ' + c.doors + ' sliding doors · ' + c.hiring + ' NOW HIRING · ' + c.lamps + ' lamps · ' + c.trees + ' trees · ' + c.cars + ' cars' : 'Building the map…',
+      toggles: [T('night', 'NIGHT', v => g.setNight(v)), T('rings', 'VOICE RINGS', v => g.show('rings', v)), T('labels', 'ZONE NAMES', v => g.show('labels', v)), T('towers', 'SKYLINE', v => g.show('towers', v))],
+      zones: zs.map(z => { const sel = S.zone === z.key; return { label: z.label.toUpperCase(), bg: sel ? '#ffd23a' : '#000000', fg: sel ? '#000000' : '#ffffff', go: e => { blur(e); this.setState({ zone: z.key }); g && g.flyTo(z.key); } }; }),
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;background:#f3f2f2}a{color:var(--color-accent-700)}a:hover{color:var(--color-accent)}button:focus-visible,input:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}input[type=range]{accent-color:#ec3013;height:28px}</style>
+</helmet>
+<div style="display:grid;grid-template-columns:{{ L.cols }};grid-template-rows:{{ L.rows }};height:100dvh;background:var(--color-bg);font-family:var(--font-body);color:var(--color-text)">
+  <div style="position:relative;min-width:0;min-height:0;border-right:{{ L.stageR }};border-bottom:{{ L.stageB }};display:flex;flex-direction:column">
+    <div style="display:flex;align-items:stretch;border-bottom:2px solid var(--color-text)">
+      <div style="padding:10px 14px;display:flex;flex-direction:column;gap:2px;border-right:2px solid var(--color-text)">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700)">Noble</div>
+        <div style="font-family:var(--font-heading);font-size:20px;font-weight:800;line-height:1;white-space:nowrap">Noble Workshop</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));flex:1;min-width:0">
+        <sc-for list="{{ views }}" as="v" hint-placeholder-count="4">
+          <button onClick="{{ v.pick }}" style="min-height:44px;border:0;border-right:2px solid var(--color-text);border-radius:0;background:{{ v.bg }};color:{{ v.fg }};font:800 13px var(--font-heading);text-align:left;padding:0 10px;cursor:pointer">{{ v.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div ref="{{ stageRef }}" style="position:relative;flex:1;min-height:0"></div>
+    <div style="position:absolute;left:10px;top:76px;display:flex;flex-wrap:wrap;pointer-events:none;font-size:12px;max-width:70%">
+      <div style="background:var(--color-bg);border:2px solid var(--color-text);margin:0 -2px -2px 0;padding:5px 9px;white-space:nowrap"><b>Shoe</b> {{ hud.shoe }}</div>
+      <div style="background:var(--color-bg);border:2px solid var(--color-text);margin:0 -2px -2px 0;padding:5px 9px;white-space:nowrap"><b>Last hit</b> {{ hud.last }}</div>
+      <div style="background:var(--color-bg);border:2px solid var(--color-text);margin:0 -2px -2px 0;padding:5px 9px;white-space:nowrap"><b>Total</b> {{ hud.total }}</div>
+      <div style="background:var(--color-bg);border:2px solid var(--color-text);margin:0 -2px -2px 0;padding:5px 9px;white-space:nowrap"><b>Reach</b> {{ hud.range }} m</div>
+      <div style="background:var(--color-bg);border:2px solid var(--color-text);margin:0 -2px -2px 0;padding:5px 9px;white-space:nowrap"><b>Pushes</b> {{ hud.pushes }}/min</div>
+      <div style="background:var(--color-bg);border:2px solid var(--color-text);margin:0 -2px -2px 0;padding:5px 9px;white-space:nowrap;color:{{ hud.reachColor }}"><b>Hands</b> {{ hud.reach }}</div>
+    </div>
+    <div style="position:absolute;left:10px;bottom:10px;display:flex;flex-wrap:wrap;max-width:70%">
+      <sc-for list="{{ toggles }}" as="m" hint-placeholder-count="5">
+        <button onClick="{{ m.pick }}" style="min-height:44px;padding:0 12px;margin:0 -2px -2px 0;border:2px solid var(--color-text);border-radius:0;background:{{ m.bg }};color:{{ m.fg }};font:700 13px var(--font-body);cursor:pointer">{{ m.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;min-height:0;min-width:0">
+    <div style="flex:1;min-height:0;overflow-y:auto">
+      <div style="padding:12px 16px 14px;border-bottom:2px solid var(--color-text);display:flex;flex-direction:column;gap:8px">
+        <div style="font-family:var(--font-heading);font-size:16px;font-weight:800">Weapons</div>
+        <sc-for list="{{ weaponRows }}" as="row" hint-placeholder-count="3">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700)">{{ row.label }}</div>
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr))">
+              <sc-for list="{{ row.opts }}" as="o">
+                <button onClick="{{ o.pick }}" style="min-height:48px;padding:6px 10px;margin:0 -2px 0 0;border:2px solid var(--color-text);border-radius:0;background:{{ o.bg }};color:{{ o.fg }};font:800 12px var(--font-heading);letter-spacing:0.04em;line-height:1.15;text-align:left;cursor:pointer">{{ o.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+        <div style="font-size:12px;line-height:1.4;color:var(--color-neutral-700, #57534e)">{{ weaponLine }}</div>
+      </div>
+      <sc-for list="{{ sections }}" as="sec" hint-placeholder-count="4">
+        <div style="padding:12px 16px 14px;border-bottom:2px solid var(--color-text);display:flex;flex-direction:column;gap:4px">
+          <div style="font-family:var(--font-heading);font-size:16px;font-weight:800;margin-bottom:2px">{{ sec.title }}</div>
+          <sc-for list="{{ sec.sliders }}" as="c">
+            <div style="display:grid;grid-template-columns:118px minmax(0,1fr) 56px;align-items:center;gap:10px;min-height:44px">
+              <span style="font-size:12px;font-weight:700">{{ c.label }}</span>
+              <input type="range" min="{{ c.min }}" max="{{ c.max }}" step="{{ c.step }}" value="{{ c.value }}" onInput="{{ c.onInput }}" style="width:100%">
+              <span style="font-size:12px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap">{{ c.shown }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+      <div style="padding:12px 16px 14px;border-bottom:2px solid var(--color-text);display:flex;flex-direction:column;gap:8px">
+        <div style="font-family:var(--font-heading);font-size:16px;font-weight:800">Colours</div>
+        <sc-for list="{{ colours }}" as="row" hint-placeholder-count="3">
+          <div style="display:grid;grid-template-columns:118px minmax(0,1fr);align-items:center;gap:10px;min-height:44px">
+            <span style="font-size:12px;font-weight:700">{{ row.label }}</span>
+            <div style="display:flex">
+              <sc-for list="{{ row.opts }}" as="o">
+                <button onClick="{{ o.pick }}" aria-label="{{ o.hex }}" style="width:44px;height:44px;margin:0 -2px 0 0;border:{{ o.border }};border-radius:0;background:{{ o.hex }};cursor:pointer"></button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="border-top:2px solid var(--color-text);display:grid;grid-template-columns:1fr 1fr">
+      <button onClick="{{ save }}" style="grid-column:1 / span 2;display:flex;justify-content:space-between;align-items:center;min-height:52px;padding:0 16px;background:var(--color-accent);color:var(--color-bg);border:0;border-bottom:2px solid var(--color-text);border-radius:0;font:800 16px var(--font-heading);text-align:left;cursor:pointer" style-hover="background:var(--color-accent-600)"><span>{{ saveLabel }}</span><span>→</span></button>
+      <button onClick="{{ copy }}" style="min-height:44px;padding:0 16px;background:var(--color-bg);color:var(--color-text);border:0;border-right:2px solid var(--color-text);border-radius:0;font:700 13px var(--font-body);text-align:left;cursor:pointer" style-hover="background:var(--color-neutral-200)">{{ copyLabel }}</button>
+      <button onClick="{{ reset }}" style="min-height:44px;padding:0 16px;background:var(--color-bg);color:var(--color-text);border:0;border-radius:0;font:700 13px var(--font-body);text-align:left;cursor:pointer" style-hover="background:var(--color-neutral-200)">Reset to default</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const cm = v => v + ' cm', deg = v => v + '°', x = v => (+v).toFixed(2) + '×';
+const SECTIONS = [
+  { title: 'Chair', sliders: [['seat', 'Seat height', 35, 65, 1, cm], ['seatW', 'Seat width', 36, 60, 1, cm], ['seatD', 'Seat depth', 30, 55, 1, cm], ['back', 'Back height', 20, 60, 1, cm], ['backTilt', 'Back tilt', -5, 25, 1, deg]] },
+  { title: 'Wheels', sliders: [['wheel', 'Wheel size', 40, 75, 1, cm], ['camber', 'Camber', 0, 15, 0.5, deg], ['wheelZ', 'Wheel position', -25, 15, 1, cm], ['caster', 'Caster size', 6, 22, 1, cm], ['foot', 'Footrest height', 0, 35, 1, cm], ['footZ', 'Footrest forward', 15, 55, 1, cm]] },
+  { title: 'Legs', sliders: [['thigh', 'Thigh angle', 40, 110, 1, deg], ['knee', 'Knee bend', 0, 130, 1, deg], ['shin', 'Shin length', 15, 50, 1, cm], ['legSpread', 'Leg spread', 6, 40, 1, cm], ['boot', 'Drone boot size', 0.6, 1.6, 0.05, x]] },
+  { title: 'Arms and motion', sliders: [['armReach', 'Arm length', 1, 1.8, 0.01, x], ['push', 'Push stroke', 0.4, 1.6, 0.05, x], ['speed', 'Roll speed', 0.2, 3, 0.05, v => (+v).toFixed(2) + ' m/s']] },
+];
+const COLOURS = [['glow', 'Glow', ['#7dd3fc', '#ec3013', '#e6b45a', '#a3e635']], ['frame', 'Frame', ['#334155', '#201e1d', '#ec3013', '#e7edf4']], ['tire', 'Tyres', ['#0f172a', '#201e1d', '#475569']], ['rim', 'Push rims', ['#cbd5e1', '#7dd3fc', '#e6b45a', '#ec3013']]];
+class Component extends DCLogic {
+  state = { cfg: null, hud: {}, saved: false, copied: false, narrow: false, land: false, lab: {} };
+  stageRef = React.createRef();
+  async componentDidMount() {
+    this.onResize = () => this.setState({ narrow: innerWidth < 720 && innerHeight > innerWidth, land: innerWidth < 960 && innerHeight < innerWidth });
+    addEventListener('resize', this.onResize); this.onResize();
+    const mod = await import(new URL('engine/chair.js', document.baseURI).href);
+    const lab = await import(new URL('noble-lab.js', document.baseURI).href);
+    this.mod = mod; const cfg = await mod.loadChair();
+    this.lab = await lab.createNobleLab({ container: this.stageRef.current, cfg, onState: hud => this.setState({ hud }) });
+    window.__NOBLE_LAB = this.lab;
+    this.setState({ cfg, lab: this.lab.state() });
+  }
+  componentWillUnmount() { removeEventListener('resize', this.onResize); this.lab && this.lab.destroy(); }
+  put(patch) { const cfg = { ...this.state.cfg, ...patch }; this.lab && this.lab.set(patch); this.setState({ cfg, saved: false, copied: false }); }
+  renderVals() {
+    const S = this.state, c = S.cfg || {}, h = S.hud || {}, lab = this.lab, on = 'var(--color-text)', off = 'var(--color-bg)';
+    const blur = e => e && e.currentTarget && e.currentTarget.blur();
+    const L = S.narrow ? { cols: 'minmax(0,1fr)', rows: '52dvh minmax(0,1fr)', stageR: '0', stageB: '2px solid var(--color-text)' }
+      : { cols: S.land ? 'minmax(0,1fr) 330px' : 'minmax(0,1fr) 380px', rows: 'minmax(0,1fr)', stageR: '2px solid var(--color-text)', stageB: '0' };
+    const ls = S.lab || {};
+    const views = [['three', '3D'], ['side', 'Side'], ['top', 'Top'], ['front', 'Front']].map(([k, l]) => ({ label: l, bg: ls.view === k ? 'var(--color-accent)' : off, fg: ls.view === k ? off : on, pick: e => { blur(e); if (!lab) return; lab.setView(k); this.setState({ lab: lab.state() }); } }));
+    const tg = (k, l) => ({ label: l, bg: ls[k] ? on : off, fg: ls[k] ? off : on, pick: e => { blur(e); if (!lab) return; lab.toggle(k); this.setState({ lab: lab.state() }); } });
+    const toggles = [{ label: c.style === 'classic' ? 'Style: classic' : 'Style: future', bg: off, fg: on, pick: e => { blur(e); this.put({ style: c.style === 'classic' ? 'future' : 'classic' }); } }, { label: 'Throw shoe', bg: 'var(--color-accent)', fg: off, pick: e => { blur(e); lab && lab.throwArm(); } },
+      { label: ls.auto ? 'Auto-throw on' : 'Auto-throw off', bg: ls.auto ? on : off, fg: ls.auto ? off : on, pick: e => { blur(e); if (!lab) return; lab.shoe({ auto: !ls.auto }); this.setState({ lab: lab.state() }); } },
+      { label: ls.wide ? 'Wide view' : 'Close view', bg: off, fg: on, pick: e => { blur(e); if (!lab) return; lab.toggleWide(); this.setState({ lab: lab.state() }); } }, tg('rolling', 'Roll'), tg('slow', 'Slow ×¼'), tg('paused', 'Pause'), { label: 'Clear tracks', bg: off, fg: on, pick: e => { blur(e); lab && lab.clear(); } }];
+    const T = S.target || { dist: 5, side: 0.6 };
+    const shoeSec = { title: 'Shoemerang test', sliders: [
+      { label: 'Target distance', min: 1, max: 9, step: 0.1, value: T.dist, shown: (+T.dist).toFixed(1) + ' m', onInput: e => { const v = +e.target.value; lab && lab.shoe({ dist: v }); this.setState({ target: { ...T, dist: v } }); } },
+      { label: 'Target angle', min: -1.4, max: 1.4, step: 0.05, value: T.side, shown: Math.round(T.side * 57.3) + '°', onInput: e => { const v = +e.target.value; lab && lab.shoe({ side: v }); this.setState({ target: { ...T, side: v } }); } }] };
+    const sections = [shoeSec].concat(SECTIONS.map(sec => ({ title: sec.title, sliders: sec.sliders.map(([k, l, min, max, step, f]) => ({ label: l, min, max, step, value: c[k] ?? min, shown: c[k] == null ? '' : f(c[k]), onInput: e => this.put({ [k]: +e.target.value }) })) })));
+    const colours = COLOURS.map(([k, l, opts]) => ({ label: l, opts: opts.map(hex => ({ hex, border: c[k] === hex ? '4px solid var(--color-accent)' : '2px solid var(--color-text)', pick: e => { blur(e); this.put({ [k]: hex }); } })) }));
+    const WL = { spike: 'SPIKE WHEEL: spikes pop out of the wheels, 360° spin, sword damage.', ram: 'BATTERING RAM: armrest spikes come forward, short fast charge, +25% damage, then a recharge.', horn: 'AUDIO HORN: 360° stun burst at sword range. Move the target under 3.5 m to see the stars.', shoe: 'SHOEMERANG: his right boot flies out and back.', boot: 'BOOTERANG: bigger, stronger, slower boot.', homing: 'HOMING SHOE: seeks the target, longer range.', spin: 'SPIN-OUT (hold 1): wheelie spin, knocks everyone back.', rockets: 'ARMREST LAUNCHERS (hold 2): twin mini-rockets fold out.', hover: 'HOVER (hold 3 in the air): short glide over gaps.' };
+    const wSel = h.weapon || '';
+    const weaponRows = [['Melee · 1', [['spike', 'Spike wheel'], ['ram', 'Battering ram'], ['horn', 'Audio horn']]], ['Ranged · 2', [['shoe', 'Shoemerang'], ['boot', 'Booterang'], ['homing', 'Homing shoe']]], ['Holds', [['spin', 'Spin-out'], ['rockets', 'Launchers'], ['hover', 'Hover']]]].map(([label, opts]) => ({ label, opts: opts.map(([k, l]) => ({ label: l, bg: wSel === k ? 'var(--color-accent)' : off, fg: wSel === k ? off : on, pick: e => { blur(e); if (!lab) return; lab.weapon(k); this.setState({ lab: lab.state() }); } })) }));
+    return {
+      L, stageRef: this.stageRef, weaponRows, weaponLine: WL[wSel] || 'Tap a weapon to preview it on the chair.', views, toggles, sections, colours,
+      hud: { shoe: (h.shoe || 'ready').toUpperCase(), total: h.total ?? 0, last: h.last || '–', range: h.rangeM ?? 7.2, pushes: h.pushes ?? 0, reach: h.reachOk === false ? 'can’t reach the rims' : 'on the rims', reachColor: h.reachOk === false ? 'var(--color-accent-700)' : 'var(--color-text)' },
+      saveLabel: S.saved ? 'Saved. The Bridge uses these' : 'Save these settings',
+      save: e => { blur(e); if (!this.mod || !S.cfg) return; this.mod.saveChair(S.cfg); this.setState({ saved: true }); },
+      copyLabel: S.copied ? 'Copied' : 'Copy for presets/chair.json',
+      copy: e => { blur(e); if (!S.cfg) return; const t = JSON.stringify(S.cfg, null, 2); (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).catch(() => prompt('Copy:', t)); this.setState({ copied: true }); },
+      reset: e => { blur(e); if (!this.mod) return; this.put({ ...this.mod.CHAIR_DEFAULTS }); },
+    };
+  }
+}
+</script>
+</body>
+</html>

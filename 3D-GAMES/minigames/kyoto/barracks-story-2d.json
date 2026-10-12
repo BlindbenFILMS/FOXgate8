@@ -1,0 +1,204 @@
+{
+ "note": "Copied verbatim from the 2D Gaya file (kSecond + kWatch1 in kyotoBarracks). Do not rewrite.",
+ "second": {
+  "key": "kSecond",
+  "name": "the general’s second",
+  "bio": "Carries the general’s orders and, when the general would rather not ask a question himself, carries the question.",
+  "lines": [
+   {
+    "who": "npc",
+    "text": "You are the wrestler with the sword. Do not bother answering; there is one of you."
+   },
+   {
+    "who": "npc",
+    "text": "The general in red has a question he will not ask you out loud, so I have been sent to ask it with this."
+   },
+   {
+    "who": "npc",
+    "text": "He wants to know whether that blade was given to you or found. A man who was taught holds one a certain way. A man who picked it up off a beach holds it like a plank."
+   },
+   {
+    "who": "npc",
+    "text": "Draw it. I will not kill you and you will not kill me — there are forty men through that door and every one of them can count."
+   }
+  ],
+  "topics": [
+   {
+    "label": "It was given to me.",
+    "act": "bout:kSecond",
+    "replies": [
+     "Then show me. That is the same sentence said properly.",
+     "Guard up, rikishi."
+    ]
+   },
+   {
+    "label": "And if I refuse?",
+    "replies": [
+     "Then I write down that you refused. The general reads it. And you never hear another word about any of this, ever, from anybody.",
+     "— Believe me. That is worse."
+    ]
+   },
+   {
+    "label": "Who was he to you?",
+    "replies": [
+     "Nothing. I never met the man.",
+     "I have met the general every day for nine years, though, and he has been a different shape since the morning you walked into that throne room."
+    ]
+   },
+   {
+    "label": "Not now.",
+    "replies": [
+     "The yard is here tomorrow. So am I."
+    ]
+   }
+  ],
+  "bout": {
+   "won": "boutWon",
+   "wonNote": {
+    "title": "SOMEBODY KNEW WHICH BEACH",
+    "body": "The boy’s family did not flee — they were sent away nine years ago by someone in Kyoto with the standing to arrange it, and the men in black were on that beach waiting. The general does not know who betrayed them.\n\nThe ninjas on the mountain are not bandits. They were paid."
+   },
+   "wonCall": "HE YIELDS",
+   "lost": "boutLost",
+   "lostNote": {
+    "title": "HE TOOK IT",
+    "body": "You lost, and he took the sword off you — politely, with both hands, the way it is done.\n\nHe did not say it was his. He said the general would want to see it, which is a different sentence and a worse one.\n\nGo to the castle. Everybody on the road who had something to say about the blade on your back will have nothing to say to you now."
+   },
+   "lostCall": "YOU ARE DOWN",
+   "xp": 140,
+   "xpWhy": "you held a samurai’s blade like a man who was taught",
+   "call": "DRAW.",
+   "hisCall": "Guard up, rikishi.",
+   "takes": "blade",
+   "takesGear": "katana",
+   "taken": "swordTaken"
+  },
+  "states": [
+   {
+    "requires": "boutWon",
+    "again": "Keep it where I can see it. — That was a joke.",
+    "lines": [
+     {
+      "who": "npc",
+      "text": "Stop. — Stop. That is enough."
+     },
+     {
+      "who": "npc",
+      "text": "You were taught. Not well, and not recently, and not by anybody from this city. But you were taught, and a thief is not taught."
+     },
+     {
+      "who": "npc",
+      "text": "So I will say the thing I was told to say if you won, which the general did not expect to have to spend."
+     },
+     {
+      "who": "npc",
+      "text": "That family did not run from Kyoto nine years ago. They were SENT out of it. Quietly, at night, by somebody with the standing to arrange a boat."
+     },
+     {
+      "who": "npc",
+      "text": "And the men in black were not waiting on that beach by luck. Somebody in this city knew which beach. — I do not know who. Neither does he, and it is eating him from the inside out."
+     }
+    ],
+    "topics": [
+     {
+      "label": "Who arranges a boat?",
+      "replies": [
+       "Six men in this city. I can name four of them and you have met two.",
+       "That is as far as I go. I am a sword, not a magistrate."
+      ]
+     },
+     {
+      "label": "Does the boy know?",
+      "replies": [
+       "I hope not. — Do not be the one who tells him in the street."
+      ]
+     },
+     {
+      "label": "Again?",
+      "act": "bout:kSecond",
+      "replies": [
+       "For the practice, then. Nothing rides on it this time."
+      ]
+     },
+     {
+      "label": "Thank you.",
+      "replies": [
+       "Mm. Mind the step."
+      ]
+     }
+    ]
+   },
+   {
+    "requires": "boutLost",
+    "again": "The castle. He is expecting you.",
+    "lines": [
+     {
+      "who": "npc",
+      "text": "Enough. — Enough, that is enough."
+     },
+     {
+      "who": "npc",
+      "text": "You were not taught. Not by anybody, not ever. You hold it the way a man holds a plank he is about to put down."
+     },
+     {
+      "who": "npc",
+      "text": "Which does not make you a thief. It makes you a man carrying something that is not his, and there is a difference, and the difference is the only reason this is going the way it is going."
+     },
+     {
+      "who": "npc",
+      "text": "— Both hands. Thank you. The general will want to look at it, and then you and he can have whatever conversation you are going to have."
+     }
+    ],
+    "topics": [
+     {
+      "label": "That is mine.",
+      "replies": [
+       "It is not, and you know it is not, and I am not going to be the one who says whose it was.",
+       "Go up to the castle. If he gives it back to you then it is yours from a man who could give it, which is better than what you had this morning."
+      ]
+     },
+     {
+      "label": "Understood.",
+      "replies": [
+       "Good. — For what it is worth: you did not stop. Most of them stop."
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "watcher": {
+  "key": "kWatch1",
+  "name": "a samurai of the yard",
+  "bio": "One of the forty. He is not going to help you and he is not going to help him either.",
+  "states": [
+   {
+    "requires": "boutWon",
+    "lines": [
+     {
+      "who": "npc",
+      "text": "Nobody in this yard is going to say it to you, so I will. That was not bad."
+     }
+    ]
+   },
+   {
+    "requires": "boutLost",
+    "lines": [
+     {
+      "who": "npc",
+      "text": "You got up. That is the half of it most men skip."
+     }
+    ]
+   },
+   {
+    "requires": "summoned",
+    "lines": [
+     {
+      "who": "npc",
+      "text": "We were told to stand here and watch. That is all we were told, and it is unusual."
+     }
+    ]
+   }
+  ]
+ }
+}

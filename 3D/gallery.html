@@ -102,7 +102,7 @@ OFF</button></div>
   <div class="lab">Atmosphere</div>
   <div class="opts"><button id="ambBtn">Ambient sounds</button><button id="nightBtn">🌙 Night</button></div>
   <div class="lab">Visiting together</div>
-  <div class="opts"><button id="rename">Change my name</button><button id="invite">Copy private room link</button><button id="tourBtn">Lead a tour</button><button id="hostBtn">Host this visit</button><button id="noteBtn">📝 Leave a note here</button></div>
+  <div class="opts"><button id="rename">Change my name</button><button id="invite">Copy private room link</button><button id="tourBtn">Lead a tour</button><button id="hostBtn">Host this visit</button><button id="noteBtn">🙂 Comment spots · leave a comment</button></div>
   <div id="whoList" style="font-size:13px;line-height:1.5;margin-top:8px"></div>
   <div class="lab">Lost?</div>
   <div class="opts"><button id="home">Back to the entrance</button></div>
@@ -116,7 +116,8 @@ const pref = (() => { try { return JSON.parse(localStorage.getItem('8gates.galle
 const savePref = () => { try { localStorage.setItem('8gates.gallery.v1', JSON.stringify(pref)); } catch (e) {} };
 let G; let near = null;
 try {
-  G = await createGallery({ container: $('stage'), onProgress: f => { $('lb').style.width = Math.round(f * 100) + '%'; }, onNear, onZone: z => { document.querySelector('#place .c').textContent = z; }, onSplash: () => { $('live').textContent = 'Splash! No swimming in the lake. Back to the entrance.'; $('hint').textContent = '💦 Splash! No swimming in the lake. Back to the entrance.'; $('hint').style.display = 'block'; setTimeout(() => $('hint').style.display = 'none', 3500); } });
+  G = await createGallery({ container: $('stage'), onProgress: f => { $('lb').style.width = Math.round(f * 100) + '%'; }, onNear, onZone: z => { document.querySelector('#place .c').textContent = z; }, onPad: p => { if (!p) { if ($('hint').dataset.pad) { $('hint').style.display = 'none'; delete $('hint').dataset.pad; } return; } $('live').textContent = 'Comment spot: ' + p.name + '. The LEAVE NOTE button is on the right; tap it to leave a comment.'; $('hint').textContent = '🙂 YOUR COMMENTS HERE · tap LEAVE NOTE'; $('hint').dataset.pad = '1'; $('hint').style.display = 'block'; clearTimeout(window.PADHINT); window.PADHINT = setTimeout(() => { if ($('hint').dataset.pad) { $('hint').style.display = 'none'; delete $('hint').dataset.pad; } }, 4000); }, onSplash: () => { $('live').textContent = 'Splash! No swimming in the lake. Back to the entrance.'; $('hint').textContent = '💦 Splash! No swimming in the lake. Back to the entrance.'; $('hint').style.display = 'block'; setTimeout(() => $('hint').style.display = 'none', 3500); } });
+  G.openCommentSpots = openCommentSpots;   // (the notes module opens it when someone tries to comment off a comment spot)
 } catch (e) { $('lt').textContent = 'The gallery could not open: ' + e.message; throw e; }
 window.G = G;
 // stained glass in the main hall's roof, with HOLT for HOPE in braille and its shadow on the floor
@@ -178,6 +179,7 @@ function actionWords(n) {
     case 'goto': return ['TAKE ME THERE', L];
     case 'signpost': return ['WHERE TO?', 'Signpost · the park'];
     case 'piano': return ['PLAY PIANO', 'Grand piano · Academy of Music'];
+    case 'comment': return ['LEAVE A COMMENT', 'Comment spot · ' + ((n.item && n.item.spot && n.item.spot.name) || '')];
     default: return [L.toUpperCase().slice(0, 26), ''];
   }
 }
@@ -219,6 +221,7 @@ function open(n) {
   if (n.kind === 'signpost') { openSignpost(); return; }
   if (n.kind === 'piano') { if (window.PIANO) window.PIANO.open(); return; }
   if (n.kind === 'note') { if (window.NOTES) window.NOTES.openSpot(n.item); return; }
+  if (n.kind === 'comment') { if (window.NOTES) window.NOTES.openCompose(n.item.spot); return; }
   quoteStop(); bioScrollStop();
   const pb = $('pb'); pb.innerHTML = ''; pb.scrollTop = 0;
   if (n.kind === 'art') {
@@ -330,6 +333,25 @@ function openSignpost() {
 }
 // the park map (☰): the campus drawn as you see it when you arrive (the museum ahead, the cinema behind you), you as a red dot;
 // tap a building (or its row) to walk there when you're in the park, or to go straight there from anywhere else
+// COMMENT SPOTS: the yellow pads with a YOUR COMMENTS HERE sign are the only places to leave a comment; this lists them, nearest first
+function openCommentSpots() {
+  if (!G.comments) return;
+  const wrap = document.createElement('div'), here = G.comments.here();
+  const p = document.createElement('p'); p.style.cssText = 'margin:0 0 10px;font:400 15px/1.5 var(--font)';
+  p.textContent = here ? 'You are standing on the comment spot at ' + here.name + '.' : 'Comments are left on comment spots: a slightly raised yellow pad with a sign that says YOUR COMMENTS HERE. Step onto one and the LEAVE NOTE button appears.';
+  wrap.appendChild(p);
+  if (here) { const r = document.createElement('div'); r.className = 'row'; const b = document.createElement('button'); b.textContent = '📝 Leave a comment here'; b.onclick = () => window.NOTES && window.NOTES.openCompose(here); r.appendChild(b); wrap.appendChild(r); }
+  const list = [...G.comments.list].sort((a, b) => G.comments.dist(a) - G.comments.dist(b));
+  for (const S of list) {
+    if (here && S.id === here.id) continue;
+    const r = document.createElement('div'); r.className = 'row'; r.style.cssText = 'align-items:center;justify-content:space-between;border-top:1px solid #3a3735;padding-top:8px';
+    const t = document.createElement('div'); t.style.cssText = 'flex:1;min-width:150px'; t.innerHTML = '<b>' + esc(S.name.charAt(0).toUpperCase() + S.name.slice(1)) + '</b><br><span style="opacity:.75">about ' + Math.max(1, Math.round(G.comments.dist(S))) + ' m away</span>';
+    const b = document.createElement('button'); b.textContent = 'Take me there'; b.setAttribute('aria-label', 'Take me to the comment spot at ' + S.name);
+    b.onclick = () => { close(); G.comments.go(S.id); };
+    r.append(t, b); wrap.appendChild(r);
+  }
+  showPanel('Your comments here 🙂', 'Comment spots', wrap);
+}
 function openMap() {
   const [px, , pz, pf] = G.localState(), inPark = !!G.campus.zone();
   // map: up = west (towards the museum), left = north; 1 unit = 1 metre; world x -46..94 -> y, z 60..-60 -> x
@@ -348,14 +370,16 @@ function openMap() {
     ${bld('amb', 30.6, 49.4, -57.4, -23.6, '#1d1c1b', 'ACADEMY')}
     ${bld('cinema', 74, 90, -11, 11, '#7e3328', 'CINEMA')}
     <circle cx="${X(2.1)}" cy="${Y(29.6)}" r="1.6" fill="#9a6a3c"/>
+    ${(G.comments ? G.comments.list : []).filter(S => Y(S.x) > 2 && Y(S.x) < 140).map(S => `<g class="cs" data-id="${S.id}" role="button" tabindex="0" aria-label="Comment spot: ${S.name}" style="cursor:pointer"><rect x="${(X(S.z) - 2.6).toFixed(1)}" y="${(Y(S.x) - 2.6).toFixed(1)}" width="5.2" height="5.2" fill="#f6c443" stroke="#1d1c1b" stroke-width="1"/><circle cx="${(X(S.z) - 0.9).toFixed(1)}" cy="${(Y(S.x) - 0.6).toFixed(1)}" r=".45" fill="#1d1c1b"/><circle cx="${(X(S.z) + 0.9).toFixed(1)}" cy="${(Y(S.x) - 0.6).toFixed(1)}" r=".45" fill="#1d1c1b"/><path d="M${(X(S.z) - 1.3).toFixed(1)} ${(Y(S.x) + 0.6).toFixed(1)} q1.3 1.3 2.6 0" stroke="#1d1c1b" stroke-width=".55" fill="none"/></g>`).join('')}
     ${you}
   </svg>`;
   const wrap = document.createElement('div'); wrap.innerHTML = svg;
   const p = document.createElement('p'); p.style.cssText = 'margin:4px 0 6px;font:400 14px/1.45 var(--font)';
-  p.textContent = inPark ? 'You are the red dot. Tap a place and your fox walks you there, or tap GO NOW to jump.' : (px < -13 ? 'You are inside the museum (the red dot). ' : 'You are the red dot. ') + 'Tap a place to go straight there.'; wrap.appendChild(p);
+  p.textContent = (inPark ? 'You are the red dot. Tap a place and your fox walks you there, or tap GO NOW to jump.' : (px < -13 ? 'You are inside the museum (the red dot). ' : 'You are the red dot. ') + 'Tap a place to go straight there.') + ' The yellow smiley squares are comment spots: tap one to go there.'; wrap.appendChild(p);
   placeRows(wrap, inPark);
   wrap.querySelectorAll('.mb').forEach(g => { const go = () => { const D = G.campus.dests.find(d => d.to === g.dataset.to); close(); if (inPark) walkWith(D); else G.campus.go(D.to); };
     g.onclick = go; g.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } }; });
+  wrap.querySelectorAll('.cs').forEach(g => { const go = () => { close(); G.comments.go(g.dataset.id); }; g.onclick = go; g.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } }; });
   showPanel('The park', 'Map', wrap);
 }
 // SHOWTIME: a minute before each show, everyone who isn't already in the cinema gets a nudge (at most every half hour)
@@ -434,7 +458,7 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
   import('./engine/gallery-notes.js').then(async ({ setupNotes }) => {
     window.NOTES = await setupNotes({ G, net, cfg: G.notesConfig, myName: () => pref.name, announce, esc, readAloud: () => !pref.quietNotes, showPanel });
   }).catch(e => console.warn('notes unavailable', e));
-  $('noteBtn').onclick = () => { if (!window.NOTES) return; if (G.campus && G.campus.zone() === 'why') window.NOTES.openWhy({}); else window.NOTES.openCompose(); };   // in the WHY House, LEAVE NOTE adds your story to its walls
+  $('noteBtn').onclick = () => { if (!window.NOTES) return; if (G.comments && G.comments.here()) window.NOTES.openCompose(); else openCommentSpots(); };   // comments only go on the comment spots (yellow pads)
   const [{ setupLive }, { setupFace }] = await Promise.all([import('./engine/gallery-live.js'), import('./engine/gallery-face.js')]);
   window.LIVE = setupLive({ G, net, announce, nameOf: id => names.get(id) || 'A visitor', invite: (...a) => window.TOG && window.TOG.invite(...a) });
   window.FACE = setupFace({ G, net, announce, onState: st => { const b = $('faceBtn'); b.classList.toggle('on', st === 'on'); b.setAttribute('aria-pressed', st === 'on'); b.textContent = st === 'loading' ? '🦊 Starting camera…' : st === 'on' ? '🦊 Fox copies my face · ON' : '🦊 Fox copies my face (camera)'; } });

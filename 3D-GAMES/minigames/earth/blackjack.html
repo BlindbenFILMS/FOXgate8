@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Casino 8 — Blackjack</title>
+<style>
+  html, body {
+    margin: 0; padding: 0; height: 100%; overflow: hidden; background: #04070d;
+    font-family: 'Trebuchet MS', 'Segoe UI', Arial, sans-serif;
+    color: #dbe7f3; -webkit-text-size-adjust: 100%;
+  }
+  #stage {
+    position: absolute; left: 50%; top: 50%; width: 1180px; height: 720px;
+    transform-origin: 50% 50%;
+    background:
+      radial-gradient(120% 90% at 50% 0%, rgba(35,70,110,0.55), rgba(4,7,13,0) 60%),
+      linear-gradient(#070c15, #04070d);
+    border: 2px solid #16304a; border-radius: 14px; box-sizing: border-box;
+    display: flex; gap: 18px; padding: 18px;
+  }
+  #left { width: 320px; display: flex; flex-direction: column; gap: 12px; }
+  #right { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+  #shoeWrap {
+    position: relative; flex: 1; overflow: hidden;
+    background: radial-gradient(70% 60% at 50% 30%, rgba(30,60,95,0.45), rgba(6,10,18,0) 70%);
+    border: 1px solid #1d3450; border-radius: 12px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+  }
+  #shoeCards { display: flex; }
+  #shoeCards div {
+    width: 40px; height: 58px; margin-left: -30px; border-radius: 5px;
+    background: repeating-linear-gradient(45deg,#123049 0 7px,#0d2439 7px 14px);
+    border: 1px solid rgba(0,240,255,0.28); box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  }
+  #shoeCards div:first-child { margin-left: 0; }
+  #shoeBar { width: 74%; height: 8px; border-radius: 5px; background: #12202f; overflow: hidden; }
+  #shoeFill { height: 100%; background: linear-gradient(90deg,#38bdf8,#0d5f7a); width: 100%; }
+  #shoeText { font-size: 11px; letter-spacing: 2px; color: #6f8aa5; }
+  #callBox { font-size: 13px; letter-spacing: 4px; color: #7fd4ff; text-transform: uppercase; }
+  #moneyRow { display: flex; gap: 12px; flex: none; }
+  .money {
+    flex: 1; padding: 8px 14px; background: rgba(10,18,30,0.72);
+    border: 1px solid #1d3450; border-radius: 10px;
+  }
+  .money .k { font-size: 11px; letter-spacing: 3px; color: #6f8aa5; }
+  #purse { font-size: 26px; font-weight: 900; color: #ffd166; }
+  #down { font-size: 26px; font-weight: 900; color: #7fd4ff; }
+  #resultBox {
+    min-height: 78px; display: flex; align-items: center; gap: 12px; padding: 8px 14px;
+    flex: none; box-sizing: border-box;
+    background: rgba(10,18,30,0.72); border: 1px solid #1d3450; border-radius: 10px;
+  }
+  #resultText { font-size: 13px; letter-spacing: 2px; color: #9fb6cc; flex: 1; }
+  #resultWin { font-size: 19px; font-weight: 900; color: #ffd166; }
+  #history { display: flex; gap: 5px; flex-wrap: wrap; max-width: 96px; justify-content: flex-end; }
+  .hchip {
+    width: 24px; height: 24px; border-radius: 6px; font-size: 11px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center; color: #0a0f18; background: #b9c6d4;
+  }
+  .hchip.w { background: #3fa45b; color: #06140b; }
+  .hchip.l { background: #d8323b; color: #fff; }
+  .hchip.p { background: #7b8ea1; color: #0a0f18; }
+
+  /* ---- the table ---- */
+  #felt {
+    flex: 1; position: relative; border-radius: 14px; overflow: hidden;
+    background:
+      radial-gradient(120% 100% at 50% -10%, #14603f 0%, #0b3a25 45%, #072418 100%);
+    border: 2px solid #1d5a3c;
+  }
+  #feltArc {
+    position: absolute; left: 0; right: 0; top: 33%; text-align: center; pointer-events: none;
+    color: rgba(255,240,190,0.30); letter-spacing: 5px; line-height: 1.7;
+  }
+  #feltArc b { display: block; font-size: 21px; color: rgba(255,240,190,0.42); letter-spacing: 6px; }
+  #feltArc { font-size: 12px; }
+  #dealerRow, #playerRow {
+    position: absolute; left: 0; right: 0; display: flex; justify-content: center;
+    gap: 26px; align-items: flex-start;
+  }
+  #dealerRow { top: 14px; }
+  #playerRow { bottom: 12px; }
+  .hand { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+  .hand.act .cards { filter: drop-shadow(0 0 12px rgba(127,212,255,0.75)); }
+  .cards { display: flex; }
+  .cards > div { margin-left: -20px; }
+  .cards > div:first-child { margin-left: 0; }
+  .tag {
+    font-size: 12px; font-weight: 900; letter-spacing: 2px; padding: 2px 9px; border-radius: 999px;
+    background: rgba(6,14,24,0.85); border: 1px solid rgba(127,212,255,0.5); color: #dbe7f3;
+  }
+  .tag.bust { border-color: #d8323b; color: #ff8b92; }
+  .tag.bj { border-color: #ffd166; color: #ffd166; }
+  .tag.win { border-color: #3fa45b; color: #7ee29a; }
+
+  /* ---- one card, exactly as the poker tables draw them ---- */
+  .pc { position: relative; width: 84px; height: 126px; perspective: 900px; flex: none; }
+  .pcInner {
+    position: absolute; inset: 0; border-radius: 11px; overflow: hidden;
+    background: linear-gradient(158deg,#ffffff 0%,#f7f9fb 55%,#e7ecf1 100%);
+    border: 1px solid #cfd8e0;
+    box-shadow: 0 10px 22px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.35) inset,
+                0 -14px 24px rgba(0,0,0,0.35) inset;
+    transition: transform 0.3s cubic-bezier(.2,.7,.3,1);
+  }
+  .pc.flip .pcInner { transform: rotateY(88deg) scale(0.96); }
+  .pcKey { position: absolute; inset: 3px; border-radius: 8px;
+           border: 1px solid rgba(23,32,43,0.14); pointer-events: none; }
+  .pcGloss { position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(150deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 42%); }
+  .pcShade { position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(120% 80% at 50% 110%, rgba(0,0,0,0.42), rgba(0,0,0,0) 60%); }
+  .pcIdx { position: absolute; inset: 0; display: flex; flex-direction: column;
+           justify-content: space-between; padding: 5px 6px; box-sizing: border-box; }
+  .pcIdx .a, .pcIdx .b { display: flex; flex-direction: column; line-height: 0.98; }
+  .pcIdx .b { align-self: flex-end; width: max-content; transform: rotate(180deg); }
+  .pcIdx .v { font-size: 15px; font-weight: 900; letter-spacing: 0.5px; }
+  .pcIdx .s { font-size: 12px; }
+  .pcArt { position: absolute; inset: 26px 16px 24px; display: flex;
+           align-items: center; justify-content: center; }
+  .pcArt canvas { height: 100%; width: auto; max-width: 100%;
+                  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); }
+  .pcArt span { font-size: 30px; }
+  .pcBack {
+    position: absolute; inset: 0; border-radius: 11px; align-items: center; justify-content: center;
+    background: repeating-linear-gradient(45deg,#123049 0 7px,#0d2439 7px 14px);
+    box-shadow: 0 0 26px rgba(0,240,255,0.10) inset; display: none;
+  }
+  .pc.back .pcBack { display: flex; }
+  .pcBack .k { position: absolute; inset: 5px; border-radius: 8px;
+               border: 1px solid rgba(0,240,255,0.28); }
+  .pcBack canvas { width: 54px; height: 54px; filter: drop-shadow(0 0 14px rgba(56,189,248,0.4)); }
+
+  #bar {
+    height: 92px; display: flex; align-items: center; gap: 9px; padding: 0 12px;
+    overflow: hidden;
+    background: rgba(10,18,30,0.72); border: 1px solid #1d3450; border-radius: 10px;
+  }
+  #chipRow { display: flex; gap: 9px; padding: 5px; border-radius: 14px; flex: none;
+             border: 2px solid transparent; transition: border-color .2s ease; }
+  #chipRow.lit { border-color: rgba(127,212,255,0.85);
+                 animation: glowRow 1.15s ease-in-out infinite; }
+  @keyframes glowRow {
+    0%, 100% { box-shadow: 0 0 0 rgba(127,212,255,0); }
+    50%      { box-shadow: 0 0 22px rgba(127,212,255,0.55); }
+  }
+  #betSpot {
+    position: absolute; left: 50%; bottom: 158px; transform: translateX(-50%);
+    width: 104px; height: 104px; border-radius: 50%;
+    border: 3px dashed rgba(255,240,190,0.45); display: flex;
+    align-items: center; justify-content: center; cursor: pointer;
+    font-size: 12px; letter-spacing: 3px; color: rgba(255,240,190,0.6);
+  }
+  #betSpot.lit { animation: glowSpot 1.2s ease-in-out infinite; border-style: solid; }
+  @keyframes glowSpot {
+    0%, 100% { box-shadow: 0 0 0 rgba(127,212,255,0); border-color: rgba(127,212,255,0.5); }
+    50%      { box-shadow: 0 0 30px rgba(127,212,255,0.6); border-color: rgba(127,212,255,1); }
+  }
+  #betSpot .amt { font-size: 26px; font-weight: 900; color: #ffd166; letter-spacing: 0; }
+  .chip {
+    width: 52px; height: 52px; border-radius: 50%; cursor: pointer; flex: none;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 16px; color: #0a0f18;
+    border: 3px dashed rgba(255,255,255,0.55); box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+    user-select: none; transition: transform .08s ease;
+  }
+  .chip.sel { outline: 3px solid #ffd166; outline-offset: 3px; transform: translateY(-3px); }
+  button.act {
+    height: 52px; padding: 0 15px; border-radius: 9px; cursor: pointer;
+    background: #132234; color: #cfe6ff; border: 2px solid #2f5b80;
+    font-size: 13px; letter-spacing: 2px; font-weight: 700; flex: none;
+  }
+  button.act:hover { background: #1a2f47; }
+  button.act:disabled { opacity: .3; cursor: default; }
+  #deal {
+    background: linear-gradient(#7a2ea8, #45156a); border-color: #b06fe0; color: #fff;
+    flex: 1 1 auto; min-width: 120px; font-size: 16px;
+  }
+  #deal.pulse { animation: pulseDeal 0.9s ease-in-out infinite; }
+  @keyframes pulseDeal {
+    0%, 100% { box-shadow: 0 0 0 rgba(224,132,255,0);    border-color: #b06fe0; }
+    50%      { box-shadow: 0 0 28px rgba(224,132,255,0.8); border-color: #f0c2ff; }
+  }
+  .coach {
+    position: absolute; pointer-events: none; opacity: 0;
+    transition: opacity .25s ease; z-index: 40;
+    font-size: 19px; font-weight: 900; letter-spacing: 4px; color: #eaf7ff;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.9), 0 0 22px rgba(127,212,255,0.75);
+    text-align: center;
+  }
+  .coach.on { opacity: 1; animation: bob 1.15s ease-in-out infinite; }
+  .coach span { display: inline-block; padding: 7px 16px; border-radius: 999px;
+                background: rgba(8,18,30,0.82); border: 2px solid rgba(127,212,255,0.75); }
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  #feltHint { left: 0; right: 0; top: 46%; }
+  #barHint { left: 380px; right: 18px; bottom: 104px; }
+  #mark { position: absolute; right: 16px; top: 12px; font-size: 11px;
+          letter-spacing: 5px; color: #35506c; }
+  #back {
+    position: fixed; left: 10px; top: 10px; z-index: 2147483647;
+    padding: 8px 13px; border-radius: 6px; border: 2px solid #5fe3ff;
+    background: rgba(4,10,18,0.92); color: #bff2ff; font-size: 13px;
+    letter-spacing: 2px; font-weight: 700; cursor: pointer;
+    font-family: 'Trebuchet MS', Arial, sans-serif;
+  }
+  #note {
+    position: absolute; left: 0; right: 0; top: 30%; text-align: center;
+    font-size: 40px; font-weight: 900; letter-spacing: 6px; color: #fff;
+    text-shadow: 0 0 24px rgba(140,220,255,.9); pointer-events: none; opacity: 0;
+    transition: opacity .25s ease; z-index: 50;
+  }
+</style>
+</head>
+<body>
+<button id="back">&#9664; BACK TO CASINO</button>
+<div id="stage">
+  <div id="mark">8 GATES</div>
+  <div id="left">
+    <div id="shoeWrap">
+      <div id="shoeCards"><div></div><div></div><div></div><div></div><div></div><div></div></div>
+      <div id="shoeBar"><div id="shoeFill"></div></div>
+      <div id="shoeText">SIX DECKS</div>
+      <div id="callBox">place your bet</div>
+    </div>
+    <div id="moneyRow">
+      <div class="money"><div class="k">YOUR PURSE</div><div id="purse">0</div></div>
+      <div class="money"><div class="k">ON THE TABLE</div><div id="down">0</div></div>
+    </div>
+    <div id="resultBox">
+      <div id="resultText">no hand yet</div>
+      <div id="resultWin"></div>
+      <div id="history"></div>
+    </div>
+  </div>
+  <div id="right">
+    <div id="felt">
+      <div id="feltArc"><b>BLACKJACK PAYS 3 TO 2</b>DEALER MUST STAND ON ALL 17s<br>INSURANCE PAYS 2 TO 1</div>
+      <div id="dealerRow"></div>
+      <div id="betSpot"><span class="lbl">BET HERE</span></div>
+      <div id="playerRow"></div>
+      <div id="feltHint" class="coach"><span></span></div>
+    </div>
+    <div id="bar">
+      <div id="chipRow">
+        <div class="chip" data-v="1"   style="background:#e8e8e8">1</div>
+        <div class="chip" data-v="5"   style="background:#e0524d">5</div>
+        <div class="chip" data-v="25"  style="background:#3fa45b">25</div>
+        <div class="chip" data-v="100" style="background:#2f6fd0;color:#eaf4ff">100</div>
+      </div>
+      <button class="act" id="clear">CLEAR</button>
+      <button class="act" id="deal">DEAL</button>
+      <button class="act" id="hit">HIT</button>
+      <button class="act" id="stand">STAND</button>
+      <button class="act" id="dbl">DOUBLE</button>
+      <button class="act" id="split">SPLIT</button>
+    </div>
+  </div>
+  <div id="note"></div>
+  <div id="barHint" class="coach"><span></span></div>
+</div>
+
+<script>
+(function () {
+'use strict';
+
+/* ===========================================================================
+   BLACKJACK, at the table that has said BLACKJACK since build 021 and has been
+   dealt by a man called Frankie who has never once been able to deal anything.
+
+   SIX DECKS AND A CUT CARD, dealer stands on all seventeens, blackjack pays
+   three to two — which is written on the felt because on a real floor it is
+   written on the felt, and because the tables that pay six to five write that
+   on the felt too and hope you do not read it.
+
+   AND THE CARDS ARE THE POKER TABLES' CARDS. Not a copy of them: the same
+   drawing code, lifted out of the five-card game that came from Meru — the
+   ivory finish, the corner indices, the crest on the back, and the fox
+   portraits on the court cards that blink and twitch their ears while you are
+   deciding whether to hit. A casino where the deck changes depending on which
+   table you sit at is a casino with two decks in it.
+   ======================================================================== */
+
+var PURSE_KEY = 'blackjack_fox_credits';
+var TAUGHT_KEY = 'blackjack_fox_taught';
+var START = 1000;
+var DECKS = 6;
+
+/* ---- THE CARD ART, VERBATIM ----------------------------------------------
+   Everything between here and the end of this block is the poker table's own
+   code, changed in exactly three ways: the class methods are plain functions,
+   the three settings it read off React props are fixed to what this casino
+   deals (ivory cards, a fox on the ace, a radial backdrop), and the starship's
+   particle store is a variable rather than a component field. */
+var IVORY = true;
+var PARTS = [];
+
+function drawCrest(cv) {
+    const px = 66, dpr = 2, unit = px / 32;
+    if (cv.width !== px * dpr) { cv.width = px * dpr; cv.height = px * dpr; }
+    const ctx = cv.getContext('2d');
+    ctx.setTransform(dpr * unit, 0, 0, dpr * unit, (px * dpr) / 2, (px * dpr) / 2);
+    ctx.clearRect(-16, -16, 32, 32);
+    ctx.fillStyle = '#070a13'; ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2.4; ctx.stroke();
+    ctx.strokeStyle = 'rgba(56, 189, 248, 0.3)'; ctx.lineWidth = 0.7;
+    ctx.beginPath(); ctx.arc(0, 0, 12, 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = '#ffffff'; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.lineWidth = 3.4;
+    ctx.beginPath(); ctx.arc(0, -4, 3.4, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, 4.6, 4.8, 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = '#7dd3fc'; ctx.lineWidth = 0.9;
+    ctx.beginPath(); ctx.arc(0, -4, 3.4, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, 4.6, 4.8, 0, Math.PI * 2); ctx.stroke();
+  }
+function drawFoxPortrait(cv, rank, suit, t, idx) {
+    t = t || 0;
+    const W = 104, H = 148, dpr = 2;
+    if (cv.width !== W * dpr) { cv.width = W * dpr; cv.height = H * dpr; }
+    const ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+
+    const ivory = IVORY;
+    const accent = suit.red ? (ivory ? '#c0122f' : '#ff3366') : (ivory ? '#0d5f7a' : '#00f0ff');
+    const accentDim = suit.red ? 'rgba(255,51,102,0.22)' : 'rgba(0,240,255,0.22)';
+    const robe = suit.red
+      ? (rank === 'K' ? ['#ffe0e6', '#9f0f2e'] : rank === 'Q' ? ['#ffc9d6', '#b3123a'] : ['#ffd6dd', '#7e0c24'])
+      : (rank === 'K' ? ['#d9faff', '#0b5f7a'] : rank === 'Q' ? ['#c8f4ff', '#0d6d8a'] : ['#e2fbff', '#084c63']);
+
+    const back = 'Radial glow';
+    if (back === 'Radial glow') {
+      const bg = ctx.createRadialGradient(W / 2, 56, 4, W / 2, 56, 70);
+      bg.addColorStop(0, ivory ? 'rgba(0,0,0,0.07)' : accentDim);
+      bg.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+    } else if (back === 'Grid') {
+      ctx.strokeStyle = ivory ? 'rgba(23,32,43,0.10)' : 'rgba(0,240,255,0.10)'; ctx.lineWidth = 1;
+      for (let x = 8; x < W; x += 16) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+      for (let y = 8; y < H; y += 16) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+    }
+
+    if (rank === 'A') { drawStarship(ctx, W, H, accent, ivory, suit, t, idx); return; }
+
+    // wink once early, then blink on a 2s cadence
+    let closedL = false, closedR = false;
+    if (t >= 0.55 && t < 0.88) { closedR = true; }
+    else if (t > 1.3 && ((t - 1.3) % 2) < 0.13) { closedL = true; closedR = true; }
+    // ear twitch: a quick flick every 3.4s, alternating ears
+    const twCycle = t % 3.4, twSide = (Math.floor(t / 3.4) % 2 === 0) ? 1 : -1;
+    const twitch = twCycle < 0.34 ? Math.sin((twCycle / 0.34) * Math.PI) * 0.3 : 0;
+
+    // neck
+    ctx.save(); ctx.translate(W / 2, 0);
+    const neckG = ctx.createLinearGradient(0, 78, 0, 94);
+    neckG.addColorStop(0, '#ea580c'); neckG.addColorStop(1, '#9a3412');
+    ctx.fillStyle = neckG; ctx.beginPath(); ctx.roundRect(-11, 78, 22, 14, 5); ctx.fill();
+    ctx.restore();
+
+    // torso + shoulders
+    ctx.save(); ctx.translate(W / 2, 112); ctx.scale(0.85, 0.85);
+    const torsoG = ctx.createLinearGradient(0, -28, 0, 36);
+    torsoG.addColorStop(0, robe[0]); torsoG.addColorStop(0.6, robe[1]); torsoG.addColorStop(1, '#0b0f17');
+    ctx.fillStyle = torsoG; ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(-28, -28);
+    ctx.quadraticCurveTo(-31, -5, -25, 10);
+    ctx.lineTo(-20, 18); ctx.lineTo(0, 36); ctx.lineTo(20, 18); ctx.lineTo(25, 10);
+    ctx.quadraticCurveTo(31, -5, 28, -28);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    [-1, 1].forEach(side => {
+      const sh = ctx.createRadialGradient(26 * side, -26, 2, 26 * side, -23, 13);
+      sh.addColorStop(0, '#ffffff'); sh.addColorStop(1, robe[1]);
+      ctx.fillStyle = sh; ctx.strokeStyle = '#475569'; ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.ellipse(26 * side, -24, 10, 7, side * 0.35, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.strokeStyle = accent; ctx.globalAlpha = 0.55; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.ellipse(26 * side, -24, 6.5, 4, side * 0.35, 0, Math.PI * 2); ctx.stroke();
+      ctx.globalAlpha = 1;
+    });
+    ctx.strokeStyle = 'rgba(15,23,42,0.8)'; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(-18, -27); ctx.lineTo(0, -6); ctx.lineTo(18, -27); ctx.stroke();
+    // held shield with vector suit emblem
+    ctx.save(); ctx.translate(0, 0); ctx.scale(3.4, 3.4);
+    const rim = ctx.createLinearGradient(-7, -8, 7, 11);
+    rim.addColorStop(0, '#d4af37'); rim.addColorStop(0.5, '#fffdd0'); rim.addColorStop(1, '#a67c1e');
+    ctx.fillStyle = rim; ctx.strokeStyle = 'rgba(60,40,8,0.6)'; ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(-7, -8); ctx.lineTo(7, -8); ctx.quadraticCurveTo(7, 4.5, 0, 11);
+    ctx.quadraticCurveTo(-7, 4.5, -7, -8); ctx.closePath(); ctx.fill(); ctx.stroke();
+    const shFace = ctx.createLinearGradient(0, -7, 0, 9);
+    shFace.addColorStop(0, 'rgba(255,255,255,0.6)'); shFace.addColorStop(1, 'rgba(211,221,231,0.6)');
+    ctx.fillStyle = shFace;
+    ctx.beginPath(); ctx.moveTo(-5.5, -6.4); ctx.lineTo(5.5, -6.4); ctx.quadraticCurveTo(5.5, 3.4, 0, 9);
+    ctx.quadraticCurveTo(-5.5, 3.4, -5.5, -6.4); ctx.closePath(); ctx.fill();
+    ctx.save(); ctx.translate(0, -1.4);
+    const pipSize = suit.name === 'spades' ? 7.6 : suit.name === 'clubs' ? 7.8 : suit.name === 'hearts' ? 8.8 : 9.6;
+    drawSuitPip(ctx, suit.name, pipSize, suit.name === 'spades' ? '#000000' : suit.name === 'clubs' ? '#5b6673' : '#d81028');
+    ctx.restore();
+    ctx.restore();
+    ctx.restore();
+
+    // head — Queen is narrower, King broader
+    const headSquash = rank === 'Q' ? 0.88 : (rank === 'K' ? 1.05 : 1);
+    ctx.save(); ctx.translate(W / 2, 62); ctx.scale(headSquash, 1);
+
+    [-1, 1].forEach(side => {
+      ctx.save();
+      const rot = side === twSide ? twitch * side : 0;
+      ctx.translate(16 * side, -18); ctx.rotate(rot); ctx.translate(-16 * side, 18);
+      ctx.fillStyle = '#c2410c';
+      ctx.beginPath(); ctx.moveTo(42 * side, -52); ctx.lineTo(9 * side, -25); ctx.lineTo(21 * side, -3); ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath(); ctx.moveTo(36 * side, -48); ctx.lineTo(27 * side, -40); ctx.lineTo(19 * side, -13); ctx.lineTo(19 * side, -6); ctx.fill();
+      ctx.fillStyle = '#9d174d';
+      ctx.beginPath(); ctx.moveTo(31 * side, -43); ctx.lineTo(15 * side, -29); ctx.lineTo(19 * side, -13); ctx.fill();
+      ctx.restore();
+    });
+
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); ctx.moveTo(-35, -5); ctx.lineTo(-40, 2); ctx.lineTo(-25, 0); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(35, -5); ctx.lineTo(40, 2); ctx.lineTo(25, 0); ctx.fill();
+
+    const furG = ctx.createRadialGradient(-6, -32, 4, 0, -8, 46);
+    furG.addColorStop(0, '#fb923c'); furG.addColorStop(0.55, '#ea580c'); furG.addColorStop(1, '#c2410c');
+    ctx.fillStyle = furG;
+    ctx.beginPath(); ctx.moveTo(-35, -5); ctx.bezierCurveTo(-35, -45, 35, -45, 35, -5);
+    ctx.lineTo(12, 15); ctx.lineTo(0, 22); ctx.lineTo(-12, 15); ctx.closePath(); ctx.fill();
+    const muzzleG = ctx.createLinearGradient(0, -38, 0, 15);
+    muzzleG.addColorStop(0, '#fdba74'); muzzleG.addColorStop(1, '#f97316');
+    ctx.fillStyle = muzzleG;
+    ctx.beginPath(); ctx.moveTo(0, -38); ctx.bezierCurveTo(15, -38, 35, -30, 35, -5);
+    ctx.lineTo(12, 15); ctx.lineTo(0, 22); ctx.closePath(); ctx.fill();
+
+    drawHeadgear(ctx, rank, accent, ivory);
+
+    drawBrows(ctx, rank);
+
+    [{ closed: closedL, x: -14, ax: -21, bx: -7 }, { closed: closedR, x: 13, ax: 21, bx: 7 }].forEach(eye => {
+      if (eye.closed) {
+        ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 2.6; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(eye.ax * 0.92, -7); ctx.lineTo(eye.bx, -7.4); ctx.stroke();
+        return;
+      }
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath(); ctx.moveTo(eye.ax, -9); ctx.lineTo(eye.bx, -9.5); ctx.lineTo(eye.x, -5.5); ctx.fill();
+      ctx.fillStyle = accent; ctx.shadowColor = accent; ctx.shadowBlur = ivory ? 0 : 7;
+      ctx.beginPath(); ctx.arc(eye.x, -7, 2.6, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
+      ctx.fillStyle = '#000000';
+      ctx.beginPath(); ctx.arc(eye.x, -7, 1.3, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath(); ctx.arc(eye.x - 1, -8, 0.6, 0, Math.PI * 2); ctx.fill();
+    });
+
+    if (rank === 'Q') {
+      ctx.strokeStyle = '#1b1220'; ctx.lineWidth = 1.1; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(-22, -10.5); ctx.quadraticCurveTo(-14, -12.5, -6, -10.2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(22, -10.5); ctx.quadraticCurveTo(14, -12.5, 6, -10.2); ctx.stroke();
+      ctx.lineWidth = 0.9;
+      ctx.beginPath(); ctx.moveTo(-22, -10.5); ctx.lineTo(-26, -13.5); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(22, -10.5); ctx.lineTo(26, -13.5); ctx.stroke();
+      ctx.strokeStyle = 'rgba(157,23,77,0.55)'; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(-20, -13.5); ctx.quadraticCurveTo(-13, -15.5, -7, -13.5); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(20, -13.5); ctx.quadraticCurveTo(13, -15.5, 7, -13.5); ctx.stroke();
+    }
+    ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(-26, 4); ctx.lineTo(-10, 2); ctx.moveTo(-28, 9); ctx.lineTo(-12, 5); ctx.stroke();
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.beginPath(); ctx.moveTo(26, 4); ctx.lineTo(10, 2); ctx.moveTo(28, 9); ctx.lineTo(12, 5); ctx.stroke();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); ctx.moveTo(-10, 12); ctx.quadraticCurveTo(0, 11, 10, 12); ctx.lineTo(8, 19);
+    ctx.quadraticCurveTo(0, 21, -8, 19); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = '#000000'; ctx.lineWidth = 1.8;
+    ctx.beginPath(); ctx.arc(0, 11, 6, 0.4, Math.PI - 0.2); ctx.stroke();
+    ctx.fillStyle = '#000000'; ctx.beginPath(); ctx.arc(0, 11, 3.5, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+
+  /* vector suit pip, centered on 0,0, roughly s tall */
+function drawSuitPip(ctx, name, s, color) {
+    const k = s / 10;
+    ctx.save(); ctx.scale(k, k); ctx.fillStyle = color;
+    if (name === 'diamonds') {
+      ctx.beginPath(); ctx.moveTo(0, -5.8); ctx.lineTo(3.1, 0); ctx.lineTo(0, 5.8); ctx.lineTo(-3.1, 0);
+      ctx.closePath(); ctx.fill();
+    } else if (name === 'hearts') {
+      ctx.beginPath(); ctx.moveTo(0, 5.2);
+      ctx.bezierCurveTo(-5.6, 0.4, -4.4, -5.4, -1.7, -4.6); ctx.bezierCurveTo(-0.6, -4.2, 0, -3.1, 0, -2.4);
+      ctx.bezierCurveTo(0, -3.1, 0.6, -4.2, 1.7, -4.6); ctx.bezierCurveTo(4.4, -5.4, 5.6, 0.4, 0, 5.2);
+      ctx.closePath(); ctx.fill();
+    } else if (name === 'spades') {
+      ctx.beginPath(); ctx.moveTo(0, -6);
+      ctx.bezierCurveTo(3.2, -2.6, 5.6, -0.4, 5.6, 1.6);
+      ctx.bezierCurveTo(5.6, 3.4, 3.6, 4.2, 2.1, 3.1);
+      ctx.bezierCurveTo(2.1, 4.2, 2.6, 5.1, 3.4, 5.9);
+      ctx.lineTo(-3.4, 5.9);
+      ctx.bezierCurveTo(-2.6, 5.1, -2.1, 4.2, -2.1, 3.1);
+      ctx.bezierCurveTo(-3.6, 4.2, -5.6, 3.4, -5.6, 1.6);
+      ctx.bezierCurveTo(-5.6, -0.4, -3.2, -2.6, 0, -6);
+      ctx.closePath(); ctx.fill();
+    } else {
+      ctx.beginPath(); ctx.arc(0, -2.6, 2.2, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(-2.6, 1, 2.2, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(2.6, 1, 2.2, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(-2.2, 5.2); ctx.lineTo(2.2, 5.2);
+      ctx.quadraticCurveTo(0.5, 3.6, 0.7, 0.6); ctx.lineTo(-0.7, 0.6);
+      ctx.quadraticCurveTo(-0.5, 3.6, -2.2, 5.2); ctx.closePath(); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+function drawBrows(ctx, rank) {
+    if (rank === 'Q') {
+      ctx.strokeStyle = '#2b1b26'; ctx.lineWidth = 1.5; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(-24, -15); ctx.quadraticCurveTo(-15, -20, -6, -16); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(24, -15); ctx.quadraticCurveTo(15, -20, 6, -16); ctx.stroke();
+      return;
+    }
+    if (rank === 'J') {
+      ctx.fillStyle = '#1e293b';
+      ctx.beginPath(); ctx.moveTo(-24, -14); ctx.lineTo(-5, -17.5); ctx.lineTo(-5, -14); ctx.lineTo(-16, -11); ctx.fill();
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath(); ctx.moveTo(5, -17.5); ctx.lineTo(24, -14); ctx.lineTo(16, -11); ctx.lineTo(5, -14); ctx.fill();
+      return;
+    }
+    ctx.fillStyle = '#ffffff'; ctx.strokeStyle = 'rgba(100,116,139,0.55)'; ctx.lineWidth = 0.8;
+    ctx.beginPath(); ctx.moveTo(-28, -16); ctx.lineTo(-3, -23); ctx.lineTo(-3, -15); ctx.lineTo(-17, -11); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(3, -23); ctx.lineTo(28, -16); ctx.lineTo(17, -11); ctx.lineTo(3, -15); ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
+
+function drawStarship(ctx, W, H, accent, ivory, suit, t, idx) {
+    ctx.save(); ctx.translate(W / 2, H / 2 + 4);
+
+    // entry flight: rises from below the card, then settles to center
+    const rise = 0.6, settle = 1.35;
+    let yOff = 0, thrust = 1, shipScale = 1;
+    if (t < rise) {
+      const p = t / rise, e = 1 - Math.pow(1 - p, 3);
+      yOff = 80 - 118 * e; thrust = 3.4 - 1.6 * p;
+      shipScale = 1 - 0.52 * e;            // shrinks as it climbs, so the nose never clips
+    } else if (t < settle) {
+      const p = (t - rise) / (settle - rise), e = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+      yOff = -38 + 38 * e; thrust = 1.6 - 0.6 * p;
+      shipScale = 0.48 + 0.52 * e;          // grows back as it drifts down to anchor
+    } else {
+      yOff = Math.sin((t - settle) * 1.5) * 1.6;
+    }
+
+    // engine particle trail (spawn, drift, dissipate) — left behind in card space
+    const ps = PARTS[idx] || (PARTS[idx] = []);
+    const spawn = Math.round(2 * thrust);
+    for (let k = 0; k < spawn; k++) {
+      if (ps.length < 140) ps.push({ x: (Math.random() - 0.5) * 8 * thrust, y: 30 * shipScale + yOff, vx: (Math.random() - 0.5) * 0.5, vy: (1.1 + Math.random() * 1.9) * thrust, r: 1.2 + Math.random() * 1.9, life: 0, max: 26 + Math.random() * 18 });
+    }
+    for (let i = ps.length - 1; i >= 0; i--) {
+      const p = ps[i];
+      p.x += p.vx; p.y += p.vy; p.vy *= 0.985; p.life++;
+      const a = Math.max(0, 1 - p.life / p.max);
+      ctx.globalAlpha = a * 0.85;
+      ctx.fillStyle = p.life < 8 ? '#ffffff' : '#4fdff2';
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r * (0.5 + a), 0, Math.PI * 2); ctx.fill();
+      if (p.life >= p.max || p.y > 74) ps.splice(i, 1);
+    }
+    ctx.globalAlpha = 1;
+    if (!ivory) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+      [[-30, -46], [24, -38], [-38, 22], [34, 30], [8, -54]].forEach((p, i) => {
+        ctx.globalAlpha = 0.5 - i * 0.06; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(p[0], p[1], 1.1, 0, Math.PI * 2); ctx.stroke();
+      });
+      ctx.globalAlpha = 1;
+    }
+
+    ctx.translate(0, yOff); ctx.scale(shipScale, shipScale);
+
+    // engine plume (flickers, longer under thrust)
+    const flick = (0.7 + Math.sin((t || 0) * 22) * 0.15 + Math.random() * 0.1) * thrust;
+    const plume = ctx.createLinearGradient(0, 30, 0, 46 + 26 * flick);
+    plume.addColorStop(0, '#9df6ff'); plume.addColorStop(0.35, '#4fdff2'); plume.addColorStop(1, 'rgba(79,223,242,0)');
+    ctx.fillStyle = plume; ctx.globalAlpha = 0.85;
+    ctx.beginPath(); ctx.moveTo(-11, 30); ctx.lineTo(11, 30); ctx.lineTo(4, 64); ctx.lineTo(-4, 64); ctx.closePath(); ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // wings
+    const wing = ctx.createLinearGradient(0, -10, 0, 34);
+    wing.addColorStop(0, '#e6edf5'); wing.addColorStop(1, '#7c8b9d');
+    ctx.fillStyle = wing; ctx.strokeStyle = '#2b3a4b'; ctx.lineWidth = 1.6;
+    [-1, 1].forEach(side => {
+      ctx.beginPath();
+      ctx.moveTo(9 * side, -6); ctx.lineTo(40 * side, 22); ctx.lineTo(36 * side, 31); ctx.lineTo(11 * side, 24);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = accent; ctx.globalAlpha = 0.85;
+      ctx.beginPath(); ctx.moveTo(34 * side, 24); ctx.lineTo(38 * side, 29); ctx.lineTo(30 * side, 27); ctx.closePath(); ctx.fill();
+      ctx.globalAlpha = 1; ctx.fillStyle = wing;
+    });
+
+    // fuselage
+    const hull = ctx.createLinearGradient(-14, 0, 14, 0);
+    hull.addColorStop(0, '#8f9dad'); hull.addColorStop(0.45, '#f4f8fb'); hull.addColorStop(1, '#77869a');
+    ctx.fillStyle = hull; ctx.strokeStyle = '#26313f'; ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.moveTo(0, -56);
+    ctx.bezierCurveTo(11, -34, 15, -6, 13, 30);
+    ctx.lineTo(-13, 30);
+    ctx.bezierCurveTo(-15, -6, -11, -34, 0, -56);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+
+    // canopy
+    const glass = ctx.createLinearGradient(0, -40, 0, -8);
+    glass.addColorStop(0, '#ffffff'); glass.addColorStop(0.35, accent); glass.addColorStop(1, '#10202f');
+    ctx.fillStyle = glass;
+    ctx.beginPath(); ctx.moveTo(0, -44); ctx.bezierCurveTo(8, -34, 9, -18, 7, -8);
+    ctx.lineTo(-7, -8); ctx.bezierCurveTo(-9, -18, -8, -34, 0, -44); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.7)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(-2, -40); ctx.bezierCurveTo(-6, -30, -6, -18, -5, -10); ctx.stroke();
+
+    // panel lines + intakes
+    ctx.strokeStyle = 'rgba(38,49,63,0.45)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(-9, 2); ctx.lineTo(9, 2); ctx.moveTo(-10, 12); ctx.lineTo(10, 12); ctx.stroke();
+    ctx.fillStyle = '#1c2735';
+    ctx.beginPath(); ctx.roundRect(-11, 22, 22, 9, 3); ctx.fill();
+    ctx.fillStyle = accent; ctx.shadowColor = accent; ctx.shadowBlur = ivory ? 0 : 12;
+    ctx.beginPath(); ctx.roundRect(-8, 24.5, 16, 4.5, 2.5); ctx.fill(); ctx.shadowBlur = 0;
+
+    // tail decal — suit emblem on the aft hull
+    ctx.fillStyle = 'rgba(255,255,255,0.55)'; ctx.strokeStyle = 'rgba(38,49,63,0.5)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(0, 12.5, 14, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.save(); ctx.translate(0, 12.5);
+    drawSuitPip(ctx, suit ? suit.name : 'spades', 20, suit && suit.red ? '#d81028' : (suit && suit.name === 'clubs' ? '#5b6673' : '#000000'));
+    ctx.restore();
+
+    // nose beacon
+    ctx.fillStyle = accent; ctx.shadowColor = accent; ctx.shadowBlur = ivory ? 0 : 10;
+    ctx.beginPath(); ctx.arc(0, -50, 2, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
+    ctx.restore();
+  }
+
+function drawHeadgear(ctx, rank, accent, ivory) {
+    const blur = ivory ? 0 : 8;
+    if (rank === 'J') {
+      const g = ctx.createLinearGradient(0, -47, 0, -22);
+      g.addColorStop(0, '#6b7280'); g.addColorStop(0.5, '#1f2937'); g.addColorStop(1, '#050507');
+      ctx.fillStyle = g; ctx.strokeStyle = accent; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.arc(0, -27, 29, Math.PI, 0, false); ctx.lineTo(29, -23); ctx.lineTo(-29, -23); ctx.closePath();
+      ctx.fill(); ctx.stroke();
+      // center nasal guard
+      ctx.fillStyle = '#334155'; ctx.strokeStyle = '#0b1220'; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(-4.5, -25); ctx.lineTo(4.5, -25); ctx.lineTo(3, 2); ctx.lineTo(0, 5); ctx.lineTo(-3, 2);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      // brow bar + crest fin
+      ctx.fillStyle = accent; ctx.globalAlpha = 0.85;
+      ctx.beginPath(); ctx.roundRect(-29, -27, 58, 4, 2); ctx.fill(); ctx.globalAlpha = 1;
+      const crest = ctx.createLinearGradient(0, -50, 0, -30);
+      crest.addColorStop(0, accent); crest.addColorStop(1, '#1f2937');
+      ctx.fillStyle = crest;
+      ctx.beginPath(); ctx.moveTo(-4, -50); ctx.lineTo(4, -50); ctx.lineTo(8, -30); ctx.lineTo(-8, -30); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = accent; ctx.shadowColor = accent; ctx.shadowBlur = blur;
+      ctx.beginPath(); ctx.arc(0, -52, 2.2, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
+      return;
+    }
+    const gold = ctx.createLinearGradient(0, -46, 0, -22);
+    gold.addColorStop(0, '#fffdd0'); gold.addColorStop(0.45, '#d4af37'); gold.addColorStop(1, '#8a5b12');
+    if (rank === 'Q') {
+      ctx.fillStyle = gold;
+      ctx.beginPath(); ctx.roundRect(-18, -34, 36, 4.5, 2); ctx.fill();
+      ctx.strokeStyle = gold; ctx.lineWidth = 1.4;
+      [-10, 0, 10].forEach((x, i) => {
+        ctx.beginPath(); ctx.moveTo(x - 4, -34); ctx.lineTo(x, i === 1 ? -44 : -40); ctx.lineTo(x + 4, -34); ctx.stroke();
+      });
+      ctx.fillStyle = accent; ctx.shadowColor = accent; ctx.shadowBlur = blur;
+      ctx.beginPath(); ctx.arc(0, -44.5, 2, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(0, -31, 2.2, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
+      return;
+    }
+    if (rank === 'K') {
+      ctx.fillStyle = gold;
+      ctx.beginPath(); ctx.roundRect(-27, -34, 54, 10, 3); ctx.fill();
+      [-21, -10.5, 0, 10.5, 21].forEach((x, i) => {
+        const h = (i === 2) ? -52 : (i % 2 === 0 ? -44 : -40);
+        ctx.beginPath(); ctx.moveTo(x - 6, -34); ctx.lineTo(x, h); ctx.lineTo(x + 6, -34); ctx.closePath(); ctx.fill();
+      });
+      ctx.fillStyle = accent; ctx.shadowColor = accent; ctx.shadowBlur = blur + 1;
+      [-14, 0, 14].forEach(x => { ctx.beginPath(); ctx.arc(x, -29, 2.8, 0, Math.PI * 2); ctx.fill(); });
+      ctx.shadowBlur = 0;
+      return;
+    }
+    ctx.fillStyle = '#0f172a'; ctx.strokeStyle = accent; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.roundRect(-28, -32, 56, 9, 4); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = accent; ctx.shadowColor = accent; ctx.shadowBlur = blur + 2;
+    ctx.beginPath(); ctx.moveTo(0, -44); ctx.lineTo(6, -32); ctx.lineTo(-6, -32); ctx.closePath(); ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  /* ---- sound (synthesized, no assets) ---- */
+/* ---- end of the poker table's card art ---------------------------------- */
+
+var SUITS = [
+  { name: 'spades', symbol: '♠', red: false },
+  { name: 'hearts', symbol: '♥', red: true },
+  { name: 'diamonds', symbol: '♦', red: true },
+  { name: 'clubs', symbol: '♣', red: false },
+];
+var VALUES = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+function suitOf(n) { for (var i = 0; i < 4; i++) if (SUITS[i].name === n) return SUITS[i]; return SUITS[0]; }
+function isFaceCard(c) { return c && (c.value === 'A' || c.value === 'J' || c.value === 'Q' || c.value === 'K'); }
+
+var S = {
+  purse: START,
+  chip: 5,
+  bet: 0,
+  phase: 'bet',            // bet | deal | play | dealer | done
+  shoe: [],
+  cut: 0,
+  dealer: [],
+  hole: null,              // the down card, until it is turned over
+  hands: [],               // [{cards, bet, done, doubled, bust, bj, split}]
+  active: 0,
+  insurance: 0,
+  history: [],
+  pickedChip: false,
+  taught: false,
+  msg: '',
+};
+
+/* ---- money -------------------------------------------------------------- */
+function load() {
+  try {
+    var v = parseInt(localStorage.getItem(PURSE_KEY), 10);
+    if (isFinite(v) && v >= 0) S.purse = v;
+    S.taught = localStorage.getItem(TAUGHT_KEY) === '1';
+  } catch (e) {}
+}
+function save() { try { localStorage.setItem(PURSE_KEY, String(S.purse)); } catch (e) {} }
+function taught() {
+  S.taught = true;
+  try { localStorage.setItem(TAUGHT_KEY, '1'); } catch (e) {}
+}
+
+var AC = null;
+function blip(f, len, type, vol) {
+  try {
+    if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+    var o = AC.createOscillator(), g = AC.createGain();
+    o.type = type || 'square'; o.frequency.value = f;
+    g.gain.value = vol === undefined ? 0.05 : vol;
+    g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + len);
+    o.connect(g); g.connect(AC.destination);
+    o.start(); o.stop(AC.currentTime + len);
+  } catch (e) {}
+}
+
+/* ---- the shoe ----------------------------------------------------------- */
+function shuffle() {
+  S.shoe = [];
+  for (var d = 0; d < DECKS; d++)
+    for (var s = 0; s < 4; s++)
+      for (var v = 0; v < VALUES.length; v++)
+        S.shoe.push({ value: VALUES[v], suit: SUITS[s] });
+  for (var i = S.shoe.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = S.shoe[i]; S.shoe[i] = S.shoe[j]; S.shoe[j] = t;
+  }
+  /* THE CUT CARD, three quarters of the way down. A shoe dealt to the last card
+     is a shoe you can count perfectly, and a casino that let you do that would
+     be a casino with a different problem. */
+  S.cut = Math.floor(S.shoe.length * (0.22 + Math.random() * 0.08));
+  S.msg = 'shuffling six decks';
+}
+
+/* A DECK YOU CAN STACK — the one seam in this page, and the only way to test a
+   card game honestly: the rules can then be walked through hand by hand rather
+   than waited for. Nothing in the game itself ever calls it. */
+var STACK = [];
+window.__stackDeck = function (list) {
+  STACK = (list || []).map(function (code) {
+    var v = code.length === 3 ? code.slice(0, 2) : code[0];
+    var s = code[code.length - 1];
+    return { value: v === 'T' ? '10' : v,
+             suit: suitOf({ S: 'spades', H: 'hearts', D: 'diamonds', C: 'clubs' }[s]) };
+  });
+};
+
+function draw() {
+  if (STACK.length) return STACK.shift();
+  if (S.shoe.length <= S.cut) shuffle();
+  return S.shoe.pop();
+}
+
+function handValue(cards) {
+  var t = 0, aces = 0;
+  for (var i = 0; i < cards.length; i++) {
+    var v = cards[i].value;
+    if (v === 'A') { aces++; t += 11; }
+    else if (v === '10' || v === 'J' || v === 'Q' || v === 'K') t += 10;
+    else t += parseInt(v, 10);
+  }
+  while (t > 21 && aces) { t -= 10; aces--; }
+  return { total: t, soft: aces > 0 };
+}
+function isBJ(cards) { return cards.length === 2 && handValue(cards).total === 21; }
+
+/* ---- betting ------------------------------------------------------------ */
+function addBet() {
+  if (S.phase !== 'bet') return;
+  if (S.purse < S.chip) { flash('NOT ENOUGH'); blip(120, 0.15, 'sawtooth', 0.04); return; }
+  S.bet += S.chip; S.purse -= S.chip;
+  S.pickedChip = true;
+  save(); blip(520, 0.05, 'square', 0.035); sync();
+}
+function clearBet() {
+  if (S.phase !== 'bet' || !S.bet) return;
+  S.purse += S.bet; S.bet = 0; save(); sync();
+}
+
+/* ---- a hand ------------------------------------------------------------- */
+function deal() {
+  if (S.phase !== 'bet' || !S.bet) { if (!S.bet) flash('BET FIRST'); return; }
+  S.phase = 'deal';
+  /* THE CHIP MOVES OUT OF THE CIRCLE AND ONTO THE HAND. Leaving it in both
+     places is a table that says fifty is on the felt when twenty-five is. */
+  S.lastBet = S.bet;
+  S.hands = [{ cards: [], bet: S.bet, done: false, doubled: false, bust: false, split: false }];
+  S.bet = 0;
+  S.dealer = []; S.hole = null; S.active = 0; S.insurance = 0;
+  S.msg = 'dealing';
+  sync();
+  /* ONE CARD AT A TIME, the way a hand is actually dealt: player, dealer,
+     player, dealer-face-down. */
+  var steps = [
+    function () { S.hands[0].cards.push(draw()); },
+    function () { S.dealer.push(draw()); },
+    function () { S.hands[0].cards.push(draw()); },
+    function () { S.hole = draw(); },
+  ];
+  steps.forEach(function (fn, i) {
+    setTimeout(function () { fn(); blip(430 + i * 30, 0.04, 'square', 0.03); sync(); }, 180 * (i + 1));
+  });
+  setTimeout(afterDeal, 180 * 5);
+}
+
+function afterDeal() {
+  var up = S.dealer[0];
+  /* INSURANCE, WHICH IS A BET ON THE HOLE CARD and nothing else. Offered only
+     on an ace, taken or not in one tap, and priced at half the hand — the same
+     as it is priced at every table in the world.
+
+     AND HALF OF *THE HAND*, not half of the circle. The chip moves out of the
+     circle when the cards come out, so `S.bet` is nought by the time this is
+     asked: the first pass sold insurance for nothing, paid nothing on it, and
+     read as a table where insurance simply does not work. */
+  if (up.value === 'A' && S.purse >= insurancePrice()) {
+    S.phase = 'insurance';
+    S.msg = 'insurance?';
+    sync();
+    return;
+  }
+  peekOrPlay();
+}
+
+function insurancePrice() {
+  return Math.ceil((S.hands[0] ? S.hands[0].bet : S.bet) / 2);
+}
+
+function takeInsurance(yes) {
+  if (S.phase !== 'insurance') return;
+  if (yes) {
+    var cost = insurancePrice();
+    S.insurance = cost; S.purse -= cost; save();
+  }
+  peekOrPlay();
+}
+
+function peekOrPlay() {
+  var up = S.dealer[0], upv = up.value;
+  var peeks = upv === 'A' || upv === '10' || upv === 'J' || upv === 'Q' || upv === 'K';
+  if (peeks && isBJ([up, S.hole])) {
+    S.dealer.push(S.hole); S.hole = null;
+    S.phase = 'dealer';
+    settle('dealer blackjack');
+    return;
+  }
+  if (isBJ(S.hands[0].cards)) {
+    S.hands[0].bj = true; S.hands[0].done = true;
+    S.phase = 'dealer';
+    finishDealer();
+    return;
+  }
+  S.phase = 'play';
+  S.msg = 'your move';
+  sync();
+}
+
+function hand() { return S.hands[S.active]; }
+
+function canDouble() {
+  var h = hand();
+  return S.phase === 'play' && h && h.cards.length === 2 && !h.done && S.purse >= h.bet;
+}
+function canSplit() {
+  var h = hand();
+  if (S.phase !== 'play' || !h || h.cards.length !== 2 || h.done) return false;
+  if (S.hands.length >= 3) return false;               // three hands is plenty
+  if (S.purse < h.bet) return false;
+  var a = h.cards[0].value, b = h.cards[1].value;
+  var ten = { '10': 1, 'J': 1, 'Q': 1, 'K': 1 };
+  return a === b || (ten[a] && ten[b]);
+}
+
+function hit() {
+  if (S.phase !== 'play') return;
+  var h = hand();
+  h.cards.push(draw());
+  blip(470, 0.04, 'square', 0.03);
+  var v = handValue(h.cards);
+  if (v.total > 21) { h.bust = true; h.done = true; nextHand(); }
+  else if (v.total === 21) { h.done = true; nextHand(); }
+  else sync();
+}
+function stand() {
+  if (S.phase !== 'play') return;
+  hand().done = true;
+  nextHand();
+}
+function double() {
+  if (!canDouble()) return;
+  var h = hand();
+  S.purse -= h.bet; h.bet *= 2; h.doubled = true;
+  save();
+  h.cards.push(draw());
+  blip(560, 0.06, 'square', 0.04);
+  if (handValue(h.cards).total > 21) h.bust = true;
+  h.done = true;
+  nextHand();
+}
+function split() {
+  if (!canSplit()) return;
+  var h = hand();
+  var moved = h.cards.pop();
+  S.purse -= h.bet; save();
+  var nh = { cards: [moved], bet: h.bet, done: false, doubled: false, bust: false, split: true };
+  h.split = true;
+  S.hands.splice(S.active + 1, 0, nh);
+  /* AND EACH HALF GETS ITS SECOND CARD. Split aces get one card each and stand,
+     which is the rule that stops a pair of aces being the best bet on the
+     floor. */
+  h.cards.push(draw());
+  nh.cards.push(draw());
+  if (h.cards[0].value === 'A') { h.done = true; nh.done = true; }
+  blip(620, 0.05, 'square', 0.035);
+  if (h.done) nextHand(); else sync();
+}
+
+function nextHand() {
+  while (S.active < S.hands.length && S.hands[S.active].done) S.active++;
+  if (S.active < S.hands.length) { S.msg = 'hand ' + (S.active + 1); sync(); return; }
+  S.phase = 'dealer';
+  finishDealer();
+}
+
+function finishDealer() {
+  /* THE DEALER ONLY PLAYS IF THERE IS SOMETHING TO PLAY AGAINST. Every hand
+     busted is every hand paid already; turning the hole card over anyway is
+     theatre, and it is theatre a table does not do. */
+  var live = S.hands.some(function (h) { return !h.bust; });
+  if (S.hole) { S.dealer.push(S.hole); S.hole = null; }
+  sync();
+  if (!live) { setTimeout(function () { settle(''); }, 350); return; }
+  var step = function () {
+    var v = handValue(S.dealer);
+    if (v.total < 17) {
+      S.dealer.push(draw());
+      blip(400, 0.04, 'square', 0.03);
+      sync();
+      setTimeout(step, 420);
+    } else {
+      setTimeout(function () { settle(''); }, 350);
+    }
+  };
+  setTimeout(step, 500);
+}
+
+function settle(why) {
+  var dv = handValue(S.dealer), dbust = dv.total > 21, dbj = isBJ(S.dealer);
+  var won = 0, lines = [];
+  if (S.insurance) {
+    if (dbj) { won += S.insurance * 3; lines.push('insurance'); }
+    S.insurance = 0;
+  }
+  S.hands.forEach(function (h, i) {
+    var v = handValue(h.cards);
+    var tag;
+    if (h.bust) { tag = 'bust'; }
+    else if (h.bj && !dbj) { won += h.bet + Math.round(h.bet * 1.5); tag = 'blackjack'; }
+    else if (dbj && !h.bj) { tag = 'lost'; }
+    else if (h.bj && dbj) { won += h.bet; tag = 'push'; }
+    else if (dbust || v.total > dv.total) { won += h.bet * 2; tag = 'won'; }
+    else if (v.total === dv.total) { won += h.bet; tag = 'push'; }
+    else tag = 'lost';
+    h.tag = tag;
+    lines.push(tag);
+    S.history.unshift(tag === 'push' ? 'P' : (tag === 'lost' || tag === 'bust') ? 'L' : 'W');
+  });
+  while (S.history.length > 12) S.history.pop();
+
+  S.purse += won;
+  taught();
+  save();
+  S.phase = 'done';
+  S.msg = why || (dbust ? 'the dealer busts' : 'dealer ' + dv.total);
+  S.last = S.msg + '  ·  ' + lines.join(', ');
+  var staked = S.hands.reduce(function (t, h) { return t + h.bet; }, 0);
+  document.getElementById('resultWin').textContent = won ? '+' + won : '';
+  document.getElementById('resultWin').style.color = won ? '#ffd166' : '#7b8ea1';
+  if (won > staked) { flash('+' + won); blip(660, 0.12, 'triangle', 0.06);
+                      setTimeout(function () { blip(990, 0.16, 'triangle', 0.05); }, 110); }
+  else if (!won) blip(150, 0.25, 'sawtooth', 0.035);
+  sync();
+  /* AND THE TABLE COMES BACK ROUND ON ITS OWN, with the same bet sitting in the
+     circle, because that is what a blackjack table does between hands. */
+  setTimeout(function () {
+    if (S.phase !== 'done') return;
+    S.hands = []; S.dealer = []; S.hole = null; S.active = 0;
+    S.phase = 'bet';
+    /* AND IT GOES STRAIGHT BACK OUT AGAIN, the same size, the way a player who
+       is still sitting there leaves it. Only as much as the purse can cover. */
+    S.bet = Math.max(0, Math.min(S.lastBet || 0, S.purse));
+    S.purse -= S.bet;
+    S.msg = 'place your bet';
+    sync();
+  }, 2600);
+}
+
+function flash(t) {
+  var el = document.getElementById('note');
+  el.textContent = t; el.style.opacity = '1';
+  setTimeout(function () { el.style.opacity = '0'; }, 900);
+}
+
+/* ---- drawing the table -------------------------------------------------- */
+var faceCanvases = [];        // the ones with a fox on them, repainted every frame
+
+function cardEl(card, faceDown) {
+  var d = document.createElement('div');
+  d.className = 'pc' + (faceDown ? ' back' : '');
+  var inner = document.createElement('div');
+  inner.className = 'pcInner';
+  d.appendChild(inner);
+
+  var key = document.createElement('div'); key.className = 'pcKey'; inner.appendChild(key);
+  var gloss = document.createElement('div'); gloss.className = 'pcGloss'; inner.appendChild(gloss);
+  var shade = document.createElement('div'); shade.className = 'pcShade'; inner.appendChild(shade);
+
+  if (!faceDown) {
+    var col = card.suit.red ? '#c0122f' : '#17202b';
+    var idx = document.createElement('div'); idx.className = 'pcIdx';
+    ['a', 'b'].forEach(function (which) {
+      var box = document.createElement('div'); box.className = which;
+      box.style.color = col;
+      var v = document.createElement('span'); v.className = 'v'; v.textContent = card.value;
+      var s = document.createElement('span'); s.className = 's'; s.textContent = card.suit.symbol;
+      box.appendChild(v); box.appendChild(s); idx.appendChild(box);
+    });
+    inner.appendChild(idx);
+
+    var art = document.createElement('div'); art.className = 'pcArt';
+    if (isFaceCard(card)) {
+      var cv = document.createElement('canvas');
+      art.appendChild(cv);
+      faceCanvases.push({ cv: cv, card: card, t0: performance.now() / 1000,
+                          idx: faceCanvases.length });
+    } else {
+      var pip = document.createElement('span');
+      pip.textContent = card.suit.symbol;
+      pip.style.color = col;
+      pip.style.textShadow = '0 0 14px ' + (card.suit.red ? 'rgba(255,51,102,0.4)' : 'rgba(0,240,255,0.4)');
+      art.appendChild(pip);
+    }
+    inner.appendChild(art);
+  }
+
+  var back = document.createElement('div'); back.className = 'pcBack';
+  var bk = document.createElement('div'); bk.className = 'k'; back.appendChild(bk);
+  var crest = document.createElement('canvas'); back.appendChild(crest);
+  inner.appendChild(back);
+  if (faceDown) drawCrest(crest);
+  return d;
+}
+
+function handEl(cards, tag, tagClass, active, faceDownLast) {
+  var wrap = document.createElement('div');
+  wrap.className = 'hand' + (active ? ' act' : '');
+  var row = document.createElement('div'); row.className = 'cards';
+  cards.forEach(function (c, i) {
+    row.appendChild(cardEl(c, faceDownLast && i === cards.length - 1));
+  });
+  wrap.appendChild(row);
+  if (tag) {
+    var t = document.createElement('div');
+    t.className = 'tag' + (tagClass ? ' ' + tagClass : '');
+    t.textContent = tag;
+    wrap.appendChild(t);
+  }
+  return wrap;
+}
+
+function paint() {
+  faceCanvases = [];
+  PARTS = [];
+  var dr = document.getElementById('dealerRow');
+  var pr = document.getElementById('playerRow');
+  dr.innerHTML = ''; pr.innerHTML = '';
+
+  var dcards = S.dealer.slice();
+  var hidden = !!S.hole;
+  if (hidden) dcards.push(S.hole);
+  if (dcards.length) {
+    var dv = handValue(hidden ? [S.dealer[0]] : S.dealer);
+    var dtag = hidden ? String(dv.total) + ' +' : String(handValue(S.dealer).total);
+    var dclass = !hidden && handValue(S.dealer).total > 21 ? 'bust'
+               : (!hidden && isBJ(S.dealer) ? 'bj' : '');
+    if (!hidden && handValue(S.dealer).total > 21) dtag = 'BUST';
+    if (!hidden && isBJ(S.dealer)) dtag = 'BLACKJACK';
+    dr.appendChild(handEl(dcards, dtag, dclass, false, hidden));
+  }
+
+  S.hands.forEach(function (h, i) {
+    var v = handValue(h.cards);
+    var tag = h.bust ? 'BUST' : (h.bj ? 'BLACKJACK' : (v.soft && v.total !== 21 ? String(v.total - 10) + ' / ' + v.total : String(v.total)));
+    if (S.phase === 'done' && h.tag) tag = h.tag.toUpperCase() + (h.bust ? '' : '  ' + v.total);
+    var cls = h.bust ? 'bust' : (h.bj ? 'bj' : (S.phase === 'done' && (h.tag === 'won' || h.tag === 'blackjack') ? 'win' : ''));
+    pr.appendChild(handEl(h.cards, tag, cls,
+                          S.phase === 'play' && i === S.active, false));
+  });
+}
+
+function sync() {
+  if (S.purse <= 0 && !S.bet && S.phase === 'bet') {
+    S.purse = 100; save();
+    flash('THE HOUSE STAKES YOU');
+  }
+  document.getElementById('purse').textContent = S.purse;
+  var staked = S.bet + S.hands.reduce(function (t, h) { return t + h.bet; }, 0) + S.insurance;
+  document.getElementById('down').textContent = staked;
+  document.getElementById('callBox').textContent = S.msg || 'place your bet';
+
+  var spot = document.getElementById('betSpot');
+  spot.innerHTML = '';
+  var live = S.bet || S.hands.reduce(function (t, h) { return t + h.bet; }, 0);
+  if (live) {
+    var a = document.createElement('div'); a.className = 'amt'; a.textContent = live;
+    spot.appendChild(a);
+  } else {
+    var l = document.createElement('span'); l.textContent = 'BET HERE'; spot.appendChild(l);
+  }
+
+  document.getElementById('deal').disabled = !(S.phase === 'bet' && S.bet > 0);
+  document.getElementById('clear').disabled = !(S.phase === 'bet' && S.bet > 0);
+  document.getElementById('hit').disabled = S.phase !== 'play';
+  document.getElementById('stand').disabled = S.phase !== 'play';
+  document.getElementById('dbl').disabled = !canDouble();
+  document.getElementById('split').disabled = !canSplit();
+
+  /* THE TWO BUTTONS THAT ARE ONLY EVER THERE FOR ONE QUESTION. Insurance turns
+     DEAL and CLEAR into YES and NO rather than growing two more buttons that
+     are greyed out for the rest of the game. */
+  var dealBtn = document.getElementById('deal'), clearBtn = document.getElementById('clear');
+  if (S.phase === 'insurance') {
+    dealBtn.textContent = 'INSURANCE'; dealBtn.disabled = false;
+    clearBtn.textContent = 'NO'; clearBtn.disabled = false;
+  } else {
+    dealBtn.textContent = 'DEAL';
+    clearBtn.textContent = 'CLEAR';
+  }
+
+  var fill = document.getElementById('shoeFill');
+  var left = Math.max(0, S.shoe.length - S.cut), full = DECKS * 52;
+  fill.style.width = Math.max(2, Math.round(left / full * 100)) + '%';
+  document.getElementById('shoeText').textContent =
+    S.shoe.length <= S.cut + 1 ? 'CUT CARD' : DECKS + ' DECKS  ·  ' + left + ' TO THE CUT';
+
+  /* THE BOX ON THE LEFT IS THE LAST HAND, and the line under the shoe is this
+     one. Saying the same words in both is one of them wasted. */
+  document.getElementById('resultText').textContent = S.last || 'no hand yet';
+  var h = document.getElementById('history');
+  h.innerHTML = '';
+  for (var i = 0; i < S.history.length; i++) {
+    var d = document.createElement('div');
+    d.className = 'hchip ' + S.history[i].toLowerCase();
+    d.textContent = S.history[i];
+    d.style.opacity = String(1 - i * 0.05);
+    h.appendChild(d);
+  }
+
+  paint();
+  coach();
+}
+
+/* ---- the coach ---------------------------------------------------------- */
+function coach() {
+  var chipRow = document.getElementById('chipRow');
+  var spot = document.getElementById('betSpot');
+  var dealBtn = document.getElementById('deal');
+  var fh = document.getElementById('feltHint');
+  var bh = document.getElementById('barHint');
+
+  var step = 'none';
+  if (S.phase === 'bet') {
+    if (!S.bet) step = (S.pickedChip || S.taught) ? 'spot' : 'chip';
+    else step = 'deal';
+  }
+
+  chipRow.classList.toggle('lit', step === 'chip');
+  spot.classList.toggle('lit', step === 'spot' && !S.taught);
+  dealBtn.classList.toggle('pulse', step === 'deal');
+
+  var barWord = step === 'chip' ? 'BET HOW MUCH?'
+              : (step === 'deal' && !S.taught) ? 'NOW DEAL THEM' : '';
+  bh.querySelector('span').textContent = barWord;
+  bh.classList.toggle('on', !!barWord);
+
+  var feltWord = (step === 'spot' && !S.taught) ? 'PLACE YOUR CHIPS' : '';
+  fh.querySelector('span').textContent = feltWord;
+  fh.classList.toggle('on', !!feltWord);
+}
+
+/* ---- the loop: the court cards are alive -------------------------------- */
+function frame(now) {
+  var t = now / 1000;
+  for (var i = 0; i < faceCanvases.length; i++) {
+    var f = faceCanvases[i];
+    drawFoxPortrait(f.cv, f.card.value, f.card.suit, t - f.t0, f.idx);
+  }
+  requestAnimationFrame(frame);
+}
+
+/* ---- wiring ------------------------------------------------------------- */
+document.getElementById('betSpot').addEventListener('click', addBet);
+var chips = document.querySelectorAll('.chip');
+for (var ci = 0; ci < chips.length; ci++) {
+  (function (el) {
+    el.addEventListener('click', function () {
+      S.chip = parseInt(el.getAttribute('data-v'), 10);
+      S.pickedChip = true;
+      for (var k = 0; k < chips.length; k++) chips[k].classList.remove('sel');
+      el.classList.add('sel');
+      blip(700, 0.04, 'square', 0.03);
+      sync();
+    });
+  })(chips[ci]);
+}
+document.querySelector('.chip[data-v="5"]').classList.add('sel');
+
+document.getElementById('deal').addEventListener('click', function () {
+  if (S.phase === 'insurance') takeInsurance(true); else deal();
+});
+document.getElementById('clear').addEventListener('click', function () {
+  if (S.phase === 'insurance') takeInsurance(false); else clearBet();
+});
+document.getElementById('hit').addEventListener('click', hit);
+document.getElementById('stand').addEventListener('click', stand);
+document.getElementById('dbl').addEventListener('click', double);
+document.getElementById('split').addEventListener('click', split);
+
+function goBack(e) {
+  if (e) e.preventDefault();
+  try { parent.postMessage('backToCasino', '*'); } catch (err) {}
+}
+document.getElementById('back').addEventListener('click', goBack);
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') goBack();
+  if (S.phase === 'play') {
+    if (e.key === 'h') hit();
+    if (e.key === 's') stand();
+    if (e.key === 'd') double();
+  }
+  if ((e.key === ' ' || e.key === 'Enter') && S.phase === 'bet') { e.preventDefault(); deal(); }
+});
+
+function fit() {
+  var w = window.innerWidth, h = window.innerHeight;
+  var k = Math.min(w / 1180, h / 720);
+  document.getElementById('stage').style.transform =
+    'translate(-50%,-50%) scale(' + k + ')';
+}
+window.addEventListener('resize', function () { setTimeout(fit, 60); });
+window.addEventListener('orientationchange', function () { setTimeout(fit, 300); });
+
+load();
+shuffle();
+S.msg = 'place your bet';
+fit();
+sync();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

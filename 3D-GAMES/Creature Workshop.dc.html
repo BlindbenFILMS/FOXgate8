@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#0b0a0a}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="display:grid;grid-template-rows:auto minmax(0,1fr);height:100vh;height:100dvh;background:#0b0a0a;color:#fff;font-family:var(--font-body)">
+  <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836;min-width:0">
+    <div style="padding:12px 18px;display:flex;flex-direction:column;gap:2px;border-right:2px solid #3a3836">
+      <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;color:#ffd23a">8 GATES · CREATURE BRIEF</div>
+      <div style="font-family:var(--font-heading);font-size:22px;font-weight:800;line-height:1">Creature Workshop</div>
+    </div>
+    <div style="padding:12px 18px;display:flex;flex-direction:column;justify-content:center;gap:6px;flex:1;min-width:0">
+      <div style="display:flex;justify-content:space-between;gap:12px;font-size:11px;font-weight:800;letter-spacing:0.12em;white-space:nowrap;line-height:1.2"><span style="color:#ffd23a">FAMILIES BUILT</span><span style="font-variant-numeric:tabular-nums">{{ builtLabel }}</span></div>
+      <div style="height:6px;background:#2a2826"><div style="height:100%;width:{{ builtW }};background:#ffd23a"></div></div>
+    </div>
+    <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ rosterToggle }}" style="padding:0 18px;border:0;border-left:2px solid #3a3836;border-radius:0;background:{{ rosterBtnBg }};color:#fff;font:800 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer">ROSTER</button>
+    </sc-if>
+  </div>
+
+  <div style="display:grid;grid-template-columns:{{ cols }};min-height:0;position:relative">
+    <div style="display:{{ rosterDisp }};flex-direction:column;min-height:0;border-right:2px solid #3a3836;background:#0b0a0a;{{ rosterOverlay }}">
+      <div style="flex:1;min-height:0;overflow-y:auto">
+        <sc-for list="{{ worlds }}" as="w" hint-placeholder-count="4">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px 8px;border-bottom:2px solid #3a3836;background:#141312;position:sticky;top:0;z-index:1">
+            <span style="font-family:var(--font-heading);font-weight:800;font-size:14px;letter-spacing:0.06em;color:#ffd23a">{{ w.name }}</span>
+            <span style="font-size:11px;font-weight:700;color:#8a847e">{{ w.count }}</span>
+          </div>
+          <sc-for list="{{ w.fams }}" as="f" hint-placeholder-count="3">
+            <button onClick="{{ f.pick }}" style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center;width:100%;padding:10px 16px;border:0;border-bottom:2px solid #22201f;border-radius:0;background:{{ f.bg }};color:#fff;text-align:left;cursor:pointer" style-hover="background:#1d1b1a">
+              <span style="font-family:var(--font-heading);font-weight:800;font-size:13px;letter-spacing:0.03em;line-height:1.2;color:{{ f.nc }}">{{ f.name }}</span>
+              <span style="padding:2px 6px;font:800 10px var(--font-heading);letter-spacing:0.1em;background:{{ f.chipBg }};color:{{ f.chipFg }}">{{ f.status }}</span>
+              <span style="font-size:11px;color:#8a847e;line-height:1.3">{{ f.meta }}</span>
+              <span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:{{ f.waveC }}">{{ f.wave }}</span>
+            </button>
+          </sc-for>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="position:relative;min-width:0;min-height:0;overflow:hidden">
+      <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+
+      <div ref="{{ infoRef }}" style="position:absolute;left:12px;top:12px;width:min(360px,calc(100% - 24px));max-height:calc(100% - 190px);min-height:56px;overflow-y:auto;background:#0b0a0a;border:2px solid #3a3836;display:flex;flex-direction:column;z-index:2">
+        <button onClick="{{ infoToggle }}" style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:12px 14px;border:0;border-radius:0;background:#0b0a0a;color:#fff;text-align:left;cursor:pointer">
+          <span style="display:flex;flex-direction:column;gap:4px;min-width:0">
+            <span style="display:block;font-size:11px;font-weight:800;letter-spacing:0.12em;line-height:1.25;color:#ffd23a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ selMeta }}</span>
+            <span style="display:block;font-family:var(--font-heading);font-weight:800;font-size:20px;line-height:1.2">{{ selName }}</span>
+          </span>
+          <span style="flex:none;font:800 11px var(--font-heading);letter-spacing:0.1em;color:#8a847e">{{ infoArrow }}</span>
+        </button>
+        <sc-if value="{{ infoOpen }}" hint-placeholder-val="{{ true }}">
+          <sc-for list="{{ notes }}" as="n" hint-placeholder-count="4">
+            <div style="display:grid;grid-template-columns:72px minmax(0,1fr);gap:10px;padding:9px 14px;border-top:2px solid #22201f">
+              <span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:{{ n.c }};padding-top:2px">{{ n.k }}</span>
+              <span style="font-size:12px;line-height:1.4;color:#e7e3de">{{ n.v }}</span>
+            </div>
+          </sc-for>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ notBuilt }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(320px,calc(100% - 32px));background:#0b0a0a;border:2px solid #3a3836;padding:16px;display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:11px;font-weight:800;letter-spacing:0.12em;color:#8a847e">NOT BUILT YET</span>
+          <span style="font-family:var(--font-heading);font-weight:800;font-size:16px;line-height:1.25">{{ todoLine }}</span>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ built }}" hint-placeholder-val="{{ true }}">
+        <div ref="{{ ctlRef }}" style="position:absolute;left:12px;right:12px;bottom:12px;display:flex;flex-direction:column;gap:6px;pointer-events:none">
+          <div style="display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;pointer-events:auto;scrollbar-width:thin;padding-bottom:2px">
+            <sc-for list="{{ variants }}" as="v" hint-placeholder-count="3">
+              <button onClick="{{ v.pick }}" style="flex:none;height:34px;padding:0 10px;display:flex;align-items:center;white-space:nowrap;border:2px solid #ffd23a;border-radius:0;background:{{ v.bg }};color:{{ v.fg }};font:800 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer">{{ v.label }}</button>
+            </sc-for>
+          </div>
+          <sc-if value="{{ aiOn }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:6px;pointer-events:auto"><button onClick="{{ hitBody }}" style="flex:1;height:48px;padding:0 14px;display:flex;align-items:center;border:2px solid #ffffff;border-radius:0;background:#0b0a0a;color:#fff;font:800 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer" style-active="background:#2a2826">HIT</button><button onClick="{{ hitWeak }}" style="flex:1;height:48px;padding:0 14px;display:flex;align-items:center;border:2px solid #ffd23a;border-radius:0;background:#0b0a0a;color:#ffd23a;font:800 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer" style-active="background:#2a2826">HIT WEAK POINT</button></div>
+          </sc-if>
+          <div style="display:flex;overflow-x:auto;background:#0b0a0a;border:2px solid #3a3836;pointer-events:auto;scrollbar-width:thin">
+            <sc-for list="{{ states }}" as="s" hint-placeholder-count="9">
+              <button onClick="{{ s.pick }}" style="flex:none;height:44px;padding:0 14px;display:flex;align-items:center;white-space:nowrap;border:0;border-right:2px solid #22201f;border-radius:0;background:{{ s.bg }};color:{{ s.fg }};font:800 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left">{{ s.label }}</button>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;pointer-events:auto">
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <sc-for list="{{ toggles }}" as="t" hint-placeholder-count="4">
+                <button onClick="{{ t.pick }}" style="min-height:36px;padding:0 12px;display:flex;align-items:center;gap:8px;white-space:nowrap;border:2px solid #3a3836;border-radius:0;background:#0b0a0a;color:#fff;font:800 11px var(--font-heading);letter-spacing:0.08em;cursor:pointer"><span style="width:10px;height:10px;background:{{ t.dot }}"></span>{{ t.label }}</button>
+              </sc-for>
+            </div>
+            <span style="padding:6px 10px;background:#0b0a0a;border:2px solid #3a3836;font:800 11px var(--font-heading);letter-spacing:0.08em;color:#cfcac4;font-variant-numeric:tabular-nums">{{ readout }}</span>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { sel: 'crab', variant: null, info: innerHeight > 700, rosterOpen: false, w: innerWidth, hud: { state: 'idle', calls: 0, size: 0, turn: true, tells: true, loop: false, showFox: true } };
+  stageRef = React.createRef(); ctlRef = React.createRef(); infoRef = React.createRef();
+  async componentDidMount() {
+    const [R, L] = await Promise.all([import(new URL('engine/creature-roster.js', document.baseURI).href), import(new URL('creature-lab.js', document.baseURI).href)]);
+    this.R = R; this.lab = await L.createCreatureLab({ container: this.stageRef.current, getInsets: () => { const st = this.stageRef.current, c = this.ctlRef.current, i = this.infoRef.current; if (!st) return { top: 0, bottom: 0 }; const r = st.getBoundingClientRect(); return { top: i ? Math.max(0, i.getBoundingClientRect().bottom - r.top) : 0, bottom: c ? Math.max(0, r.bottom - c.getBoundingClientRect().top) : 0, left: i ? i.getBoundingClientRect().right - r.left : 0 }; }, onState: hud => this.setState({ hud }) });
+    this.onRs = () => this.setState({ w: innerWidth }); addEventListener('resize', this.onRs);
+    this.select('crab');
+  }
+  componentWillUnmount() { this.lab && this.lab.destroy(); removeEventListener('resize', this.onRs); }
+  select(id, variant) {
+    const f = this.R && this.R.ROSTER.find(q => q.id === id); if (!f) return;
+    const v = variant || f.names[0]; this.setState({ sel: id, variant: v, rosterOpen: false });
+    if (this.lab) { if (f.built && this.lab.canBuild(v)) this.lab.setCreature(v); else this.lab.setCreature('__none__'); }
+  }
+  renderVals() {
+    const S = this.state, R = this.R, h = S.hud, lab = this.lab, narrow = S.w < 900;
+    const roster = R ? R.ROSTER : [], f = roster.find(q => q.id === S.sel) || { names: ['…'], world: '', wave: 1, kind: '' };
+    const KIND = { pack: 'PACK', heavy: 'HEAVY', ranged: 'RANGED', boss: 'BOSS', fox: 'FOX KIT', flyer: 'FLYER', creature: 'CREATURE' };
+    const built = roster.filter(q => q.built).length;
+    const STATES = [['idle', 'IDLE'], ['move', 'MOVE'], ['windup', 'WIND-UP'], ['attack', 'ATTACK'], ['recover', 'RECOVER'], ['hurt', 'HURT'], ['stagger', 'STAGGER'], ['armorBreak', 'ARMOR BREAK'], ['die', 'DIE']];
+    return {
+      stageRef: this.stageRef, ctlRef: this.ctlRef, infoRef: this.infoRef, narrow,
+      builtLabel: built + ' / ' + roster.length, builtW: roster.length ? (built / roster.length * 100).toFixed(1) + '%' : '0%',
+      cols: narrow ? 'minmax(0,1fr)' : '320px minmax(0,1fr)',
+      rosterDisp: !narrow || S.rosterOpen ? 'flex' : 'none', rosterOverlay: narrow ? 'position:absolute;inset:0;z-index:5' : '',
+      rosterToggle: () => this.setState({ rosterOpen: !S.rosterOpen }), rosterBtnBg: S.rosterOpen ? 'var(--color-accent)' : '#0b0a0a',
+      worlds: (R ? R.WORLDS : []).map(w => { const fams = roster.filter(q => q.world === w); return { name: w.toUpperCase(), count: fams.filter(q => q.built).length + ' / ' + fams.length,
+        fams: fams.map(q => { const sel = q.id === S.sel; return { name: q.names[0] + (q.names.length > 1 ? ' family' : ''), meta: KIND[q.kind] + (q.names.length > 1 ? ' · ' + q.names.length + ' variants' : ''), wave: 'WAVE ' + q.wave, waveC: q.wave === 1 ? '#ffd23a' : '#8a847e',
+          status: q.built ? 'BUILT' : 'TO DO', chipBg: q.built ? '#ffd23a' : 'transparent', chipFg: q.built ? '#000000' : '#5a5550', bg: sel ? '#1d1b1a' : '#0b0a0a', nc: sel ? '#ffd23a' : '#ffffff', pick: () => this.select(q.id) }; }) }; }),
+      selMeta: (f.world || '').toUpperCase() + ' · WAVE ' + f.wave + ' · ' + (KIND[f.kind] || ''), selName: S.variant || f.names[0],
+      infoOpen: S.info, infoArrow: S.info ? 'HIDE' : 'NOTES', infoToggle: () => this.setState({ info: !S.info }),
+      notes: [['LOOK', f.look, '#8a847e'], ['FIGHT', f.fight, '#8a847e'], ['WEAK POINT', f.weak, '#ffd23a'], ['TELL', f.tell, '#ec3013']].filter(n => n[1]).map(([k, v, c]) => ({ k, v, c })),
+      built: !!f.built, notBuilt: !f.built, todoLine: 'Wave ' + f.wave + '. ' + (f.names.length > 1 ? f.names.length + ' variants share this body.' : 'One body.') + ' Built after the families before it are approved.',
+      variants: h.phase ? [1, 2, 3].map(n => { const on = h.phase === n; return { label: 'PHASE ' + n, bg: on ? '#ffd23a' : '#0b0a0a', fg: on ? '#000000' : '#ffd23a', pick: () => lab && lab.setPhase(n) }; }) : f.names.map(n => { const on = n === S.variant; return { label: n.toUpperCase(), bg: on ? '#ffd23a' : '#0b0a0a', fg: on ? '#000000' : '#ffd23a', pick: () => this.select(f.id, n) }; }),
+      states: STATES.map(([k, l]) => { const on = h.state === k; return { label: l, bg: on ? 'var(--color-accent)' : '#0b0a0a', fg: '#ffffff', pick: () => lab && lab.play(k) }; }),
+      toggles: [['TURNTABLE', h.turn, v => lab.setTurntable(v)], ['SCALE FOX', h.showFox, v => lab.setFox(v)], ['TELLS', h.tells, v => lab.setTells(v)], ['FIGHT LOOP', h.loop, v => lab.setLoop(v)], ['PHONE BAKE', h.bake, v => lab.setBake(v)], ['TRY THE AI', h.ai, v => lab.setAI(v)], ['RESPAWN', false, () => lab.respawn()]].map(([label, on, fn]) => ({ label, dot: on ? '#ffd23a' : '#3a3836', pick: () => lab && fn(!on) })),
+      aiOn: !!h.ai, hitBody: () => lab && lab.aiHit(false), hitWeak: () => lab && lab.aiHit(true),
+      readout: h.ai ? 'AI · ' + (h.aiRole || '').toUpperCase() + ' · HP ' + h.aiHp + ' / ' + h.aiMax + ' · FOX ' + h.foxHp : (h.bake && h.before && h.before !== h.calls ? h.before + ' → ' : '') + h.calls + ' DRAW CALLS' + (h.calls <= 25 ? ' · PHONE OK' : '') + ' · ' + h.size + '× FOX',
+    };
+  }
+}
+</script>
+</body>
+</html>
