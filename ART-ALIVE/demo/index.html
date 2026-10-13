@@ -106,6 +106,7 @@ h1 .one{display:block;white-space:nowrap;font-size:min(1em,6.8vw,40px);letter-sp
 </section>
 <p class="sr" id="sr" aria-live="polite"></p>
 
+<script src="../capture.js"></script>
 <script>
 'use strict';
 const $ = id => document.getElementById(id);
@@ -396,6 +397,7 @@ async function begin(withCam) {
   locked = false; hits = misses = 0; target = shown = null; onV = alphaV = 0; lastSeg = -1; $('cap').hidden = true;
   if (withCam) { hint('Center a rectangle: a TV, poster or sheet of paper'); say('Camera on. Center any rectangle shape, like a TV, a poster or a sheet of paper, with the whole shape in view.'); }
   else { const r = tvRect(); Object.assign($('tv').style, { left: r[0][0] + 'px', top: r[0][1] + 'px', width: r[1][0] - r[0][0] + 'px', height: r[3][1] - r[0][1] + 'px' }); target = shown = r; lockOn(); }
+  newTracker();
   running = true; requestAnimationFrame(loop); $('exitBtn').focus({ preventScroll: true });
 }
 function showErr(t) { $('err').textContent = t; $('err').hidden = false; }
@@ -419,18 +421,22 @@ addEventListener('resize', () => { if (mode === 'nocam' && running) { const r = 
 function toScreen(c) { const W = innerWidth, H = innerHeight, vw = video.videoWidth, vh = video.videoHeight, s = Math.max(W / vw, H / vh), ox = (W - vw * s) / 2, oy = (H - vh * s) / 2;
   return c.map(([u, v]) => [u * vw * s + ox, v * vh * s + oy]); }
 let lastDetect = 0, lastFrame = performance.now(), crackT = 0;
+let TRK = null;
+function newTracker() { prevC = null; TRK = window.AACapture && AACapture.tracker ? AACapture.tracker({ detect: () => { const r = detect(video); if (r) prevC = r.c; return r; } }) : null; }
 function loop(now) {
   if (!running) return; requestAnimationFrame(loop);
   const dt = Math.min(.1, (now - lastFrame) / 1000); lastFrame = now;
-  if (mode === 'cam' && now - lastDetect > 45 && video.readyState >= 2) {
-    lastDetect = now; const r = detect(video);
-    if (r) { prevC = r.c; const q = toScreen(r.c); misses = 0; hits++;
-      if (!target || dist(q[0], target[0]) + dist(q[2], target[2]) > .5 * dist(target[0], target[2])) target = q; else target = target.map((p, i) => [p[0] + (q[i][0] - p[0]) * .55, p[1] + (q[i][1] - p[1]) * .55]);
+  if (mode === 'cam' && video.readyState >= 2 && (TRK || now - lastDetect > 45)) {
+    // follow the texture inside the shape every frame so the art sticks to it; fall back to finding the shape alone
+    lastDetect = now; const r = TRK ? TRK.update(video, video.videoWidth, video.videoHeight, now) : detect(video);
+    if (r) { if (!TRK) prevC = r.c; const q = toScreen(r.c); misses = 0; hits++;
+      if (TRK) target = q;
+      else if (!target || dist(q[0], target[0]) + dist(q[2], target[2]) > .5 * dist(target[0], target[2])) target = q; else target = target.map((p, i) => [p[0] + (q[i][0] - p[0]) * .55, p[1] + (q[i][1] - p[1]) * .55]);
       if (!locked && hits >= 3) lockOn(); }
     else { misses++; if (misses > 2) hits = 0; if (misses > 6) prevC = null; if (locked && misses > 12) unlock(); }
   }
   if (target) { const a = (dist(target[0], target[1]) + dist(target[3], target[2])) / (dist(target[0], target[3]) + dist(target[1], target[2]) || 1); if (portrait && a > 1.05) portrait = false; else if (!portrait && a < .85) portrait = true; }
-  if (target) shown = shown ? shown.map((p, i) => [p[0] + (target[i][0] - p[0]) * Math.min(1, dt * 18), p[1] + (target[i][1] - p[1]) * Math.min(1, dt * 18)]) : target.map(p => p.slice());
+  if (target) shown = TRK && mode === 'cam' ? target.map(p => p.slice()) : shown ? shown.map((p, i) => [p[0] + (target[i][0] - p[0]) * Math.min(1, dt * 18), p[1] + (target[i][1] - p[1]) * Math.min(1, dt * 18)]) : target.map(p => p.slice());
   onV = locked ? Math.min(1, onV + dt * 1.6) : 0; alphaV = locked ? Math.min(1, alphaV + dt * 4) : Math.max(0, alphaV - dt * 3);
   draw(now, dt);
 }

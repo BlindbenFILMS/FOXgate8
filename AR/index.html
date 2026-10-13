@@ -664,7 +664,7 @@ async function startAR() {
   const mindar = new MindARThree({
     container: $('ar'), imageTargetSrc: show.target || 'joined-on-the-phone',
     uiLoading: 'no', uiScanning: 'no', uiError: 'no',
-    filterMinCF: 0.0001, filterBeta: 0.001,      // steadier overlay
+    filterMinCF: 1, filterBeta: 0,               // MindAR's own smoothing off: it lagged far behind the painting; stick() below smooths instead
     missTolerance: 3, warmupTolerance: 3          // let go of a painting quickly, so the next one can be found
   });
   const { renderer, scene, camera } = mindar;
@@ -793,9 +793,31 @@ async function startAR() {
   $('scan').style.display = 'flex';
   $('ar').removeAttribute('aria-hidden');
 
+  /* Sticky overlay (like Artivive): keeps the art glued to the painting. Steady when you hold still, no lag when
+     you move: a one-euro filter on the painting's position and rotation, whose smoothing relaxes with speed. */
+  const STICK = { minCutoff: 1, beta: 40, dCutoff: 2 };
+  const _p = new THREE.Vector3(), _q = new THREE.Quaternion(), _s = new THREE.Vector3();
+  const alpha = (c, dt) => 1 / (1 + 1 / (2 * Math.PI * c * dt));
+  function stick(sc, dt) {
+    const g = sc.anchor.group; if (!g.visible) { sc.pose = null; return; }
+    const st = sc.pose || (sc.pose = { set: null }), now = performance.now();
+    if (g.matrix !== st.set) {   // MindAR just measured the painting again
+      g.matrix.decompose(_p, _q, _s);
+      if (!st.P) { st.P = _p.clone(); st.Q = _q.clone(); st.S = _s.clone(); st.np = _p.clone(); st.nq = _q.clone(); st.ns = _s.clone(); st.dv = 0; st.dw = 0; st.t = now; }
+      const dtr = Math.max(0.008, Math.min(0.2, (now - st.t) / 1000)), d = Math.max(1e-6, _p.length());
+      const v = _p.distanceTo(st.np) / d / dtr, w = _q.angleTo(st.nq) / dtr;   // speed: share of the distance per second, and turn rate
+      st.dv += alpha(STICK.dCutoff, dtr) * (v - st.dv); st.dw += alpha(STICK.dCutoff, dtr) * (w - st.dw);
+      st.np.copy(_p); st.nq.copy(_q); st.ns.copy(_s); st.t = now;
+    }
+    const dts = Math.max(0.004, dt || 1 / 60), a = alpha(STICK.minCutoff + STICK.beta * st.dv, dts), b = alpha(STICK.minCutoff + STICK.beta * st.dw, dts);
+    st.P.lerp(st.np, a); st.S.lerp(st.ns, a); st.Q.slerp(st.nq, b);
+    const m = st.set || new THREE.Matrix4(); m.compose(st.P, st.Q, st.S); g.matrix = st.set = m;
+  }
+
   const clock = new THREE.Clock();
   renderer.setAnimationLoop(() => {
     const t = clock.getElapsedTime(), nowG = performance.now(), dtG = Math.min(0.05, (nowG - (window.__lastG || nowG)) / 1000); window.__lastG = nowG;
+    for (const sc of scenes) stick(sc, dtG);
     if (game) { game.update(dtG); if (params.get('debug')) window.__mg = game.debug; if (game.over && !$('gameBtn').dataset.over) { $('gameBtn').dataset.over = '1'; setGameBtn('again'); } }
     else delete $('gameBtn').dataset.over;
     for (const sc of scenes) {
