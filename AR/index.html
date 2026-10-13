@@ -20,17 +20,26 @@
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
   /* ── intro ── */
-  #intro{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    padding:24px 22px calc(24px + env(safe-area-inset-bottom));text-align:center;gap:20px;z-index:20;background:#000;overflow:auto}
-  #intro .logo{display:block;width:min(64vw,300px);height:auto}
+  #intro{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+    padding:env(safe-area-inset-top) 22px calc(24px + env(safe-area-inset-bottom));text-align:center;gap:18px;z-index:20;background:#000;overflow:auto}
+  /* the intro film: a square at the very top, edge to edge on a phone, looping silently */
+  #intro .film{display:block;flex:none;width:min(100vw,50vh,560px);aspect-ratio:1/1;height:auto;margin:0 -22px 4px;object-fit:cover;background:#000;pointer-events:none}
   #intro h1{margin:0;max-width:15em;font-family:Archivo,'Atkinson Hyperlegible',Arial,sans-serif;font-weight:900;
     font-size:clamp(22px,6.6vw,34px);line-height:1.15;letter-spacing:.01em;color:#fff}
   #intro .art{color:#fff;opacity:.75;font-size:15px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
   #intro p{margin:0;max-width:30em;color:var(--soft);font-size:17px;line-height:1.5}
   #start{min-width:240px;min-height:64px;padding:16px 34px;border:0;border-radius:0;background:#fff;color:#000;
-    font-family:Archivo,'Atkinson Hyperlegible',Arial,sans-serif;font-size:24px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+    font-family:Archivo,'Atkinson Hyperlegible',Arial,sans-serif;font-size:clamp(18px,6.2vw,24px);font-weight:900;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
   #start:focus-visible,.btn:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
+  @media (orientation:landscape) and (max-height:520px){
+    #intro{gap:8px} #intro .film{width:min(44vh,320px);margin:0} #intro h1{max-width:30em;font-size:clamp(18px,3.4vw,24px)} #start{min-height:52px;padding:10px 28px;font-size:20px}}
   #intro .small{font-size:15px;color:var(--soft)}
+  /* the two intro lines: always exactly two lines; each scales with the screen between a minimum and a maximum */
+  #introText{width:100%;max-width:none;text-transform:uppercase;line-height:1.08}
+  #introText span{display:block;width:max-content;max-width:none;white-space:nowrap;margin:0 auto}
+  #introText .l1{font-size:clamp(20px,calc((100vw - 44px) / 12.5),44px)}
+  #introText .l2{font-size:clamp(14px,calc((100vw - 44px) / 16.5),30px);margin-top:.3em;color:#e9e9e9}
+  @media (orientation:landscape) and (max-height:520px){#introText .l1{font-size:clamp(18px,5.4vh,30px)} #introText .l2{font-size:clamp(14px,4.2vh,22px)}}
   #intro a{color:var(--sky)}
   #pick{display:flex;flex-direction:column;gap:10px;width:min(420px,100%)}
   #pick a{display:block;padding:14px 16px;border:1px solid var(--line);border-radius:14px;color:var(--ink);text-decoration:none;font-size:18px}
@@ -39,15 +48,22 @@
   #ar{position:fixed;inset:0;overflow:hidden}
   #ar video{object-fit:cover}
   #ar{touch-action:none}
-  /* ── the only controls on the camera view: one row at the very top (Play game · Artist · Sound),
-     so everything under it — the painting, its animation and the artist's clip — is free of buttons ── */
-  #topBar{position:fixed;left:0;right:0;top:0;z-index:12;display:none;gap:6px;
-    padding:calc(8px + env(safe-area-inset-top)) calc(8px + env(safe-area-inset-right)) 0 calc(8px + env(safe-area-inset-left))}
+  /* ── the camera view's controls: one row at the bottom (Play game · Artist · Sound) that appears only while a
+     painting is found (or a game is on), and the Blindness Spectrum filter banner at the top, always there ── */
+  #topBar{position:fixed;left:0;right:0;bottom:0;z-index:12;display:none;gap:6px;
+    padding:0 calc(8px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(8px + env(safe-area-inset-left))}
   #topBar.on{display:flex}
-  #topBar button{flex:1 1 0;min-width:0;height:50px;display:flex;align-items:center;justify-content:center;gap:7px;padding:0 6px;
-    border:2px solid #fff;border-radius:0;background:#000;color:#fff;cursor:pointer;white-space:nowrap;
+  #topBar button{flex:1 1 0;min-width:0;height:52px;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 6px;
+    border:2px solid #fff;border-radius:0;background:#000;color:#fff;cursor:pointer;white-space:nowrap;line-height:1;text-align:center;
     font-family:Archivo,'Atkinson Hyperlegible',Arial,sans-serif;font-weight:900;font-size:clamp(12px,3.7vw,16px);letter-spacing:.04em;text-transform:uppercase}
-  #topBar button .i{font-size:1.15em;line-height:1}
+  #topBar button .l{display:block;line-height:1;padding-top:.08em}     /* capitals sit optically centred */
+  #topBar button .i{display:block;font-size:.95em;line-height:1}
+  #filterBtn{position:fixed;left:0;right:0;top:0;z-index:12;display:none;width:100%;align-items:center;justify-content:center;gap:10px;
+    min-height:calc(48px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 12px 0;border:0;border-bottom:4px solid #ec3013;border-radius:0;
+    background:#1f4fd8;color:#fff;cursor:pointer;line-height:1;
+    font-family:Archivo,'Atkinson Hyperlegible',Arial,sans-serif;font-weight:900;font-size:clamp(13px,3.9vw,17px);letter-spacing:.05em;text-transform:uppercase}
+  #filterBtn.on{display:flex}
+  #filterBtn:focus-visible{outline:3px solid #fff;outline-offset:-6px}
   #topBar #gameBtn{background:#ec3013;border-color:#ec3013}
   #topBar #gameBtn.stop{background:#000;border-color:#ec3013}
   #topBar #muteBtn[aria-pressed="true"]{background:#fff;color:#000}
@@ -102,10 +118,11 @@
 <body>
 
 <main id="intro">
-  <img class="logo" src="media/blind-canvas-logo.jpg" alt="Blind Canvas Project" width="640" height="640">
-  <h1 id="introText">CENTER the ART in YOUR CAMERA to see it COME ALIVE.</h1>
+  <video class="film" id="introFilm" src="media/bcp-intro.mp4" poster="media/bcp-intro-poster.jpg" autoplay muted loop playsinline webkit-playsinline preload="auto" aria-hidden="true"></video>
+  <span class="sr">Blind Canvas Project</span>
+  <h1 id="introText"><span class="l1">This art comes alive</span><span class="l2">Center phone camera on art</span></h1>
   <div class="art" id="introArt"></div>
-  <button id="start" type="button">Start</button>
+  <button id="start" type="button">Enter gallery</button>
   <p class="small" id="introHelp">Turn your sound on. Your phone will ask to use the camera.</p>
   <p id="err" role="alert"></p>
   <nav id="pick" aria-label="Choose a room or an artwork" hidden></nav>
@@ -114,10 +131,11 @@
 <div id="loading" role="status"><div class="spinner" aria-hidden="true"></div><div>Starting camera…</div></div>
 <div id="ar" aria-hidden="true"></div>
 <div id="visionLayer"></div>
+<button id="filterBtn" type="button" aria-label="Enable the Blindness Spectrum filter: see through the eyes of someone with a vision condition">Enable Blindness Spectrum filter</button>
 <nav id="topBar" aria-label="Controls">
   <button id="gameBtn" type="button" disabled><span class="i" aria-hidden="true">&#9654;</span><span class="l">Play game</span></button>
   <button id="artistBtn" type="button" disabled><span class="i" aria-hidden="true">&#8599;</span><span class="l">Artist</span></button>
-  <button id="muteBtn" type="button" aria-pressed="false"><span class="i" aria-hidden="true">&#128266;</span><span class="l">Sound on</span></button>
+  <button id="muteBtn" type="button" aria-pressed="false"><span class="l">Sound on</span></button>
 </nav>
 <div id="scan" aria-hidden="true"><div class="cue">CENTER ART IN CAMERA</div><div class="box"></div></div>
 
@@ -180,6 +198,15 @@ if (params.get('show')) {
 }
 
 /* ── intro ─────────────────────────────────────────── */
+function fitIntroLines() {
+  for (const el of document.querySelectorAll('#introText span')) {
+    el.style.fontSize = '';
+    const room = el.parentElement.clientWidth, w = el.scrollWidth;
+    if (room && w > room) el.style.fontSize = Math.max(12, parseFloat(getComputedStyle(el).fontSize) * room / w * 0.98) + 'px';
+  }
+}
+fitIntroLines(); addEventListener('resize', fitIntroLines);
+if (document.fonts) document.fonts.ready.then(fitIntroLines);
 if (!show) {
   $('introArt').textContent = 'Choose a room or an artwork';
   $('introText').hidden = true; $('start').hidden = true; $('introHelp').hidden = true;
@@ -258,6 +285,7 @@ function setGameBtn(state) {   // 'play' | 'stop' | 'again'
 }
 function setNowShowing(sc) {   // the painting the buttons act on (null: nothing in view)
   const w = sc && sc.work;
+  if (started) $('topBar').classList.toggle('on', !!(w || game));
   $('gameBtn').disabled = !(w && GAMES[w.id]);
   $('gameBtn').setAttribute('aria-label', w && GAMES[w.id] ? (game ? 'Stop the game' : 'Play the game for ' + w.title) : 'Play game: find a painting first');
   const url = artistLink(w);
@@ -273,8 +301,7 @@ $('artistBtn').onclick = () => {
 function setMuted(on) {
   window.__muted = on;
   $('muteBtn').setAttribute('aria-pressed', on);
-  $('muteBtn').innerHTML = on ? '<span class="i" aria-hidden="true">&#128263;</span><span class="l">Muted</span>'
-                              : '<span class="i" aria-hidden="true">&#128266;</span><span class="l">Sound on</span>';
+  $('muteBtn').innerHTML = '<span class="l">' + (on ? 'Muted' : 'Sound on') + '</span>';
   $('muteBtn').setAttribute('aria-label', on ? 'Sound is off. Tap to turn sound on' : 'Sound is on. Tap to mute');
   for (const c of window.__acs) (on ? c.suspend() : c.resume()).catch(() => {});
   if (on) { stopTalking(); for (const m of document.querySelectorAll('video,audio')) if (!m.muted) { m.muted = true; m.dataset.unmute = '1'; } }
@@ -346,12 +373,12 @@ function drawBanner(c, work) {
 const shared = {};
 function sharedPlayer(kind, firstSrc) {          // kind: 'anim' (silent, loops) or 'clip' (sound)
   if (!shared[kind]) {
-    const v = mkVideo(firstSrc, kind === 'clip', kind === 'anim');
+    const v = mkVideo(firstSrc, kind === 'clip', true);   // both loop: the art and the artist's clip
     v.preload = 'none';                          // nothing downloads until a painting is found
     const tex = new THREE.VideoTexture(v); tex.colorSpace = THREE.SRGBColorSpace;
     shared[kind] = { v, tex, owner: null, saved: new Map(), ready: false };
     v.addEventListener('playing', () => { shared[kind].ready = true; });   // show the layer only once real frames arrive
-    if (kind === 'clip') v.addEventListener('ended', () => { if (current && current.clip === v) setStatus('Tap Story to hear it again', true); });
+    v.addEventListener('ended', () => { v.currentTime = 0; v.play().catch(() => {}); });   // belt and braces: never sit on an ended video
   }
   return shared[kind];
 }
@@ -579,7 +606,8 @@ function openVision() {
     })(last);
   } else vision.open();
 }
-function closeVision() { vision.close(); }
+function closeVision() { vision.close(); $('filterBtn').classList.add('on'); $('filterBtn').focus({ preventScroll: true }); }
+$('filterBtn').onclick = () => { $('filterBtn').classList.remove('on'); openVision(); };
 
 /* ── mini games inside a painting (lib/minigames) ────────
    A painting listed in GAMES gets a "Play the game" button when it's found. While a game runs, the painting's
@@ -616,7 +644,7 @@ $('start').addEventListener('click', async () => {
     silentUnlock(a);
   }
 
-  $('intro').style.display = 'none';
+  $('intro').style.display = 'none'; $('introFilm').pause();
   $('loading').style.display = 'flex';
   try {
     await startAR();
@@ -624,11 +652,11 @@ $('start').addEventListener('click', async () => {
     console.error(e);
     started = false;
     $('loading').style.display = 'none';
-    $('intro').style.display = 'flex';
+    $('intro').style.display = 'flex'; $('introFilm').play().catch(() => {});
     $('err').style.display = 'block';
     $('err').textContent = (e && (e.name === 'NotAllowedError' || /permission/i.test(e.message)))
-      ? 'Camera permission was blocked. Allow camera access for this site in your browser settings, then tap Start again.'
-      : 'The camera could not start. Make sure no other app is using it, then tap Start again. (' + (e.message || e) + ')';
+      ? 'Camera permission was blocked. Allow camera access for this site in your browser settings, then tap Enter gallery again.'
+      : 'The camera could not start. Make sure no other app is using it, then tap Enter gallery again. (' + (e.message || e) + ')';
   }
 });
 
@@ -637,7 +665,7 @@ async function startAR() {
     container: $('ar'), imageTargetSrc: show.target || 'joined-on-the-phone',
     uiLoading: 'no', uiScanning: 'no', uiError: 'no',
     filterMinCF: 0.0001, filterBeta: 0.001,      // steadier overlay
-    missTolerance: 8, warmupTolerance: 4
+    missTolerance: 3, warmupTolerance: 3          // let go of a painting quickly, so the next one can be found
   });
   const { renderer, scene, camera } = mindar;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -649,7 +677,11 @@ async function startAR() {
     const sc = buildScene(work, anchor);
     for (const v of [sc.video, sc.anim, sc.clip, sc.audio]) if (v && !unlocked.has(v)) { unlocked.add(v); silentUnlock(v); }   // unlock playback inside the Start tap
 
+    sc.anchor = anchor; sc.index = i;
     anchor.onTargetFound = () => {
+      // MindAR can lock on (or hold on) with only a sliver of the painting in view. Only count it as found when
+      // most of it is on screen; otherwise let it go at once so the painting you're actually pointing at can be found.
+      if (onScreen(sc) < SHOW_AT) { sc.rejected = true; return; }
       sc.found = true; sc.appearT = performance.now();
       bindMedia(sc);
       stats.found(sc.work.title);
@@ -677,18 +709,48 @@ async function startAR() {
       }
     };
     anchor.onTargetLost = () => {
+      if (sc.rejected) { sc.rejected = false; if (!sc.found) return; }
       sc.found = false; stats.lost();
       if (sc.gameOn) game.pause(); else if (!scenes.some(s => s.found)) setNowShowing(null);
-      if (sc.video) sc.video.pause(); if (sc.anim) sc.anim.pause(); if (sc.clip) sc.clip.pause();   // (a sound-only story keeps going)
+      // the painting left the camera: everything it was playing stops (only its own players: another painting may own them now)
+      if (sc.video) sc.video.pause();
+      if (sc.anim && shared.anim.owner === sc) sc.anim.pause();
+      if (sc.clip && shared.clip.owner === sc) sc.clip.pause();
+      if (sc.audio) sc.audio.pause();
+      if (current === sc) stopTalking();
       if (!scenes.some(s => s.found)) {
         setStatus('Center the art in your camera');
         $('scan').style.display = 'flex';
       }
-      // narration keeps going on purpose: a listener shouldn't lose the description if the phone drifts
     };
     return sc;
   });
   allScenes = scenes;
+
+  /* How much of a painting is on the screen (0..1): a 5×5 grid of points on the painting, projected to the screen.
+     MindAR keeps tracking a painting from a handful of points, so without this a painting that has mostly left the
+     camera stays "found" and blocks the one next to it. */
+  const SHOW_AT = 0.55, LET_GO_AT = 0.4, GAME_LET_GO_AT = 0.2;
+  const pv = new THREE.Vector3();
+  function onScreen(sc) {
+    const g = sc.anchor.group; g.updateMatrixWorld(true);
+    const r = renderer.domElement.getBoundingClientRect(), h = sc.work.height / sc.work.width;
+    let n = 0;
+    for (let a = 0; a < 5; a++) for (let b = 0; b < 5; b++) {
+      pv.set((a + 0.5) / 5 - 0.5, ((b + 0.5) / 5 - 0.5) * h, 0).applyMatrix4(g.matrixWorld).project(camera);
+      const x = r.left + (pv.x + 1) / 2 * r.width, y = r.top + (1 - pv.y) / 2 * r.height;
+      if (pv.z < 1 && x >= 0 && x <= innerWidth && y >= 0 && y <= innerHeight) n++;
+    }
+    return n / 25;
+  }
+  const resting = new Map();   // painting index → time until which the search skips it (so it can't block its neighbour)
+  function letGo(sc) {   // tell MindAR to drop this painting and start searching again
+    const ctrl = mindar.controller, st = ctrl && ctrl.trackingStates && ctrl.trackingStates[sc.index];
+    if (!st) return;
+    resting.set(sc.index, performance.now() + 1200);
+    st.isTracking = false; st.showing = false; st.trackMiss = 0; st.trackCount = 0; st.trackingMatrix = null;
+    if (ctrl.onUpdate) ctrl.onUpdate({ type: 'updateMatrix', targetIndex: sc.index, worldMatrix: null });
+  }
 
   // tap the art to hear a part of it
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
@@ -719,10 +781,15 @@ async function startAR() {
     msg.textContent = 'Starting camera\u2026';
   }
   await mindar.start();
+  { // the search skips a painting we just let go of, for a moment, so the one next to it is found first
+    const ctrl = mindar.controller, match = ctrl && ctrl._detectAndMatch;
+    if (match) ctrl._detectAndMatch = (input, idx) => { const now = performance.now(); const keep = idx.filter(i => !(resting.get(i) > now));
+      return keep.length ? match.call(ctrl, input, keep) : Promise.resolve({ targetIndex: -1, modelViewTransform: null }); };
+  }
   stats.scanning();
 
   $('loading').style.display = 'none';
-  $('topBar').classList.add('on'); setGameBtn('play'); setNowShowing(null);
+  setGameBtn('play'); setNowShowing(null); $('filterBtn').classList.add('on');
   $('scan').style.display = 'flex';
   $('ar').removeAttribute('aria-hidden');
 
@@ -732,7 +799,9 @@ async function startAR() {
     if (game) { game.update(dtG); if (params.get('debug')) window.__mg = game.debug; if (game.over && !$('gameBtn').dataset.over) { $('gameBtn').dataset.over = '1'; setGameBtn('again'); } }
     else delete $('gameBtn').dataset.over;
     for (const sc of scenes) {
+      if (sc.rejected && sc.anchor.visible) { letGo(sc); continue; }
       if (!sc.found) continue;
+      if (onScreen(sc) < (sc.gameOn ? GAME_LET_GO_AT : LET_GO_AT)) { letGo(sc); continue; }
       // video layers stay hidden until their video is really playing (no black flash, and a video that
       // fails to load just shows the painting)
       if (sc.animPlane) sc.animPlane.visible = !sc.gameOn && shared.anim.owner === sc && shared.anim.ready;
@@ -742,6 +811,9 @@ async function startAR() {
       if (!reduceMotion) for (const f of sc.animators) f(t);
       else if (!sc.still) { for (const f of sc.animators) f(2); sc.still = true; }  // one calm still frame
     }
+    // seamless loops: jump back to the start just before the end, so a video never sits on its last frame or goes black
+    for (const k of ['anim', 'clip']) { const p = shared[k]; if (!p) continue; const v = p.v;
+      if (!v.paused && v.duration > 1 && v.currentTime > v.duration - 0.12) v.currentTime = 0; }
     renderer.render(scene, camera);
   });
 

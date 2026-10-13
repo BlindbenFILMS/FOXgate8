@@ -102,7 +102,7 @@ OFF</button></div>
   <div class="lab">Atmosphere</div>
   <div class="opts"><button id="ambBtn">Ambient sounds</button><button id="nightBtn">🌙 Night</button></div>
   <div class="lab">Visiting together</div>
-  <div class="opts"><button id="rename">Change my name</button><button id="invite">Copy private room link</button><button id="tourBtn">Lead a tour</button><button id="hostBtn">Host this visit</button><button id="noteBtn">🙂 Comment spots · leave a comment</button></div>
+  <div class="opts"><button id="rename">Change my name</button><button id="invite">Copy private room link</button><button id="tourBtn">Lead a tour</button><button id="hostBtn">Host this visit</button><button id="noteBtn">🙂 Comment spots · leave a comment</button><button id="guideBtn" aria-pressed="true">🎥 Guided camera (ramps, big screen): ON</button><button id="liteBtn" aria-pressed="false">🪶 Lite mode (older phones): OFF</button></div>
   <div id="whoList" style="font-size:13px;line-height:1.5;margin-top:8px"></div>
   <div class="lab">Lost?</div>
   <div class="opts"><button id="home">Back to the entrance</button></div>
@@ -116,8 +116,15 @@ const pref = (() => { try { return JSON.parse(localStorage.getItem('8gates.galle
 const savePref = () => { try { localStorage.setItem('8gates.gallery.v1', JSON.stringify(pref)); } catch (e) {} };
 let G; let near = null;
 try {
-  G = await createGallery({ container: $('stage'), onProgress: f => { $('lb').style.width = Math.round(f * 100) + '%'; }, onNear, onZone: z => { document.querySelector('#place .c').textContent = z; }, onPad: p => { if (!p) { if ($('hint').dataset.pad) { $('hint').style.display = 'none'; delete $('hint').dataset.pad; } return; } $('live').textContent = 'Comment spot: ' + p.name + '. The LEAVE NOTE button is on the right; tap it to leave a comment.'; $('hint').textContent = '🙂 YOUR COMMENTS HERE · tap LEAVE NOTE'; $('hint').dataset.pad = '1'; $('hint').style.display = 'block'; clearTimeout(window.PADHINT); window.PADHINT = setTimeout(() => { if ($('hint').dataset.pad) { $('hint').style.display = 'none'; delete $('hint').dataset.pad; } }, 4000); }, onSplash: () => { $('live').textContent = 'Splash! No swimming in the lake. Back to the entrance.'; $('hint').textContent = '💦 Splash! No swimming in the lake. Back to the entrance.'; $('hint').style.display = 'block'; setTimeout(() => $('hint').style.display = 'none', 3500); } });
-  G.openCommentSpots = openCommentSpots;   // (the notes module opens it when someone tries to comment off a comment spot)
+  G = await createGallery({ container: $('stage'), onProgress: f => { $('lb').style.width = Math.round(f * 100) + '%'; }, onNear, onZone: z => { document.querySelector('#place .c').textContent = z; }, onPad: p => { if (!p) { if ($('hint').dataset.pad) { $('hint').style.display = 'none'; delete $('hint').dataset.pad; } return; } $('live').textContent = 'Comment spot: ' + p.name + '. The LEAVE NOTE button is on the right; tap it to leave a comment.'; $('hint').textContent = '🙂 YOUR COMMENTS HERE · tap LEAVE NOTE'; $('hint').dataset.pad = '1'; $('hint').style.display = 'block'; clearTimeout(window.PADHINT); window.PADHINT = setTimeout(() => { if ($('hint').dataset.pad) { $('hint').style.display = 'none'; delete $('hint').dataset.pad; } }, 4000); }, onLite: (on, auto) => { window.LITE_SHOW && window.LITE_SHOW(); if (auto) { $('live').textContent = 'Lite mode is on, so the gallery runs smoother on this phone. You can turn it off in the menu.'; $('hint').textContent = '🪶 Lite mode on for a smoother walk · ☰ to change'; $('hint').style.display = 'block'; setTimeout(() => $('hint').style.display = 'none', 4000); } }, onRail: name => { $('live').textContent = 'Guided along ' + name + '. Keep pushing forward.'; }, onSplash: () => { $('live').textContent = 'Splash! No swimming in the lake. Back to the entrance.'; $('hint').textContent = '💦 Splash! No swimming in the lake. Back to the entrance.'; $('hint').style.display = 'block'; setTimeout(() => $('hint').style.display = 'none', 3500); } });
+  G.openCommentSpots = openCommentSpots;
+{ const b = $('guideBtn'); let on = true; try { on = localStorage.getItem('bcp.guided') !== 'off'; } catch (e) {}
+  const show = () => { b.textContent = '🎥 Guided camera (ramps, big screen): ' + (on ? 'ON' : 'OFF'); b.setAttribute('aria-pressed', on ? 'true' : 'false'); G.setGuided(on); };
+  b.onclick = () => { on = !on; try { localStorage.setItem('bcp.guided', on ? 'on' : 'off'); } catch (e) {} show(); $('live').textContent = 'Guided camera ' + (on ? 'on' : 'off') + '.'; }; show(); }
+{ const b = $('liteBtn'); let saved = null; try { saved = localStorage.getItem('bcp.lite'); } catch (e) {}
+  const show = () => { const on = G.lite(); b.textContent = '🪶 Lite mode (older phones): ' + (on ? 'ON' : 'OFF'); b.setAttribute('aria-pressed', on ? 'true' : 'false'); }; window.LITE_SHOW = show;
+  b.onclick = () => { const on = !G.lite(); G.setLite(on); try { localStorage.setItem('bcp.lite', on ? 'on' : 'off'); } catch (e) {} show(); $('live').textContent = 'Lite mode ' + (on ? 'on' : 'off') + '.'; };
+  if (saved === 'on') G.setLite(true); else if (saved === 'off') G.setLite(false); show(); }   // (the notes module opens it when someone tries to comment off a comment spot)
 } catch (e) { $('lt').textContent = 'The gallery could not open: ' + e.message; throw e; }
 window.G = G;
 // stained glass in the main hall's roof, with HOLT for HOPE in braille and its shadow on the floor
@@ -226,7 +233,7 @@ function open(n) {
   const pb = $('pb'); pb.innerHTML = ''; pb.scrollTop = 0;
   if (n.kind === 'art') {
     const a = n.item; $('pk').textContent = a.bio ? 'Meet the artist' : 'Artwork'; $('pt').textContent = a.title || 'Untitled';
-    pb.innerHTML = '<div class="art"><div>' + (a.img ? '<img src="' + a.img + '" alt="' + esc(a.imgDesc || a.title) + '">' : '') + '</div><div>' + para(a.desc) +
+    pb.innerHTML = '<div class="art"><div>' + (a.img ? '<img src="' + a.img.replace('/img-m/', '/img/') + '" alt="' + esc(a.imgDesc || a.title) + '">' : '') + '</div><div>' + para(a.desc) +
       (a.imgDesc ? '<div class="lab">Image description</div>' + para(a.imgDesc) : '') +
       '<div class="row">' + (a.au ? '<button id="hq" data-l="' + esc(voiceLabel(a)) + '">▶ ' + esc(voiceLabel(a)) + '</button>' : '') + '<button id="rd">🔊 Read aloud</button>' + (a.imgDesc ? '<button id="rdd">🔊 Describe the image</button>' : '') + '</div></div></div>';
     const rd = $('rd'); rd.onclick = () => { quoteStop(); say((a.title ? a.title + '. ' : '') + a.desc.replace(/\//g, '. '), rd); };

@@ -46,10 +46,11 @@ export function buildRoof({ G }) {
   const dotM = new THREE.MeshBasicMaterial({ color: 0xfff1c4, side: THREE.DoubleSide });
   const haloT = (() => { const cv = document.createElement('canvas'); cv.width = cv.height = 64; const c = cv.getContext('2d'); const gr = c.createRadialGradient(32, 32, 6, 32, 32, 31); gr.addColorStop(0, 'rgba(255,225,150,.9)'); gr.addColorStop(1, 'rgba(255,225,150,0)'); c.fillStyle = gr; c.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(cv); })();
   const haloM = new THREE.MeshBasicMaterial({ map: haloT, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide });
-  for (const [x, z] of dots) {
-    const d = new THREE.Mesh(dotGeo, dotM); d.rotation.x = Math.PI / 2; d.position.set(x, Y - 0.02, z); d.renderOrder = 6; g.add(d);
-    const h = new THREE.Mesh(haloGeo, haloM); h.rotation.x = Math.PI / 2; h.position.set(x, Y - 0.03, z); h.renderOrder = 7; g.add(h);
-  }
+  // (12 Oct) all the dots are one mesh and all the halos another: 2 draws instead of ~70
+  const many = (geo, y) => { const src = geo.index ? geo.toNonIndexed() : geo, P = src.attributes.position, U = src.attributes.uv, pos = [], uv = [], m = new THREE.Matrix4(), v = new THREE.Vector3();
+    for (const [x, z] of dots) { m.makeRotationX(Math.PI / 2).setPosition(x, y, z); for (let i = 0; i < P.count; i++) { v.fromBufferAttribute(P, i).applyMatrix4(m); pos.push(v.x, v.y, v.z); if (U) uv.push(U.getX(i), U.getY(i)); } }
+    const out = new THREE.BufferGeometry(); out.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); if (uv.length) out.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); out.computeVertexNormals(); return out; };
+  { const d = new THREE.Mesh(many(dotGeo, Y - 0.02), dotM); d.renderOrder = 6; g.add(d); const h = new THREE.Mesh(many(haloGeo, Y - 0.03), haloM); h.renderOrder = 7; g.add(h); }
 
   // ---- the braille shadow on the floor, inside a pool of coloured light from the glass
   const fy = (() => { const y = G.world.groundAt(pcx, 0, pcz); return y > -50 ? y : -3.38; })();
