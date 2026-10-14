@@ -328,13 +328,13 @@ export function robotDanceGame() {
     if (!ok) return;
     A.hit = true; G.hits++; G.combo++; G.bestCombo = Math.max(G.bestCombo, G.combo); G.score += 100 + 25 * (G.combo - 1);
     G.music.st.combo = G.combo; G.flash = 1; G.eyeFlash = 1; G.buzz([30, 30, 30]);
-    K.sfx.good(0, G.hits); G.ui.pop(PRAISE[(G.hits - 1) % PRAISE.length]);
+    K.sfx.good(0, G.hits); G.ui.pop(PRAISE[(G.hits - 1) % PRAISE.length]); G.say(PRAISE[(G.hits - 1) % PRAISE.length]);
     const [x, y] = G.S.P(NECK.u, NECK.v - 0.1); G.fx.add(x, y, '#' + G.tint.getHexString(), 16, 0.35);
     hud(true);
   }
   function endSlot() {
     const A = G.acc; if (!A || G.move === 'A') return;
-    if (!A.hit) { G.combo = 0; G.music.st.combo = 0; G.missed++; G.ui.pop(G.move === 'F' ? 'Too wiggly!' : 'Missed it'); }
+    if (!A.hit) { G.combo = 0; G.music.st.combo = 0; G.missed++; G.ui.pop(G.move === 'F' ? 'Too wiggly!' : 'Missed it'); G.say(G.move === 'F' ? 'Too wiggly!' : 'Missed it!'); }
   }
   function finish() {
     G.finished = true; G.move = 'A';

@@ -13,6 +13,7 @@
 // ctx = { group, h, camera, renderer, say, buzz, work, story, bot }. When ctx.bot is true (…&bot=1 in the link),
 // the game plays itself so it can be tested from start to finale.
 import * as THREE from 'three';
+import { voiceFor } from './voice.js';   // Ben's recorded voice lines, used whenever a game says words he recorded
 
 export const RED = '#ec3013', BLUE = '#1f4fd8';
 export const isBot = () => /[?&]bot=1\b/.test(location.search);
@@ -329,6 +330,7 @@ export function finaleUpdate(G, dt) {
 }
 export function cleanup(G) {
   if (!G) return;
+  if (G.say && G.say.stop) G.say.stop();
   if (G._anim) { G._anim.v.pause(); G._anim.v.removeAttribute('src'); G._anim.v.load(); }
   if (G.root && G.group) G.group.remove(G.root);
   if (G.root) G.root.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material && o.material.map && !o.material.map._shared) { /* textures are shared caches; leave them */ } });
@@ -348,6 +350,7 @@ export function best(key, value, better = 'higher') {
 export function makeBase(ctx) {
   audio();
   const G = { ...ctx, bot: ctx.bot ?? isBot(), root: new THREE.Group(), ui: ui(), t: 0, playing: false, over: false, paused: false };
+  G.say = voiceFor(ctx, audio);
   ctx.group.add(G.root);
   G.S = space(ctx); G.fx = bursts(G.root);
   return G;

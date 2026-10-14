@@ -162,7 +162,7 @@ export function puppetKaraokeGame() {
   }
   function finish() {
     G.state = 'done'; caption(''); if (G.box) G.box.style.display = 'none';
-    K.finale(G, { won: true, kicker: 'Thanks for speaking up', title: 'Bill heard you', line: G.work && G.work.quote, cells: [{ k: 'Takes', v: G.takes }] });
+    K.finale(G, { won: true, kicker: 'Thanks for speaking up', title: 'Bill heard you', line: G.work && G.work.quote, cells: [{ k: 'Takes', v: G.takes }], say: 'Thanks for speaking up. Bill heard you. ' + ((G.work && G.work.quote) || '') });
   }
 
   return {

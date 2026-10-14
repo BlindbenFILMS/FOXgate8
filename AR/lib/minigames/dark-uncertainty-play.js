@@ -136,7 +136,7 @@ export function nightBusGame() {
   }
   function finish() {
     if (G.over) return; G.solo = false; G.target = 0; G.ui.buttons([]);
-    K.finale(G, { won: true, kicker: 'The bus rolls on', title: 'Bill played for you', line: G.work && G.work.quote, cells: [{ k: 'Tunes', v: G.played }, { k: 'Your notes', v: G.soloNotes }] });
+    K.finale(G, { won: true, kicker: 'The bus rolls on', title: 'Bill played for you', line: G.work && G.work.quote, cells: [{ k: 'Tunes', v: G.played }, { k: 'Your notes', v: G.soloNotes }], say: 'The bus rolls on. Bill played for you. ' + ((G.work && G.work.quote) || '') });
   }
 
   return {
