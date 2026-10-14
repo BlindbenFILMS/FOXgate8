@@ -7,7 +7,7 @@
 // for every other Blind Canvas painting (engines/<type>.js holds a game type, cfg/<type>.js each painting's settings).
 // To play an original game, add &classic=1 to the link (for example ?art=hope-is-not-lost&classic=1).
 // To give a painting its original game back for good, add its id to KEEP.
-// SPECIAL lists paintings with a brand-new game of their own (Midnight Melodies: Night light; Rhythm of Life: Glow it bright).
+// SPECIAL lists paintings with a brand-new game of their own (Midnight Melodies: Night light; Rhythm of Life: Glow it bright; Walk Through Fear: See it my way; Almost Blindness: Sound safari; Curating Hope: Light memory; The Bridge of Perception: Say it from the creek; Pedals of Freedom: Ride the block; The Dark Uncertainty: Night bus; Fearless Request: Robot dance party).
 import { napkinsGame } from './napkins.js';
 import { almostBlindnessGame } from './almost-blindness.js';
 import { walkThroughFearGame } from './walk-through-fear.js';
@@ -37,6 +37,13 @@ import SORT from './cfg/sort.js';
 import { slideGame } from './engines/slide.js';
 import { midnightMelodiesGame } from './midnight-melodies.js';
 import { rhythmOfLifeGame } from './rhythm-of-life.js';
+import { seeItMyWayGame } from './walk-through-fear-see.js';
+import { soundSafariGame } from './almost-blindness-safari.js';
+import { lightMemoryGame } from './curating-hope-memory.js';
+import { puppetKaraokeGame } from './bridge-karaoke.js';
+import { rideTheBlockGame } from './pedals-ride.js';
+import { nightBusGame } from './dark-uncertainty-play.js';
+import { robotDanceGame } from './fearless-dance.js';
 
 export const CLASSIC = {
   'napkin-please': napkinsGame,
@@ -51,12 +58,19 @@ for (const set of [CATCH, RHYTHM, RUNNER, REVEAL, BEAM, BALANCE, ECHO, CONNECT, 
 }
 
 // paintings that keep their own game (not the mosaic)
-export const KEEP = new Set(['napkin-please', 'walk-through-fear']);
+export const KEEP = new Set(['napkin-please']);
 
 // paintings with a special new game of their own (instead of the mosaic)
 export const SPECIAL = {
+  'fearless-request': robotDanceGame,           // Robot dance party: move your phone and the robot dances (its first game: &classic=1)
   'midnight-melodies': midnightMelodiesGame,   // Night light: a flashlight game with a lofi beat
   'rhythm-of-life': rhythmOfLifeGame,           // Glow it bright: sing to light the painting
+  'almost-blindness': soundSafariGame,          // Sound safari: find your way through the fog by ear (Ben's voiced game: &classic=1)
+  'the-dark-uncertainty': nightBusGame,           // Night bus: Bill lifts his trumpet and plays (its first game: &classic=1)
+  'pedals-of-freedom': rideTheBlockGame,         // Ride the block: call LEFT / RIGHT for Bill (its first game: &classic=1)
+  'the-bridge-of-perception': puppetKaraokeGame, // Say it from the creek: puppet karaoke (its first game: &classic=1)
+  'curating-hope': lightMemoryGame,             // Light memory: sing the community's song back (its first game: &classic=1)
+  'walk-through-fear': seeItMyWayGame,          // See it my way: find words through Ben's vision filters (its first game: &classic=1)
 };
 
 // the artist's words for the end of the mosaic, borrowed from each painting's original game

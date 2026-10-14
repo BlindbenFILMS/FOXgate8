@@ -27,7 +27,7 @@ The Blind Canvas artworks use the `story` layout: the animated art (from `../3D/
 
 ## Sliding mosaic (the Play game button)
 
-**Play game** now opens the **sliding mosaic** for every painting except **Napkin Please** and **Walk Through Fear**, which keep their own games. The painting is cut into a 3 × 3 mosaic with one piece missing and shuffled; slide the pieces back (tap a piece next to the gap, or the arrow buttons) and the painting closes up and comes alive. Each piece sings its note when it lands in place, the voice keeps count, and **Peek** (hold) shows the finished painting. It uses each painting's own photo in `targets/`, so new paintings get it automatically.
+**Play game** now opens the **sliding mosaic** for most paintings. **Napkin Please** keeps its own game, and Midnight Melodies, Rhythm of Life, Walk Through Fear, Almost Blindness, Curating Hope, The Bridge of Perception, Pedals of Freedom and The Dark Uncertainty have new games of their own (below). The painting is cut into a 3 × 3 mosaic with one piece missing and shuffled; slide the pieces back (tap a piece next to the gap, or the arrow buttons) and the painting closes up and comes alive. Each piece sings its note when it lands in place, the voice keeps count, and **Peek** (hold) shows the finished painting. It uses each painting's own photo in `targets/`, so new paintings get it automatically.
 
 - **lib/minigames/engines/slide.js**: the sliding mosaic
 - **lib/minigames/index.js**: `KEEP` lists the paintings that keep their own game; add an id there to give a painting its original game back
@@ -47,6 +47,51 @@ The Blind Canvas artworks use the `story` layout: the animated art (from `../3D/
 Music: Will's drum groove builds as you light things, with soft chords (Cm9 · Ebmaj9) that step aside whenever someone sings, so the game never mistakes its own music for a voice. When everything is lit the microphone turns off and a synth melody joins the groove.
 
 - **lib/minigames/rhythm-of-life.js**: the game, the drum groove and the pitch listener; the things to light are `TARGETS` at the top
+
+## See it my way (Walk Through Fear)
+
+**Walk Through Fear** has **See it my way**. Words are hidden in Ben's painting, and the painting is seen through Ben's vision-condition filters (the same maths as the Blindness Spectrum Simulator): 1 cataracts, 2 macular degeneration, 3 glaucoma, 4 retinitis pigmentosa, Ben's own diagnosis. Find and tap each word (BREATHE, STEP · TRUST, LISTEN · COURAGE, FORWARD · WALK, THROUGH, FEAR). Where a filter has a centre (the macular smudge, the glaucoma and RP tunnels) it follows where the phone points, so players look around, or just beside a word, the way people with these conditions do. A hum grows near a hidden word and **Hint** says where to look. Between rounds the filter lifts to show the painting clearly.
+
+- **lib/minigames/walk-through-fear-see.js**: the game; `ROUNDS` at the top sets each condition, its strength (`sev`) and its words. The original Walk Through Fear game is still there: add `&classic=1`.
+
+## Sound safari (Almost Blindness)
+
+**Almost Blindness** has **Sound safari**. Swirling fog fills the tunnel, and you find your way by ear. Six everyday sounds that help a blind person get around are hidden in it: birdsong, a bicycle bell, dripping water, wind chimes, a crosswalk signal and a guide dog's tags. Move a finger (or point the phone) through the fog: each sound gets louder, brighter and comes from its side as you get close; hold still on one to find it and the fog clears there. Then follow the door chime home to the light, and the fog lifts. **Hint** says which way to go; the panel says Listen / Getting warmer / Very close. Headphones make left and right clearer. All sounds are made live (no files).
+
+- **lib/minigames/almost-blindness-safari.js**: the game, the fog and the sounds; the hidden sounds are `SOUNDS` at the top. Ben's voiced Almost Blindness game is still there: add `&classic=1`.
+
+## Light memory (Curating Hope)
+
+**Curating Hope** has **Light memory**, a song the community remembers together. The six people under the tree are the voices (low on the left, high on the right); each lights up and sings a note. Listen to a few notes of their song, then sing it back by tapping the people in order (anywhere across the screen works: left to right picks the singer). Each round adds a note (3 up to 8) and fills more of the tree with light. A wrong note isn't a loss: everyone sings it again, together. At the end the whole song is sung in harmony and the tree glows. **Again** replays the song. Voices are made live (no files).
+
+- **lib/minigames/curating-hope-memory.js**: the game; `SONG` is the melody, `PEOPLE` the singers. The first Curating Hope game is still there: add `&classic=1`.
+
+## Say it from the creek (The Bridge of Perception)
+
+**The Bridge of Perception** has **Say it from the creek**, a puppet karaoke. Bill's face becomes a puppet: a prompt card asks something (first, Ben's: "What would you say if you fell through a hole other people can easily see and avoid?"; **Shuffle / Next** deals another). Press **Talk** and answer: his mouth moves with your voice as you speak. Then he says it back: his jaw drops with each word, his eyes blink and pop wide on loud bits, the creek ripples out from his chin and bubbles rise at the waterline. Pick his voice (Normal, Echo under the bridge, Gurgly, Deep, Squeaky); live captions show your words where the phone supports speech recognition. **Type** lets people write it instead, and he says it in a computer voice. Nothing is uploaded or saved: it all stays on the phone.
+
+- **lib/minigames/bridge-karaoke.js**: the game; `PROMPTS` at the top are the prompt cards, and the face points (mouth, jaw, eyes) are at the top of the shader. Its first game is still there: add `&classic=1`.
+
+## Ride the block (Pedals of Freedom)
+
+**Pedals of Freedom** has **Ride the block**: be Bill's eyes. Bill (cut out of the painting, with the street behind him filled in) starts small far down the lane and pedals toward you, growing until he rides back into his own place in the painting. His legs pedal and the bike's headlight glows. Things appear in the road (a ball, a cat, a puddle, a trash can, a branch, a dog, a skateboard), each with its own sound from where it is; shout **LEFT** or **RIGHT** (the phone listens, where speech recognition is available), or press the buttons, or tap the left or right side of the screen, and he swerves. He rings his bell when something is close in his lane. Bumps slow him down; the finale is Bill's quote about knowing every bump in the sidewalk.
+
+- **lib/minigames/pedals-ride.js**: the game; `THINGS` are the road obstacles, `RIDE` the seconds for the whole block
+- **media/games/pedals/rider.png** (Bill cut out) and **road.jpg** (the painting with him removed and the street filled in). His first game is still there: add `&classic=1`.
+
+## Night bus (The Dark Uncertainty)
+
+**The Dark Uncertainty** has **Night bus**. The bus is moving: city shapes (buildings, trees, lamp posts and passing streetlights) slide past the windows in the painting's own reds, browns and creams, and the bus gently rumbles. Press **Play** and Bill lifts his trumpet to his lips and plays a tune (3 tunes: Night bus blues, Window lights, Long way home), with notes drifting from the bell. **Your solo** raises the trumpet and lets you play it: tap across the screen, low on the left, high on the right. **Done** ends with Bill's words. The trumpet is made live (brass synthesis with a little bus echo); recorded trumpet notes can replace it later.
+
+- **lib/minigames/dark-uncertainty-play.js**: the game; `TUNES` are the melodies, the window shapes and city are in the shader
+- **media/games/dark-uncertainty/trumpet.png** (the trumpet and his hands, cut out) and **body.jpg** (the painting with them lifted out). His first game is still there: add `&classic=1`.
+
+## Robot dance party (Fearless Request)
+
+**Fearless Request** has **Robot dance party**. The big robot is a puppet: his head bobs, both arms move, the lantern swings from his hand, his knees bend and his feet step, all to a funk band made live in the browser. Move your phone and he dances: the more you move, the more he grooves, and the more the band plays (bass, stabs and a synth line join in as you get going). Every two bars he calls and shows a move, a beat and a half early so you can get ready: **Lean left**, **Lean right** (tilt the phone), **Bounce** (pump it up and down), **Wiggle** (shake it) and **Freeze** (hold still: the music cuts out with a record scratch and comes crashing back). 16 moves, then "Arms up!" and Wayne's words. The sky turns into a club: coloured beams sweep and pulse on the beat, follow the way you tilt the phone, change colour every bar, and a mirror ball throws sparkles across the stars. Every move is spoken and has its own sound, so it plays by ear, and if the painting leaves the camera the party keeps going. No motion sensor? The **Lean / Bounce / Lean** buttons and tapping the screen work too. (On iPhone the motion permission is asked when you press Play game.)
+
+- **lib/minigames/fearless-dance.js**: the game; `ROUTINE` is the order of the moves, `pose()` is the choreography, `funk()` is the band
+- **media/games/fearless/**: **stage.jpg** (the painting with the robot taken out) and his parts, cut out: **body.png, head.png, armL.png, lant.png, armR.png**. His first game is still there: add `&classic=1`.
 
 ## Mini games (all 49 paintings)
 
