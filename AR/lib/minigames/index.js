@@ -7,7 +7,7 @@
 // for every other Blind Canvas painting (engines/<type>.js holds a game type, cfg/<type>.js each painting's settings).
 // To play an original game, add &classic=1 to the link (for example ?art=hope-is-not-lost&classic=1).
 // To give a painting its original game back for good, add its id to KEEP.
-// SPECIAL lists paintings with a brand-new game of their own (Midnight Melodies: Night light).
+// SPECIAL lists paintings with a brand-new game of their own (Midnight Melodies: Night light; Rhythm of Life: Glow it bright).
 import { napkinsGame } from './napkins.js';
 import { almostBlindnessGame } from './almost-blindness.js';
 import { walkThroughFearGame } from './walk-through-fear.js';
@@ -36,6 +36,7 @@ import { sortGame } from './engines/sort.js';
 import SORT from './cfg/sort.js';
 import { slideGame } from './engines/slide.js';
 import { midnightMelodiesGame } from './midnight-melodies.js';
+import { rhythmOfLifeGame } from './rhythm-of-life.js';
 
 export const CLASSIC = {
   'napkin-please': napkinsGame,
@@ -55,6 +56,7 @@ export const KEEP = new Set(['napkin-please', 'walk-through-fear']);
 // paintings with a special new game of their own (instead of the mosaic)
 export const SPECIAL = {
   'midnight-melodies': midnightMelodiesGame,   // Night light: a flashlight game with a lofi beat
+  'rhythm-of-life': rhythmOfLifeGame,           // Glow it bright: sing to light the painting
 };
 
 // the artist's words for the end of the mosaic, borrowed from each painting's original game

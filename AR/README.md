@@ -40,6 +40,14 @@ The Blind Canvas artworks use the `story` layout: the animated art (from `../3D/
 - **lib/minigames/midnight-melodies.js**: the game and its music; the hidden spots are `SPOTS` at the top (u, v from the top-left)
 - **lib/minigames/index.js**: `SPECIAL` lists paintings with a new game of their own. `&mosaic=1` opens the sliding mosaic instead, and `&classic=1` the original game.
 
+## Glow it bright (Rhythm of Life)
+
+**Rhythm of Life** has **Glow it bright**, a singing game. The painting dims; sing or hum and a glowing orb rises and falls with your pitch (low notes by the drums, high notes up by the light bulb and planets), brighter the louder you sing. Hold it on each glowing ring to light 6 things (Will, the bass drum, the light bulb, the little drummer, the old radio, the planets); each one brings back part of Will's drum groove. Clap (or press Clap) for a flash of light. While you hum for Will, the game learns your comfortable note, so any voice works. It asks for the microphone when the game starts; with no microphone, touch the screen and slide up and down instead.
+
+Music: Will's drum groove builds as you light things, with soft chords (Cm9 · Ebmaj9) that step aside whenever someone sings, so the game never mistakes its own music for a voice. When everything is lit the microphone turns off and a synth melody joins the groove.
+
+- **lib/minigames/rhythm-of-life.js**: the game, the drum groove and the pitch listener; the things to light are `TARGETS` at the top
+
 ## Mini games (all 49 paintings)
 
 Every Blind Canvas painting has a "Play the game" button. Each game is about a minute long, plays over the painting, and can be played by ear: instructions are spoken, sounds come from where things are, the phone buzzes, and big buttons or screen-thirds do everything. At the end the painting's own animation plays and the "story" button opens the artist's interview.
