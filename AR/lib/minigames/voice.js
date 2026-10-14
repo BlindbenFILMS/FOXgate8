@@ -12,6 +12,7 @@ const PREFIX = {
   'curating-hope': 'memory-', 'the-bridge-of-perception': 'creek-', 'pedals-of-freedom': 'ride-', 'the-dark-uncertainty': 'bus-',
   'fearless-request': 'dance-', 'pathways-unveiled': 'road-', 'roots-of-kinship': 'apples-', 'reflections-of-sisterhood': 'fish-',
   'decision-divide': 'tides-', 'harmonious-gathering': 'storm-', 'inner-peace-in-outer-chaos': 'calm-',
+  'the-mirror': 'mirror-', 'the-gray-zone': 'meta-', 'rhapsody-in-blue': 'jazz-', 'moment-of-communion': 'cross-', 'the-scope-of-communication': 'talk-',
 };
 const norm = s => s.toLowerCase().replace(/[’‘`]/g, "'").replace(/[^a-z0-9' ]+/g, ' ').replace(/\s+/g, ' ').trim();
 const BY_TEXT = new Map();

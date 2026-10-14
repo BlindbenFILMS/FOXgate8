@@ -7,7 +7,7 @@
 // for every other Blind Canvas painting (engines/<type>.js holds a game type, cfg/<type>.js each painting's settings).
 // To play an original game, add &classic=1 to the link (for example ?art=hope-is-not-lost&classic=1).
 // To give a painting its original game back for good, add its id to KEEP.
-// SPECIAL lists paintings with a brand-new game of their own (Midnight Melodies: Night light; Rhythm of Life: Glow it bright; Walk Through Fear: See it my way; Almost Blindness: Sound safari; Curating Hope: Light memory; The Bridge of Perception: Say it from the creek; Pedals of Freedom: Ride the block; The Dark Uncertainty: Night bus; Fearless Request: Robot dance party; Pathways Unveiled: Open road safari; Roots of Kinship: Family apples; Reflections of Sisterhood: Fish for the sisters; Decision Divide: Tides of decision; Harmonious Gathering: Blow the storm away; Inner Peace in Outer Chaos: Calm walk; The Mirror: Pieces of me; The Gray Zone: Metamorphosis; Rhapsody in Blue: Jazz says; Moment of Communion: Calm the crossing; The Scope of Communication: Self-talk; Haute Couture Dreams: Style the dream; Embracing Unity: Hold on together; Joyride: Sunset joyride; The Only Light We’ll See: Light the night).
+// SPECIAL lists paintings with a brand-new game of their own (Midnight Melodies: Night light; Rhythm of Life: Glow it bright; Walk Through Fear: See it my way; Almost Blindness: Sound safari; Curating Hope: Light memory; The Bridge of Perception: Say it from the creek; Pedals of Freedom: Ride the block; The Dark Uncertainty: Night bus; Fearless Request: Robot dance party; Pathways Unveiled: Open road safari; Roots of Kinship: Family apples; Reflections of Sisterhood: Fish for the sisters; Decision Divide: Tides of decision; Harmonious Gathering: Blow the storm away; Inner Peace in Outer Chaos: Calm walk; The Mirror: Pieces of me; The Gray Zone: Metamorphosis; Rhapsody in Blue: Jazz says; Moment of Communion: Calm the crossing; The Scope of Communication: Self-talk; Haute Couture Dreams: Style the dream; Embracing Unity: Hold on together; Joyride: Sunset joyride; The Only Light We’ll See: Light the night; The Visions That We Share: Catch the words; All Life’s Beauty: Dance in the flowers; Back of a Harley: Ride by feel; Lighthouse of Hope: Riddles of the lighthouse; Telephone Poles: Straight as an arrow).
 import { napkinsGame } from './napkins.js';
 import { almostBlindnessGame } from './almost-blindness.js';
 import { walkThroughFearGame } from './walk-through-fear.js';
@@ -59,6 +59,11 @@ import { styleTheDreamGame } from './haute-style.js';
 import { holdOnTogetherGame } from './unity-together.js';
 import { sunsetJoyrideGame } from './joyride-sunset.js';
 import { lightTheNightGame } from './onlylight-find.js';
+import { catchTheWordsGame } from './visions-eye.js';
+import { danceInTheFlowersGame } from './beauty-dance.js';
+import { rideByFeelGame } from './harley-ride.js';
+import { riddlesOfTheLighthouseGame } from './lighthouse-riddles.js';
+import { straightAsAnArrowGame } from './poles-drive.js';
 
 export const CLASSIC = {
   'napkin-please': napkinsGame,
@@ -77,6 +82,11 @@ export const KEEP = new Set(['napkin-please']);
 
 // paintings with a special new game of their own (instead of the mosaic)
 export const SPECIAL = {
+  'telephone-poles': straightAsAnArrowGame, // Straight as an arrow: tilt to speed up or slow down; slow down when the bent poles drop their wires into the road
+  'lighthouse-of-hope': riddlesOfTheLighthouseGame, // Riddles of the lighthouse: the talking face asks riddles about blindness and hope; right answers shine the light
+  'back-of-a-harley': rideByFeelGame, // Ride by feel: lean into the curves your buddy calls, across the country; tap when the Harley goes by
+  'all-lifes-beauty': danceInTheFlowersGame, // Dance in the flowers: a puppet girl you sway and twirl to a waltz; flowers swirl, worry clouds get waved away
+  'the-visions-that-we-share': catchTheWordsGame, // Catch the words: the eye looks left and right and blinks to catch the words of a shared poem
   'the-only-light-well-see': lightTheNightGame, // Light the night: search the dark with your light; each find becomes a star until the whole night is lit
   'joyride': sunsetJoyrideGame, // Sunset joyride: steer down the moving boulevard, switch radio stations, and describe the world her way
   'embracing-unity': holdOnTogetherGame, // Hold on together: link the family hand to hand, then walk them home and bring back anyone who drifts off
