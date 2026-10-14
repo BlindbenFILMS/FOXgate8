@@ -7,7 +7,7 @@
 // for every other Blind Canvas painting (engines/<type>.js holds a game type, cfg/<type>.js each painting's settings).
 // To play an original game, add &classic=1 to the link (for example ?art=hope-is-not-lost&classic=1).
 // To give a painting its original game back for good, add its id to KEEP.
-// SPECIAL lists paintings with a brand-new game of their own (Midnight Melodies: Night light; Rhythm of Life: Glow it bright; Walk Through Fear: See it my way; Almost Blindness: Sound safari; Curating Hope: Light memory; The Bridge of Perception: Say it from the creek; Pedals of Freedom: Ride the block; The Dark Uncertainty: Night bus; Fearless Request: Robot dance party).
+// SPECIAL lists paintings with a brand-new game of their own (Midnight Melodies: Night light; Rhythm of Life: Glow it bright; Walk Through Fear: See it my way; Almost Blindness: Sound safari; Curating Hope: Light memory; The Bridge of Perception: Say it from the creek; Pedals of Freedom: Ride the block; The Dark Uncertainty: Night bus; Fearless Request: Robot dance party; Pathways Unveiled: Open road safari; Roots of Kinship: Family apples; Reflections of Sisterhood: Fish for the sisters; Decision Divide: Tides of decision; Harmonious Gathering: Blow the storm away; Inner Peace in Outer Chaos: Calm walk).
 import { napkinsGame } from './napkins.js';
 import { almostBlindnessGame } from './almost-blindness.js';
 import { walkThroughFearGame } from './walk-through-fear.js';
@@ -44,6 +44,12 @@ import { puppetKaraokeGame } from './bridge-karaoke.js';
 import { rideTheBlockGame } from './pedals-ride.js';
 import { nightBusGame } from './dark-uncertainty-play.js';
 import { robotDanceGame } from './fearless-dance.js';
+import { openRoadSafariGame } from './pathways-safari.js';
+import { familyApplesGame } from './roots-apples.js';
+import { sistersFishGame } from './reflections-fish.js';
+import { tidesOfDecisionGame } from './decision-tides.js';
+import { blowTheStormGame } from './harmonious-weather.js';
+import { calmWalkGame } from './inner-peace-walk.js';
 
 export const CLASSIC = {
   'napkin-please': napkinsGame,
@@ -62,6 +68,12 @@ export const KEEP = new Set(['napkin-please']);
 
 // paintings with a special new game of their own (instead of the mosaic)
 export const SPECIAL = {
+  'inner-peace-in-outer-chaos': calmWalkGame,  // Calm walk: red light, green light toward the painting, breathing in rhythm (its first game: &classic=1)
+  'harmonious-gathering': blowTheStormGame,    // Blow the storm away: blow into the mic to clear the clouds, the river flows (its first game: &classic=1)
+  'decision-divide': tidesOfDecisionGame,      // Tides of decision: tilt to push the cool and warm worlds across the divide (its first game: &classic=1)
+  'reflections-of-sisterhood': sistersFishGame, // Fish for the sisters: point out the fish swimming under the dock (its first game: &classic=1)
+  'roots-of-kinship': familyApplesGame,        // Family apples: hang an apple for everyone, then find them through low vision (its first game: &classic=1)
+  'pathways-unveiled': openRoadSafariGame,     // Open road safari: find city sounds, tame the weather, cars drive the roads (its first game: &classic=1)
   'fearless-request': robotDanceGame,           // Robot dance party: move your phone and the robot dances (its first game: &classic=1)
   'midnight-melodies': midnightMelodiesGame,   // Night light: a flashlight game with a lofi beat
   'rhythm-of-life': rhythmOfLifeGame,           // Glow it bright: sing to light the painting
