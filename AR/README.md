@@ -25,6 +25,21 @@ Test it: open `targets/fox-at-dusk.jpg` and `targets/harbor-light.jpg` on a comp
 
 The Blind Canvas artworks use the `story` layout: the animated art (from `../3D/gallery/anim/`) plays over the painting, a black title banner (TITLE / ARTIST in white capitals) sits under it, and the artist's clip plays with sound under that. The camera view has just one row of buttons, at the very top: **Play game** (Stop / Play again during a game), **Artist** (opens that artist's page on blindcanvasproject.com; the list is `ARTIST_PAGES` in index.html, or give an artwork its own `link` in artworks.js) and **Sound on / Muted** (one switch for every sound: the clip, narration, speech and the games). Everything under the row stays free of buttons. Tap the clip to pause it. Screen-reader users also get a hidden "Describe the painting" button.
 
+## Sliding mosaic (the Play game button)
+
+**Play game** now opens the **sliding mosaic** for every painting except **Napkin Please** and **Walk Through Fear**, which keep their own games. The painting is cut into a 3 × 3 mosaic with one piece missing and shuffled; slide the pieces back (tap a piece next to the gap, or the arrow buttons) and the painting closes up and comes alive. Each piece sings its note when it lands in place, the voice keeps count, and **Peek** (hold) shows the finished painting. It uses each painting's own photo in `targets/`, so new paintings get it automatically.
+
+- **lib/minigames/engines/slide.js**: the sliding mosaic
+- **lib/minigames/index.js**: `KEEP` lists the paintings that keep their own game; add an id there to give a painting its original game back
+- Every original game below is still saved, unchanged. To play one, add `&classic=1` to the link (for example `?art=hope-is-not-lost&classic=1`).
+
+## Night light (Midnight Melodies)
+
+**Midnight Melodies** has a game of its own: **Night light**, a flashlight game with a lofi beat. The room goes dark and the phone becomes a flashlight: wherever the middle of the screen points on the real painting, a warm beam lights it (or drag a finger). Seven things are hidden: a pine tree, a comet, a paper sailboat, a sleepy star, the trumpet's valves, Wayne asleep and his pillow. Hold the light on one to find it; it plays a trumpet note, stays softly lit, and the lofi song grows a layer (vinyl and chords, then hats, the beat, bass and a sleepy trumpet). Then shine on the trumpet lamp: the room fills with light and a lullaby plays. By ear: a twinkle comes from the side of the nearest hidden thing and speeds up when close, and **Hint** says which way to move. The music is made live in the browser (no audio files).
+
+- **lib/minigames/midnight-melodies.js**: the game and its music; the hidden spots are `SPOTS` at the top (u, v from the top-left)
+- **lib/minigames/index.js**: `SPECIAL` lists paintings with a new game of their own. `&mosaic=1` opens the sliding mosaic instead, and `&classic=1` the original game.
+
 ## Mini games (all 49 paintings)
 
 Every Blind Canvas painting has a "Play the game" button. Each game is about a minute long, plays over the painting, and can be played by ear: instructions are spoken, sounds come from where things are, the phone buzzes, and big buttons or screen-thirds do everything. At the end the painting's own animation plays and the "story" button opens the artist's interview.
