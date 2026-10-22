@@ -222,6 +222,25 @@ The games now speak in Ben's recorded voice. Every game talks through `G.say(tex
 
 - **lib/minigames/poles-drive.js**: the game; `WIRES` (how many times they come down), `SAFE` (how slow is slow enough), `VP` (where the road meets the sky). Everything is drawn on the painting itself (the car is drawn in code), so there are no extra image files. Its first game is still there: add `&classic=1`.
 
+## What should I paint? (Flow State)
+
+**Flow State** (Raquel Alim) has **What should I paint?** "I always have art flowing through me... I have too many things in my head that I need to paint." Raquel starts lost in her flow, eyes closed, the colours around her streaming. Then she **opens her eyes** (painted in over her closed lids: eyes that blink and look around) and asks, "What should I paint next?" **You're her voice**: press **Talk** and say an idea. Her **mouth moves with your voice** as you speak, then she says it back with her eyes on you, in the voice you pick (**Normal**, **Dreamy** with a soft echo, or **Bright**), the colours around her flowing faster as she talks, with live captions. Press **Again** to re-record, or **Paint it**: she closes her eyes ("Mmm. I can see it already."), a chime plays and the colours swirl into a burst. Three ideas, then her own words. **Tap her face** any time and she opens her eyes and looks where you touched. No microphone, or rather type? Press **Type** and she says it in a computer voice. Nothing is uploaded or saved.
+
+- **lib/minigames/flow-talk.js**: the game; `ASKS` (what she asks each round), `STYLES` (her voices), `IDEAS` (how many). Her eyes, mouth and the flowing colours are all done on the painting itself, so there are no extra image files. Its first game is still there: add `&classic=1`.
+
+## Light the glass (A New Day)
+
+**A New Day** (Raquel Alim) has **Light the glass**. "I have my down moments, and that's okay. Tomorrow is a new day." It's night and her stained-glass window is dark blue. **Rub your finger** across the glass and every piece you touch lights up warm, like the sunrise is behind it, each stroke playing a soft chime (higher toward the top, panned left or right). Or press **Point to light** and sweep the phone across the painting. Birds join in as the window fills. Halfway through comes **a down moment**: a cloud drifts over and some of the light fades ("That's okay. Light it again."). Fill the window and the sun rises: "Good morning. A new day."
+
+- **lib/minigames/newday-glass.js**: the game; `GOAL` (how much of the window to light), `BRUSH` (finger size). The night and lit versions are both made from the painting itself, so there are no extra image files.
+
+## Show her (All the Possibilities)
+
+**All the Possibilities** (Raquel Alim) has **Show her**. "If I were able to sit down with my 12-year-old self, I would show her the art of other visually impaired people." Raquel sits beside her younger self in front of a big round window. **Tap anywhere** (or press **Show her**) and the window swirls open onto another **Blind Canvas painting by a visually impaired artist**, with what it says she could do: make music (Reaching Past Blindness), dance (All Life's Beauty), paint (Flow State), play sports (Goalball Is…), ride a bike (Pedals of Freedom), design fashion (Haute Couture Dreams), see the world (Seeing the World Together), find her power (The Power Within), and anything she dreams (A Bright Future). Each one plays its own note, climbing a scale, and sparkles drift down to the girl, who lifts her head to look. The moons glow and the river of light flows. After the last one she turns to Raquel: so many options.
+
+- **lib/minigames/possible-window.js**: the game; `SHOW` (which paintings, the words and who made them), `WAIT` (seconds between taps).
+- **media/games/possible/**: `window.png` (where the round window is, leaving out the moons and Raquel's head) and small copies of the nine paintings it shows.
+
 ## Mini games (all 49 paintings)
 
 Every Blind Canvas painting has a "Play the game" button. Each game is about a minute long, plays over the painting, and can be played by ear: instructions are spoken, sounds come from where things are, the phone buzzes, and big buttons or screen-thirds do everything. At the end the painting's own animation plays and the "story" button opens the artist's interview.

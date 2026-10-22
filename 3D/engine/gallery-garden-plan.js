@@ -9,6 +9,7 @@ export const CAMPUS = {
   why: { x0: 31, x1: 49, z0: 25, z1: 41 },                  // the WHY House (door on its south face, towards the tree)
   amb: { x0: 30.6, x1: 49.4, z0: -57.4, z1: -23.6, O: [40, 0, -24] },   // the AMB building (a buildWing room; door on its north face)
   cinema: { x0: 74, x1: 90, z0: -11, z1: 11 },              // BLIND CAN CINEMA (door on its west face)
+  amb2: { x0: 49.4, x1: 69.8, z0: -38.8, z1: -24 },           // the AMB's stage room (22 Oct), through a doorway in the main room's east wall
   pools: [{ x: 13.5, z: 4.75, yaw: 0 }, { x: 13.5, z: -4.75, yaw: Math.PI }],   // 'Hope Floating in Braille', either side of the walk
   flags: [[22.32, -17.68, 'bcp'], [22.32, 17.68, 'ora']],   // (11 Oct: just outside the ring path, not on it)
   oldFlags: [[25.15, -14.85], [25.15, 14.85]],   // (where they stood: the trees and lanterns were laid out round these; kept so that layout doesn't reshuffle)
@@ -16,6 +17,7 @@ export const CAMPUS = {
 const inRect = (x, z, r, m = 0) => x > r.x0 - m && x < r.x1 + m && z > r.z0 - m && z < r.z1 + m;
 export const onCampus = (x, z, m = 0) => inRect(x, z, CAMPUS.why, m) || inRect(x, z, CAMPUS.amb, m) || inRect(x, z, { x0: CAMPUS.cinema.x0 - 3.2, x1: CAMPUS.cinema.x1, z0: CAMPUS.cinema.z0, z1: CAMPUS.cinema.z1 }, m)
   || CAMPUS.pools.some(p => Math.abs(x - p.x) < 4.2 + m && Math.abs(z - p.z) < 0.6 + 2.8 + m && Math.sign(z) === Math.sign(p.z));
+export const inBuilding = (x, z, m = 0) => onCampus(x, z, m) || inRect(x, z, CAMPUS.amb2, m);   // (onCampus is the original set: the garden's layout was planned round it)
 let cache = null;
 export function planGarden() {
   if (cache) return cache;
@@ -52,6 +54,9 @@ export function planGarden() {
     if (trees.some(t => Math.hypot(t[0] - x, t[1] - z) < 6.2) || lanterns.some(l => Math.hypot(l[0] - x, l[1] - z) < 2.5) || benches.some(b => Math.hypot(b[0] - x, b[1] - z) < 3)) continue;
     trees.push([x, z, 8.5 + rnd() * 5.5, false]);
   }
+  // (the stage room came later: clear what stands where it was built, without reshuffling the rest of the garden)
+  const clearOf = (x, z, m) => !inRect(x, z, CAMPUS.amb2, m);
+  for (const arr of [lanterns, trees]) for (let i = arr.length - 1; i >= 0; i--) if (!clearOf(arr[i][0], arr[i][1], arr === trees ? 3.5 : 1.2)) arr.splice(i, 1);
   cache = { paths, river, lanterns, benches, trees, pathDist, riverDist };
   return cache;
 }

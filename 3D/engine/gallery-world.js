@@ -7,7 +7,7 @@
 import * as THREE from '../vendor/three/three.module.js';
 import { buildEye } from './gallery-eye.js';
 import { setStainedNight } from './gallery-stained.js';
-import { GARDEN, RING, CAMPUS, onCampus, planGarden } from './gallery-garden-plan.js';
+import { GARDEN, RING, CAMPUS, inBuilding as onCampus, planGarden } from './gallery-garden-plan.js';
 import { toCreasedNormals } from '../vendor/three/addons/BufferGeometryUtils.js';
 
 const rnd = (() => { let s = 20261002; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; })();

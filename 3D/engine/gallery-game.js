@@ -31,7 +31,7 @@ import { buildKiosks, carveWorld, carved, buildEntrance, buildRooms, buildBioWal
 const BASE = 'gallery/';
 const SPAWN = { x: CAMPUS.spawn.x, y: 0.5, z: CAMPUS.spawn.z, face: CAMPUS.spawn.face };   // in the middle of the park beside the big tree, facing the museum (the cinema behind you)
 
-export async function createGallery({ container, onProgress = () => {}, onNear = () => {}, onZone = () => {}, onSplash = () => {}, onPad = () => {}, onRail = () => {}, onLite = () => {} }) {
+export async function createGallery({ container, onProgress = () => {}, onNear = () => {}, onZone = () => {}, onSplash = () => {}, onPad = () => {}, onLite = () => {} }) {
   const lowEnd = /iPhone|iPad|Android/i.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);   // (iPads say they're Macs)
   const NOWORLD = new URLSearchParams(location.search).has('noworld');   // (testing) the museum without the lake, flags and city
   const renderer = new THREE.WebGLRenderer({ antialias: !lowEnd || devicePixelRatio < 2, powerPreference: 'high-performance' });
@@ -134,8 +134,10 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     const B = (w, h, d, x, y, z, ry = 0) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d)); m.position.set(x, y, z); m.rotation.y = ry; m.updateMatrixWorld(true); edgeCol.push(m); };
     const G = GARDEN, gw = G.x1 - G.x0, gd = G.z1 - G.z0, gx = (G.x0 + G.x1) / 2;
     B(gw, 0.6, gd, gx, G.y - 0.3, 0);                                                      // the lawn
-    B(gw, 3, 0.4, gx, 1.5, G.z1); B(gw, 3, 0.4, gx, 1.5, G.z0); B(0.4, 3, gd, G.x1, 1.5, 0);   // hedges: north, south, east
-    const sl = G.z1 - G.plaza.z; B(0.4, 3, sl, G.x0, 1.5, G.plaza.z + sl / 2); B(0.4, 3, sl, G.x0, 1.5, -G.plaza.z - sl / 2);   // west, beside the lake
+    // hedges: north, south, east, and west beside the lake. Each wall covers the whole 0.9 m hedge plus the terrace edge
+    // behind it, so you walk up to the leaves rather than into them (22 Oct)
+    B(gw, 3, 1.1, gx, 1.5, G.z1 - 0.35); B(gw, 3, 1.1, gx, 1.5, G.z0 + 0.35); B(1.1, 3, gd, G.x1 - 0.35, 1.5, 0);
+    const sl = G.z1 - G.plaza.z; B(1.1, 3, sl, G.x0 + 0.35, 1.5, G.plaza.z + sl / 2); B(1.1, 3, sl, G.x0 + 0.35, 1.5, -G.plaza.z - sl / 2);
     const plan = planGarden();
     for (const [x, z] of plan.lanterns) B(0.7, 1.6, 0.7, x, 0.8, z);
     for (const [x, z, ry] of plan.benches) B(2.5, 0.6, 0.7, x, 0.3, z, ry);
@@ -482,7 +484,9 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     Object.assign(LIVE, { idx, el, tex, mat: new THREE.MeshBasicMaterial({ map: tex }) }); applyScreens();
   }
   function liveClear(quiet) { if (LIVE.el) { LIVE.el.pause(); LIVE.el.srcObject = null; } if (LIVE.tex) LIVE.tex.dispose(); if (LIVE.mat) LIVE.mat.dispose(); Object.assign(LIVE, { idx: -1, mat: null, el: null, tex: null }); if (!quiet) applyScreens(); }
-  const screenPos = i => vids[i].wp || (vids[i].wp = vids[i].box.getWorldPosition(new THREE.Vector3()));
+  // (a screen's own world position: p when given, as rooms' screens get merged into their room's meshes and then sit at the origin)
+  const vidPos = v => v.wp || (v.wp = v.p ? new THREE.Vector3(...v.p) : v.box.getWorldPosition(new THREE.Vector3()));
+  const screenPos = i => vidPos(vids[i]);
   function nearestScreen(x, y, z) {   // the screen of the room you're in, or else the closest one in sight range
     const p = new THREE.Vector3(x, y + 0.5, z); let best = -1, bd = 1e9;
     vids.forEach((v, i) => { const inZone = (v.zone && v.zone.containsPoint(p)) || (v.zones && v.zones.some(q => q.containsPoint(p))); const d = screenPos(i).distanceTo(p) - (inZone ? 1000 : 0) - (v.box.scale.y * v.box.scale.z > 40 ? 8 : 0); if (d < bd) { bd = d; best = i; } });
@@ -537,7 +541,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   function M(geo, mat, x = 0, y = 0, z = 0, parent, outline = 0.04, radius) { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); if (outline) addOutline(m, outline, radius); (parent || scene).add(m); return m; }
   const { makeFox, animFox } = foxKit({ THREE, scene, toon, M, grad, outlineMat, crestTex, rr, pick, clamp, smooth, damp });
   const FOX_SCALE = 0.62;   // kit foxes are ~2.7 units; the gallery is in metres
-  let player = null, look = 'male', extra = 'none';
+  let player = null, look = 'male', extra = 'none', guitarHold = null;
   // the player's merch: Blind Canvas Project logo on the black tee, "Walk Through Fear" on the back of the hoodie
   const printTex = (w, h, draw) => { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const c = cv.getContext('2d'); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; draw(c, w, h, () => { t.needsUpdate = true; }); return t; };
   // ---- the BCP tee: one artwork on the front (different per visitor), Ben's logo on the back
@@ -686,8 +690,8 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   function buildPlayer() {
     const pos = player ? player.position.clone() : null;
     if (player) scene.remove(player);
-    player = makeVisitorFox(look, extra, style); if (pos) player.position.copy(pos);
-    scene.add(player);
+    const old = player; player = makeVisitorFox(look, extra, style); if (pos) player.position.copy(pos);
+    scene.add(player); if (guitarHold && old && guitarHold.parent === old) player.add(guitarHold);   // (changed outfit mid-song: keep the guitar)
   }
   // ---------------------------------------------------------------- other visitors (multiplayer)
   const remotes = new Map();
@@ -862,45 +866,23 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     return { ux: (c[0] - Pl.x) / d, uz: (c[1] - Pl.z) / d };
   }
 
-  // ---------------------------------------------------------------- camera rails (12 Oct): the ramps up to the 2nd floor and their turns, and round the big screen
-  // Each rail is the middle line of a ramp and its turn at the top. Walking within its width and roughly along it (either way),
-  // you're steered along it, round the turn too; the camera swings round behind you as usual. Step off it, or push across it,
-  // and you're free. ☰ → Guided camera turns this off.
-  const RAILS = NOWORLD ? [] : [
-    { name: 'the ramp up to Dave Steele and the 2nd floor', w: 2.0, y: [-3.6, 6.2], pts: [[-76.6, -4.2], [-76.6, -20.6], [-77.6, -21.6], [-81.5, -21.6]] },
-    { name: 'the ramp up to the 2nd floor, north side', w: 2.0, y: [-3.6, 6.2], pts: [[-76.6, 4.2], [-76.6, 20.6], [-77.6, 21.6], [-81.5, 21.6]] },
-    { name: 'the west ramp up to the 2nd floor', w: 2.0, y: [-3.6, 6.2], pts: [[-143.7, -2.2], [-143.7, -19.6], [-142.7, -20.8], [-139, -20.8]] },
-    { name: 'the west ramp up to the 2nd floor, north side', w: 2.0, y: [-3.6, 6.2], pts: [[-143.7, 2.2], [-143.7, 19.6], [-142.7, 20.6], [-139, 20.6]] },
-    // round the big screen at the front of the main hall (it stands across the middle): either side, then on behind it towards the west ramps
-    { name: 'round the big screen, north side', w: 2.4, y: [-4, -1.5], pts: [[-110, 1.5], [-115.5, 9.5], [-122.5, 10.2], [-123.3, 3], [-123.3, 0], [-138, 0]] },
-    { name: 'round the big screen, south side', w: 2.4, y: [-4, -1.5], pts: [[-110, -1.5], [-115.5, -9.5], [-122.5, -10.2], [-123.3, -3], [-123.3, 0], [-138, 0]] },
-  ];
-  let railOn = null;
-  function railSteer(dx, dz) {
-    const len = Math.hypot(dx, dz); if (len < 1e-6) return null;
-    let best = null;
-    for (const R of RAILS) {
-      if (Pl.y < R.y[0] || Pl.y > R.y[1]) continue;
-      for (let i = 0; i < R.pts.length - 1; i++) {
-        const [ax, az] = R.pts[i], [bx, bz] = R.pts[i + 1], sx = bx - ax, sz = bz - az, L = Math.hypot(sx, sz);
-        const t = Math.max(0, Math.min(1, ((Pl.x - ax) * sx + (Pl.z - az) * sz) / (L * L))), px = ax + sx * t, pz = az + sz * t, d = Math.hypot(Pl.x - px, Pl.z - pz);
-        if (d < R.w && (!best || d < best.d)) best = { R, i, t, d, px, pz, ux: sx / L, uz: sz / L };
+  const BODY_R = +(new URLSearchParams(location.search).get("body")) || 0.42, PUSH_DIRS = Array.from({ length: 12 }, (_, a) => [Math.sin(a * Math.PI / 6), Math.cos(a * Math.PI / 6)]), pushN = new THREE.Vector3();
+  function pushOut(R) {
+    for (let it = 0; it < 3; it++) {
+      let deep = 0, nx = 0, nz = 0;
+      for (const [ux, uz] of PUSH_DIRS) for (const h of [0.5, 1.0, 1.55]) {
+        const r = cast(Pl.x, Pl.y + h, Pl.z, ux, 0, uz, R + 0.02); if (!r || Math.abs(r.face.normal.y) >= 0.55) continue;
+        pushN.copy(r.face.normal); pushN.y = 0; if (pushN.lengthSq() < 1e-6) continue; pushN.normalize();
+        let d = pushN.x * ux + pushN.z * uz; if (d > 0) { pushN.negate(); d = -d; }   // (the normal facing us)
+        const gap = r.distance * -d, pen = R - gap;   // how far the wall's plane is from our centre, and how far inside we are
+        if (pen > deep) { deep = pen; nx = pushN.x; nz = pushN.z; }
       }
+      if (deep < 0.005) return;
+      const step = Math.min(deep, 0.25);
+      let ok = true; for (const h of [0.5, 1.0, 1.55]) { const r = cast(Pl.x, Pl.y + h, Pl.z, nx, 0, nz, step + 0.05); if (r && Math.abs(r.face.normal.y) < 0.55) ok = false; }
+      if (!ok) return;   // wedged between two walls: leave it rather than pop through one
+      Pl.x += nx * step; Pl.z += nz * step;
     }
-    if (!best) { railOn = null; return null; }
-    const mx = dx / len, mz = dz / len; let dir = mx * best.ux + mz * best.uz;
-    if (Math.abs(dir) < 0.5) { railOn = null; return null; }   // pushing across it: you're stepping off, so let go
-    const sgn = Math.sign(dir), R = best.R;
-    // round the bends: blend towards the next (or previous) segment's direction near the corner
-    let ux = best.ux * sgn, uz = best.uz * sgn;
-    const j = sgn > 0 ? best.i + 1 : best.i - 1, nearEnd = sgn > 0 ? 1 - best.t : best.t, segL = Math.hypot(R.pts[best.i + 1][0] - R.pts[best.i][0], R.pts[best.i + 1][1] - R.pts[best.i][1]);
-    if (j >= 0 && j < R.pts.length - 1 && nearEnd * segL < 1.6) { const [cx, cz] = R.pts[j], [ex, ez] = R.pts[j + 1], L2 = Math.hypot(ex - cx, ez - cz), k = 1 - nearEnd * segL / 1.6; ux = ux * (1 - k) + (ex - cx) / L2 * sgn * k; uz = uz * (1 - k) + (ez - cz) / L2 * sgn * k; }
-    const cx = (best.px - Pl.x) * 0.8, cz = (best.pz - Pl.z) * 0.8;   // drift back to the middle
-    let nx = ux + cx, nz = uz + cz; const nl = Math.hypot(nx, nz); nx /= nl; nz /= nl;
-    // keep 'forward' lined up with where you're now going, so you carry on along it without fighting the stick
-    const turn = Math.atan2(nx, nz) - Math.atan2(mx, mz); St.moveYaw += Math.atan2(Math.sin(turn), Math.cos(turn));
-    if (railOn !== R) { railOn = R; onRail(R.name); }
-    return [nx * len, nz * len];
   }
   function move(dt) {
     // camera-relative input
@@ -909,18 +891,10 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     let mag = Math.min(1, il);
     let run = input.run || mag > 0.92;
     let sp = (run ? 6.2 : 3.4) * mag * (extra === 'chair' ? 0.95 : 1);
-    // (12 Oct) 'forward' follows the camera, except while you hold the stick: then it stays where it was when you pushed, so
-    // the camera swinging round behind you no longer changes where you're going (that was the fighting). Dragging to look while
-    // walking still turns it.
-    const held = mag > 0.05;
-    if (St.lastPos && Math.hypot(Pl.x - St.lastPos[0], Pl.z - St.lastPos[1]) > 3) St.held = false;   // (you were moved: a door, a 'take me there')
-    St.lastPos = [Pl.x, Pl.z];
-    if (!held || !St.held || St.fp || performance.now() - St.lastLook < 300 || St.moveYaw == null) St.moveYaw = St.yaw;
-    St.held = held;
-    const fx = -Math.sin(St.moveYaw), fz = -Math.cos(St.moveYaw);   // forward on the ground
+    // (22 Oct: back to plain camera-relative movement: no camera rails, no held-direction latch)
+    St.moveYaw = St.yaw;
+    const fx = -Math.sin(St.yaw), fz = -Math.cos(St.yaw);   // forward on the ground
     let dx = (fx * iz + -fz * ix) * sp * dt, dz = (fz * iz + fx * ix) * sp * dt;
-    // camera rails: on the ramps and at their turns, walking roughly along the way goes along the way (and round the turn)
-    if (mag > 0.05 && St.guided !== false && !AW.pts && !F.id) { const g = railSteer(dx, dz); if (g) { dx = g[0]; dz = g[1]; } }
     // following a friend: walk their path behind them; moving yourself stops it
     if (AW.pts) {
       if (mag > 0.05) walkStop('moved');
@@ -931,8 +905,9 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       else { const a = followAuto(dt); if (a) { mag = 1; run = a.run; sp = (run ? 6.2 : 3.4) * (extra === 'chair' ? 0.95 : 1); dx = a.ux * sp * dt; dz = a.uz * sp * dt; } }
     }
     if (mag > 0.05) { const want = Math.atan2(dx, dz); let d = want - Pl.face; d = Math.atan2(Math.sin(d), Math.cos(d)); Pl.face += d * Math.min(1, dt * 12); }
-    // walls: rays at knee, chest and head; slide along what we hit
-    const R = 0.32;
+    // walls: rays at knee, chest and head; slide along what we hit. R is the body's radius: wide enough for the fox's
+    // shoulders, swinging arms and tail (and the wheelchair) so nothing of it sinks into a wall (22 Oct)
+    const R = BODY_R;
     for (let pass = 0; pass < 2; pass++) {
       const len = Math.hypot(dx, dz); if (len < 1e-5) break;
       const ux = dx / len, uz = dz / len; let hit = null;
@@ -946,6 +921,10 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     }
     // also block the sideways slide if it walks into another wall
     { const len = Math.hypot(dx, dz); if (len > 1e-5) { let ok = true; for (const h of [0.5, 1.0, 1.55]) { const r = cast(Pl.x, Pl.y + h, Pl.z, dx / len, 0, dz / len, len + R); if (r && Math.abs(r.face.normal.y) < 0.55) ok = false; } if (ok) { Pl.x += dx; Pl.z += dz; } } }
+    // and keep the body clear all round: sliding along a wall at a shallow angle, or walking into a corner, can leave the
+    // body closer than R to a wall (the fox then looks half inside it, and a thin wall or a glass pane can be slipped
+    // through). Feel round in 12 directions and step back out along the wall's normal, never into another wall.
+    if (!Pl.sit) pushOut(R);
     // ground: step up to 0.55 m, ramps, falls
     const gy = groundAt(Pl.x, Pl.y, Pl.z);
     if (input.jump && Pl.ground && extra !== 'chair') { Pl.vy = 6.2; Pl.ground = false; } input.jump = 0;
@@ -983,7 +962,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     V.gi = 0; V.gt = 0; V.from = [St.yaw, St.pitch]; V.home = [St.yaw, St.pitch];
     vOverlay.open(spot.cond); onNear(null); nearKey = 'vision-locked';
   }
-  function exitVision() { if (!V.spot) return; const sp = V.spot; V.spot = null; vOverlay.close(); joyRest(); St.pitch = 0.28; St.camDist = 1.2; Pl.x = sp.x + 1.6; nearKey = null; }
+  function exitVision() { if (!V.spot) return; const sp = V.spot; V.spot = null; vOverlay.close(); joyRest(); St.pitch = 0.28; St.camDist = 1.2; { let d = 1.6; for (const h of [0.5, 1.0, 1.55]) { const r = cast(sp.x, sp.y + h, sp.z, 1, 0, 0, 1.6 + BODY_R); if (r && Math.abs(r.face.normal.y) < 0.55) d = Math.min(d, r.distance - BODY_R); } Pl.x = sp.x + Math.max(0, d); } pushOut(BODY_R); nearKey = null; }
   function updateVision(dt, now) {
     for (const sp of vSpots) sp.glow.material.opacity = 0.32 + Math.sin(now / 420 + sp.z) * 0.18;
     let yr = 0, pr = 0;
@@ -1170,7 +1149,11 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   }
   function standUp() {
     if (!Pl.sit) return; const s = Pl.sit; Pl.sit = null; if (player) player.userData.sit = false;
-    Pl.y = s.gy; Pl.x += s.nx * 0.75; Pl.z += s.nz * 0.75; Pl.vy = 0; nearKey = null;
+    Pl.y = s.gy; Pl.vy = 0;
+    // step off the way you're facing, unless something's there (the piano: you face its keys), then behind, then to either side
+    const clear = (ux, uz) => { for (const h of [0.75, 0.95, 1.55]) { const r = cast(Pl.x, Pl.y + h, Pl.z, ux, 0, uz, 0.75 + BODY_R); if (r && Math.abs(r.face.normal.y) < 0.55) return false; } return true; };
+    const tries = [[s.nx, s.nz], [-s.nx, -s.nz], [s.nz, -s.nx], [-s.nz, s.nx]], go = tries.find(([ux, uz]) => clear(ux, uz)) || tries[1];
+    Pl.x += go[0] * 0.75; Pl.z += go[1] * 0.75; Pl.face = Math.atan2(go[0], go[1]); St.yaw = Pl.face + Math.PI; pushOut(BODY_R); nearKey = null;
   }
   // ---- the room's film, full screen (the same video the screen shows; tap ✕ or Esc to come back)
   function filmHere() {
@@ -1201,6 +1184,8 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     const p = new THREE.Vector3(Pl.x, Pl.y + 1.2, Pl.z); let best = null, bd = 1e9;
     if (V.spot) return null;
     if (Pl.sit && Pl.sit.name === 'Piano bench') return { kind: 'piano', item: { z: 4 }, label: 'Play the piano' };
+    if (Pl.sit && Pl.sit.name === 'Drum stool') return { kind: 'drums', item: { z: 4 }, label: 'Play the drums' };
+    if (Pl.sit && Pl.sit.name === 'Guitar stool') return { kind: 'guitar', item: { z: 4 }, label: 'Play the guitar' };
     if (Pl.sit) return { kind: 'sit', item: { z: 0, up: true, name: Pl.sit.name }, label: 'Stand up' };
     if (simwalls && simwalls.kioskPositions.some(k => Math.hypot(Pl.x - k.x, Pl.z - k.z) < 2.6 && Math.abs(Pl.y - k.y) < 2)) return { kind: 'simctl', item: simwalls, label: 'Change the wall severity' };
     for (const sp of vSpots) if (Math.hypot(Pl.x - sp.x, Pl.z - sp.z) < sp.r + 0.15 && Math.abs(Pl.y - sp.y) < 1.2) return { kind: 'vision', item: sp, label: 'See through their eyes' };
@@ -1294,7 +1279,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       if (zUrl !== zPend.u) { zPend.u = zUrl; zPend.t = 0; } else zPend.t += 0.25;
       if (!zUrl || zUrl === curUrl || zPend.t >= (fast ? 1.5 : 0.25)) playUrl(zUrl);
       if (window.HUSH) { if (!video.paused) { video.pause(); hushPaused = true; } } else if (hushPaused) { hushPaused = false; if (video.paused && (video.currentSrc || video.src)) video.play().catch(() => {}); }   // the room film pauses while an artwork is open, and picks up where it left off
-      if (zUrl) { let dmin = 1e9; for (const v of vids) if (v.u === zUrl) dmin = Math.min(dmin, (v.wp ||= v.box.getWorldPosition(new THREE.Vector3())).distanceTo(pp)); const vv = vids.find(v => v.u === zUrl); const zs = vv.zone ? vv.zone.getSize(new THREE.Vector3()) : null, reach = vv.reach || Math.max(vv.dist || 20, zs ? Math.hypot(zs.x, zs.z) * 1.1 : 0); video.volume = clamp((vv.vol ?? 0.8) * Math.max(vv.minVol ?? 0.45, 1 - dmin / reach) * (LIVE.idx >= 0 ? 0.12 : 1), 0, 1); }   // a live host talk: the room film drops to a murmur   // never silent while you're in the zone
+      if (zUrl) { let dmin = 1e9; for (const v of vids) if (v.u === zUrl) dmin = Math.min(dmin, vidPos(v).distanceTo(pp)); const vv = vids.find(v => v.u === zUrl); const zs = vv.zone ? vv.zone.getSize(new THREE.Vector3()) : null, reach = vv.reach || Math.max(vv.dist || 20, zs ? Math.hypot(zs.x, zs.z) * 1.1 : 0); const zg = vv.zone && vv.zone.containsPoint(pp) ? 1 : (vv.zones || []).reduce((g, z, i) => z.containsPoint(pp) ? Math.min(g, (vv.zoneGains && vv.zoneGains[i]) ?? 1) : g, 1); video.volume = clamp((vv.vol ?? 0.8) * Math.max(vv.minVol ?? 0.45, 1 - dmin / reach) * zg * (LIVE.idx >= 0 ? 0.12 : 1), 0, 1); }   // (zg: some places hear it quieter, e.g. the AMB's stage room)   // a live host talk: the room film drops to a murmur   // never silent while you're in the zone
       if (!V.spot) { const n = nearest(); const key = n ? n.kind + n.label + (n.item && n.item.z) : null; if (key !== nearKey) { nearKey = key; onNear(n); } }
     }
     occCull();
@@ -1311,7 +1296,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
 
   return {
     arts, edu, notesConfig: data.notes ? { ...data.notes, ...(campus ? { guestbook: campus.why.guestbook, why: { slots: campus.why.slots, station: campus.why.station } } : {}) } : null,
-    setGuided(on) { St.guided = !!on; }, setLite: on => { if (!on) LITE.userOff = true; setLite(!!on, false); }, lite: () => LITE.on, guided: () => St.guided !== false,
+    setGuided() {}, setLite: on => { if (!on) LITE.userOff = true; setLite(!!on, false); }, lite: () => LITE.on, guided: () => St.guided !== false,
     setLook(l, x) { look = l || look; extra = x || 'none'; buildPlayer(); },
     // multiplayer hooks (the page wires these to engine/gallery-net.js)
     localState: () => [+Pl.x.toFixed(2), +Pl.y.toFixed(2), +Pl.z.toFixed(2), +Pl.face.toFixed(2), +Math.min(9, Pl.speed).toFixed(1), Pl.ground ? 0 : 1, Pl.sit ? 1 : 0],   // [x, y, z, face, speed, air, sitting]
@@ -1347,6 +1332,12 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       go(to) { const t = CAMPUS_STOPS[to]; if (!t) return; if (Pl.sit) standUp(); travel({ to: { x: t.x, z: t.z, y: groundAt(t.x, 3, t.z), face: t.face } }); },
       walk: (to, onEnd) => walkTo(to, onEnd), stopWalk: () => walkStop('stopped'), walking: () => AW.pts ? AW.to : null, dests: SIGN_DEST,
       piano: campus.piano, playPiano() { if (!(Pl.sit && Pl.sit.name === 'Piano bench')) { if (Pl.sit) standUp(); sitOn(campus.piano.bench); } }, standUp: () => standUp(),
+      band: campus.band, playAt(which) { const b = which === 'piano' ? campus.piano.bench : campus.band[which] && campus.band[which].bench; if (!b || (Pl.sit && Pl.sit.name === b.name)) return; if (Pl.sit) standUp(); sitOn(b); },
+      // the guitar goes from its stand into the fox's lap (neck to its left) while you play, and back after
+      holdGuitar(on) { const Gt = campus.band.guitar; if (!Gt || !player) return; const gt = Gt.group;
+        if (on) { if (!guitarHold) { guitarHold = new THREE.Group(); guitarHold.scale.setScalar(1 / FOX_SCALE); } if (guitarHold.parent !== player) player.add(guitarHold);
+          guitarHold.add(gt); gt.position.set(0.02, Gt.bench.top + 0.2 - Pl.y, 0.24); gt.rotation.set(-0.12, 0.1, -1.2); }
+        else { Gt.rest.parent.add(gt); gt.position.copy(Gt.rest.pos); gt.rotation.copy(Gt.rest.rot); } },
       showtime: () => campus.cinema.show(), filmTitle: () => campus.cinema.now().title,
       zone: () => St.campusZone, why: campus.why, nowShowing: () => campus.cinema.now().title, nextFilm: () => playUrl(campus.cinema.next()), group: campus.group,
     },
@@ -1362,7 +1353,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     goWing() { const d = doors.find(x => x.wing); if (d) travel(d); },
     // add-ons (notes, guest book): draw into the scene, add things you can walk up to, run each frame
     world: { THREE, scene, camera, groundAt: (x, y, z) => groundAt(x, y, z), pos: () => [Pl.x, Pl.y, Pl.z], addNear: f => nearProviders.push(f), onTick: f => tickers.push(f), refreshNear: () => { nearKey = null; } },
-    debug: { nearest: () => nearest(), guides, THREE, DBG, video, animator, Pl, St, input, scene, camera, renderer, vids, signs, teleport(x, y, z, face) { Pl.x = x; Pl.z = z; Pl.y = y ?? groundAt(x, 30, z); Pl.vy = 0; if (face != null) { Pl.face = face; St.yaw = face + Math.PI; } }, groundAt, cast, colSrc, colWhat, occ: () => OCC && { tiles: OCC.tiles.length, hidden: OCC.hidden, pass: OCC.pass }, occTiles: () => OCC && OCC.tiles, occSeen, info: () => ({ calls: renderer.info.render.calls, tris: renderer.info.render.triangles, tex: renderer.info.memory.textures, geo: renderer.info.memory.geometries }) },
+    debug: { move: dt => move(dt), nearest: () => nearest(), guides, THREE, DBG, video, animator, Pl, St, input, scene, camera, renderer, vids, signs, teleport(x, y, z, face) { Pl.x = x; Pl.z = z; Pl.y = y ?? groundAt(x, 30, z); Pl.vy = 0; if (face != null) { Pl.face = face; St.yaw = face + Math.PI; } }, groundAt, cast, colSrc, colWhat, occ: () => OCC && { tiles: OCC.tiles.length, hidden: OCC.hidden, pass: OCC.pass }, occTiles: () => OCC && OCC.tiles, occSeen, info: () => ({ calls: renderer.info.render.calls, tris: renderer.info.render.triangles, tex: renderer.info.memory.textures, geo: renderer.info.memory.geometries }) },
     destroy() { cancelAnimationFrame(raf); ro.disconnect(); removeEventListener('keydown', onKeyDown); removeEventListener('keyup', onKeyUp); if (hls) hls.destroy(); video.pause(); renderer.dispose(); el.remove(); joyBase.remove(); lookBtn.remove(); noteBtn.remove(); joyKnob.remove(); },
   };
 }

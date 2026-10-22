@@ -102,7 +102,7 @@ OFF</button></div>
   <div class="lab">Atmosphere</div>
   <div class="opts"><button id="ambBtn">Ambient sounds</button><button id="nightBtn">🌙 Night</button></div>
   <div class="lab">Visiting together</div>
-  <div class="opts"><button id="rename">Change my name</button><button id="invite">Copy private room link</button><button id="tourBtn">Lead a tour</button><button id="hostBtn">Host this visit</button><button id="noteBtn">🙂 Comment spots · leave a comment</button><button id="guideBtn" aria-pressed="true">🎥 Guided camera (ramps, big screen): ON</button><button id="liteBtn" aria-pressed="false">🪶 Lite mode (older phones): OFF</button></div>
+  <div class="opts"><button id="rename">Change my name</button><button id="invite">Copy private room link</button><button id="tourBtn">Lead a tour</button><button id="hostBtn">Host this visit</button><button id="noteBtn">🙂 Comment spots · leave a comment</button><button id="liteBtn" aria-pressed="false">🪶 Lite mode (older phones): OFF</button></div>
   <div id="whoList" style="font-size:13px;line-height:1.5;margin-top:8px"></div>
   <div class="lab">Lost?</div>
   <div class="opts"><button id="home">Back to the entrance</button></div>
@@ -116,11 +116,9 @@ const pref = (() => { try { return JSON.parse(localStorage.getItem('8gates.galle
 const savePref = () => { try { localStorage.setItem('8gates.gallery.v1', JSON.stringify(pref)); } catch (e) {} };
 let G; let near = null;
 try {
-  G = await createGallery({ container: $('stage'), onProgress: f => { $('lb').style.width = Math.round(f * 100) + '%'; }, onNear, onZone: z => { document.querySelector('#place .c').textContent = z; }, onPad: p => { if (!p) { if ($('hint').dataset.pad) { $('hint').style.display = 'none'; delete $('hint').dataset.pad; } return; } $('live').textContent = 'Comment spot: ' + p.name + '. The LEAVE NOTE button is on the right; tap it to leave a comment.'; $('hint').textContent = '🙂 YOUR COMMENTS HERE · tap LEAVE NOTE'; $('hint').dataset.pad = '1'; $('hint').style.display = 'block'; clearTimeout(window.PADHINT); window.PADHINT = setTimeout(() => { if ($('hint').dataset.pad) { $('hint').style.display = 'none'; delete $('hint').dataset.pad; } }, 4000); }, onLite: (on, auto) => { window.LITE_SHOW && window.LITE_SHOW(); if (auto) { $('live').textContent = 'Lite mode is on, so the gallery runs smoother on this phone. You can turn it off in the menu.'; $('hint').textContent = '🪶 Lite mode on for a smoother walk · ☰ to change'; $('hint').style.display = 'block'; setTimeout(() => $('hint').style.display = 'none', 4000); } }, onRail: name => { $('live').textContent = 'Guided along ' + name + '. Keep pushing forward.'; }, onSplash: () => { $('live').textContent = 'Splash! No swimming in the lake. Back to the entrance.'; $('hint').textContent = '💦 Splash! No swimming in the lake. Back to the entrance.'; $('hint').style.display = 'block'; setTimeout(() => $('hint').style.display = 'none', 3500); } });
+  G = await createGallery({ container: $('stage'), onProgress: f => { $('lb').style.width = Math.round(f * 100) + '%'; }, onNear, onZone: z => { document.querySelector('#place .c').textContent = z; }, onPad: p => { if (!p) { if ($('hint').dataset.pad) { $('hint').style.display = 'none'; delete $('hint').dataset.pad; } return; } $('live').textContent = 'Comment spot: ' + p.name + '. The LEAVE NOTE button is on the right; tap it to leave a comment.'; $('hint').textContent = '🙂 YOUR COMMENTS HERE · tap LEAVE NOTE'; $('hint').dataset.pad = '1'; $('hint').style.display = 'block'; clearTimeout(window.PADHINT); window.PADHINT = setTimeout(() => { if ($('hint').dataset.pad) { $('hint').style.display = 'none'; delete $('hint').dataset.pad; } }, 4000); }, onLite: (on, auto) => { window.LITE_SHOW && window.LITE_SHOW(); if (auto) { $('live').textContent = 'Lite mode is on, so the gallery runs smoother on this phone. You can turn it off in the menu.'; $('hint').textContent = '🪶 Lite mode on for a smoother walk · ☰ to change'; $('hint').style.display = 'block'; setTimeout(() => $('hint').style.display = 'none', 4000); } },  onSplash: () => { $('live').textContent = 'Splash! No swimming in the lake. Back to the entrance.'; $('hint').textContent = '💦 Splash! No swimming in the lake. Back to the entrance.'; $('hint').style.display = 'block'; setTimeout(() => $('hint').style.display = 'none', 3500); } });
   G.openCommentSpots = openCommentSpots;
-{ const b = $('guideBtn'); let on = true; try { on = localStorage.getItem('bcp.guided') !== 'off'; } catch (e) {}
-  const show = () => { b.textContent = '🎥 Guided camera (ramps, big screen): ' + (on ? 'ON' : 'OFF'); b.setAttribute('aria-pressed', on ? 'true' : 'false'); G.setGuided(on); };
-  b.onclick = () => { on = !on; try { localStorage.setItem('bcp.guided', on ? 'on' : 'off'); } catch (e) {} show(); $('live').textContent = 'Guided camera ' + (on ? 'on' : 'off') + '.'; }; show(); }
+
 { const b = $('liteBtn'); let saved = null; try { saved = localStorage.getItem('bcp.lite'); } catch (e) {}
   const show = () => { const on = G.lite(); b.textContent = '🪶 Lite mode (older phones): ' + (on ? 'ON' : 'OFF'); b.setAttribute('aria-pressed', on ? 'true' : 'false'); }; window.LITE_SHOW = show;
   b.onclick = () => { const on = !G.lite(); G.setLite(on); try { localStorage.setItem('bcp.lite', on ? 'on' : 'off'); } catch (e) {} show(); $('live').textContent = 'Lite mode ' + (on ? 'on' : 'off') + '.'; };
@@ -186,6 +184,8 @@ function actionWords(n) {
     case 'goto': return ['TAKE ME THERE', L];
     case 'signpost': return ['WHERE TO?', 'Signpost · the park'];
     case 'piano': return ['PLAY PIANO', 'Grand piano · Academy of Music'];
+    case 'drums': return ['PLAY DRUMS', 'Drum kit · Academy of Music'];
+    case 'guitar': return ['PLAY GUITAR', 'Electric guitar · Academy of Music'];
     case 'comment': return ['LEAVE A COMMENT', 'Comment spot · ' + ((n.item && n.item.spot && n.item.spot.name) || '')];
     default: return [L.toUpperCase().slice(0, 26), ''];
   }
@@ -227,6 +227,7 @@ function open(n) {
   if (n.kind === 'goto') { G.campus && G.campus.go(n.item.to); return; }
   if (n.kind === 'signpost') { openSignpost(); return; }
   if (n.kind === 'piano') { if (window.PIANO) window.PIANO.open(); return; }
+  if (n.kind === 'drums' || n.kind === 'guitar') { if (window.PIANO && window.PIANO.isOpen()) window.PIANO.close(false); if (window.BAND) window.BAND.open(n.kind); return; }
   if (n.kind === 'note') { if (window.NOTES) window.NOTES.openSpot(n.item); return; }
   if (n.kind === 'comment') { if (window.NOTES) window.NOTES.openCompose(n.item.spot); return; }
   quoteStop(); bioScrollStop();
@@ -360,7 +361,7 @@ function openCommentSpots() {
   showPanel('Your comments here 🙂', 'Comment spots', wrap);
 }
 function openMap() {
-  const [px, , pz, pf] = G.localState(), inPark = !!G.campus.zone();
+  const [px, pz, pf] = G.localState(), inPark = !!G.campus.zone();
   // map: up = west (towards the museum), left = north; 1 unit = 1 metre; world x -46..94 -> y, z 60..-60 -> x
   const X = z => 60 - z, Y = x => x + 46;
   const bld = (to, x0, x1, z0, z1, fill, label, ink = '#fff') => `<g class="mb" data-to="${to}" role="button" tabindex="0" aria-label="${label.replace('|', ' ')}" style="cursor:pointer"><rect x="${X(z1)}" y="${Y(x0)}" width="${z1 - z0}" height="${x1 - x0}" fill="${fill}" stroke="#1d1c1b" stroke-width="1.2"/><text x="${X((z0 + z1) / 2)}" y="${Y((x0 + x1) / 2) + 2.2 - (label.split('|').length - 1) * 3.2}" text-anchor="middle" font-size="6.2" font-weight="800" fill="${ink}" font-family="Archivo, Arimo, sans-serif">${label.split('|').map((l, i) => `<tspan x="${X((z0 + z1) / 2)}" dy="${i ? 6.4 : 0}">${l}</tspan>`).join('')}</text></g>`;
@@ -451,7 +452,7 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
     onJoin: id => {},
     onLeave: id => { const nm = names.get(id); if (G.following() === id) G.unfollow(); G.remote.remove(id); names.delete(id); if (window.TOG) window.TOG.onLeave(id); if (window.LIVE) window.LIVE.onLeave(id); if (window.CAMHEAD) window.CAMHEAD.onLeave(id); if (nm) announce(nm + ' left the gallery'); if (window.VOICE) window.VOICE.onLeave(id); refresh(); },
     onState: (id, st, prof) => { if (prof && !prof.name) prof = null; if (!prof && !names.has(id) && !st) return; const isNew = !names.has(id) && prof; G.remote.upsert(id, st, prof); if (prof) { names.set(id, prof.name); if (isNew) { announce(prof.name + ' joined the gallery'); if (entered) { net && net.hello(me()); if (window.TOG) window.TOG.onNewPeer(id); if (window.VOICE) window.VOICE.onNewPeer(id); if (window.LIVE) window.LIVE.onNewPeer(id); if (window.CAMHEAD) window.CAMHEAD.onNewPeer(id); } } } refresh(); },
-    onEvent: (id, d) => { if (window.PIANO) window.PIANO.onEvent(id, d); if (window.CAMHEAD) window.CAMHEAD.onEvent(id, d); if (window.LIVE) window.LIVE.onEvent(id, d); if (window.FACE) window.FACE.onEvent(id, d); if (window.TOG) window.TOG.onEvent(id, d); if (window.VOICE) window.VOICE.onEvent(id, d); if (window.NOTES) window.NOTES.onEvent(id, d); },
+    onEvent: (id, d) => { if (window.PIANO) window.PIANO.onEvent(id, d); if (window.BAND) window.BAND.onEvent(id, d); if (window.CAMHEAD) window.CAMHEAD.onEvent(id, d); if (window.LIVE) window.LIVE.onEvent(id, d); if (window.FACE) window.FACE.onEvent(id, d); if (window.TOG) window.TOG.onEvent(id, d); if (window.VOICE) window.VOICE.onEvent(id, d); if (window.NOTES) window.NOTES.onEvent(id, d); },
     onStream: (id, stream, meta) => { if (window.CAMHEAD) window.CAMHEAD.onStream(id, stream, meta); if (window.LIVE) window.LIVE.onStream(id, stream, meta); if (window.VOICE) window.VOICE.onStream(id, stream); },
     onEmote: (id, e) => { if (e === 'wave') { G.remote.wave(id); const nm = names.get(id); if (nm) announce(nm + ' waves'); } },
     onStatus: s => { status = s; refresh(); },
@@ -462,6 +463,7 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
   const { setupVoice } = await import('./engine/gallery-voice.js');
   window.VOICE = setupVoice({ G, net, button: $('micBtn'), announce, nameOf: id => names.get(id) || 'A visitor' });
   if (G.campus) import('./engine/gallery-piano.js').then(({ setupPiano }) => { window.PIANO = setupPiano({ G, net, announce, nameOf: id => names.get(id) || 'Someone' }); });
+  if (G.campus) import('./engine/gallery-band.js').then(({ setupBand }) => { window.BAND = setupBand({ G, net, announce, nameOf: id => names.get(id) || 'Someone' }); });
   import('./engine/gallery-notes.js').then(async ({ setupNotes }) => {
     window.NOTES = await setupNotes({ G, net, cfg: G.notesConfig, myName: () => pref.name, announce, esc, readAloud: () => !pref.quietNotes, showPanel });
   }).catch(e => console.warn('notes unavailable', e));

@@ -7,7 +7,7 @@
 // for every other Blind Canvas painting (engines/<type>.js holds a game type, cfg/<type>.js each painting's settings).
 // To play an original game, add &classic=1 to the link (for example ?art=hope-is-not-lost&classic=1).
 // To give a painting its original game back for good, add its id to KEEP.
-// SPECIAL lists paintings with a brand-new game of their own (Midnight Melodies: Night light; Rhythm of Life: Glow it bright; Walk Through Fear: See it my way; Almost Blindness: Sound safari; Curating Hope: Light memory; The Bridge of Perception: Say it from the creek; Pedals of Freedom: Ride the block; The Dark Uncertainty: Night bus; Fearless Request: Robot dance party; Pathways Unveiled: Open road safari; Roots of Kinship: Family apples; Reflections of Sisterhood: Fish for the sisters; Decision Divide: Tides of decision; Harmonious Gathering: Blow the storm away; Inner Peace in Outer Chaos: Calm walk; The Mirror: Pieces of me; The Gray Zone: Metamorphosis; Rhapsody in Blue: Jazz says; Moment of Communion: Calm the crossing; The Scope of Communication: Self-talk; Haute Couture Dreams: Style the dream; Embracing Unity: Hold on together; Joyride: Sunset joyride; The Only Light We’ll See: Light the night; The Visions That We Share: Catch the words; All Life’s Beauty: Dance in the flowers; Back of a Harley: Ride by feel; Lighthouse of Hope: Riddles of the lighthouse; Telephone Poles: Straight as an arrow).
+// SPECIAL lists paintings with a brand-new game of their own (Midnight Melodies: Night light; Rhythm of Life: Glow it bright; Walk Through Fear: See it my way; Almost Blindness: Sound safari; Curating Hope: Light memory; The Bridge of Perception: Say it from the creek; Pedals of Freedom: Ride the block; The Dark Uncertainty: Night bus; Fearless Request: Robot dance party; Pathways Unveiled: Open road safari; Roots of Kinship: Family apples; Reflections of Sisterhood: Fish for the sisters; Decision Divide: Tides of decision; Harmonious Gathering: Blow the storm away; Inner Peace in Outer Chaos: Calm walk; The Mirror: Pieces of me; The Gray Zone: Metamorphosis; Rhapsody in Blue: Jazz says; Moment of Communion: Calm the crossing; The Scope of Communication: Self-talk; Haute Couture Dreams: Style the dream; Embracing Unity: Hold on together; Joyride: Sunset joyride; The Only Light We’ll See: Light the night; The Visions That We Share: Catch the words; All Life’s Beauty: Dance in the flowers; Back of a Harley: Ride by feel; Lighthouse of Hope: Riddles of the lighthouse; Telephone Poles: Straight as an arrow; Flow State: What should I paint?; A New Day: Light the glass; All the Possibilities: Show her).
 import { napkinsGame } from './napkins.js';
 import { almostBlindnessGame } from './almost-blindness.js';
 import { walkThroughFearGame } from './walk-through-fear.js';
@@ -64,6 +64,9 @@ import { danceInTheFlowersGame } from './beauty-dance.js';
 import { rideByFeelGame } from './harley-ride.js';
 import { riddlesOfTheLighthouseGame } from './lighthouse-riddles.js';
 import { straightAsAnArrowGame } from './poles-drive.js';
+import { whatShouldIPaintGame } from './flow-talk.js';
+import { lightTheGlassGame } from './newday-glass.js';
+import { showHerGame } from './possible-window.js';
 
 export const CLASSIC = {
   'napkin-please': napkinsGame,
@@ -82,6 +85,9 @@ export const KEEP = new Set(['napkin-please']);
 
 // paintings with a special new game of their own (instead of the mosaic)
 export const SPECIAL = {
+  'all-the-possibilities': showHerGame, // Show her: tap, and the round window shows the girl another painting by a visually impaired artist
+  'a-new-day': lightTheGlassGame, // Light the glass: rub the night-dark stained glass to light it like sunrise; fill the window for a new day
+  'flow-state': whatShouldIPaintGame, // What should I paint?: Raquel opens her eyes and talks with your voice (puppet); tell her what to paint
   'telephone-poles': straightAsAnArrowGame, // Straight as an arrow: tilt to speed up or slow down; slow down when the bent poles drop their wires into the road
   'lighthouse-of-hope': riddlesOfTheLighthouseGame, // Riddles of the lighthouse: the talking face asks riddles about blindness and hope; right answers shine the light
   'back-of-a-harley': rideByFeelGame, // Ride by feel: lean into the curves your buddy calls, across the country; tap when the Harley goes by

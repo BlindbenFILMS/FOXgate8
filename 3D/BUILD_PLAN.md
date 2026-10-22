@@ -361,3 +361,26 @@ Ben's PlayCanvas project (BCP export) was exported with PlayCanvas's own GltfExp
 - Camera rails round the big screen at the front of the main hall (north and south ways round, then on behind it towards the west ramps). ☰ label now "Guided camera (ramps, big screen)".
 - Fox head merged too (second skinned pass attached to the head, bones = head + ears; camera head / face mask still hide it). Meshes per fox: suit+cane 49 -> 10, art tee 36 -> 10, wheelchair 85 -> 23.
 - Note: the PC bridge adds a C2PA chunk (~5.7 KB) to every .webp it writes; pixels identical.
+
+## Oct 22: walls
+- Body radius 0.32 → 0.42 (BODY_R; ?body= to test) so the fox's shoulders, arms and tail never sink into a wall.
+- pushOut(): each frame, feel round in 12 directions at 0.5/1.0/1.55 m and step back out along the wall's normal (never into another wall). Stops shallow-angle slides from slipping through thin walls and glass (e.g. the window nook by April & Melissa's poster).
+- Leaving a vision spot or standing up from a bench also stops short of walls.
+- Tests: push.js (16k shoves into walls: crossings 11 → 0, body inside a wall 1,840 → ~20, stair edges only); walkscan at 0.45 loses no areas; drive routes unchanged.
+
+## Oct 22 (afternoon): hedges, piano, band corner
+- Park hedges: their invisible walls now cover the whole hedge (1.1 m deep), so you can't walk into the leaves.
+- Standing up from any seat steps the way you face only if it's clear, else behind / to the side (the piano bench faces the piano, so you used to stand up inside it).
+- AMB band corner: a drum kit east of the piano (drum stool, ACTION PLAY DRUMS: 9 big pads, keys SPACE F D E G H K R U) and a red electric guitar on a stand with an amp west of it (guitar stool, ACTION PLAY GUITAR: the guitar moves into the fox's lap; 9 chords, swipe the strings / STRUM ▼▲, DRIVE; keys 1-9, SPACE/↓/↑, A-H strings). Synth sound (drums: sweeps + noise + 808 metal; guitar: Karplus-Strong). Everyone hears it by distance, sees drums jump and strings shake. Code: gallery-campus.js (band), engine/gallery-band.js (sound + panels), gallery.html (actions).
+
+## Oct 22 (evening): AMB stage room, no rails
+- Camera rails removed completely (RAILS/railSteer, the ☰ Guided camera button, the onRail announcements), and the held-direction
+  latch with them: movement is plain camera-relative again, as before 12 Oct.
+- AMB second room ("The Stage", gallery.json rooms[amb2]): east of the main room (x 49.4-69.8, z -38.8..-24), through a doorway in
+  the main room's east wall (buildWing sideDoor). Stage at the back (campus STAGE) with the piano, drum kit and guitar turned to face
+  the doorway; title + AMB logo wall behind it. The Community artist moved there; the main room keeps AMB + On Stage, one artist per
+  wall, every canvas with its text card beside it at eye level (buildWing hang).
+- buildWing options: Wd, lip, frontWall, doorZ, sideDoor, hang; endVideo.extraZones take an optional gain.
+- AMB film: heard through the main room and out of the front door (extra zone in front, reach 55), quiet in the stage room (gain
+  0.18). Also fixed: room films were measured from the origin once their room was merged (near-silent); screens now use their p.
+- Garden: trees/lanterns inside the stage room's footprint are dropped after planning (no reshuffle); petals avoid it (inBuilding).

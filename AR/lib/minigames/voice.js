@@ -13,6 +13,9 @@ const PREFIX = {
   'fearless-request': 'dance-', 'pathways-unveiled': 'road-', 'roots-of-kinship': 'apples-', 'reflections-of-sisterhood': 'fish-',
   'decision-divide': 'tides-', 'harmonious-gathering': 'storm-', 'inner-peace-in-outer-chaos': 'calm-',
   'the-mirror': 'mirror-', 'the-gray-zone': 'meta-', 'rhapsody-in-blue': 'jazz-', 'moment-of-communion': 'cross-', 'the-scope-of-communication': 'talk-',
+  'haute-couture-dreams': 'style-', 'embracing-unity': 'unity-', 'joyride': 'joy-', 'the-only-light-well-see': 'moon-',
+  'the-visions-that-we-share': 'eye-', 'all-lifes-beauty': 'flower-', 'back-of-a-harley': 'harley-', 'lighthouse-of-hope': 'light-',
+  'telephone-poles': 'poles-', 'flow-state': 'paint-', 'a-new-day': 'glass-', 'all-the-possibilities': 'show-',
 };
 const norm = s => s.toLowerCase().replace(/[’‘`]/g, "'").replace(/[^a-z0-9' ]+/g, ' ').replace(/\s+/g, ' ').trim();
 const BY_TEXT = new Map();

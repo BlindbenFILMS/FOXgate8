@@ -127,7 +127,8 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
       c.fillStyle = '#ff9783'; c.font = `700 40px ${FONT}`; c.textAlign = 'right'; c.fillText('Stories, art and voices from visitors like you', w - 50, 108); });
     plane(W - 1.2, 0.9, new THREE.MeshBasicMaterial({ map: headT }), cx, WH - 0.62, R.z1 - T - 0.02, Math.PI);
     const rug = plane(8, 6, new THREE.MeshLambertMaterial({ map: tex(512, 384, (c, w, h) => { c.fillStyle = '#7a1f22'; c.fillRect(0, 0, w, h); c.strokeStyle = '#e9c98a'; c.lineWidth = 10; c.strokeRect(24, 24, w - 48, h - 48); c.lineWidth = 3; c.strokeRect(46, 46, w - 92, h - 92); c.fillStyle = 'rgba(233,201,138,.5)'; c.font = `800 140px ${FONT}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('?', w / 2, h / 2 + 8); }) }), cx, 0.065, R.z0 + 10.5);
-    rug.rotation.set(-Math.PI / 2, 0, Math.PI);   // (the ? reads the right way up as you come in) rug.material.polygonOffset = true; rug.material.polygonOffsetFactor = -2;
+    rug.rotation.set(-Math.PI / 2, 0, Math.PI);   // (the ? reads the right way up as you come in)
+    rug.material.polygonOffset = true; rug.material.polygonOffsetFactor = -2;
     for (const x of [cx - 3.6, cx + 3.6]) { const b = makeBench(2.6); b.group.position.set(x, 0.06, R.z0 + 9.2); root.add(b.group); box(2.6, 0.55, 0.65, null, x, 0.33, R.z0 + 9.2).visible = false; benches.push({ x, z: R.z0 + 9.2, ry: 0, len: 2.6, dir: 1, name: 'Bench · facing the stories' }); }
     for (const x of [R.x0 + 1.1, R.x1 - 1.1]) { const p = makePlant(2.3); p.group.position.set(x, 0.06, R.z0 + 1.2); root.add(p.group); box(0.8, 1.6, 0.8, null, x, 0.8, R.z0 + 1.2).visible = false; }
     // the story stand: just inside the door, on your right as you come in, reading towards the door
@@ -160,9 +161,17 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
     const keysT = tex(512, 64, (c, w, h) => { c.fillStyle = '#f7f5f0'; c.fillRect(0, 0, w, h); c.fillStyle = '#1d1c1b'; for (let i = 0; i <= 14; i++) c.fillRect(i * (w / 14) - 1, 0, 2, h); const blk = [0, 1, 3, 4, 5, 7, 8, 10, 11, 12]; for (const i of blk) c.fillRect((i + 0.68) * (w / 14), 0, (w / 14) * 0.64, h * 0.6); c.fillStyle = '#ec3013'; c.fillRect(0, 0, w, 4); });
     const keys = (len, along) => { const t = keysT.clone(); t.needsUpdate = true; t.wrapS = THREE.RepeatWrapping; t.repeat.set(len / 3.6, 1); return new THREE.MeshLambertMaterial({ map: t }); };
     const L = A.z1 - A.z0, W = A.x1 - A.x0;
-    box(0.08, 0.9, L, keys(L), A.x0 - 0.04, H - 0.6, (A.z0 + A.z1) / 2, false); box(0.08, 0.9, L, keys(L), A.x1 + 0.04, H - 0.6, (A.z0 + A.z1) / 2, false);
+    const B2 = CAMPUS.amb2, eL = B2.z0 - A.z0;   // the east wall shows only south of the stage room (which joins it at its north end)
+    box(0.08, 0.9, L, keys(L), A.x0 - 0.04, H - 0.6, (A.z0 + A.z1) / 2, false); box(0.08, 0.9, eL, keys(eL), A.x1 + 0.04, H - 0.6, A.z0 + eL / 2, false);
     box(W, 0.9, 0.08, keys(W), cx, H - 0.6, A.z0 - 0.04, false);
-    for (const [w, d, x, z] of [[0.1, L, A.x0 - 0.05, (A.z0 + A.z1) / 2], [0.1, L, A.x1 + 0.05, (A.z0 + A.z1) / 2], [W, 0.1, cx, A.z0 - 0.05]]) box(w, 0.45, d, ink, x, 0.225, z, false);
+    for (const [w, d, x, z] of [[0.1, L, A.x0 - 0.05, (A.z0 + A.z1) / 2], [0.1, eL, A.x1 + 0.05, A.z0 + eL / 2], [W, 0.1, cx, A.z0 - 0.05]]) box(w, 0.45, d, ink, x, 0.225, z, false);
+    // the stage room's outside: the same piano-key frieze and ink plinth, and its name over the north wall
+    { const w2 = B2.x1 - B2.x0, d2 = B2.z1 - B2.z0, c2 = (B2.x0 + B2.x1) / 2, z2 = (B2.z0 + B2.z1) / 2;
+      box(w2, 0.9, 0.08, keys(w2), c2, H - 0.6, B2.z1 + 0.04, false); box(w2, 0.9, 0.08, keys(w2), c2, H - 0.6, B2.z0 - 0.04, false); box(0.08, 0.9, d2, keys(d2), B2.x1 + 0.04, H - 0.6, z2, false);
+      for (const [w, d, x, z] of [[w2, 0.1, c2, B2.z1 + 0.05], [w2, 0.1, c2, B2.z0 - 0.05], [0.1, d2, B2.x1 + 0.05, z2]]) box(w, 0.45, d, ink, x, 0.225, z, false);
+      const nT = tex(1600, 220, (c, w, h) => { c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, 0, 16, h);
+        c.fillStyle = '#ff9783'; c.font = `800 38px ${FONT}`; c.fillText('ACADEMY OF MUSIC FOR THE BLIND', 60, 70); c.fillStyle = '#fff'; fitText(c, 'THE STAGE', w - 120, 116); c.fillText('THE STAGE', 56, 178); });
+      plane(9, 1.24, new THREE.MeshBasicMaterial({ map: nT }), c2, 3.4, B2.z1 + 0.09, 0); }
     for (const s of [-1, 1]) { const p = makePlant(2.4); p.group.position.set(cx + s * 6.2, 0, A.z1 + 1.4); root.add(p.group); box(0.8, 1.6, 0.8, null, cx + s * 6.2, 0.8, A.z1 + 1.4).visible = false; }
   }
 
@@ -326,10 +335,20 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
   near.push(pl => { for (const g of gotos) if (Math.hypot(pl.x - g.x, pl.z - g.z) < g.r && Math.abs(pl.y - g.y) < 2.2) return { kind: 'goto', item: { z: g.to.length, to: g.to }, label: g.label }; return null; });
 
   // ============================================================ the Academy's grand piano (play it: gallery-piano.js)
-  // In the middle of the AMB building, between the visitors' bench and the film wall: you sit with your back to the door and play
-  // towards the screen. Gloss-black case with the lid propped open, 5 octaves of keys (C2-C7) that dip as notes play, a bench.
+  // On the stage in the AMB's second room (22 Oct; it stood in the middle of the main room): turned to face the room's doorway,
+  // so you sit behind it and play out to the room. Gloss-black case with the lid propped open, 5 octaves of keys (C2-C7) that dip
+  // as notes play, a bench. (Built facing -z, then the whole group turned: STAGE.ry; W() maps its local x/z into the world.)
+  const STAGE = { x0: 63.9, x1: 69.4, z0: -37.9, z1: -24.9, y: 0.06, top: 0.51, ry: Math.PI / 2 };
+  const W = (X, Z, lx, lz) => [X + lx * Math.cos(STAGE.ry) + lz * Math.sin(STAGE.ry), Z - lx * Math.sin(STAGE.ry) + lz * Math.cos(STAGE.ry)];
+  {   // the stage itself: an ink-sided platform with a plank top, a step along its front, a red edge
+    const S = STAGE, cx = (S.x0 + S.x1) / 2, cz = (S.z0 + S.z1) / 2, w = S.x1 - S.x0, d = S.z1 - S.z0, h = S.top - S.y;
+    const plank = woodify(new THREE.MeshLambertMaterial({ color: 0xd9c4a8 }), wood);
+    box(w, h, d, [ink, ink, plank, ink, ink, ink], cx, S.y + h / 2, cz);
+    box(0.6, h / 2, d - 1.2, [ink, ink, plank, ink, ink, ink], S.x0 - 0.3, S.y + h / 4, cz);
+    box(0.05, 0.05, d, red, S.x0 + 0.02, S.top - 0.03, cz, false);
+  }
   const piano = (() => {
-    const PX = 40, PZ = -46.6, Y0 = 0.06, g = new THREE.Group(); g.position.set(PX, Y0, PZ); root.add(g);
+    const PX = 66.4, PZ = -35.6, Y0 = STAGE.top, g = new THREE.Group(); g.position.set(PX, Y0, PZ); g.rotation.y = STAGE.ry; root.add(g);
     const gloss = new THREE.MeshPhongMaterial({ color: 0x0d0d0f, specular: 0x5a5a66, shininess: 90 }), innerM = new THREE.MeshLambertMaterial({ color: 0x8a6a3a }), brass = new THREE.MeshLambertMaterial({ color: 0xc9a14a });
     // the case outline seen from above (x across, y = -z towards the tail): the straight bass side on the left, the curved treble side on the right
     const S = new THREE.Shape(); S.moveTo(-0.76, 0); S.lineTo(0.76, 0); S.lineTo(0.76, 0.55);
@@ -368,11 +387,121 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
     for (const x of [-0.4, 0.4]) for (const z of [0.58, 0.86]) box(0.05, 0.46, 0.05, benchM, x, 0.23, z, false, g);
     plane(0.2, 0.035, new THREE.MeshBasicMaterial({ map: tex(256, 44, (c, w, h) => { c.fillStyle = '#c9a14a'; c.fillRect(0, 0, w, h); c.fillStyle = '#2a2010'; c.font = `800 26px ${FONT}`; c.textAlign = 'center'; c.fillText('AMB', w / 2, 32); }) }), 0, 0.8, -0.018, 0, g);
     // solid: the case (and the bench, low, so you can step up to it)
-    box(1.55, 1.0, 2.05, null, PX, Y0 + 0.5, PZ - 1.0).visible = false;
-    const bench = { x: PX, z: PZ + 0.72, ry: 0, len: 0.9, dir: -1, top: Y0 + 0.55, name: 'Piano bench' };
+    { const [cx, cz] = W(PX, PZ, 0, -1.0); box(2.05, 1.0, 1.55, null, cx, Y0 + 0.5, cz).visible = false; }   // (turned a quarter: its length runs along x)
+    const [bx, bz] = W(PX, PZ, 0, 0.72), [nx, nz] = W(PX, PZ, 0, 0.9), [ax, az] = W(PX, PZ, 0, -0.8);
+    const bench = { x: bx, z: bz, ry: STAGE.ry, len: 0.9, dir: -1, top: Y0 + 0.55, name: 'Piano bench' };
     benches.push(bench);
-    near.push(pl => Math.hypot(pl.x - PX, pl.z - (PZ + 0.9)) < 2.4 && Math.abs(pl.y - Y0) < 1.5 ? { kind: 'piano', item: { z: 3 }, label: 'Grand piano · play it' } : null);
-    return { x: PX, y: Y0 + 1.0, z: PZ - 0.8, bench, press(m, down) { const k = keys.get(m); if (k) place(k.im, k.i, k.x, k.y, k.z, down); } };
+    near.push(pl => Math.hypot(pl.x - nx, pl.z - nz) < 1.7 && Math.abs(pl.y - Y0) < 1.2 ? { kind: 'piano', item: { z: 3 }, label: 'Grand piano · play it' } : null);
+    return { x: ax, y: Y0 + 1.0, z: az, bench, press(m, down) { const k = keys.get(m); if (k) place(k.im, k.i, k.x, k.y, k.z, down); } };
+  })();
+
+  // ============================================================ the band corner (22 Oct): a drum kit east of the piano and an electric
+  // guitar on its stand (with a little amp) to the west, all facing the film wall like the piano. Sit on the drum stool or the guitar
+  // stool and play (gallery-band.js); the drums jump when they're hit and the guitar's strings shiver.
+  const band = (() => {
+    const Y0 = STAGE.top, out = { drums: null, guitar: null };
+    const chrome = new THREE.MeshPhongMaterial({ color: 0xc8ccd2, specular: 0xffffff, shininess: 80 }), blackM = new THREE.MeshLambertMaterial({ color: 0x151515 });
+    const brassC = new THREE.MeshPhongMaterial({ color: 0xc99a3a, specular: 0xffe2a0, shininess: 70, side: THREE.DoubleSide });
+    const shellM = new THREE.MeshPhongMaterial({ color: 0xc81e14, specular: 0x884444, shininess: 60 }), headM = new THREE.MeshLambertMaterial({ color: 0xf2efe6 });
+    const cyl = (rt, rb, h, m, seg = 20) => new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, seg), m);
+    const dyn = o => { o.traverse(c => { c.userData.dyn = true; }); return o; };
+    const stool = (g, x, z) => { const s = cyl(0.19, 0.19, 0.08, blackM); s.position.set(x, 0.52, z); g.add(s); const p = cyl(0.025, 0.025, 0.48, chrome, 8); p.position.set(x, 0.25, z); g.add(p);
+      for (let i = 0; i < 3; i++) { const l = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.02, 0.28), chrome); const a = i * 2.094; l.position.set(x + Math.sin(a) * 0.12, 0.03, z + Math.cos(a) * 0.12); l.rotation.y = a; g.add(l); } };
+    // ---------------- the drum kit
+    {
+      const DX = 66.6, DZ = -31.4, g = new THREE.Group(); g.position.set(DX, Y0, DZ); g.rotation.y = STAGE.ry; root.add(g);
+      const pieces = {};
+      // a drum: shell + two heads + chrome hoops, in its own group so it can jump when hit
+      const drum = (name, r, h, x, y, z, tiltX = 0, logo = null) => {
+        const d = new THREE.Group(); d.position.set(x, y, z); d.rotation.x = tiltX; g.add(d);
+        d.add(cyl(r, r, h, shellM)); for (const s of [1, -1]) { const hd = cyl(r * 0.99, r * 0.99, 0.004, headM); hd.position.y = s * h / 2; d.add(hd); const hp = new THREE.Mesh(new THREE.TorusGeometry(r, 0.008, 6, 24), chrome); hp.rotation.x = Math.PI / 2; hp.position.y = s * h / 2; d.add(hp); }
+        if (logo) { const f = new THREE.Mesh(new THREE.CircleGeometry(r * 0.97, 28), new THREE.MeshBasicMaterial({ map: logo })); f.position.y = -h / 2 - 0.003; f.rotation.x = Math.PI / 2; d.add(f); }
+        d.userData.base = { y, s: 1, rx: tiltX }; pieces[name] = dyn(d); return d; };
+      const cymbal = (name, r, x, y, z, tilt) => {
+        const st = cyl(0.012, 0.012, y, chrome, 8); st.position.set(x, y / 2, z); g.add(st);
+        for (let i = 0; i < 3; i++) { const l = new THREE.Mesh(new THREE.BoxGeometry(0.015, 0.015, 0.3), chrome); const a = i * 2.094; l.position.set(x + Math.sin(a) * 0.13, 0.04, z + Math.cos(a) * 0.13); l.rotation.y = a; g.add(l); }
+        const c = new THREE.Group(); c.position.set(x, y + 0.02, z); c.rotation.x = tilt; g.add(c);
+        const geo = new THREE.ConeGeometry(r, 0.035, 32, 1, true); const m = new THREE.Mesh(geo, brassC); c.add(m); const bell = new THREE.Mesh(new THREE.SphereGeometry(r * 0.2, 12, 6, 0, 6.283, 0, 1.4), brassC); bell.position.y = 0.012; c.add(bell);
+        c.userData.base = { y: y + 0.02, s: 1, rx: tilt }; pieces[name] = dyn(c); return c; };
+      // the kick drum, lying on its side, the AMB logo on its front head (facing the film wall, away from the drummer)
+      const kickLogo = tex(256, 256, (c, w, h) => { c.fillStyle = '#111'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.beginPath(); c.arc(w / 2, h / 2, w * 0.42, 0, 6.283); c.fill();
+        c.fillStyle = '#fff'; c.font = `900 72px ${FONT}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('AMB', w / 2, h / 2 - 8); c.font = `800 20px ${FONT}`; c.fillText('ACADEMY OF MUSIC', w / 2, h / 2 + 44); });
+      kickLogo.center.set(0.5, 0.5); kickLogo.rotation = Math.PI;
+      const kick = drum('kick', 0.29, 0.42, 0, 0.31, -0.05, Math.PI / 2, kickLogo);
+      for (const s of [1, -1]) { const sp = new THREE.Mesh(new THREE.BoxGeometry(0.015, 0.015, 0.25), chrome); sp.position.set(s * 0.26, 0.05, -0.32); sp.rotation.x = 0.5; g.add(sp); }   // spurs
+      const pedal = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.02, 0.24), blackM); pedal.position.set(0, 0.04, 0.3); pedal.rotation.x = -0.18; g.add(pedal);
+      drum('snare', 0.18, 0.13, -0.38, 0.66, 0.5, -0.12);
+      { const st = cyl(0.012, 0.012, 0.58, chrome, 8); st.position.set(-0.38, 0.29, 0.5); g.add(st); }
+      drum('tom1', 0.14, 0.2, -0.17, 0.82, 0.02, -0.35); drum('tom2', 0.16, 0.22, 0.18, 0.83, 0.02, -0.35);
+      { const m = cyl(0.012, 0.012, 0.25, chrome, 8); m.position.set(0, 0.68, 0); g.add(m); }
+      drum('floor', 0.22, 0.36, 0.56, 0.48, 0.42);
+      for (const [lx, lz] of [[0.4, 0.3], [0.72, 0.3], [0.56, 0.62]]) { const l = cyl(0.01, 0.01, 0.3, chrome, 6); l.position.set(lx, 0.15, lz); g.add(l); }
+      // hi-hat: two cymbals on one stand, left of the snare
+      cymbal('hihat', 0.17, -0.78, 0.92, 0.42, -0.08); { const top = new THREE.Mesh(new THREE.ConeGeometry(0.17, 0.03, 32, 1, true), brassC); top.rotation.x = Math.PI; top.position.y = 0.035; pieces.hihat.add(top); dyn(top); }
+      cymbal('crash', 0.24, -0.62, 1.36, -0.22, -0.28); cymbal('ride', 0.28, 0.82, 1.22, -0.08, -0.22);
+      stool(g, 0, 1.12);
+      // sticks resting on the snare
+      for (const s of [-0.03, 0.03]) { const st = cyl(0.007, 0.007, 0.4, new THREE.MeshLambertMaterial({ color: 0xd9b27a }), 6); st.rotation.z = Math.PI / 2; st.rotation.y = 0.3 + s * 3; st.position.set(-0.38, 0.74, 0.5 + s); g.add(st); }
+      // solid: the kit (walk round it); the stool stays clear so you can sit on it
+      { const [cx, cz] = W(DX, DZ, 0, 0.12); box(1.5, 1.4, 2.0, null, cx, Y0 + 0.7, cz).visible = false; }
+      const [sx, sz] = W(DX, DZ, 0, 1.12), [nx, nz] = W(DX, DZ, 0, 1.3);
+      const bench = { x: sx, z: sz, ry: STAGE.ry, len: 0.9, dir: -1, top: Y0 + 0.56, name: 'Drum stool' };
+      benches.push(bench);
+      near.push(pl => Math.hypot(pl.x - nx, pl.z - nz) < 1.5 && Math.abs(pl.y - Y0) < 1.2 ? { kind: 'drums', item: { z: 3 }, label: 'Drum kit · play it' } : null);
+      const hits = new Map();
+      tickers.push(dt => { for (const [k, t] of hits) { const p = pieces[k], b = p.userData.base, a = Math.max(0, 1 - t / 0.35), w = Math.sin(t * 38) * a;
+        if (k === 'crash' || k === 'ride' || k === 'hihat') { p.rotation.x = b.rx + w * (k === 'hihat' ? 0.05 : 0.16); p.rotation.z = Math.sin(t * 27) * a * 0.08; }
+        else { const sq = 1 - a * 0.07 * Math.abs(Math.sin(t * 50)); p.scale.set(1 + (1 - sq) * 0.5, sq, 1 + (1 - sq) * 0.5); }
+        if (a <= 0) { hits.delete(k); p.rotation.x = b.rx; p.rotation.z = 0; p.scale.setScalar(1); } else hits.set(k, t + dt); } });
+      out.drums = { x: DX, y: Y0 + 1.0, z: DZ, bench, hit(k) { if (pieces[k]) hits.set(k, 0); } };
+    }
+    // ---------------- the electric guitar on its stand, an amp beside it, a stool
+    {
+      const GX = 65.8, GZ = -27.4, g = new THREE.Group(); g.position.set(GX, Y0, GZ); g.rotation.y = STAGE.ry; root.add(g);
+      // the stand: a tripod with a padded cradle and a neck yoke
+      for (let i = 0; i < 3; i++) { const a = i * 2.094 + 0.5, l = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.02, 0.36), blackM); l.position.set(Math.sin(a) * 0.15, 0.03, Math.cos(a) * 0.15); l.rotation.y = a; g.add(l); }
+      { const p = cyl(0.014, 0.014, 0.95, blackM, 8); p.position.set(0, 0.5, -0.1); p.rotation.x = -0.12; g.add(p);
+        const cr = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.03, 0.08), blackM); cr.position.set(0, 0.3, 0.02); g.add(cr);
+        const y = new THREE.Mesh(new THREE.TorusGeometry(0.04, 0.008, 6, 12, Math.PI), blackM); y.position.set(0, 0.98, -0.14); g.add(y); }
+      // the guitar: a red double-cut body (white pickguard), maple neck, six strings
+      const gt = new THREE.Group(); g.add(gt);
+      const R = [[0, -0.25], [0.1, -0.235], [0.17, -0.15], [0.175, -0.06], [0.115, 0.04], [0.12, 0.12], [0.155, 0.2], [0.11, 0.235], [0.05, 0.16], [0, 0.17]];
+      const right = new THREE.SplineCurve(R.map(([x, y]) => new THREE.Vector2(x, y))).getPoints(40), S = new THREE.Shape();
+      S.moveTo(0, -0.25); for (const p of right) S.lineTo(p.x, p.y); for (let i = right.length - 1; i >= 0; i--) { const p = right[i]; const x = -p.x * (p.y > 0.1 ? 0.92 : 1); S.lineTo(x, p.y > 0.1 ? p.y - 0.02 : p.y); } S.closePath();
+      const bodyGeo = new THREE.ExtrudeGeometry(S, { depth: 0.045, bevelEnabled: true, bevelThickness: 0.006, bevelSize: 0.006, bevelSegments: 2, curveSegments: 6 }); bodyGeo.translate(0, 0, -0.0225);
+      gt.add(new THREE.Mesh(bodyGeo, new THREE.MeshPhongMaterial({ color: 0xd2231a, specular: 0xffffff, shininess: 110 })));
+      const pg = new THREE.Mesh(new THREE.ShapeGeometry(S, 6), new THREE.MeshLambertMaterial({ color: 0xf6f3ea })); pg.scale.set(0.62, 0.62, 1); pg.position.set(0.035, -0.02, 0.03); gt.add(pg);
+      const maple = new THREE.MeshLambertMaterial({ color: 0xe0b878 }), rose = new THREE.MeshLambertMaterial({ color: 0x3a2418 });
+      const neck = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.52, 0.022), maple); neck.position.set(0, 0.43, 0.01); gt.add(neck);
+      const board = new THREE.Mesh(new THREE.BoxGeometry(0.052, 0.5, 0.006), rose); board.position.set(0, 0.43, 0.024); gt.add(board);
+      for (let f = 1; f <= 12; f++) { const fy = 0.68 - 0.5 * (1 - Math.pow(2, -f / 12)) * 1.6; const fr = new THREE.Mesh(new THREE.BoxGeometry(0.052, 0.003, 0.004), chrome); fr.position.set(0, fy, 0.028); gt.add(fr); }
+      const head = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.17, 0.016), maple); head.position.set(0.012, 0.77, 0.004); head.rotation.z = -0.08; gt.add(head);
+      for (let i = 0; i < 6; i++) { const pk = cyl(0.007, 0.007, 0.03, chrome, 6); pk.rotation.z = Math.PI / 2; pk.position.set(0.055, 0.71 + i * 0.022, 0.006); gt.add(pk); }
+      for (const py of [-0.1, -0.02, 0.06]) { const pu = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.02, 0.008), blackM); pu.position.set(0, py, 0.036); gt.add(pu); }
+      const bridge = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.03, 0.01), chrome); bridge.position.set(0, -0.16, 0.034); gt.add(bridge);
+      for (const [kx, ky] of [[0.1, -0.12], [0.11, -0.17], [0.07, -0.2]]) { const k = cyl(0.012, 0.012, 0.015, chrome, 10); k.rotation.x = Math.PI / 2; k.position.set(kx, ky, 0.034); gt.add(k); }
+      const strings = [], strM = new THREE.MeshBasicMaterial({ color: 0xe9e9e9 });
+      for (let i = 0; i < 6; i++) { const sx = -0.021 + i * 0.0084, s = new THREE.Mesh(new THREE.BoxGeometry(0.0014 + (5 - i) * 0.0002, 0.84, 0.0014), strM); s.position.set(sx, 0.26, 0.04); s.userData.bx = sx; gt.add(s); strings.push(s); }
+      gt.position.set(0, 0.55, 0.02); gt.rotation.x = -0.14; dyn(gt);
+      const rest = { pos: gt.position.clone(), rot: gt.rotation.clone(), parent: g };
+      // the amp, beside the stand
+      const amp = new THREE.Group(); amp.position.set(-0.75, 0, -0.25); amp.rotation.y = 0.35; g.add(amp);
+      const ampBox = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.5, 0.28), new THREE.MeshLambertMaterial({ color: 0x1b1a19 })); ampBox.position.y = 0.25; amp.add(ampBox);
+      const grille = plane(0.48, 0.3, new THREE.MeshLambertMaterial({ map: tex(256, 160, (c, w, h) => { c.fillStyle = '#3a3633'; c.fillRect(0, 0, w, h); c.strokeStyle = 'rgba(0,0,0,.35)'; for (let x = 0; x < w; x += 6) { c.beginPath(); c.moveTo(x, 0); c.lineTo(x, h); c.stroke(); }
+        c.fillStyle = '#ec3013'; c.font = `900 italic 34px ${FONT}`; c.textAlign = 'center'; c.fillText('AMB', w / 2, h - 22); }) }), 0, 0.2, 0.141, 0, amp);
+      const panel = plane(0.48, 0.1, new THREE.MeshLambertMaterial({ map: tex(256, 54, (c, w, h) => { c.fillStyle = '#c9a14a'; c.fillRect(0, 0, w, h); c.fillStyle = '#111'; for (let i = 0; i < 6; i++) { c.beginPath(); c.arc(30 + i * 40, h / 2, 10, 0, 6.283); c.fill(); } }) }), 0, 0.42, 0.141, 0, amp);
+      stool(g, 0.55, 1.1);
+      box(0.5, 1.0, 0.5, null, GX, Y0 + 0.5, GZ).visible = false;
+      { const [cx, cz] = W(GX, GZ, -0.75, -0.25); box(0.42, 0.55, 0.62, null, cx, Y0 + 0.27, cz).visible = false; }
+      const [sx, sz] = W(GX, GZ, 0.55, 1.1), [nx, nz] = W(GX, GZ, 0.4, 1.1);
+      const bench = { x: sx, z: sz, ry: STAGE.ry, len: 0.9, dir: -1, top: Y0 + 0.56, name: 'Guitar stool' };
+      benches.push(bench);
+      near.push(pl => Math.hypot(pl.x - nx, pl.z - nz) < 1.4 && Math.abs(pl.y - Y0) < 1.2 ? { kind: 'guitar', item: { z: 3 }, label: 'Electric guitar · play it' } : null);
+      const shake = new Array(6).fill(0); let tt = 0;
+      tickers.push(dt => { tt += dt; for (let i = 0; i < 6; i++) { if (shake[i] <= 0) continue; shake[i] = Math.max(0, shake[i] - dt * 1.6); strings[i].position.x = strings[i].userData.bx + Math.sin(tt * (90 + i * 13)) * 0.0022 * shake[i]; } });
+      out.guitar = { x: GX, y: Y0 + 1.0, z: GZ, bench, group: gt, rest, pluck(i) { if (i >= 0 && i < 6) shake[i] = 1; } };
+    }
+    return out;
   })();
 
   // ============================================================ the signpost by the big tree: an oak post with an arrow for each place
@@ -405,11 +534,11 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
   const zoneAt = (x, y, z) => {
     if (y < -1.5 || y > 12) return null;
     if (inR(x, z, CAMPUS.why)) return 'why';
-    if (inR(x, z, CAMPUS.amb)) return 'amb';
+    if (inR(x, z, CAMPUS.amb) || inR(x, z, CAMPUS.amb2)) return 'amb';
     if (inR(x, z, CAMPUS.cinema)) return 'cinema';
     if (x > 7.4) return 'park';
     return null;
   };
   root.updateMatrixWorld(true);
-  return { group: root, col, benches, screens, near, why, cinema, piano, zoneAt, tick: dt => tickers.forEach(f => f(dt)) };
+  return { group: root, col, benches, screens, near, why, cinema, piano, band, zoneAt, tick: dt => tickers.forEach(f => f(dt)) };
 }

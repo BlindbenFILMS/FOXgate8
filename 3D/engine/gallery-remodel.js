@@ -178,7 +178,7 @@ export function buildRooms({ scene, data, wood, resolveImg, buildWing }) {
   const out = { col: [], arts: [], screens: [], canvases: [], list: [] };
   for (const R of data.rooms || []) {
     const O = new THREE.Vector3(...R.O);
-    const room = buildWing({ scene, wing: { artists: R.artists }, O, rotY: R.rotY, doorW: R.doorW, wood, resolveImg, L: R.L, title: R.title, logo: R.logo, endVideo: R.endVideo, floorLogo: R.floorLogo, fillLogo: R.fillLogo, doorSign: R.doorSign, bayW: R.bayW });
+    const room = buildWing({ scene, wing: { artists: R.artists }, O, rotY: R.rotY, doorW: R.doorW, wood, resolveImg, L: R.L, title: R.title, logo: R.logo, endVideo: R.endVideo, floorLogo: R.floorLogo, fillLogo: R.fillLogo, doorSign: R.doorSign, bayW: R.bayW, Wd: R.Wd, lip: R.lip ?? 1, frontWall: R.frontWall !== false, doorZ: R.doorZ || 0, sideDoor: R.sideDoor || null, hang: R.hang || null });
     // the partner's logo out in the hall, on an ink panel, to lead people to the room (loads with the room)
     // a free-standing ink display board (for a photo hung on the low wall across the hall); a red bar on top
     for (const hb of R.hallBoards || []) {
