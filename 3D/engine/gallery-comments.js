@@ -61,9 +61,11 @@ export function buildCommentSpots({ THREE, scene, spots = COMMENT_SPOTS }) {
     const c = new THREE.Mesh(new THREE.BoxGeometry(S.w + 0.14, PAD_H, S.d + 0.14)); c.position.set(S.x, S.y + PAD_H / 2, S.z); c.rotation.y = S.face; c.updateMatrixWorld(true); col.push(c);
     // the sign: on the pad's back edge, off to one side so it never stands in the way, facing the same way as the spot
     const sx = S.w / 2 - 0.25, sz = -S.d / 2 + 0.08, BW = 1.5, BH = 1.0, top = 2.15;
-    const post = new THREE.Mesh(new THREE.BoxGeometry(0.09, top - 0.05, 0.09), ink); post.position.set(sx, (top - 0.05) / 2, sz); g.add(post);
-    const board = new THREE.Mesh(new THREE.BoxGeometry(BW + 0.08, BH + 0.08, 0.06), ink); board.position.set(sx - BW / 2 + 0.2, top - BH / 2, sz); g.add(board);
-    for (const [dz, ry] of [[0.032, 0], [-0.032, Math.PI]]) { const f = new THREE.Mesh(new THREE.PlaneGeometry(BW, BH), signM); f.position.set(sx - BW / 2 + 0.2, top - BH / 2, sz + dz); f.rotation.y = ry; g.add(f); }
+    // (22 Oct) a thick board (thicker than the post), and the post stops inside it, so it never crosses the words on either face
+    const T = 0.2, postTop = top - BH + 0.3;
+    const post = new THREE.Mesh(new THREE.BoxGeometry(0.09, postTop, 0.09), ink); post.position.set(sx, postTop / 2, sz); g.add(post);
+    const board = new THREE.Mesh(new THREE.BoxGeometry(BW + 0.08, BH + 0.08, T), ink); board.position.set(sx - BW / 2 + 0.2, top - BH / 2, sz); g.add(board);
+    for (const [dz, ry] of [[T / 2 + 0.002, 0], [-T / 2 - 0.002, Math.PI]]) { const f = new THREE.Mesh(new THREE.PlaneGeometry(BW, BH), signM); f.position.set(sx - BW / 2 + 0.2, top - BH / 2, sz + dz); f.rotation.y = ry; g.add(f); }
     { const w = new THREE.Vector3(sx, 0.6, sz).applyAxisAngle(new THREE.Vector3(0, 1, 0), S.face); const m = new THREE.Mesh(new THREE.BoxGeometry(0.16, 1.2, 0.16)); m.position.set(S.x + w.x, S.y + 0.6, S.z + w.z); m.updateMatrixWorld(true); col.push(m); }
     list.push({ ...S, top: S.y + PAD_H });
   }

@@ -89,15 +89,18 @@ export function buildVisionSpots({ scene, spots, groundAt }) {
       const side = sp.signSide || 1, px = sp.x - dz * 1.75 * side + dx * 0.2, pz = sp.z + dx * 1.75 * side + dz * 0.2, rot = Math.atan2(-dx, -dz);
       const grp = new THREE.Group(); grp.position.set(px, yy, pz); grp.rotation.y = rot; signG.add(grp);
       // the pole stops under the plate and a short neck joins plate to disc, so nothing crosses the words
-      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.97, 10), ink); pole.position.y = 0.485; grp.add(pole);
-      const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.1, 10), ink); neck.position.y = 1.63; grp.add(neck);
+      // (22 Oct) thick plate and disc: the pole runs up into the plate and the neck into the disc, hidden inside them
+      const T = 0.16;
+      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 1.2, 10), ink); pole.position.y = 0.6; grp.add(pole);
+      const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.5, 10), ink); neck.position.y = 1.75; grp.add(neck);
+      const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.52, 0.52, T, 40), ink); disc.rotation.x = Math.PI / 2; disc.position.y = 2.18; grp.add(disc);
       const foot = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.32, 0.06, 20), ink); foot.position.y = 0.03; grp.add(foot);
       const DY = 2.18;
       for (const r of [0, Math.PI]) {
-        const face = new THREE.Mesh(new THREE.CircleGeometry(0.5, 48), faceM); face.position.set(0, DY, r ? -0.032 : 0.032); face.rotation.y = r; grp.add(face);
-        const plate = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.62), plateM); plate.position.set(0, 1.28, r ? -0.032 : 0.032); plate.rotation.y = r; grp.add(plate);
+        const face = new THREE.Mesh(new THREE.CircleGeometry(0.5, 48), faceM); face.position.set(0, DY, r ? -T / 2 - 0.002 : T / 2 + 0.002); face.rotation.y = r; grp.add(face);
+        const plate = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.62), plateM); plate.position.set(0, 1.28, r ? -T / 2 - 0.002 : T / 2 + 0.002); plate.rotation.y = r; grp.add(plate);
       }
-      const back = new THREE.Mesh(new THREE.BoxGeometry(1.24, 0.66, 0.06), ink); back.position.y = 1.28; grp.add(back);
+      const back = new THREE.Mesh(new THREE.BoxGeometry(1.24, 0.66, T), ink); back.position.y = 1.28; grp.add(back);
       const ring = new THREE.Mesh(new THREE.CylinderGeometry(0.52, 0.52, 0.06, 40), ink); ring.rotation.x = Math.PI / 2; ring.position.y = DY; grp.add(ring);
       sp.signPos = new THREE.Vector3(px, yy, pz);
     }

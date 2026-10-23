@@ -13,6 +13,7 @@
 // Plus, back in the museum: the AMB room's old doorway is closed with a sign that takes you to its new building, and a board by
 // the Wall of Why points to the WHY House ("leave your own").
 import * as THREE from '../vendor/three/three.module.js';
+import { lean } from './gallery-texmem.js';
 import { CAMPUS, RING } from './gallery-garden-plan.js';
 import { lectern } from './gallery-remodel.js';
 import { makePlant, makeBench } from './gallery-props.js';
@@ -23,10 +24,12 @@ const DECO = '"Limelight", "Poiret One", Archivo, Arimo, Helvetica, Arial, sans-
 // minutes on the clock (:00, :15, :30, :45 — the same moment for every visitor, wherever they are); between shows the screen and
 // the marquee count down to the next one. Everyone in the cinema sees the same frame (the film is locked to the clock).
 export const CINEMA_SHOW = { file: 'blindcan_festival', title: 'This Weekend Is Blind CAN Film Festival', kicker: 'Blind CAN Film Festival', len: 603.5, every: 15 };
-export const CINEMA_PROGRAM = [CINEMA_SHOW];
-export function showtime(nowMs = Date.now()) {   // { on, t (seconds into the film), start, next (ms of the next show), nextIn (s) }
-  const P = CINEMA_SHOW.every * 60, s = nowMs / 1000, t = s % P, start = (s - t) * 1000, next = start + P * 1000;
-  return t < CINEMA_SHOW.len ? { on: true, t, start, next, nextIn: (next - nowMs) / 1000 } : { on: false, t: 0, start, next, nextIn: (next - nowMs) / 1000 };
+// Screen 2 (22 Oct): its own film on its own showtimes: Blind CAN's White Cane commercial (one minute, every two minutes)
+export const CINEMA_SHOW2 = { file: 'white_cane', title: 'White Cane Commercial', kicker: 'Blind CAN · 2023', len: 60.1, every: 2 };
+export const CINEMA_PROGRAM = [CINEMA_SHOW, CINEMA_SHOW2];
+export function showtime(nowMs = Date.now(), F = CINEMA_SHOW) {   // { on, t (seconds into the film), start, next (ms of the next show), nextIn (s) }
+  const P = F.every * 60, s = nowMs / 1000, t = s % P, start = (s - t) * 1000, next = start + P * 1000;
+  return t < F.len ? { on: true, t, start, next, nextIn: (next - nowMs) / 1000 } : { on: false, t: 0, start, next, nextIn: (next - nowMs) / 1000 };
 }
 const hhmm = ms => new Date(ms).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 const mmss = s => { s = Math.max(0, Math.ceil(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
@@ -35,7 +38,7 @@ export const CAMPUS_STOPS = {
   why: { x: 40, z: 21.6, face: 0, name: 'The WHY House' },
   amb: { x: 40, z: -21.4, face: Math.PI, name: 'Academy of Music for the Blind' },
   cinema: { x: 67.5, z: 0, face: Math.PI / 2, name: 'BLIND CAN Cinema' },
-  park: { x: CAMPUS.spawn.x, z: CAMPUS.spawn.z, face: CAMPUS.spawn.face, name: 'The Park' },
+  park: { x: CAMPUS.parkStop.x, z: CAMPUS.parkStop.z, face: CAMPUS.parkStop.face, name: 'The Park' },
   museum: { x: -10, z: 0, face: -Math.PI / 2, name: 'The Museum' },
 };
 // the signpost by the big tree, and the walks it sends you on (along the paths, round the tree; the last point is the door)
@@ -47,13 +50,15 @@ export const SIGN_DEST = [
   { to: 'amb', label: 'ACADEMY OF MUSIC', icon: '🎹', sub: 'for the Blind', route: [[33, -5.5], [36.5, -9], [40, -14.5], [40, -21.4], [40, -23]] },
 ];
 
-const tex = (w, h, draw, rep) => { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; draw(cv.getContext('2d'), w, h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; if (rep) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(...rep); } return t; };
+const texLive = (w, h, draw, rep) => { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; draw(cv.getContext('2d'), w, h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; if (rep) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(...rep); } return t; };   // (one that's drawn on again later)
+const tex = (w, h, draw, rep) => lean(texLive(w, h, draw, rep));   // (drawn once: its canvas is let go after upload, gallery-texmem.js)
 const fitText = (c, text, maxW, size, weight = 800, font = FONT, min = 10) => { let fs = size; c.font = `${weight} ${fs}px ${font}`; while (fs > min && c.measureText(text).width > maxW) { fs -= 2; c.font = `${weight} ${fs}px ${font}`; } return fs; };
 function wrap(c, text, maxW) { const out = []; let line = ''; for (const w of String(text).split(/\s+/)) { const t = line ? line + ' ' + w : w; if (c.measureText(t).width > maxW && line) { out.push(line); line = w; } else line = t; } if (line) out.push(line); return out; }
 
 export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u => u, lowEnd = false, camera: cam = null }) {
   const col = [], benches = [], screens = [], tickers = [], near = [];
   const root = new THREE.Group(); scene.add(root);
+  const inside = [];   // (22 Oct) [object, rect]: drawn only while the camera is inside that building (their many small moving parts cost draws)
   // a box: world position, optional per-face materials [+x,-x,+y,-y,+z,-z]; solid ones go in the collision list
   const box = (w, h, d, m, x, y, z, solid = true, parent = root) => { const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); b.position.set(x, y, z); parent.add(b); if (solid) col.push(b); return b; };
   const plane = (w, h, m, x, y, z, ry = 0, parent = root) => { const p = new THREE.Mesh(new THREE.PlaneGeometry(w, h), m); p.position.set(x, y, z); p.rotation.y = ry; parent.add(p); return p; };
@@ -62,6 +67,19 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
   const oak = woodify(new THREE.MeshLambertMaterial({ color: 0xffffff }), wood);
   const loadInto = (mat, url, after) => { new THREE.TextureLoader().load(resolveImg(url), t => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; mat.map = t; mat.color.set(0xffffff); mat.needsUpdate = true; after && after(t); }); };
   const img = (url, cb) => { const im = new Image(); im.onload = () => cb(im); im.src = resolveImg(url); return im; };
+  // (22 Oct) a floor rug or inlay carrying the Blind Canvas Project logo, tinted to suit: drawBg paints the cloth, then the logo is
+  // laid on at (lx, ly, size) in canvas pixels once it loads; the canvas is let go after that upload (gallery-texmem.js)
+  const LOGO_URL = 'gallery/img/bcp_logo_white.webp', logoWait = [];
+  const logoIm = img(LOGO_URL, () => { logoWait.splice(0).forEach(f => f()); });
+  const tinted = (im, col) => { const c = document.createElement('canvas'); c.width = im.width; c.height = im.height; const x = c.getContext('2d'); x.drawImage(im, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = col; x.fillRect(0, 0, c.width, c.height); return c; };
+  const logoRug = (pw, ph, cw, ch, drawBg, logos, x, y, z, rz = 0, solidM = false) => {
+    const t = texLive(cw, ch, drawBg);
+    const put = () => { const c = t.image.getContext('2d'); for (const [lx, ly, size, col, alpha = 1, rot = 0] of logos) { const tl = tinted(logoIm, col), k = size / Math.max(tl.width, tl.height); c.save(); c.globalAlpha = alpha; c.translate(lx, ly); c.rotate(rot); c.drawImage(tl, -tl.width * k / 2, -tl.height * k / 2, tl.width * k, tl.height * k); c.restore(); } t.needsUpdate = true; lean(t); };
+    if (logoIm.complete && logoIm.naturalWidth) put(); else logoWait.push(put);
+    const m = new THREE.MeshLambertMaterial({ map: t }); m.polygonOffset = true; m.polygonOffsetFactor = -2; m.polygonOffsetUnits = -2;
+    const r = plane(pw, ph, m, x, y, z); r.rotation.set(-Math.PI / 2, 0, rz); return r;
+  };
+  const rugEdge = (c, w, h, base, line) => { c.fillStyle = base; c.fillRect(0, 0, w, h); c.strokeStyle = line; c.lineWidth = Math.max(6, w / 50); c.strokeRect(w * 0.045, h * 0.06, w * 0.91, h * 0.88); c.lineWidth = Math.max(2, w / 170); c.strokeRect(w * 0.09, h * 0.12, w * 0.82, h * 0.76); };
 
   // ============================================================ the WHY House (north)
   const why = (() => {
@@ -97,11 +115,13 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
     // the gables: clapboard triangles, front and back, each with a round window and a big red "?"
     { const tri = new THREE.Shape(); tri.moveTo(-W / 2, 0); tri.lineTo(W / 2, 0); tri.lineTo(0, RIDGE); tri.closePath();
       const gm = siding(W, RIDGE); gm.side = THREE.DoubleSide;
-      const qT = tex(256, 256, (c, w, h) => {
+      const qT = texLive(512, 512, (c, w, h) => {
         const g = c.createRadialGradient(w / 2, h / 2, 10, w / 2, h / 2, w / 2); g.addColorStop(0, '#2e5fd8'); g.addColorStop(1, '#0d1f4f'); c.fillStyle = g; c.beginPath(); c.arc(w / 2, h / 2, w / 2 - 14, 0, Math.PI * 2); c.fill();
         c.strokeStyle = '#1d1c1b'; c.lineWidth = 16; c.stroke();
-        c.fillStyle = '#ec3013'; c.font = `800 190px ${FONT}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('?', w / 2, h / 2 + 10);
       });
+      // (22 Oct) the Blind Canvas Project logo in the round window, in place of the "?"
+      img('gallery/img/blind_canvas_project_logo__270692239.webp', im => { const c = qT.image.getContext('2d'), w = qT.image.width, k = Math.min(w * 0.7 / im.width, w * 0.7 / im.height);
+        c.save(); c.beginPath(); c.arc(w / 2, w / 2, w / 2 - 22, 0, Math.PI * 2); c.clip(); c.drawImage(im, (w - im.width * k) / 2, (w - im.height * k) / 2 + 4, im.width * k, im.height * k); c.restore(); qT.needsUpdate = true; });
       const qM = new THREE.MeshBasicMaterial({ map: qT, transparent: true });
       for (const [z, ry] of [[R.z0 - 0.01, Math.PI], [R.z1 + 0.01, 0]]) {
         const m = new THREE.Mesh(new THREE.ShapeGeometry(tri), gm); m.position.set(cx, WH, z); m.rotation.y = ry; root.add(m);
@@ -126,18 +146,17 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
       c.fillStyle = '#fff'; fitText(c, 'WHY DO YOU CREATE?  WHY DO YOU CARE?', w * 0.62, 84); c.fillText('WHY DO YOU CREATE?  WHY DO YOU CARE?', 50, 112);
       c.fillStyle = '#ff9783'; c.font = `700 40px ${FONT}`; c.textAlign = 'right'; c.fillText('Stories, art and voices from visitors like you', w - 50, 108); });
     plane(W - 1.2, 0.9, new THREE.MeshBasicMaterial({ map: headT }), cx, WH - 0.62, R.z1 - T - 0.02, Math.PI);
-    const rug = plane(8, 6, new THREE.MeshLambertMaterial({ map: tex(512, 384, (c, w, h) => { c.fillStyle = '#7a1f22'; c.fillRect(0, 0, w, h); c.strokeStyle = '#e9c98a'; c.lineWidth = 10; c.strokeRect(24, 24, w - 48, h - 48); c.lineWidth = 3; c.strokeRect(46, 46, w - 92, h - 92); c.fillStyle = 'rgba(233,201,138,.5)'; c.font = `800 140px ${FONT}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('?', w / 2, h / 2 + 8); }) }), cx, 0.065, R.z0 + 10.5);
-    rug.rotation.set(-Math.PI / 2, 0, Math.PI);   // (the ? reads the right way up as you come in)
-    rug.material.polygonOffset = true; rug.material.polygonOffsetFactor = -2;
+    // the rug: deep red with a gold border and the Blind Canvas Project logo woven in gold (22 Oct: was a "?")
+    logoRug(8, 6, 768, 576, (c, w, h) => rugEdge(c, w, h, '#7a1f22', '#e9c98a'), [[384, 288, 330, '#e9c98a', 0.85]], cx, 0.065, R.z0 + 10.5, Math.PI);   // (reads the right way up as you come in)
     for (const x of [cx - 3.6, cx + 3.6]) { const b = makeBench(2.6); b.group.position.set(x, 0.06, R.z0 + 9.2); root.add(b.group); box(2.6, 0.55, 0.65, null, x, 0.33, R.z0 + 9.2).visible = false; benches.push({ x, z: R.z0 + 9.2, ry: 0, len: 2.6, dir: 1, name: 'Bench · facing the stories' }); }
     for (const x of [R.x0 + 1.1, R.x1 - 1.1]) { const p = makePlant(2.3); p.group.position.set(x, 0.06, R.z0 + 1.2); root.add(p.group); box(0.8, 1.6, 0.8, null, x, 0.8, R.z0 + 1.2).visible = false; }
-    // the story stand: just inside the door, on your right as you come in, reading towards the door
+    // the story stand: in the middle of the room on the line from the door, reading towards the door
     const standT = tex(1024, 720, (c, w, h) => { c.fillStyle = '#f9f8f6'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, 0, 14, h);
       c.fillStyle = '#ec3013'; c.font = `800 34px ${FONT}`; c.fillText('THE WHY HOUSE', 56, 86);
       c.fillStyle = '#1d1c1b'; c.font = `800 92px ${FONT}`; c.fillText('Add your story.', 52, 200);
       c.font = `500 38px ${FONT}`; c.fillStyle = '#3d4046'; ['Why do you create? Why do you care?', 'Write it, record it in your own voice,', 'and add a photo of you or your art.', 'It hangs here on these walls.'].forEach((l, i) => c.fillText(l, 56, 290 + i * 54));
       c.fillStyle = '#ec3013'; c.font = `800 36px ${FONT}`; c.fillText('WALK UP · TAP ADD YOUR STORY', 56, 620); });
-    const stand = { x: cx + 3.2, z: R.z0 + 2.4 };
+    const stand = { x: cx, z: (R.z0 + R.z1) / 2 - 1.2 };   // (22 Oct) in the middle of the room, straight ahead as you come in the door
     { const g = new THREE.Group(); g.position.set(stand.x, 0.06, stand.z); g.rotation.y = Math.PI; root.add(g); lectern(g, ink, red, null, standT); box(0.8, 1.2, 0.6, null, stand.x, 0.6, stand.z).visible = false; }
     // the story slots: the back wall (5 x 2) and both side walls (4 x 2): world centre, facing direction, size
     const slots = [], CW = 2.7, CH = 1.66, rows = [3.35, 1.5];
@@ -151,20 +170,20 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
   {
     const A = CAMPUS.amb, cx = (A.x0 + A.x1) / 2, H = 6.4;
     // the logo parapet over the door
-    const parT = tex(2048, 300, (c, w, h) => { c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, h - 14, w, 14);
+    const parT = texLive(2048, 300, (c, w, h) => { c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, h - 14, w, 14);
       c.fillStyle = '#ff9783'; c.font = `800 34px ${FONT}`; c.fillText('THE BLIND CANVAS PROJECT  ·  LOS ANGELES', 560, 92);
       c.fillStyle = '#fff'; const fs = fitText(c, 'ACADEMY OF MUSIC FOR THE BLIND', w - 620, 104); c.fillText('ACADEMY OF MUSIC FOR THE BLIND', 556, 92 + fs + 22); });
     const parM = new THREE.MeshBasicMaterial({ map: parT });
     const par = box(A.x1 - A.x0 + 0.2, 3.0, 0.4, [ink, ink, ink, ink, parM, ink], cx, H + 1.6, A.z1 + 0.16, false);   // (its +z face looks out over the park)
     img('gallery/img/amb_logo_270127889.webp', im => { const c = parT.image.getContext('2d'); const k = Math.min(440 / im.width, 236 / im.height); c.drawImage(im, 60 + (440 - im.width * k) / 2, 24 + (236 - im.height * k) / 2, im.width * k, im.height * k); parT.needsUpdate = true; });
     // a piano-key frieze round the top of the walls, and an ink plinth
-    const keysT = tex(512, 64, (c, w, h) => { c.fillStyle = '#f7f5f0'; c.fillRect(0, 0, w, h); c.fillStyle = '#1d1c1b'; for (let i = 0; i <= 14; i++) c.fillRect(i * (w / 14) - 1, 0, 2, h); const blk = [0, 1, 3, 4, 5, 7, 8, 10, 11, 12]; for (const i of blk) c.fillRect((i + 0.68) * (w / 14), 0, (w / 14) * 0.64, h * 0.6); c.fillStyle = '#ec3013'; c.fillRect(0, 0, w, 4); });
+    const keysT = texLive(512, 64, (c, w, h) => { c.fillStyle = '#f7f5f0'; c.fillRect(0, 0, w, h); c.fillStyle = '#1d1c1b'; for (let i = 0; i <= 14; i++) c.fillRect(i * (w / 14) - 1, 0, 2, h); const blk = [0, 1, 3, 4, 5, 7, 8, 10, 11, 12]; for (const i of blk) c.fillRect((i + 0.68) * (w / 14), 0, (w / 14) * 0.64, h * 0.6); c.fillStyle = '#ec3013'; c.fillRect(0, 0, w, 4); });
     const keys = (len, along) => { const t = keysT.clone(); t.needsUpdate = true; t.wrapS = THREE.RepeatWrapping; t.repeat.set(len / 3.6, 1); return new THREE.MeshLambertMaterial({ map: t }); };
     const L = A.z1 - A.z0, W = A.x1 - A.x0;
-    const B2 = CAMPUS.amb2, eL = B2.z0 - A.z0;   // the east wall shows only south of the stage room (which joins it at its north end)
-    box(0.08, 0.9, L, keys(L), A.x0 - 0.04, H - 0.6, (A.z0 + A.z1) / 2, false); box(0.08, 0.9, eL, keys(eL), A.x1 + 0.04, H - 0.6, A.z0 + eL / 2, false);
-    box(W, 0.9, 0.08, keys(W), cx, H - 0.6, A.z0 - 0.04, false);
-    for (const [w, d, x, z] of [[0.1, L, A.x0 - 0.05, (A.z0 + A.z1) / 2], [0.1, eL, A.x1 + 0.05, A.z0 + eL / 2], [W, 0.1, cx, A.z0 - 0.05]]) box(w, 0.45, d, ink, x, 0.225, z, false);
+    const B2 = CAMPUS.amb2;   // the east wall shows either side of the stage room, which joins it part way along
+    box(0.08, 0.9, L, keys(L), A.x0 - 0.04, H - 0.6, (A.z0 + A.z1) / 2, false); box(W, 0.9, 0.08, keys(W), cx, H - 0.6, A.z0 - 0.04, false);
+    for (const [z0, z1] of [[A.z0, B2.z0], [B2.z1, A.z1]]) { const l = z1 - z0; if (l > 0.2) { box(0.08, 0.9, l, keys(l), A.x1 + 0.04, H - 0.6, (z0 + z1) / 2, false); box(0.1, 0.45, l, ink, A.x1 + 0.05, 0.225, (z0 + z1) / 2, false); } }
+    for (const [w, d, x, z] of [[0.1, L, A.x0 - 0.05, (A.z0 + A.z1) / 2], [W, 0.1, cx, A.z0 - 0.05]]) box(w, 0.45, d, ink, x, 0.225, z, false);
     // the stage room's outside: the same piano-key frieze and ink plinth, and its name over the north wall
     { const w2 = B2.x1 - B2.x0, d2 = B2.z1 - B2.z0, c2 = (B2.x0 + B2.x1) / 2, z2 = (B2.z0 + B2.z1) / 2;
       box(w2, 0.9, 0.08, keys(w2), c2, H - 0.6, B2.z1 + 0.04, false); box(w2, 0.9, 0.08, keys(w2), c2, H - 0.6, B2.z0 - 0.04, false); box(0.08, 0.9, d2, keys(d2), B2.x1 + 0.04, H - 0.6, z2, false);
@@ -177,6 +196,7 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
 
   // ============================================================ BLIND CAN CINEMA (east)
   const cinema = (() => {
+    const out2 = {};
     const C = CAMPUS.cinema, cz = (C.z0 + C.z1) / 2, H = 9, T = 0.4, W = C.z1 - C.z0, D = C.x1 - C.x0, ENT = 5.2, EH = 4.0, FX = C.x0;
     // materials: a cream terracotta front, red brick sides and back, red velvet and a starry ceiling inside
     const cream = new THREE.MeshLambertMaterial({ map: tex(256, 256, (c, w, h) => { c.fillStyle = '#eadbbf'; c.fillRect(0, 0, w, h); c.strokeStyle = 'rgba(120,90,50,.18)'; c.lineWidth = 2; for (let y = 0; y < h; y += 64) { c.beginPath(); c.moveTo(0, y); c.lineTo(w, y); c.stroke(); } for (let y = 0; y < h; y += 64) for (let x = (y / 64) % 2 ? 0 : 64; x < w; x += 128) { c.beginPath(); c.moveTo(x, y); c.lineTo(x, y + 64); c.stroke(); } }, [W / 4, H / 4]) });
@@ -193,29 +213,152 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
     box(D, 0.2, W, [wallIn, wallIn, new THREE.MeshLambertMaterial({ color: 0x3a1a16 }), wallIn, wallIn, wallIn], (C.x0 + C.x1) / 2, H + 0.1, cz, false);   // the roof
     { const stars = plane(D - 0.8, W - 0.8, new THREE.MeshBasicMaterial({ map: tex(1024, 1024, (c, w, h) => { const g = c.createRadialGradient(w / 2, h / 2, 40, w / 2, h / 2, w * 0.7); g.addColorStop(0, '#1b2a5a'); g.addColorStop(1, '#0a0f24'); c.fillStyle = g; c.fillRect(0, 0, w, h); for (let i = 0; i < 520; i++) { const r = Math.random() < 0.08 ? 2.6 : 1.2; c.fillStyle = `rgba(255,${240 + Math.random() * 15},${200 + Math.random() * 50},${0.5 + Math.random() * 0.5})`; c.beginPath(); c.arc(Math.random() * w, Math.random() * h, r, 0, Math.PI * 2); c.fill(); } }) }), (C.x0 + C.x1) / 2, H - 0.02, cz);
       stars.rotation.x = Math.PI / 2; }   // an "atmospheric" ceiling: the night sky of the old picture palaces
-    // the screen, the curtains, the stage
-    const SX = C.x1 - T - 0.06, VH = 6.4, VW = VH * 16 / 9, SY = 1.4 + VH / 2;
-    box(0.04, VH + 0.5, VW + 0.5, ink, SX + 0.02, SY, cz, false);
-    const posterMat = new THREE.MeshBasicMaterial({ color: 0x111111 }), dark = new THREE.MeshBasicMaterial({ color: 0x151515 });
-    const scr = new THREE.Mesh(new THREE.BoxGeometry(0.06, VH, VW), [dark, posterMat, dark, dark, dark, dark]); scr.position.set(SX - 0.03, SY, cz); root.add(scr);
-    for (const s of [-1, 1]) { const cw = (W - T * 2 - VW) / 2 + 0.2; box(0.25, H - 0.3, cw, velvet, SX - 0.4, (H - 0.3) / 2, cz + s * (VW / 2 + cw / 2 - 0.2), false); }
-    box(0.3, 1.1, W - T * 2, velvet, SX - 0.45, H - 0.75, cz, false);   // the valance
-    box(0.06, 0.06, W - T * 2, new THREE.MeshBasicMaterial({ color: 0xe0b45a }), SX - 0.62, H - 1.32, cz, false);   // gold trim
-    const stageM = woodify(new THREE.MeshLambertMaterial({ color: 0xffffff }), wood);
-    box(2.0, 0.5, W - T * 2, [ink, ink, stageM, ink, ink, ink], SX - 1.0 - 0.3, 0.25, cz);
-    // seats: five rows, a centre aisle and two side aisles; sit on any row to watch (facing the screen)
-    const ROWS = [77.6, 79.3, 81.0, 82.7, 84.4], BLOCK = [[C.z0 + T + 1.1, cz - 1.4], [cz + 1.4, C.z1 - T - 1.1]], SEAT = 0.58;
-    const seats = [];
-    for (const x of ROWS) for (const [z0, z1] of BLOCK) { const n = Math.floor((z1 - z0) / SEAT); for (let i = 0; i < n; i++) seats.push([x, z0 + SEAT / 2 + i * SEAT + ((z1 - z0) - n * SEAT) / 2]);
-      box(0.75, 0.52, z1 - z0, null, x - 0.05, 0.32, (z0 + z1) / 2).visible = false; benches.push({ x, z: (z0 + z1) / 2, ry: Math.PI / 2, len: z1 - z0, dir: 1, top: 0.6, name: 'Cinema seat · watch the film' }); }
-    { const seatRed = new THREE.MeshLambertMaterial({ color: 0xa3222c }), m4 = new THREE.Matrix4(), I = (geo, mat) => new THREE.InstancedMesh(geo, mat, seats.length);
-      const cushion = I(new THREE.BoxGeometry(0.5, 0.14, 0.5).translate(0.02, 0.5, 0), seatRed), back = I(new THREE.BoxGeometry(0.12, 0.72, 0.5).translate(-0.24, 0.86, 0), seatRed), frame = I(new THREE.BoxGeometry(0.56, 0.5, 0.06).translate(-0.02, 0.25, 0.28), ink);
-      seats.forEach(([x, z], i) => { m4.makeTranslation(x, 0.06, z); cushion.setMatrixAt(i, m4); back.setMatrixAt(i, m4); frame.setMatrixAt(i, m4); });
-      root.add(cushion, back, frame); }
-    // sconces down both walls, little aisle lights
-    const sconceM = new THREE.MeshBasicMaterial({ color: 0xffd28a });
-    for (let x = C.x0 + 3; x < C.x1 - 3; x += 3.2) for (const s of [-1, 1]) { const sc = box(0.5, 0.8, 0.12, sconceM, x, 4.2, cz + s * (W / 2 - T - 0.07), false); }
-    for (const x of ROWS) for (const s of [-1, 1]) box(0.12, 0.06, 0.12, sconceM, x + 0.6, 0.1, cz + s * 1.25, false);
+    // ---- inside (22 Oct): a lobby with a snack bar as you come in, then two theatres side by side behind it (Screen 1 south,
+    // Screen 2 north), each through its own doorway from the lobby, with its own screen, curtains, stage and four rows of seats
+    const goldM = new THREE.MeshLambertMaterial({ color: 0xc9a14a }), sconceM = new THREE.MeshBasicMaterial({ color: 0xffd28a });
+    const LX = 80.0, PT = 0.3, DW = 2.4, DH = 3.4;   // the lobby's back wall (x), its thickness, the theatre doorways
+    const TH = [{ z0: C.z0 + T, z1: cz - 0.15, n: 1 }, { z0: cz + 0.15, z1: C.z1 - T, n: 2 }]; for (const t of TH) t.c = (t.z0 + t.z1) / 2;
+    { const zs = [C.z0 + T, TH[0].c - DW / 2, TH[0].c + DW / 2, TH[1].c - DW / 2, TH[1].c + DW / 2, C.z1 - T];
+      for (let i = 0; i < 6; i += 2) box(PT, H, zs[i + 1] - zs[i], wallIn, LX + PT / 2, H / 2, (zs[i] + zs[i + 1]) / 2);
+      for (const t of TH) { box(PT, H - DH, DW, wallIn, LX + PT / 2, DH + (H - DH) / 2, t.c);
+        for (const s of [-1, 1]) box(PT + 0.12, DH, 0.12, goldM, LX + PT / 2, DH / 2, t.c + s * (DW / 2 + 0.06), false);
+        box(PT + 0.12, 0.12, DW + 0.24, goldM, LX + PT / 2, DH + 0.06, t.c, false); } }
+    box(C.x1 - T - LX - PT, H, 0.3, wallIn, (LX + PT + C.x1 - T) / 2, H / 2, cz);   // between the theatres
+    // over each doorway, on the lobby side: SCREEN n and what's showing (redrawn with the showtimes)
+    const doorSigns = TH.map(t => { const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 300; const tx = new THREE.CanvasTexture(cv); tx.colorSpace = THREE.SRGBColorSpace;
+      box(0.12, 1.3, 4.3, ink, LX - 0.06, DH + 1.2, t.c, false); plane(4.2, 1.2, new THREE.MeshBasicMaterial({ map: tx }), LX - 0.13, DH + 1.2, t.c, -Math.PI / 2); return { cv, tx, n: t.n }; });
+    // the theatres
+    const stageM = woodify(new THREE.MeshLambertMaterial({ color: 0xffffff }), wood), seats = [], ROWS = [82.7, 85.3];   // (22 Oct: 20 seats a theatre, 2 rows of 10, a wide walk between)
+    const theatres = TH.map(t => {
+      const W2 = t.z1 - t.z0, SX = C.x1 - T - 0.06, VW = Math.min(W2 - 2.2, 8.4), VH = VW * 9 / 16, SY = 0.95 + VH / 2;
+      box(0.04, VH + 0.4, VW + 0.4, ink, SX + 0.02, SY, t.c, false);
+      const posterMat = new THREE.MeshBasicMaterial({ color: 0x111111 }), dark = new THREE.MeshBasicMaterial({ color: 0x151515 });
+      const scr = new THREE.Mesh(new THREE.BoxGeometry(0.06, VH, VW), [dark, posterMat, dark, dark, dark, dark]); scr.position.set(SX - 0.03, SY, t.c); root.add(scr);
+      for (const s of [-1, 1]) { const cw = (W2 - VW) / 2 + 0.2; box(0.25, H - 0.3, cw, velvet, SX - 0.4, (H - 0.3) / 2, t.c + s * (VW / 2 + cw / 2 - 0.2), false); }
+      box(0.3, 1.1, W2, velvet, SX - 0.45, H - 0.75, t.c, false); box(0.06, 0.06, W2, goldM, SX - 0.62, H - 1.32, t.c, false);
+      box(1.3, 0.45, W2, [ink, ink, stageM, ink, ink, ink], SX - 0.95, 0.225, t.c);
+      // each row: 5 seats either side of a centre aisle, a seat every 0.7 m. Every seat is its own place to sit (you sit in that
+      // seat, facing the screen, looking at it), and solid
+      for (const x of ROWS) for (const side of [-1, 1]) for (let k = 0; k < 5; k++) { const z = t.c + side * (0.85 + k * 0.7); seats.push([x, z]);
+        box(0.62, 0.5, 0.62, null, x - 0.02, 0.31, z).visible = false;
+        benches.push({ x, z, ry: Math.PI / 2, len: 0.9, dir: 1, top: 0.5, name: 'Cinema seat · Screen ' + t.n, look: [SX, SY, t.c] }); }
+      for (let x = LX + 1.6; x < C.x1 - 2; x += 2.6) for (const z of [t.z0 + 0.07, t.z1 - 0.07]) box(0.5, 0.8, 0.12, sconceM, x, 4.2, z, false);
+      for (const x of ROWS) for (const s of [-1, 1]) box(0.12, 0.06, 0.12, sconceM, x + 0.8, 0.1, t.c + s * 0.4, false);   // aisle lights
+      return { ...t, scr, posterMat, SX, SY, VW, VH, zone: new THREE.Box3(new THREE.Vector3(LX + PT, -1, t.z0), new THREE.Vector3(C.x1, H + 1.5, t.z1)) };
+    });
+    { // full-size seats: a wide cushion at sitting height, a tall padded back, armrests, a black base (seat faces +x, the screen)
+      const seatRed = new THREE.MeshLambertMaterial({ color: 0xa3222c }), m4 = new THREE.Matrix4(), I = (geo, mat) => new THREE.InstancedMesh(geo, mat, seats.length);
+      const cushion = I(new THREE.BoxGeometry(0.56, 0.12, 0.58).translate(0.02, 0.42, 0), seatRed), back = I(new THREE.BoxGeometry(0.12, 0.62, 0.58).translate(-0.27, 0.7, 0), seatRed);   // (low enough that a seated fox shows over it)
+      const armL = I(new THREE.BoxGeometry(0.5, 0.06, 0.06).translate(-0.02, 0.64, -0.32), ink), armR = I(new THREE.BoxGeometry(0.5, 0.06, 0.06).translate(-0.02, 0.64, 0.32), ink), frame = I(new THREE.BoxGeometry(0.5, 0.36, 0.5).translate(-0.04, 0.18, 0), ink);
+      seats.forEach(([x, z], i) => { m4.makeTranslation(x, 0.06, z); for (const m of [cushion, back, armL, armR, frame]) m.setMatrixAt(i, m4); });
+      root.add(cushion, back, armL, armR, frame); }
+    // ---- the snack bar, along the lobby's north wall (22 Oct, evening): a red counter with a gold top and a lit glass candy case in
+    // its front; behind it the back counter with a popcorn machine (popping) and a soda fountain turned to face the door; a lit menu
+    // board. Popcorn boxes and drinks carry the Blind Canvas Project logo. The fox behind it fills them and sets them out
+    // (gallery-game.js runs the fox; this builds the props and hands over the pieces it moves: snack).
+    const SB = { x0: 75.0, x1: 79.6, z: C.z1 - T - 2.3 }, BZ = C.z1 - T - 0.3;   // front counter (its middle line), back counter
+    const snack = {}, snackG = new THREE.Group(); root.add(snackG); inside.push([snackG, 'cinema']);
+    { const cx = (SB.x0 + SB.x1) / 2, L = SB.x1 - SB.x0, D = 0.7, redM = new THREE.MeshLambertMaterial({ color: 0xa3222c }), fz = SB.z - D / 2;
+      // the counter, built round its candy window: ends, a kick plate, a band under the top, the top, a dark back to the case
+      const WX0 = SB.x0 + 0.9, WX1 = SB.x1 - 0.9, WY0 = 0.22, WY1 = 0.86;
+      box(WX0 - SB.x0, 1.0, D, redM, (SB.x0 + WX0) / 2, 0.5, SB.z, false); box(SB.x1 - WX1, 1.0, D, redM, (WX1 + SB.x1) / 2, 0.5, SB.z, false);
+      box(WX1 - WX0, WY0, D, redM, cx, WY0 / 2, SB.z, false); box(WX1 - WX0, 1.0 - WY1, D, redM, cx, (WY1 + 1.0) / 2, SB.z, false);
+      box(WX1 - WX0, WY1 - WY0, 0.05, new THREE.MeshLambertMaterial({ color: 0x2a1a14 }), cx, (WY0 + WY1) / 2, SB.z + D / 2 - 0.03, false);
+      box(L + 0.1, 0.06, D + 0.12, goldM, cx, 1.03, SB.z, false);
+      box(L, 1.0, D, null, cx, 0.5, SB.z).visible = false;   // (solid)
+      // the candy: two shelves of little boxes in bright wrappers, lit warm, behind glass with a gold frame
+      const glassM = new THREE.MeshLambertMaterial({ color: 0xd8f0f6, transparent: true, opacity: 0.22, depthWrite: false });
+      const shelfM = new THREE.MeshLambertMaterial({ color: 0xf2e6c8 }), lightM = new THREE.MeshBasicMaterial({ color: 0xfff1c4 });
+      for (const y of [WY0 + 0.02, (WY0 + WY1) / 2]) box(WX1 - WX0, 0.02, D - 0.12, shelfM, cx, y, SB.z, false);
+      box(WX1 - WX0 - 0.1, 0.02, 0.06, lightM, cx, WY1 - 0.02, SB.z - 0.15, false);
+      const wraps = [0xec3013, 0xf6c443, 0x2e5fd8, 0x2ea44f, 0xff7ab8, 0x8a4fd8, 0xff9a2e, 0xffffff];
+      { const geo = new THREE.BoxGeometry(0.16, 0.2, 0.08), N = 2 * Math.floor((WX1 - WX0 - 0.1) / 0.19);
+        const im = new THREE.InstancedMesh(geo, new THREE.MeshLambertMaterial({ color: 0xffffff }), N), m4 = new THREE.Matrix4(), per = N / 2;
+        for (let i = 0; i < N; i++) { const row = i < per ? 0 : 1, k = i % per; m4.makeTranslation(WX0 + 0.14 + k * 0.19, (row ? (WY0 + WY1) / 2 : WY0 + 0.02) + 0.11, SB.z - 0.08 + (k % 2) * 0.1); im.setMatrixAt(i, m4); im.setColorAt(i, new THREE.Color(wraps[(i * 5 + row) % wraps.length])); }
+        root.add(im); }
+      box(WX1 - WX0, WY1 - WY0, 0.02, glassM, cx, (WY0 + WY1) / 2, fz + 0.01, false);
+      for (const [w, h, x, y] of [[WX1 - WX0 + 0.08, 0.04, cx, WY0], [WX1 - WX0 + 0.08, 0.04, cx, WY1], [0.04, WY1 - WY0, WX0, (WY0 + WY1) / 2], [0.04, WY1 - WY0, WX1, (WY0 + WY1) / 2]]) box(w, h, 0.05, goldM, x, y, fz, false);
+      const candyT = tex(512, 96, (c, w, h) => { c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ffd27a'; c.textAlign = 'center'; c.font = `800 60px ${FONT}`; c.fillText('CANDY', w / 2, 70); });
+      plane(0.9, 0.17, new THREE.MeshBasicMaterial({ map: candyT }), cx, WY0 - 0.11 + 0.0, fz - 0.005, Math.PI);
+      // the back counter
+      { const bx1 = SB.x1 - 1.6; box(bx1 - SB.x0, 0.95, 0.6, [ink, ink, goldM, ink, ink, ink], (SB.x0 + bx1) / 2, 0.475, BZ); }   // (stops short of the fountain, so the fox can stand at it)
+    }
+    // the Blind Canvas Project logo, for the popcorn boxes and cups (drawn in when it loads)
+    const logoCups = [];
+    const bcpLogo = img('gallery/img/bcp_logo_white.webp', () => logoCups.forEach(f => f()));
+    const logoTex = (w, h, draw) => { const t = texLive(w, h, (c) => draw(c, null)); const redraw = () => { const c = t.image.getContext('2d'); draw(c, bcpLogo.complete && bcpLogo.naturalWidth ? bcpLogo : null); t.needsUpdate = true; }; logoCups.push(redraw); redraw(); return t; };
+    const logoAt = (c, im, x, y, s) => { if (!im) return; const k = s / Math.max(im.width, im.height); c.drawImage(im, x - im.width * k / 2, y - im.height * k / 2, im.width * k, im.height * k); };
+    const boxT = logoTex(256, 256, (c, im) => { for (let i = 0; i < 8; i++) { c.fillStyle = i % 2 ? '#ffffff' : '#d8232a'; c.fillRect(i * 32, 0, 32, 256); }
+      c.fillStyle = '#1d2a6b'; c.beginPath(); c.arc(128, 128, 78, 0, Math.PI * 2); c.fill(); logoAt(c, im, 128, 128, 120); });
+    const cupT = logoTex(256, 256, (c, im) => { c.fillStyle = '#1d2a6b'; c.fillRect(0, 0, 256, 256); c.fillStyle = '#ec3013'; c.fillRect(0, 0, 256, 26); c.fillRect(0, 230, 256, 26); logoAt(c, im, 128, 128, 150); });
+    const boxM = new THREE.MeshLambertMaterial({ map: boxT }), cupM = new THREE.MeshLambertMaterial({ map: cupT }), cornM = new THREE.MeshLambertMaterial({ color: 0xfff1c9 }), lidM = new THREE.MeshLambertMaterial({ color: 0xf4f2ee });
+    const kernelGeo = new THREE.IcosahedronGeometry(0.03, 0);
+    // a popcorn box: open-topped, flared, heaped with popcorn (local origin at its foot)
+    const makeBox = () => { const g = new THREE.Group(); const b = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.075, 0.24, 4, 1, true), boxM); b.rotation.y = Math.PI / 4; b.position.y = 0.12; b.material.side = THREE.DoubleSide; g.add(b);
+      const base = new THREE.Mesh(new THREE.BoxGeometry(0.105, 0.01, 0.105), boxM); base.position.y = 0.005; g.add(base);
+      for (let i = 0; i < 14; i++) { const k = new THREE.Mesh(kernelGeo, cornM); const a = i * 2.4, r = (i % 4) * 0.022; k.position.set(Math.cos(a) * r, 0.23 + (3 - (i % 4)) * 0.018, Math.sin(a) * r); k.rotation.set(i, i * 2, 0); g.add(k); }
+      return g; };
+    // a drink: a cup with the logo, a lid and a straw; its soda (shown filling) is a dark column inside
+    const makeCup = () => { const g = new THREE.Group(); const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.045, 0.2, 14, 1, true), cupM); cup.position.y = 0.1; cup.material.side = THREE.DoubleSide; g.add(cup);
+      const soda = new THREE.Mesh(new THREE.CylinderGeometry(0.056, 0.043, 0.19, 12), new THREE.MeshLambertMaterial({ color: 0x3a1a10 })); soda.position.y = 0.1; g.add(soda); g.userData.soda = soda;
+      const lid = new THREE.Mesh(new THREE.CylinderGeometry(0.063, 0.063, 0.015, 14), lidM); lid.position.y = 0.205; g.add(lid); g.userData.lid = lid;
+      const straw = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 0.16, 6), new THREE.MeshLambertMaterial({ color: 0xec3013 })); straw.position.set(0.015, 0.27, 0); straw.rotation.z = 0.12; g.add(straw); g.userData.straw = straw;
+      return g; };
+    // the popcorn machine: a glass cabinet on the back counter, red roof, a kettle hanging inside, popcorn piled up and popping
+    const PM = { x: SB.x0 + 0.85, y: 0.95, z: BZ };
+    { const glass = new THREE.MeshLambertMaterial({ color: 0xcfeaf2, transparent: true, opacity: 0.28, depthWrite: false });
+      box(0.95, 0.1, 0.55, new THREE.MeshLambertMaterial({ color: 0xa3222c }), PM.x, PM.y + 0.05, PM.z, false);
+      box(0.95, 0.85, 0.55, glass, PM.x, PM.y + 0.52, PM.z, false);
+      box(1.0, 0.16, 0.6, new THREE.MeshLambertMaterial({ color: 0xa3222c }), PM.x, PM.y + 1.03, PM.z, false);
+      const signT = tex(512, 96, (c, w, h) => { c.fillStyle = '#a3222c'; c.fillRect(0, 0, w, h); c.fillStyle = '#ffd27a'; c.textAlign = 'center'; c.font = `900 66px ${FONT}`; c.fillText('POPCORN', w / 2, 72); });
+      plane(0.92, 0.15, new THREE.MeshBasicMaterial({ map: signT }), PM.x, PM.y + 1.03, PM.z - 0.305, Math.PI);
+      for (const s of [-1, 1]) for (const t of [-1, 1]) box(0.03, 0.85, 0.03, goldM, PM.x + s * 0.46, PM.y + 0.52, PM.z + t * 0.26, false);
+      const kettle = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.12, 0.16, 16), new THREE.MeshLambertMaterial({ color: 0xb8bcc2 })); kettle.position.set(PM.x, PM.y + 0.74, PM.z); root.add(kettle);
+      box(0.88, 0.14, 0.5, cornM, PM.x, PM.y + 0.17, PM.z, false);   // the pile
+      // popping: kernels burst out of the kettle and tumble down onto the pile, over and over
+      const N = 40, pop = new THREE.InstancedMesh(kernelGeo, cornM, N), P = [], m4 = new THREE.Matrix4(), e = new THREE.Euler(), q = new THREE.Quaternion(), one = new THREE.Vector3(1, 1, 1), v = new THREE.Vector3();
+      const spawn = p => { p.x = PM.x + (Math.random() - 0.5) * 0.18; p.y = PM.y + 0.74; p.z = PM.z + (Math.random() - 0.5) * 0.18; p.vx = (Math.random() - 0.5) * 0.9; p.vy = 0.6 + Math.random() * 1.1; p.vz = (Math.random() - 0.5) * 0.6; p.r = Math.random() * 6; p.wait = Math.random() * 1.6; };
+      for (let i = 0; i < N; i++) { const p = {}; spawn(p); p.wait = Math.random() * 3; P.push(p); }
+      pop.frustumCulled = false; snackG.add(pop);
+      let near = true;
+      tickers.push(dt => { const cp = cam && cam.position; near = !cp || Math.hypot(cp.x - PM.x, cp.z - PM.z) < 30; if (!near) return;
+        for (let i = 0; i < N; i++) { const p = P[i];
+          if (p.wait > 0) { p.wait -= dt; m4.makeScale(0, 0, 0); pop.setMatrixAt(i, m4); continue; }
+          p.vy -= 3.2 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt; p.r += dt * 8;
+          if (Math.abs(p.x - PM.x) > 0.42) { p.vx = -p.vx * 0.5; p.x = PM.x + Math.sign(p.x - PM.x) * 0.42; }
+          if (Math.abs(p.z - PM.z) > 0.23) { p.vz = -p.vz * 0.5; p.z = PM.z + Math.sign(p.z - PM.z) * 0.23; }
+          if (p.y < PM.y + 0.25) spawn(p);
+          m4.compose(v.set(p.x, p.y, p.z), q.setFromEuler(e.set(p.r, p.r * 1.3, 0)), one); pop.setMatrixAt(i, m4); }
+        pop.instanceMatrix.needsUpdate = true; });
+    }
+    // the soda fountain, turned to face the door (west): a tall cabinet with a lit Blind Canvas Project panel, four taps, a drip tray
+    const SF = { x: SB.x1 - 0.45, y: 0.95, z: BZ };
+    { const g = new THREE.Group(); g.position.set(SF.x, SF.y, SF.z); g.rotation.y = Math.PI / 2; root.add(g);   // (its front, built facing -z, now faces -x)
+      const steel = new THREE.MeshLambertMaterial({ color: 0x9aa0a6 }), darkM = new THREE.MeshLambertMaterial({ color: 0x2b2a29 });
+      const body = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1.0, 0.55), [steel, steel, steel, steel, steel, steel]); body.position.set(0, 0.5, 0.0); g.add(body);
+      const panelT = logoTex(256, 256, (c, im) => { c.fillStyle = '#1d2a6b'; c.fillRect(0, 0, 256, 256); c.fillStyle = '#ec3013'; c.fillRect(0, 216, 256, 40); c.fillStyle = '#fff'; c.font = `900 30px ${FONT}`; c.textAlign = 'center'; c.fillText('SODA', 128, 246); logoAt(c, im, 128, 104, 170); });
+      const panel = new THREE.Mesh(new THREE.PlaneGeometry(0.44, 0.44), new THREE.MeshBasicMaterial({ map: panelT })); panel.position.set(0, 0.74, -0.281); panel.rotation.y = Math.PI; g.add(panel);
+      const tray = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.03, 0.18), darkM); tray.position.set(0, 0.03, -0.36); g.add(tray);
+      for (let i = 0; i < 4; i++) { const tap = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.07, 8), darkM); tap.position.set(-0.165 + i * 0.11, 0.43, -0.31); g.add(tap);
+        const lever = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.09, 0.02), new THREE.MeshLambertMaterial({ color: [0xec3013, 0xf6c443, 0x2e5fd8, 0x2ea44f][i] })); lever.position.set(-0.165 + i * 0.11, 0.5, -0.33); g.add(lever); }
+      const top = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.06, 0.57), darkM); top.position.set(0, 1.03, 0); g.add(top);
+      const stand = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.95, 0.6), ink); stand.position.set(0, -0.475, 0); g.add(stand);   // it stands on its own cabinet
+    }
+    // the stream, while a cup fills (shown by the fox's routine)
+    const stream = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.22, 6), new THREE.MeshLambertMaterial({ color: 0x3a1a10 })); stream.position.set(SF.x - 0.31, SF.y + 0.3, SF.z); stream.visible = false; stream.userData.dyn = true; root.add(stream);
+    // a few boxes and drinks already out on the counter
+    const slots = []; for (let i = 0; i < 7; i++) slots.push({ x: SB.x0 + 0.5 + i * 0.6, item: null });
+    const counterY = 1.06, counterZ = SB.z - 0.05;
+    const put = (slot, kind) => { const it = kind === 'box' ? makeBox() : makeCup(); it.traverse(o => { o.userData.dyn = true; }); it.position.set(slot.x, counterY, counterZ); snackG.add(it); slot.item = it; return it; };   // (dyn: the fox moves these, so never merged)
+    put(slots[1], 'box'); put(slots[2], 'cup'); put(slots[5], 'cup'); put(slots[6], 'box');
+    Object.assign(snack, { PM, SF, SB, BZ, slots, counterY, counterZ, makeBox, makeCup, stream, root: snackG });
+    for (const x of [SB.x0 - 0.12, SB.x1 + 0.12]) box(0.24, 1.0, 1.6, null, x, 0.5, C.z1 - T - 1.6).visible = false;   // (no squeezing round the ends)
+    // the lobby: a gold rope line to the doors, posters on the south wall
+    for (const x of [76.2, 78.4]) for (const z of [cz - 2.2, cz + 2.2]) { box(0.1, 0.95, 0.1, goldM, x, 0.475, z, false); }
+    { const rope = new THREE.MeshLambertMaterial({ color: 0x8e1c24 }); for (const z of [cz - 2.2, cz + 2.2]) box(2.2, 0.06, 0.06, rope, 77.3, 0.82, z, false); }
+    // (22 Oct) a navy runner between the ropes, gold-edged, with the Blind Canvas Project logo in gold, read as you walk in
+    logoRug(3.8, 5.6, 448, 660, (c, w, h) => rugEdge(c, w, h, '#1d2a6b', '#c9a14a'), [[224, 330, 300, '#e9c98a', 0.95]], 77.2, 0.068, cz, -Math.PI / 2);
+    out2.staff = [{ x: 77.3, z: C.z1 - T - 1.25, face: Math.PI, role: 'snacks' }, { x: FX - 1.0, z: cz - 4.0, face: -Math.PI / 2, role: 'tickets' }];
     // ---- the front: pilasters, a stepped tower with a sunburst, the marquee with chasing bulbs, poster cases, the ticket booth
     const gold = new THREE.MeshLambertMaterial({ color: 0xc9a14a });
     for (const z of [C.z0 + 0.4, cz - 6.4, cz + 6.4, C.z1 - 0.4]) { box(0.36, 11.6, 0.6, ink, FX - 0.18, 5.8, z, false); box(0.38, 11.6, 0.08, red, FX - 0.19, 5.8, z + (z < cz ? 0.34 : -0.34), false); }
@@ -263,54 +406,58 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
       box(1.56, 0.12, 1.56, ink, bx, 2.55, bz, false); const dome = new THREE.Mesh(new THREE.SphereGeometry(0.78, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshLambertMaterial({ color: 0xa3222c })); dome.position.set(bx, 2.6, bz); root.add(dome);
       plane(1.2, 0.34, new THREE.MeshBasicMaterial({ map: tex(512, 140, (c, w, h) => { c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ffd27a'; c.textAlign = 'center'; c.font = `800 92px ${FONT}`; c.fillText('TICKETS', w / 2, 104); }) }), bx - 0.79, 2.32, bz, -Math.PI / 2);
       const p = makePlant(2.2); p.group.position.set(FX - 1.0, 0, cz + 4.2); root.add(p.group); box(0.8, 1.6, 0.8, null, FX - 1.0, 0.8, cz + 4.2).visible = false; }
-    // the show: one film at fixed showtimes (CINEMA_SHOW); the poster case on the left is the film, on the right the showtimes
-    const F = CINEMA_SHOW, film = { ...F, u: 'gallery/video/' + F.file + '.mp4', local: 'gallery/video/' + F.file + '.mp4', im: null };
-    film.im = img('gallery/img2/cinema_' + F.file + '.webp', () => { draw(true); setPoster(); });
-    const screen = { u: film.u, local: film.local, box: scr, faces: [1], posterMat, vol: 0.9, dist: 30, reach: 40, minVol: 0.05, p: [SX, SY, cz], zone: new THREE.Box3(new THREE.Vector3(C.x0 + 0.2, -1, C.z0), new THREE.Vector3(C.x1, H + 1.5, C.z1)), cinema: true };
-    screens.push(screen);
-    const setPoster = () => { const im = film.im; if (!im || !im.complete || !im.naturalWidth) return; const t = new THREE.Texture(im); t.colorSpace = THREE.SRGBColorSpace; t.needsUpdate = true; if (posterMat.map) posterMat.map.dispose(); posterMat.map = t; posterMat.color.set(0xffffff); posterMat.needsUpdate = true; };
-    // between shows: a countdown in front of the screen
-    const cd = { cv: document.createElement('canvas') }; cd.cv.width = 1024; cd.cv.height = 576; cd.t = new THREE.CanvasTexture(cd.cv); cd.t.colorSpace = THREE.SRGBColorSpace;
-    const cdPlane = plane(VW, VH, new THREE.MeshBasicMaterial({ map: cd.t }), SX - 0.08, SY, cz, -Math.PI / 2); cdPlane.userData.dyn = true; cdPlane.visible = false;
-    function filmPoster(P) {
-      const c = P.cv.getContext('2d'), w = P.cv.width, h = P.cv.height; c.fillStyle = '#1a0d10'; c.fillRect(0, 0, w, h); c.strokeStyle = '#c9a14a'; c.lineWidth = 10; c.strokeRect(14, 14, w - 28, h - 28);
-      c.fillStyle = '#ffd27a'; c.textAlign = 'center'; c.font = `800 34px ${FONT}`; c.fillText('NOW SHOWING', w / 2, 84);
+    // the shows (22 Oct: one per screen): each screen's film at fixed showtimes, locked to the clock so everyone in that theatre
+    // sees the same frame; between shows a countdown. The left poster case is Screen 1's film, the right Screen 2's.
+    const shows = theatres.map((th, i) => {
+      const F = CINEMA_PROGRAM[i] || CINEMA_SHOW, film = { ...F, u: 'cinema' + th.n + ':' + F.file, local: 'gallery/video/' + F.file + '.mp4', im: null };
+      const screen = { u: film.u, local: film.local, box: th.scr, faces: [1], posterMat: th.posterMat, vol: 0.9, dist: 20, reach: 30, minVol: 0.05, p: [th.SX, th.SY, th.c], zone: th.zone, cinema: true, show: () => showtime(Date.now(), F) };
+      screens.push(screen);
+      const sh = { F, film, screen, th };
+      sh.setPoster = () => { const im = film.im; if (!im || !im.complete || !im.naturalWidth) return; const t = new THREE.Texture(im); t.colorSpace = THREE.SRGBColorSpace; t.needsUpdate = true; if (th.posterMat.map) th.posterMat.map.dispose(); th.posterMat.map = t; th.posterMat.color.set(0xffffff); th.posterMat.needsUpdate = true; };
+      film.im = img('gallery/img2/cinema_' + F.file + '.webp', () => { draw(true); sh.setPoster(); });
+      sh.cd = { cv: document.createElement('canvas') }; sh.cd.cv.width = 1024; sh.cd.cv.height = 576; sh.cd.t = new THREE.CanvasTexture(sh.cd.cv); sh.cd.t.colorSpace = THREE.SRGBColorSpace;
+      sh.cdPlane = plane(th.VW, th.VH, new THREE.MeshBasicMaterial({ map: sh.cd.t }), th.SX - 0.08, th.SY, th.c, -Math.PI / 2); sh.cdPlane.userData.dyn = true; sh.cdPlane.visible = false;
+      return sh;
+    });
+    function filmPoster(P, sh) {
+      const film = sh.film, c = P.cv.getContext('2d'), w = P.cv.width, h = P.cv.height; c.fillStyle = '#1a0d10'; c.fillRect(0, 0, w, h); c.strokeStyle = '#c9a14a'; c.lineWidth = 10; c.strokeRect(14, 14, w - 28, h - 28);
+      c.fillStyle = '#ffd27a'; c.textAlign = 'center'; c.font = `800 34px ${FONT}`; c.fillText('NOW SHOWING · SCREEN ' + sh.th.n, w / 2, 84);
       const im = film.im; if (im && im.complete && im.naturalWidth) { const iw = w - 70, ih = Math.min(330, iw * im.naturalHeight / im.naturalWidth); c.drawImage(im, 35, 120, iw, ih); }
       let fs = 54, L; do { c.font = `800 ${fs}px ${FONT}`; L = wrap(c, film.title, w - 80); fs -= 4; } while (L.length > 3 && fs > 30);
       c.fillStyle = '#fff'; L.slice(0, 3).forEach((l, i) => c.fillText(l, w / 2, 530 + i * (fs + 12)));
       c.fillStyle = '#e8d9b8'; c.font = `500 26px ${FONT}`; c.fillText(film.kicker, w / 2, 500);
-      c.fillStyle = '#ec3013'; c.font = `800 28px ${FONT}`; c.fillText('BLIND CAN CINEMA', w / 2, h - 50); P.t.needsUpdate = true;
-    }
-    function timesPoster(P, S) {
-      const c = P.cv.getContext('2d'), w = P.cv.width, h = P.cv.height; c.fillStyle = '#1a0d10'; c.fillRect(0, 0, w, h); c.strokeStyle = '#c9a14a'; c.lineWidth = 10; c.strokeRect(14, 14, w - 28, h - 28);
-      c.textAlign = 'center'; c.fillStyle = '#ffd27a'; c.font = `800 40px ${FONT}`; c.fillText('SHOWTIMES', w / 2, 96); c.fillStyle = '#ec3013'; c.fillRect(w / 2 - 60, 116, 120, 6);
-      c.font = `500 26px ${FONT}`; c.fillStyle = '#e8d9b8'; c.fillText('Every ' + F.every + ' minutes · ' + Math.round(F.len / 60) + ' min', w / 2, 170);
-      const first = S.on ? S.next : S.next; for (let i = 0; i < 5; i++) { const at = first + i * F.every * 60000; c.fillStyle = i ? '#fff' : '#ffd27a'; c.font = `800 ${i ? 52 : 64}px ${FONT}`; c.fillText(hhmm(at), w / 2, 270 + i * 82); }
-      c.fillStyle = '#ec3013'; c.font = `800 28px ${FONT}`; c.fillText('BLIND CAN CINEMA', w / 2, h - 50); P.t.needsUpdate = true;
+      c.fillStyle = '#ec3013'; c.font = `800 28px ${FONT}`; c.fillText('Every ' + sh.F.every + ' min · BLIND CAN CINEMA', w / 2, h - 50); P.t.needsUpdate = true;
     }
     let lastKey = '', lastMin = -1;
     function draw(force) {
-      const S = showtime(), key = S.on ? 'on' + Math.floor(S.start / 60000) : 'off' + Math.ceil(S.nextIn); if (key === lastKey && !force) return; lastKey = key;
-      const c = lb.cv.getContext('2d'), w = lb.cv.width, h = lb.cv.height;
+      const SS = shows.map(sh => showtime(Date.now(), sh.F)), key = SS.map(S => S.on ? 'on' + Math.floor(S.start / 60000) : 'off' + Math.ceil(S.nextIn)).join('|'); if (key === lastKey && !force) return; lastKey = key;
+      const S = SS[0], film = shows[0].film, c = lb.cv.getContext('2d'), w = lb.cv.width, h = lb.cv.height;
       c.fillStyle = '#fdf8ea'; c.fillRect(0, 0, w, h); c.fillStyle = '#1d1c1b'; c.textAlign = 'center';
-      c.font = `800 40px ${FONT}`; c.fillText(S.on ? 'NOW SHOWING  ·  STARTED ' + hhmm(S.start) : 'NEXT SHOWTIME ' + hhmm(S.next) + '  ·  IN ' + mmss(S.nextIn), w / 2, 56);
+      c.font = `800 40px ${FONT}`; c.fillText(S.on ? 'SCREEN 1 · NOW SHOWING  ·  STARTED ' + hhmm(S.start) : 'SCREEN 1 · NEXT SHOWTIME ' + hhmm(S.next) + '  ·  IN ' + mmss(S.nextIn), w / 2, 56);
       fitText(c, film.title.toUpperCase(), w - 120, 108); c.fillText(film.title.toUpperCase(), w / 2, 168); lb.t.needsUpdate = true;
-      const m = Math.floor(Date.now() / 60000); if (m !== lastMin || force) { lastMin = m; filmPoster(posters[0]); timesPoster(posters[1], S); }
-      cdPlane.visible = !S.on;
-      if (!S.on) {   // the countdown on the screen
-        const g = cd.cv.getContext('2d'), W2 = cd.cv.width, H2 = cd.cv.height; g.fillStyle = '#0b0a0c'; g.fillRect(0, 0, W2, H2);
-        const im = film.im; if (im && im.complete && im.naturalWidth) { g.globalAlpha = 0.35; g.drawImage(im, 0, 0, W2, H2); g.globalAlpha = 1; }
-        g.textAlign = 'center'; g.fillStyle = '#ffd27a'; g.font = `800 40px ${FONT}`; g.fillText('NEXT SHOWTIME  ·  ' + hhmm(S.next), W2 / 2, 120);
-        g.fillStyle = '#fff'; g.font = `800 190px ${FONT}`; g.fillText(mmss(S.nextIn), W2 / 2, 330);
-        g.font = `800 40px ${FONT}`; fitText(g, film.title.toUpperCase(), W2 - 120, 44); g.fillText(film.title.toUpperCase(), W2 / 2, 430);
-        g.fillStyle = '#ff9783'; g.font = `600 28px ${FONT}`; g.fillText('Take a seat · everyone watches together', W2 / 2, 500); cd.t.needsUpdate = true;
-      }
+      const m = Math.floor(Date.now() / 60000); if (m !== lastMin || force) { lastMin = m; shows.forEach((sh, i) => posters[i] && filmPoster(posters[i], sh)); }
+      shows.forEach((sh, i) => { const S = SS[i], film = sh.film;
+        // the sign over its doorway in the lobby
+        { const ds = doorSigns[i], g = ds.cv.getContext('2d'), W2 = ds.cv.width, H2 = ds.cv.height; g.fillStyle = '#1d1c1b'; g.fillRect(0, 0, W2, H2); g.fillStyle = '#ec3013'; g.fillRect(0, H2 - 14, W2, 14);
+          g.textAlign = 'center'; g.fillStyle = '#ffd27a'; g.font = `800 64px ${FONT}`; g.fillText('SCREEN ' + sh.th.n, W2 / 2, 82);
+          g.fillStyle = '#fff'; fitText(g, film.title, W2 - 80, 56, 700); g.fillText(film.title, W2 / 2, 168);
+          g.fillStyle = '#ff9783'; g.font = `600 40px ${FONT}`; g.fillText(S.on ? 'Now showing · started ' + hhmm(S.start) : 'Next show ' + hhmm(S.next) + ' · in ' + mmss(S.nextIn), W2 / 2, 238); ds.tx.needsUpdate = true; }
+        sh.cdPlane.visible = !S.on;
+        if (!S.on) {   // the countdown on its screen
+          const g = sh.cd.cv.getContext('2d'), W2 = sh.cd.cv.width, H2 = sh.cd.cv.height; g.fillStyle = '#0b0a0c'; g.fillRect(0, 0, W2, H2);
+          const im = film.im; if (im && im.complete && im.naturalWidth) { g.globalAlpha = 0.35; g.drawImage(im, 0, 0, W2, H2); g.globalAlpha = 1; }
+          g.textAlign = 'center'; g.fillStyle = '#ffd27a'; g.font = `800 40px ${FONT}`; g.fillText('SCREEN ' + sh.th.n + '  ·  NEXT SHOWTIME  ·  ' + hhmm(S.next), W2 / 2, 120);
+          g.fillStyle = '#fff'; g.font = `800 190px ${FONT}`; g.fillText(mmss(S.nextIn), W2 / 2, 330);
+          g.font = `800 40px ${FONT}`; fitText(g, film.title.toUpperCase(), W2 - 120, 44); g.fillText(film.title.toUpperCase(), W2 / 2, 430);
+          g.fillStyle = '#ff9783'; g.font = `600 28px ${FONT}`; g.fillText('Take a seat · everyone watches together', W2 / 2, 500); sh.cd.t.needsUpdate = true;
+        } });
     }
     draw(true);
     // redraw once a second, only when you're near enough to see it
     let acc = 0; tickers.push(dt => { acc += dt; if (acc < 0.5) return; acc = 0; const cp = cam && cam.position; if (!cp || Math.hypot(cp.x - (C.x0 + C.x1) / 2, cp.z - cz) < 140) draw(false); });
-    const next = () => screen.u;
-    return { screen, next, now: () => film, show: showtime, rect: C };
+    const at = (x, z) => shows.find(sh => x > LX && z > sh.th.z0 - 0.2 && z < sh.th.z1 + 0.2) || shows[0];   // the screen whose theatre you're in (else Screen 1)
+    return { screen: shows[0].screen, screens: shows.map(sh => sh.screen), next: () => shows[0].screen.u, now: () => shows[0].film, show: () => showtime(Date.now(), shows[0].F),
+      showAt: (x, z) => showtime(Date.now(), at(x, z).F), filmAt: (x, z) => at(x, z).film, rect: C, staff: out2.staff, snack };
   })();
 
   // ============================================================ back in the museum: the AMB room's old doorway, the Wall of Why's pointer
@@ -320,11 +467,8 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
     c.font = `500 36px ${FONT}`; c.fillStyle = '#e9e5e5'; y += 20; for (const l of lines) { c.fillText(l, 60, y); y += 48; }
     c.fillStyle = '#ec3013'; c.fillRect(60, h - 120, w - 120, 76); c.fillStyle = '#fff'; c.font = `800 38px ${FONT}`; c.textAlign = 'center'; c.fillText(cta, w / 2, h - 70); });
   const gotos = [];
-  {   // the AMB doorway at the north end of the Wall of Why hallway: closed now, with a sign
-    const y0 = -3.14, z = -27.85, x = -70.25;
-    box(8.6, 7.2, 0.4, new THREE.MeshLambertMaterial({ color: 0xeceae6 }), x, y0 + 3.6, z);
-    plane(4.6, 3.45, new THREE.MeshBasicMaterial({ map: boardT('THE ACADEMY HAS MOVED', ['Academy of Music', 'for the Blind'], ['Its film, its students and their music', 'have a building of their own now,', 'out in the cherry blossom park.'], 'TAP TO GO THERE  →') }), x, y0 + 2.3, z + 0.21, 0);
-    gotos.push({ x, y: y0, z: z + 1.6, r: 3.2, to: 'amb', label: 'Academy of Music for the Blind · in the park' });
+  {   // the south corridor (the AMB's old way in) now leads on to the New Artists Wing's south half (22 Oct): roof over its open end
+    box(8.6, 0.3, 4.4, new THREE.MeshLambertMaterial({ color: 0xf6f5f3 }), -70.25, 4.75, -29.8, false);
   }
   {   // the Wall of Why: a board on the low east wall across from the portraits
     const y0 = -3.14, x = -66.3, z = 14.5;
@@ -338,7 +482,7 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
   // On the stage in the AMB's second room (22 Oct; it stood in the middle of the main room): turned to face the room's doorway,
   // so you sit behind it and play out to the room. Gloss-black case with the lid propped open, 5 octaves of keys (C2-C7) that dip
   // as notes play, a bench. (Built facing -z, then the whole group turned: STAGE.ry; W() maps its local x/z into the world.)
-  const STAGE = { x0: 63.9, x1: 69.4, z0: -37.9, z1: -24.9, y: 0.06, top: 0.51, ry: Math.PI / 2 };
+  const STAGE = { x0: 63.9, x1: 69.4, z0: -47.5, z1: -32.5, y: 0.06, top: 0.51, ry: Math.PI / 2 };
   const W = (X, Z, lx, lz) => [X + lx * Math.cos(STAGE.ry) + lz * Math.sin(STAGE.ry), Z - lx * Math.sin(STAGE.ry) + lz * Math.cos(STAGE.ry)];
   {   // the stage itself: an ink-sided platform with a plank top, a step along its front, a red edge
     const S = STAGE, cx = (S.x0 + S.x1) / 2, cz = (S.z0 + S.z1) / 2, w = S.x1 - S.x0, d = S.z1 - S.z0, h = S.top - S.y;
@@ -348,7 +492,7 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
     box(0.05, 0.05, d, red, S.x0 + 0.02, S.top - 0.03, cz, false);
   }
   const piano = (() => {
-    const PX = 66.4, PZ = -35.6, Y0 = STAGE.top, g = new THREE.Group(); g.position.set(PX, Y0, PZ); g.rotation.y = STAGE.ry; root.add(g);
+    const PX = 66.1, PZ = -44.2, Y0 = STAGE.top, g = new THREE.Group(); g.position.set(PX, Y0, PZ); g.rotation.y = STAGE.ry; root.add(g);
     const gloss = new THREE.MeshPhongMaterial({ color: 0x0d0d0f, specular: 0x5a5a66, shininess: 90 }), innerM = new THREE.MeshLambertMaterial({ color: 0x8a6a3a }), brass = new THREE.MeshLambertMaterial({ color: 0xc9a14a });
     // the case outline seen from above (x across, y = -z towards the tail): the straight bass side on the left, the curved treble side on the right
     const S = new THREE.Shape(); S.moveTo(-0.76, 0); S.lineTo(0.76, 0); S.lineTo(0.76, 0.55);
@@ -409,7 +553,8 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
       for (let i = 0; i < 3; i++) { const l = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.02, 0.28), chrome); const a = i * 2.094; l.position.set(x + Math.sin(a) * 0.12, 0.03, z + Math.cos(a) * 0.12); l.rotation.y = a; g.add(l); } };
     // ---------------- the drum kit
     {
-      const DX = 66.6, DZ = -31.4, g = new THREE.Group(); g.position.set(DX, Y0, DZ); g.rotation.y = STAGE.ry; root.add(g);
+      // (the kit is built at a natural size, then scaled up K so it reads from across the room; its stool stays normal size)
+      const DX = 65.3, DZ = -40, K = 1.35, SZ = 1.38, g = new THREE.Group(); g.position.set(DX, Y0, DZ); g.rotation.y = STAGE.ry; g.scale.setScalar(K); root.add(g); inside.push([g, 'amb']);
       const pieces = {};
       // a drum: shell + two heads + chrome hoops, in its own group so it can jump when hit
       const drum = (name, r, h, x, y, z, tiltX = 0, logo = null) => {
@@ -424,8 +569,11 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
         const geo = new THREE.ConeGeometry(r, 0.035, 32, 1, true); const m = new THREE.Mesh(geo, brassC); c.add(m); const bell = new THREE.Mesh(new THREE.SphereGeometry(r * 0.2, 12, 6, 0, 6.283, 0, 1.4), brassC); bell.position.y = 0.012; c.add(bell);
         c.userData.base = { y: y + 0.02, s: 1, rx: tilt }; pieces[name] = dyn(c); return c; };
       // the kick drum, lying on its side, the AMB logo on its front head (facing the film wall, away from the drummer)
-      const kickLogo = tex(256, 256, (c, w, h) => { c.fillStyle = '#111'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.beginPath(); c.arc(w / 2, h / 2, w * 0.42, 0, 6.283); c.fill();
-        c.fillStyle = '#fff'; c.font = `900 72px ${FONT}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('AMB', w / 2, h / 2 - 8); c.font = `800 20px ${FONT}`; c.fillText('ACADEMY OF MUSIC', w / 2, h / 2 + 44); });
+      // the front head: the real AMB logo on black (drawn in when the image loads)
+      const kickLogo = texLive(512, 512, (c, w, h) => { c.fillStyle = '#111'; c.fillRect(0, 0, w, h); });
+      img('gallery/img/amb_logo_270127889.webp', im => { const c = kickLogo.image.getContext('2d'), w = 512; c.fillStyle = '#111'; c.fillRect(0, 0, w, w);
+        c.strokeStyle = '#ec3013'; c.lineWidth = 14; c.beginPath(); c.arc(w / 2, w / 2, w / 2 - 12, 0, 6.283); c.stroke();
+        const k = Math.min(w * 0.74 / im.width, w * 0.6 / im.height); c.drawImage(im, (w - im.width * k) / 2, (w - im.height * k) / 2, im.width * k, im.height * k); kickLogo.needsUpdate = true; });
       kickLogo.center.set(0.5, 0.5); kickLogo.rotation = Math.PI;
       const kick = drum('kick', 0.29, 0.42, 0, 0.31, -0.05, Math.PI / 2, kickLogo);
       for (const s of [1, -1]) { const sp = new THREE.Mesh(new THREE.BoxGeometry(0.015, 0.015, 0.25), chrome); sp.position.set(s * 0.26, 0.05, -0.32); sp.rotation.x = 0.5; g.add(sp); }   // spurs
@@ -439,12 +587,13 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
       // hi-hat: two cymbals on one stand, left of the snare
       cymbal('hihat', 0.17, -0.78, 0.92, 0.42, -0.08); { const top = new THREE.Mesh(new THREE.ConeGeometry(0.17, 0.03, 32, 1, true), brassC); top.rotation.x = Math.PI; top.position.y = 0.035; pieces.hihat.add(top); dyn(top); }
       cymbal('crash', 0.24, -0.62, 1.36, -0.22, -0.28); cymbal('ride', 0.28, 0.82, 1.22, -0.08, -0.22);
-      stool(g, 0, 1.12);
+      { const sg = new THREE.Group(); sg.position.set(DX, Y0, DZ); sg.rotation.y = STAGE.ry; root.add(sg); stool(sg, 0, SZ); }
       // sticks resting on the snare
       for (const s of [-0.03, 0.03]) { const st = cyl(0.007, 0.007, 0.4, new THREE.MeshLambertMaterial({ color: 0xd9b27a }), 6); st.rotation.z = Math.PI / 2; st.rotation.y = 0.3 + s * 3; st.position.set(-0.38, 0.74, 0.5 + s); g.add(st); }
       // solid: the kit (walk round it); the stool stays clear so you can sit on it
-      { const [cx, cz] = W(DX, DZ, 0, 0.12); box(1.5, 1.4, 2.0, null, cx, Y0 + 0.7, cz).visible = false; }
-      const [sx, sz] = W(DX, DZ, 0, 1.12), [nx, nz] = W(DX, DZ, 0, 1.3);
+      { const [cx, cz] = W(DX, DZ, 0, 0.2); box(1.55, 1.8, 2.5, null, cx, Y0 + 0.9, cz).visible = false; }
+      { const [cx, cz] = W(DX, DZ, 0, 0.25); logoRug(3.0, 3.0, 512, 512, (c, w, h) => rugEdge(c, w, h, '#232226', '#ec3013'), [[256, 436, 120, '#f4f2ee', 0.95], [256, 76, 120, '#f4f2ee', 0.95, Math.PI]], cx, Y0 + 0.006, cz, STAGE.ry); }   // (22 Oct) the drum rug, with the logo
+      const [sx, sz] = W(DX, DZ, 0, SZ), [nx, nz] = W(DX, DZ, 0, SZ + 0.2);
       const bench = { x: sx, z: sz, ry: STAGE.ry, len: 0.9, dir: -1, top: Y0 + 0.56, name: 'Drum stool' };
       benches.push(bench);
       near.push(pl => Math.hypot(pl.x - nx, pl.z - nz) < 1.5 && Math.abs(pl.y - Y0) < 1.2 ? { kind: 'drums', item: { z: 3 }, label: 'Drum kit · play it' } : null);
@@ -457,7 +606,7 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
     }
     // ---------------- the electric guitar on its stand, an amp beside it, a stool
     {
-      const GX = 65.8, GZ = -27.4, g = new THREE.Group(); g.position.set(GX, Y0, GZ); g.rotation.y = STAGE.ry; root.add(g);
+      const GX = 64.9, GZ = -36, g = new THREE.Group(); g.position.set(GX, Y0, GZ); g.rotation.y = STAGE.ry; root.add(g); inside.push([g, 'amb']);
       // the stand: a tripod with a padded cradle and a neck yoke
       for (let i = 0; i < 3; i++) { const a = i * 2.094 + 0.5, l = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.02, 0.36), blackM); l.position.set(Math.sin(a) * 0.15, 0.03, Math.cos(a) * 0.15); l.rotation.y = a; g.add(l); }
       { const p = cyl(0.014, 0.014, 0.95, blackM, 8); p.position.set(0, 0.5, -0.1); p.rotation.x = -0.12; g.add(p);
@@ -504,6 +653,42 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
     return out;
   })();
 
+  // ============================================================ the walk-on floor piano (22 Oct): two octaves of giant keys on the stage
+  // room's floor, in front of the stage, for the audience to play along. Stand on a key to play it (everyone nearby hears it, and
+  // sees it go down and light up); several people can play at once. Low notes on the left as you face the stage.
+  const floorPiano = (() => {
+    const FX0 = 53.9, KL = 2.2, BL = 1.15, KW = 0.5, Z0 = -43.75, Y = 0.06, LO = 60;   // white keys run x FX0..FX0+KL; C4 at Z0
+    const isBlack = m => [1, 3, 6, 8, 10].includes(m % 12), keys = [];
+    let wi = 0; for (let m = LO; m <= LO + 24; m++) { if (isBlack(m)) { keys.push({ m, black: true, z0: Z0 + wi * KW - 0.15, z1: Z0 + wi * KW + 0.15, x0: FX0 + KL - BL, x1: FX0 + KL }); } else { keys.push({ m, black: false, z0: Z0 + wi * KW, z1: Z0 + (wi + 1) * KW, x0: FX0, x1: FX0 + KL }); wi++; } }
+    const Z1 = Z0 + wi * KW, cz = (Z0 + Z1) / 2;
+    box(KL + 0.4, 0.04, Z1 - Z0 + 0.4, ink, FX0 + KL / 2, Y + 0.02, cz, false);   // the black surround
+    box(KL + 0.4, 0.07, Z1 - Z0 + 0.4, null, FX0 + KL / 2, Y + 0.035, cz).visible = false;   // what you stand on (the keys' tops)
+    box(0.08, 0.045, Z1 - Z0 + 0.4, red, FX0 - 0.2, Y + 0.023, cz, false);         // a red edge where you step on
+    const whites = keys.filter(k => !k.black), blacks = keys.filter(k => k.black);
+    const wIM = new THREE.InstancedMesh(new THREE.BoxGeometry(KL - 0.06, 0.06, KW - 0.05), new THREE.MeshLambertMaterial({ color: 0xffffff }), whites.length);
+    const bIM = new THREE.InstancedMesh(new THREE.BoxGeometry(BL, 0.08, 0.3), new THREE.MeshLambertMaterial({ color: 0xffffff }), blacks.length);
+    const m4 = new THREE.Matrix4(), cW = new THREE.Color(0xf7f4ec), cB = new THREE.Color(0x151515), hue = new THREE.Color();
+    whites.forEach((k, i) => { k.im = wIM; k.i = i; }); blacks.forEach((k, i) => { k.im = bIM; k.i = i; });
+    const draw = (k, down) => { const h = k.black ? 0.08 : 0.06; m4.makeTranslation((k.x0 + k.x1) / 2, Y + (k.black ? 0.05 : 0.04) - (down ? 0.03 : 0), (k.z0 + k.z1) / 2); k.im.setMatrixAt(k.i, m4);
+      k.im.setColorAt(k.i, down ? hue.setHSL(((k.m - LO) % 12) / 12, 0.85, k.black ? 0.45 : 0.62) : k.black ? cB : cW); k.im.instanceMatrix.needsUpdate = true; k.im.instanceColor.needsUpdate = true; };
+    for (const k of keys) draw(k, false);
+    wIM.frustumCulled = bIM.frustumCulled = false; root.add(wIM, bIM);
+    // the sign, beside it (thick, its post inside)
+    { const sT = tex(1024, 560, (c, w, h) => { c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, h - 22, w, 22);
+        c.fillStyle = '#fff'; c.textAlign = 'center'; fitText(c, 'THE FLOOR PIANO', w - 80, 104); c.fillText('THE FLOOR PIANO', w / 2, 140);
+        // a row of little keys
+        for (let i = 0; i < 14; i++) { c.fillStyle = '#f7f4ec'; c.fillRect(120 + i * 56, 200, 50, 150); } for (const i of [0, 1, 3, 4, 5, 7, 8, 10, 11, 12]) { c.fillStyle = '#151515'; c.fillRect(120 + i * 56 + 36, 200, 30, 92); }
+        c.fillStyle = '#ffd27a'; c.font = `800 46px ${FONT}`; c.fillText('Step on a key to play it', w / 2, 430); c.fillStyle = '#ff9783'; c.font = `600 38px ${FONT}`; c.fillText('Play along with the band · bring friends!', w / 2, 492); });
+      const SX = FX0 - 1.2, SZ = Z1 + 0.9, g = new THREE.Group(); g.position.set(SX, 0, SZ); g.rotation.y = -Math.PI / 2 + 0.5; root.add(g);
+      const post = new THREE.Mesh(new THREE.BoxGeometry(0.1, 1.3, 0.1), ink); post.position.y = 0.65; g.add(post);
+      const board = new THREE.Mesh(new THREE.BoxGeometry(1.86, 1.02, 0.18), ink); board.position.y = 1.55; g.add(board);
+      for (const [dz, ry] of [[0.092, 0], [-0.092, Math.PI]]) { const f = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 0.98), new THREE.MeshBasicMaterial({ map: sT })); f.position.set(0, 1.55, dz); f.rotation.y = ry; g.add(f); }
+      box(0.2, 1.2, 0.2, null, SX, 0.6, SZ).visible = false; }
+    // which key is under a point (black keys first: they sit on top, at the far end)
+    const keyAt = (x, z) => { if (x < FX0 || x > FX0 + KL || z < Z0 || z > Z1) return null; for (const k of blacks) if (x >= k.x0 && x <= k.x1 && z >= k.z0 && z <= k.z1) return k; for (const k of whites) if (z >= k.z0 && z < k.z1) return k; return null; };
+    return { keys, keyAt, press: (k, down) => draw(k, down), y: Y, x: FX0 + KL / 2, z: cz };
+  })();
+
   // ============================================================ the signpost by the big tree: an oak post with an arrow for each place
   {
     const P = SIGNPOST, g = new THREE.Group(); g.position.set(P.x, 0, P.z); root.add(g);
@@ -539,6 +724,10 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
     if (x > 7.4) return 'park';
     return null;
   };
+  // show the inside-only things when the camera is in their building (with a little margin at the doors)
+  { const R = { amb: [CAMPUS.amb, CAMPUS.amb2], cinema: [{ x0: CAMPUS.cinema.x0 - 4, x1: CAMPUS.cinema.x1, z0: CAMPUS.cinema.z0, z1: CAMPUS.cinema.z1 }] };
+    let acc = 1; tickers.push(dt => { acc += dt; if (acc < 0.3) return; acc = 0; const cp = cam && cam.position; if (!cp) return;
+      for (const [o, k] of inside) o.visible = R[k].some(r => cp.x > r.x0 - 1 && cp.x < r.x1 + 1 && cp.z > r.z0 - 1 && cp.z < r.z1 + 1 && cp.y < 12); }); }
   root.updateMatrixWorld(true);
-  return { group: root, col, benches, screens, near, why, cinema, piano, band, zoneAt, tick: dt => tickers.forEach(f => f(dt)) };
+  return { group: root, col, benches, screens, near, why, cinema, piano, band, floorPiano, zoneAt, tick: dt => tickers.forEach(f => f(dt)) };
 }

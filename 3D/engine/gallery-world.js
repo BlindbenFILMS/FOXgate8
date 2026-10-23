@@ -165,7 +165,10 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
     if (treePts.some(p => Math.hypot(p[0] - x, p[1] - z) < 7)) continue;
     treePts.push([x, z]);
   }
-  for (const [x, z, sc] of planGarden().trees) treePts.push([x, z, sc]);   // the cherry blossom garden (the big old tree first)
+  // (22 Oct) a tree must stand on the ground: one that would land on a roof (the New Artists Wing's south half went up over two)
+  // is dropped; the garden's trees stand on its lawn, whatever is under their middle (the big tree's trunk post had lifted it 3 m)
+  for (let i = treePts.length - 1; i >= 0; i--) { const g = groundAt(treePts[i][0], 5, treePts[i][1]); if (g > -2.2) treePts.splice(i, 1); else treePts[i][3] = g; }
+  for (const [x, z, sc] of planGarden().trees) treePts.push([x, z, sc, GARDEN.y]);   // the cherry blossom garden (the big old tree first)
   {
     const card = new THREE.PlaneGeometry(1, 1); card.translate(0, 0.5, 0);
     const cross = new THREE.BufferGeometry(), a = card.clone(), b = card.clone(); b.rotateY(Math.PI / 2);
@@ -173,12 +176,12 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
     merge(a, b);
     const mat = new THREE.MeshLambertMaterial({ map: round, transparent: true, alphaTest: 0.3, side: THREE.DoubleSide });
     const im = new THREE.InstancedMesh(cross, mat, treePts.length), m4 = new THREE.Matrix4(), q = new THREE.Quaternion();
-    treePts.forEach(([x, z, sc], i) => { const s = sc || 9 + rnd() * 6, g = groundAt(x, 5, z); m4.compose(new THREE.Vector3(x, g > -100 ? g - 0.1 : -3.35, z), q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), rnd() * Math.PI), new THREE.Vector3(s * (0.9 + rnd() * 0.3), s, s)); im.setMatrixAt(i, m4); });
+    treePts.forEach(([x, z, sc, g], i) => { const s = sc || 9 + rnd() * 6; m4.compose(new THREE.Vector3(x, g > -100 ? g - 0.1 : -3.35, z), q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), rnd() * Math.PI), new THREE.Vector3(s * (0.9 + rnd() * 0.3), s, s)); im.setMatrixAt(i, m4); });
     im.frustumCulled = false; scene.add(im);
   }
 
   // ---------------------------------------------------------------- 2. the lake
-  const WATER_Y = -2.95;
+  const WATER_Y = -2.95, POOL = { x0: -29.4, x1: -13.3, z0: -15, z1: 15, y: -0.75 };
   const LAKE = { x0: -43.6, x1: GARDEN.x0, z0: -84, z1: 84 };   // between the museum's eye and the welcome plaza, under the bridge
   const lakeW = LAKE.x1 - LAKE.x0, lakeD = LAKE.z1 - LAKE.z0, lcx = (LAKE.x0 + LAKE.x1) / 2, lcz = (LAKE.z0 + LAKE.z1) / 2;
   {
@@ -198,6 +201,11 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
     water.rotation.x = -Math.PI / 2; water.position.set(lcx, WATER_Y, lcz); water.renderOrder = 1; scene.add(water);
     waterMat = water.material;
     updaters.push(t => { water.material.uniforms.uT.value = t; });
+    // (22 Oct) the pools either side of the bridge, inside the eye: raised up to just below the bridge so you see the water as you
+    // walk over it into the museum (the lake's own level is down under the eye's wooden bowl there). Same water, one plane: the
+    // bridge hides its middle, and it meets the bowl's rising sides in a natural shoreline. The uplights and mist sit on it.
+    const pool = new THREE.Mesh(new THREE.PlaneGeometry(POOL.x1 - POOL.x0, POOL.z1 - POOL.z0, 48, 48), water.material);
+    pool.rotation.x = -Math.PI / 2; pool.position.set((POOL.x0 + POOL.x1) / 2, POOL.y, (POOL.z0 + POOL.z1) / 2); pool.renderOrder = 1; scene.add(pool);
     // a pale stone rim round the lake (the museum side is the building itself)
     const stone = new THREE.MeshLambertMaterial({ color: 0xd8d2c8 });
     const rim = (w, d, x, z) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, 0.7, d), stone); m.position.set(x, -3.0, z); scene.add(m); };
@@ -445,6 +453,6 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
   return {
     update(dt) { t += dt; for (const f of updaters) f(t, dt); },
     setNight(v) { nightTarget = v ? 1 : 0; }, isNight: () => nightTarget === 1,
-    lake: LAKE, waterY: WATER_Y,
+    lake: LAKE, waterY: WATER_Y, pool: POOL,
   };
 }

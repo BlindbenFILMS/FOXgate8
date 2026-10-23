@@ -2,12 +2,16 @@
 // 1) carve: cut pieces out of Ben's PlayCanvas building (triangles whose centre falls in a region) — visuals and collision
 // 2) build: new wing-style pieces (wide walkways, rails, the eye portal) that replace what was cut
 import * as THREE from '../vendor/three/three.module.js';
+import { TEXMEM, lean } from './gallery-texmem.js';
 import { woodify } from './gallery-wing.js';
 import { TOOLS, ALLY_TIPS, SPECTRUM } from './kiosk-art.js';
 import { stainedGlass } from './gallery-stained.js';
 
 // regions are boxes {min:[x,y,z], max:[x,y,z]} or x-axis cylinders {cyl:{x0,x1,y,z,r}}
 export const CARVES = [
+  // the music room's high glass band (one 53 m strip, 12.56-14.47 m) that the skywalk climbs through: cut, and rebuilt with an arch
+  // for the skywalk to pass under (gallery-game.js, 'skywalk arch')
+  { name: 'skywalk glass band', only: 'Arch', min: [-177.8, 12.4, -28], max: [-177.58, 14.6, 26] },
   // the old narrow bridge (deck + curbs) from the opening platform through the eye and down
   { name: 'old bridge', min: [-38.2, -3.3, -1.35], max: [-6.25, 3.15, 1.35] },
   // the eye's pupil and iris tunnel (rebuilt bigger so the wide walkway fits through)
@@ -109,7 +113,7 @@ export function buildEntrance({ scene, wood }) {
   const inkM = new THREE.MeshLambertMaterial({ color: 0x1d1c1b });
   const redM = new THREE.MeshBasicMaterial({ color: 0xec3013 });
   const blueM = new THREE.MeshBasicMaterial({ color: 0x15309a });
-  const railGlass = stainedGlass({ cell: 0.42, y0: -3.4, y1: 4.0 });   // deeper blues as the ramp goes down into the hall   // deep cobalt: the bridge into the stained-glass eye and the ramp down inside
+  const railGlass = stainedGlass({ cell: 0.42, y0: -3.4, y1: 4.0, opacity: 0.68 });   // deeper blues as the ramp goes down into the hall   // deep cobalt: the bridge into the stained-glass eye and the ramp down inside
   const P = [[-13.0, 0.0], [-19.5, 0.0], [-25.6, 2.5], [-32.0, 2.5], [-44.5, -3.38], [-45.5, -3.38]];   // lands 2 m short of 'Hope Floating in Braille'
   const seg = (x0, y0, x1, y1, rails = true) => {
     if (x1 < x0) [x0, y0, x1, y1] = [x1, y1, x0, y0];   // keep the angle in (-90°, 90°) so "up" stays up
@@ -178,7 +182,7 @@ export function buildRooms({ scene, data, wood, resolveImg, buildWing }) {
   const out = { col: [], arts: [], screens: [], canvases: [], list: [] };
   for (const R of data.rooms || []) {
     const O = new THREE.Vector3(...R.O);
-    const room = buildWing({ scene, wing: { artists: R.artists }, O, rotY: R.rotY, doorW: R.doorW, wood, resolveImg, L: R.L, title: R.title, logo: R.logo, endVideo: R.endVideo, floorLogo: R.floorLogo, fillLogo: R.fillLogo, doorSign: R.doorSign, bayW: R.bayW, Wd: R.Wd, lip: R.lip ?? 1, frontWall: R.frontWall !== false, doorZ: R.doorZ || 0, sideDoor: R.sideDoor || null, hang: R.hang || null });
+    const room = buildWing({ scene, wing: { artists: R.artists }, O, rotY: R.rotY, doorW: R.doorW, wood, resolveImg, L: R.L, title: R.title, logo: R.logo, endVideo: R.endVideo, floorLogo: R.floorLogo, fillLogo: R.fillLogo, doorSign: R.doorSign, bayW: R.bayW, Wd: R.Wd, lip: R.lip ?? 1, frontWall: R.frontWall !== false, doorZ: R.doorZ || 0, sideDoor: R.sideDoor || null, hang: R.hang || null, titleY: R.titleY || 3.0 });
     // the partner's logo out in the hall, on an ink panel, to lead people to the room (loads with the room)
     // a free-standing ink display board (for a photo hung on the low wall across the hall); a red bar on top
     for (const hb of R.hallBoards || []) {
@@ -218,7 +222,7 @@ export function canvasBox(s, texLoader) {
 // wall label / bio board, drawn to the rectangle's own proportions
 export function cardTexture(s) {
   const c = s.c.map(v => new THREE.Vector3(...v)); const wM = c[1].distanceTo(c[0]), hM = c[3].distanceTo(c[0]);
-  const K = Math.min(260, 1400 / Math.max(wM, hM)); const W = Math.round(wM * K), H = Math.round(hM * K);
+  const K = Math.min(260, 1400 / Math.max(wM, hM)) * TEXMEM.scale; const W = Math.round(wM * K), H = Math.round(hM * K);
   const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const x = cv.getContext('2d');
   const px = m => m * K;   // metres -> pixels
   if (s.style === 'bio') {
@@ -247,7 +251,7 @@ export function cardTexture(s) {
     }
     x.fillStyle = '#ec3013'; x.font = `800 ${q(0.085)}px ${FONT}`; x.fillText('APPROACH TO VIEW · READ ALOUD', pad, H - q(0.1));
   }
-  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return lean(t);
 }
 
 // ------------------------------------------------------------ the welcome plaza: one family of light, museum-style furniture
@@ -360,7 +364,7 @@ export function buildBioWalls({ scene, data }) {
     x.fillStyle = '#1d1c1b'; x.fillRect(0, 0, cv.width, cv.height); x.fillStyle = '#ec3013'; x.fillRect(0, 0, cv.width, 0.03 * K);
     let fs = 0.25 * K; x.font = `800 ${fs}px ${FONT}`; while (x.measureText(name).width > cv.width * 0.9 && fs > 40) { fs -= 4; x.font = `800 ${fs}px ${FONT}`; }
     x.fillStyle = '#fff'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(name, cv.width / 2, cv.height / 2 + 0.015 * K);
-    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
+    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return lean(t);
   };
   for (const B of data.bioWalls || []) {
     const [nx, nz] = B.n, H = B.top - B.bottom, T = B.t, W = B.w;

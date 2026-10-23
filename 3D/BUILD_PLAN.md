@@ -384,3 +384,65 @@ Ben's PlayCanvas project (BCP export) was exported with PlayCanvas's own GltfExp
 - AMB film: heard through the main room and out of the front door (extra zone in front, reach 55), quiet in the stage room (gain
   0.18). Also fixed: room films were measured from the origin once their room was merged (near-silent); screens now use their p.
 - Garden: trees/lanterns inside the stage room's footprint are dropped after planning (no reshuffle); petals avoid it (inBuilding).
+- Fixed (22 Oct, late): room film screens were being merged into their room's meshes (12 Oct draw-call pass), so the film never
+  replaced the poster (AMB showed only its logo card). Screens are now kept out of mergeStatic (userData.dyn).
+- "Watch full screen" only shows within ~5 m of a screen (plus half its width) and in its own room, like walking up to a painting.
+- Stage: drum kit 1.35x (stool normal size), instruments moved up to the front edge, real AMB logo on the kick drum, back sign
+  "the YOU ARE IN THE BAND stage... step up and play" raised above the instruments (titleY).
+- Stage room moved south (O z -40, 16 m wide) so its doorway sits right after "The Power Within" (the superhero painting) on the
+  main room's east wall; east wall order: bio, Harmony of Vision, The Power Within, doorway, A Bright Future (hang gap item).
+- The water either side of the bridge inside the eye is raised (gallery-world POOL, y -0.75, same water material) so you see it as
+  you walk over into the museum; the uplights and mist moved up to its surface (gallery-eye WY).
+- Stained glass clearer: stainedGlass/artGlass take an opacity (uOp) that also lightens the leading; building windows 0.45
+  (gallery-game windows, ring art windows), bridge/ramp and skywalk rails 0.68.
+- New Artists Wing split in two, 64 m each (2 bays a side): north off the hall's north corridor (Anthony Ferraro, Deborah
+  Tramentozzi, Delric Pollins, Doreen Holmes), south at the end of the south corridor where the AMB's old room was (Michael Tubiak,
+  Nikki Jeffords, Sophia Dunn-Walker). Removed the AMB leftovers there (the "Academy has moved" wall and sign, the hall AMB logo and
+  board); the floor arrows now say NEW ARTISTS WING both ways; vision spots moved inside each half.
+- Lift deck: the Ora logo turned to read from the music room's entrance side (+x).
+- Skywalk: the music room's high glass band (GLB 'Arch', 12.56-14.47 m) crossed it at x -177.7 and stopped you at head height;
+  carved (CARVES 'skywalk glass band') and rebuilt with an arched opening over the deck ('skywalk arch' in gallery-game.js).
+- Morten Bonde's meditation screen (vids[16]) moved 1.7 m out from the wall and up 0.35 m: a slanted wall piece was cutting it.
+- Trees: one landing on a roof is dropped (two had ended up on the New Artists Wing's south half); garden trees stand on the lawn
+  (the big tree had been lifted 3 m by its trunk post).
+- Signs on posts: thick boards with the post running up inside (comment-spot signs, the "see through their eyes" signs, the
+  BLIND CANVAS PROJECT name sign), so no post crosses the words.
+- WHY House: the story stand moved to the middle of the room on the line from the door; the gables' round windows show the
+  Blind Canvas Project logo instead of the "?".
+- BLIND CAN CINEMA rebuilt inside: a lobby (snack bar along the north wall with a menu board, popcorn machine, soda fountain; a
+  rope line) and two theatres behind it, each through its own doorway with a SCREEN n sign showing its film and next show.
+  Screen 1 (south): the Film Festival every 15 min; Screen 2 (north): Blind CAN's White Cane Commercial (gallery/video/white_cane.mp4,
+  from Ben's upload, 60 s) every 2 min. Each screen is locked to its own clock (screen.show()); "film" labels follow the theatre
+  you're in (cinema.showAt/filmAt). Staff foxes (gallery-game staff): one in the ticket booth, one behind the snack bar.
+- Snack bar (evening): glass CANDY case in the counter front (two lit shelves of candy boxes), popcorn machine with kernels popping
+  out of the kettle onto the pile, soda fountain on its own cabinet turned to face the door (lit BCP logo panel, four taps, drip
+  tray), popcorn boxes and drinks with the Blind Canvas Project logo. The snack bar fox's job (gallery-game snackJob): scoop a
+  box at the machine (it fills), set it on the counter, fill a cup at the fountain (stream, soda rises, lid and straw go on), set
+  it out; seven places on the counter, oldest cleared when full.
+- Cinema seats: 20 per theatre (2 rows of 10, centre aisle, rows 2.6 m apart), full-size seats (cushion, back, armrests), each
+  its own seat to sit in; sitting turns you to the screen and looks at it (bench.look in sitOn).
+- The walk-on FLOOR PIANO in the stage room (campus floorPiano, sound engine/gallery-floorpiano.js): 2 octaves C4-C6 of giant
+  keys (white 0.5 x 2.2 m) on the floor in front of the stage, black keys at the stage end. Whoever stands on a key plays it,
+  you and every other visitor, worked out from where each fox stands (no extra network messages); keys dip and light up in a
+  colour per note; others' notes fade with distance. A sign beside it.
+- Polish pass (22 Oct, late): checked walkability (no area lost, nothing reachable in the lake-splash zone), console clean at 12
+  spots. The band instruments and the snack bar's moving props are only drawn while the camera is inside their building
+  (campus `inside` list; ~110 fewer draws from the park); staff foxes hidden beyond 45 m. When someone else picks up the guitar
+  it moves into their fox's lap on your screen too (band event 'gth'; holdGuitarFor; put back if they leave). The New Artists
+  Wing's spare bay shows the Blind Canvas Project logo. The park map shows the AMB's stage room.
+- Known: from the spawn facing the museum, a phone draws ~460 calls (the museum front, plaza and Hope pools all in view);
+  Lite mode switches on if that's too slow.
+- Start back on the welcome plaza (CAMPUS.spawn 2.5, 0, facing the eye); "the park" stop stays by the big tree (CAMPUS.parkStop).
+- 'Hope Floating in Braille': one pool now (CAMPUS.hope), north of the walk at (13.5, 6.2), turned 90° so it reads facing the
+  museum's eye; CAMPUS.pools kept only for the garden layout. Map updated.
+
+## 22 Oct: mobile pass + longer view distance
+- Art loads in further: phones 95 m (was ~60), desktop 140 m. Far paintings use small copies (gallery/img-s/, 146 webp, 780 KB) and swap to the sharp image within 42 m on phones (sharp everywhere on desktop).
+- Wings/rooms load earlier (phones 80-95 m, desktop 110-130 m) and unload later, so nothing pops in near the player.
+- Canvas text textures (signs, cards, panels, campus labels) are 60% size on phones and free their drawing canvas after upload (engine/gallery-texmem.js). Phone texture memory estimate 527 MB -> ~300-410 MB along a full tour, stable, no errors.
+- Blind Canvas Project logo woven into rugs: the WHY House rug (gold on red, was a "?"), a navy runner in the cinema lobby between the ropes, and the drum rug on the AMB stage (campus logoRug helper).
+- Community photos on bare walls (buildWing `community`): the south wing's spare bay now has the logo (smaller) with four community photos round it; both wings' end walls get a photo either side of the title. Each has an "OUR COMMUNITY" caption and can be viewed/read like the art.
+- Screen readers: the 3D view is labelled, the joystick is hidden from them, and walking into a new place is announced ("You are in ...").
+- Link preview: og/twitter tags + gallery/og-gallery.jpg (1200x630) so shared links show a card.
+- Start view measured at ~420 draw calls on a phone (was ~466); further cuts would hide things you can see through the eye, so left as is.
+- Fewer pop-ups for guests (22 Oct, late): 'Watch together', leading tours, 'show everyone my view' and the showtime pop-up are the host's only; guests only get invites from the host, the showtime is just announced for screen readers, and the comment-spot hint shows once per spot per visit.

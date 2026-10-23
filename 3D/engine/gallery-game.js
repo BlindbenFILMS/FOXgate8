@@ -19,6 +19,8 @@ import { buildVisionSpots, visionOverlay } from './gallery-vision.js';
 import { buildSimWalls } from './gallery-simwall.js';
 import { buildBraille, patchOldBraille } from './gallery-braille.js';
 import { buildCampus, CAMPUS_STOPS, SIGN_DEST } from './gallery-campus.js';
+import { floorPianoSound } from './gallery-floorpiano.js';
+import { TEXMEM, lean } from './gallery-texmem.js';
 import { buildCommentSpots } from './gallery-comments.js';
 import { stainedGlass } from './gallery-stained.js';
 import { buildElevator } from './gallery-elevator.js';
@@ -33,10 +35,12 @@ const SPAWN = { x: CAMPUS.spawn.x, y: 0.5, z: CAMPUS.spawn.z, face: CAMPUS.spawn
 
 export async function createGallery({ container, onProgress = () => {}, onNear = () => {}, onZone = () => {}, onSplash = () => {}, onPad = () => {}, onLite = () => {} }) {
   const lowEnd = /iPhone|iPad|Android/i.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);   // (iPads say they're Macs)
+  TEXMEM.scale = lowEnd ? 0.6 : 1;   // (signs, cards and boards drawn smaller on phones: a third of the memory, still sharp there)
   const NOWORLD = new URLSearchParams(location.search).has('noworld');   // (testing) the museum without the lake, flags and city
   const renderer = new THREE.WebGLRenderer({ antialias: !lowEnd || devicePixelRatio < 2, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(devicePixelRatio, lowEnd ? 1.5 : 2));
   renderer.domElement.style.cssText = 'display:block;width:100%;height:100%;touch-action:none;outline:none';
+  renderer.domElement.setAttribute('role', 'img'); renderer.domElement.setAttribute('aria-label', 'The 3D Blind Canvas gallery. Move with the arrow keys or the joystick; the Actions button reads out what is near you.');   // (22 Oct)
   container.appendChild(renderer.domElement);
   const W = () => container.clientWidth || 1, H = () => container.clientHeight || 1;
   renderer.setSize(W(), H());
@@ -72,13 +76,27 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   // quarter of the memory); a painting opened full screen still shows the full-size one.
   const SMALL_ART = lowEnd || new URLSearchParams(location.search).has('small');
   const RES = u => (u && SMALL_ART && u.startsWith('gallery/img/')) ? 'gallery/img-m/' + u.slice(12) : u;
-  data.signs.forEach(s => { if (s.img) { s.key = s.img; s.img = RES(s.img); } }); data.vids.forEach(v => { v.poster = RES(v.poster); });
+  // (22 Oct) and every painting has a tiny copy (gallery/img-s/, 192 px): shown first, from far away, so walls are never bare
+  // as you walk up; the sharp copy replaces it as you come near, and goes back to the tiny one when you walk away
+  const TINY = u => (u && u.startsWith('gallery/img/')) ? 'gallery/img-s/' + u.slice(12) : u;
+  data.signs.forEach(s => { if (s.img) { s.key = s.img; s.imgTiny = TINY(s.img); s.img = RES(s.img); } }); data.vids.forEach(v => { v.poster = RES(v.poster); });
   const IMGURL = {}; try { for (const k of Object.keys(await (await fetch(BASE + 'img.index.json')).json())) IMGURL[k] = RES(k); } catch (e) { console.warn('image list', e); }   // (the list of art, for the shirt picker)
   const gltf = await new Promise((res, rej) => new GLTFLoader().load(BASE + 'gallery.glb', res, e => e.total && onProgress(e.loaded / e.total), rej));
   const world = gltf.scene; scene.add(world); world.updateMatrixWorld(true);
   // remodel: cut out the old pieces we rebuild in the New Wing style, and drop their signs/art/screens
   // (the big bio blocks are cut from the building only: their card and portrait already sit on the slim walls built below)
   const carveInfo = carveWorld(world, [...CARVES, ...(data.bioWalls || []).map(b => ({ name: 'bio wall ' + b.name, ...b.carve }))]);
+  // 'skywalk arch' (22 Oct): the glass band carved above, rebuilt in its own material with an arched opening where the skywalk
+  // passes through it (the skywalk deck is at ~11.07 m there; you walk under the arch's 14.2 m crown)
+  { let src = null; world.traverse(o => { if (!src && o.isMesh && o.name === 'Arch' && !Array.isArray(o.material) && o.material.name === 'PaletteMaterial003') src = o; });
+    if (src) {
+      const X = -177.69, Z0 = -27.45, Z1 = 25.54, Y0 = 12.56, Y1 = 14.47, a = -1.95, b = 1.15, ys = 13.45, crown = 14.2, S = new THREE.Shape();
+      S.moveTo(Z0, Y0); S.lineTo(a, Y0); S.lineTo(a, ys);
+      for (let i = 1; i <= 16; i++) { const t = Math.PI - i / 16 * Math.PI; S.lineTo((a + b) / 2 + Math.cos(t) * (b - a) / 2, ys + Math.sin(t) * (crown - ys)); }
+      S.lineTo(b, Y0); S.lineTo(Z1, Y0); S.lineTo(Z1, Y1); S.lineTo(Z0, Y1); S.closePath();
+      const band = new THREE.Mesh(new THREE.ShapeGeometry(S), src.material); band.name = 'Arch skywalk band';
+      band.position.set(X, 0, 0); band.rotation.y = -Math.PI / 2; scene.add(band); band.updateMatrixWorld(true); world.attach(band);
+    } }
   const ctrOf = c => c.reduce((a, v) => [a[0] + v[0] / 4, a[1] + v[1] / 4, a[2] + v[2] / 4], [0, 0, 0]);
   data.signs = data.signs.filter(sg => !carved(...ctrOf(sg.c)));
   data.arts = data.arts.filter(a => !carved(...(a.c ? ctrOf(a.c) : a.p)));
@@ -106,8 +124,19 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   });
   // New Artists Wing: built from Ben's artist pages, entered through a doorway in the main hall (quick fade, like our interiors)
   // joined to the south end of the Wall of Why hallway (x -74..-66), running out over the lawn; walk straight in
-  const WING_O = new THREE.Vector3(-69.9, -3.14, 22.0);
-  const wing = data.wing ? buildWing({ scene, wing: data.wing, O: WING_O, rotY: Math.PI / 2, doorW: 8.4, wood, resolveImg: RES, L: 124, spacious: true }) : null;
+  // the New Artists Wing (22 Oct: split in two, the same size either side of the hall). North: off the hall's north corridor;
+  // south: where the AMB's old room was, at the end of the south corridor. The artists are shared out, first half north.
+  const WING_O = new THREE.Vector3(-69.9, -3.14, 22.0), WING_S_O = new THREE.Vector3(-69.9, -3.14, -31.8), WING_L = 64;
+  const WA = data.wing ? data.wing.artists : [], half = Math.ceil(WA.length / 2);
+  // (22 Oct) community photos for the wings' bare walls: the south half's spare bay and both end walls
+  const COMM = ['group_photo_blind_can_square_50kb_270309875', 'ben_and_lorrane_square_50kb_270309880', '2_steves_square_50kb_270309872', 'bcp_wall_at_arvo_square_50kb_270309879', 'com1_square_50kb_270309876', 'art_and_people_square_50kb_270309873', 'combranding_all_community_square_50kb_270309881', 'group_photo_blind_can_square_50kb_270309875'].map(n => 'gallery/img/' + n + '.webp');
+  const wingTitle = list => ({ kicker: 'THE BLIND CANVAS PROJECT', lines: ['New Artists', 'Wing'], sub: list.map(a => a.name).join(' · ') });
+  const wings = !data.wing ? [] : [
+    Object.assign(buildWing({ scene, wing: { artists: WA.slice(0, half) }, O: WING_O, rotY: Math.PI / 2, doorW: 8.4, wood, resolveImg: RES, L: WING_L, spacious: true, title: wingTitle(WA.slice(0, half)), community: COMM.slice(6) }), { O: WING_O }),
+    Object.assign(buildWing({ scene, wing: { artists: WA.slice(half) }, O: WING_S_O, rotY: -Math.PI / 2, doorW: 8.4, wood, resolveImg: RES, L: WING_L, spacious: true, title: wingTitle(WA.slice(half)), fillLogo: 'gallery/img/blind_canvas_project_logo__270692239.webp', community: COMM.slice(0, 6) }), { O: WING_S_O }),   // (its spare bay gets the logo)
+  ];
+  const wing = wings.length ? { col: wings.flatMap(w => w.col), arts: wings.flatMap(w => w.arts), screens: wings.flatMap(w => w.screens), canvases: wings.flatMap(w => w.canvases),
+    bounds: { containsPoint: p => wings.some(w => w.bounds.containsPoint(p)) }, load() { wings.forEach(w => w.load()); }, unload() { wings.forEach(w => w.unload()); } } : null;
   const doors = [];
   if (wing) for (const m of wing.col) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); g.userData.lab = 'wing'; colGeos.push(g); }
   const entrance = buildEntrance({ scene, wood });
@@ -161,7 +190,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     for (const w of data.windows || []) {
       const [xa, xb] = w.x, [ya, yb] = w.y, cx = (xa + xb) / 2, cy = (ya + yb) / 2, W = xb - xa, H = yb - ya;
       const g = new THREE.Group(); g.position.set(cx, cy, w.z); scene.add(g);
-      const pane = new THREE.Mesh(new THREE.PlaneGeometry(W, H), stainedGlass({ cell: 0.85, y0: ya, y1: yb })); pane.renderOrder = 4; g.add(pane);   // stained glass, in the eye facade's style
+      const pane = new THREE.Mesh(new THREE.PlaneGeometry(W, H), stainedGlass({ cell: 0.85, y0: ya, y1: yb, opacity: 0.45 })); pane.renderOrder = 4; g.add(pane);   // stained glass, in the eye facade's style
       for (let k = 1; k < Math.max(2, Math.round(H / 3.2)); k++) { const b = new THREE.Mesh(new THREE.BoxGeometry(W, 0.06, 0.08), frameM); b.position.y = -H / 2 + k * H / Math.max(2, Math.round(H / 3.2)); g.add(b); }   // slim transoms
       const c = new THREE.Mesh(new THREE.BoxGeometry(W, H, 0.2)); c.position.set(cx, cy, w.z); c.updateMatrixWorld(true); winCol.push(c);
     }
@@ -210,17 +239,19 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     for (const o of gone) o.parent && o.parent.remove(o);
     return saved;
   }
-  { let saved = 0; for (const g of [entrance.group, kiosks.group, bioWalls.group, propsG, wing && wing.group, campus && campus.group, braille.group, comments && comments.group, skywalk.group, eyelid && eyelid.group, ...rooms.list.map(r => r.room.group)]) if (g) saved += mergeStatic(g); console.log('[perf] merged', saved, 'static meshes'); }
+  // (22 Oct) film screens are never merged: their face material is swapped to the film when it plays, so they must stay their own mesh
+  for (const v of [...(wing ? wing.screens : []), ...rooms.screens, ...(campus ? campus.screens : [])]) v.box.userData.dyn = true;
+  { let saved = 0; for (const g of [entrance.group, kiosks.group, bioWalls.group, propsG, ...wings.map(w => w.group), campus && campus.group, braille.group, comments && comments.group, skywalk.group, eyelid && eyelid.group, ...rooms.list.map(r => r.room.group)]) if (g) saved += mergeStatic(g); console.log('[perf] merged', saved, 'static meshes'); }
   // phones: small far things (a plaque, a stool, a frame on a wall 60 m away) are a few pixels but each costs a draw call.
   // Every quarter second, anything smaller than ~0.5 degree on screen is skipped; it comes back long before it's big enough to see.
   // (From the park you see the whole museum: this saves ~300 of its ~830 draws.)
   // (works on draw layers, not .visible, so nothing that shows or hides itself is disturbed; the list is made once, after everything is built)
   // Lite mode (12 Oct): for older phones. 1x resolution, small things drop out sooner, the view ends at ~330 m in the haze
   // (the far city and trees), art and labels draw from shorter range. Turns itself on if the phone keeps struggling.
-  const LITE = { on: false, near: 28, k: 0.012, art: 70, label: 38, userOff: false };
+  const LITE = { on: false, near: 28, k: 0.012, art: 90, label: 40, userOff: false };
   function setLite(on, auto) {
     if (on === LITE.on) return; LITE.on = on; if (!auto && !on) LITE.userOff = true;
-    LITE.near = on ? 16 : 28; LITE.k = on ? 0.022 : 0.012; LITE.art = on ? 42 : 70; LITE.label = on ? 24 : 38;
+    LITE.near = on ? 16 : 28; LITE.k = on ? 0.022 : 0.012; LITE.art = on ? 60 : 90; LITE.label = on ? 26 : 40;
     if (!LITE.fog) LITE.fog = scene.fog ? [scene.fog.near, scene.fog.far] : null, LITE.far = camera.far;
     if (scene.fog && LITE.fog) { scene.fog.near = on ? 90 : LITE.fog[0]; scene.fog.far = on ? 330 : LITE.fog[1]; }
     camera.far = on ? 360 : LITE.far; camera.updateProjectionMatrix();
@@ -343,7 +374,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     return out;
   }
   function textTexture(s) {
-    const K = Math.min(1.6, 1024 / Math.max(s.w, s.h));
+    const K = Math.min(1.6, 1024 / Math.max(s.w, s.h)) * TEXMEM.scale;
     const cv = document.createElement('canvas'); cv.width = Math.round(s.w * K); cv.height = Math.round(s.h * K);
     const ctx = cv.getContext('2d');
     ctx.font = `${s.b ? 700 : 400} ${s.fs * K}px Arimo, Archivo, Helvetica, Arial, sans-serif`;
@@ -354,7 +385,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     const x = s.al[0] < 0.34 ? 1 : s.al[0] > 0.66 ? cv.width - 1 : cv.width / 2;
     const y0 = (cv.height - th) * (1 - s.al[1]) + lh / 2;
     lines.forEach((l, i) => ctx.fillText(l, x, y0 + i * lh));
-    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
+    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return lean(t);
   }
   // titles on the building's beams: white text on an ink plate with room around it (they used to be white-on-white and touch the edges)
   function plateSign(s) {
@@ -396,7 +427,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   arts.push(...rooms.arts);
   function showSign(sg) {
     if (sg.mesh) return; const s = sg.s;
-    if (s.k === 'c') { sg.mesh = canvasBox(s, texLoader); compactGroups(sg.mesh); scene.add(sg.mesh); occAdd(sg.mesh); return; }
+    if (s.k === 'c') { const far = sg.d > SHARP; sg.tiny = far && !!s.imgTiny; sg.mesh = canvasBox(sg.tiny ? { ...s, img: s.imgTiny } : s, texLoader); compactGroups(sg.mesh); scene.add(sg.mesh); occAdd(sg.mesh); return; }
     if (s.k === 't' && s.plate) { sg.mesh = plateSign(s); scene.add(sg.mesh); occAdd(sg.mesh); return; }
     if (s.k === 'l') { sg.mesh = new THREE.Mesh(quad(s.c), new THREE.MeshBasicMaterial({ map: cardTexture(s), polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 })); sg.mesh.renderOrder = 2; scene.add(sg.mesh); occAdd(sg.mesh); return; }
     let mat;
@@ -406,7 +437,11 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   }
   function hideSign(sg) { if (!sg.mesh) return; occRemove(sg.mesh); scene.remove(sg.mesh); sg.mesh.geometry.dispose(); for (const m of [].concat(sg.mesh.material)) { if (m.map) m.map.dispose(); if (m !== sideShared) m.dispose(); } sg.mesh = null; }
   const sideShared = null;
-  const NEAR = lowEnd ? 50 : 115, FAR = NEAR + (lowEnd ? 18 : 30);   // (phones keep less art in memory: running out reloads the page)   // load art well before it can be seen, so walls never fill in as you watch
+  // how far out art loads (22 Oct: further, so it's there before you can see it): phones load the tiny copies out to 95 m and the
+  // sharp ones within SHARP; computers load everything out to 140 m
+  const NEAR = lowEnd ? 95 : 140, FAR = NEAR + (lowEnd ? 20 : 30), SHARP = lowEnd ? 42 : 1e9;
+  const swapArt = (sg, tiny) => { const face = [].concat(sg.mesh.material)[4]; if (!face) return; sg.tiny = tiny; const want = sg.mesh;
+    texLoader.load(tiny ? sg.s.imgTiny : sg.s.img, t => { if (sg.mesh !== want || sg.tiny !== tiny) { t.dispose(); return; } t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; const old = face.map; face.map = t; face.color.set(0xffffff); face.needsUpdate = true; if (old) old.dispose(); }); };   // (phones keep less art in memory: running out reloads the page)   // load art well before it can be seen, so walls never fill in as you watch
 
   // ---------------------------------------------------------------- video screens (zone video: play while you stand in the room)
   // "Six Views": the vision-simulator room's two big screens show one film through six eye conditions, live (severity set from a kiosk)
@@ -693,6 +728,64 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     const old = player; player = makeVisitorFox(look, extra, style); if (pos) player.position.copy(pos);
     scene.add(player); if (guitarHold && old && guitarHold.parent === old) player.add(guitarHold);   // (changed outfit mid-song: keep the guitar)
   }
+  // ---------------------------------------------------------------- cinema staff (22 Oct): a fox selling tickets in the booth out front and one
+  // working the snack bar in the lobby, in red usher vests with gold trim; they stand at their posts and look about
+  const staff = [];
+  if (campus && campus.cinema.staff) for (const s of campus.cinema.staff) {
+    try {
+      const f = makeFox({ torso: ['#a3222c', '#7a1820', '#c9a14a'], crest: '8', mood: 'warm', look: { ...(s.role === 'tickets' ? PLAYER_FEMALE : PLAYER_MALE), tailSide: 0.6 }, outfit: 'vest', prints: null, gear: 'none' });
+      bakeLocal(f); skinFox(f); f.scale.setScalar(FOX_SCALE); f.position.set(s.x, s.role === 'tickets' ? 0.4 : 0.3, s.z);   // (on a step behind the counter, so you see more than a head) f.rotation.y = s.face; scene.add(f);
+      staff.push({ f, s, t: Math.random() * 10 });
+    } catch (e) { console.warn('cinema staff fox', e); }
+  }
+  // the snack bar fox's job (22 Oct): scoop a box of popcorn at the machine and set it out on the counter, then fill a drink at the
+  // soda fountain and set that out, over and over. The counter holds seven; when it's full the oldest one is cleared away first.
+  const snackJob = (() => {
+    const K = campus && campus.cinema.snack; if (!K) return null;
+    const carry = new THREE.Group(); carry.scale.setScalar(1 / FOX_SCALE);   // (in the fox's own frame, in metres: held in front of its chest)
+    const W = { lane: K.SB.z + 1.05, popX: K.PM.x, sodaX: K.SF.x - 0.75 };
+    const plan = []; let step = null, item = null, kindNext = 'box', order = 0;
+    const go = (x, z, face, then) => plan.push({ t: 'walk', x, z, face, then });
+    const freeSlot = () => { let s = K.slots.find(s => !s.item); if (!s) { s = K.slots.reduce((a, b) => (a.item.userData.at || 0) < (b.item.userData.at || 0) ? a : b); K.root.remove(s.item); s.item = null; } return s; };
+    const queue = () => { const kind = kindNext; kindNext = kind === 'box' ? 'cup' : 'box'; const slot = freeSlot();
+      if (kind === 'box') { go(W.popX, W.lane, 0); plan.push({ t: 'work', dur: 1.8, kind }); }
+      else { go(W.sodaX, K.SF.z, Math.PI / 2); plan.push({ t: 'work', dur: 2.6, kind }); }
+      go(slot.x, W.lane, Math.PI); plan.push({ t: 'place', dur: 0.9, slot }); plan.push({ t: 'wait', dur: 1.2 + Math.random() }); };
+    return (st, dt) => {
+      const f = st.f; if (!carry.parent) f.add(carry);
+      if (!step) { if (!plan.length) queue(); step = plan.shift(); step.e = 0; }
+      step.e += dt; let speed = 0, reach = 0;
+      if (step.t === 'walk') {
+        const dx = step.x - f.position.x, dz = step.z - f.position.z, d = Math.hypot(dx, dz), v = 1.1 * dt;
+        if (d > 0.03) { const want = Math.atan2(dx, dz); let a = want - f.rotation.y; a = Math.atan2(Math.sin(a), Math.cos(a)); f.rotation.y += a * Math.min(1, dt * 8); f.position.x += dx / d * Math.min(v, d); f.position.z += dz / d * Math.min(v, d); speed = 1.1 / FOX_SCALE * 0.6; }
+        else { let a = step.face - f.rotation.y; a = Math.atan2(Math.sin(a), Math.cos(a)); f.rotation.y += a * Math.min(1, dt * 8); if (Math.abs(a) < 0.05) step = null; }
+      } else if (step.t === 'work') {
+        reach = 1;
+        if (!item) { item = step.kind === 'box' ? K.makeBox() : K.makeCup(); item.position.set(0, 0.62, 0.36); carry.add(item); if (step.kind === 'cup') { item.userData.soda.scale.y = 0.02; item.userData.lid.visible = item.userData.straw.visible = false; } }
+        if (step.kind === 'box') { const k = Math.min(1, step.e / step.dur); item.children.forEach((c, i) => { if (i > 1) c.visible = i - 2 < k * 14; }); }   // scooping: the box fills up
+        else { const k = Math.min(1, Math.max(0, (step.e - 0.4) / (step.dur - 0.9))); item.userData.soda.scale.y = Math.max(0.02, k); item.userData.soda.position.y = 0.1 * Math.max(0.02, k) + 0.005; K.stream.visible = k > 0 && k < 1; if (k >= 1) item.userData.lid.visible = item.userData.straw.visible = true; }
+        if (step.e >= step.dur) { K.stream.visible = false; step = null; }
+      } else if (step.t === 'place') {
+        reach = 1;
+        if (step.e >= step.dur && item) { carry.remove(item); item.position.set(step.slot.x, K.counterY, K.counterZ); item.rotation.set(0, 0, 0); item.userData.at = ++order; K.root.add(item); step.slot.item = item; item = null; step = null; }
+      } else if (step.e >= step.dur) step = null;
+      animFox(f, dt, speed, false);
+      // arms: forward to the machine, out over the counter, or holding what it carries in front
+      const P = f.userData.P; if (P && P.arms) { const want = reach ? -1.25 : item ? -0.7 : null; if (want != null) for (const a of P.arms) { a.rotation.x = want; } }
+    };
+  })();
+  // the walk-on floor piano (22 Oct): whoever stands on a key plays it, you and every other visitor (from where their fox stands,
+  // so it needs no messages of its own); keys go down and light up; others' notes are softer the further you are from it
+  const FP = campus && campus.floorPiano, fpSound = FP ? floorPianoSound() : null; let fpOn = new Map();
+  function floorPianoTick() {
+    const dMe = Math.hypot(Pl.x - FP.x, Pl.z - FP.z), heard = Math.abs(Pl.y - FP.y) < 4 ? Math.max(0, 1 - dMe / 40) ** 2 : 0;
+    const now = new Map(), feet = [['me', Pl.x, Pl.y, Pl.z]]; for (const [id, r] of remotes) if (r.placed) feet.push([id, r.x, r.y, r.z]);
+    for (const [id, x, y, z] of feet) { if (Math.abs(y - FP.y) > 0.5) continue; const k = FP.keyAt(x, z); if (k) now.set(id, k); }   // (a jump lifts you off the key)
+    const held = new Set(now.values());
+    for (const [id, k] of fpOn) if (now.get(id) !== k) { fpSound.off(id); if (!held.has(k)) FP.press(k, false); }
+    for (const [id, k] of now) if (fpOn.get(id) !== k) { FP.press(k, true); fpSound.on(id, k.m, id === 'me' ? 1 : heard); }
+    fpOn = now;
+  }
   // ---------------------------------------------------------------- other visitors (multiplayer)
   const remotes = new Map();
   const tagSprite = (text, bg = 'rgba(20,19,18,.88)', fg = '#ffffff', w = 512) => {
@@ -769,7 +862,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     }
     hide.forEach(o => { o.visible = false; }); head.add(g); fox.userData.camObj = g; fox.userData.camHidden = hide;
   }
-  function remoteRemove(id) { setCam(id, null); const r = remotes.get(id); if (!r) return; if (r.fox) scene.remove(r.fox); if (r.tag) scene.remove(r.tag); remotes.delete(id); }
+  function remoteRemove(id) { setCam(id, null); const r = remotes.get(id); if (!r) return; if (campus && campus.band.guitar && campus.band.guitar.heldBy === id) { const Gt = campus.band.guitar; Gt.rest.parent.add(Gt.group); Gt.group.position.copy(Gt.rest.pos); Gt.group.rotation.copy(Gt.rest.rot); Gt.heldBy = null; } if (r.fox) scene.remove(r.fox); if (r.tag) scene.remove(r.tag); remotes.delete(id); }
   function updateRemotes(dt) {
     const now = performance.now();
     for (const r of remotes.values()) {
@@ -940,8 +1033,8 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     { x: -97.8, y: -3.3, z: 0, cond: 'rp', textYaw: Math.PI / 2, look: [-117.6, 0.16, -0.18], signSide: 1 },             // main hall, centred, back by the big screen
     { x: -88.7, y: -3.3, z: 0, cond: 'cataracts', textYaw: Math.PI / 2, look: [-117.6, 0.16, -0.18], signSide: -1 },      // main hall, centred, toward the entrance
     { x: -2.5, y: 0.5, z: 0, cond: 'glaucoma', textYaw: Math.PI / 2, look: [-30, 2.5, 0], signSide: 1 },                 // welcome platform, looking down the walkway
-    { x: -70.25, y: -2.5, z: -65.7, cond: 'amd', textYaw: Math.PI, look: [-70.25, 0.4, -73.7] },                        // AMB room, facing the film wall
-    { x: -69.9, y: -2.5, z: 114, cond: 'floaters', textYaw: 0, look: [-69.9, 0.5, 146] },                                // New Artists Wing
+    { x: -69.9, y: -2.5, z: -64.0, cond: 'amd', textYaw: Math.PI, look: [-69.9, 0.6, -95.8] },                           // New Artists Wing (south), facing its far wall
+    { x: -69.9, y: -2.5, z: 54, cond: 'floaters', textYaw: 0, look: [-69.9, 0.5, 86] },                                // New Artists Wing
     { x: -224, y: -2.5, z: 0, cond: 'cataracts', textYaw: Math.PI / 2, look: [-205, -1, 0] },                            // music room, back area
     { x: -258, y: -2.5, z: 2, cond: 'glaucoma', textYaw: 0, look: [-261.5, -1.0, 29.2] },                               // meditation area, facing Morten
   ] });
@@ -1038,6 +1131,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   // arrows round the middle: N, E, S, W
   joyBase.innerHTML = '<svg viewBox="0 0 112 112" width="112" height="112" style="position:absolute;left:-2px;top:-2px" aria-hidden="true"><g fill="#f3f2f2"><path d="M56 9 L64 19 L48 19 Z"/><path d="M56 103 L64 93 L48 93 Z"/><path d="M9 56 L19 48 L19 64 Z"/><path d="M103 56 L93 48 L93 64 Z"/></g></svg>';
   joyKnob.style.cssText = 'position:absolute;width:44px;height:44px;border-radius:50%;background:#ec3013;border:2px solid #f3f2f2;box-sizing:border-box;transform:translate(-50%,-50%);display:none;pointer-events:none;z-index:5;transition:opacity .2s;';
+  joyBase.setAttribute('aria-hidden', 'true'); joyKnob.setAttribute('aria-hidden', 'true');
   container.append(joyBase, joyKnob);
   // the LOOK AROUND eye, always in the bottom right corner: tap = first person on/off; press (and drag) = look around, and on
   // letting go the view swings back to the normal camera angle
@@ -1146,6 +1240,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     Pl.sit = { gy: Pl.y, nx, nz, name: b.name || 'Bench' };
     Pl.x = b.x + c * along + nx * 0.06; Pl.z = b.z - s * along + nz * 0.06; Pl.y = benchTop(b) - hip + 0.03; Pl.vy = 0; Pl.speed = 0;
     Pl.face = Math.atan2(nx, nz); St.yaw = Pl.face + Math.PI; St.pitch = 0.22; player.userData.sit = true; nearKey = null;
+    if (b.look) { Pl.face = Math.atan2(b.look[0] - Pl.x, b.look[2] - Pl.z); St.yaw = Pl.face + Math.PI; St.pitch = 0.04; St.camDist = 1.4; }   // (a cinema seat: turn to the screen and look at it)
   }
   function standUp() {
     if (!Pl.sit) return; const s = Pl.sit; Pl.sit = null; if (player) player.userData.sit = false;
@@ -1159,8 +1254,12 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   function filmHere() {
     const i = nearestScreen(Pl.x, Pl.y, Pl.z); if (i < 0) return false;
     const v = vids[i], p = new THREE.Vector3(Pl.x, Pl.y + 0.5, Pl.z);
-    const inZone = (v.zone && v.zone.containsPoint(p)) || (v.zones && v.zones.some(q => q.containsPoint(p)));
-    return !!(inZone && curUrl && v.u === curUrl && video.readyState >= 2);
+    // (22 Oct) only when you walk up to the screen, like walking up to a painting: within 5 m of it (plus half its width, for the
+    // big end-wall screens), and in its own room (not where its sound carries, like the AMB's stage room or the park)
+    const inRoom = v.zone ? v.zone.containsPoint(p) : true;
+    if (v.half == null) { const bb = new THREE.Box3().setFromObject(v.box), sz = bb.isEmpty() ? null : bb.getSize(new THREE.Vector3()); v.half = sz ? Math.max(sz.x, sz.z) / 2 : 1; }
+    const near = vidPos(v).distanceTo(p) < 5 + Math.min(v.half, 6);
+    return !!(inRoom && near && curUrl && v.u === curUrl && video.readyState >= 2);
   }
   let filmOv = null;
   function fullFilm() {
@@ -1225,6 +1324,10 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     if (faceLocal) player.userData.faceCtl = faceLocal;
     wearCam(player, camHeads.get('me'));
     animFox(player, dt, Pl.speed / FOX_SCALE * 0.6, !Pl.ground);
+    for (const st of staff) { const far = Math.hypot(st.s.x - Pl.x, st.s.z - Pl.z) > 45; st.f.visible = !far; if (far) continue; st.t += dt;
+      if (st.s.role === 'snacks' && snackJob) { snackJob(st, dt); continue; }
+      animFox(st.f, dt, 0, false); st.f.rotation.y = st.s.face + Math.sin(st.t * 0.35) * 0.35; }
+    if (FP) floorPianoTick();
     updateRemotes(dt);
     if (F.id) followRecord();
     for (const f of tickers) f(dt);
@@ -1232,9 +1335,9 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     if (campus) {
       campus.tick(dt);
       // showtimes: in the cinema the film is locked to the clock (everyone sees the same frame); between shows it waits at the start
-      const cs = campus.cinema.screen;
-      if (curUrl && curUrl === cs.u && video.readyState >= 1 && !window.HUSH) {
-        const S = campus.cinema.show();
+      const cs = campus.cinema.screens.find(x => x.u === curUrl);   // (22 Oct: two screens, each on its own showtimes)
+      if (curUrl && cs && video.readyState >= 1 && !window.HUSH) {
+        const S = cs.show();
         if (S.on) { cineT -= dt; if (cineT <= 0 && Math.abs(video.currentTime - S.t) > 2 && S.t < (video.duration || 1e9) - 1) { cineT = 3; try { video.currentTime = S.t; } catch (e) {} }   // (at most one seek every 3 s, so a slow connection isn't kept seeking)
           if (video.paused) video.play().catch(() => {}); }
         else if (!video.paused || video.currentTime > 0.5) { video.pause(); try { video.currentTime = 0; } catch (e) {} }
@@ -1263,12 +1366,13 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       streamT = 0.25; const p = new THREE.Vector3(Pl.x, Pl.y, Pl.z); detailCull();
       { const inWing = !!wing && wing.bounds.containsPoint(p), cz = campus && campus.zoneAt(Pl.x, Pl.y, Pl.z); St.inWing = inWing; St.campusZone = cz || null;
         const zn = inWing ? 'New Artists Wing' : cz ? CAMPUS_STOPS[cz].name : 'The Gallery'; if (zn !== St.zoneName) { St.zoneName = zn; onZone(zn); } }
-      if (wing) { { const dW = Math.hypot(Pl.x - WING_O.x, Pl.z - WING_O.z); if (dW < (fast ? 70 : lowEnd ? 75 : 110)) wing.load(); else if (dW > (lowEnd ? 105 : 160)) wing.unload(); } }
-      for (const r of rooms.list) { const dR = Math.hypot(Pl.x - r.O.x, Pl.z - r.O.z); if (dR < (fast ? 55 : lowEnd ? 65 : 90)) r.room.load(); else if (dR > (lowEnd ? 105 : 170)) r.room.unload(); }   // far rooms let their paintings go (memory)
+      for (const w of wings) { const dW = Math.hypot(Pl.x - w.O.x, Pl.z - w.O.z); if (dW < (fast ? 80 : lowEnd ? 95 : 130)) w.load(); else if (dW > (lowEnd ? 125 : 175)) w.unload(); }
+      for (const r of rooms.list) { const dR = Math.hypot(Pl.x - r.O.x, Pl.z - r.O.z); if (dR < (fast ? 70 : lowEnd ? 85 : 110)) r.room.load(); else if (dR > (lowEnd ? 120 : 180)) r.room.unload(); }   // far rooms let their paintings go (memory)
       // rooms behind walls still draw (the camera doesn't know about walls): hide a room's whole group unless you're close to it
-      { const pp2 = new THREE.Vector3(Pl.x, Pl.y + 1, Pl.z); for (const r of rooms.list) r.room.group.visible = r.park || r.room.bounds.distanceToPoint(pp2) < 50; if (wing) wing.group.visible = wing.bounds.distanceToPoint(pp2) < 50; }
+      { const pp2 = new THREE.Vector3(Pl.x, Pl.y + 1, Pl.z); for (const r of rooms.list) r.room.group.visible = r.park || r.room.bounds.distanceToPoint(pp2) < 75; for (const w of wings) w.group.visible = w.bounds.distanceToPoint(pp2) < 75; }
       // nearest first, a few per tick (no hitch), far enough out that it all arrives before you can see it
-      const want = []; for (const sg of signs) { const d = sg.ctr.distanceTo(p); if (d < NEAR) { if (!sg.mesh) want.push([d, sg]); else sg.mesh.visible = d < ((sg.s.k === 't' || sg.s.k === 'l') ? LITE.label : LITE.art); } else if (d > FAR) hideSign(sg); }   // loaded far out (no pop-in of images), but only drawn when close enough to matter: labels 38 m, art 70 m
+      const want = []; let swaps = 0; for (const sg of signs) { const d = sg.ctr.distanceTo(p); sg.d = d; if (d < NEAR) { if (!sg.mesh) want.push([d, sg]); else { sg.mesh.visible = d < ((sg.s.k === 't' || sg.s.k === 'l') ? LITE.label : LITE.art);
+          if (sg.s.k === 'c' && sg.s.imgTiny && swaps < 4) { if (sg.tiny && d < SHARP) { swapArt(sg, false); swaps++; } else if (!sg.tiny && d > SHARP + 18) { swapArt(sg, true); swaps++; } } } } else if (d > FAR) hideSign(sg); }   // (a few swaps a tick, nearest first is fine)   // loaded far out (no pop-in of images), but only drawn when close enough to matter: labels 38 m, art 70 m
       want.sort((a, b) => a[0] - b[0]); for (const [, sg] of want.slice(0, firstStream ? 60 : fast ? 4 : 14)) showSign(sg);   // running: a few at a time, nearest first
       firstStream = false;
       lightArt();
@@ -1338,8 +1442,13 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
         if (on) { if (!guitarHold) { guitarHold = new THREE.Group(); guitarHold.scale.setScalar(1 / FOX_SCALE); } if (guitarHold.parent !== player) player.add(guitarHold);
           guitarHold.add(gt); gt.position.set(0.02, Gt.bench.top + 0.2 - Pl.y, 0.24); gt.rotation.set(-0.12, 0.1, -1.2); }
         else { Gt.rest.parent.add(gt); gt.position.copy(Gt.rest.pos); gt.rotation.copy(Gt.rest.rot); } },
-      showtime: () => campus.cinema.show(), filmTitle: () => campus.cinema.now().title,
-      zone: () => St.campusZone, why: campus.why, nowShowing: () => campus.cinema.now().title, nextFilm: () => playUrl(campus.cinema.next()), group: campus.group,
+      // someone else picked up the guitar (or put it back): it goes into their fox's lap on your screen too
+      holdGuitarFor(id, on) { const Gt = campus.band.guitar, r = remotes.get(id); if (!Gt) return; const gt = Gt.group;
+        if (on && r && r.fox) { let h = r.fox.userData.guitarHold; if (!h) { h = new THREE.Group(); h.scale.setScalar(1 / FOX_SCALE); r.fox.add(h); r.fox.userData.guitarHold = h; }
+          h.add(gt); gt.position.set(0.02, Gt.bench.top + 0.2 - r.y, 0.24); gt.rotation.set(-0.12, 0.1, -1.2); Gt.heldBy = id; }
+        else if (!on && Gt.heldBy === id) { Gt.rest.parent.add(gt); gt.position.copy(Gt.rest.pos); gt.rotation.copy(Gt.rest.rot); Gt.heldBy = null; } },
+      showtime: () => campus.cinema.showAt(Pl.x, Pl.z), filmTitle: () => campus.cinema.filmAt(Pl.x, Pl.z).title,
+      zone: () => St.campusZone, why: campus.why, nowShowing: () => campus.cinema.filmAt(Pl.x, Pl.z).title, nextFilm: () => playUrl(campus.cinema.next()), group: campus.group,
     },
     sit: b => (b && b.up) || Pl.sit ? standUp() : sitOn(b), fullFilm: () => fullFilm(), sitting: () => !!Pl.sit,
     camHead: { local: (mode, stream) => setCam('me', mode, stream), remote: (id, mode, stream) => setCam(id, mode, stream) },

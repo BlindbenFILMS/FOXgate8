@@ -42,7 +42,7 @@ const FS = `
     col *= mix(0.82, 1.0, smoothstep(0.0, 0.12, edge));
     col = mix(col, col * 0.55 + col * col * 0.9 + vec3(0.06, 0.05, 0.03), uNight);
     // clearer glass (more of the world shows through), but the lead came stays solid black, as it would be
-    col = mix(col, vec3(0.04, 0.04, 0.05), lead); a = mix(a * 0.55 * uOp, 1.0, lead);
+    col = mix(col, vec3(0.04, 0.04, 0.05), lead); a = mix(a * 0.55 * uOp, mix(0.4, 1.0, uOp), lead);   // (lower uOp: clearer panes and lighter leading)
     gl_FragColor = vec4(col, a);
     #include <fog_fragment>
   }`;
@@ -178,7 +178,7 @@ const ART_VS = `
     #include <fog_vertex>
   }`;
 const ART_FS = `
-  uniform float uNight; uniform vec2 uSize; uniform vec4 uArt; uniform sampler2D uMap; uniform float uHas; uniform float uFlip; uniform float uSeed;
+  uniform float uNight; uniform vec2 uSize; uniform vec4 uArt; uniform sampler2D uMap; uniform float uHas; uniform float uFlip; uniform float uSeed; uniform float uOp;
   varying vec3 vW; varying vec2 vUv;
   #include <fog_pars_fragment>
   vec2 h2(vec2 p) { p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3))); return fract(sin(p) * 43758.5453); }
@@ -201,7 +201,7 @@ const ART_FS = `
       vec2 uv = clamp((c - a0) / (a1 - a0), 0.0, 1.0); if (uFlip > 0.5) uv.x = 1.0 - uv.x;
       vec3 t = uHas > 0.5 ? texture2D(uMap, uv).rgb : vec3(0.3, 0.45, 0.8);
       float l = dot(t, vec3(0.3, 0.59, 0.11)); t = clamp(mix(vec3(l), t, 1.35) * 1.08, 0.0, 1.0);   // a little richer, like glass
-      col = t; al = 0.86; lead = (1.0 - smoothstep(0.02, 0.04, e)) * smoothstep(0.2, 1.0, 0.3 / (length(fwidth(P)) * 9.0));   // far off, the leading thins out instead of shimmering
+      col = t; al = 0.86 * (0.45 + 0.55 * uOp); lead = (1.0 - smoothstep(0.02, 0.04, e)) * smoothstep(0.2, 1.0, 0.3 / (length(fwidth(P)) * 9.0));   // far off, the leading thins out instead of shimmering
       vec2 dir = vec2(cos(hash(id) * 6.28), sin(hash(id) * 6.28));
       col *= 0.92 + noise(vec2(dot(P, dir) * 7.0, dot(P, vec2(-dir.y, dir.x)) * 0.8 + hash(id) * 20.0)) * 0.14;
       col *= mix(0.8, 1.0, smoothstep(0.0, 0.06, e));
@@ -215,7 +215,7 @@ const ART_FS = `
       vec2 dir = vec2(cos(h * 6.28), sin(h * 6.28));
       col *= 0.9 + noise(vec2(dot(P, dir) * 5.0, dot(P, vec2(-dir.y, dir.x)) * 0.6 + h * 20.0)) * 0.18;
       col *= mix(0.82, 1.0, smoothstep(0.0, 0.12, e));
-      al *= 0.55;
+      al *= 0.55 * uOp;
       lead = (1.0 - smoothstep(0.03, 0.06, e)) * smoothstep(0.2, 1.0, 0.8 / (length(fwidth(P)) * 9.0));
     }
     // the medallion's ink frame with a thin gold fillet inside it; the pane's own ink border
@@ -224,13 +224,13 @@ const ART_FS = `
     vec2 eb = min(P, uSize - P); float border = 1.0 - smoothstep(0.08, 0.11, min(eb.x, eb.y));
     col = mix(col, col * 0.55 + col * col * 0.9 + vec3(0.06, 0.05, 0.03), uNight);
     col = mix(col, vec3(0.93, 0.78, 0.42), gold * 0.9); al = mix(al, 0.95, gold);
-    lead = max(lead, max(fr, border));
-    col = mix(col, vec3(0.04, 0.04, 0.05), lead); al = mix(al, 1.0, lead);
+    float solid = max(fr, border); lead = max(lead, solid);
+    col = mix(col, vec3(0.04, 0.04, 0.05), lead); al = mix(al, max(solid, mix(0.4, 1.0, uOp)), lead);
     gl_FragColor = vec4(col, al);
     #include <fog_fragment>
   }`;
-export function artGlass({ size, art, flip = false, seed = 0 }) {   // size [W, H] m; art [cx, cy, half, half] m in pane coords
+export function artGlass({ size, art, flip = false, seed = 0, opacity = 1 }) {   // size [W, H] m; art [cx, cy, half, half] m in pane coords
   const m = new THREE.ShaderMaterial({ vertexShader: ART_VS, fragmentShader: ART_FS, transparent: true, depthWrite: false, side: THREE.DoubleSide, fog: true,
-    uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uNight: { value: 0 }, uSize: { value: new THREE.Vector2(...size) }, uArt: { value: new THREE.Vector4(...art) }, uMap: { value: null }, uHas: { value: 0 }, uFlip: { value: flip ? 1 : 0 }, uSeed: { value: seed } }]) });
+    uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uNight: { value: 0 }, uSize: { value: new THREE.Vector2(...size) }, uArt: { value: new THREE.Vector4(...art) }, uMap: { value: null }, uHas: { value: 0 }, uFlip: { value: flip ? 1 : 0 }, uSeed: { value: seed }, uOp: { value: opacity } }]) });
   all.push(m); return m;
 }

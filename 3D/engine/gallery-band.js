@@ -182,14 +182,14 @@ export function setupBand({ G, net, announce = () => {}, nameOf = () => 'Someone
   let which = null, guard = null;
   function open(w) {
     if (which) close(false); audio(); G.campus.playAt(w); which = w;
-    if (w === 'guitar') { G.campus.holdGuitar(true); gUI.style.display = 'flex'; announce('You have the guitar. Pick a chord on the left, then swipe across the strings to strum, or tap Strum. Tap Done to put it back.'); }
+    if (w === 'guitar') { G.campus.holdGuitar(true); if (net) net.event({ k: 'gth', on: 1 }); gUI.style.display = 'flex'; announce('You have the guitar. Pick a chord on the left, then swipe across the strings to strum, or tap Strum. Tap Done to put it back.'); }
     else { dUI.style.display = 'flex'; announce('You are at the drums. Tap the drums to play: kick, snare, hi-hat, toms and cymbals. Everyone nearby can hear you. Tap Done to stand up.'); }
     clearInterval(guard); guard = setInterval(() => { if (which && G.sitting && !G.sitting()) close(false); }, 400);   // (got up some other way)
   }
   function close(stand) {
     if (!which) return; const w = which; which = null; clearInterval(guard); fingers.clear();
     dUI.style.display = gUI.style.display = 'none';
-    if (w === 'guitar') G.campus.holdGuitar(false);
+    if (w === 'guitar') { G.campus.holdGuitar(false); if (net) net.event({ k: 'gth', on: 0 }); }
     if (stand && G.campus.standUp) G.campus.standUp();
   }
   // other people playing
@@ -198,6 +198,7 @@ export function setupBand({ G, net, announce = () => {}, nameOf = () => 'Someone
     if (!d) return;
     if (d.k === 'drm' && typeof d.d === 'string' && PADS.some(p => p.k === d.d)) { const v = near(B.drums); drumSound(d.d, v); B.drums.hit(d.d === 'open' ? 'hihat' : d.d); if (v > 0.2 && !heard.has(id + 'd')) { heard.add(id + 'd'); announce(nameOf(id) + ' is playing the drums'); } }
     else if (d.k === 'gtr' && Number.isFinite(d.m) && d.s >= 0 && d.s < 6) { const v = near(B.guitar), m = Math.max(28, Math.min(88, d.m | 0)); pluck(d.s | 0, m, v, !!d.x); B.guitar.pluck(d.s | 0); if (v > 0.2 && !heard.has(id + 'g')) { heard.add(id + 'g'); announce(nameOf(id) + ' is playing the guitar'); } }
+    else if (d.k === 'gth') { if (G.campus.holdGuitarFor) G.campus.holdGuitarFor(id, !!d.on); }
     else if (d.k === 'gtd') { /* their amp setting: we keep ours (one shared amp would surprise you) */ }
   }
   return { open, close, onEvent, isOpen: () => !!which, which: () => which };

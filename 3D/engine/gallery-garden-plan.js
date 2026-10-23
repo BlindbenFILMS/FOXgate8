@@ -5,12 +5,14 @@ export const RING = { x: 40, z: 0, r: 21 };   // the ring path: the name sign ar
 // the park campus (4 Oct): you start beside the big tree facing the museum; BLIND CAN CINEMA behind you (east), the WHY House on
 // your left (north), the Academy of Music for the Blind on your right (south); two Hope pools either side of the walk to the museum
 export const CAMPUS = {
-  spawn: { x: 33.5, z: 0, face: -Math.PI / 2 },
+  spawn: { x: 2.5, z: 0, face: -Math.PI / 2 },   // (22 Oct: back on the welcome plaza, the old start platform, facing the museum's eye)
+  parkStop: { x: 33.5, z: 0, face: -Math.PI / 2 },   // where 'the park' takes you (beside the big tree)
   why: { x0: 31, x1: 49, z0: 25, z1: 41 },                  // the WHY House (door on its south face, towards the tree)
   amb: { x0: 30.6, x1: 49.4, z0: -57.4, z1: -23.6, O: [40, 0, -24] },   // the AMB building (a buildWing room; door on its north face)
   cinema: { x0: 74, x1: 90, z0: -11, z1: 11 },              // BLIND CAN CINEMA (door on its west face)
-  amb2: { x0: 49.4, x1: 69.8, z0: -38.8, z1: -24 },           // the AMB's stage room (22 Oct), through a doorway in the main room's east wall
-  pools: [{ x: 13.5, z: 4.75, yaw: 0 }, { x: 13.5, z: -4.75, yaw: Math.PI }],   // 'Hope Floating in Braille', either side of the walk
+  amb2: { x0: 49.4, x1: 69.8, z0: -48.4, z1: -31.6 },           // the AMB's stage room (22 Oct), through a doorway in the main room's east wall
+  pools: [{ x: 13.5, z: 4.75, yaw: 0 }, { x: 13.5, z: -4.75, yaw: Math.PI }],   // (where the two Hope pools stood when the garden was laid out: kept so its layout doesn't reshuffle)
+  hope: [{ x: 13.5, z: 6.2, yaw: Math.PI / 2 }],   // (22 Oct) 'Hope Floating in Braille' now: one pool, north of the walk, turned to face the museum's eye
   flags: [[22.32, -17.68, 'bcp'], [22.32, 17.68, 'ora']],   // (11 Oct: just outside the ring path, not on it)
   oldFlags: [[25.15, -14.85], [25.15, 14.85]],   // (where they stood: the trees and lanterns were laid out round these; kept so that layout doesn't reshuffle)
 };

@@ -1,5 +1,6 @@
 // Blind Canvas gallery: honey-oak floors + the New Artists Wing (built from Ben's artist pages)
 import * as THREE from '../vendor/three/three.module.js';
+import { TEXMEM, lean } from './gallery-texmem.js';
 import { makePlant } from './gallery-props.js';
 
 // ------------------------------------------------------------ hardwood
@@ -66,12 +67,12 @@ export const isWhiteFloorMat = m => !m.transparent && m.color && m.color.r > 0.7
 
 // ------------------------------------------------------------ canvas text
 function wrap(ctx, text, maxW) { const out = []; for (const para of String(text).split('\n')) { let line = ''; for (const w of para.split(/\s+/)) { const t = line ? line + ' ' + w : w; if (ctx.measureText(t).width > maxW && line) { out.push(line); line = w; } else line = t; } out.push(line); } return out; }
-function panelTex(w, h, draw) { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const c = cv.getContext('2d'); draw(c, w, h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; }
+function panelTex(w, h, draw) { const k = TEXMEM.scale, cv = document.createElement('canvas'); cv.width = Math.round(w * k); cv.height = Math.round(h * k); const c = cv.getContext('2d'); c.scale(k, k); draw(c, w, h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return lean(t); }   // (drawn at w x h, stored smaller on phones; let go after upload)
 const FONT = 'Archivo, Arimo, Helvetica, Arial, sans-serif';
 
 // ------------------------------------------------------------ the wing
 // Laid out along -x from its origin O (entrance), floor at O.y. Returns meshes for collision, art entries and doors.
-export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveImg, L = 66, title = null, logo = null, spacious = false, endVideo = null, floorLogo = null, fillLogo = null, doorSign = 'NEW ARTISTS WING', videoKicker = 'BLINDNESS · AN INTERVIEW WITH', bayW: bayWIn = 0, Wd: WdIn = 0, lip = 1, frontWall = true, doorZ = 0, sideDoor = null, hang = null }) {
+export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveImg, L = 66, title = null, logo = null, spacious = false, endVideo = null, floorLogo = null, fillLogo = null, doorSign = 'NEW ARTISTS WING', videoKicker = 'BLINDNESS · AN INTERVIEW WITH', bayW: bayWIn = 0, Wd: WdIn = 0, lip = 1, frontWall = true, doorZ = 0, sideDoor = null, hang = null, titleY = 3.0, community = null }) {
   const g = new THREE.Group(); g.position.copy(O); g.rotation.y = rotY; scene.add(g); g.updateMatrixWorld(true);
   // local layout -> world (the wing can be turned to join any doorway of the building)
   const toW = v => v.clone().applyMatrix4(g.matrixWorld), dirW = v => v.clone().applyQuaternion(g.quaternion);
@@ -168,11 +169,11 @@ export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveIm
     c.font = `500 ${lines.length > 2 ? 34 : 40}px ${FONT}`; c.fillStyle = '#cfcaca';
     wrap(c, T.sub || '', w - 220).slice(0, 2).forEach((l, i) => c.fillText(l, 130, (lines.length > 2 ? 590 : 560) + i * 46));
   });
-  const tp = new THREE.Mesh(new THREE.PlaneGeometry(TW, 4.2), new THREE.MeshBasicMaterial({ map: titleT })); tp.position.set(-L + 0.02, 3.0, logo ? -HW + 0.6 + TW / 2 : 0); tp.rotation.y = Math.PI / 2; g.add(tp);
+  const tp = new THREE.Mesh(new THREE.PlaneGeometry(TW, 4.2), new THREE.MeshBasicMaterial({ map: titleT })); tp.position.set(-L + 0.02, titleY, logo ? -HW + 0.6 + TW / 2 : 0); tp.rotation.y = Math.PI / 2; g.add(tp);
   if (logo) {   // the partner's logo, large, on an ink panel
     const LW = Wd - 1.2 - TW - 0.5, LH = 4.2;
     const lm = new THREE.MeshBasicMaterial({ color: 0x1d1c1b });
-    const lp = new THREE.Mesh(new THREE.PlaneGeometry(LW, LH), lm); lp.position.set(-L + 0.02, 3.0, HW - 0.6 - LW / 2); lp.rotation.y = Math.PI / 2; g.add(lp);
+    const lp = new THREE.Mesh(new THREE.PlaneGeometry(LW, LH), lm); lp.position.set(-L + 0.02, titleY, HW - 0.6 - LW / 2); lp.rotation.y = Math.PI / 2; g.add(lp);
     loaders.push(() => { const img = new Image(); img.onload = () => {
       const t = panelTex(Math.round(LW * 160), Math.round(LH * 160), (c, w, h) => { c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, 0, w, 10);
         const k = Math.min((w * 0.88) / img.width, (h * 0.8) / img.height), iw = img.width * k, ih = img.height * k; c.drawImage(img, (w - iw) / 2, (h - ih) / 2 + 5, iw, ih); });
@@ -203,6 +204,7 @@ export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveIm
     const side = H.side, zf = side * (HW - 0.05), rotYp = side < 0 ? 0 : Math.PI, n = new THREE.Vector3(0, 0, -side); let x = H.x;
     const at = (lx, y, dz = 0) => new THREE.Vector3(lx, y, zf - side * dz);
     for (const it of H.items) {
+      if (it && it.gap) { x -= it.gap; continue; }   // (room left for a doorway)
       if (it === 'bio') {
         const bioT = panelTex(900, 1100, (c, w, h) => {
           c.fillStyle = '#3d4046'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, 0, w, 14);
@@ -307,7 +309,24 @@ export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveIm
   // the partner's logo on the floor just inside the door, upright as you walk in
   if (floorLogo) { const fl = logoPanel(8.4, 3.9, floorLogo); fl.rotation.x = -Math.PI / 2; fl.rotation.z = Math.PI / 2; fl.position.set(-6.2, 0.012, 0); fl.material.polygonOffset = true; fl.material.polygonOffsetFactor = -2; fl.renderOrder = 1; g.add(fl); }
   // empty bays get the logo, so no wall is left bare
-  if (fillLogo && !hang) for (let i = wing.artists.length; i < slots.length; i++) { const sl = slots[i]; const lp = logoPanel(11, 4.8, fillLogo); lp.position.set(sl.x, 2.9, sl.side * (HW - 0.04)); lp.rotation.y = sl.side < 0 ? 0 : Math.PI; g.add(lp); }
+  // (22 Oct) community photos: square prints with a caption, on walls that would otherwise stand bare
+  const comm = (community || []).slice();
+  const capT = panelTex(860, 200, (c, w, h) => { c.fillStyle = '#f9f8f6'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, 0, 12, h);
+    c.fillStyle = '#1d1c1b'; c.font = `800 62px ${FONT}`; c.fillText('OUR COMMUNITY', 44, 92); c.fillStyle = '#5a5654'; c.font = `500 38px ${FONT}`; c.fillText('The Blind Canvas Project, together', 44, 160); });
+  const capM = new THREE.MeshBasicMaterial({ map: capT });
+  const photo = (img, p, ry, nrm) => {
+    const S = 3.2, faceM = new THREE.MeshBasicMaterial({ color: 0xdddddd }), sideM = new THREE.MeshLambertMaterial({ color: 0xf4f2ee });
+    const cvs = new THREE.Mesh(new THREE.BoxGeometry(S, S, 0.07), [sideM, sideM, sideM, sideM, faceM, sideM]); cvs.position.copy(p); cvs.rotation.y = ry; g.add(cvs);
+    canvases.push({ mesh: cvs, w: S, h: S, key: img }); artTex.push({ faceM, url: resolveImg(img) });
+    const cap = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 0.6), capM); cap.position.copy(p).addScaledVector(nrm, -0.01); cap.position.y = 0.72; cap.rotation.y = ry; g.add(cap);
+    arts.push({ title: 'Our community', desc: 'The Blind Canvas Project community, together', imgDesc: '', img: resolveImg(img), ctr: toW(cvs.position), n: dirW(nrm), artist: 'The Blind Canvas Project' });
+  };
+  // empty bays get the logo (smaller, when there are photos to hang round it), so no wall is left bare
+  if (fillLogo && !hang) for (let i = wing.artists.length; i < slots.length; i++) { const sl = slots[i], ry = sl.side < 0 ? 0 : Math.PI, nrm = new THREE.Vector3(0, 0, -sl.side), zf = sl.side * (HW - 0.09);
+    const withPhotos = comm.length >= 4, lp = withPhotos ? logoPanel(7.4, 3.6, fillLogo) : logoPanel(11, 4.8, fillLogo); lp.position.set(sl.x, withPhotos ? 2.75 : 2.9, sl.side * (HW - 0.04)); lp.rotation.y = ry; g.add(lp);
+    if (withPhotos) for (const dx of [-10.4, -6.2, 6.2, 10.4]) photo(comm.shift(), new THREE.Vector3(sl.x + dx, 2.75, zf), ry, nrm); }
+  // the end wall either side of the title
+  if (!logo && comm.length >= 2) for (const z of [-7.6, 7.6]) photo(comm.shift(), new THREE.Vector3(-L + 0.09, titleY, z), Math.PI / 2, new THREE.Vector3(1, 0, 0));
   g.updateMatrixWorld(true);
   let loaded = false, artGen = 0, artOn = false;
   const TL = new THREE.TextureLoader();

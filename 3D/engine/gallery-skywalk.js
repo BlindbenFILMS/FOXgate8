@@ -13,7 +13,7 @@ export function buildSkywalk({ scene, wood, woodify }) {
   const S = SKYWALK, g = new THREE.Group(); scene.add(g); const col = [];
   const deckM = woodify(new THREE.MeshLambertMaterial({ color: 0xffffff }), wood, 4, true);
   const inkM = new THREE.MeshLambertMaterial({ color: 0x1d1c1b }), blueM = new THREE.MeshBasicMaterial({ color: 0x15309a });
-  const glassM = stainedGlass({ cell: 0.42, y0: S.y0, y1: S.y1 + 1.2 });
+  const glassM = stainedGlass({ cell: 0.42, y0: S.y0, y1: S.y1 + 1.2, opacity: 0.68 });
   // the ramp, along -x (same construction as the entrance bridge)
   { let x0 = S.x1, y0 = S.y1, x1 = S.x0, y1 = S.y0;   // ordered so the angle stays in (-90°, 90°)
     const len = Math.hypot(x1 - x0, y1 - y0), ang = Math.atan2(y1 - y0, x1 - x0), mx = (x0 + x1) / 2, my = (y0 + y1) / 2, W = S.W;

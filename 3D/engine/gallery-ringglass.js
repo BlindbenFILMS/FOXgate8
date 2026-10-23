@@ -31,7 +31,7 @@ export function buildRingGlass({ scene, data, resolveImg = u => u }) {
     const cx = (A[0] + B[0]) / 2 - RC[0], cz = (A[1] + B[1]) / 2 - RC[1], f = Math.hypot(cx, cz), fx = cx / f, fz = cz / f;   // outward
     const flip = (dx * -fz + dz * fx) < 0;
     const S = Math.min(W - 2.2, H - 2.2) / 2;
-    const mat = artGlass({ size: [W, H], art: title ? [W / 2, H / 2 + 0.3, S, S] : [-99, -99, 0, 0], flip, seed: i * 1.37 });
+    const mat = artGlass({ size: [W, H], art: title ? [W / 2, H / 2 + 0.3, S, S] : [-99, -99, 0, 0], flip, seed: i * 1.37, opacity: 0.45 });   // (22 Oct: clearer, you see out)
     const geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.Float32BufferAttribute([A[0], Y0, A[1], B[0], Y0, B[1], B[0], Y1, B[1], A[0], Y1, A[1]], 3));
     geo.setAttribute('uv', new THREE.Float32BufferAttribute([0, 0, 1, 0, 1, 1, 0, 1], 2)); geo.setIndex([0, 1, 2, 0, 2, 3]); geo.computeVertexNormals();

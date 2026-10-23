@@ -147,7 +147,7 @@ export function buildEye({ scene, lowEnd }) {
   // ------------------------------------------------ uplights in the lake: four lamps in the water throw angled beams up at the glass,
   // and mist drifting up off the water catches the light as it passes through them
   {
-    const WY = -1.6, beamV = `varying vec3 vN; varying vec3 vW; varying float vY; uniform float uL;
+    const WY = -0.75, beamV = `varying vec3 vN; varying vec3 vW; varying float vY; uniform float uL;
       void main() { vY = position.y / uL; vN = normalize(mat3(modelMatrix) * normal); vec4 wp = modelMatrix * vec4(position, 1.0); vW = wp.xyz; gl_Position = projectionMatrix * viewMatrix * wp; }`;
     const beamF = `varying vec3 vN; varying vec3 vW; varying float vY; uniform float uI;
       void main() { float f = abs(dot(normalize(vN), normalize(cameraPosition - vW))); float k = pow(f, 2.2) * pow(1.0 - vY, 0.8) * smoothstep(0.0, 0.08, vY) * uI;
@@ -204,13 +204,13 @@ export function buildEye({ scene, lowEnd }) {
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
     const ink = new THREE.MeshLambertMaterial({ color: 0x1d1c1b }), steel = new THREE.MeshLambertMaterial({ color: 0xd9d9d6 });
     const g = new THREE.Group(); g.position.set(X, 0, 0); scene.add(g);
-    const box = new THREE.Mesh(new THREE.BoxGeometry(0.4, SH + 0.2, SW + 0.2), ink); box.position.set(0, Y0 + SH / 2, 0); g.add(box);
+    const TH = 0.72, box = new THREE.Mesh(new THREE.BoxGeometry(TH, SH + 0.2, SW + 0.2), ink);   // (22 Oct: thicker than the posts, which run up into it) box.position.set(0, Y0 + SH / 2, 0); g.add(box);
     for (const s of [1, -1]) {   // readable from the lake and from the plaza
       const face = new THREE.Mesh(new THREE.PlaneGeometry(SW, SH), new THREE.MeshBasicMaterial({ map: t, fog: true }));
-      face.position.set(0.21 * s, Y0 + SH / 2, 0); face.rotation.y = s * Math.PI / 2; g.add(face);
+      face.position.set((TH / 2 + 0.01) * s, Y0 + SH / 2, 0); face.rotation.y = s * Math.PI / 2; g.add(face);
     }
     for (const z of [-SW * 0.22, SW * 0.22]) {
-      const post = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.26, Y0, 14), steel); post.position.set(0, Y0 / 2, z); g.add(post);   // standing in the cherry garden; the walk passes under the sign
+      const post = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.26, Y0 + 1.0, 14), steel); post.position.set(0, (Y0 + 1.0) / 2, z); g.add(post);   // standing in the cherry garden; the walk passes under the sign
       const foot = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.5, 0.3, 20), new THREE.MeshLambertMaterial({ color: 0xd8d2c8 })); foot.position.set(0, 0.15, z); g.add(foot);
     }
     out.sign = g;

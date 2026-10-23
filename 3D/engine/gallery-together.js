@@ -1,6 +1,7 @@
 // Blind Canvas gallery: visiting together.
 //  • Tours: lead a tour from the menu; everyone gets a "Follow" invite and their fox walks your path behind you
 //    (any visitor can also be followed, or jumped to, from the menu's list of who's here).
+//  • (22 Oct: guests see as few pop-ups as possible: the watch-party offer, tours and the showtime nudge are the host's; invites only come from the host)
 //  • Watch parties: in any room with a film, "Watch together" restarts it for everyone in that room, in sync;
 //    people elsewhere get an invite that takes them there.
 //  • The Six Views wall is shared: when anyone changes the severity at a kiosk, everyone's wall changes.
@@ -70,7 +71,7 @@ export function setupTogether({ G, net, nameOf, announce, onSev = () => {}, esc 
     const film = G.film.url();
     if (party && party.host === 'me') { rows.push(row('Watch party · you are hosting', fname(party.u), [['From the start', () => { G.film.seek(party.u, 0); hostSync(); }, ''], ['End', () => endParty(), 'p']])); sig.push('ph'); }
     else if (party && party.joined && film === party.u) { rows.push(row('Watch party · in sync', 'with ' + nameOf(party.host) + ' · ' + fname(party.u), [['Leave', () => { party.joined = false; party.left = true; render(); }, '']])); sig.push('pj' + party.host); }
-    else if (film && G.remote.count() > 0 && !(party && party.u === film) && !noWatch.has(film) && !(G.campus && G.campus.zone() === 'cinema')) { rows.push(row('Watch together', 'Restart ' + fname(film) + ' for everyone, in sync', [['▶ Start', () => startParty(), 'p'], ['✕', () => { noWatch.add(film); render(); }, 'c']])); sig.push('pw' + film); }
+    else if (host === 'me' && film && G.remote.count() > 0 && !(party && party.u === film) && !noWatch.has(film) && !(G.campus && G.campus.zone() === 'cinema')) { rows.push(row('Watch together', 'Restart ' + fname(film) + ' for everyone, in sync', [['▶ Start', () => startParty(), 'p'], ['✕', () => { noWatch.add(film); render(); }, 'c']])); sig.push('pw' + film); }
     for (const i of invites) { rows.push(row(i.title, i.text, [[i.btn, () => { invites = invites.filter(x => x !== i); i.act(); render(); }, 'p'], ['✕', () => { invites = invites.filter(x => x !== i); render(); }, 'c']], 'go')); sig.push('i' + i.key); }
     const k = sig.join('|') + '|' + (fid ? nameOf(fid) : '');
     if (k === shown) return; shown = k;
@@ -118,7 +119,7 @@ export function setupTogether({ G, net, nameOf, announce, onSev = () => {}, esc 
     if (!d || typeof d !== 'object') return;
     const nm = nameOf(id);
     if (d.k === 'tour') {
-      if (d.a === 'on') invite('tour' + id, id, nm + ' is leading a tour', 'Your fox can follow them round the gallery', 'Follow ' + nm, () => follow(id, true));
+      if (d.a === 'on' && host === id) invite('tour' + id, id, nm + ' is leading a tour', 'Your fox can follow them round the gallery', 'Follow ' + nm, () => follow(id, true));
       else if (d.a === 'off') { invites = invites.filter(i => i.key !== 'tour' + id); if (G.following() === id && tour.from === id) { G.unfollow(); announce(nm + "'s tour ended."); } render(); }
       else if (d.a === 'join' && tour.leading) { tour.followers.add(id); announce(nm + ' is following your tour.'); render(); }
       else if (d.a === 'leave') { tour.followers.delete(id); render(); }
@@ -129,12 +130,12 @@ export function setupTogether({ G, net, nameOf, announce, onSev = () => {}, esc 
       const fresh = !party || party.host !== id || party.u !== d.u;
       if (fresh) party = { host: id, u: d.u, joined: false, left: false };
       if (!party.joined && !party.left && G.film.url() === d.u) { party.joined = true; announce('Watch party: ' + fname(d.u) + ' is now in sync with ' + nm + '.'); }
-      if (fresh && !party.joined) invite('wp' + id, id, nm + ' started a watch party', fname(d.u), 'Join', () => { party.joined = true; party.left = false; goTo(id); });
+      if (fresh && !party.joined && host === id) invite('wp' + id, id, nm + ' started a watch party', fname(d.u), 'Join', () => { party.joined = true; party.left = false; goTo(id); });
       if (party.joined && G.film.url() === d.u) { const target = (+d.t || 0) + 0.15, drift = G.film.time() - target; if (!G.film.ready() || Math.abs(drift) > 0.8) G.film.seek(d.u, target); }
       render();
     } else if (d.k === 'gvis') {
       if (d.a === 'off') { optOut.delete(id); if (gview && gview.from === id) { endGuest(); announce(nm + ' stopped sharing their view.'); } return; }
-      if (d.a !== 'on' || !COND[d.cond] || optOut.has(id)) return;
+      if (d.a !== 'on' || !COND[d.cond] || optOut.has(id) || host !== id) return;
       const r = G.remote.list().find(p => p.id === id), me = G.localState();
       const near = r && Math.hypot(r.x - me[0], r.z - me[2]) < 35 && Math.abs(r.y - me[1]) < 4;
       if (!near) { if (gview && gview.from === id) endGuest(); return; }
@@ -211,7 +212,7 @@ export function setupTogether({ G, net, nameOf, announce, onSev = () => {}, esc 
     // group vision upkeep: keep sharing alive for people who walk up; let a guest view lapse if the sharer goes quiet
     if (gv.on && (gv.t += 0.5) >= 4) { gv.t = 0; net.event({ k: 'gvis', a: 'on', cond: gv.cond, sev: gv.sev }); }
     if (gview && (now() > gview.until || !G.vision.overlay.isGuest())) { gview = null; if (G.vision.overlay.isGuest()) G.vision.overlay.guestEnd(); }
-    G.vision.overlay.setShareHandler((on, cond, sev) => shareVision(on, cond, sev), G.remote.count() > 0);
+    G.vision.overlay.setShareHandler((on, cond, sev) => shareVision(on, cond, sev), G.remote.count() > 0 && (host === 'me' || gv.on));   // (22 Oct) 'show everyone' is the host's
     if (party && party.host === 'me') { if (G.film.url() !== party.u) endParty(); else if ((syncT += 0.5) >= 3) { syncT = 0; hostSync(); } }
     if (party && party.host !== 'me' && party.joined && G.film.url() !== party.u && !invites.some(i => i.key === 'wp' + party.host)) { /* walked out: stay joined, re-sync when back */ }
     render();

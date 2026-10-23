@@ -10,7 +10,7 @@ import * as THREE from '../vendor/three/three.module.js';
 // each pool: its glass block stands on the far side (away from the walk), the water and the floating H-O-P-E between the glass
 // and the walk, so both read as you pass between them. (Local frame: the walk is at -z.)
 import { CAMPUS } from './gallery-garden-plan.js';
-export const BRAILLE = { units: CAMPUS.pools, floor: 0.02, poolW: 7.0, poolD: 2.0, GW: 5.0, GH: 2.6, GD: 0.42 };
+export const BRAILLE = { units: CAMPUS.hope, floor: 0.02, poolW: 7.0, poolD: 2.0, GW: 5.0, GH: 2.6, GD: 0.42 };
 
 const tex = (w, h, draw, rep) => { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; draw(cv.getContext('2d'), w, h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; if (rep) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(...rep); } return t; };
 
@@ -120,6 +120,6 @@ export function buildBraille({ scene, resolveImg }) {
   });
   root.updateMatrixWorld(true);
   // where each pool's artwork card is read from (the walk side, by the water)
-  const spots = B.units.map(U => ({ x: U.x, y: 0.4, z: U.z - Math.cos(U.yaw) * 2.2 }));
+  const spots = B.units.map(U => ({ x: U.x - Math.sin(U.yaw) * 2.2, y: 0.4, z: U.z - Math.cos(U.yaw) * 2.2 }));   // (on its reading side)
   return { group: root, col, spots, tick: dt => tickers.forEach(f => f(dt)) };
 }

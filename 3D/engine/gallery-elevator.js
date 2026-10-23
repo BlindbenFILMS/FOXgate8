@@ -29,7 +29,8 @@ export function buildElevator({ scene, resolveImg = u => u }) {
       const img = new Image(); img.onload = () => { const sx = 120, sy = 40, sw = 272, sh = 215, k = 300 / sw; c.save(); c.beginPath(); c.arc(256, 256, 168, 0, Math.PI * 2); c.clip(); c.globalCompositeOperation = 'lighten'; c.drawImage(img, sx, sy, sw, sh, 256 - sw * k / 2, 256 - sh * k / 2 + 4, sw * k, sh * k); c.restore(); t.needsUpdate = true; };
       img.src = resolveImg('gallery/img/ora_card_16x9_black_269773142.webp');
       return t; })();
-    const face = new THREE.Mesh(new THREE.CircleGeometry(L.r - 0.1, 40), new THREE.MeshBasicMaterial({ map: topT })); face.rotation.x = -Math.PI / 2; face.position.y = 0.006; plat.add(face);
+    // (22 Oct) turned so the Ora logo reads the right way up from the music room's entrance side (+x)
+    const face = new THREE.Mesh(new THREE.CircleGeometry(L.r - 0.1, 40), new THREE.MeshBasicMaterial({ map: topT })); face.rotation.set(-Math.PI / 2, 0, Math.PI / 2, 'YXZ'); face.position.y = 0.006; plat.add(face);
     return { g: plat, y, home: y, target: y, idle: 0 };
   };
   const LO = mkPlat(L.y0, 'ELEVATOR · FLOOR 2 · THE EYE · '), UP = mkPlat(L.y1, 'ELEVATOR · FLOOR 1 · MUSIC ROOM · ');

@@ -4,6 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <title>Blind Canvas Gallery · 8 GATES 3D</title>
+<meta name="description" content="Walk through the Blind Canvas Project's 3D gallery: art by blind and visually impaired artists, films, live music and a place to share your own why. Right in your browser, with friends.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Blind Canvas Project">
+<meta property="og:title" content="The Blind Canvas Gallery">
+<meta property="og:description" content="A 3D gallery of art by blind and visually impaired artists. Walk in, play in the band, catch a film, bring a friend.">
+<meta property="og:url" content="https://blindbenfilms.github.io/FOXgate8/3D/gallery.html">
+<meta property="og:image" content="https://blindbenfilms.github.io/FOXgate8/3D/gallery/og-gallery.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A fox avatar on a wooden plaza in front of the gallery, a building shaped like a giant eye with stained glass inside.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#141312">
 <link rel="stylesheet" href="vendor/fonts/archivo.css">
 <style>
   :root { --bg:#141312; --ink:#f3f2f2; --card:#232120; --accent:#ec3013; --teal:#22b8b0; --font:"Archivo",system-ui,sans-serif; }
@@ -116,7 +128,7 @@ const pref = (() => { try { return JSON.parse(localStorage.getItem('8gates.galle
 const savePref = () => { try { localStorage.setItem('8gates.gallery.v1', JSON.stringify(pref)); } catch (e) {} };
 let G; let near = null;
 try {
-  G = await createGallery({ container: $('stage'), onProgress: f => { $('lb').style.width = Math.round(f * 100) + '%'; }, onNear, onZone: z => { document.querySelector('#place .c').textContent = z; }, onPad: p => { if (!p) { if ($('hint').dataset.pad) { $('hint').style.display = 'none'; delete $('hint').dataset.pad; } return; } $('live').textContent = 'Comment spot: ' + p.name + '. The LEAVE NOTE button is on the right; tap it to leave a comment.'; $('hint').textContent = '🙂 YOUR COMMENTS HERE · tap LEAVE NOTE'; $('hint').dataset.pad = '1'; $('hint').style.display = 'block'; clearTimeout(window.PADHINT); window.PADHINT = setTimeout(() => { if ($('hint').dataset.pad) { $('hint').style.display = 'none'; delete $('hint').dataset.pad; } }, 4000); }, onLite: (on, auto) => { window.LITE_SHOW && window.LITE_SHOW(); if (auto) { $('live').textContent = 'Lite mode is on, so the gallery runs smoother on this phone. You can turn it off in the menu.'; $('hint').textContent = '🪶 Lite mode on for a smoother walk · ☰ to change'; $('hint').style.display = 'block'; setTimeout(() => $('hint').style.display = 'none', 4000); } },  onSplash: () => { $('live').textContent = 'Splash! No swimming in the lake. Back to the entrance.'; $('hint').textContent = '💦 Splash! No swimming in the lake. Back to the entrance.'; $('hint').style.display = 'block'; setTimeout(() => $('hint').style.display = 'none', 3500); } });
+  G = await createGallery({ container: $('stage'), onProgress: f => { $('lb').style.width = Math.round(f * 100) + '%'; }, onNear, onZone: z => { const pc = document.querySelector('#place .c'); if (pc.textContent !== z) { pc.textContent = z; clearTimeout(window.ZONESAY); window.ZONESAY = setTimeout(() => { if (!$('live').dataset.busy) $('live').textContent = 'You are in ' + z + '.'; }, 600); } }, onPad: p => { if (!p) { if ($('hint').dataset.pad) { $('hint').style.display = 'none'; delete $('hint').dataset.pad; } return; } window.PADSEEN = window.PADSEEN || new Set(); if (window.PADSEEN.has(p.name)) return; window.PADSEEN.add(p.name); $('live').textContent = 'Comment spot: ' + p.name + '. The LEAVE NOTE button is on the right; tap it to leave a comment.'; $('hint').textContent = '🙂 YOUR COMMENTS HERE · tap LEAVE NOTE'; $('hint').dataset.pad = '1'; $('hint').style.display = 'block'; clearTimeout(window.PADHINT); window.PADHINT = setTimeout(() => { if ($('hint').dataset.pad) { $('hint').style.display = 'none'; delete $('hint').dataset.pad; } }, 4000); }, onLite: (on, auto) => { window.LITE_SHOW && window.LITE_SHOW(); if (auto) { $('live').textContent = 'Lite mode is on, so the gallery runs smoother on this phone. You can turn it off in the menu.'; $('hint').textContent = '🪶 Lite mode on for a smoother walk · ☰ to change'; $('hint').style.display = 'block'; setTimeout(() => $('hint').style.display = 'none', 4000); } },  onSplash: () => { $('live').textContent = 'Splash! No swimming in the lake. Back to the entrance.'; $('hint').textContent = '💦 Splash! No swimming in the lake. Back to the entrance.'; $('hint').style.display = 'block'; setTimeout(() => $('hint').style.display = 'none', 3500); } });
   G.openCommentSpots = openCommentSpots;
 
 { const b = $('liteBtn'); let saved = null; try { saved = localStorage.getItem('bcp.lite'); } catch (e) {}
@@ -372,10 +384,11 @@ function openMap() {
     <path d="M${X(0)} ${Y(-12)} L${X(0)} ${Y(19)} M${X(0)} ${Y(61)} L${X(0)} ${Y(74)} M${X(18.2)} ${Y(29.5)} L${X(27)} ${Y(25)} L${X(40)} ${Y(18)} L${X(46)} ${Y(8)} M${X(-18.2)} ${Y(29.5)} L${X(-27)} ${Y(25)} L${X(-40)} ${Y(18)} L${X(-46)} ${Y(8)} M${X(0)} ${Y(61)} L${X(0)} ${Y(74)}" stroke="#d9cdb4" stroke-width="3" fill="none"/>
     <circle cx="${X(0)}" cy="${Y(40)}" r="21" stroke="#d9cdb4" stroke-width="3" fill="none"/>
     <circle cx="${X(0)}" cy="${Y(40)}" r="5" fill="#f4aac6" stroke="#8a4a5e" stroke-width="1"/>
-    <rect x="${X(5.1)}" y="${Y(9.8)}" width="3.1" height="7.4" fill="#5fc6d8"/><rect x="${X(-2)}" y="${Y(9.8)}" width="3.1" height="7.4" fill="#5fc6d8"/>
+    <rect x="${X(9.7)}" y="${Y(12)}" width="7" height="3" fill="#5fc6d8"/>
     ${bld('museum', -44, -13, -24, 24, '#f3efe8', 'THE MUSEUM', '#1d1c1b')}
     ${bld('why', 31, 49, 25, 41, '#efe4cf', 'WHY|HOUSE', '#1d1c1b')}
     ${bld('amb', 30.6, 49.4, -57.4, -23.6, '#1d1c1b', 'ACADEMY')}
+    ${bld('amb', 49.4, 69.8, -48.4, -31.6, '#3d4046', 'STAGE')}
     ${bld('cinema', 74, 90, -11, 11, '#7e3328', 'CINEMA')}
     <circle cx="${X(2.1)}" cy="${Y(29.6)}" r="1.6" fill="#9a6a3c"/>
     ${(G.comments ? G.comments.list : []).filter(S => Y(S.x) > 2 && Y(S.x) < 140).map(S => `<g class="cs" data-id="${S.id}" role="button" tabindex="0" aria-label="Comment spot: ${S.name}" style="cursor:pointer"><rect x="${(X(S.z) - 2.6).toFixed(1)}" y="${(Y(S.x) - 2.6).toFixed(1)}" width="5.2" height="5.2" fill="#f6c443" stroke="#1d1c1b" stroke-width="1"/><circle cx="${(X(S.z) - 0.9).toFixed(1)}" cy="${(Y(S.x) - 0.6).toFixed(1)}" r=".45" fill="#1d1c1b"/><circle cx="${(X(S.z) + 0.9).toFixed(1)}" cy="${(Y(S.x) - 0.6).toFixed(1)}" r=".45" fill="#1d1c1b"/><path d="M${(X(S.z) - 1.3).toFixed(1)} ${(Y(S.x) + 0.6).toFixed(1)} q1.3 1.3 2.6 0" stroke="#1d1c1b" stroke-width=".55" fill="none"/></g>`).join('')}
@@ -399,6 +412,7 @@ function openMap() {
     if (!window.READY || !G || !G.campus) return; const S = G.campus.showtime(), inCinema = G.campus.zone() === 'cinema';
     if (!S.on && S.nextIn <= 60 && S.nextIn > 50) {
       if (inCinema) { if (warnedIn !== S.next) { warnedIn = S.next; $('live').textContent = 'The show starts in one minute.'; } return; }
+      if (!(window.TOG && window.TOG.host() === 'me')) { if (warnedIn !== S.next) { warnedIn = S.next; $('live').textContent = 'Showtime in one minute at BLIND CAN Cinema.'; } return; }   // (22 Oct) the pop-up is the host's; guests just hear it
       if (Date.now() - lastShown < 25 * 60000) return; lastShown = Date.now();
       const time = new Date(S.next).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
       el.innerHTML = '<b>🎬 SHOWTIME IN 1 MINUTE · ' + time + '</b>' + esc(G.campus.filmTitle()) + ' at BLIND CAN Cinema<div class="row"><button id="stGo">Take me there</button><button class="x" id="stX">Not now</button></div>';
@@ -444,7 +458,7 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
     $('who').textContent = net === null ? 'Connecting…' : status === 'offline' ? 'Just you (offline)' : n ? (n + 1) + ' foxes here' : 'Just you here · invite a friend';
     const sig = (pref.name || '') + '|' + G.remote.list().map(p => p.id + p.name + p.placed + (G.following() === p.id) + (window.VOICE && window.VOICE.isOn(p.id)) + (window.TOG && window.TOG.host() === p.id)).join(',');
     if (sig !== whoSig && window.TOG) { whoSig = sig; window.TOG.whoRows($('whoList'), pref.name); }
-    $('tourBtn').textContent = window.TOG && window.TOG.leading() ? 'End my tour' : 'Lead a tour';
+    $('tourBtn').textContent = window.TOG && window.TOG.leading() ? 'End my tour' : 'Lead a tour'; $('tourBtn').style.display = window.TOG && (window.TOG.host() === 'me' || window.TOG.leading()) ? '' : 'none';   // (22 Oct) tours are for the host
     if (window.TOG) { const h = window.TOG.host(); $('hostBtn').textContent = h === 'me' ? 'Stop hosting' : h ? '⭐ ' + (names.get(h) || 'Someone') + ' is hosting' : 'Host this visit'; $('hostBtn').disabled = !!h && h !== 'me'; }
   };
   let status = 'connecting', net = null, entered = false, whoSig = '';
