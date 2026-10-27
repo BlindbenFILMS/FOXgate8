@@ -548,6 +548,31 @@ $('go').onclick = async () => {
   }
 };
 
+/* ── keeping the art lined up for the whole visit ──
+   MindAR works out how the camera picture sits on the screen only when it starts, and again on a window "resize".
+   Phones change both without telling it: the address bar slides, the phone turns, or the camera switches resolution
+   a moment after starting. Then every overlay sits off its painting until the page is refreshed (tested: 120-300 px off).
+   So: re-fit whenever the view changes size, and start the tracking again (same camera, a second or so) if the camera's
+   picture changes size. */
+function keepAligned(mindar, after) {
+  let t = 0, busy = false;
+  const fit = () => { clearTimeout(t); t = setTimeout(() => { try { mindar.resize(); } catch (e) {} }, 120); };
+  if (window.ResizeObserver) new ResizeObserver(fit).observe(mindar.container);
+  if (window.visualViewport) visualViewport.addEventListener('resize', fit);
+  addEventListener('orientationchange', () => setTimeout(fit, 350));
+  setInterval(async () => {
+    const v = mindar.video, c = mindar.controller; if (busy || document.hidden || !v || !c || !v.videoWidth) return;
+    if (v.videoWidth === c.inputWidth && v.videoHeight === c.inputHeight) return;
+    busy = true;
+    try {
+      c.stopProcessVideo();
+      for (const a of mindar.anchors) { a.group.visible = false; if (a.visible) { a.visible = false; if (a.onTargetLost) a.onTargetLost(); } }
+      await new Promise(r => setTimeout(r, 150)); await mindar._startAR(); if (after) after();
+    } catch (e) { console.warn('re-start tracking', e); }
+    busy = false;
+  }, 800);
+}
+
 async function startAR() {
   const mindar = new MindARThree({ container: $('ar'), imageTargetSrc: 'joined-on-the-phone', uiLoading: 'no', uiScanning: 'no', uiError: 'no',
     filterMinCF: 0.0001, filterBeta: 0.001, missTolerance: 8, warmupTolerance: 4 });
@@ -572,6 +597,7 @@ async function startAR() {
     : await loadTargets(works.map(w => w.target), (d, n) => { msg.textContent = 'Loading paintings ' + d + ' of ' + n + '…'; });
   msg.textContent = 'Starting camera…';
   await mindar.start();
+  keepAligned(mindar);   // stays on the painting if the phone turns, the address bar slides or the camera changes resolution
   $('loading').style.display = 'none'; $('scan').style.display = 'flex'; $('top').style.display = 'flex'; $('bar').style.display = 'flex';
   $('ar').removeAttribute('aria-hidden');
   say('Center a painting in your camera', false);
