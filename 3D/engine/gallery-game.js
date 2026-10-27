@@ -984,9 +984,13 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     let mag = Math.min(1, il);
     let run = input.run || mag > 0.92;
     let sp = (run ? 6.2 : 3.4) * mag * (extra === 'chair' ? 0.95 : 1);
-    // (22 Oct: back to plain camera-relative movement: no camera rails, no held-direction latch)
-    St.moveYaw = St.yaw;
-    const fx = -Math.sin(St.yaw), fz = -Math.cos(St.yaw);   // forward on the ground
+    // (27 Oct) assisted turning, no rails: while you hold the stick, "forward" eases only slowly towards where the camera
+    // looks, so the camera can swing round behind your fox without yanking your path. Hold the stick to one side and
+    // you curve that way in a smooth arc; let go (or drag to look) and the stick lines up with the screen again.
+    { const held = mag > 0.05, looked = performance.now() - St.lastLook < 250;
+      if (St.moveYaw == null || !held || looked) St.moveYaw = St.yaw;
+      else { let d = St.yaw - St.moveYaw; d = Math.atan2(Math.sin(d), Math.cos(d)); if (Math.abs(d) > 2.4) St.moveYaw = St.yaw; else St.moveYaw += d * Math.min(1, dt * 0.55); } }
+    const fx = -Math.sin(St.moveYaw), fz = -Math.cos(St.moveYaw);   // forward on the ground
     let dx = (fx * iz + -fz * ix) * sp * dt, dz = (fz * iz + fx * ix) * sp * dt;
     // following a friend: walk their path behind them; moving yourself stops it
     if (AW.pts) {
@@ -1088,15 +1092,17 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     if (St.fp) {
       const cp = Math.cos(St.pitch), dir = new THREE.Vector3(Math.sin(St.yaw) * cp, Math.sin(St.pitch), Math.cos(St.yaw) * cp);
       const moving = Pl.speed > 0.6 && (Math.abs(input.jx) + Math.abs(input.jy) + input.f + input.b + input.l + input.r) > 0.1;
-      if (moving && performance.now() - St.lastLook > 900) { let d = Pl.face + Math.PI - St.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); St.yaw += d * Math.min(1, dt * 2.4 * clamp((Math.cos(d) + 0.6) / 1.2, 0, 1)); }
+      if (moving && performance.now() - St.lastLook > 900) { let d = Pl.face + Math.PI - St.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); St.yaw += d * Math.min(1, dt * 3.0 * clamp((Math.cos(d) + 0.75) / 0.6, 0, 1)); }
       const eye = new THREE.Vector3(Pl.x, Pl.y + 1.5, Pl.z); camera.position.copy(eye); camera.lookAt(eye.sub(dir)); St.camDist = 0.55; player.visible = false; return;
     }
-    // follow: while walking, swing the camera round behind the fox (not when you just dragged to look, and not when walking toward the camera)
-    const moving = Pl.speed > 0.6 && (Math.abs(input.jx) + Math.abs(input.jy) + input.f + input.b + input.l + input.r) > 0.1;
+    // follow (27 Oct, stronger): while walking, the camera swings round behind the fox, fully for anything up to a right
+    // angle and fading out only when you walk back toward the camera (so it never spins); not just after a drag to look.
+    // Walking on a guided route or a tour follows too (no stick needed).
+    const moving = Pl.speed > 0.6 && ((Math.abs(input.jx) + Math.abs(input.jy) + input.f + input.b + input.l + input.r) > 0.1 || !!AW.pts || !!F.id);
     if (moving && performance.now() - St.lastLook > 900) {
       const behind = Pl.face + Math.PI; let d = behind - St.yaw; d = Math.atan2(Math.sin(d), Math.cos(d));
-      const w = clamp((Math.cos(d) + 0.6) / 1.2, 0, 1);
-      St.yaw += d * Math.min(1, dt * 2.4 * w);
+      const w = clamp((Math.cos(d) + 0.75) / 0.6, 0, 1);
+      St.yaw += d * Math.min(1, dt * 3.0 * w);
     }
     const head = new THREE.Vector3(Pl.x, Pl.y + 1.35, Pl.z);
     const cp = Math.cos(St.pitch), dir = new THREE.Vector3(Math.sin(St.yaw) * cp, Math.sin(St.pitch), Math.cos(St.yaw) * cp);
@@ -1402,6 +1408,22 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     arts, edu, notesConfig: data.notes ? { ...data.notes, ...(campus ? { guestbook: campus.why.guestbook, why: { slots: campus.why.slots, station: campus.why.station } } : {}) } : null,
     setGuided() {}, setLite: on => { if (!on) LITE.userOff = true; setLite(!!on, false); }, lite: () => LITE.on, guided: () => St.guided !== false,
     setLook(l, x) { look = l || look; extra = x || 'none'; buildPlayer(); },
+    // (27 Oct) a head-and-shoulders portrait of a fox look, drawn on the main renderer (no second WebGL context) and
+    // copied out as an image: the Joe / Jane cards on the way in
+    portrait(l, x, px = 220) {
+      const f = makeVisitorFox(l, x, style); for (let i = 0; i < 3; i++) animFox(f, 0.05, 0, false);
+      const S = new THREE.Scene(); S.add(new THREE.HemisphereLight(0xffffff, 0x8a6a5a, 2.2)); const dl = new THREE.DirectionalLight(0xffffff, 2.0); dl.position.set(2, 4, 5); S.add(dl);
+      S.add(f); f.position.set(0, 0, 0); f.rotation.y = 0.3; f.updateMatrixWorld(true);
+      const h = new THREE.Box3().setFromObject(f).max.y, cam = new THREE.PerspectiveCamera(28, 1, 0.05, 50); cam.position.set(0.2, h - 0.35, 1.9); cam.lookAt(0, h - 0.45, 0);
+      const pr = renderer.getPixelRatio(), css = px / pr, vp = new THREE.Vector4(), cc = new THREE.Color(); renderer.getViewport(vp); renderer.getClearColor(cc); const ca = renderer.getClearAlpha();
+      const rt = renderer.getRenderTarget(); renderer.setRenderTarget(null);
+      renderer.setScissorTest(true); renderer.setViewport(0, 0, css, css); renderer.setScissor(0, 0, css, css); renderer.setClearColor(0x1d2a6b, 1); renderer.clear(); renderer.render(S, cam);
+      const c = document.createElement('canvas'); c.width = c.height = px; const H = renderer.domElement.height;
+      c.getContext('2d').drawImage(renderer.domElement, 0, H - px, px, px, 0, 0, px, px);
+      renderer.setScissorTest(false); renderer.setViewport(vp); renderer.setClearColor(cc, ca); renderer.setRenderTarget(rt);
+      S.remove(f);
+      return c.toDataURL('image/webp', 0.88);
+    },
     // multiplayer hooks (the page wires these to engine/gallery-net.js)
     localState: () => [+Pl.x.toFixed(2), +Pl.y.toFixed(2), +Pl.z.toFixed(2), +Pl.face.toFixed(2), +Math.min(9, Pl.speed).toFixed(1), Pl.ground ? 0 : 1, Pl.sit ? 1 : 0],   // [x, y, z, face, speed, air, sitting]
     remote: { upsert: remoteUpsert, remove: remoteRemove, count: () => remotes.size, names: () => [...remotes.values()].map(r => r.prof.name), list: () => [...remotes.values()].map(r => ({ id: r.id, name: r.prof.name || 'Visitor', placed: r.placed, x: r.tx, y: r.ty, z: r.tz })), wave: id => { const r = remotes.get(id); if (r && r.fox) showWave(r.fox); } },

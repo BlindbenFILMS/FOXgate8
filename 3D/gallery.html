@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Blind Canvas Gallery · 8 GATES 3D</title>
 <meta name="description" content="Walk through the Blind Canvas Project's 3D gallery: art by blind and visually impaired artists, films, live music and a place to share your own why. Right in your browser, with friends.">
 <meta property="og:type" content="website">
@@ -31,6 +31,7 @@
   #micBtn { width:52px; border:2px solid var(--ink); border-left:0; background:var(--bg); color:var(--ink); font:800 11px/1.15 var(--font); letter-spacing:.06em; text-align:center; padding:0; white-space:pre-line; }
   #micBtn.on { background:var(--accent); color:#fff; }
   #avRow .av { flex:1; min-height:76px; padding:10px; background:#141312; color:#fff; border:2px solid #5a5654; font:400 26px/1 var(--font); text-align:center; }
+  #avRow .av b { font-size:16px !important; }
   #avRow .av b { display:block; margin-top:6px; font:800 13px/1.2 var(--font); letter-spacing:.08em; text-transform:uppercase; }
   #avRow .av[aria-checked=true] { border-color:#ec3013; background:#2a1512; box-shadow:inset 0 -4px 0 #ec3013; }
   #menuBtn { width:48px; border:2px solid var(--ink); border-left:0; background:var(--bg); font-size:20px; text-align:center; }
@@ -83,17 +84,48 @@
   #menu button { min-height:44px; padding:8px 12px; border:2px solid var(--ink); background:var(--card); font:800 12px var(--font); letter-spacing:.06em; text-transform:uppercase; }
   #menu button.on { background:var(--ink); color:var(--bg); }
   #menu a { display:block; margin-top:12px; padding:12px; border:2px solid var(--ink); background:var(--accent); color:#fff; font-weight:800; text-decoration:none; letter-spacing:.06em; text-transform:uppercase; font-size:13px; }
-  #load { position:fixed; inset:0; z-index:30; background:#0b0a12; color:#f3f2f2; display:flex; flex-direction:column; justify-content:center; padding:24px; }
+  #load { position:fixed; inset:0; z-index:30; color:#f3f2f2; display:flex; flex-direction:column; justify-content:flex-start; align-items:center; text-align:center; padding:calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)); overflow-y:auto;
+    background: radial-gradient(120% 70% at 50% 0%, #1d2a6b 0%, #10153a 45%, #0b0a12 100%); }
+  #load > * { width:100%; max-width:420px; }
+  #load .logo { width:min(46vw,190px); height:auto; margin:0 auto 4px; display:block; filter:drop-shadow(0 6px 18px rgba(0,0,0,.45)); }
+  #load .tips { position:relative; margin:18px auto 16px; padding:4px 6px 0; text-align:center; background:none; border:0; min-height:150px; cursor:pointer; }
+  #load .tips::before { content:''; display:block; width:44px; height:4px; background:var(--accent); margin:0 auto 12px; }
+  #load .tips .n { font:800 11px/1 var(--font); letter-spacing:.16em; text-transform:uppercase; color:#ff9783; }
+  #load .tips .q { font:800 21px/1.2 var(--font); margin:8px 0 6px; }
+  #load .tips .a { font:400 15px/1.45 var(--font); color:#e2dede; }
+  #load .tips .body { transition:opacity .45s ease, transform .45s ease; }
+  #load .tips .body.out { opacity:0; transform:translateY(8px); }
+  #load .dots { display:flex; gap:6px; margin-top:14px; justify-content:center; }
+  #load .dots i { width:8px; height:8px; border-radius:50%; background:rgba(243,242,242,.3); }
+  #load .dots i.on { background:var(--accent); }
+  @media (prefers-reduced-motion:reduce) { #load .tips .body { transition:none; } }
+  #load > :first-child { margin-top:auto !important; } #load > :last-child { margin-bottom:auto !important; }   /* centred, but never cut off at the top when it's taller than the screen */
+  #load #enter { font-size:15px !important; letter-spacing:.05em !important; width:100%; }
+  #load #nameRow, #load #avRow { margin-left:auto; margin-right:auto; }
+  @media (max-height:740px) { #avRow .av img { max-width:92px; } #avRow .av { min-height:0; padding:8px; } }
+  /* phone on its side: logo and tips on the left, name, Joe / Jane and Enter on the right */
+  @media (orientation:landscape) and (max-height:560px) {
+    #load { display:grid; grid-template-columns:minmax(0,380px) minmax(0,380px); column-gap:28px; align-content:center; justify-content:center; text-align:left; }
+    #load > * { max-width:none; margin-top:0 !important; margin-bottom:0 !important; }
+    #load .logo { grid-column:1; grid-row:1; width:110px; margin:0 0 8px !important; }
+    #load .tips { grid-column:1; grid-row:2 / span 2; margin:0 !important; min-height:0; text-align:left; } #load .tips::before { margin-left:0; } #load .dots { justify-content:flex-start; }
+    #load .bar { grid-column:1; grid-row:4; margin-top:10px !important; } #load #lt { grid-column:1; grid-row:5; margin-top:6px !important; text-align:left; }
+    #load #nameRow { grid-column:2; grid-row:1; } #load #avRow { grid-column:2; grid-row:2 / span 2; margin-top:8px !important; }
+    #load #enter { grid-column:2; grid-row:4 / span 2; margin-top:10px !important; align-self:start; }
+    #avRow .av img { max-width:70px; } #avRow .av { padding:6px; }
+  }
+  @media (max-height:700px) { #load .logo { width:min(28vw,100px); } #avRow .av img { max-width:74px !important; } #load .tips { min-height:128px; padding:12px 14px; } #load .tips .q { font-size:17px; } #load .tips .a { font-size:14px; } }
   #load .k { font-size:12px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:#ff9783; }
   #load h1 { font:800 clamp(40px,10vw,88px)/0.9 var(--font); letter-spacing:-0.04em; margin:8px 0 18px; }
-  #load .bar { height:12px; border:2px solid #f3f2f2; max-width:420px; } #load .bar i { display:block; height:100%; width:0; background:var(--accent); }
-  #load p { max-width:520px; color:#cfcaca; line-height:1.5; }
+  #load .bar { height:12px; border:2px solid #f3f2f2; max-width:420px; margin:0 auto; } #load .bar i { display:block; height:100%; width:0; background:var(--accent); }
+  #load p { max-width:420px; color:#cfcaca; line-height:1.5; margin:10px auto; font-size:14px; }
+  #avRow .av img { display:block; width:100%; max-width:120px; aspect-ratio:1; margin:0 auto; background:#1d2a6b; border:2px solid #f3f2f2; object-fit:cover; }
   .sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
 </style>
 </head>
 <body>
 <div id="stage"></div>
-<div id="load"><div class="k">8 GATES · 3D · Ben Fox</div><h1>Blind Canvas<br>Project</h1><div class="bar"><i id="lb"></i></div><p id="lt">Opening the gallery…</p><label id="nameRow" style="display:none;max-width:420px;margin-top:6px"><span style="display:block;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#ff9783;margin-bottom:6px">Your name (others in the gallery see it)</span><input id="nameIn" maxlength="20" autocomplete="nickname" style="width:100%;min-height:52px;padding:10px 14px;background:#141312;color:#fff;border:2px solid #f3f2f2;border-radius:0;font:700 18px var(--font)" placeholder="Your name"></label><div id="avRow" style="display:none;max-width:420px;margin-top:14px"><span style="display:block;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#ff9783;margin-bottom:6px">Choose your avatar</span><div style="display:flex;gap:8px" role="radiogroup" aria-label="Choose your avatar"><button class="av" data-x="cane" role="radio">🦯<b>White cane</b></button><button class="av" data-x="chair" role="radio">♿<b>Wheelchair</b></button></div></div><button id="enter" style="display:none;margin-top:18px;min-height:56px;padding:14px 22px;max-width:420px;background:#ec3013;color:#fff;border:2px solid #f3f2f2;font:800 16px var(--font);letter-spacing:.08em;text-transform:uppercase;text-align:center">Enter the gallery · sound on 🔊</button></div>
+<div id="load"><img class="logo" src="gallery/img/bcp_logo_white.webp" alt="Blind Canvas Project"><div class="tips" id="tips" role="region" aria-label="Blindness tips"><div class="body" id="tipBody" aria-live="polite"></div><div class="dots" id="tipDots" aria-hidden="true"></div></div><div class="bar"><i id="lb"></i></div><p id="lt">Opening the gallery…</p><label id="nameRow" style="display:none;max-width:420px;margin-top:6px"><span style="display:block;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#ff9783;margin-bottom:6px">Your name (others in the gallery see it)</span><input id="nameIn" maxlength="20" autocomplete="nickname" style="width:100%;min-height:52px;padding:10px 14px;background:#141312;color:#fff;border:2px solid #f3f2f2;border-radius:0;font:700 18px var(--font)" placeholder="Your name"></label><div id="avRow" style="display:none;max-width:420px;margin-top:14px"><span style="display:block;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#ff9783;margin-bottom:6px">Choose your avatar</span><div style="display:flex;gap:8px" role="radiogroup" aria-label="Choose your avatar"><button class="av" data-x="joe" role="radio" aria-label="Joe"><img id="pJoe" alt=""><b>Joe</b></button><button class="av" data-x="jane" role="radio" aria-label="Jane"><img id="pJane" alt=""><b>Jane</b></button></div></div><button id="enter" style="display:none;margin-top:18px;min-height:56px;padding:14px 22px;max-width:420px;background:#ec3013;color:#fff;border:2px solid #f3f2f2;font:800 16px var(--font);letter-spacing:.08em;text-transform:uppercase;text-align:center">Enter the gallery · sound on 🔊</button></div>
 <div id="place"><div class="t box"><div class="w">Blind Canvas Project</div><div class="c">The Gallery</div><div id="who" style="font-size:12px;font-weight:700;margin-top:3px;color:#cfcaca">Connecting…</div></div><button id="menuBtn" aria-label="Menu">☰</button><button id="waveBtn" aria-label="Wave to everyone" style="width:48px;border:2px solid var(--ink);border-left:0;background:var(--bg);font-size:22px;text-align:center">👋</button><button id="micBtn" style="display:none" aria-pressed="false">MIC
 OFF</button></div>
 <button id="act" aria-live="polite"></button>
@@ -107,8 +139,10 @@ OFF</button></div>
   <div class="opts" style="margin-bottom:6px"><button id="faceBtn" aria-pressed="false">🦊 Fox copies my face (camera)</button><button id="tvHeadBtn" aria-pressed="false">📺 Screen head</button><button id="maskBtn" aria-pressed="false">🎭 Face mask</button></div>
   <div class="note" id="camNote" style="font:600 12px/1.35 var(--font);margin:-2px 0 8px;color:var(--muted,#5a5654)">Fox copies you: your camera stays on this device. Screen head and Face mask: everyone in the gallery sees your camera.</div>
   <div class="opts" id="looks"><button data-l="wrap">Art tee</button><button data-l="suit">Suit fox</button><button data-l="male">Fox</button><button data-l="female">Vixen</button></div>
+  <div class="lab">Be</div>
+  <div class="opts" id="who"><button data-w="joe">Joe</button><button data-w="jane">Jane</button></div>
   <div class="lab">Gear</div>
-  <div class="opts" id="extras"><button data-x="none">None</button><button data-x="glasses">Glasses</button><button data-x="cane">White cane</button><button data-x="chair">Wheelchair</button></div>
+  <div class="opts" id="extras"><button data-x="none">None</button><button data-x="glasses">Glasses</button></div>
   <div class="lab">Reading</div>
   <div class="opts"><button id="voices">Play the artist's voice when I open art</button><button id="autoRead">Read aloud when I open art</button><button id="big">Larger text</button><button id="readNotes">Read notes aloud when I pass</button></div>
   <div class="lab">Atmosphere</div>
@@ -121,6 +155,35 @@ OFF</button></div>
   <a href="index.html">← Back to the galaxy</a>
 </div>
 <div class="sr" id="live" aria-live="polite"></div>
+<script>
+// (27 Oct) no browser zoom: pinch, double-tap and ctrl+wheel / ctrl +/- would push buttons off the screen
+(() => {
+  const stop = e => e.preventDefault();
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(t => document.addEventListener(t, stop, { passive: false }));
+  document.addEventListener('touchmove', e => { if (e.touches.length > 1 || (e.scale && e.scale !== 1)) e.preventDefault(); }, { passive: false });
+  let lastTap = 0; document.addEventListener('touchend', e => { const now = Date.now(); if (now - lastTap < 320 && !(e.target.closest && e.target.closest('input,textarea'))) e.preventDefault(); lastTap = now; }, { passive: false });
+  addEventListener('wheel', e => { if (e.ctrlKey || e.metaKey) e.preventDefault(); }, { passive: false });
+  addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && ['+', '-', '=', '_', '0'].includes(e.key)) e.preventDefault(); });
+})();
+// (27 Oct) the loading screen: five blindness tips that turn over while the gallery loads (tap the card for the next one)
+(() => {
+  const TIPS = [
+    ['Offer your elbow, not your hand', 'Let a blind person hold just above your elbow and follow your movements. Never grab or push. It gives them control and confidence.'],
+    ['Paint a picture with words', 'Describe the layout, mention steps or low branches, and use clock positions: "your coffee is at 2 o’clock."'],
+    ['Say hello, and say goodbye', 'Announce yourself when you arrive and when you leave, and say your name, even if you think they know your voice.'],
+    ['Ask before you touch', 'Always ask before touching someone, their cane or their guide dog. Start with words: "May I guide you?"'],
+    ['Include, don’t assume', 'Concerts, cooking, pottery, nature walks: with a little description almost anything can be shared. Ask what they enjoy.']
+  ];
+  const body = document.getElementById('tipBody'), dots = document.getElementById('tipDots'), card = document.getElementById('tips');
+  if (!body) return;
+  dots.innerHTML = TIPS.map(() => '<i></i>').join('');
+  let i = Math.floor(Math.random() * TIPS.length), t = 0;
+  const show = () => { const [q, a] = TIPS[i]; body.innerHTML = '<div class="n">Blindness tip ' + (i + 1) + ' of ' + TIPS.length + '</div><div class="q"></div><div class="a"></div>'; body.querySelector('.q').textContent = q; body.querySelector('.a').textContent = a; [...dots.children].forEach((d, k) => d.classList.toggle('on', k === i)); };
+  const next = () => { body.classList.add('out'); setTimeout(() => { i = (i + 1) % TIPS.length; show(); body.classList.remove('out'); }, 450); };
+  show(); t = setInterval(() => { if (document.getElementById('load').style.display === 'none') return clearInterval(t); next(); }, 7000);
+  card.addEventListener('click', () => { clearInterval(t); next(); t = setInterval(next, 9000); });
+})();
+</script>
 <script type="module">
 import { createGallery } from './engine/gallery-game.js';
 const $ = id => document.getElementById(id);
@@ -432,6 +495,7 @@ function walkWith(D) {
 const syncMenu = () => {
   document.querySelectorAll('#looks button').forEach(b => b.classList.toggle('on', b.dataset.l === (pref.look || 'male')));
   document.querySelectorAll('#extras button').forEach(b => b.classList.toggle('on', b.dataset.x === (pref.extra || 'none')));
+  document.querySelectorAll('#who button').forEach(b => b.classList.toggle('on', (pref.extra === 'cane' || pref.extra === 'chair') && b.dataset.w === whoOf()));
   $('ambBtn').classList.toggle('on', !pref.quietAmb); $('nightBtn').classList.toggle('on', !!pref.night); $('nightBtn').textContent = pref.night ? '☀️ Day' : '🌙 Night';
   $('voices').classList.toggle('on', !pref.noVoices); $('autoRead').classList.toggle('on', !!pref.autoRead); $('readNotes').classList.toggle('on', !pref.quietNotes); $('big').classList.toggle('on', !!pref.big);
   document.documentElement.style.fontSize = pref.big ? '120%' : ''; $('pb').style.fontSize = pref.big ? '20px' : '';
@@ -440,6 +504,10 @@ $('mapBtn').onclick = () => { if (G.campus) openMap(); };
 $('menuBtn').onclick = () => { const m = $('menu'); m.style.display = m.style.display === 'block' ? 'none' : 'block'; syncMenu(); };
 document.querySelectorAll('#looks button').forEach(b => b.onclick = () => { pref.look = b.dataset.l; savePref(); G.setLook(pref.look, pref.extra); syncMenu(); });
 document.querySelectorAll('#extras button').forEach(b => b.onclick = () => { pref.extra = b.dataset.x; savePref(); G.setLook(pref.look || 'male', pref.extra); syncMenu(); });
+// (27 Oct) Joe and Jane: Joe is the suited fox with his cane, Jane the vixen in her chair (the Fox Studio's art tee stays on Joe if chosen)
+function whoOf() { return pref.extra === 'chair' ? 'jane' : 'joe'; }
+function WHO(w) { if (w === 'jane') { pref.look = 'female'; pref.extra = 'chair'; } else { pref.look = pref.look === 'wrap' ? 'wrap' : 'suit'; pref.extra = 'cane'; } savePref(); G.setLook(pref.look, pref.extra); syncMenu(); }
+document.querySelectorAll('#who button').forEach(b => b.onclick = () => WHO(b.dataset.w));
 $('autoRead').onclick = () => { pref.autoRead = !pref.autoRead; savePref(); syncMenu(); };
 $('voices').onclick = () => { pref.noVoices = !pref.noVoices; savePref(); syncMenu(); if (pref.noVoices) quoteStop(); };
 $('ambBtn').onclick = () => { pref.quietAmb = !pref.quietAmb; savePref(); if (window.SOUND) window.SOUND.set(!pref.quietAmb); syncMenu(); };
@@ -508,7 +576,7 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
   let lastSent = '', lastT = 0;
   setInterval(() => { const st = G.localState(), k = st.join(','); const now = performance.now(); if (k !== lastSent || now - lastT > 1000) { net.send(st); lastSent = k; lastT = now; } }, 100);
   const sendProfile = () => net.hello(me());
-  document.querySelectorAll('#looks button, #extras button').forEach(b => b.addEventListener('click', sendProfile));
+  document.querySelectorAll('#looks button, #extras button, #who button').forEach(b => b.addEventListener('click', sendProfile));
   // the Fox Studio on the plaza: dress your fox (look, shirt art, gear, fur, camera)
   import('./engine/gallery-studio.js').then(({ setupStudio }) => {
     window.STUDIO = setupStudio({ G, announce, at: { x: -54.0, z: 9.6 },   // in the entry hall, against the left wall
@@ -530,10 +598,11 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
 // one tap to enter: this tap is what lets the room videos (and read-aloud) play with sound from then on
 $('lt').textContent = 'Videos in each room play with sound when you walk in. Other visitors appear as foxes too.';
 $('nameRow').style.display = 'block'; $('nameIn').value = pref.name || '';
-// the avatar: the suited fox with a white cane or in a wheelchair (remembered; more looks in ☰)
-{ const pickAv = x => { document.querySelectorAll('#avRow .av').forEach(b => b.setAttribute('aria-checked', b.dataset.x === x)); pref.look = pref.look === 'wrap' ? 'wrap' : 'suit'; pref.extra = x; G.setLook(pref.look, x); };   // keeps the Fox Studio's art tee if that's what you chose
+// (27 Oct) the avatar: Joe or Jane, each shown as a portrait drawn from their own fox (remembered; more looks in ☰)
+{ const pickAv = w => { document.querySelectorAll('#avRow .av').forEach(b => b.setAttribute('aria-checked', b.dataset.x === w)); WHO(w); };
   $('avRow').style.display = 'block'; document.querySelectorAll('#avRow .av').forEach(b => b.onclick = () => pickAv(b.dataset.x));
-  pickAv(pref.extra === 'chair' ? 'chair' : 'cane'); }
+  try { if (G.portrait) { $('pJoe').src = G.portrait('suit', 'cane'); $('pJane').src = G.portrait('female', 'chair'); } } catch (e) { console.warn('portraits', e); }
+  pickAv(whoOf()); }
 $('enter').style.display = 'block'; $('enter').focus();
 await new Promise(res => $('enter').addEventListener('click', () => {
   pref.name = ($('nameIn').value || '').trim().slice(0, 20) || ('Fox ' + Math.floor(100 + Math.random() * 900)); savePref();
