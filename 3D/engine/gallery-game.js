@@ -984,7 +984,11 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
 
   let G_pupil = null;
   const Pl = { x: SPAWN.x, y: SPAWN.y, z: SPAWN.z, vy: 0, vx: 0, vz: 0, lean: 0, face: SPAWN.face, ground: false, speed: 0 };
-  const St = { yaw: SPAWN.face + Math.PI, pitch: 0.28, dist: 4.2, camDist: 4.2 };
+  // (29 Oct, Ben) the view tilts up to the walls: less floor, more art. A lower camera angle, and the camera aims a little above
+  // the fox's head. Computers more, phones just slightly (was pitch 0.28, aimed at the head).
+  const PHONE_CAM = matchMedia('(pointer:coarse)').matches || 'ontouchstart' in window || new URLSearchParams(location.search).has('phonepreview');
+  const REST_PITCH = PHONE_CAM ? 0.24 : 0.17, AIM_UP = PHONE_CAM ? 0.15 : 0.45;
+  const St = { yaw: SPAWN.face + Math.PI, pitch: REST_PITCH, dist: 4.2, camDist: 4.2 };
   // if the phone's graphics reset (WebGL context lost), reload and put the visitor back where they were
   {
     try { const r = JSON.parse(sessionStorage.getItem('8gates.gallery.resume') || 'null'); sessionStorage.removeItem('8gates.gallery.resume');
@@ -1078,6 +1082,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     }
   }
   // (28 Oct, Ben) movement + camera follow restored to the version Ben uploaded (gallery-design-kit)
+  let HOLD = false;
   function move(dt) {
     // camera-relative input
     // (28 Oct, Ben: a jerk on letting go of LEFT / RIGHT while holding UP) the keys are on / off, so the direction jumped 45°
@@ -1089,6 +1094,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       St.kx = ease(St.kx || 0, kx, kz); St.kz = ease(St.kz || 0, kz, kx);
       if (!kx && Math.abs(St.kx) < 0.02) St.kx = 0; if (!kz && Math.abs(St.kz) < 0.02) St.kz = 0; }
     let ix = input.jx + St.kx, iz = input.jy + St.kz;
+    if (HOLD) { ix = 0; iz = 0; }   /* (29 Oct) a painting game is on: the fox stands still, taps and swipes belong to the game */
     const il = Math.hypot(ix, iz); if (il > 1) { ix /= il; iz /= il; }
     let mag = Math.min(1, il);
     let run = input.run || mag > 0.92;
@@ -1168,7 +1174,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     V.gi = 0; V.gt = 0; V.from = [St.yaw, St.pitch]; V.home = [St.yaw, St.pitch];
     vOverlay.open(spot.cond); onNear(null); nearKey = 'vision-locked';
   }
-  function exitVision() { if (!V.spot) return; const sp = V.spot; V.spot = null; vOverlay.close(); joyRest(); St.pitch = 0.28; St.camDist = 1.2; { let d = 1.6; for (const h of [0.5, 1.0, 1.55]) { const r = cast(sp.x, sp.y + h, sp.z, 1, 0, 0, 1.6 + BODY_R); if (r && Math.abs(r.face.normal.y) < 0.55) d = Math.min(d, r.distance - BODY_R); } Pl.x = sp.x + Math.max(0, d); } pushOut(BODY_R); nearKey = null; }
+  function exitVision() { if (!V.spot) return; const sp = V.spot; V.spot = null; vOverlay.close(); joyRest(); St.pitch = REST_PITCH; St.camDist = 1.2; { let d = 1.6; for (const h of [0.5, 1.0, 1.55]) { const r = cast(sp.x, sp.y + h, sp.z, 1, 0, 0, 1.6 + BODY_R); if (r && Math.abs(r.face.normal.y) < 0.55) d = Math.min(d, r.distance - BODY_R); } Pl.x = sp.x + Math.max(0, d); } pushOut(BODY_R); nearKey = null; }
   function updateVision(dt, now) {
     for (const sp of vSpots) sp.glow.material.opacity = 0.32 + Math.sin(now / 420 + sp.z) * 0.18;
     let yr = 0, pr = 0;
@@ -1237,7 +1243,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     const want = Math.max(0.55, near);
     St.camDist = want < St.camDist ? want : damp(St.camDist, want, 3, dt);
     camera.position.copy(head).addScaledVector(dir, St.camDist);
-    camera.lookAt(head);
+    camera.lookAt(head.x, head.y + AIM_UP, head.z);   // (29 Oct) aim a little above the head: more wall in view
     player.visible = St.camDist > 1.1;   // squeezed against a wall: go first-person rather than fill the screen with fox
   }
 
@@ -1288,8 +1294,8 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   noteBtn.addEventListener('click', e => { e.stopPropagation(); openNote(); });
   noteBtn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openNote(); } });
   const LK = { id: null, t0: 0, x: 0, y: 0, moved: 0, held: false, snap: null };
-  const homeAngles = () => V.spot && V.home ? V.home : [Pl.face + Math.PI, St.fp ? 0.04 : 0.28];
-  const setFP = on => { if (V.spot || studio) return; St.fp = on; St.yaw = Pl.face + Math.PI; St.pitch = on ? 0.04 : 0.28; if (!on) St.camDist = 1.2;
+  const homeAngles = () => V.spot && V.home ? V.home : [Pl.face + Math.PI, St.fp ? 0.04 : REST_PITCH];
+  const setFP = on => { if (V.spot || studio) return; St.fp = on; St.yaw = Pl.face + Math.PI; St.pitch = on ? 0.04 : REST_PITCH; if (!on) St.camDist = 1.2;
     lookBtn.setAttribute('aria-pressed', on); lookEye.style.background = on ? '#ec3013' : 'rgba(29,28,27,.72)'; };
   const snapBack = () => { const [ty, tp] = homeAngles(); LK.snap = { fy: St.yaw, fp: St.pitch, ty, tp, t: 0 }; };
   lookBtn.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); LK.id = e.pointerId; LK.t0 = performance.now(); LK.x = e.clientX; LK.y = e.clientY; LK.moved = 0; LK.held = false; LK.snap = null; try { lookBtn.setPointerCapture(e.pointerId); } catch (err) {} });
@@ -1523,7 +1529,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       if (zUrl !== zPend.u) { zPend.u = zUrl; zPend.t = 0; } else zPend.t += 0.25;
       if (!zUrl || zUrl === curUrl || zPend.t >= (fast ? 1.5 : 0.25)) playUrl(zUrl);
       if (window.HUSH) { if (!video.paused) { video.pause(); hushPaused = true; } } else if (hushPaused) { hushPaused = false; if (video.paused && (video.currentSrc || video.src)) video.play().catch(() => {}); }   // the room film pauses while an artwork is open, and picks up where it left off
-      if (zUrl) { let dmin = 1e9; for (const v of vids) if (v.u === zUrl) dmin = Math.min(dmin, vidPos(v).distanceTo(pp)); const vv = vids.find(v => v.u === zUrl); const zs = vv.zone ? vv.zone.getSize(new THREE.Vector3()) : null, reach = vv.reach || Math.max(vv.dist || 20, zs ? Math.hypot(zs.x, zs.z) * 1.1 : 0); const zg = vv.zone && vv.zone.containsPoint(pp) ? 1 : (vv.zones || []).reduce((g, z, i) => z.containsPoint(pp) ? Math.min(g, (vv.zoneGains && vv.zoneGains[i]) ?? 1) : g, 1); video.volume = clamp((vv.vol ?? 0.8) * Math.max(vv.minVol ?? 0.45, 1 - dmin / reach) * zg * (LIVE.idx >= 0 ? 0.12 : 1), 0, 1); }   // (zg: some places hear it quieter, e.g. the AMB's stage room)   // a live host talk: the room film drops to a murmur   // never silent while you're in the zone
+      if (zUrl) { let dmin = 1e9; for (const v of vids) if (v.u === zUrl) dmin = Math.min(dmin, vidPos(v).distanceTo(pp)); const vv = vids.filter(v => v.u === zUrl).reduce((b, v) => ((v.vol ?? 0.8) > (b.vol ?? 0.8) ? v : b));   /* (29 Oct, Ben: Dave's + Raquel's interviews were silent) a film on 2 screens takes the louder one's settings (the 2nd-floor copies are vol 0) */ const zs = vv.zone ? vv.zone.getSize(new THREE.Vector3()) : null, reach = vv.reach || Math.max(vv.dist || 20, zs ? Math.hypot(zs.x, zs.z) * 1.1 : 0); const zg = vv.zone && vv.zone.containsPoint(pp) ? 1 : (vv.zones || []).reduce((g, z, i) => z.containsPoint(pp) ? Math.min(g, (vv.zoneGains && vv.zoneGains[i]) ?? 1) : g, 1); video.volume = clamp((vv.vol ?? 0.8) * Math.max(vv.minVol ?? 0.45, 1 - dmin / reach) * zg * (LIVE.idx >= 0 ? (vids[LIVE.idx] && vids[LIVE.idx].u === zUrl ? 0 : 0.12) : 1), 0, 1); }   /* (29 Oct, Ben) the screen showing a host's camera or screen share is silent: its film makes no sound at all while it's live (films elsewhere drop to a murmur, as before) */   // (zg: some places hear it quieter, e.g. the AMB's stage room)   // a live host talk: the room film drops to a murmur   // never silent while you're in the zone
       if (!V.spot) { const n = nearest(); const key = n ? n.kind + n.label + (n.item && n.item.z) : null; if (key !== nearKey) { nearKey = key; onNear(n); } }
     }
     // (Ben, 28 Oct) the hanging welcome film: there as you come in through the eye, gone once you've walked under it, so looking
@@ -1585,7 +1591,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     follow: (id, onEnd) => followStart(id, onEnd), unfollow: () => followStop('stopped'), following: () => F.id,
     goTo(id, slot) { const r = remotes.get(id); if (!r || !r.placed) return false; if (V.spot) exitVision(); if (F.id) followStop('gathered'); placeNear(r, slot); return true; },
     live: { show: (i, st) => liveShow(i, st), clear: () => liveClear(), nearest: (x, y, z) => nearestScreen(x, y, z), active: () => LIVE.idx, pos: i => screenPos(i).toArray() },
-    studioCam(v) { if (v && !studio && v.face != null) { Pl.face = v.face; } if (v && studio) v.t = studio.t; studio = v || null; if (!v) { St.pitch = 0.28; fit(); } else studioView(); },   // facing the fox's front first
+    studioCam(v) { if (v && !studio && v.face != null) { Pl.face = v.face; } if (v && studio) v.t = studio.t; studio = v || null; if (!v) { St.pitch = REST_PITCH; fit(); } else studioView(); },   // facing the fox's front first
     wrapArt: k => wrapArt(k), sleeveArt: (k, s) => sleeveArt(k, s),   // (27 Oct) the shirt studio's mannequins wear the same prints
     shirtArts() {   // every artwork that can go on a shirt, Walk Through Fear first, with titles where the gallery has them
       const title = new Map(); const rev = new Map(Object.entries(IMGURL).map(([k, u]) => [u, k]));
@@ -1632,6 +1638,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     goSpot(t) { if (V.spot) exitVision(); if (Pl.sit) standUp(); if (AW.pts) walkStop('moved'); if (F.id) followStop('moved'); travel({ to: t, wing: !!t.wing }); },
     // add-ons (notes, guest book): draw into the scene, add things you can walk up to, run each frame
     chess: fun.chess || null,
+    hold(on) { HOLD = !!on; if (on) { input.jx = input.jy = 0; Pl.vx = Pl.vz = 0; } joyBase.style.visibility = joyKnob.style.visibility = on ? 'hidden' : ''; },   // (29 Oct) painting games: hold the fox still
     camShot(pos, at) { shotFrom(); SHOT.pos = new THREE.Vector3(...pos); SHOT.at = new THREE.Vector3(...at); SHOT.out = false; },   // (27 Oct) hold the camera on a view
     camSave() { SHOT.saved = { yaw: St.yaw, pitch: St.pitch, camDist: St.camDist, fp: St.fp }; },   // remember the view before a shot (camRelease goes back to it)
     camRelease() { if (!SHOT.pos) return; shotFrom(); SHOT.pos = null; SHOT.out = true; const s = SHOT.saved; if (s) { SHOT.saved = null; St.yaw = s.yaw; St.pitch = s.pitch; St.camDist = s.camDist; St.fp = s.fp; St.lastLook = performance.now(); } },

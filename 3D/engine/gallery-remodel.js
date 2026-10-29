@@ -312,6 +312,11 @@ export function buildKiosks({ scene, resolveImg = u => u }) {
   const loader = new THREE.TextureLoader();
   const art = { TOOLS, ALLY_TIPS };
   const box = (parent, w, h, d, m, x, y, z, collide) => { const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); b.position.set(x, y, z); parent.add(b); if (collide) col.push(b); return b; };
+  // (29 Oct, Ben: visitors got behind the plaza signs and stuck) an invisible solid block filling the space BEHIND every screen
+  // stand and panel, floor to top, a little wider than the sign: you can walk up to the front, never round the back. Rays (the
+  // camera) see past it ('see'), so the view doesn't jump when you stand beside one.
+  const blockBehind = (t, w, top, depth = 1.2) => { const b = new THREE.Mesh(new THREE.BoxGeometry(w + 0.5, Math.max(2.2, top), depth)); b.visible = false; b.userData.see = true; b.userData.dyn = true;
+    b.position.set(0, Math.max(2.2, top) / 2, 0.04 - depth / 2);   /* from just in front of the face (a fast step can't slip under the screen) to 1.2 m behind */ t.add(b); col.push(b); };
   const texMat = (src, base = 0x2b2928) => { const m = new THREE.MeshBasicMaterial({ color: base }); loader.load(src, t => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; m.map = t; m.color.set(0xffffff); m.needsUpdate = true; }); return m; };
   // facing: the screens look across the avenue, turned a little toward the visitor arriving from the spawn
   const inward = (z) => Math.atan2(FRONT.lean, -Math.sign(z));
@@ -327,6 +332,7 @@ export function buildKiosks({ scene, resolveImg = u => u }) {
       const scr = new THREE.Mesh(new THREE.PlaneGeometry(w, h), img === 'ALLY_TIPS' ? allyTipsMat() : texMat(art[img] || img)); scr.position.set(0, bottom + h / 2, 0.002); t.add(scr);
     }
     box(t, w + 0.08, 0.04, 0.08, red, 0, bottom + h + 0.06, -0.03, false);                // the red rule
+    blockBehind(t, w, bottom + h + 0.1);
     return t;
   };
   // the welcome film, hanging: an ink frame round the two-sided screen (the film box from gallery.json sits inside it), a red rule
@@ -364,6 +370,7 @@ export function buildKiosks({ scene, resolveImg = u => u }) {
     box(t, pn.w + 0.1, h + 0.1, 0.06, ink, 0, bottom + h / 2, -0.035, true);
     const face = new THREE.Mesh(new THREE.PlaneGeometry(pn.w, h), texMat(resolveImg(pn.img))); face.position.set(0, bottom + h / 2, 0.001); t.add(face);
     box(t, pn.w + 0.1, 0.045, 0.08, red, 0, bottom + h + 0.075, -0.035, false);
+    blockBehind(t, pn.w, bottom + h + 0.1);
   }
   g.updateMatrixWorld(true);
   return { group: g, col, filmFrame };

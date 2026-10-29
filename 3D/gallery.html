@@ -25,6 +25,7 @@
 <link rel="icon" type="image/png" href="gallery/icon-180.png">
 <meta name="theme-color" content="#141312">
 <link rel="stylesheet" href="vendor/fonts/archivo.css">
+<script type="importmap">{ "imports": { "three": "./vendor/three/three.module.js" } }</script>   <!-- (29 Oct) the painting games (AR/lib/minigames) import three by name: the gallery's own copy -->
 <script>
 // (27 Oct) working copy: the big media (3D model, films, sounds) is not in this copy, so it streams from the live site; on the live site nothing changes
 window.GMEDIA = u => (typeof u === 'string' && !/^(https?:|blob:|data:)/.test(u) && /\.(glb|mp4|mp3|m4a|webm|wav)$/i.test(u.split('?')[0]) && !/github\.io$/.test(location.hostname)) ? 'https://blindbenfilms.github.io/FOXgate8/3D/' + u.replace(/^\.\//, '') : u;
@@ -113,6 +114,13 @@ window.GMEDIA = u => (typeof u === 'string' && !/^(https?:|blob:|data:)/.test(u)
   #menu .host { background:#141312; }
   #menu a { display:flex; align-items:center; min-height:48px; padding:0 14px; border-top:2px solid var(--ink); color:var(--ink); font:800 12px var(--font); text-decoration:none; letter-spacing:.08em; text-transform:uppercase; }
   #menu a:hover { background:#3a2723; }
+  /* (29 Oct, Ben) menu clean-up: a red BACK button on top, a yellow MAP button at the bottom, SOUNDS + MULTIPLAYER fold open */
+  #menu button.back { min-height:56px; background:var(--accent,#ec3013); border-color:var(--accent,#ec3013); color:#fff; font-size:13px; }
+  #menu button.big.map { background:#ffd400; border-color:#ffd400; color:#1d1c1b; }
+  #menu button.fold { width:100%; display:flex; justify-content:space-between; align-items:center; min-height:52px; font-size:13px; }
+  #menu button.fold::after { content:'▸'; font-size:16px; } #menu button.fold[aria-expanded="true"]::after { content:'▾'; }
+  #menu .foldBody { margin-top:8px; }
+  #menu .topRow { display:flex; align-items:center; gap:12px; } #menu .topRow .back { flex:1; min-width:0; } #menu .menuLogo { height:56px; width:auto; flex:none; display:block; }   /* (29 Oct, Ben) the BCP logo left of the back button */
   #topCam { width:52px; border:2px solid var(--ink); border-left:0; background:var(--bg); color:var(--ink); font:800 11px/1.15 var(--font); letter-spacing:.06em; text-align:center; padding:0; white-space:pre-line; }
   #topCam.on { background:var(--accent); color:#fff; }
   #camPop { position:fixed; z-index:21; left:12px; top:calc(70px + env(safe-area-inset-top)); width:min(320px,calc(100vw - 24px)); display:none; background:#201e1d; padding:12px 14px 14px; }
@@ -211,25 +219,25 @@ OFF</button><button id="menuBtn" aria-label="Menu">☰</button></div>
 <div id="hint" class="box">Touch the left side to walk · hold LOOK AROUND to look</div>
 <div id="panel" class="box" role="dialog" aria-modal="true" aria-labelledby="pt"><header><div class="h"><div class="k" id="pk"></div><h2 id="pt"></h2></div><button id="px" aria-label="Close">✕</button></header><div class="body" id="pb"></div></div>
 <div id="menu" class="box" role="dialog" aria-label="Menu">
-  <div class="sec"><div class="opts one"><button id="mapBtn" class="big">🗺 Map · go to any room</button></div></div>
-  <div class="sec"><div class="lab">Your fox</div>
-    <div class="opts" id="who" style="margin-bottom:6px"><button data-w="joe">Joe · cane</button><button data-w="jane">Jane · chair</button></div>
-    <div class="opts" id="looks"><button data-l="wrap">Art sweatshirt</button><button data-l="wraptee">Art tee</button><button data-l="suit">Suit</button><button data-l="male">Fox</button><button data-l="female">Vixen</button></div>
-    <div class="opts" id="extras" style="margin-top:6px"><button data-x="none">No glasses</button><button data-x="glasses">Glasses</button></div></div>
-  <div class="sec"><div class="lab">Reading &amp; sound</div>
-    <div class="opts one"><button id="voices" class="tg">Artist's voice when I open art</button><button id="autoRead" class="tg">Read art aloud</button><button id="readNotes" class="tg">Read notes aloud as I pass</button><button id="big" class="tg">Larger text</button><button id="ambBtn" class="tg">Ambient sounds</button></div>
-    <div class="opts one" style="margin-top:6px"><button id="nightBtn">🌙 Night</button></div></div>
-  <div class="sec"><div class="lab">Visiting together</div>
-    <div class="opts"><button id="rename">Change my name</button><button id="invite">Copy room link</button></div>
-    <div class="opts one" style="margin-top:6px"><button id="noteBtn">🙂 Leave a comment</button></div>
-    <div id="whoList" style="font-size:13px;line-height:1.5;margin-top:8px"></div></div>
-  <div class="sec"><div class="lab">Lost?</div>
-    <div class="opts one"><button id="home">Back to the entrance</button><button id="liteBtn" aria-pressed="false">🪶 Lite mode (older phones): OFF</button></div></div>
+  <!-- (29 Oct, Ben) the menu, cleaned up: back to the gallery first, host mode, then SOUNDS and MULTIPLAYER OPTIONS that open when pressed, and the map at the bottom (the Your fox buttons are gone: the shirt booth dresses your fox) -->
+  <div class="sec"><div class="topRow"><img src="gallery/img/bcp_logo_white.webp" alt="Blind Canvas Project" class="menuLogo"><button id="menuBack" class="back">← Back to the gallery</button></div></div>
   <div class="sec host" id="hostSec"><div class="lab">Host mode</div>
     <div class="opts one" id="hostLock"><button id="hostOpen">🔒 I'm hosting this visit</button></div>
     <div id="hostPw" style="display:none"><div class="row2"><input id="hostIn" type="password" autocomplete="off" aria-label="Host password" placeholder="Password"><button id="hostGo">Unlock</button></div><div class="err" id="hostErr" aria-live="polite"></div></div>
     <div class="opts one" id="hostOpts" style="display:none"><button id="hostBtn">Host this visit</button><button id="tourBtn">Lead a tour</button></div></div>
-  <a href="index.html">← Back to the galaxy</a>
+  <div class="sec"><button class="fold" id="sndFold" aria-expanded="false" aria-controls="sndBody">🔊 Sounds</button>
+    <div id="sndBody" class="foldBody" hidden>
+    <div class="opts one"><button id="voices" class="tg">Artist's voice when I open art</button><button id="autoRead" class="tg">Read art aloud</button><button id="readNotes" class="tg">Read notes aloud as I pass</button><button id="big" class="tg">Larger text</button><button id="ambBtn" class="tg">Ambient sounds</button></div>
+    </div></div>
+  <div class="sec"><button class="fold" id="mpFold" aria-expanded="false" aria-controls="mpBody">👥 Multiplayer options</button>
+    <div id="mpBody" class="foldBody" hidden>
+    <div class="opts"><button id="rename">Change my name</button><button id="invite">Copy room link</button></div>
+    <div class="opts one" style="margin-top:6px"><button id="noteBtn">🙂 Leave a comment</button></div>
+    <div id="whoList" style="font-size:13px;line-height:1.5;margin-top:8px"></div></div></div>
+  <div class="sec"><div class="lab">Lost?</div>
+    <div class="opts one"><button id="home">Back to the entrance</button><button id="liteBtn" aria-pressed="false">🪶 Lite mode (older phones): OFF</button></div>
+    <div class="opts one" style="margin-top:6px"><button id="nightBtn">🌙 Night</button></div></div>
+  <div class="sec"><div class="opts one"><button id="mapBtn" class="big map">🗺 Map · go to any room</button></div></div>
 </div>
 <div id="camPop" style="display:none"><button id="faceBtn" hidden></button><button id="tvHeadBtn" hidden></button><button id="maskBtn" hidden></button><button id="camOff" hidden></button><div id="camMsg"></div></div>
 <div id="camToast" role="status" aria-live="polite" style="position:fixed;z-index:21;left:12px;top:calc(70px + env(safe-area-inset-top));width:min(320px,calc(100vw - 24px));display:none;background:#5c2c22;color:#fff;border:2px solid #f3f2f2;border-left:6px solid #ec3013;padding:10px 12px;font:600 13px/1.4 var(--font)"></div>
@@ -292,6 +300,7 @@ setInterval(() => {
 { const redX = root => (root.querySelectorAll ? root.querySelectorAll('button') : []).forEach(b => { if (!b.classList.contains('xbtn-red') && /✕|\u2715/.test(b.textContent)) { b.classList.add('xbtn-red'); if (b.textContent.trim() === '✕') b.style.padding = '0'; } });
   redX(document); new MutationObserver(ms => { for (const m of ms) for (const n of m.addedNodes) if (n.nodeType === 1) { if (n.tagName === 'BUTTON') redX(n.parentNode || document); else redX(n); } }).observe(document.body, { childList: true, subtree: true }); }
 import('./engine/gallery-puzzle.js').then(({ setupPuzzle }) => { try { window.PUZZLE = setupPuzzle({ G }); } catch (e) { console.warn('puzzle', e); } }).catch(e => console.warn('puzzle', e));
+import('./engine/gallery-games.js').then(({ setupGames }) => { try { window.GAMES = setupGames({ G, announce: t => { const l = document.getElementById('live'); if (l) l.textContent = t; } }); } catch (e) { console.warn('games', e); } }).catch(e => console.warn('games', e));   // (29 Oct, Ben) five paintings' own games, in place of their living puzzles
 // (28 Oct) COLOUR INSIDE THE LINES: two easels in the park
 import('./engine/gallery-colour.js').then(({ setupColour }) => { try { window.COLOUR = setupColour({ G }); } catch (e) { console.warn('colour easels', e); } }).catch(e => console.warn('colour easels', e));
 // stained glass in the main hall's roof, with HOLT for HOPE in braille and its shadow on the floor
@@ -410,7 +419,7 @@ function open(n) {
   quoteStop(); bioScrollStop();
   const pb = $('pb'); pb.innerHTML = ''; pb.scrollTop = 0;
   if (n.kind === 'art') {
-    const a = n.item; setTimeout(() => window.PUZZLE && window.PUZZLE.button(a, pb), 0); $('pk').textContent = a.bio ? 'Meet the artist' : 'Artwork'; $('pt').textContent = a.title || 'Untitled';
+    const a = n.item; setTimeout(() => { if (window.GAMES && window.GAMES.button(a, pb)) return; window.PUZZLE && window.PUZZLE.button(a, pb); }, 0); $('pk').textContent = a.bio ? 'Meet the artist' : 'Artwork'; $('pt').textContent = a.title || 'Untitled';
     pb.innerHTML = '<div class="art"><div>' + (a.img ? '<img src="' + a.img.replace('/img-m/', '/img/') + '" alt="' + esc(a.imgDesc || a.title) + '">' : '') + '</div><div>' + para(a.desc) +
       (a.imgDesc ? '<div class="lab">Image description</div>' + para(a.imgDesc) : '') +
       '<div class="row">' + (a.au ? '<button id="hq" data-l="' + esc(voiceLabel(a)) + '">▶ ' + esc(voiceLabel(a)) + '</button>' : '') + '<button id="rd">🔊 Read aloud</button>' + (a.imgDesc ? '<button id="rdd">🔊 Describe the image</button>' : '') + '</div></div></div>';
@@ -705,6 +714,8 @@ $('nightBtn').onclick = () => { pref.sky = SKY_NEXT[skyNow()]; pref.night = pref
 $('readNotes').onclick = () => { pref.quietNotes = !pref.quietNotes; savePref(); syncMenu(); };
 $('big').onclick = () => { pref.big = !pref.big; savePref(); syncMenu(); };
 $('home').onclick = () => { G.respawn(); $('menu').style.display = 'none'; };
+document.querySelectorAll('#menu .fold').forEach(b => b.onclick = () => { const body = document.getElementById(b.getAttribute('aria-controls')), open = body.hidden; body.hidden = !open; b.setAttribute('aria-expanded', String(open)); });   // (29 Oct, Ben) SOUNDS + MULTIPLAYER OPTIONS open when pressed
+$('menuBack').onclick = e => { e.preventDefault(); $('menu').style.display = 'none'; $('menuBtn').focus(); };   // (29 Oct, Ben: it went to the old galaxy game) just closes the menu: you stay where you were standing
 syncMenu();
 let ENTER_RES; const ENTERED = new Promise(r => ENTER_RES = r);
 // ------------------------------------------------ multiplayer: see each other's foxes

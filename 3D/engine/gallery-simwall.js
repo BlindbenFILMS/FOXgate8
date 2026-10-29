@@ -104,7 +104,7 @@ export function buildSimWalls({ scene, walls, src, kiosk, kiosks, zone }) {
     if (w.simVid) { const v = document.createElement('video'); v.muted = true; v.defaultMuted = true; v.volume = 0; v.setAttribute('muted', ''); v.loop = true; v.playsInline = true; v.setAttribute('playsinline', ''); v.preload = 'none'; v.crossOrigin = 'anonymous';
       const t = new THREE.VideoTexture(v); t.colorSpace = THREE.NoColorSpace; const crop = new THREE.Vector4(0, 0, 1, 1);
       v.addEventListener('loadedmetadata', () => { const a = v.videoWidth / v.videoHeight; if (a > 1) crop.set((1 - 1 / a) / 2, 0, 1 / a, 1); else crop.set(0, (1 - a) / 2, 1, a); });
-      extra.push({ video: v, src: w.simVid }); return { tex: t, crop, lev: new THREE.Vector3(0.09, 1.22, 1.3) }; }   // (Ben: the HDR film came out grey + washed out: deeper blacks, more contrast + colour)
+      extra.push({ video: v, src: w.simVid }); return { tex: t, crop, lev: new THREE.Vector3(0.02, 1.06, 1.08) }; }   // (29 Oct, Ben) the new doctor clip is a clean SDR file (the old one was HDR, which came out grey): only a touch of depth now
     return { tex: vtex, crop: new THREE.Vector4(0, 0, 1, 1), lev: new THREE.Vector3(0, 1, 1) }; };
   const st = { sev: 0.85, shown: 0.85, playing: false, phase: 0, t: 0 };
   const tiles = [];   // { mat, i }
