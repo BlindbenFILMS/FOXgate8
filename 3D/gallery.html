@@ -272,6 +272,10 @@ OFF</button><button id="menuBtn" aria-label="Menu">☰</button></div>
 })();
 </script>
 <script type="module">
+// (29 Oct, Ben: no ambient sound on phone data, fine on wifi) fetch the sound code now, while the gallery loads, so Enter can switch
+// the sound on right inside the tap: browsers only allow sound to start inside a tap, and on a slow connection the old
+// fetch-after-tap finished too late, so the sound stayed off
+const SOUND_MOD = import('./engine/gallery-sound.js').then(m => (window.__soundMod = m)).catch(e => { console.warn('sound', e); return null; });
 import { createGallery } from './engine/gallery-game.js';
 const $ = id => document.getElementById(id);
 const pref = (() => { try { return JSON.parse(localStorage.getItem('8gates.gallery.v1') || '{}'); } catch (e) { return {}; } })();
@@ -826,7 +830,7 @@ $('enter').style.display = 'block'; $('enter').focus();
 await new Promise(res => $('enter').addEventListener('click', () => {
   pref.name = ($('nameIn').value || '').trim().slice(0, 20) || ('Fox ' + Math.floor(100 + Math.random() * 900)); savePref();
   G.unlockAudio();
-  try { if (!window.SOUND) { import('./engine/gallery-sound.js').then(({ setupSound }) => { window.SOUND = setupSound({ getState: () => G.localState(), inside: (x, y, z) => x < -44 || ['why', 'amb', 'cinema'].includes(G.campus && G.campus.zone()), zone: () => G.campus && G.campus.zone(), filmPlaying: () => !!G.film.url(), chair: () => (pref.extra || '') === 'chair' }); if (window.SOUND) { window.SOUND.resume(); window.SOUND.set(!pref.quietAmb); } }); } } catch (e) {}
+  try { if (!window.SOUND) { const mkSound = ({ setupSound }) => { window.SOUND = setupSound({ getState: () => G.localState(), inside: (x, y, z) => x < -44 || ['why', 'amb', 'cinema'].includes(G.campus && G.campus.zone()), zone: () => G.campus && G.campus.zone(), filmPlaying: () => !!G.film.url(), chair: () => (pref.extra || '') === 'chair' }); if (window.SOUND) { window.SOUND.resume(); window.SOUND.set(!pref.quietAmb); } }; if (window.__soundMod) mkSound(window.__soundMod); else SOUND_MOD.then(m => m && !window.SOUND && mkSound(m)); } } catch (e) {}   /* (29 Oct) made inside the Enter tap */
   try { if (window.speechSynthesis) { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } } catch (e) {}
   res();
 }, { once: true }));

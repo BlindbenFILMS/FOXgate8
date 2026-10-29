@@ -520,6 +520,30 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     return { ...v, box, posterMat, zone };
   });
   if (wing) vids.push(...wing.screens);
+  // (29 Oct, Ben) INTERVIEW films start from IN FRONT of their screen: an oval reaching out from the screen face (far straight
+  // ahead, short to the sides), inside the old room zone. Walking straight at a screen starts it from about 9 m; walking past it
+  // along a path, only when you're right beside it. The welcome film, the AMB films, Morten's meditation film, the cinema, the
+  // simulator walls, the main hall's big films and the music videos keep their whole-room zones.
+  const INTERVIEW = /(ben_fox|april_melissa|alayna_lopez|steven_mccoy|wayne_pearcy|marcus_roberts|rusty_perez|will_hollimon|bill_mccann|ricky_ruzicka|morten_bonde|dave_steele|raquel_alim|craig_ellis|deja_hadley)\.mp4$/;
+  const AX = [new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 1)];
+  function frontOf(v) {   // the screen's face: centre, the way it faces (both ways for two-sided screens), the width axis, the oval's size
+    if (v.fz !== undefined) return v.fz; v.fz = null; const b = v.box; if (!b || !b.geometry) return null;
+    b.updateMatrixWorld(true); if (!b.geometry.boundingBox) b.geometry.computeBoundingBox();
+    const size = b.geometry.boundingBox.getSize(new THREE.Vector3()), sc = new THREE.Vector3(); b.matrixWorld.decompose(new THREE.Vector3(), new THREE.Quaternion(), sc);
+    const dims = [size.x * Math.abs(sc.x), size.y * Math.abs(sc.y), size.z * Math.abs(sc.z)], q = b.getWorldQuaternion(new THREE.Quaternion());
+    const faces = v.faces || [0, 1], na = Math.floor(faces[0] / 2), two = faces.length > 1;
+    const n = AX[na].clone().applyQuaternion(q); if (faces[0] % 2) n.negate(); n.y = 0; if (n.lengthSq() < 1e-6) return null; n.normalize();
+    const wa = [0, 1, 2].filter(i => i !== na).sort((i, j) => Math.abs(AX[i].clone().applyQuaternion(q).y) - Math.abs(AX[j].clone().applyQuaternion(q).y))[0];
+    const a = AX[wa].clone().applyQuaternion(q); a.y = 0; a.normalize(); const w = dims[wa];
+    const c = vidPos(v).clone().addScaledVector(n, two ? 0 : dims[na] / 2);
+    return (v.fz = { c, n, a, two, side: w / 2 + 2.2, far: Math.max(9, w * 1.6) });
+  }
+  function inFront(v, p) {
+    const f = frontOf(v); if (!f) return true; const dx = p.x - f.c.x, dz = p.z - f.c.z;
+    let along = dx * f.n.x + dz * f.n.z; if (f.two) along = Math.abs(along); if (along < -0.3) return false;
+    const lat = dx * f.a.x + dz * f.a.z, u = lat / f.side, w2 = Math.max(0, along) / f.far;
+    return u * u + w2 * w2 <= 1 && Math.abs(p.y - f.c.y) < 6;
+  }
   vids.push(...rooms.screens);
   if (campus) vids.push(...campus.screens);
   for (const v of vids) compactGroups(v.box);   // a screen box draws 2 times, not 6   // a two-sided interview screen in the middle of each bay of the New Artists Wing
@@ -1524,7 +1548,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       lightArt();
       // which video zone are we in?
       let zUrl = null; const pp = new THREE.Vector3(Pl.x, Pl.y + 0.5, Pl.z);
-      for (const v of vids) if ((v.zone && v.zone.containsPoint(pp)) || (v.zones && v.zones.some(z => z.containsPoint(pp)))) { zUrl = v.u; break; }
+      for (const v of vids) if (((v.zone && v.zone.containsPoint(pp)) || (v.zones && v.zones.some(z => z.containsPoint(pp)))) && (!(v.interview || INTERVIEW.test(v.local || v.u || '')) || inFront(v, pp))) { zUrl = v.u; break; }   /* (29 Oct) interviews: only from in front */ St.zUrl = zUrl;
       // films: only start once you've settled in a room (running past a doorway doesn't spin up a film for a second)
       if (zUrl !== zPend.u) { zPend.u = zUrl; zPend.t = 0; } else zPend.t += 0.25;
       if (!zUrl || zUrl === curUrl || zPend.t >= (fast ? 1.5 : 0.25)) playUrl(zUrl);
