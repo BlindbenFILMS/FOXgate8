@@ -57,6 +57,29 @@ export const CARVES = [
   // with a gap), and the two big black screen frames (rebuilt smaller, further apart)
   { name: 'skywalk gap (2nd floor edge wall)', only: 'mesh_32', min: [-146.2, 5.8, -1.5], max: [-145.2, 6.7, 0.5] },
   { name: 'old 2nd floor screen frames', only: 'mesh_35', min: [-146, 9, -6], max: [-145.3, 10, 6.5] },
+  // (27 Oct) the entry hall's step-and-repeat board: its black backing box (rebuilt beside the shirt studio, gallery-studio.js)
+  { name: 'step-and-repeat backing', only: 'mesh_34', min: [-41, -2, 12.3], max: [-40, -0.5, 12.8] },
+  // (27 Oct, Ben) the entry hall, opened up: the two broken wall stubs left from the old braille pit (floor kept), the low
+  // strip of its edge, and the white trim bands that jutted in from the west side like the lip of a hall
+  { name: 'entry stubs (below floor)', only: 'ENTRANCE_floor', min: [-57, -8, -6], max: [-52.5, -3.45, 5] },
+  { name: 'entry stubs (above floor)', only: 'ENTRANCE_floor', min: [-57, -3.3, -6], max: [-52.5, 3, 5] },
+  { name: 'braille pit edge strip', only: 'mesh_32', min: [-56.7, -4, -6], max: [-56, -3.2, 4.5] },
+  { name: 'entry west trim lip north', only: 'TRIM___right___White_ext___2nd', min: [-66, -6.5, 3.5], max: [-62.5, 13.5, 24] },
+  { name: 'entry west trim lip south', only: 'TRIM___right___White_ext___2nd', min: [-66, -6.5, -26], max: [-62.5, 13.5, -3.5] },
+  // (27 Oct, s14) the Stevie Wonder screens' old black frames on the west wall (the bigger screens moved in toward the doorway)
+  { name: 'old Stevie frames', only: 'mesh_35', min: [-63.6, -4, -13], max: [-62.6, 0, 13] },
+  // (s31, Ben) the big hall's wide black frames behind the two Six Views walls (the walls now hug their content)
+  { name: 'old Six Views frames north', only: 'mesh_35', min: [-169, -4, 20.8], max: [-151, 7, 21.45] },
+  { name: 'old Six Views frames south', only: 'mesh_35', min: [-169, -4, -21.5], max: [-151, 7, -20.85] },
+  // (Ben, 28 Oct) Meditate with Morten: the old flat blue pond, its rim and the five little stones (rebuilt in gallery-zen.js)
+  { name: 'morten pond water', only: 'Cube__30__1', min: [-257.4, -9, 5.4], max: [-244.0, -2.8, 9.5] },
+  { name: 'morten pond rim', min: [-257.4, -3.5, 5.4], max: [-244.6, -2.5, 9.6] },   // (the floor stays: ENTRANCE_floor covers it)
+  { name: 'morten stones', only: 'mesh_24', min: [-262, -4, 21], max: [-254, -2, 32] },
+  // (Ben, 28 Oct) the old pond's sunken basin walls that still stood 0.75 m proud as a low beam from the Morten card to the gravel
+  // garden (they reach down to -8, so the rim carve above missed them), and the west half of the door's north black jamb (the
+  // jamb now ends at the threshold, where the stepping stones start; its east half, mesh_34 #3, stays)
+  { name: 'morten pond basin', only: 'Arch__1_', min: [-257.4, -9, 5.8], max: [-243.5, -2.5, 9.6] },
+  { name: 'morten door jamb west', only: 'mesh_34', min: [-248.5, -1, 3.2], max: [-247.3, 1, 4.2] },
   // the old platform's back rim east of the plaza (the cherry garden starts there now)
   { name: 'old platform rim', min: [7.35, -6, -17.5], max: [13, 3.2, 17.5] },
 ];
@@ -182,7 +205,7 @@ export function buildRooms({ scene, data, wood, resolveImg, buildWing }) {
   const out = { col: [], arts: [], screens: [], canvases: [], list: [] };
   for (const R of data.rooms || []) {
     const O = new THREE.Vector3(...R.O);
-    const room = buildWing({ scene, wing: { artists: R.artists }, O, rotY: R.rotY, doorW: R.doorW, wood, resolveImg, L: R.L, title: R.title, logo: R.logo, endVideo: R.endVideo, floorLogo: R.floorLogo, fillLogo: R.fillLogo, doorSign: R.doorSign, bayW: R.bayW, Wd: R.Wd, lip: R.lip ?? 1, frontWall: R.frontWall !== false, doorZ: R.doorZ || 0, sideDoor: R.sideDoor || null, hang: R.hang || null, titleY: R.titleY || 3.0 });
+    const room = buildWing({ dim: R.dim || 1, scene, wing: { artists: R.artists }, O, rotY: R.rotY, doorW: R.doorW, wood, resolveImg, L: R.L, title: R.title, logo: R.logo, endVideo: R.endVideo, floorLogo: R.floorLogo, fillLogo: R.fillLogo, doorSign: R.doorSign, bayW: R.bayW, Wd: R.Wd, lip: R.lip ?? 1, frontWall: R.frontWall !== false, doorZ: R.doorZ || 0, sideDoor: R.sideDoor || null, hang: R.hang || null, titleY: R.titleY || 3.0, frontWins: R.frontWins || null });
     // the partner's logo out in the hall, on an ink panel, to lead people to the room (loads with the room)
     // a free-standing ink display board (for a photo hung on the low wall across the hall); a red bar on top
     for (const hb of R.hallBoards || []) {
@@ -239,17 +262,17 @@ export function cardTexture(s) {
     for (const p of s.bio || []) { for (const l of wrapT(x, p, W - pad * 2)) { if (y > H - pad) break; x.fillText(l, pad, y); y += px(bs * 1.35); } y += px(0.05); }
   } else {
     const F = s.scale || 1, q = m => px(m * F);   // bigger cards get bigger type
-    x.fillStyle = '#f9f8f6'; x.fillRect(0, 0, W, H); x.fillStyle = '#1d1c1b'; x.fillRect(0, 0, q(0.035), H);
+    x.fillStyle = '#1d1c1b'; x.fillRect(0, 0, W, H); x.fillStyle = '#ec3013'; x.fillRect(0, 0, q(0.035), H);   // (27 Oct, Ben) black card, white type
     const pad = q(0.16); let y = pad + q(0.2);
     const tsz = s.plaque ? 0.17 : 0.24;
-    x.fillStyle = '#1d1c1b'; x.font = `800 ${q(tsz)}px ${FONT}`; for (const l of wrapT(x, s.title, W - pad * 2).slice(0, 2)) { x.fillText(l, pad, y); y += q(tsz * 1.08); }
-    if (s.artist) { x.font = `500 ${q(0.14)}px ${FONT}`; x.fillStyle = '#5a5654'; x.fillText(s.artist, pad, y); y += q(0.24); }
+    x.fillStyle = '#ffffff'; x.font = `800 ${q(tsz)}px ${FONT}`; for (const l of wrapT(x, s.title, W - pad * 2).slice(0, 2)) { x.fillText(l, pad, y); y += q(tsz * 1.08); }
+    if (s.artist) { x.font = `500 ${q(0.14)}px ${FONT}`; x.fillStyle = '#e9e5e5'; x.fillText(s.artist, pad, y); y += q(0.24); }
     if (s.quote && !s.plaque) {
-      x.font = `italic 400 ${q(0.14)}px ${FONT}`; x.fillStyle = '#2b2928';
+      x.font = `italic 400 ${q(0.14)}px ${FONT}`; x.fillStyle = '#f3f2f2';
       const lines = wrapT(x, s.quote, W - pad * 2); const room = Math.floor((H - y - q(0.3)) / q(0.19));
       lines.slice(0, Math.max(0, room)).forEach((l, i, arr) => { x.fillText(i === arr.length - 1 && lines.length > arr.length ? l + ' …' : l, pad, y); y += q(0.19); });
     }
-    x.fillStyle = '#ec3013'; x.font = `800 ${q(0.085)}px ${FONT}`; x.fillText('APPROACH TO VIEW · READ ALOUD', pad, H - q(0.1));
+    x.fillStyle = '#ff9783'; x.font = `800 ${q(0.085)}px ${FONT}`; x.fillText('APPROACH TO VIEW · READ ALOUD', pad, H - q(0.1));
   }
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return lean(t);
 }
@@ -261,18 +284,22 @@ export function cardTexture(s) {
 export const FRONT = {
   // the welcome film: the only screen out front, standing in the lake beside the bridge (right-hand side walking in), halfway to
   // the eye, turned to the plaza so you can watch from the platform's edge (gallery.json vids[0] sits in this stand)
-  film: { x: -19.5, z: -6.4, w: 5.0, h: 2.8, base: -1.64, deck: 0.02, bottom: 1.6, look: [-8, -1] },
+  // (27 Oct, Ben) now HANGING in the first room, right over the main walkway past the bottom of the ramp: you see it through the
+  // eye as you climb the ramp and walk under it; two-sided, on long cables from the roof
+  film: { hang: true, x: -48, z: 0, y: 5.0, w: 7.2, h: 4.05, ceil: 23.8 },   // (s14: up 2.8 m, so it sits in the iris as you climb)
   // the learning screens stand back along the plaza's edges, facing in (gallery.json edu points match these)
   screens: [
     { x: -4.25, z: 12.9, img: 'TOOLS' },                                // Tools for the blind
-    { x: -4.25, z: -12.9, img: 'ALLY_TIPS' },                           // Tips to be loved by the blind
-    { x: 5.2, z: -12.9, img: 'SPECTRUM' },                              // Blindness is a spectrum
+    { x: -7.0, z: -12.0, img: 'ALLY_TIPS', k: 2, bottom: 0.6 },   // (z -12: the wide screen's turned end stays inside the rail)          // Tips to be loved by the blind (s23: twice the size, where blindness tip 2 stood)
+    // (27 Oct, Ben) the BLINDNESS IS A SPECTRUM screen beside it is gone; the round vision-simulator spot in the plaza stays
+    { x: -1.2, z: -12.6, img: null, yaw: 0, w: 4.2, h: 4.0, bottom: 0.6 },   // (s24) legs + red rule for the plaza's Six Views screen (gallery-simwall draws the film)
   ],
   panels: [
-    { x: 0.6, z: -12.9, img: 'gallery/img/bcp_intro_virtualgallary_graphic_270129099.webp', w: 5.6, ar: 1.70 },
+    // (s23, Ben) the south copy of the intro graphic is gone (a repeat; the north one stays); tip 2 took tip 1's place; tip 1
+    // stands out in the park between the museum and the Academy of Music, just off the south walk, facing the walk
     { x: 0.6, z: 12.9, img: 'gallery/img/bcp_intro_virtualgallary_graphic_270129099.webp', w: 5.6, ar: 1.70 },
-    { x: -8.6, z: 12.9, img: 'gallery/img/blindness_tip_final_01_270309773.webp', w: 4.6, ar: 1.72 },
-    { x: -8.6, z: -12.9, img: 'gallery/img/blindness_tip_final_02_270309764.webp', w: 4.6, ar: 1.72 },
+    { x: -8.6, z: 12.9, img: 'gallery/img/blindness_tip_final_02_270309764.webp', w: 4.6, ar: 1.72 },
+    { x: 34.7, z: -20.4, face: [28.5, -21.0], img: 'gallery/img/blindness_tip_final_01_270309773.webp', w: 4.6, ar: 1.72 },   // (s33: forward, clear of the trees, right beside the south walk) (28 Oct, Ben: moved across the walk; PAINT TOGETHER took its old spot)
   ],
   lean: 0.35,                                                           // screens turn this much toward the arriving visitor (east)
 };
@@ -280,10 +307,10 @@ const SPAWN_XZ = [3.6, 0];
 export const faceYaw = (x, z, tx, tz) => Math.atan2(tx - x, tz - z);   // yaw that turns local +z toward (tx, tz)
 
 export function buildKiosks({ scene, resolveImg = u => u }) {
-  const g = new THREE.Group(); scene.add(g); const col = [];
+  const g = new THREE.Group(); scene.add(g); const col = []; let filmFrame = null;
   const ink = new THREE.MeshLambertMaterial({ color: 0x1d1c1b }), red = new THREE.MeshBasicMaterial({ color: 0xec3013 });
   const loader = new THREE.TextureLoader();
-  const art = { TOOLS, ALLY_TIPS, SPECTRUM };
+  const art = { TOOLS, ALLY_TIPS };
   const box = (parent, w, h, d, m, x, y, z, collide) => { const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); b.position.set(x, y, z); parent.add(b); if (collide) col.push(b); return b; };
   const texMat = (src, base = 0x2b2928) => { const m = new THREE.MeshBasicMaterial({ color: base }); loader.load(src, t => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; m.map = t; m.color.set(0xffffff); m.needsUpdate = true; }); return m; };
   // facing: the screens look across the avenue, turned a little toward the visitor arriving from the spawn
@@ -297,22 +324,40 @@ export function buildKiosks({ scene, resolveImg = u => u }) {
     for (const s of [-1, 1]) box(t, 0.07, 0.04, 0.6, ink, s * lx, 0.02, -0.09, false);    // feet
     if (img) {
       box(t, w + 0.08, h + 0.08, 0.06, ink, 0, bottom + h / 2, -0.03, true);              // bezel / back
-      const scr = new THREE.Mesh(new THREE.PlaneGeometry(w, h), texMat(art[img] || img)); scr.position.set(0, bottom + h / 2, 0.002); t.add(scr);
+      const scr = new THREE.Mesh(new THREE.PlaneGeometry(w, h), img === 'ALLY_TIPS' ? allyTipsMat() : texMat(art[img] || img)); scr.position.set(0, bottom + h / 2, 0.002); t.add(scr);
     }
     box(t, w + 0.08, 0.04, 0.08, red, 0, bottom + h + 0.06, -0.03, false);                // the red rule
     return t;
   };
-  // the welcome film's stand in the lake: one ink pier from the water up to a big bezel (the film box from gallery.json sits in its face)
-  { const f = FRONT.film, t = new THREE.Group(); t.position.set(f.x, f.base, f.z); t.rotation.y = faceYaw(f.x, f.z, ...f.look); g.add(t);
-    const top = f.deck - f.base + f.bottom;   // screen bottom, measured from the stand's foot
-    box(t, 0.5, top + 0.2, 0.36, ink, 0, (top + 0.2) / 2, -0.2, false);                    // the pier
-    box(t, 1.4, 0.12, 1.0, ink, 0, 0.06, -0.2, false);                                      // its footing
-    box(t, f.w + 0.16, f.h + 0.16, 0.12, ink, 0, top + f.h / 2, -0.07, false);             // bezel / back
-    box(t, f.w + 0.16, 0.06, 0.14, red, 0, top + f.h + 0.11, -0.07, false); }              // the red rule
-  for (const k of FRONT.screens) stand(k.x, k.z, inward(k.z), 2.4, 1.8, 0.95, k.img);
+  // the welcome film, hanging: an ink frame round the two-sided screen (the film box from gallery.json sits inside it), a red rule
+  // along the top, a slim header bar, and two cables up to the roof
+  { const f = FRONT.film, t = new THREE.Group(); t.position.set(f.x, f.y, f.z); g.add(t);
+    filmFrame = t;   // (Ben, 28 Oct) the game hides the frame, bar and cables with the film once you're past it (the eye stays clear)
+    const W = f.w, H = f.h, D = 0.3, fr = 0.14;
+    box(t, D, fr, W + fr * 2, ink, 0, H / 2 + fr / 2, 0, false); box(t, D, fr, W + fr * 2, ink, 0, -H / 2 - fr / 2, 0, false);
+    box(t, D, H, fr, ink, 0, 0, W / 2 + fr / 2, false); box(t, D, H, fr, ink, 0, 0, -W / 2 - fr / 2, false);
+    box(t, D + 0.02, 0.08, W + fr * 2 + 0.02, red, 0, H / 2 + fr + 0.04, 0, false);
+    box(t, 0.1, 0.12, W * 0.8, ink, 0, H / 2 + fr + 0.5, 0, false);   // the hanging bar
+    const steel = new THREE.MeshLambertMaterial({ color: 0x9a958e });
+    for (const s of [-1, 1]) { const cz = s * W * 0.36; box(t, 0.025, 0.5, 0.025, steel, 0, H / 2 + fr + 0.27, cz, false); const len = f.ceil - (f.y + H / 2 + fr + 0.56); box(t, 0.025, len, 0.025, steel, 0, H / 2 + fr + 0.56 + len / 2, cz, false); } }
+  filmFrame && filmFrame.traverse(o => { o.userData.dyn = true; });   // (kept out of the merge, so it can hide on its own)
+  for (const k of FRONT.screens) stand(k.x, k.z, k.yaw ?? inward(k.z), k.w || 2.4 * (k.k || 1), k.h || 1.8 * (k.k || 1), k.bottom ?? 0.95, k.img);
+  // (28 Oct, Ben) a LARGE Tips to be Loved by the Blind kiosk in the Vision Simulator room, on the south wall between the Diabetic
+  // Retinopathy and Cataracts cards (the room floor is at -3.38)
+  { const t = stand(-160.1, -21.25, 0, 6.0, 4.5, 0.35, 'ALLY_TIPS'); t.position.y = -3.38; }
+  // (28 Oct, Ben) and a LARGE TOOLS FOR THE BLIND kiosk opposite, on the north wall between the Retinitis Pigmentosa + Glaucoma cards
+  { const t = stand(-160.1, 20.85, Math.PI, 6.0, 4.5, 0.35, 'TOOLS'); t.position.y = -3.38; }
+  // (27 Oct, Ben) the Stevie Wonder screens hang on walls like mounted TVs: a gallery-white wall behind each (floor to above the
+  // screen, the screen's back flush on it), an ink mounting plate just inside the screen's edge, and a red rule along the top
+  { const wallM = new THREE.MeshLambertMaterial({ color: 0xeceae6 }), FL = -3.38, X = -63.25, T = 0.32, top = 1.75;
+    for (const s of [-1, 1]) { const z0 = 4.85, z1 = 11.45, zc = s * (z0 + z1) / 2, L = z1 - z0;
+      box(g, T, top - FL, L, wallM, X - T / 2, (top + FL) / 2, zc, true);                           // the wall
+      box(g, T + 0.04, 0.12, L + 0.04, ink, X - T / 2, FL + 0.06, zc, false);                     // an ink skirting
+      box(g, T + 0.02, 0.06, L + 0.02, red, X - T / 2, top + 0.03, zc, false);                     // the red rule on top
+      box(g, 0.04, 3.1, 5.4, ink, X + 0.02, -0.75, s * 8.13, false); } }                          // the mounting plate behind the screen
   // exhibition panels along the plaza edges (they replace the old boards that floated out past the rails)
   for (const pn of FRONT.panels) {
-    const h = pn.w / pn.ar, bottom = 0.85, yaw = pn.z > 0 ? Math.PI : 0;
+    const h = pn.w / pn.ar, bottom = 0.85, yaw = pn.face ? faceYaw(pn.x, pn.z, pn.face[0], pn.face[1]) : pn.z > 0 ? Math.PI : 0;
     const t = new THREE.Group(); t.position.set(pn.x, 0, pn.z); t.rotation.y = yaw; g.add(t);
     for (const s of [-1, 1]) box(t, 0.08, bottom + h, 0.08, ink, s * (pn.w / 2 - 0.3), (bottom + h) / 2, -0.08, true);
     for (const s of [-1, 1]) box(t, 0.08, 0.04, 0.7, ink, s * (pn.w / 2 - 0.3), 0.02, -0.08, false);
@@ -321,7 +366,34 @@ export function buildKiosks({ scene, resolveImg = u => u }) {
     box(t, pn.w + 0.1, 0.045, 0.08, red, 0, bottom + h + 0.075, -0.035, false);
   }
   g.updateMatrixWorld(true);
-  return { group: g, col };
+  return { group: g, col, filmFrame };
+}
+
+// (27 Oct, Ben) TIPS TO BE LOVED BY THE BLIND: a new screen graphic, drawn in the gallery's card style (black ground, white type,
+// red accents) with the six tips from the kiosk's Learn panel as big short lines. 4:3, the stand's 2.4 x 1.8 m screen.
+function allyTipsMat() {
+  const W = 1600, H = 1200, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
+  const tips = [['Offer your elbow,', 'not your hand'], ['Paint a picture', 'with words'], ['Say hello', 'and goodbye'], ['Ask before', 'you touch'], ['Invite us', 'along'], ['Give us', 'a little time']];
+  const heart = (x, y, s) => { c.beginPath(); c.moveTo(x, y + s * 0.3); c.bezierCurveTo(x, y, x - s * 0.5, y, x - s * 0.5, y + s * 0.3); c.bezierCurveTo(x - s * 0.5, y + s * 0.6, x, y + s * 0.78, x, y + s); c.bezierCurveTo(x, y + s * 0.78, x + s * 0.5, y + s * 0.6, x + s * 0.5, y + s * 0.3); c.bezierCurveTo(x + s * 0.5, y, x, y, x, y + s * 0.3); c.closePath(); };
+  const draw = () => {
+    c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, W, H); c.fillStyle = '#ec3013'; c.fillRect(0, 0, W, 22);
+    const P = 84; c.textBaseline = 'alphabetic';
+    c.fillStyle = '#ff9783'; c.font = `800 34px ${FONT}`; c.fillText('THE BLIND CANVAS PROJECT \u00b7 LEARN', P, 104);
+    c.fillStyle = '#ffffff'; c.font = `800 112px ${FONT}`; c.fillText('TIPS TO BE', P, 236);
+    c.fillStyle = '#ec3013'; c.fillText('LOVED', P, 352); const lw = c.measureText('LOVED ').width;
+    c.fillStyle = '#ffffff'; c.fillText('BY THE BLIND', P + lw, 352);
+    c.fillStyle = '#ec3013'; heart(W - P - 80, 112, 160); c.fill();
+    c.fillStyle = '#f3f2f2'; c.fillRect(P, 404, W - P * 2, 6);
+    const colW = (W - P * 2 - 60) / 2, rowH = 196;
+    tips.forEach(([a, b], i) => { const x = P + (i % 2) * (colW + 60), y = 470 + Math.floor(i / 3 * 0) + (i >> 1) * rowH;
+      c.fillStyle = '#ec3013'; c.font = `800 92px ${FONT}`; c.fillText(String(i + 1), x, y + 84);
+      c.fillStyle = '#ffffff'; c.font = `800 60px ${FONT}`; c.fillText(a, x + 96, y + 50); c.fillStyle = '#e9e5e5'; c.font = `500 60px ${FONT}`; c.fillText(b, x + 96, y + 118); });
+    c.fillStyle = '#ec3013'; c.fillRect(0, H - 92, W, 92); c.fillStyle = '#ffffff'; c.font = `800 44px ${FONT}`; c.fillText('WALK UP TO LEARN MORE \u00b7 READ ALOUD', P, H - 30);
+  };
+  draw();
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { draw(); t.needsUpdate = true; });
+  return new THREE.MeshBasicMaterial({ map: t });
 }
 
 // a reading lectern (local +z faces the reader): floor plate, slim blade, tilted top with a thin ink frame and the red rule

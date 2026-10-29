@@ -25,6 +25,10 @@
 <link rel="icon" type="image/png" href="gallery/icon-180.png">
 <meta name="theme-color" content="#141312">
 <link rel="stylesheet" href="vendor/fonts/archivo.css">
+<script>
+// (27 Oct) working copy: the big media (3D model, films, sounds) is not in this copy, so it streams from the live site; on the live site nothing changes
+window.GMEDIA = u => (typeof u === 'string' && !/^(https?:|blob:|data:)/.test(u) && /\.(glb|mp4|mp3|m4a|webm|wav)$/i.test(u.split('?')[0]) && !/github\.io$/.test(location.hostname)) ? 'https://blindbenfilms.github.io/FOXgate8/3D/' + u.replace(/^\.\//, '') : u;
+</script>
 <style>
   :root { --bg:#141312; --ink:#f3f2f2; --card:#232120; --accent:#ec3013; --teal:#22b8b0; --font:"Archivo",system-ui,sans-serif; }
   * { box-sizing:border-box; }
@@ -43,9 +47,9 @@
   #avRow .av b { display:block; margin-top:6px; font:800 13px/1.2 var(--font); letter-spacing:.08em; text-transform:uppercase; }
   #avRow .av[aria-checked=true] { border-color:#ec3013; background:#2a1512; box-shadow:inset 0 -4px 0 #ec3013; }
   #menuBtn { width:48px; border:2px solid var(--ink); border-left:0; background:var(--bg); font-size:20px; text-align:center; }
-  #act { position:fixed; right:calc(12px + env(safe-area-inset-right)); bottom:calc(154px + env(safe-area-inset-bottom)); z-index:10; display:none; max-width:min(320px,52vw); min-height:52px; padding:10px 14px; background:var(--accent); color:#fff; border:2px solid var(--ink); font:800 13px/1.25 var(--font); letter-spacing:.06em; text-transform:uppercase; }
+  #act { position:fixed; right:calc(12px + env(safe-area-inset-right)); bottom:calc(222px + env(safe-area-inset-bottom)); z-index:10; display:none; max-width:min(320px,52vw); min-height:52px; padding:10px 14px; background:var(--accent); color:#fff; border:2px solid var(--ink); font:800 13px/1.25 var(--font); letter-spacing:.06em; text-transform:uppercase; }
   #act small { display:block; font-size:10px; letter-spacing:.14em; opacity:.85; }
-  #actBtn { position:fixed; right:calc(12px + env(safe-area-inset-right)); bottom:calc(16px + env(safe-area-inset-bottom)); z-index:9; display:flex; align-items:center; gap:8px; padding:0; border:0; background:none; cursor:pointer; touch-action:manipulation; }
+  #actBtn { position:fixed; right:calc(12px + env(safe-area-inset-right)); bottom:calc(152px + env(safe-area-inset-bottom)); z-index:9; display:flex; align-items:center; gap:8px; padding:0; border:0; background:none; cursor:pointer; touch-action:manipulation; }
   #actBtn .lbl { background:rgba(29,28,27,.78); color:#f3f2f2; padding:6px 8px; text-align:right; max-width:min(58vw,300px); }
   #actBtn .lbl b { display:block; font:800 12px/1.15 var(--font); letter-spacing:.12em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   #actBtn .lbl small { display:none; font:800 9px/1.2 var(--font); letter-spacing:.12em; color:#ff9783; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:2px; }
@@ -66,7 +70,10 @@
   #panel header .h { flex:1; padding:10px 14px; }
   #panel header .k { font-size:11px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); }
   #panel header h2 { margin:2px 0 0; font:800 clamp(20px,5vw,30px)/1.05 var(--font); letter-spacing:-0.01em; }
-  #panel header button { width:56px; border:0; border-left:2px solid var(--ink); background:var(--bg); font-size:22px; text-align:center; }
+  #panel header button { width:56px; flex:none; border:0; border-left:2px solid var(--ink); background:#ec3013; color:#fff; font-size:22px; line-height:1; padding:0; display:flex; align-items:center; justify-content:center; }
+  #panel header button:hover { background:#c4260f; }
+  .xbtn-red { background:#ec3013 !important; color:#fff !important; border-color:#ec3013 !important; display:inline-flex !important; align-items:center !important; justify-content:center !important; text-align:center !important; line-height:1 !important; }
+  .xbtn-red:hover { background:#c4260f !important; }
   #panel .body { overflow:auto; padding:14px; font-size:16px; line-height:1.5; -webkit-overflow-scrolling:touch; }
   #panel .art { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.1fr); gap:14px; }
   @media (max-width:640px) { #panel .art { grid-template-columns:1fr; } }
@@ -86,19 +93,55 @@
   .people .p { border:2px solid var(--ink); background:var(--card); }
   .people img { width:100%; aspect-ratio:1; object-fit:cover; display:block; border-bottom:2px solid var(--ink); }
   .people .p div { padding:8px; font-size:13px; } .people .p b { display:block; font-size:14px; }
-  #menu { position:fixed; z-index:21; left:12px; top:calc(70px + env(safe-area-inset-top)); width:min(340px,calc(100vw - 24px)); display:none; padding:12px; max-height:calc(100dvh - 90px); overflow:auto; }
-  #menu .lab { font-size:11px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; margin:10px 0 6px; color:var(--accent); }
-  #menu .opts { display:flex; flex-wrap:wrap; gap:6px; }
-  #menu button { min-height:44px; padding:8px 12px; border:2px solid var(--ink); background:var(--card); font:800 12px var(--font); letter-spacing:.06em; text-transform:uppercase; }
-  #menu button.on { background:var(--ink); color:var(--bg); }
-  #menu a { display:block; margin-top:12px; padding:12px; border:2px solid var(--ink); background:var(--accent); color:#fff; font-weight:800; text-decoration:none; letter-spacing:.06em; text-transform:uppercase; font-size:13px; }
+  /* (28 Oct, Ben) the menu, polished: dark ground, light ink, 2px rules between sections, full-width rows, toggles show ON / OFF */
+  #menu { position:fixed; z-index:21; left:12px; top:calc(70px + env(safe-area-inset-top)); width:min(360px,calc(100vw - 24px)); display:none; padding:0; max-height:calc(100dvh - 86px - env(safe-area-inset-top)); overflow:auto; background:#201e1d; -webkit-overflow-scrolling:touch; touch-action:pan-y; }
+  #menu .sec { padding:12px 14px 14px; border-top:2px solid var(--ink); }
+  #menu .sec:first-child { border-top:0; }
+  #menu .lab { font-size:11px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; margin:0 0 8px; color:#ff9783; }
+  #menu .opts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; }
+  #menu .opts.one { grid-template-columns:1fr; } #menu #looks button:last-child { grid-column:span 2; }
+  #menu button { min-height:48px; padding:8px 12px; border:2px solid var(--ink); background:transparent; color:var(--ink); font:800 12px/1.2 var(--font); letter-spacing:.06em; text-transform:uppercase; }
+  #menu button:hover { background:#3a2723; } #menu button:active { background:#5c2c22; }
+  #menu button:focus-visible, #topCam:focus-visible, #micBtn:focus-visible, #camPop button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  #menu button.on { background:var(--ink); color:#201e1d; }
+  #menu button.big { min-height:56px; background:var(--accent); border-color:var(--accent); color:#fff; font-size:13px; }
+  #menu .tg { display:flex; justify-content:space-between; align-items:center; gap:10px; }
+  #menu .tg::after { content:'OFF'; font-size:10px; letter-spacing:.14em; padding:3px 6px; border:2px solid currentColor; flex:none; }
+  #menu .tg.on::after { content:'ON'; }
+  #menu .row2 { display:flex; gap:6px; } #menu .row2 input { flex:1; min-width:0; min-height:48px; padding:0 12px; border:2px solid var(--ink); background:#141312; color:var(--ink); font:800 16px var(--font); letter-spacing:.1em; border-radius:0; -webkit-user-select:text; user-select:text; }
+  #menu .err { color:#ff9783; font:700 12px var(--font); margin-top:6px; min-height:14px; }
+  #menu .host { background:#141312; }
+  #menu a { display:flex; align-items:center; min-height:48px; padding:0 14px; border-top:2px solid var(--ink); color:var(--ink); font:800 12px var(--font); text-decoration:none; letter-spacing:.08em; text-transform:uppercase; }
+  #menu a:hover { background:#3a2723; }
+  #topCam { width:52px; border:2px solid var(--ink); border-left:0; background:var(--bg); color:var(--ink); font:800 11px/1.15 var(--font); letter-spacing:.06em; text-align:center; padding:0; white-space:pre-line; }
+  #topCam.on { background:var(--accent); color:#fff; }
+  #camPop { position:fixed; z-index:21; left:12px; top:calc(70px + env(safe-area-inset-top)); width:min(320px,calc(100vw - 24px)); display:none; background:#201e1d; padding:12px 14px 14px; }
+  #camPop .lab { font-size:11px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; margin:0 0 8px; color:#ff9783; }
+  #camPop .opts { display:grid; gap:6px; }
+  #camPop button { min-height:52px; padding:8px 12px; border:2px solid var(--ink); background:transparent; color:var(--ink); font:800 12px/1.2 var(--font); letter-spacing:.06em; text-transform:uppercase; }
+  #camPop button:hover { background:#3a2723; } #camPop button.on { background:var(--ink); color:#201e1d; }
+  @media (max-width:430px) { #place .t { min-width:0; padding:6px 10px; } #placeBox img { height:34px !important; } #place .c { font-size:18px; } #place #who { font-size:11px !important; } #menuBtn, #waveBtn { width:46px !important; } #micBtn, #topCam { width:48px; } }
+  /* (28 Oct, Ben) ?topbar=full: the bar pinned to the top, edge to edge: logo + room on the left, the buttons on the right, menu last */
+  body.barFull #place { left:0; right:0; top:0; padding-top:env(safe-area-inset-top); background:#141312; border-bottom:2px solid var(--ink); }
+  body.barFull #place .t { flex:1; border:0; background:transparent; }
+  body.barFull #place > button { border-top:0 !important; border-bottom:0 !important; border-left:2px solid var(--ink) !important; border-right:0 !important; min-width:56px; }
+  body.barFull #menu, body.barFull #camPop { left:auto; right:12px; top:calc(76px + env(safe-area-inset-top)); }
+  body.barFull #camToast { left:auto; right:12px; top:calc(76px + env(safe-area-inset-top)); }
+  @media (max-width:480px) { body.barFull #place .t { padding:6px 8px; gap:8px !important; } body.barFull #placeBox img { height:30px !important; } body.barFull #place .c { font-size:16px; line-height:1.05; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    body.barFull #place .t > div { overflow:hidden; } body.barFull #place > button { min-width:48px !important; width:48px !important; font-size:8.5px !important; } body.barFull #mapLine { font-size:10px !important; letter-spacing:.08em !important; white-space:nowrap; } }
+  body.barFull #hint { top:calc(84px + env(safe-area-inset-top)); }
+  #place > button { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; width:56px; padding:0; border:2px solid var(--ink); border-left:0; background:var(--bg); color:var(--ink); font:800 9px/1 var(--font) !important; letter-spacing:.1em; text-align:center; white-space:nowrap; text-transform:uppercase; }
+  #place > button span { display:block; }
+  #place > button:hover { background:#3a2723; } #place > button:active { background:#5c2c22; }
+  #place > button.on { background:var(--accent); color:#fff; }
+  #camPop .note { font:600 12px/1.4 var(--font); color:#cfcaca; margin-top:10px; }
   #load { position:fixed; inset:0; z-index:30; color:#f3f2f2; display:flex; flex-direction:column; justify-content:flex-start; align-items:center; text-align:center; padding:calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)); overflow-y:auto;
-    background: radial-gradient(120% 70% at 50% 0%, #1d2a6b 0%, #10153a 45%, #0b0a12 100%); }
+    background: radial-gradient(70% 42% at 50% 22%, rgba(59,130,246,.22) 0%, rgba(59,130,246,0) 70%), radial-gradient(120% 70% at 50% 0%, #1d2a6b 0%, #10153a 48%, #0b0a12 100%); }
   #load > * { width:100%; max-width:420px; }
-  #load .logo { width:min(46vw,190px); height:auto; margin:0 auto 4px; display:block; filter:drop-shadow(0 6px 18px rgba(0,0,0,.45)); }
-  #load .tips { position:relative; margin:18px auto 16px; padding:4px 6px 0; text-align:center; background:none; border:0; min-height:150px; cursor:pointer; }
+  #load .logo { width:min(88vw,420px); max-height:34dvh; object-fit:contain; height:auto; margin:0 auto 4px; display:block; filter:drop-shadow(0 6px 18px rgba(0,0,0,.45)); }
+  #load .tips { position:relative; margin:4px auto 6px; padding:4px 6px 0; text-align:center; background:none; border:0; min-height:150px; cursor:pointer; }
   #load .tips::before { content:''; display:block; width:44px; height:4px; background:var(--accent); margin:0 auto 12px; }
-  #load .tips .n { font:800 11px/1 var(--font); letter-spacing:.16em; text-transform:uppercase; color:#ff9783; }
+  #load .tips .n { font:800 11px/1 var(--font); letter-spacing:.16em; text-transform:uppercase; color:#9fc0ff; }
   #load .tips .q { font:800 21px/1.2 var(--font); margin:8px 0 6px; }
   #load .tips .a { font:400 15px/1.45 var(--font); color:#e2dede; }
   #load .tips .body { transition:opacity .45s ease, transform .45s ease; }
@@ -107,61 +150,89 @@
   #load .dots i { width:8px; height:8px; border-radius:50%; background:rgba(243,242,242,.3); }
   #load .dots i.on { background:var(--accent); }
   @media (prefers-reduced-motion:reduce) { #load .tips .body { transition:none; } }
-  #load > :first-child { margin-top:auto !important; } #load > :last-child { margin-bottom:auto !important; }   /* centred, but never cut off at the top when it's taller than the screen */
+  #load > :first-child { margin-top:auto !important; } #load > :last-child { margin-bottom:auto !important; }
+  /* (28 Oct, Ben) portrait: the logo floats centred in the space between the top of the screen and the name box; the name, bar, Enter and tips sit together below */
+  @media not ((orientation:landscape) and (max-height:560px)) { #load > .logo { margin-top:auto !important; margin-bottom:24px !important; } #load > #enter { margin-bottom:auto !important; }   /* (Ben) the group sits close under the logo; the two together are centred on the screen */   /* three equal gaps (the Enter button is the last thing shown; the old avatar row after it is hidden): above the logo, between the logo and the group, below the group */ }   /* centred, but never cut off at the top when it's taller than the screen */
+  #load #enter:hover { background:#1e40af !important; } #load #enter:active { background:#172f86 !important; }
   #load #enter { font-size:15px !important; letter-spacing:.05em !important; width:100%; }
   #load #nameRow, #load #avRow { margin-left:auto; margin-right:auto; }
+  /* (28 Oct, Ben) final polish: focus rings, a soft glow on the button, the tip sits lower and quieter */
+  #load #nameIn::placeholder { color:#8f97b8; }
+  #load #nameIn:focus-visible, #load #enter:focus-visible { outline:3px solid #8fb4ff; outline-offset:2px; }
+  #load #enter { box-shadow:0 8px 24px rgba(29,79,216,.45); transition:background .15s, transform .1s; }
+  #load #enter:active { transform:translateY(1px); }
+  #load .tips { opacity:.92; }
+  #load .tips::before { background:#3b82f6 !important; }
+  #load .dots i.on { background:#3b82f6 !important; }
+  #load .bar { border-color:rgba(243,242,242,.85) !important; }
   @media (max-height:740px) { #avRow .av img { max-width:92px; } #avRow .av { min-height:0; padding:8px; } }
   /* phone on its side: logo and tips on the left, name, Joe / Jane and Enter on the right */
   @media (orientation:landscape) and (max-height:560px) {
     #load { display:grid; grid-template-columns:minmax(0,380px) minmax(0,380px); column-gap:28px; align-content:center; justify-content:center; text-align:left; }
     #load > * { max-width:none; margin-top:0 !important; margin-bottom:0 !important; }
-    #load .logo { grid-column:1; grid-row:1; width:110px; margin:0 0 8px !important; }
-    #load .tips { grid-column:1; grid-row:2 / span 2; margin:0 !important; min-height:0; text-align:left; } #load .tips::before { margin-left:0; } #load .dots { justify-content:flex-start; }
-    #load .bar { grid-column:1; grid-row:4; margin-top:10px !important; } #load #lt { grid-column:1; grid-row:5; margin-top:6px !important; text-align:left; }
-    #load #nameRow { grid-column:2; grid-row:1; } #load #avRow { grid-column:2; grid-row:2 / span 2; margin-top:8px !important; }
-    #load #enter { grid-column:2; grid-row:4 / span 2; margin-top:10px !important; align-self:start; }
+    #load .logo { grid-column:1; grid-row:1; width:auto !important; height:min(150px, 21dvh) !important; max-height:none; object-fit:contain; object-position:left center; margin:0 0 8px !important; } #load #enter { grid-column:2; grid-row:3; margin:8px 0 0 !important; align-self:start; width:100%; }
+    #load .tips { grid-column:1; grid-row:3; margin:0 !important; min-height:0; text-align:left; } #load .tips::before { margin-left:0; } #load .dots { justify-content:flex-start; }
+    #load .bar { grid-column:2; grid-row:2; margin-top:10px !important; width:100%; align-self:start; } #load #lt { grid-column:2; grid-row:3; margin-top:6px !important; text-align:left; }
+    #load #nameRow { grid-column:2; grid-row:1; align-self:end; }  #load #avRow { grid-column:2; grid-row:3; margin-top:8px !important; }
     #avRow .av img { max-width:70px; } #avRow .av { padding:6px; }
   }
-  @media (max-height:700px) { #load .logo { width:min(28vw,100px); } #avRow .av img { max-width:74px !important; } #load .tips { min-height:128px; padding:12px 14px; } #load .tips .q { font-size:17px; } #load .tips .a { font-size:14px; } }
+  @media (max-height:700px) { #load .logo { width:min(80vw,320px); max-height:28dvh; } #avRow .av img { max-width:74px !important; } #load .tips { min-height:128px; padding:12px 14px; } #load .tips .q { font-size:17px; } #load .tips .a { font-size:14px; } }
   #load .k { font-size:12px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:#ff9783; }
   #load h1 { font:800 clamp(40px,10vw,88px)/0.9 var(--font); letter-spacing:-0.04em; margin:8px 0 18px; }
-  #load .bar { height:12px; border:2px solid #f3f2f2; max-width:420px; margin:0 auto; } #load .bar i { display:block; height:100%; width:0; background:var(--accent); }
+  #load .bar { height:12px; border:2px solid #f3f2f2; width:100%; max-width:420px; margin:14px auto 0; box-sizing:border-box; overflow:hidden; } #load .bar i { max-width:100%; } #load .bar i { display:block; height:100%; width:0; background:#3b82f6; }
   #load p { max-width:420px; color:#cfcaca; line-height:1.5; margin:10px auto; font-size:14px; }
   #avRow .av img { display:block; width:100%; max-width:120px; aspect-ratio:1; margin:0 auto; background:#1d2a6b; border:2px solid #f3f2f2; object-fit:cover; }
   .sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
 </style>
 </head>
 <body>
+<script>
+// (28 Oct, Ben) the top strip's four buttons share one look: a line icon over a short label, all the same size
+window.TB_ICON = {
+  wave: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 11V6a2 2 0 0 0-4 0v1"/><path d="M14 10V4a2 2 0 0 0-4 0v2"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>',
+  mic: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>',
+  micOff: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="2" x2="22" y1="2" y2="22"/><path d="M18.89 13.23A7.12 7.12 0 0 0 19 12v-2"/><path d="M5 10v2a7 7 0 0 0 12 5"/><path d="M15 9.34V5a3 3 0 0 0-5.68-1.33"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12"/><line x1="12" x2="12" y1="19" y2="22"/></svg>',
+  cam: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 13 5.22 3.48a.5.5 0 0 0 .78-.42V7.87a.5.5 0 0 0-.76-.42L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>',
+  camOff: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.66 6H14a2 2 0 0 1 2 2v2.5l5.25-3.5a.5.5 0 0 1 .75.44v8.92a.5.5 0 0 1-.36.48"/><path d="M16 16a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2"/><line x1="2" x2="22" y1="2" y2="22"/></svg>',
+  menu: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></svg>',
+};
+window.tbSet = (el, icon, label) => { el.innerHTML = window.TB_ICON[icon] + '<span>' + label + '</span>'; };
+</script>
+<script>if (new URLSearchParams(location.search).get('topbar') !== 'old') document.body.classList.add('barFull');   // (28 Oct, Ben) the full strip is the default (?topbar=old = the old floating bar)</script>
 <div id="stage"></div>
-<div id="load"><img class="logo" src="gallery/img/bcp_logo_white.webp" alt="Blind Canvas Project"><div class="tips" id="tips" role="region" aria-label="Blindness tips"><div class="body" id="tipBody" aria-live="polite"></div><div class="dots" id="tipDots" aria-hidden="true"></div></div><div class="bar"><i id="lb"></i></div><p id="lt">Opening the gallery…</p><label id="nameRow" style="display:none;max-width:420px;margin-top:6px"><span style="display:block;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#ff9783;margin-bottom:6px">Your name (others in the gallery see it)</span><input id="nameIn" maxlength="20" autocomplete="nickname" style="width:100%;min-height:52px;padding:10px 14px;background:#141312;color:#fff;border:2px solid #f3f2f2;border-radius:0;font:700 18px var(--font)" placeholder="Your name"></label><div id="avRow" style="display:none;max-width:420px;margin-top:14px"><span style="display:block;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#ff9783;margin-bottom:6px">Choose your avatar</span><div style="display:flex;gap:8px" role="radiogroup" aria-label="Choose your avatar"><button class="av" data-x="joe" role="radio" aria-label="Joe"><img id="pJoe" alt=""><b>Joe</b></button><button class="av" data-x="jane" role="radio" aria-label="Jane"><img id="pJane" alt=""><b>Jane</b></button></div></div><button id="enter" style="display:none;margin-top:18px;min-height:56px;padding:14px 22px;max-width:420px;background:#ec3013;color:#fff;border:2px solid #f3f2f2;font:800 16px var(--font);letter-spacing:.08em;text-transform:uppercase;text-align:center">Enter the gallery · sound on 🔊</button></div>
-<div id="place"><div class="t box"><div class="w">Blind Canvas Project</div><div class="c">The Gallery</div><div id="who" style="font-size:12px;font-weight:700;margin-top:3px;color:#cfcaca">Connecting…</div></div><button id="menuBtn" aria-label="Menu">☰</button><button id="waveBtn" aria-label="Wave to everyone" style="width:48px;border:2px solid var(--ink);border-left:0;background:var(--bg);font-size:22px;text-align:center">👋</button><button id="micBtn" style="display:none" aria-pressed="false">MIC
-OFF</button></div>
+<div id="load"><img class="logo" src="gallery/img/bcp_logo_white.webp" alt="Blind Canvas Project"><div class="tips" id="tips" role="region" aria-label="Blindness tips"><div class="body" id="tipBody" aria-live="polite"></div><div class="dots" id="tipDots" aria-hidden="true"></div></div><label id="nameRow" style="display:none;max-width:420px;margin-top:12px"><span style="display:block;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#cfd8ff;margin-bottom:6px;text-align:left">NAME other gallery visitors see</span><input id="nameIn" maxlength="20" autocomplete="nickname" style="width:100%;min-height:54px;padding:10px 14px;background:rgba(11,10,18,.6);color:#fff;border:2px solid #f3f2f2;border-radius:0;font:700 18px var(--font);-webkit-user-select:text;user-select:text" placeholder="Type a name"></label><div class="bar"><i id="lb"></i></div><p id="lt">Opening the gallery…</p><button id="enter" style="display:none;margin-top:14px;min-height:60px;padding:14px 22px;max-width:420px;background:#1d4fd8;color:#fff;border:2px solid #f3f2f2;font:800 16px var(--font);letter-spacing:.08em;text-transform:uppercase;text-align:center;display:none">Enter the gallery <span aria-hidden="true" style="margin-left:6px">→</span></button><div id="avRow" style="display:none;max-width:420px;margin-top:14px"><span style="display:block;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#ff9783;margin-bottom:6px">Choose your avatar</span><div style="display:flex;gap:8px" role="radiogroup" aria-label="Choose your avatar"><button class="av" data-x="joe" role="radio" aria-label="Joe"><img id="pJoe" alt=""><b>Joe</b></button><button class="av" data-x="jane" role="radio" aria-label="Jane"><img id="pJane" alt=""><b>Jane</b></button></div></div></div>
+<div id="place"><div class="t box" id="placeBox" role="button" tabindex="0" aria-label="Open the fast travel map" style="cursor:pointer;display:flex;align-items:center;gap:10px"><img src="gallery/img/bcp_logo_white.webp" alt="Blind Canvas Project" style="height:44px;width:auto;flex:none;display:block"><div style="min-width:0"><div id="who" class="w" style="color:#ff9783;display:none"></div><div class="c">The Gallery</div><div style="font:800 11px/1.2 var(--font);letter-spacing:.12em;text-transform:uppercase;color:#ffd23a;margin-top:3px;text-decoration:underline;text-underline-offset:2px;white-space:nowrap" id="mapLine">MAP FOR FAST TRAVEL</div></div></div><button id="waveBtn" aria-label="Wave to everyone" >👋</button><button id="micBtn" aria-pressed="false">MIC
+OFF</button><button id="topCam" aria-haspopup="dialog" aria-pressed="false" aria-label="Screen head off. Tap to wear your camera as your fox's head">CAM
+OFF</button><button id="menuBtn" aria-label="Menu">☰</button></div>
+<script>tbSet(document.getElementById('waveBtn'), 'wave', 'WAVE'); tbSet(document.getElementById('micBtn'), 'micOff', 'MIC'); tbSet(document.getElementById('topCam'), 'camOff', 'CAM'); tbSet(document.getElementById('menuBtn'), 'menu', 'MENU');</script>
 <button id="act" aria-live="polite"></button>
-<!-- ACTION: bottom right, under LOOK AROUND and LEAVE NOTE. Its word changes with where you are: VIEW ART, READ, SIGN GUEST BOOK, SIT, FULL SCREEN… -->
+<!-- ACTION: bottom right, above LOOK AROUND, under LEAVE NOTE. Its word changes with where you are: VIEW ART, READ, SIGN GUEST BOOK, SIT, FULL SCREEN… -->
 <button id="actBtn" type="button" aria-label="Actions: nothing here yet"><span class="lbl"><small id="actSub"></small><b id="actVerb">ACTIONS</b></span><span class="ico" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30"><path d="M13 27 L13 13.5 a2 2 0 0 1 4 0 L17 19 M17 15.5 a2 2 0 0 1 4 0 L21 20 M21 17 a2 2 0 0 1 4 0 L25 22 c0 3 -2 5 -5 5 L16 27 c-1.6 0 -2.6 -.6 -3.4 -1.8 L9 20 a1.9 1.9 0 0 1 3 -2.2 L13 19" fill="none" stroke="#f3f2f2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.5 9.5 a7 7 0 0 1 13 0 M5 7.5 a11 11 0 0 1 20 0" fill="none" stroke="#f3f2f2" stroke-width="2" stroke-linecap="round" opacity=".75"/></svg></span></button>
-<div id="hint" class="box">Touch the left side to walk · drag the right side to look</div>
+<div id="hint" class="box">Touch the left side to walk · hold LOOK AROUND to look</div>
 <div id="panel" class="box" role="dialog" aria-modal="true" aria-labelledby="pt"><header><div class="h"><div class="k" id="pk"></div><h2 id="pt"></h2></div><button id="px" aria-label="Close">✕</button></header><div class="body" id="pb"></div></div>
 <div id="menu" class="box" role="dialog" aria-label="Menu">
-  <div class="opts" style="margin-bottom:6px"><button id="mapBtn">🗺 Park map · go to a place</button></div>
-  <div class="lab">Your fox</div>
-  <div class="opts" style="margin-bottom:6px"><button id="faceBtn" aria-pressed="false">🦊 Fox copies my face (camera)</button><button id="tvHeadBtn" aria-pressed="false">📺 Screen head</button><button id="maskBtn" aria-pressed="false">🎭 Face mask</button></div>
-  <div class="note" id="camNote" style="font:600 12px/1.35 var(--font);margin:-2px 0 8px;color:var(--muted,#5a5654)">Fox copies you: your camera stays on this device. Screen head and Face mask: everyone in the gallery sees your camera.</div>
-  <div class="opts" id="looks"><button data-l="wrap">Art tee</button><button data-l="suit">Suit fox</button><button data-l="male">Fox</button><button data-l="female">Vixen</button></div>
-  <div class="lab">Be</div>
-  <div class="opts" id="who"><button data-w="joe">Joe</button><button data-w="jane">Jane</button></div>
-  <div class="lab">Gear</div>
-  <div class="opts" id="extras"><button data-x="none">None</button><button data-x="glasses">Glasses</button></div>
-  <div class="lab">Reading</div>
-  <div class="opts"><button id="voices">Play the artist's voice when I open art</button><button id="autoRead">Read aloud when I open art</button><button id="big">Larger text</button><button id="readNotes">Read notes aloud when I pass</button></div>
-  <div class="lab">Atmosphere</div>
-  <div class="opts"><button id="ambBtn">Ambient sounds</button><button id="nightBtn">🌙 Night</button></div>
-  <div class="lab">Visiting together</div>
-  <div class="opts"><button id="rename">Change my name</button><button id="invite">Copy private room link</button><button id="tourBtn">Lead a tour</button><button id="hostBtn">Host this visit</button><button id="noteBtn">🙂 Comment spots · leave a comment</button><button id="liteBtn" aria-pressed="false">🪶 Lite mode (older phones): OFF</button></div>
-  <div id="whoList" style="font-size:13px;line-height:1.5;margin-top:8px"></div>
-  <div class="lab">Lost?</div>
-  <div class="opts"><button id="home">Back to the entrance</button></div>
+  <div class="sec"><div class="opts one"><button id="mapBtn" class="big">🗺 Map · go to any room</button></div></div>
+  <div class="sec"><div class="lab">Your fox</div>
+    <div class="opts" id="who" style="margin-bottom:6px"><button data-w="joe">Joe · cane</button><button data-w="jane">Jane · chair</button></div>
+    <div class="opts" id="looks"><button data-l="wrap">Art sweatshirt</button><button data-l="wraptee">Art tee</button><button data-l="suit">Suit</button><button data-l="male">Fox</button><button data-l="female">Vixen</button></div>
+    <div class="opts" id="extras" style="margin-top:6px"><button data-x="none">No glasses</button><button data-x="glasses">Glasses</button></div></div>
+  <div class="sec"><div class="lab">Reading &amp; sound</div>
+    <div class="opts one"><button id="voices" class="tg">Artist's voice when I open art</button><button id="autoRead" class="tg">Read art aloud</button><button id="readNotes" class="tg">Read notes aloud as I pass</button><button id="big" class="tg">Larger text</button><button id="ambBtn" class="tg">Ambient sounds</button></div>
+    <div class="opts one" style="margin-top:6px"><button id="nightBtn">🌙 Night</button></div></div>
+  <div class="sec"><div class="lab">Visiting together</div>
+    <div class="opts"><button id="rename">Change my name</button><button id="invite">Copy room link</button></div>
+    <div class="opts one" style="margin-top:6px"><button id="noteBtn">🙂 Leave a comment</button></div>
+    <div id="whoList" style="font-size:13px;line-height:1.5;margin-top:8px"></div></div>
+  <div class="sec"><div class="lab">Lost?</div>
+    <div class="opts one"><button id="home">Back to the entrance</button><button id="liteBtn" aria-pressed="false">🪶 Lite mode (older phones): OFF</button></div></div>
+  <div class="sec host" id="hostSec"><div class="lab">Host mode</div>
+    <div class="opts one" id="hostLock"><button id="hostOpen">🔒 I'm hosting this visit</button></div>
+    <div id="hostPw" style="display:none"><div class="row2"><input id="hostIn" type="password" autocomplete="off" aria-label="Host password" placeholder="Password"><button id="hostGo">Unlock</button></div><div class="err" id="hostErr" aria-live="polite"></div></div>
+    <div class="opts one" id="hostOpts" style="display:none"><button id="hostBtn">Host this visit</button><button id="tourBtn">Lead a tour</button></div></div>
   <a href="index.html">← Back to the galaxy</a>
 </div>
+<div id="camPop" style="display:none"><button id="faceBtn" hidden></button><button id="tvHeadBtn" hidden></button><button id="maskBtn" hidden></button><button id="camOff" hidden></button><div id="camMsg"></div></div>
+<div id="camToast" role="status" aria-live="polite" style="position:fixed;z-index:21;left:12px;top:calc(70px + env(safe-area-inset-top));width:min(320px,calc(100vw - 24px));display:none;background:#5c2c22;color:#fff;border:2px solid #f3f2f2;border-left:6px solid #ec3013;padding:10px 12px;font:600 13px/1.4 var(--font)"></div>
 <div class="sr" id="live" aria-live="polite"></div>
 <script>
 // (27 Oct) no browser zoom: pinch, double-tap and ctrl+wheel / ctrl +/- would push buttons off the screen
@@ -199,7 +270,7 @@ const pref = (() => { try { return JSON.parse(localStorage.getItem('8gates.galle
 const savePref = () => { try { localStorage.setItem('8gates.gallery.v1', JSON.stringify(pref)); } catch (e) {} };
 let G; let near = null;
 try {
-  G = await createGallery({ container: $('stage'), onProgress: f => { $('lb').style.width = Math.round(f * 100) + '%'; }, onNear, onZone: z => { const pc = document.querySelector('#place .c'); if (pc.textContent !== z) { pc.textContent = z; clearTimeout(window.ZONESAY); window.ZONESAY = setTimeout(() => { if (!$('live').dataset.busy) $('live').textContent = 'You are in ' + z + '.'; }, 600); } }, onPad: p => { if (!p) { if ($('hint').dataset.pad) { $('hint').style.display = 'none'; delete $('hint').dataset.pad; } return; } window.PADSEEN = window.PADSEEN || new Set(); if (window.PADSEEN.has(p.name)) return; window.PADSEEN.add(p.name); $('live').textContent = 'Comment spot: ' + p.name + '. The LEAVE NOTE button is on the right; tap it to leave a comment.'; $('hint').textContent = '🙂 YOUR COMMENTS HERE · tap LEAVE NOTE'; $('hint').dataset.pad = '1'; $('hint').style.display = 'block'; clearTimeout(window.PADHINT); window.PADHINT = setTimeout(() => { if ($('hint').dataset.pad) { $('hint').style.display = 'none'; delete $('hint').dataset.pad; } }, 4000); }, onLite: (on, auto) => { window.LITE_SHOW && window.LITE_SHOW(); if (auto) { $('live').textContent = 'Lite mode is on, so the gallery runs smoother on this phone. You can turn it off in the menu.'; $('hint').textContent = '🪶 Lite mode on for a smoother walk · ☰ to change'; $('hint').style.display = 'block'; setTimeout(() => $('hint').style.display = 'none', 4000); } },  onSplash: () => { $('live').textContent = 'Splash! No swimming in the lake. Back to the entrance.'; $('hint').textContent = '💦 Splash! No swimming in the lake. Back to the entrance.'; $('hint').style.display = 'block'; setTimeout(() => $('hint').style.display = 'none', 3500); } });
+  G = await createGallery({ container: $('stage'), onProgress: f => { $('lb').style.width = Math.max(0, Math.min(100, Math.round(f * 100))) + '%'; }, onNear, onZone: z => { const pc = document.querySelector('#place .c'); if (pc.textContent !== z) { pc.textContent = z; clearTimeout(window.ZONESAY); window.ZONESAY = setTimeout(() => { if (!$('live').dataset.busy) $('live').textContent = 'You are in ' + z + '.'; }, 600); } }, onPad: p => { if (!p) { if ($('hint').dataset.pad) { $('hint').style.display = 'none'; delete $('hint').dataset.pad; } return; } window.PADSEEN = window.PADSEEN || new Set(); if (window.PADSEEN.has(p.name)) return; window.PADSEEN.add(p.name); $('live').textContent = 'Comment spot: ' + p.name + '. The LEAVE NOTE button is on the right; tap it to leave a comment.'; $('hint').textContent = '🙂 YOUR COMMENTS HERE · tap LEAVE NOTE'; $('hint').dataset.pad = '1'; $('hint').style.display = 'block'; clearTimeout(window.PADHINT); window.PADHINT = setTimeout(() => { if ($('hint').dataset.pad) { $('hint').style.display = 'none'; delete $('hint').dataset.pad; } }, 4000); }, onLite: (on, auto) => { window.LITE_SHOW && window.LITE_SHOW(); if (auto) { $('live').textContent = 'Lite mode is on, so the gallery runs smoother on this phone. You can turn it off in the menu.'; $('hint').textContent = '🪶 Lite mode on for a smoother walk · ☰ to change'; $('hint').style.display = 'block'; setTimeout(() => $('hint').style.display = 'none', 4000); } },  onSplash: () => { $('live').textContent = 'Splash! No swimming in the lake. Back to the entrance.'; $('hint').textContent = '💦 Splash! No swimming in the lake. Back to the entrance.'; $('hint').style.display = 'block'; setTimeout(() => $('hint').style.display = 'none', 3500); } });
   G.openCommentSpots = openCommentSpots;
 
 { const b = $('liteBtn'); let saved = null; try { saved = localStorage.getItem('bcp.lite'); } catch (e) {}
@@ -208,12 +279,29 @@ try {
   if (saved === 'on') G.setLite(true); else if (saved === 'off') G.setLite(false); show(); }   // (the notes module opens it when someone tries to comment off a comment spot)
 } catch (e) { $('lt').textContent = 'The gallery could not open: ' + e.message; throw e; }
 window.G = G;
+// (29 Oct, Ben) the ART HUNT + ART BINGO side tabs hide while anything is full screen or a game is being played
+setInterval(() => {
+  const tabs = document.querySelectorAll('button[aria-label="Art hunt card"],button[aria-label="Art bingo card"]'); if (!tabs.length) return;
+  const W = window, on = k => { try { return !!(W[k] && W[k].isOpen && W[k].isOpen()); } catch (e) { return false; } };
+  let busy = !!document.fullscreenElement || document.getElementById('panel').style.display === 'flex' || W.HUSH
+    || ['PUZZLE', 'PAINT', 'CHESS', 'STUDIO', 'PIANO', 'BAND', 'COLOUR', 'NOTES', 'FILM', 'CINEMA', 'SIM', 'GUESTBOOK'].some(on);
+  if (!busy) { const c = W.G && W.G.world && W.G.world.canvas, e = document.elementFromPoint(innerWidth / 2, innerHeight / 2);
+    if (c && e && e !== c && !c.contains(e) && !e.closest('[data-hud],#hud,#hint,#live') && e.getBoundingClientRect().width > innerWidth * 0.6) busy = true; }
+  tabs.forEach(t => { t.style.visibility = busy ? 'hidden' : ''; t.style.pointerEvents = busy ? 'none' : ''; });
+}, 300);
+{ const redX = root => (root.querySelectorAll ? root.querySelectorAll('button') : []).forEach(b => { if (!b.classList.contains('xbtn-red') && /✕|\u2715/.test(b.textContent)) { b.classList.add('xbtn-red'); if (b.textContent.trim() === '✕') b.style.padding = '0'; } });
+  redX(document); new MutationObserver(ms => { for (const m of ms) for (const n of m.addedNodes) if (n.nodeType === 1) { if (n.tagName === 'BUTTON') redX(n.parentNode || document); else redX(n); } }).observe(document.body, { childList: true, subtree: true }); }
+import('./engine/gallery-puzzle.js').then(({ setupPuzzle }) => { try { window.PUZZLE = setupPuzzle({ G }); } catch (e) { console.warn('puzzle', e); } }).catch(e => console.warn('puzzle', e));
+// (28 Oct) COLOUR INSIDE THE LINES: two easels in the park
+import('./engine/gallery-colour.js').then(({ setupColour }) => { try { window.COLOUR = setupColour({ G }); } catch (e) { console.warn('colour easels', e); } }).catch(e => console.warn('colour easels', e));
 // stained glass in the main hall's roof, with HOLT for HOPE in braille and its shadow on the floor
 import('./engine/gallery-roof.js').then(({ buildRoof }) => { try { window.ROOF = buildRoof({ G }); } catch (e) { console.warn('roof glass', e); } }).catch(e => console.warn('roof glass', e));
 
 if (pref.look || pref.extra) G.setLook(pref.look || 'male', pref.extra || 'none');
 if (pref.style) G.setStyle(pref.style);   // your fur and shirt art from the Fox Studio
-if (pref.night) G.setNight(true);
+const SKY_NEXT = { golden: 'night', night: 'day', day: 'golden' }, SKY_LABEL = { golden: '🌅 Golden hour', night: '🌙 Night', day: '☀️ Afternoon' };
+const skyNow = () => pref.sky || (pref.night ? 'night' : 'golden');
+if (G.setSky) G.setSky(skyNow()); else if (pref.night) G.setNight(true);
 const touch = matchMedia('(pointer:coarse)').matches;
 $('hint').textContent = touch ? 'Touch the left side to walk · drag the right side to look' : 'W A S D to walk · Shift to run · drag to look · E to view';
 setTimeout(() => $('hint').style.display = 'none', 9000);
@@ -242,9 +330,10 @@ function simCtl(w) {
 function onNear(n) {
   near = n; const b = $('act');
   if (simPanel && (!n || n.kind !== 'simctl')) simPanel.style.display = 'none';
+  if (n && window.BINGO) window.BINGO.near(n);
   if (!n) { b.style.display = 'none'; setAction(null); return; }
   const nc = n.kind === 'art' && window.NOTES ? window.NOTES.countFor(n.item) : 0;
-  b.innerHTML = '<small>' + (n.kind === 'art' ? 'Artwork' + (nc ? ' · 💬 ' + nc + (nc === 1 ? ' note' : ' notes') : '') : n.kind === 'vision' ? 'Stand here · vision simulator' : n.kind === 'simctl' ? 'Kiosk · the six views wall' : n.kind === 'guestbook' ? 'Guest book' : n.kind === 'studio' ? 'Fox Studio' : n.kind === 'braille' ? 'Learn' : n.kind === 'elevator' ? 'Elevator' : n.kind === 'note' ? 'A note left here' : 'Learn') + (touch ? '' : ' · press E') + '</small>' + esc(n.label.replace(/^VIEW · /, ''));
+  b.innerHTML = '<small>' + (n.kind === 'art' ? 'Artwork' + (nc ? ' · 💬 ' + nc + (nc === 1 ? ' note' : ' notes') : '') : n.kind === 'vision' ? 'Stand here · vision simulator' : n.kind === 'simctl' ? 'Kiosk · the six views wall' : n.kind === 'guestbook' ? 'Guest book' : n.kind === 'studio' ? 'Fox Studio' : n.kind === 'paint' ? 'Plaza · big shared canvas' : n.kind === 'braille' ? 'Learn' : n.kind === 'elevator' ? 'Elevator' : n.kind === 'note' ? 'A note left here' : 'Learn') + (touch ? '' : ' · press E') + '</small>' + esc(n.label.replace(/^VIEW · /, ''));
   b.style.display = 'none'; setAction(n); if (n.kind !== 'note') $('live').textContent = n.label;   // (a note's full text was just announced)
 }
 $('act').addEventListener('click', () => near && open(near));
@@ -258,7 +347,7 @@ function actionWords(n) {
     case 'guestbook': return ['SIGN GUEST BOOK', 'The guest book'];
     case 'vision': return ['TRY IT', 'Vision simulator · see through their eyes'];
     case 'simctl': return ['SET SEVERITY', 'The six views wall'];
-    case 'studio': return ['DRESS UP', 'Fox Studio'];
+    case 'studio': return ['DRESS UP', 'Choose your shirt'];
     case 'braille': return ['LEARN', 'Braille and brilliance'];
     case 'elevator': return [n.busy ? 'WAIT' : /down/.test(l) ? 'GO DOWN' : /call/.test(l) ? 'CALL ELEVATOR' : 'GO UP', L];
     case 'sit': return [n.item && n.item.up ? 'STAND UP' : 'SIT', (n.item && n.item.name) || 'Bench'];
@@ -267,6 +356,8 @@ function actionWords(n) {
     case 'goto': return ['TAKE ME THERE', L];
     case 'signpost': return ['WHERE TO?', 'Signpost · the park'];
     case 'piano': return ['PLAY PIANO', 'Grand piano · Academy of Music'];
+    case 'colour': return ['COLOUR', L.replace(/^Colour Inside the Lines · /, '') + ' · Colour inside the lines'];
+    case 'chess': return ['PLAY CHESS', L.replace(/^Play chess · /, '') + ' · Talking Chess'];
     case 'drums': return ['PLAY DRUMS', 'Drum kit · Academy of Music'];
     case 'guitar': return ['PLAY GUITAR', 'Electric guitar · Academy of Music'];
     case 'comment': return ['LEAVE A COMMENT', 'Comment spot · ' + ((n.item && n.item.spot && n.item.spot.name) || '')];
@@ -310,13 +401,16 @@ function open(n) {
   if (n.kind === 'goto') { G.campus && G.campus.go(n.item.to); return; }
   if (n.kind === 'signpost') { openSignpost(); return; }
   if (n.kind === 'piano') { if (window.PIANO) window.PIANO.open(); return; }
+  if (n.kind === 'colour') { if (window.COLOUR) window.COLOUR.open(n.item); return; }
+  if (n.kind === 'chess') { if (window.CHESS) window.CHESS.open(n.item); return; }
+  if (n.kind === 'paint') { if (window.PAINT) window.PAINT.open(); return; }
   if (n.kind === 'drums' || n.kind === 'guitar') { if (window.PIANO && window.PIANO.isOpen()) window.PIANO.close(false); if (window.BAND) window.BAND.open(n.kind); return; }
   if (n.kind === 'note') { if (window.NOTES) window.NOTES.openSpot(n.item); return; }
   if (n.kind === 'comment') { if (window.NOTES) window.NOTES.openCompose(n.item.spot); return; }
   quoteStop(); bioScrollStop();
   const pb = $('pb'); pb.innerHTML = ''; pb.scrollTop = 0;
   if (n.kind === 'art') {
-    const a = n.item; $('pk').textContent = a.bio ? 'Meet the artist' : 'Artwork'; $('pt').textContent = a.title || 'Untitled';
+    const a = n.item; setTimeout(() => window.PUZZLE && window.PUZZLE.button(a, pb), 0); $('pk').textContent = a.bio ? 'Meet the artist' : 'Artwork'; $('pt').textContent = a.title || 'Untitled';
     pb.innerHTML = '<div class="art"><div>' + (a.img ? '<img src="' + a.img.replace('/img-m/', '/img/') + '" alt="' + esc(a.imgDesc || a.title) + '">' : '') + '</div><div>' + para(a.desc) +
       (a.imgDesc ? '<div class="lab">Image description</div>' + para(a.imgDesc) : '') +
       '<div class="row">' + (a.au ? '<button id="hq" data-l="' + esc(voiceLabel(a)) + '">▶ ' + esc(voiceLabel(a)) + '</button>' : '') + '<button id="rd">🔊 Read aloud</button>' + (a.imgDesc ? '<button id="rdd">🔊 Describe the image</button>' : '') + '</div></div></div>';
@@ -381,7 +475,7 @@ function quotePlay(url, btn, after) {
   if (quoteBtn === btn && !quoteAu.paused) { quoteStop(); return; }
   quoteStop(); if (synth) synth.cancel(); speaking = null; document.querySelectorAll('#pb .on').forEach(b => b.classList.remove('on'));
   quoteBtn = btn; quoteAfter = after || null; btn.classList.add('on'); btn.textContent = '■ Stop';
-  if (!quoteAu.src.endsWith(url)) quoteAu.src = url; quoteAu.currentTime = 0;
+  url = window.GMEDIA(url); if (!quoteAu.src.endsWith(url)) quoteAu.src = url; quoteAu.currentTime = 0;
   quoteAu.play().catch(() => quoteStop());
 }
 quoteAu.onended = () => { const f = quoteAfter; quoteStop(); if (f) f(); };
@@ -406,7 +500,7 @@ function placeRows(wrap, canWalk) {
   for (const D of G.campus.dests) {
     const row = document.createElement('div'); row.style.cssText = 'display:flex;gap:8px;margin:8px 0;align-items:stretch';
     const b = document.createElement('button'); b.style.cssText = 'flex:1;min-height:64px;display:flex;align-items:center;gap:12px;padding:8px 14px;border:2px solid var(--ink);background:var(--card);color:var(--ink);text-align:left;cursor:pointer';
-    b.innerHTML = '<span aria-hidden="true" style="font:800 28px var(--font);color:#ec3013;width:34px;text-align:center">' + D.icon + '</span><span><b style="display:block;font:800 15px/1.2 var(--font);letter-spacing:.06em">' + D.label + '</b><small style="font:500 13px var(--font);color:#b9b4b4">' + D.sub + (canWalk ? '' : ' · tap to go') + '</small></span>';
+    b.innerHTML = '<span aria-hidden="true" style="font:800 28px var(--font);color:#ec3013;width:34px;flex:none;text-align:center">' + D.icon + '</span><span style="flex:1;min-width:0;overflow-wrap:anywhere"><b style="display:block;font:800 15px/1.2 var(--font);letter-spacing:.06em">' + D.label + '</b><small style="display:block;font:500 13px/1.3 var(--font);color:#b9b4b4">' + D.sub + (canWalk ? '' : ' · tap to go') + '</small></span>';
     b.setAttribute('aria-label', (canWalk ? 'Walk to ' : 'Go to ') + D.label.toLowerCase() + ', ' + D.sub);
     b.onclick = () => { close(); if (canWalk) walkWith(D); else G.campus.go(D.to); };
     row.appendChild(b);
@@ -443,11 +537,68 @@ function openCommentSpots() {
   }
   showPanel('Your comments here 🙂', 'Comment spots', wrap);
 }
-function openMap() {
+// (28 Oct, Ben) THE MUSEUM MAP: every room of the big gallery, tap one to go straight there (a quick fade). Up = west, like the park map.
+const ROOMS_IN = [
+  { k: 'eye', label: 'ENTRANCE · THE EYE', sub: 'Welcome hall + Wall of Why', at: { x: -50, y: -3.0, z: 0, face: -Math.PI / 2 }, r: [-66, -13, -15, 15], fill: '#f3efe8', ink: '#1d1c1b' },
+  { k: 'main', label: 'MAIN GALLERY', sub: 'The big screen + the artists', at: { x: -80, y: -3.0, z: 0, face: -Math.PI / 2 }, r: [-145, -66, -22, 22], fill: '#1d2a6b' },
+  { k: 'wingN', label: 'NEW ARTISTS · NORTH', sub: 'Seven new artists', at: { x: -69.9, y: -2.9, z: 28, face: 0, wing: true }, r: [-80.9, -58.9, 22, 86], fill: '#3d4046' },
+  { k: 'wingS', label: 'NEW ARTISTS · SOUTH', sub: 'Community photos', at: { x: -69.9, y: -2.9, z: -38, face: Math.PI, wing: true }, r: [-80.9, -58.9, -95.8, -31.8], fill: '#3d4046' },
+  { k: 'sim', label: 'VISION SIMULATOR', sub: 'The Six Views wall', at: { x: -149, y: -3.0, z: 0, face: -Math.PI / 2 }, r: [-177, -146, -22, 22], fill: '#6b6661' },
+  { k: 'music', label: 'MUSIC ROOM', sub: 'The eye-shaped room + the lift', at: { x: -194, y: -3.0, z: 0, face: -Math.PI / 2 }, ell: [-208, 0, 14, 26], fill: '#152a6b' },
+  { k: 'top', label: 'THE EYE PLATFORM', sub: 'Top floor, over the music room', at: { x: -201.2, y: 15.0, z: -0.5, face: -Math.PI / 2 }, fill: '#22b8b0', ink: '#1d1c1b' },
+  { k: 'zen', label: 'MEDITATE WITH MORTEN', sub: 'The quiet garden', at: { x: -250.0, y: -3.0, z: 2.0, face: -0.5 }, r: [-264, -246, -6, 33.5], fill: '#5f6e52' },
+];
+function openMuseumMap() {
+  // (28 Oct, Ben: "polish the map") laid out the way you walk it: the entrance on the right, deeper rooms to the left, north up.
+  // Every room has a big number, the same number as its row in the list; the room you're in is ringed in red.
+  const [px, py, pz, pf] = G.localState();
+  const X = x => x + 268, Y = z => 96 - z;   // x -268..-10 -> 0..258 across, z 96..-100 -> 0..196 down
+  const inR = R => R.k === 'top' ? py > 10 && Math.hypot(px + 205.6, pz + 0.5) < 8 : py < 10 && (R.r ? px >= R.r[0] && px <= R.r[1] && pz >= R.r[2] && pz <= R.r[3] : R.ell ? ((px - R.ell[0]) / R.ell[2]) ** 2 + ((pz - R.ell[1]) / R.ell[3]) ** 2 <= 1 : false);
+  const here = ROOMS_IN.find(inR) || null;
+  const ctr = R => R.r ? [(R.r[0] + R.r[1]) / 2, (R.r[2] + R.r[3]) / 2] : R.ell ? [R.ell[0], R.ell[1]] : [-205.6, 0];
+  const shape = (R, i) => { const on = R === here, st = on ? '#ec3013' : '#f3f2f2', sw = on ? 3 : 1.4;
+    const body = R.r ? `<rect x="${X(R.r[0])}" y="${Y(R.r[3])}" width="${R.r[1] - R.r[0]}" height="${R.r[3] - R.r[2]}" fill="${R.fill}" stroke="${st}" stroke-width="${sw}"/>`
+      : R.ell ? `<ellipse cx="${X(R.ell[0])}" cy="${Y(R.ell[1])}" rx="${R.ell[2]}" ry="${R.ell[3]}" fill="${R.fill}" stroke="${st}" stroke-width="${sw}"/>`
+      : `<path d="M${X(-205.6)} ${Y(0) - 38} L${X(-205.6)} ${Y(-0.5) - 8}" stroke="${R.fill}" stroke-width="1.4" stroke-dasharray="2 2"/><circle cx="${X(-205.6)}" cy="${Y(-0.5)}" r="7.5" fill="none" stroke="${on ? '#ec3013' : R.fill}" stroke-width="${on ? 3.4 : 2.6}" stroke-dasharray="3 2"/>`;
+    const [cx, cz] = ctr(R), nx = R.r ? X(R.r[0]) + 10 : R.k === 'top' ? X(-205.6) : X(cx), ny = R.r ? Y(R.r[3]) + 10 : R.k === 'top' ? Y(0) - 46 : Y(cz) + 12;   // (numbers in each room's top-left corner, so the yellow arrow never hides one; the platform's number sits just outside the ring)
+    return `<g class="mr" data-k="${R.k}" role="button" tabindex="0" aria-label="${i + 1}: ${R.label}${on ? ', you are here' : ''}" style="cursor:pointer">${body}<circle cx="${nx}" cy="${ny}" r="7.6" fill="${on ? '#ec3013' : '#f3f2f2'}" stroke="#1d1c1b" stroke-width="1.6"/><text x="${nx}" y="${ny + 3.6}" text-anchor="middle" font-size="10.5" font-weight="800" fill="${on ? '#fff' : '#1d1c1b'}" font-family="Archivo, Arimo, sans-serif" pointer-events="none">${i + 1}</text></g>`; };
+  const inside = px < -13, mx = X(Math.max(-268, Math.min(-10, px))), my = Y(Math.max(-100, Math.min(96, pz)));
+  const you = inside ? `<g transform="translate(${mx} ${my}) rotate(${(90 - pf * 180 / Math.PI).toFixed(0)})" pointer-events="none"><circle r="5.2" fill="#ffd23a" stroke="#1d1c1b" stroke-width="1.6"/><path d="M0 -11 L3.8 -4.4 L-3.8 -4.4 Z" fill="#ffd23a" stroke="#1d1c1b" stroke-width="1"/></g>` : '';
+  const svg = `<svg viewBox="-4 -4 266 204" style="display:block;width:100%;background:#141312;border:2px solid var(--ink)" role="img" aria-label="Map of the museum. The entrance is on the right; walking in you pass the main gallery with the New Artists Wing to the north and south, then the vision simulator, the round music room with the eye platform above it, and Meditate with Morten at the far left.">
+    <circle cx="${X(-210)}" cy="${Y(0)}" r="36" fill="#232120" stroke="#5a5654" stroke-width="1.2"/>
+    <path d="M${X(-43)} ${Y(0)} L${X(-13)} ${Y(0)}" stroke="#5fc6d8" stroke-width="7"/>
+    <text x="${X(-12)}" y="${Y(-10)}" text-anchor="end" font-size="6.5" font-weight="800" fill="#5fc6d8" font-family="Archivo, Arimo, sans-serif" letter-spacing=".8">IN ›</text>
+    ${ROOMS_IN.map(shape).join('')}
+    <text x="2" y="9" font-size="6.5" font-weight="800" fill="#cfcaca" font-family="Archivo, Arimo, sans-serif" letter-spacing=".8">N ↑</text>
+    ${you}
+  </svg>`;
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:14px;align-items:start';
+  const left = document.createElement('div'); left.innerHTML = svg;
+  const p = document.createElement('p'); p.style.cssText = 'margin:8px 0 0;font:600 13px/1.4 var(--font);color:#cfcaca';
+  p.innerHTML = (inside ? '<b style="color:#ffd23a">Yellow arrow = you.</b> ' : '') + 'Tap a room on the map or in the list to go straight there.'; left.appendChild(p);
+  const list = document.createElement('div'); list.style.cssText = 'display:grid;gap:6px';
+  const go = R => { close(); G.goSpot(R.at); $('live').textContent = 'Going to ' + R.label.toLowerCase() + '.'; };
+  ROOMS_IN.forEach((R, i) => { const on = R === here, b = document.createElement('button');
+    b.style.cssText = 'width:100%;min-height:56px;display:flex;align-items:center;gap:12px;padding:6px 12px 6px 6px;border:2px solid ' + (on ? '#ec3013' : 'var(--ink)') + ';background:' + (on ? '#3a2723' : 'transparent') + ';color:var(--ink);text-align:left;cursor:pointer';
+    b.innerHTML = '<span aria-hidden="true" style="width:40px;height:40px;flex:none;display:flex;align-items:center;justify-content:center;background:' + R.fill + ';border:2px solid ' + (on ? '#ec3013' : '#f3f2f2') + ';font:800 18px var(--font);color:' + (R.ink || '#fff') + '">' + (i + 1) + '</span><span style="flex:1;min-width:0"><b style="display:block;font:800 13px/1.2 var(--font);letter-spacing:.06em">' + R.label + '</b><span style="font:600 12px/1.3 var(--font);color:#cfcaca">' + R.sub + '</span></span>' + (on ? '<span style="flex:none;font:800 10px var(--font);letter-spacing:.12em;color:#fff;background:#ec3013;padding:4px 6px">YOU ARE HERE</span>' : '<span aria-hidden="true" style="flex:none;font:800 16px var(--font);color:#ffd23a">›</span>');
+    b.setAttribute('aria-label', (i + 1) + ': go to ' + R.label.toLowerCase() + ', ' + R.sub + (on ? '. You are here.' : ''));
+    b.onmouseenter = () => { if (!on) b.style.background = '#3a2723'; }; b.onmouseleave = () => { if (!on) b.style.background = 'transparent'; };
+    b.onclick = () => go(R); list.appendChild(b); });
+  const sw = document.createElement('button'); sw.textContent = '← The park map'; sw.style.cssText = 'width:100%;min-height:48px;margin-top:4px;padding:0 14px;border:2px solid var(--ink);background:none;color:var(--ink);font:800 12px var(--font);letter-spacing:.08em;text-transform:uppercase;cursor:pointer';
+  sw.onclick = () => openMap(true); list.appendChild(sw);
+  wrap.append(left, list);
+  left.querySelectorAll('.mr').forEach(g => { const R = ROOMS_IN.find(r => r.k === g.dataset.k); g.onclick = () => go(R); g.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(R); } }; });
+  showPanel('Fast travel · inside the museum', 'Where to?', wrap);
+}
+function openMap(forcePark) {
+  if (!forcePark && G.localState()[0] < -13) { openMuseumMap(); return; }   // inside the museum: its own map first
   const [px, pz, pf] = G.localState(), inPark = !!G.campus.zone();
   // map: up = west (towards the museum), left = north; 1 unit = 1 metre; world x -46..94 -> y, z 60..-60 -> x
   const X = z => 60 - z, Y = x => x + 46;
-  const bld = (to, x0, x1, z0, z1, fill, label, ink = '#fff') => `<g class="mb" data-to="${to}" role="button" tabindex="0" aria-label="${label.replace('|', ' ')}" style="cursor:pointer"><rect x="${X(z1)}" y="${Y(x0)}" width="${z1 - z0}" height="${x1 - x0}" fill="${fill}" stroke="#1d1c1b" stroke-width="1.2"/><text x="${X((z0 + z1) / 2)}" y="${Y((x0 + x1) / 2) + 2.2 - (label.split('|').length - 1) * 3.2}" text-anchor="middle" font-size="6.2" font-weight="800" fill="${ink}" font-family="Archivo, Arimo, sans-serif">${label.split('|').map((l, i) => `<tspan x="${X((z0 + z1) / 2)}" dy="${i ? 6.4 : 0}">${l}</tspan>`).join('')}</text></g>`;
+  const bld = (to, x0, x1, z0, z1, fill, label, ink = '#fff') => { const L = label.split('|'), w = z1 - z0, hh = x1 - x0, M = 2.4;   // (Ben) the text always fits inside its box with a margin
+    const fs = Math.min(6.2, (w - M * 2) / (Math.max(...L.map(l => l.length)) * 0.72), (hh - M * 2) / (L.length * 1.1)), lh = fs * 1.1, cy = Y((x0 + x1) / 2) - (L.length - 1) * lh / 2 + fs * 0.36;
+    return `<g class="mb" data-to="${to}" role="button" tabindex="0" aria-label="${label.replace('|', ' ')}" style="cursor:pointer"><rect x="${X(z1)}" y="${Y(x0)}" width="${w}" height="${hh}" fill="${fill}" stroke="#1d1c1b" stroke-width="1.2"/><text x="${X((z0 + z1) / 2)}" y="${cy.toFixed(2)}" text-anchor="middle" font-size="${fs.toFixed(2)}" font-weight="800" letter-spacing=".2" fill="${ink}" font-family="Archivo, Arimo, sans-serif" pointer-events="none">${L.map((l, i) => `<tspan x="${X((z0 + z1) / 2)}" dy="${i ? lh.toFixed(2) : 0}">${l}</tspan>`).join('')}</text></g>`; };
   const mx = Math.max(5, Math.min(115, X(pz))), my = Math.max(5, Math.min(137, Y(px)));   // (in the museum's far rooms you sit on the map's top edge)
   const you = `<g transform="translate(${mx} ${my}) rotate(${(-pf * 180 / Math.PI - 90).toFixed(0)})"><circle r="4.2" fill="#ec3013" stroke="#fff" stroke-width="1.4"/><path d="M0 -8.5 L3 -3.6 L-3 -3.6 Z" fill="#ec3013"/></g>`;
   const svg = `<svg viewBox="0 0 120 142" style="display:block;width:100%;max-width:440px;margin:0 auto 6px;background:#24301f;border:2px solid var(--ink)" role="img" aria-label="Map of the park: the museum at the top, BLIND CAN Cinema at the bottom, the WHY House on the left, the Academy of Music on the right, the big tree in the middle">
@@ -458,10 +609,12 @@ function openMap() {
     <rect x="${X(9.7)}" y="${Y(12)}" width="7" height="3" fill="#5fc6d8"/>
     ${bld('museum', -44, -13, -24, 24, '#f3efe8', 'THE MUSEUM', '#1d1c1b')}
     ${bld('why', 31, 49, 25, 41, '#efe4cf', 'WHY|HOUSE', '#1d1c1b')}
-    ${bld('amb', 30.6, 49.4, -57.4, -23.6, '#1d1c1b', 'ACADEMY')}
+    ${bld('amb', 30.6, 49.4, -57.4, -23.6, '#1d1c1b', 'ACADEMY|OF MUSIC')}
     ${bld('amb', 49.4, 69.8, -48.4, -31.6, '#3d4046', 'STAGE')}
-    ${bld('cinema', 74, 90, -11, 11, '#7e3328', 'CINEMA')}
+    ${bld('cinema', 74, 92, -11, 11, '#7e3328', 'CINEMA')}
     <circle cx="${X(2.1)}" cy="${Y(29.6)}" r="1.6" fill="#9a6a3c"/>
+    ${bld('chess', -4.5, 8.5, 36.5, 58.5, '#1d1c1b', 'TALKING|CHESS')}
+    ${bld('paint', -4.5, 8.5, -58.5, -36.5, '#ec3013', 'PAINT|TOGETHER')}
     ${(G.comments ? G.comments.list : []).filter(S => Y(S.x) > 2 && Y(S.x) < 140).map(S => `<g class="cs" data-id="${S.id}" role="button" tabindex="0" aria-label="Comment spot: ${S.name}" style="cursor:pointer"><rect x="${(X(S.z) - 2.6).toFixed(1)}" y="${(Y(S.x) - 2.6).toFixed(1)}" width="5.2" height="5.2" fill="#f6c443" stroke="#1d1c1b" stroke-width="1"/><circle cx="${(X(S.z) - 0.9).toFixed(1)}" cy="${(Y(S.x) - 0.6).toFixed(1)}" r=".45" fill="#1d1c1b"/><circle cx="${(X(S.z) + 0.9).toFixed(1)}" cy="${(Y(S.x) - 0.6).toFixed(1)}" r=".45" fill="#1d1c1b"/><path d="M${(X(S.z) - 1.3).toFixed(1)} ${(Y(S.x) + 0.6).toFixed(1)} q1.3 1.3 2.6 0" stroke="#1d1c1b" stroke-width=".55" fill="none"/></g>`).join('')}
     ${you}
   </svg>`;
@@ -472,6 +625,8 @@ function openMap() {
   wrap.querySelectorAll('.mb').forEach(g => { const go = () => { const D = G.campus.dests.find(d => d.to === g.dataset.to); close(); if (inPark) walkWith(D); else G.campus.go(D.to); };
     g.onclick = go; g.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } }; });
   wrap.querySelectorAll('.cs').forEach(g => { const go = () => { close(); G.comments.go(g.dataset.id); }; g.onclick = go; g.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } }; });
+  { const sw = document.createElement('button'); sw.textContent = 'Inside the museum: every room →'; sw.style.cssText = 'width:100%;min-height:52px;margin-top:8px;padding:0 14px;border:2px solid #ec3013;background:#ec3013;color:#fff;font:800 12px var(--font);letter-spacing:.08em;text-transform:uppercase';
+    sw.onclick = openMuseumMap; wrap.appendChild(sw); }
   showPanel('The park', 'Map', wrap);
 }
 // SHOWTIME: a minute before each show, everyone who isn't already in the cinema gets a nudge (at most every half hour)
@@ -504,22 +659,49 @@ const syncMenu = () => {
   document.querySelectorAll('#looks button').forEach(b => b.classList.toggle('on', b.dataset.l === (pref.look || 'male')));
   document.querySelectorAll('#extras button').forEach(b => b.classList.toggle('on', b.dataset.x === (pref.extra || 'none')));
   document.querySelectorAll('#who button').forEach(b => b.classList.toggle('on', (pref.extra === 'cane' || pref.extra === 'chair') && b.dataset.w === whoOf()));
-  $('ambBtn').classList.toggle('on', !pref.quietAmb); $('nightBtn').classList.toggle('on', !!pref.night); $('nightBtn').textContent = pref.night ? '☀️ Day' : '🌙 Night';
+  $('ambBtn').classList.toggle('on', !pref.quietAmb); $('nightBtn').classList.toggle('on', skyNow() !== 'golden'); $('nightBtn').textContent = SKY_LABEL[SKY_NEXT[skyNow()]];
   $('voices').classList.toggle('on', !pref.noVoices); $('autoRead').classList.toggle('on', !!pref.autoRead); $('readNotes').classList.toggle('on', !pref.quietNotes); $('big').classList.toggle('on', !!pref.big);
   document.documentElement.style.fontSize = pref.big ? '120%' : ''; $('pb').style.fontSize = pref.big ? '20px' : '';
 };
 $('mapBtn').onclick = () => { if (G.campus) openMap(); };
-$('menuBtn').onclick = () => { const m = $('menu'); m.style.display = m.style.display === 'block' ? 'none' : 'block'; syncMenu(); };
+$('placeBox').onclick = () => { if (G.campus) { $('menu').style.display = 'none'; openMap(); } };
+$('placeBox').onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('placeBox').click(); } };
+$('menuBtn').onclick = () => { const m = $('menu'); $('camToast').style.display = 'none'; m.style.display = m.style.display === 'block' ? 'none' : 'block'; syncMenu(); syncHost(); };
+// (28 Oct, Ben) host mode is locked: password BCP (any case). Unlocked for this tab only. Hosting controls stay hidden until then.
+let HOST_OK = (() => { try { return sessionStorage.getItem('bcp.hostOk') === '1'; } catch (e) { return false; } })();
+function syncHost() { const me = window.TOG && window.TOG.host() === 'me';
+  $('hostLock').style.display = HOST_OK || me ? 'none' : ''; $('hostOpts').style.display = HOST_OK || me ? '' : 'none'; if (HOST_OK || me) $('hostPw').style.display = 'none'; }
+$('hostOpen').onclick = () => { $('hostPw').style.display = ''; $('hostLock').style.display = 'none'; $('hostErr').textContent = ''; $('hostIn').value = ''; setTimeout(() => $('hostIn').focus(), 30); };
+const hostTry = () => { if ($('hostIn').value.trim().toUpperCase() === 'BCP') { HOST_OK = true; try { sessionStorage.setItem('bcp.hostOk', '1'); } catch (e) {} $('hostErr').textContent = ''; syncHost(); $('live').textContent = 'Host mode unlocked.'; }
+  else { $('hostErr').textContent = 'That password is not right.'; $('hostIn').select(); } };
+$('hostGo').onclick = hostTry; $('hostIn').onkeydown = e => { e.stopPropagation(); if (e.key === 'Enter') hostTry(); if (e.key === 'Escape') { $('hostPw').style.display = 'none'; syncHost(); } };
+$('hostIn').onkeyup = e => e.stopPropagation();
+// the CAM button beside the mic: opens the three camera choices (and Camera off)
+const camSync = () => { if (camWait && /…/.test($('topCam').textContent)) return; const on = !!(window.CAMHEAD && window.CAMHEAD.mode() === 'screen'), b = $('topCam');
+  b.classList.toggle('on', on); tbSet(b, on ? 'cam' : 'camOff', on ? 'CAM ON' : 'CAM'); b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.setAttribute('aria-label', on ? 'Screen head on. Tap to turn your camera off' : "Screen head off. Tap to wear your camera as your fox's head"); };
+$('topCam').onclick = () => { if (!window.CAMHEAD || !window.CAMHEAD.supported) { camToast('This browser cannot share a camera here.', 5000); return; }
+  if (window.CAMHEAD.mode() === 'screen') { clearInterval(camWait); camWait = null; window.CAMHEAD.stop(); $('camToast').style.display = 'none'; setTimeout(camSync, 50); return; }
+  if (window.FACE && window.FACE.on()) window.FACE.stop(); window.CAMHEAD.start('screen'); camStarting(); };
+// (28 Oct, Ben) CAM = SCREEN HEAD only, a toggle like the mic. If the browser blocks the camera, a box under the bar says so.
+let camWait = null;
+function camToast(html, ms) { const m = $('camToast'); m.innerHTML = html; m.style.display = 'block'; clearTimeout(m._t); if (ms) m._t = setTimeout(() => m.style.display = 'none', ms); }
+function camStarting() { clearInterval(camWait); const t0 = Date.now(), live0 = $('live').textContent; tbSet($('topCam'), 'cam', 'CAM …');
+  camWait = setInterval(() => { const on = window.CAMHEAD && window.CAMHEAD.mode() === 'screen', lv = $('live').textContent;
+    if (on) { clearInterval(camWait); $('camToast').style.display = 'none'; camSync(); return; }
+    if ((lv !== live0 && /block|denied|not allowed|no camera|could not|couldn|unavailable|failed/i.test(lv)) || Date.now() - t0 > 12000) { clearInterval(camWait); camWait = null; camSync();
+      camToast('<b style="display:block;font:800 12px var(--font);letter-spacing:.1em;margin-bottom:4px">CAMERA BLOCKED</b>Your browser did not let the gallery use the camera. Tap the camera or lock icon by the web address, choose Allow, then tap CAM again.' + (window !== window.top ? ' If the gallery is open inside another page, open it in its own tab.' : ''), 12000); } }, 300); }
+$('camOff').onclick = () => { if (window.FACE && window.FACE.on()) window.FACE.stop(); if (window.CAMHEAD && window.CAMHEAD.mode()) window.CAMHEAD.stop(); $('camPop').style.display = 'none'; setTimeout(camSync, 50); };
+setInterval(camSync, 1000);
 document.querySelectorAll('#looks button').forEach(b => b.onclick = () => { pref.look = b.dataset.l; savePref(); G.setLook(pref.look, pref.extra); syncMenu(); });
 document.querySelectorAll('#extras button').forEach(b => b.onclick = () => { pref.extra = b.dataset.x; savePref(); G.setLook(pref.look || 'male', pref.extra); syncMenu(); });
 // (27 Oct) Joe and Jane: Joe is the suited fox with his cane, Jane the vixen in her chair (the Fox Studio's art tee stays on Joe if chosen)
 function whoOf() { return pref.extra === 'chair' ? 'jane' : 'joe'; }
-function WHO(w) { if (w === 'jane') { pref.look = 'female'; pref.extra = 'chair'; } else { pref.look = pref.look === 'wrap' ? 'wrap' : 'suit'; pref.extra = 'cane'; } savePref(); G.setLook(pref.look, pref.extra); syncMenu(); }
+function WHO(w) { if (w === 'jane') { pref.look = 'female'; pref.extra = 'chair'; } else { pref.look = pref.look === 'wrap' || pref.look === 'wraptee' ? pref.look : 'suit'; pref.extra = 'cane'; } savePref(); G.setLook(pref.look, pref.extra); syncMenu(); }
 document.querySelectorAll('#who button').forEach(b => b.onclick = () => WHO(b.dataset.w));
 $('autoRead').onclick = () => { pref.autoRead = !pref.autoRead; savePref(); syncMenu(); };
 $('voices').onclick = () => { pref.noVoices = !pref.noVoices; savePref(); syncMenu(); if (pref.noVoices) quoteStop(); };
 $('ambBtn').onclick = () => { pref.quietAmb = !pref.quietAmb; savePref(); if (window.SOUND) window.SOUND.set(!pref.quietAmb); syncMenu(); };
-$('nightBtn').onclick = () => { pref.night = !pref.night; savePref(); G.setNight(pref.night); $('live').textContent = pref.night ? 'Night falls over the city.' : 'Back to golden afternoon light.'; syncMenu(); };
+$('nightBtn').onclick = () => { pref.sky = SKY_NEXT[skyNow()]; pref.night = pref.sky === 'night'; savePref(); G.setSky(pref.sky); $('live').textContent = { golden: 'Golden hour. The lamps come on.', night: 'Night falls over the city.', day: 'Back to bright afternoon light.' }[pref.sky]; syncMenu(); };
 $('readNotes').onclick = () => { pref.quietNotes = !pref.quietNotes; savePref(); syncMenu(); };
 $('big').onclick = () => { pref.big = !pref.big; savePref(); syncMenu(); };
 $('home').onclick = () => { G.respawn(); $('menu').style.display = 'none'; };
@@ -531,18 +713,25 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
   const announce = t => { $('live').textContent = t; };
   const refresh = () => {
     const n = G.remote.count();
-    $('who').textContent = net === null ? 'Connecting…' : status === 'offline' ? 'Just you (offline)' : n ? (n + 1) + ' foxes here' : 'Just you here · invite a friend';
+    $('who').textContent = ''; $('who').style.display = 'none';   // (28 Oct, Ben) the foxes-here count is gone from the top bar   // (28 Oct, Ben) the map line moved above the room name; this only shows when others are here
     const sig = (pref.name || '') + '|' + G.remote.list().map(p => p.id + p.name + p.placed + (G.following() === p.id) + (window.VOICE && window.VOICE.isOn(p.id)) + (window.TOG && window.TOG.host() === p.id)).join(',');
     if (sig !== whoSig && window.TOG) { whoSig = sig; window.TOG.whoRows($('whoList'), pref.name); }
     $('tourBtn').textContent = window.TOG && window.TOG.leading() ? 'End my tour' : 'Lead a tour'; $('tourBtn').style.display = window.TOG && (window.TOG.host() === 'me' || window.TOG.leading()) ? '' : 'none';   // (22 Oct) tours are for the host
+    if (typeof syncHost === 'function') syncHost();
     if (window.TOG) { const h = window.TOG.host(); $('hostBtn').textContent = h === 'me' ? 'Stop hosting' : h ? '⭐ ' + (names.get(h) || 'Someone') + ' is hosting' : 'Host this visit'; $('hostBtn').disabled = !!h && h !== 'me'; }
   };
   let status = 'connecting', net = null, entered = false, whoSig = '';
+  // (28 Oct, Ben) ONE shared clock for the hunt, bingo and the paint canvas: it starts when the first fox comes in; everyone after
+  // takes the oldest clock in the room; when the gallery is empty the next fox starts a fresh one
+  window.GSES = { e: Date.now(),
+    slot(ms) { return (Math.floor(this.e / 1000) % 100000) * 100 + Math.floor((Date.now() - this.e) / ms); },
+    left(ms) { return ms - ((Date.now() - this.e) % ms); },
+    onEvent(id, d) { if (!d || d.k !== 'ses') return; if (d.a === 'ask') net.event({ k: 'ses', e: this.e }, id); else if (d.e > 0 && d.e < this.e) this.e = d.e; } };
   net = await connectGallery({
-    onJoin: id => {},
-    onLeave: id => { const nm = names.get(id); if (G.following() === id) G.unfollow(); G.remote.remove(id); names.delete(id); if (window.TOG) window.TOG.onLeave(id); if (window.LIVE) window.LIVE.onLeave(id); if (window.CAMHEAD) window.CAMHEAD.onLeave(id); if (nm) announce(nm + ' left the gallery'); if (window.VOICE) window.VOICE.onLeave(id); refresh(); },
+    onJoin: id => { if (net) net.event({ k: 'ses', e: window.GSES.e }, id); if (window.BINGO) window.BINGO.onJoin(id); },
+    onLeave: id => { if (window.BINGO) window.BINGO.onLeave(id); if (window.CHESS) window.CHESS.onLeave(id); const nm = names.get(id); if (G.following() === id) G.unfollow(); G.remote.remove(id); names.delete(id); if (window.TOG) window.TOG.onLeave(id); if (window.LIVE) window.LIVE.onLeave(id); if (window.CAMHEAD) window.CAMHEAD.onLeave(id); if (nm) announce(nm + ' left the gallery'); if (window.VOICE) window.VOICE.onLeave(id); refresh(); },
     onState: (id, st, prof) => { if (prof && !prof.name) prof = null; if (!prof && !names.has(id) && !st) return; const isNew = !names.has(id) && prof; G.remote.upsert(id, st, prof); if (prof) { names.set(id, prof.name); if (isNew) { announce(prof.name + ' joined the gallery'); if (entered) { net && net.hello(me()); if (window.TOG) window.TOG.onNewPeer(id); if (window.VOICE) window.VOICE.onNewPeer(id); if (window.LIVE) window.LIVE.onNewPeer(id); if (window.CAMHEAD) window.CAMHEAD.onNewPeer(id); } } } refresh(); },
-    onEvent: (id, d) => { if (window.PIANO) window.PIANO.onEvent(id, d); if (window.BAND) window.BAND.onEvent(id, d); if (window.CAMHEAD) window.CAMHEAD.onEvent(id, d); if (window.LIVE) window.LIVE.onEvent(id, d); if (window.FACE) window.FACE.onEvent(id, d); if (window.TOG) window.TOG.onEvent(id, d); if (window.VOICE) window.VOICE.onEvent(id, d); if (window.NOTES) window.NOTES.onEvent(id, d); },
+    onEvent: (id, d) => { window.GSES.onEvent(id, d); if (window.BINGO) window.BINGO.onEvent(id, d); if (window.HUNT) window.HUNT.onEvent(id, d); if (window.PAINT) window.PAINT.onEvent(id, d); if (window.PUZZLE) window.PUZZLE.onEvent(id, d); if (window.CHESS) window.CHESS.onEvent(id, d); if (window.PIANO) window.PIANO.onEvent(id, d); if (window.BAND) window.BAND.onEvent(id, d); if (window.CAMHEAD) window.CAMHEAD.onEvent(id, d); if (window.LIVE) window.LIVE.onEvent(id, d); if (window.FACE) window.FACE.onEvent(id, d); if (window.TOG) window.TOG.onEvent(id, d); if (window.VOICE) window.VOICE.onEvent(id, d); if (window.NOTES) window.NOTES.onEvent(id, d); },
     onStream: (id, stream, meta) => { if (window.CAMHEAD) window.CAMHEAD.onStream(id, stream, meta); if (window.LIVE) window.LIVE.onStream(id, stream, meta); if (window.VOICE) window.VOICE.onStream(id, stream); },
     onEmote: (id, e) => { if (e === 'wave') { G.remote.wave(id); const nm = names.get(id); if (nm) announce(nm + ' waves'); } },
     onStatus: s => { status = s; refresh(); },
@@ -551,8 +740,13 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
   window.TOG = setupTogether({ G, net, esc, announce, nameOf: id => names.get(id) || 'A visitor',
     onSev: (v, who) => { const W = G.simwall(); if (W) W.setSeverity(v / 100); const sv = $('simSev'); if (sv) { sv.value = v; $('simP').textContent = v + '%'; } announce(who + ' set the Six Views wall to ' + v + ' percent'); } });
   const { setupVoice } = await import('./engine/gallery-voice.js');
+  if (window.PUZZLE) window.PUZZLE.setNet(net); else setTimeout(() => window.PUZZLE && window.PUZZLE.setNet(net), 3000);
+  import('./engine/gallery-bingo.js').then(({ setupBingo }) => { window.BINGO = setupBingo({ G, net, announce, nameOf: id => names.get(id) || 'A friend' }); for (const id of names.keys()) window.BINGO.onJoin(id); }).catch(e => console.warn('bingo', e));
+  import('./engine/gallery-hunt.js').then(({ setupHunt }) => { window.HUNT = setupHunt({ G, net, announce, nameOf: id => names.get(id) || 'A friend' }); }).catch(e => console.warn('hunt', e));
+  import('./engine/gallery-paint.js').then(({ setupPaint }) => { window.PAINT = setupPaint({ G, net, announce, nameOf: id => names.get(id) || 'A visitor' }); }).catch(e => console.warn('paint', e));
   window.VOICE = setupVoice({ G, net, button: $('micBtn'), announce, nameOf: id => names.get(id) || 'A visitor' });
   if (G.campus) import('./engine/gallery-piano.js').then(({ setupPiano }) => { window.PIANO = setupPiano({ G, net, announce, nameOf: id => names.get(id) || 'Someone' }); });
+  if (G.chess) import('./engine/gallery-chess.js').then(({ setupChess }) => { window.CHESS = setupChess({ G, net, announce, nameOf: id => names.get(id) || 'A visitor' }); }).catch(e => console.warn('chess unavailable', e));   // (27 Oct) fox chess
   if (G.campus) import('./engine/gallery-band.js').then(({ setupBand }) => { window.BAND = setupBand({ G, net, announce, nameOf: id => names.get(id) || 'Someone' }); });
   import('./engine/gallery-notes.js').then(async ({ setupNotes }) => {
     window.NOTES = await setupNotes({ G, net, cfg: G.notesConfig, myName: () => pref.name, announce, esc, readAloud: () => !pref.quietNotes, showPanel });
@@ -562,7 +756,7 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
   window.LIVE = setupLive({ G, net, announce, nameOf: id => names.get(id) || 'A visitor', invite: (...a) => window.TOG && window.TOG.invite(...a) });
   window.FACE = setupFace({ G, net, announce, onState: st => { const b = $('faceBtn'); b.classList.toggle('on', st === 'on'); b.setAttribute('aria-pressed', st === 'on'); b.textContent = st === 'loading' ? '🦊 Starting camera…' : st === 'on' ? '🦊 Fox copies my face · ON' : '🦊 Fox copies my face (camera)'; } });
   if (!window.FACE.supported) $('faceBtn').style.display = 'none';
-  $('faceBtn').onclick = () => { if (!window.FACE.on() && window.CAMHEAD) window.CAMHEAD.stop(true); window.FACE.toggle(); $('menu').style.display = 'none'; };
+  $('faceBtn').onclick = () => { const was = window.FACE.on(); if (!was && window.CAMHEAD) window.CAMHEAD.stop(true); window.FACE.toggle(); if (was) $('camPop').style.display = 'none'; else camStarting('Fox copies my face'); };
   // wear your camera: a screen for a head, or your face as a mask (both are seen by everyone here)
   const { setupCamHead } = await import('./engine/gallery-camhead.js');
   const camLabel = { screen: ['📺 Screen head', 'tvHeadBtn'], mask: ['🎭 Face mask', 'maskBtn'] };
@@ -570,16 +764,18 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
     for (const [k, [txt, id]] of Object.entries(camLabel)) { const b = $(id), on = st === 'on' && window.CAMHEAD && window.CAMHEAD.mode() === k, ld = st === 'loading' && m === k; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); b.textContent = ld ? txt + ' · starting…' : on ? txt + ' · ON' : txt; }
   } });
   if (!window.CAMHEAD.supported) { $('tvHeadBtn').style.display = $('maskBtn').style.display = 'none'; }
-  for (const k of ['screen', 'mask']) $(camLabel[k][1]).onclick = () => { if (window.FACE.on()) window.FACE.stop(); window.CAMHEAD.start(k); $('menu').style.display = 'none'; };
+  for (const k of ['screen', 'mask']) $(camLabel[k][1]).onclick = () => { const was = window.CAMHEAD.mode() === k; if (window.FACE.on()) window.FACE.stop(); window.CAMHEAD.start(k); if (was) $('camPop').style.display = 'none'; else camStarting(camLabel[k][0].replace(/^\S+\s/, '')); };
   document.addEventListener('visibilitychange', () => { if (document.hidden && window.CAMHEAD.mode()) window.CAMHEAD.stop(); });   // never send your camera from a background tab
-  $('hostBtn').onclick = () => { window.TOG.claimHost(window.TOG.host() !== 'me'); $('menu').style.display = 'none'; refresh(); };
+  $('hostBtn').onclick = () => { window.TOG.claimHost(window.TOG.host() !== 'me'); $('menu').style.display = 'none'; refresh(); syncHost(); };
   $('tourBtn').onclick = () => { window.TOG.leadTour(!window.TOG.leading()); $('menu').style.display = 'none'; refresh(); };
   const me = () => ({ name: pref.name, look: pref.look || 'male', extra: pref.extra || 'none', ...G.style() });
   refresh();
   await ENTERED; entered = true;
   // the first visitor in the room is Ben's fox; everyone after gets their own fur colours and a different artwork on their shirt
-  if (!pref.style && G.remote.count() > 0) G.setStyle(G.randomStyle());   // (unless you dressed your fox in the Fox Studio)
-  net.hello(me()); refresh();
+  // (28 Oct, Ben) every visit: a new shirt artwork that no other fox in the gallery is wearing (checked again once everyone's arrived)
+  pref.style = G.randomStyle(G.remote.arts()); G.setStyle(pref.style); savePref();
+  net.hello(me()); refresh(); net.event({ k: 'ses', a: 'ask' });
+  setTimeout(() => { if (G.remote.arts().includes(G.style().art)) { pref.style = G.randomStyle(G.remote.arts()); G.setStyle(pref.style); savePref(); net.hello(me()); } }, 3500);
   // send where we are: 10 times a second while moving, once a second while standing still
   let lastSent = '', lastT = 0;
   setInterval(() => { const st = G.localState(), k = st.join(','); const now = performance.now(); if (k !== lastSent || now - lastT > 1000) { net.send(st); lastSent = k; lastT = now; } }, 100);
@@ -587,7 +783,12 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
   document.querySelectorAll('#looks button, #extras button, #who button').forEach(b => b.addEventListener('click', sendProfile));
   // the Fox Studio on the plaza: dress your fox (look, shirt art, gear, fur, camera)
   import('./engine/gallery-studio.js').then(({ setupStudio }) => {
-    window.STUDIO = setupStudio({ G, announce, at: { x: -54.0, z: 9.6 },   // in the entry hall, against the left wall
+    // (27 Oct, Ben) CHOOSE YOUR SHIRT: moved to the middle of the entry hall's north wall, turned to the wall's angle; the
+    // step-and-repeat (left) and the tall BCP banner (right, standing on the floor) beside it get ink backings
+    // (27 Oct, Ben, s13) the whole group slides west along the north wall's foot, into the empty stretch, so you see it ahead of you
+    // coming down the ramp: step-and-repeat, then the tall banner, then CHOOSE YOUR SHIRT (board standing on the floor, mannequins out front)
+    window.STUDIO = setupStudio({ G, announce, at: { x: -57.831, z: 9.625 }, face: 2.9800, lay: { bz: -3.05, by: 0.25, BH: 3.6, mz: -1.75 },
+      backings: [{"x":-47.733,"z":14.482,"y":-0.808,"w":8.35,"h":5.1,"d":0.12,"ry":-0.1616},{"x":-54.033,"z":13.455,"y":-0.19,"w":3.66,"h":6.42,"d":0.06,"ry":-0.1616}],
       getPrefs: () => ({ look: pref.look || 'male', extra: pref.extra || 'none', style: G.style() }),
       apply: ({ look, extra, style }) => {
         if (look) pref.look = look; if (extra) pref.extra = extra;
@@ -604,18 +805,17 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
   window.NET = net;
 });
 // one tap to enter: this tap is what lets the room videos (and read-aloud) play with sound from then on
-$('lt').textContent = 'Videos in each room play with sound when you walk in. Other visitors appear as foxes too.';
+$('lt').style.display = 'none';   // (28 Oct, Ben) no text under the name / button
+{ const b = document.querySelector('#load .bar'); if (b) { $('lb').style.width = '100%'; b.style.transition = 'opacity .4s'; setTimeout(() => { b.style.opacity = '0'; setTimeout(() => { b.style.display = 'none'; }, 420); }, 350); } }   // (28 Oct, Ben) the bar fills, then fades away once the gallery is ready
 $('nameRow').style.display = 'block'; $('nameIn').value = pref.name || '';
-// (27 Oct) the avatar: Joe or Jane, each shown as a portrait drawn from their own fox (remembered; more looks in ☰)
-{ const pickAv = w => { document.querySelectorAll('#avRow .av').forEach(b => b.setAttribute('aria-checked', b.dataset.x === w)); WHO(w); };
-  $('avRow').style.display = 'block'; document.querySelectorAll('#avRow .av').forEach(b => b.onclick = () => pickAv(b.dataset.x));
-  try { if (G.portrait) { $('pJoe').src = G.portrait('suit', 'cane'); $('pJane').src = G.portrait('female', 'chair'); } } catch (e) { console.warn('portraits', e); }
-  pickAv(whoOf()); }
+// (28 Oct, Ben) no avatar choice: every visit you're given Joe or Jane at random (more looks in ☰ and the Fox Studio)
+// (28 Oct, Ben) every fox starts as a cane fox in the ART SUIT (the art square on the front, the BCP logo on the back, a different art per fox); the chair is in ☰ later
+pref.look = 'suit'; WHO('joe');
 $('enter').style.display = 'block'; $('enter').focus();
 await new Promise(res => $('enter').addEventListener('click', () => {
   pref.name = ($('nameIn').value || '').trim().slice(0, 20) || ('Fox ' + Math.floor(100 + Math.random() * 900)); savePref();
   G.unlockAudio();
-  try { if (!window.SOUND) { import('./engine/gallery-sound.js').then(({ setupSound }) => { window.SOUND = setupSound({ getState: () => G.localState(), inside: (x, y, z) => x < -44, filmPlaying: () => !!G.film.url(), chair: () => (pref.extra || '') === 'chair' }); if (window.SOUND) { window.SOUND.resume(); window.SOUND.set(!pref.quietAmb); } }); } } catch (e) {}
+  try { if (!window.SOUND) { import('./engine/gallery-sound.js').then(({ setupSound }) => { window.SOUND = setupSound({ getState: () => G.localState(), inside: (x, y, z) => x < -44 || ['why', 'amb', 'cinema'].includes(G.campus && G.campus.zone()), zone: () => G.campus && G.campus.zone(), filmPlaying: () => !!G.film.url(), chair: () => (pref.extra || '') === 'chair' }); if (window.SOUND) { window.SOUND.resume(); window.SOUND.set(!pref.quietAmb); } }); } } catch (e) {}
   try { if (window.speechSynthesis) { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } } catch (e) {}
   res();
 }, { once: true }));

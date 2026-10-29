@@ -1,5 +1,6 @@
 // Blind Canvas gallery: the sound of the walk-on floor piano (22 Oct). A bright, bell-like toy-piano tone that rings while you
 // stand on the key and fades when you step off. One voice per (who, key). No samples: a few partials and a soft knock.
+import { hallVerb } from './gallery-hall.js';
 export function floorPianoSound() {
   let ac = null, out = null;
   const voices = new Map();
@@ -10,6 +11,7 @@ export function floorPianoSound() {
     out = ac.createGain(); out.gain.value = 0.7; out.connect(comp);
     const d = ac.createDelay(0.3), fb = ac.createGain(), wet = ac.createGain(); d.delayTime.value = 0.12; fb.gain.value = 0.25; wet.gain.value = 0.18;   // a little room
     out.connect(d); d.connect(fb); fb.connect(d); d.connect(wet); wet.connect(comp);
+    { const H = hallVerb(ac, { wet: 0.3 }); out.connect(H.input); H.output.connect(comp); }   // (28 Oct) the hall
     return ac;
   }
   // wake the audio on the first touch or key (browsers only start sound after a gesture)

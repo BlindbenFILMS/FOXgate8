@@ -4,6 +4,7 @@
 // (A W S E D F T G Y H U J K O L = C to E, Z / X = octave down / up). ◀ ▶ move the keyboard an octave, PEDAL holds the notes.
 // The sound is a small piano synth (no samples): a few decaying partials, a soft hammer knock, brighter when you play higher.
 // Everyone in the gallery hears what you play, softer the further they are from the piano, and sees the keys go down.
+import { hallVerb } from './gallery-hall.js';
 const FONT = 'Archivo, Arimo, Helvetica, Arial, sans-serif';
 const NAMES = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
 const SPOKEN = ['C', 'C sharp', 'D', 'D sharp', 'E', 'F', 'F sharp', 'G', 'G sharp', 'A', 'A sharp', 'B'];
@@ -24,6 +25,7 @@ export function setupPiano({ G, net, announce = () => {}, nameOf = () => 'Someon
     const d = ac.createDelay(0.2), fb = ac.createGain(), lp = ac.createBiquadFilter(), wet = ac.createGain();
     d.delayTime.value = 0.075; fb.gain.value = 0.32; lp.type = 'lowpass'; lp.frequency.value = 2400; wet.gain.value = 0.22;
     master.connect(d); d.connect(lp); lp.connect(fb); fb.connect(d); lp.connect(wet); wet.connect(comp);
+    { const H = hallVerb(ac, { wet: 0.34 }); master.connect(H.input); H.output.connect(comp); }   // (28 Oct) and the hall it stands in
     return ac;
   }
   let noiseBuf = null;

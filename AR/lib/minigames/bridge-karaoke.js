@@ -29,7 +29,8 @@ const FRAG = `
 varying vec2 vUv;
 uniform sampler2D map; uniform float uOpen, uBlink, uPop, uTalk, uT, uA, uH;
 const vec2 M = vec2(0.497, 0.706);   // the mouth line
-const vec2 J = vec2(0.497, 0.722), JR = vec2(0.062, 0.032);   // the lower lip and chin that drop
+const vec2 J = vec2(0.497, 0.724), JR = vec2(0.072, 0.044);   // the lower lip and chin that drop
+const vec2 U = vec2(0.497, 0.693), UR = vec2(0.058, 0.02);    // the upper lip, which lifts a little
 const vec2 E1 = vec2(0.415, 0.565), E2 = vec2(0.556, 0.562), ER = vec2(0.042, 0.022);
 vec3 tex(vec2 p){ return texture2D(map, vec2(clamp(p.x, 0.001, 0.999), 1.0 - clamp(p.y, 0.001, 0.999))).rgb; }
 float inHead(vec2 p){ return 1.0 - smoothstep(0.85, 1.0, length((p - vec2(0.5, 0.6)) / vec2(0.185, 0.14))); }
@@ -51,8 +52,13 @@ void main(){
     s += (d / max(r, 0.001)) * sin(r * 140.0 - uT * 9.0) * exp(-r * 6.0) * 0.0045 * uTalk;
   }
   // the jaw: the lower lip and chin drop with each word
-  float dj = uOpen * 0.018, wj = 1.0 - smoothstep(0.6, 1.0, length((p - J) / JR)), below = smoothstep(M.y - 0.002, M.y + 0.003, p.y);
+  // (bigger since 29 Oct: the jaw drops about twice as far, the upper lip lifts, and the lips stretch wider as he opens)
+  float dj = uOpen * 0.034, wj = 1.0 - smoothstep(0.6, 1.0, length((p - J) / JR)), below = smoothstep(M.y - 0.002, M.y + 0.003, p.y);
   s.y -= dj * wj * below;
+  float up = uOpen * 0.007, wu = 1.0 - smoothstep(0.55, 1.0, length((p - U) / UR));
+  s.y += up * wu * (1.0 - below);
+  float wm = 1.0 - smoothstep(0.5, 1.0, length((p - M) / vec2(0.075, 0.04)));
+  s.x = mix(s.x, M.x + (s.x - M.x) / (1.0 + uOpen * 0.16), wm);
   // eyes: blink and pop
   float lid = 0.0; vec2 skin = vec2(0.0);
   s = eye(s, p, E1, lid, skin); s = eye(s, p, E2, lid, skin);
@@ -60,7 +66,7 @@ void main(){
   if (lid > 1.5) col *= 0.45; else if (lid > 0.5) col = tex(skin);
   // inside the mouth when it's open
   // inside the mouth: a soft, shaded opening between the lips (darker in the middle, a hint of tongue low down)
-  float mw = 0.043 * (0.8 + 0.2 * uOpen), my = M.y + dj * 0.5 + 0.001, mh = dj * 0.5 + 0.0035;   // covers the whole gap the jaw opens
+  float mw = 0.041 * (0.85 + 0.25 * uOpen), my = M.y + (dj - up) * 0.5 + 0.001, mh = (dj + up) * 0.5 + 0.0035;   // covers the whole gap the jaw and lip open
   vec2 mq = vec2((p.x - M.x) / mw, (p.y - my) / mh); mq.y += mq.x * mq.x * 0.25;   // a gentle smile-shaped curve
   float me = length(mq);
   vec3 inside = mix(vec3(0.05, 0.015, 0.015), vec3(0.32, 0.08, 0.07), smoothstep(0.1, 1.0, me));
@@ -192,7 +198,10 @@ export function puppetKaraokeGame() {
       if (an) { an.getFloatTimeDomainData(G.abuf); let r = 0; for (let i = 0; i < G.abuf.length; i++) r += G.abuf[i] * G.abuf[i]; lvl = Math.min(1, Math.sqrt(r / G.abuf.length) * 7); }
       if (G.state === 'say' && G.tts) lvl = 0.35 + 0.35 * Math.abs(Math.sin(G.t * 11)) * (0.6 + 0.4 * Math.sin(G.t * 3.1));   // typed: a talking rhythm
       if (G.bot && G.state === 'say') lvl = 0.5 + 0.5 * Math.sin(G.t * 12);
-      G.open += ((lvl > 0.06 ? Math.min(1, lvl * 1.4) : 0) - G.open) * Math.min(1, dt * 22);
+      if (window.__mouth != null) lvl = window.__mouth;   // (for testing: hold the mouth at a set opening)
+      // the mouth: opens wide even for quieter voices, and flaps with the syllables so it never just hangs open on a long sound
+      const flap = lvl > 0.06 ? 0.62 + 0.38 * Math.abs(Math.sin(G.t * 13)) : 0;
+      G.open += ((lvl > 0.06 ? Math.min(1, lvl * 2.2) * (window.__mouth != null ? 1 : flap) : 0) - G.open) * Math.min(1, dt * 26);
       G.talk += (lvl - G.talk) * Math.min(1, dt * 3);
       G.pop += ((lvl > 0.7 ? 1 : 0) - G.pop) * Math.min(1, dt * (lvl > 0.7 ? 14 : 3));
       // blinking

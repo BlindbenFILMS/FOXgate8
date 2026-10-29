@@ -2,8 +2,8 @@
 // First you grow the family: tap the tree to hang ten apples, one for each person (Grandma, Grandpa, Mom, Dad, Auntie,
 // Uncle, Big sister, Little sister, Cousin, Baby). Each one blossoms and swells into an apple with its own note.
 // Then a low-vision filter comes over the painting (not total blindness): can you still find them? Five apples through
-// a cloudy haze (cataracts), then the last five through tunnel vision (retinitis pigmentosa), where the clear spot
-// follows where the phone points. Tap each apple to pick it into the basket. At the end the filter lifts and the whole
+// tunnel vision first (retinitis pigmentosa, Ben's own condition), where the clear spot follows where the phone points,
+// then the last five through a cloudy haze (cataracts). Tap each apple to pick it into the basket. At the end the filter lifts and the whole
 // family is back on the tree. The apples are painted INTO the picture, so the filter covers them exactly as it
 // covers the painting. By ear: a soft hum grows when you're near an apple, Hint says which way to look.
 // The filter maths are Ben's vision filters (the same as See it my way).
@@ -13,12 +13,13 @@ import * as K from './kit.js';
 
 const FAMILY = ['Grandma', 'Grandpa', 'Mom', 'Dad', 'Auntie', 'Uncle', 'Big sister', 'Little sister', 'Cousin', 'Baby'];
 const ROUNDS = [
-  { mode: 1, sev: 0.66, name: 'Cataracts', kicker: 'Round 1 of 2', count: 5,
-    desc: 'A cloudy haze: everything is blurry and faded.', tip: 'Look for round shapes, not details.' },
-  { mode: 4, sev: 0.47, name: 'Retinitis pigmentosa', kicker: 'Round 2 of 2', count: 5,
+  { mode: 4, sev: 0.47, name: 'Retinitis pigmentosa', kicker: 'Round 1 of 2', count: 5,
     desc: 'Tunnel vision: only a small clear circle in the middle.', tip: 'Move your phone slowly to look around.' },
+  { mode: 1, sev: 0.66, name: 'Cataracts', kicker: 'Round 2 of 2', count: 5,
+    desc: 'A cloudy haze: everything is blurry and faded.', tip: 'Look for round shapes, not details.' },
 ];
-const CANOPY = { u: 0.5, v: 0.47, r: 0.44 }, LOW = 0.64, APPLE = 0.066, GAP = 0.075, PICK_R = 0.055;
+// (the apples, the room between them and how close a tap must be are all 10% bigger than at first, so they're easier to see and pick)
+const CANOPY = { u: 0.5, v: 0.47, r: 0.44 }, LOW = 0.64, APPLE = 0.0726, GAP = 0.0825, PICK_R = 0.0605;
 // spots the "Hang" button (and the robot player) use
 const SPOTS = [[0.3, 0.2], [0.5, 0.12], [0.7, 0.2], [0.2, 0.35], [0.4, 0.28], [0.6, 0.3], [0.8, 0.36], [0.27, 0.5], [0.45, 0.44], [0.62, 0.45], [0.75, 0.55], [0.35, 0.58], [0.15, 0.48], [0.86, 0.47], [0.56, 0.2]];
 
@@ -258,7 +259,7 @@ export function familyApplesGame() {
     pause() { if (G) G.paused = true; },
     resume() { if (G) G.paused = false; },
     get over() { return !!(G && G.over); },
-    get debug() { return G && { engine: 'family-apples', playing: G.playing, over: G.over, phase: G.phase, round: G.r, apples: G.apples.length, found: G.apples.filter(a => a.got).length, misses: G.misses, t: +G.t.toFixed(1) }; },
+    get debug() { return G && { engine: 'family-apples', playing: G.playing, over: G.over, phase: G.phase, round: G.r, apples: G.apples.length, found: G.apples.filter(a => a.got).length, misses: G.misses, settle: +G.settle.toFixed(2), list: G.apples.map(a => `${a.got ? '✓' : ''}${a.u.toFixed(3)},${a.v.toFixed(3)}`), t: +G.t.toFixed(1) }; },
     stop() { K.cleanup(G); G = null; },
   };
 }

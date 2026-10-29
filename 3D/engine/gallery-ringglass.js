@@ -17,7 +17,12 @@ export const RING_ART = {
   0: null, 1: ['The Power Within', 'gallery/img/wix_amb_22.webp'], 2: ['Flow State', 'gallery/img/wix_raquel_22.webp'], 3: ['Midnight Melodies', 'gallery/img/wix_wayne_trumpet.webp'], 4: ['Lighthouse of Hope', 'gallery/img/wix_c_lighthouse.webp'], 5: ['Rhythm of Life', 'gallery/img/wix_will_drums.webp'], 6: ['Roots of Kinship', 'gallery/img/wix_am_familytree.webp'], 7: ['Rhapsody in Blue', 'gallery/img/wix_m_rhapsody.webp'],
   11: ['Pour In The Love', 'gallery/img/wix_steven_heart.webp'], 12: ['The Visions That We Share', 'gallery/img/wix_d_1.webp'], 13: ['I Am Blind, Like My Hair Is Brown', 'gallery/img/wix_alayna_hair.webp'], 14: ['Reaching Past Blindness', 'gallery/img/wix_rusty_reach.webp'], 15: ['GOALBALL IS...', 'gallery/img/ricky_r_goalball_optimized_269676269.webp'], 16: ['Joyride', 'gallery/img/wix_deja_joyride.webp'],
   17: ['Pedals of Freedom', 'gallery/img/wix_b_bicycle.webp'], 18: null, 19: ['Walk Through Fear', 'gallery/img/wix_walk_through_fear.webp'] };   // null: crossed by the ring's diagonal braces, so plain leaded glass
-const Y0 = 4.3, Y1 = 16.56, RC = [-210, 0];
+const Y0 = 4.3, Y1 = 16.56, RC = [-210, 0], FLOOR = -3.34;
+// (Ben, 28 Oct) the curved hall has ONE way in (opening 9, from the vision simulator room) and ONE way out (the gap at the end of
+// opening 19, to Meditate with Morten). Every other open stretch at ground level is glazed solid: [opening, from m, to m] along
+// the beam line, measured by casting rays along each opening (open where nothing stands).
+const LOW_SPANS = [[1, 3.0, 16.0], [2, 0, 1.9], [2, 2.6, 13.4], [3, 0, 2.4], [4, 0, 2.4], [5, 0.6, 2.9], [10, 13.0, 18.9], [11, 0, 2.4],
+  [12, 2.1, 13.9], [13, 0, 3.4], [13, 7.6, 12.2], [14, 0, 0.9], [14, 6.6, 10.7], [15, 0, 2.9], [15, 9.1, 11.2], [16, 0, 2.4], [16, 9.6, 13.4], [17, 0, 1.4], [17, 2.1, 16.0], [18, 0, 2.4]];
 
 export function buildRingGlass({ scene, data, resolveImg = u => u }) {
   const g = new THREE.Group(); scene.add(g);
@@ -52,6 +57,22 @@ export function buildRingGlass({ scene, data, resolveImg = u => u }) {
         p.mat.uniforms.uMap.value = t; p.mat.uniforms.uHas.value = 1; }, undefined, () => {});
     }
   }
+  // the solid ground-floor glazing: clear glass from the floor to the transom, ink mullions about every 2.4 m, an ink sill, a slim
+  // ink head where the stained glass starts (or ends the pane, on openings without stained glass), and a solid blocker behind it
+  const col = [], clear = new THREE.MeshLambertMaterial({ color: 0xdfe6e8, transparent: true, opacity: 0.16, depthWrite: false, side: THREE.DoubleSide });
+  const H0 = Y0 - FLOOR;
+  for (const [i, d0, d1] of LOW_SPANS) {
+    const A = mid(i), B = mid((i + 1) % V.length), L = Math.hypot(B[0] - A[0], B[1] - A[1]), tx = (B[0] - A[0]) / L, tz = (B[1] - A[1]) / L;
+    const a = Math.max(0, d0 - 0.15), b = Math.min(L, d1 + 0.15), w = b - a, cx = A[0] + tx * (a + b) / 2, cz = A[1] + tz * (a + b) / 2, ry = -Math.atan2(tz, tx);
+    const pane = new THREE.Mesh(new THREE.PlaneGeometry(w, H0), clear); pane.position.set(cx, FLOOR + H0 / 2, cz); pane.rotation.y = ry; pane.renderOrder = 4; g.add(pane);
+    const bx = (bw, bh, bd, x, y, z) => { const m = new THREE.Mesh(new THREE.BoxGeometry(bw, bh, bd), ink); m.position.set(x, y, z); m.rotation.y = ry; g.add(m); return m; };
+    bx(w, 0.14, 0.26, cx, FLOOR + 0.07, cz);                                   // sill
+    bx(w, 0.12, 0.2, cx, 0.9, cz);                                             // a rail at hand height, so it reads as glass and not a gap
+    if (!RING_ART[i]) bx(w, 0.16, 0.22, cx, Y0 - 0.06, cz);                    // head (the stained-glass openings have their transom already)
+    const n = Math.max(1, Math.round(w / 2.4));
+    for (let k = 0; k <= n; k++) { const d = a + w * k / n; bx(0.1, H0, 0.16, A[0] + tx * d, FLOOR + H0 / 2, A[1] + tz * d); }
+    const blk = new THREE.Mesh(new THREE.BoxGeometry(w, H0, 0.3)); blk.position.set(cx, FLOOR + H0 / 2, cz); blk.rotation.y = ry; blk.updateMatrixWorld(true); blk.userData.see = true; col.push(blk);
+  }
   g.updateMatrixWorld(true);
-  return { group: g, tick, panes };
+  return { group: g, tick, panes, col };
 }

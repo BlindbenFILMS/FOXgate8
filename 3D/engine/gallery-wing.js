@@ -41,7 +41,7 @@ export function makeWood({ size = 1024, planksAcross = 16, hue = 32, sat = 46, l
 // Lambert material: any upward-facing surface takes the planks, in world space (4 m per tile)
 export function woodify(mat, wood, metresPerTile = 4, walls = false) {
   mat.onBeforeCompile = sh => {
-    sh.uniforms.uWood = { value: wood }; sh.uniforms.uWoodK = { value: 1 / metresPerTile };
+    sh.uniforms.uWood = { value: wood }; sh.uniforms.uWoodK = { value: 1 / metresPerTile }; sh.uniforms.uWoodDim = { value: mat.userData.dimK ?? 1 };   // (28 Oct: a dimmed room's planks)
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vWP; varying vec3 vWN;')
       .replace('#include <project_vertex>', `#include <project_vertex>
       #ifdef USE_INSTANCING
@@ -50,11 +50,41 @@ export function woodify(mat, wood, metresPerTile = 4, walls = false) {
         mat4 wm = modelMatrix;
       #endif
       vWP = (wm * vec4(transformed, 1.0)).xyz; vWN = normalize(mat3(wm) * objectNormal);`);
-    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vWP; varying vec3 vWN; uniform sampler2D uWood; uniform float uWoodK;')
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vWP; varying vec3 vWN; uniform sampler2D uWood; uniform float uWoodK; uniform float uWoodDim;')
       .replace('#include <map_fragment>', `#include <map_fragment>
-      if (vWN.y > 0.9 && min(diffuseColor.r, min(diffuseColor.g, diffuseColor.b)) > 0.72) { diffuseColor.rgb = texture2D(uWood, vWP.xz * uWoodK).rgb; }${walls ? `
+      if (vWN.y > 0.9 && min(diffuseColor.r, min(diffuseColor.g, diffuseColor.b)) > 0.72) { diffuseColor.rgb = texture2D(uWood, vWP.xz * uWoodK).rgb * uWoodDim;
+        // (Ben, 28 Oct) Meditate with Morten is an outdoor garden: warm slate pavers in running bond with mossy joints, not hardwood
+        if (vWP.x < -246.4 && vWP.x > -266.5 && vWP.z > -6.7 && vWP.z < 34.5 && vWP.y < -3.0) {
+          vec2 q = vWP.xz / vec2(1.2, 0.8); float row = floor(q.y); q.x += mod(row, 2.0) * 0.5; vec2 f = fract(q), id = floor(q);
+          float h = fract(sin(dot(id, vec2(12.9898, 78.233))) * 43758.5453), e = min(min(f.x, 1.0 - f.x) * 1.2, min(f.y, 1.0 - f.y) * 0.8);
+          vec3 st = mix(vec3(0.15, 0.14, 0.125), vec3(0.24, 0.225, 0.2), h) * (0.93 + 0.07 * sin(vWP.x * 6.3 + h * 9.0) * sin(vWP.z * 4.1));
+          diffuseColor.rgb = mix(vec3(0.05, 0.08, 0.035), st, smoothstep(0.012, 0.03, e));
+        } }${walls ? `
       else if (abs(vWN.y) < 0.35) { float mx = max(diffuseColor.r, max(diffuseColor.g, diffuseColor.b)), mn = min(diffuseColor.r, min(diffuseColor.g, diffuseColor.b));
-        if (mx - mn < 0.035 && mx > 0.03 && mx < 0.4) diffuseColor.rgb = vec3(0.835, 0.827, 0.81); }` : ''}`);
+        if (mx - mn < 0.035 && mx > 0.03 && mx < 0.4) diffuseColor.rgb = vec3(0.835, 0.827, 0.81); }
+      // (Ben, 28 Oct) the curved hall round the music room + the music room: not one flat white. Hall walls a warm limestone that
+      // darkens toward the floor (grounds the blocks), an ink skirting and an ink line at 4.3 m that runs on round the ring with the
+      // glazing's transoms; the music room's black drum turns deep Ora navy, lighter as it rises.
+      if (abs(vWN.y) < 0.35 && vWP.x < -177.4 && length(vWP.xz - vec2(-210.0, 0.0)) < 41.0 && vWP.y > -3.6 && vWP.y < 17.0) {
+        float hh = vWP.y + 3.34, mx2 = max(diffuseColor.r, max(diffuseColor.g, diffuseColor.b)), gr = mix(0.66, 1.0, smoothstep(0.0, 5.0, hh));
+        if (mx2 < 0.03) diffuseColor.rgb = vec3(0.010, 0.016, 0.052) * mix(0.8, 1.7, smoothstep(0.0, 12.0, hh));
+        else if (mx2 > 0.5) diffuseColor.rgb = vec3(0.80, 0.73, 0.64) * gr;
+        if (hh < 0.16 || abs(hh - 7.64) < 0.07) diffuseColor.rgb = vec3(0.012, 0.011, 0.011);
+      }
+      // (Ben, 28 Oct) MAIN GALLERY tones (ground floor, x -145.5..-66, |z| < 23): long walls a soft warm limestone that
+      // lets the art lead; the END walls (facing along the hall) a deep Ora navy, lighter as they rise; an ink skirting all round
+      if (abs(vWN.y) < 0.35 && vWP.x > -145.5 && vWP.x < -66.0 && abs(vWP.z) < 23.0 && vWP.y > -3.6 && vWP.y < 5.4) {
+        float hh = vWP.y + 3.34, mx4 = max(diffuseColor.r, max(diffuseColor.g, diffuseColor.b));
+        if (mx4 > 0.5) diffuseColor.rgb = abs(vWN.x) > 0.7 ? vec3(0.018, 0.03, 0.085) * mix(0.85, 1.35, smoothstep(0.0, 8.0, hh)) : vec3(0.80, 0.765, 0.70);
+        if (hh < 0.16) diffuseColor.rgb = vec3(0.012, 0.011, 0.011);
+      }
+      // (Ben, 28 Oct) Meditate with Morten: soft sage walls, darker toward the floor, warm charcoal for the black pieces, ink skirting
+      if (abs(vWN.y) < 0.35 && vWP.x < -246.4 && vWP.x > -267.0 && vWP.z > -7.2 && vWP.z < 35.0 && vWP.y < 9.0) {
+        float hh = vWP.y + 3.34, mx3 = max(diffuseColor.r, max(diffuseColor.g, diffuseColor.b));
+        if (mx3 < 0.03) diffuseColor.rgb = vec3(0.030, 0.028, 0.022);
+        else if (mx3 > 0.5) diffuseColor.rgb = vec3(0.50, 0.55, 0.45) * mix(0.72, 1.0, smoothstep(0.0, 4.0, hh));
+        if (hh < 0.16) diffuseColor.rgb = vec3(0.012, 0.011, 0.011);
+      }` : ''}`);
   };
   mat.customProgramCacheKey = () => walls ? 'woodify-walls' : 'woodify';
   mat.needsUpdate = true;
@@ -72,7 +102,7 @@ const FONT = 'Archivo, Arimo, Helvetica, Arial, sans-serif';
 
 // ------------------------------------------------------------ the wing
 // Laid out along -x from its origin O (entrance), floor at O.y. Returns meshes for collision, art entries and doors.
-export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveImg, L = 66, title = null, logo = null, spacious = false, endVideo = null, floorLogo = null, fillLogo = null, doorSign = 'NEW ARTISTS WING', videoKicker = 'BLINDNESS · AN INTERVIEW WITH', bayW: bayWIn = 0, Wd: WdIn = 0, lip = 1, frontWall = true, doorZ = 0, sideDoor = null, hang = null, titleY = 3.0, community = null }) {
+export function buildWing({ dim = 1, scene, wing, O, rotY = 0, doorW = 0, wood, resolveImg, L = 66, title = null, logo = null, spacious = false, endVideo = null, floorLogo = null, fillLogo = null, doorSign = 'NEW ARTISTS WING', videoKicker = 'BLINDNESS · AN INTERVIEW WITH', bayW: bayWIn = 0, Wd: WdIn = 0, lip = 1, frontWall = true, doorZ = 0, sideDoor = null, hang = null, titleY = 3.0, community = null, frontWins = null }) {
   const g = new THREE.Group(); g.position.copy(O); g.rotation.y = rotY; scene.add(g); g.updateMatrixWorld(true);
   // local layout -> world (the wing can be turned to join any doorway of the building)
   const toW = v => v.clone().applyMatrix4(g.matrixWorld), dirW = v => v.clone().applyQuaternion(g.quaternion);
@@ -86,6 +116,9 @@ export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveIm
   const floorM = woodify(new THREE.MeshLambertMaterial({ color: 0xffffff }), wood);
   const ceilM = new THREE.MeshLambertMaterial({ color: 0xf6f5f3 });
   const lightM = new THREE.MeshBasicMaterial({ color: 0xfff6e2 });
+  // (28 Oct) dim: a room with its house lights down (the AMB, so its stage lights shine): walls, floor and ceiling darker, the
+  // ceiling strips a low glow. The art faces and cards are unlit materials, so they stay bright, like a gallery at a concert.
+  if (dim < 1) { for (const m of [wallM, greyM, ceilM]) m.color.multiplyScalar(dim); floorM.userData.dimK = 0.45 + dim * 0.5; floorM.needsUpdate = true; lightM.color.multiplyScalar(0.55 + dim * 0.3); }
   const box = (w, h, d, m, x, y, z, collide = true) => { const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); b.position.set(x, y, z); g.add(b); if (collide) col.push(b); return b; };
   // shell
   // (lip: how far the floor and ceiling run out past the front wall; a room that opens off another room's side has none,
@@ -98,7 +131,15 @@ export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveIm
     box(0.4, Hh, a + HW, wallM, 0.2, Hh / 2, (-HW + a) / 2); box(0.4, Hh, HW - b, wallM, 0.2, Hh / 2, (b + HW) / 2); box(0.4, Hh - DH, doorW, wallM, 0.2, DH + (Hh - DH) / 2, doorZ);
   } else if (doorW > 0) {   // open entrance: walk straight in from the building's hallway
     const side = (Wd - doorW) / 2, lintel = 5.0;
-    box(0.4, Hh, side, wallM, 0.2, Hh / 2, -(doorW / 2 + side / 2)); box(0.4, Hh, side, wallM, 0.2, Hh / 2, doorW / 2 + side / 2);
+    // (28 Oct, Ben) frontWins: real see-through windows in the front wall, [zc, w, y0, y1] in the wing's own frame; each hole gets
+    // an unseen blocker (solid; the speed-saver rays see past it) and the glass + frames come from the caller (gallery-amb.js)
+    const sideWall = (za, zb) => { let cur = za;
+      for (const [zc, ww, y0, y1] of (frontWins || []).filter(h => h[0] > za && h[0] < zb).sort((p, q) => p[0] - q[0])) {
+        const h0 = zc - ww / 2, h1 = zc + ww / 2;
+        box(0.4, Hh, h0 - cur, wallM, 0.2, Hh / 2, (cur + h0) / 2); box(0.4, y0, ww, wallM, 0.2, y0 / 2, zc); box(0.4, Hh - y1, ww, wallM, 0.2, (y1 + Hh) / 2, zc);
+        const bl = box(0.4, y1 - y0, ww, null, 0.2, (y0 + y1) / 2, zc); bl.visible = false; bl.userData.see = true; cur = h1; }
+      box(0.4, Hh, zb - cur, wallM, 0.2, Hh / 2, (cur + zb) / 2); };
+    sideWall(-HW, -doorW / 2); sideWall(doorW / 2, HW);
     box(0.4, Hh - lintel, doorW, wallM, 0.2, lintel + (Hh - lintel) / 2, 0);
     const sg = panelTex(1024, 128, (c, w, h) => { c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, 0, 10, h); c.fillStyle = '#fff'; let fs = 64; c.font = `800 ${fs}px ${FONT}`; while (c.measureText(doorSign).width > w - 70 && fs > 30) { fs -= 2; c.font = `800 ${fs}px ${FONT}`; } c.textBaseline = 'middle'; c.fillText(doorSign, 40, 66); });   // shrink to fit: the whole name always shows
     for (const r of [0, Math.PI]) { const m = new THREE.Mesh(new THREE.PlaneGeometry(doorW - 0.4, 1.0), new THREE.MeshBasicMaterial({ map: sg })); m.position.set(r ? 0.45 : -0.05, lintel + 0.6, 0); m.rotation.y = r ? Math.PI / 2 : -Math.PI / 2; g.add(m); }
@@ -227,14 +268,14 @@ export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveIm
       cvs.position.copy(at(cx, 2.3, 0.04)); cvs.rotation.y = rotYp; g.add(cvs); canvases.push({ mesh: cvs, w: S, h: S, key: p.img });
       artTex.push({ faceM, url: resolveImg(p.img) });
       const cT = panelTex(CW * K, CH * K, (c, w, h) => {
-        c.fillStyle = '#f9f8f6'; c.fillRect(0, 0, w, h); c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, 12, h);
+        c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, 0, 12, h); c.fillStyle = '#ffffff';
         const pad = 50; let y = 92; let ts = 70; c.font = `800 ${ts}px ${FONT}`; const tl = () => wrap(c, p.title, w - pad * 2); while (tl().length > 2 && ts > 46) { ts -= 4; c.font = `800 ${ts}px ${FONT}`; }
-        c.fillStyle = '#1d1c1b'; tl().slice(0, 2).forEach(l => { c.fillText(l, pad, y); y += ts * 1.06; });
-        c.font = `500 42px ${FONT}`; c.fillStyle = '#5a5654'; c.fillText(A.name, pad, y + 4); y += 72;
+        c.fillStyle = '#ffffff'; tl().slice(0, 2).forEach(l => { c.fillText(l, pad, y); y += ts * 1.06; });
+        c.font = `500 42px ${FONT}`; c.fillStyle = '#e9e5e5'; c.fillText(A.name, pad, y + 4); y += 72;
         const q = p.quote ? '\u201c' + p.quote.replace(/^["\u201c]|["\u201d]$/g, '') + '\u201d' : (p.paras[0] || '');
-        c.font = `italic 400 38px ${FONT}`; c.fillStyle = '#2b2928'; const ql = wrap(c, q, w - pad * 2); const room = Math.floor((h - y - 76) / 50);
+        c.font = `italic 400 38px ${FONT}`; c.fillStyle = '#f3f2f2'; const ql = wrap(c, q, w - pad * 2); const room = Math.floor((h - y - 76) / 50);
         ql.slice(0, Math.max(0, room)).forEach((l, i, arr) => { c.fillText(i === arr.length - 1 && ql.length > arr.length ? l + ' \u2026' : l, pad, y); y += 50; });
-        c.fillStyle = '#ec3013'; c.font = `800 26px ${FONT}`; c.fillText('APPROACH TO VIEW \u00b7 READ ALOUD', pad, h - 34);
+        c.fillStyle = '#ff9783'; c.font = `800 26px ${FONT}`; c.fillText('APPROACH TO VIEW \u00b7 READ ALOUD', pad, h - 34);
       });
       const card = new THREE.Mesh(new THREE.PlaneGeometry(CW, CH), new THREE.MeshBasicMaterial({ map: cT }));
       card.position.copy(at(x - S - 0.35 - CW / 2, 1.6, 0.03)); card.rotation.y = rotYp; g.add(card);
@@ -279,23 +320,23 @@ export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveIm
       cvs.position.copy(at(cx, spacious ? 2.75 : 2.65, 0.04)); cvs.rotation.y = rotY; g.add(cvs); canvases.push({ mesh: cvs, w: S, h: S, key: p.img });
       artTex.push({ faceM, url: resolveImg(p.img) });   // loaded when you come near, let go when you're far away (see load/unload)
       const plT = panelTex(1100, 300, (c, w, h) => {   // 3.3 x 0.9 m: big type, low on the wall so you can walk right up to it
-        c.fillStyle = '#f9f8f6'; c.fillRect(0, 0, w, h); c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, 12, h);
+        c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, 0, 12, h); c.fillStyle = '#ffffff';
         let ts = 68; c.font = `800 ${ts}px ${FONT}`; while (c.measureText(p.title).width > w - 80 && ts > 44) { ts -= 2; c.font = `800 ${ts}px ${FONT}`; }
         c.fillText(wrap(c, p.title, w - 80)[0], 44, 104);
-        c.font = `500 46px ${FONT}`; c.fillStyle = '#5a5654'; c.fillText(A.name, 44, 184);
-        c.fillStyle = '#ec3013'; c.font = `800 30px ${FONT}`; c.fillText('APPROACH TO VIEW · READ ALOUD', 44, 262);
+        c.font = `500 46px ${FONT}`; c.fillStyle = '#e9e5e5'; c.fillText(A.name, 44, 184);
+        c.fillStyle = '#ff9783'; c.font = `800 30px ${FONT}`; c.fillText('APPROACH TO VIEW · READ ALOUD', 44, 262);
       });
       if (spacious) {   // a description card beside the canvas, like the main gallery's (title, artist, quote), low enough to read up close
         const CW = 2.9, CH = 2.2, K = 300;
         const cT = panelTex(CW * K, CH * K, (c, w, h) => {
-          c.fillStyle = '#f9f8f6'; c.fillRect(0, 0, w, h); c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, 12, h);
+          c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, 0, 12, h); c.fillStyle = '#ffffff';
           const pad = 52; let y = 96; let ts = 74; c.font = `800 ${ts}px ${FONT}`; const tl = () => wrap(c, p.title, w - pad * 2); while (tl().length > 2 && ts > 50) { ts -= 4; c.font = `800 ${ts}px ${FONT}`; }
-          c.fillStyle = '#1d1c1b'; tl().slice(0, 2).forEach(l => { c.fillText(l, pad, y); y += ts * 1.06; });
-          c.font = `500 44px ${FONT}`; c.fillStyle = '#5a5654'; c.fillText(A.name, pad, y + 6); y += 76;
+          c.fillStyle = '#ffffff'; tl().slice(0, 2).forEach(l => { c.fillText(l, pad, y); y += ts * 1.06; });
+          c.font = `500 44px ${FONT}`; c.fillStyle = '#e9e5e5'; c.fillText(A.name, pad, y + 6); y += 76;
           const q = p.quote ? '\u201c' + p.quote.replace(/^["\u201c]|["\u201d]$/g, '') + '\u201d' : (p.paras[0] || '');
-          c.font = `italic 400 40px ${FONT}`; c.fillStyle = '#2b2928'; const ql = wrap(c, q, w - pad * 2); const room = Math.floor((h - y - 80) / 52);
+          c.font = `italic 400 40px ${FONT}`; c.fillStyle = '#f3f2f2'; const ql = wrap(c, q, w - pad * 2); const room = Math.floor((h - y - 80) / 52);
           ql.slice(0, Math.max(0, room)).forEach((l, i, arr) => { c.fillText(i === arr.length - 1 && ql.length > arr.length ? l + ' \u2026' : l, pad, y); y += 52; });
-          c.fillStyle = '#ec3013'; c.font = `800 26px ${FONT}`; c.fillText('APPROACH TO VIEW \u00b7 READ ALOUD', pad, h - 36);
+          c.fillStyle = '#ff9783'; c.font = `800 26px ${FONT}`; c.fillText('APPROACH TO VIEW \u00b7 READ ALOUD', pad, h - 36);
         });
         const card = new THREE.Mesh(new THREE.PlaneGeometry(CW, CH), new THREE.MeshBasicMaterial({ map: cT }));
         card.position.copy(at(cx + S / 2 + 0.45 + CW / 2, 1.95, 0.03)); card.rotation.y = rotY; g.add(card);
@@ -311,8 +352,8 @@ export function buildWing({ scene, wing, O, rotY = 0, doorW = 0, wood, resolveIm
   // empty bays get the logo, so no wall is left bare
   // (22 Oct) community photos: square prints with a caption, on walls that would otherwise stand bare
   const comm = (community || []).slice();
-  const capT = panelTex(860, 200, (c, w, h) => { c.fillStyle = '#f9f8f6'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, 0, 12, h);
-    c.fillStyle = '#1d1c1b'; c.font = `800 62px ${FONT}`; c.fillText('OUR COMMUNITY', 44, 92); c.fillStyle = '#5a5654'; c.font = `500 38px ${FONT}`; c.fillText('The Blind Canvas Project, together', 44, 160); });
+  const capT = panelTex(860, 200, (c, w, h) => { c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, 0, 12, h);
+    c.fillStyle = '#ffffff'; c.font = `800 62px ${FONT}`; c.fillText('OUR COMMUNITY', 44, 92); c.fillStyle = '#e9e5e5'; c.font = `500 38px ${FONT}`; c.fillText('The Blind Canvas Project, together', 44, 160); });
   const capM = new THREE.MeshBasicMaterial({ map: capT });
   const photo = (img, p, ry, nrm) => {
     const S = 3.2, faceM = new THREE.MeshBasicMaterial({ color: 0xdddddd }), sideM = new THREE.MeshLambertMaterial({ color: 0xf4f2ee });

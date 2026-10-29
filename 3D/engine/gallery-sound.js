@@ -3,7 +3,9 @@
 //  • Inside: a soft gallery hum (air, distant voices of the building).
 //  • Footsteps on the wood floors while you walk (a soft roll for wheelchair users).
 // For blind visitors this says where you are. It ducks under the room films, and can be turned off in the menu.
-export function setupSound({ getState, inside, filmPlaying, chair }) {
+import { hallVerb } from './gallery-hall.js';
+//  • (28 Oct) The Academy of Music: a hall echo on your steps inside, and a three-note chime on the door as you come in.
+export function setupSound({ getState, inside, filmPlaying, chair, zone = () => null }) {
   const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
   const ctx = new AC(), master = ctx.createGain(); master.gain.value = 0.9; master.connect(ctx.destination);
   const noiseBuf = (secs, kind) => {
@@ -38,13 +40,33 @@ export function setupSound({ getState, inside, filmPlaying, chair }) {
     const s = ctx.createBufferSource(); s.buffer = stepBuf; s.playbackRate.value = 0.85 + Math.random() * 0.3;
     const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 520 + Math.random() * 180; bp.Q.value = 1.3;
     const g = ctx.createGain(), t = ctx.currentTime; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.11 * loud, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0005, t + 0.13);
-    s.connect(bp).connect(g).connect(master); s.start(t); s.stop(t + 0.2);
+    s.connect(bp).connect(g).connect(stepOut); s.start(t); s.stop(t + 0.2);
   }
-  const roll = ctx.createGain(); roll.gain.value = 0; roll.connect(master);
+  // the Academy's hall: steps (and the roll) also go to its echo while you're inside
+  const hall = hallVerb(ctx, { wet: 0.5 }), hallSend = ctx.createGain(); hallSend.gain.value = 0; hallSend.connect(hall.input); hall.output.connect(master);
+  const stepOut = ctx.createGain(); stepOut.connect(master); stepOut.connect(hallSend);
+  // the door chime: three soft bell notes going up (C E G), a little echo of the hall after it
+  function chime() {
+    const t0 = ctx.currentTime + 0.05;
+    [[1046.5, 0], [1318.5, 0.16], [1568, 0.32]].forEach(([f, d]) => { const g = ctx.createGain(), t = t0 + d; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.09, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0004, t + 1.6);
+      for (const [h, a] of [[1, 1], [2.76, 0.3], [5.4, 0.12]]) { const o = ctx.createOscillator(), og = ctx.createGain(); o.type = 'sine'; o.frequency.value = f * h; og.gain.value = a; o.connect(og).connect(g); o.start(t); o.stop(t + 1.7); }
+      g.connect(master); g.connect(hall.input); });
+  }
+  let lastZone = null;
+  const roll = ctx.createGain(); roll.gain.value = 0; roll.connect(stepOut);
   { const src = loop(noiseBuf(3, 'brown')), bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 300; src.connect(bp).connect(roll); }
 
   // phones only let sound start from a tap: try again on the next touch or key
   for (const ev of ['pointerdown', 'keydown', 'touchend']) addEventListener(ev, () => { if (on && ctx.state !== 'running') ctx.resume().catch(() => {}); }, { passive: true });
+  // (28 Oct) Meditate with Morten: the trickle of the bamboo spout near the pond, and the soft knock of the shishi-odoshi
+  const trickle = ctx.createGain(); trickle.gain.value = 0; trickle.connect(master);
+  { const src = loop(noiseBuf(4, 'white')), bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2400; bp.Q.value = 0.9; src.connect(bp).connect(trickle); }
+  function tok(v) { const t0 = ctx.currentTime;
+    for (const [f, a, d] of [[520, 1, 0.12], [1180, 0.35, 0.05], [260, 0.5, 0.18]]) { const o = ctx.createOscillator(), og = ctx.createGain(); o.frequency.value = f; og.gain.setValueAtTime(0.0001, t0); og.gain.exponentialRampToValueAtTime(v * a, t0 + 0.004); og.gain.exponentialRampToValueAtTime(0.0001, t0 + d); o.connect(og).connect(master); o.start(t0); o.stop(t0 + d + 0.05); } }
+  let tokSeen = 0, bellSeen = 0;
+  // (pass 2) the singing bowl: a long, soft, slightly beating tone when you sit down on a meditation cushion
+  function bowl() { const t0 = ctx.currentTime;
+    for (const [f, a, d] of [[262, 0.05, 7], [264.2, 0.04, 7], [706, 0.018, 4.5], [1340, 0.008, 2.6]]) { const o = ctx.createOscillator(), og = ctx.createGain(); o.frequency.value = f; og.gain.setValueAtTime(0.0001, t0); og.gain.exponentialRampToValueAtTime(a, t0 + 0.02); og.gain.exponentialRampToValueAtTime(0.0001, t0 + d); o.connect(og).connect(master); o.start(t0); o.stop(t0 + d + 0.1); } }
   let on = true, stepT = 0, birdT = 2, last = performance.now();
   const ramp = (p, v) => p.setTargetAtTime(v, ctx.currentTime, 0.4);
   setInterval(() => {
@@ -53,6 +75,10 @@ export function setupSound({ getState, inside, filmPlaying, chair }) {
     // an artwork (or any info panel) is open: everything else goes quiet so the art and the artist's voice have the room
     master.gain.setTargetAtTime(window.HUSH ? 0 : 0.9, ctx.currentTime, 0.12); if (window.HUSH) return;
     const [x, y, z, , speed, air] = getState(), inn = inside(x, y, z), duck = filmPlaying() ? 0.35 : 1;
+    { let zn = null; try { zn = zone(); } catch (e) {} if (zn === 'amb' && lastZone && lastZone !== 'amb') chime(); lastZone = zn; ramp(hallSend.gain, zn === 'amb' ? 0.9 : 0); }
+    { const d = Math.hypot(x + 249.6, z - 20.2), k = y < 2 && x < -246 ? Math.max(0, 1 - d / 14) : 0; ramp(trickle.gain, 0.035 * k * k * duck);
+      const n = window.__zenTok || 0; if (n !== tokSeen) { tokSeen = n; if (k > 0) tok(0.12 * k * duck); }
+      const nb = window.__zenBell || 0; if (nb !== bellSeen) { bellSeen = nb; bowl(); } }
     // the lake: louder the nearer you are to its edge (outside the building only)
     const nearLake = inn ? 0 : Math.max(0, 1 - Math.max(0, x > -12.4 ? x + 12.4 : 0) / 26);   // the lake lies between the plaza and the museum; it fades as you walk into the garden
     ramp(water.gain, 0.22 * nearLake * duck);

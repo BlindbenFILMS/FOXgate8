@@ -9,10 +9,11 @@
 //   start({ group, h, camera, renderer, say, buzz }) · update(dt) · pointer(kind, event) · pause() · resume() · stop()
 import * as THREE from 'three';
 
-const EMPTY = 'media/games/napkin-please-empty.jpg';
+// (found from this file, so the game also works from other pages, like the 3D gallery)
+const EMPTY = new URL('../../media/games/napkin-please-empty.jpg', import.meta.url).href;
 // Designed napkin art: drop PNGs named napkin-1.png … napkin-6.png into AR/media/games/napkins/ and the game uses
 // them instead of the drawn napkins below (any that are missing are simply skipped). 1024×256, transparent background.
-const ART = 'media/games/napkins/napkin-';
+const ART = new URL('../../media/games/napkins/napkin-', import.meta.url).href;
 // in painting units (1 wide, centred): the tower stands on the diner's head and is as wide as the painted one
 const BASE_Y = 0.5 - 790 / 1024, TOWER_X = 540 / 1024 - 0.5, STEP = 0.031, NW = 0.30, NH = 0.075;
 const HAND = [500 / 1024 - 0.5, 0.5 - 445 / 1024];   // Wayne's hands, where new napkins come from
@@ -216,6 +217,7 @@ export function napkinsGame() {
     pause() { if (G) G.paused = true; },
     resume() { if (G) G.paused = false; },
     get over() { return !!(G && G.over); },
+    get debug() { return G && { engine: 'napkins', playing: G.playing, over: G.over, score: G.score, stack: G.stack.length, top: +((towerTop() - BASE_Y) / (G.h / 2 - BASE_Y)).toFixed(2) }; },
     stop() {
       if (!G) return;
       G.group.remove(G.root); G.root.traverse(o => { if (o.material && o.material !== G.empty.material) o.material.dispose(); });

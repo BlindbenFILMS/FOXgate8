@@ -23,13 +23,16 @@ export function chairKit({ THREE, M, toon }) {
     const SIT = 0.42 + (S0.y - 1.12) - 0.0;   // the bottom of his torso in body space (lathe starts at 0.42 + lift)
     // ---- arms: two-bone, hands on the push rims ----
     const arms = P.arms.map((arm, i) => {
-      const side = Math.sign(arm.position.x) || (i ? 1 : -1), ms = arm.children.filter(c => c.isMesh);
+      const side = Math.sign(arm.position.x) || (i ? 1 : -1), ms = arm.children.filter(c => c.isMesh && !c.userData.sleeveBand);
       const sleeve = ms[0] ? ms[0].material : toon('#f7f1e6'), cuff = ms[1] ? ms[1].material : sleeve, paw = (ms.filter(c => c.geometry.type === 'SphereGeometry').pop() || {}).material || toon('#f2741f');
       arm.visible = false;
       const up = new THREE.Group(), fo = new THREE.Group(), hd = new THREE.Group(); body.add(up, fo, hd);
       const uM = null, fM = null;
       const cM = M(new THREE.CylinderGeometry(0.1, 0.1, 0.08, 14), cuff, 0, 0, 0, fo, 0.012, 0.1);
       M(new THREE.SphereGeometry(0.115, 12, 8), paw, 0, 0, 0, hd, 0.02, 0.115);
+      if (arm.userData.sleeveMat) {   // (27 Oct) the short-sleeved art tee: art sleeve + rounded shoulder on the rebuilt upper arm
+        const sm = arm.userData.sleeveMat, AS = arm.scale.x || 1.25, t = M(new THREE.CylinderGeometry(0.1 * AS, 0.092 * AS, 0.26 * AS, 16, 1, true), sm, 0, -0.115 * AS, 0, up, 0.014, 0.1 * AS);
+        const cp = M(new THREE.SphereGeometry(0.1 * AS, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), sm, 0, 0.015 * AS, 0, up, 0.014, 0.1 * AS); cp.scale.y = 0.75; t.userData.sleeveBand = cp.userData.sleeveBand = true; }
       return { side, sleeve, S: arm.position.clone(), up, fo, hd, uM, fM, cM, UA: 0, FA: 0, E: new THREE.Vector3(), H: new THREE.Vector3() };
     });
     const v1 = new THREE.Vector3(), v2 = new THREE.Vector3(), v3 = new THREE.Vector3(), pole = new THREE.Vector3();

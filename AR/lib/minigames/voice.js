@@ -5,7 +5,7 @@
 // the computer voice at the end, exactly as before. Clips for the painting's own game load as soon as it starts.
 import LINES from './voice-lines.js';
 
-const BASE = 'media/voice/';
+const BASE = new URL('../../media/voice/', import.meta.url).href;   // AR/media/voice/, whichever page plays the game (the AR page or the 3D gallery)
 // which clips belong to which painting's game (anything else plays the sliding mosaic)
 const PREFIX = {
   'midnight-melodies': 'night-', 'rhythm-of-life': 'glow-', 'walk-through-fear': 'see-', 'almost-blindness': 'safari-',

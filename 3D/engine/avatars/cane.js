@@ -21,7 +21,7 @@ export function caneKit({ THREE, M, toon }) {
     const u = fox.userData, P = u.P, body = P.body;
     const arm = P.arms[0];                       // her RIGHT arm (she faces +z, so her right is -x)
     const side = Math.sign(arm.position.x) || -1;
-    const meshes = arm.children.filter(c => c.isMesh);
+    const meshes = arm.children.filter(c => c.isMesh && !c.userData.sleeveBand);
     const sleeveMat = meshes[0] ? meshes[0].material : toon('#e7edf4');
     const pawM = meshes.filter(c => c.geometry.type === 'SphereGeometry').pop(); const pawMat = pawM ? pawM.material : toon('#f8fafc');
     arm.visible = false;
@@ -30,6 +30,9 @@ export function caneKit({ THREE, M, toon }) {
     M(new THREE.CapsuleGeometry(0.078 * AS, UA - 0.08, 4, 10), sleeveMat, 0, -UA / 2, 0, upper, 0.02);
     M(new THREE.CapsuleGeometry(0.068 * AS, FA - 0.06, 4, 10), sleeveMat, 0, -FA / 2, 0, fore, 0.02);
     M(new THREE.SphereGeometry(0.1, 12, 8), pawMat, 0, 0, 0, hand, 0.02, 0.1);
+    if (arm.userData.sleeveMat) {   // (27 Oct) the short-sleeved art tee: its art sleeve + rounded shoulder on the rebuilt upper arm
+      const sm = arm.userData.sleeveMat, t = M(new THREE.CylinderGeometry(0.1 * AS, 0.092 * AS, 0.26 * AS, 16, 1, true), sm, 0, -0.115 * AS, 0, upper, 0.014, 0.1 * AS);
+      const cp = M(new THREE.SphereGeometry(0.1 * AS, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), sm, 0, 0.015 * AS, 0, upper, 0.014, 0.1 * AS); cp.scale.y = 0.75; t.userData.sleeveBand = cp.userData.sleeveBand = true; }
     // the cane: unit parts, sized in layout()
     const white = toon('#f8fafc'), red = toon('#dc2626'), black = toon('#1f2937');
     const grip = M(new THREE.CylinderGeometry(0.036, 0.036, 1, 12), black, 0, 0, 0, cane, 0.01, 0.036);

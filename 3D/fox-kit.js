@@ -204,7 +204,7 @@ export function foxKit({ THREE, scene, toon, M, grad, outlineMat, crestTex, rr, 
       const C = { light: toon(torso[0]), mid: toon(torso[1]), dark: toon(torso[2]), gold: toon('#e6b45a', { emissive: new THREE.Color('#5a3e10'), emissiveIntensity: 0.25 }), cream: toon('#f7f1e6'), ink: toon('#1e293b'), fur: toon('#f8fafc') };
       const lathe = (pts, col, segs = 26, squash = 1.1) => { const gg = latheColored(pts, (y, c) => typeof col === 'function' ? col(y, c) : c.copy(col), segs); const pp = gg.attributes.position; for (let i = 0; i < pp.count; i++) { const z = pp.getZ(i); pp.setZ(i, z > 0 ? z * squash : z * 0.92); } gg.computeVertexNormals(); return gg; };
       const badge = (x, y, z, r = 0.075, rx = -0.2) => { const tex = armorCrest(crest); const bm = M(new THREE.CylinderGeometry(r, r, 0.02, 28), [C.gold, new THREE.MeshToonMaterial({ map: tex, gradientMap: grad }), C.gold], x, y + lift, z, body, 0.008, r); bm.rotation.set(Math.PI / 2 + rx, Math.PI / 2, 0, 'XYZ'); return bm; };
-      const sleeve = (mat, cuffMat, wide = false) => [-1, 1].map(s => { const p = new THREE.Group(); p.position.set(s * 0.4, 1.12 + lift, 0); p.scale.setScalar(1.25); body.add(p);
+      const sleeve = (mat0, cuff0, wide = false) => [-1, 1].map(s => { const mat = Array.isArray(mat0) ? mat0[s < 0 ? 0 : 1] : mat0, cuffMat = Array.isArray(cuff0) ? cuff0[s < 0 ? 0 : 1] : cuff0; const p = new THREE.Group(); p.position.set(s * 0.4, 1.12 + lift, 0); p.scale.setScalar(1.25); body.add(p);
         if (wide) { M(new THREE.CylinderGeometry(0.075, 0.15, 0.34, 14, 1, true), mat, 0, -0.2, 0, p, 0.016, 0.15); M(new THREE.TorusGeometry(0.148, 0.018, 6, 18), cuffMat, 0, -0.37, 0, p, 0).rotation.x = Math.PI / 2; }
         else { M(new THREE.CapsuleGeometry(0.078, 0.26, 4, 10), mat, 0, -0.17, 0, p, 0.02); M(new THREE.CylinderGeometry(0.088, 0.088, 0.07, 14), cuffMat, 0, -0.31, 0, p, 0.012, 0.088); }
         M(new THREE.SphereGeometry(0.095, 12, 8), toon(L.paw), 0, -0.4, 0.01, p, 0.02, 0.095); return p; });
@@ -290,7 +290,9 @@ export function foxKit({ THREE, scene, toon, M, grad, outlineMat, crestTex, rr, 
         if (prints && prints.wrap && T) {   // an all-over art tee: one print wrapped right round the shirt (front centre = the middle of the picture, seam at the back)
           const rAt = y => { for (let i = 0; i < prof.length - 1; i++) { const [r0, y0] = prof[i], [r1, y1] = prof[i + 1]; if (y >= y0 && y <= y1) return r0 + (r1 - r0) * (y - y0) / (y1 - y0); } return prof[prof.length - 1][0]; };
           const Y0 = 0.43, Y1 = 1.2, N = 20, pts = []; for (let i = 0; i <= N; i++) { const y = Y0 + (Y1 - Y0) * i / N; pts.push(new THREE.Vector2(rAt(y) + 0.008, y)); }
-          const w = new THREE.Mesh(new THREE.LatheGeometry(pts, 40, -Math.PI, Math.PI * 2), new THREE.MeshToonMaterial({ map: prints.wrap, gradientMap: grad, polygonOffset: true, polygonOffsetFactor: -2 })); w.position.y = lift; body.add(w);
+          // (27 Oct) shaped like the shirt under it (pushed out 10 % at the front, in 8 % at the back), or the black tee pokes through the front
+          const wg = new THREE.LatheGeometry(pts, 40, -Math.PI, Math.PI * 2), wp = wg.attributes.position; for (let i = 0; i < wp.count; i++) { const z = wp.getZ(i); wp.setZ(i, z > 0 ? z * 1.1 : z * 0.92); } wg.computeVertexNormals();
+          const w = new THREE.Mesh(wg, new THREE.MeshToonMaterial({ map: prints.wrap, gradientMap: grad, polygonOffset: true, polygonOffsetFactor: -2 })); w.position.y = lift; body.add(w);
         }
         if (prints && prints.front && !prints.wrap) { const fw = T ? (prints.frontW || 1.78) : 0.62; const f = new THREE.Mesh(T ? new THREE.CylinderGeometry(0.322, 0.256, 0.43, 28, 1, true, -fw / 2, fw) : new THREE.CylinderGeometry(0.33, 0.275, 0.26, 16, 1, true, -fw / 2, fw), printMat(prints.front)); f.position.set(0, (T ? 0.895 : 1.0) + lift, 0); f.scale.z = 1.1; body.add(f); }
         if (prints && prints.back && T && !prints.wrap) {   // tee: the back print follows the shirt's own profile, up high between the shoulder blades
@@ -298,7 +300,16 @@ export function foxKit({ THREE, scene, toon, M, grad, outlineMat, crestTex, rr, 
           const Y0 = 0.79, Y1 = 1.225, N = 16, pts = []; for (let i = 0; i <= N; i++) { const y = Y0 + (Y1 - Y0) * i / N; pts.push(new THREE.Vector2(rAt(y) + 0.012, y)); }
           const bw = 1.6, b = new THREE.Mesh(new THREE.LatheGeometry(pts, 28, Math.PI - bw / 2, bw), printMat(prints.back)); b.position.y = lift; body.add(b);
         } else if (prints && prints.back && !prints.wrap) { const bw = T ? 1.8 : 1.6; const b = new THREE.Mesh(T ? new THREE.CylinderGeometry(0.325, 0.264, 0.5, 28, 1, true, Math.PI - bw / 2, bw) : new THREE.CylinderGeometry(0.352, 0.298, 0.52, 24, 1, true, Math.PI - bw / 2, bw), printMat(prints.back)); b.position.set(0, (T ? 0.87 : 0.87) + lift, 0); b.scale.z = 0.93; body.add(b); }
-        P.arms = T ? sleeve(tee, tee) : sleeve(hood, rib);
+        // (27 Oct, Ben) the all-over art tee wraps the arms too: each sleeve carries the painting's own edge on its side
+        const armArt = T && prints && prints.wrap && prints.sleeves ? prints.sleeves.map(t => new THREE.MeshToonMaterial({ map: t, gradientMap: grad })) : null;
+        if (armArt && prints.short) {   // (27 Oct) the short-sleeved art tee: fur arms, an art sleeve round the top of each
+          const fur = toon(L.fur); P.arms = sleeve(fur, fur);
+          P.sleeveBands = [];
+          P.arms.forEach((p, i) => { const sm = armArt[i].clone(); sm.side = THREE.DoubleSide;
+            const tube = M(new THREE.CylinderGeometry(0.1, 0.092, 0.26, 16, 1, true), sm, 0, -0.115, 0, p, 0.014, 0.1);
+            const cap = M(new THREE.SphereGeometry(0.1, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), sm, 0, 0.015, 0, p, 0.014, 0.1); cap.scale.y = 0.75;
+            for (const o of [tube, cap]) { o.userData.sleeveBand = true; P.sleeveBands.push(o); } p.userData.sleeveMat = sm; });   // (tagged: the cane / chair rigs copy them onto their own arms; kept out of the body merge)   // a rounded shoulder on top (the open tube looked broken)
+        } else P.arms = armArt ? sleeve(armArt, armArt) : T ? sleeve(tee, tee) : sleeve(hood, rib);
       } else if (kind === 'royal') {  // the King: gown, cape, ermine
         M(lathe([[0.36, 0.06], [0.4, 0.08], [0.36, 0.4], [0.3, 0.7], [0.3, 0.95], [0.34, 1.12], [0.24, 1.22], [0.12, 1.26], [0, 1.27]], (y, c) => c.copy(t1).lerp(t0, smooth(0.3, 1.1, y))), vcToon, 0, lift - 0.02, 0, body, 0.03);
         const cape = M(new THREE.CylinderGeometry(0.34, 0.52, 1.18, 28, 1, true, Math.PI * 0.62, Math.PI * 0.76), toon('#c42d3c', { side: THREE.DoubleSide }), 0, 0.62 + lift, -0.02, body, 0.03); cape.material.side = THREE.DoubleSide;

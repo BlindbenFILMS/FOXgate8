@@ -25,13 +25,16 @@ export function artAnimator({ items, maxActive = 2, fade = 0.9, range = 9 }) {
     s.plane = new THREE.Mesh(new THREE.PlaneGeometry(it.w, it.h), s.mat);
     s.plane.position.z = 0.037; s.plane.renderOrder = 3; mesh.add(s.plane);
     s.video.src = it.url; s.video.currentTime = 0;
-    const p = s.video.play(); if (p && p.catch) p.catch(() => {});
+    // (29 Oct, Ben) a painting marked with sound (gallery.json animSound) plays its own audio, fading in with the picture;
+    // if the browser won't allow sound yet, it plays silent as before
+    const snd = !!it.sound && !window.HUSH; s.video.muted = !snd; if (snd) { s.video.removeAttribute('muted'); s.video.volume = 0; } else s.video.setAttribute('muted', '');
+    const p = s.video.play(); if (p && p.catch) p.catch(() => { if (snd) { s.video.muted = true; s.video.setAttribute('muted', ''); s.video.play().catch(() => {}); } });
   }
   function release(s) {
     if (s.item && s.failed.has(s.item.url)) dead.add(s.item.url);
     if (s.plane) { s.plane.parent && s.plane.parent.remove(s.plane); s.plane.geometry.dispose(); s.plane = null; }
     s.item = null; s.a = 0; s.target = 0; s.ready = false; s.mat.opacity = 0;
-    s.video.pause(); s.video.removeAttribute('src'); s.video.load();
+    s.video.pause(); s.video.muted = true; s.video.setAttribute('muted', ''); s.video.removeAttribute('src'); s.video.load();
   }
 
   let checkT = 0;
@@ -67,6 +70,7 @@ export function artAnimator({ items, maxActive = 2, fade = 0.9, range = 9 }) {
       const goal = s.target && s.ready ? 1 : 0;
       s.a += Math.sign(goal - s.a) * Math.min(Math.abs(goal - s.a), dt / fade);
       s.mat.opacity = s.a * s.a * (3 - 2 * s.a);   // smoothstep
+      if (s.item.sound && !s.video.muted) { if (window.HUSH) s.video.muted = true; else s.video.volume = Math.min(1, s.mat.opacity); }   // (29 Oct) its sound fades with the picture
       if (s.target === 0 && s.a <= 0) release(s);
     }
   }

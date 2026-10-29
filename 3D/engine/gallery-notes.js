@@ -195,16 +195,16 @@ export async function setupNotes({ G, net, cfg, myName, announce, esc, readAloud
   }
   function drawBook() {
     if (!bookCtx) return; const c = bookCtx, w = 1024, h = 720;
-    c.fillStyle = '#f9f8f6'; c.fillRect(0, 0, w, h); c.fillStyle = '#1d1c1b'; c.fillRect(w / 2 - 3, 30, 6, h - 60);   // an open book
-    c.fillStyle = '#ec3013'; c.font = `800 30px ${FONT}`; c.fillText('THE GUEST BOOK', 44, 74);
-    c.fillStyle = '#1d1c1b'; c.font = `800 60px ${FONT}`; c.fillText('Say hello.', 44, 150);
-    c.font = `500 30px ${FONT}`; c.fillStyle = '#5a5654'; ['Leave a note for the', 'artists and everyone', 'who visits after you.'].forEach((l, i) => c.fillText(l, 44, 210 + i * 40));
-    c.fillStyle = '#ec3013'; c.font = `800 28px ${FONT}`; c.fillText('WALK UP · TAP TO SIGN', 44, 400);
+    c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, 0, w, 12); c.fillStyle = '#f3f2f2'; c.fillRect(w / 2 - 3, 30, 6, h - 60);   // an open book (Ben, 28 Oct: black, white text)
+    c.fillStyle = '#fff'; c.font = `800 30px ${FONT}`; c.fillText('THE GUEST BOOK', 44, 74);
+    c.font = `800 60px ${FONT}`; c.fillText('Say hello.', 44, 150);
+    c.font = `500 30px ${FONT}`; ['Leave a note for the', 'artists and everyone', 'who visits after you.'].forEach((l, i) => c.fillText(l, 44, 210 + i * 40));
+    c.fillStyle = '#ec3013'; c.fillRect(44, 360, 380, 4); c.fillStyle = '#fff'; c.font = `800 28px ${FONT}`; c.fillText('WALK UP · TAP TO SIGN', 44, 410);
     const list = visible('book').slice(0, 4);
-    c.font = `800 22px ${FONT}`; c.fillStyle = '#ec3013'; c.fillText(list.length ? 'LATEST SIGNATURES' : 'BE THE FIRST TO SIGN', w / 2 + 34, 74);
+    c.font = `800 22px ${FONT}`; c.fillText(list.length ? 'LATEST SIGNATURES' : 'BE THE FIRST TO SIGN', w / 2 + 34, 74);
     list.forEach((n, i) => {
-      const y = 130 + i * 140; c.fillStyle = '#1d1c1b'; c.font = `800 30px ${FONT}`; c.fillText(n.name, w / 2 + 34, y);
-      c.font = `500 26px ${FONT}`; c.fillStyle = '#3d4046'; let line = '', row = 0;
+      const y = 130 + i * 140; c.fillStyle = '#fff'; c.font = `800 30px ${FONT}`; c.fillText(n.name, w / 2 + 34, y);
+      c.font = `500 26px ${FONT}`; let line = '', row = 0;
       for (const word of n.text.split(' ')) { const t = line ? line + ' ' + word : word; if (c.measureText(t).width > w / 2 - 80) { if (row < 2) c.fillText(row === 1 ? line + '…' : line, w / 2 + 34, y + 36 + row * 32); row++; line = word; } else line = t; }
       if (row < 2) c.fillText(line, w / 2 + 34, y + 36 + row * 32);
     });
@@ -219,26 +219,26 @@ export async function setupNotes({ G, net, cfg, myName, announce, esc, readAloud
       const cv = document.createElement('canvas'); cv.width = 640; cv.height = Math.round(640 * S.h / S.w);
       const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
       const m = new THREE.Mesh(new THREE.PlaneGeometry(S.w, S.h), new THREE.MeshBasicMaterial({ map: t }));
-      m.position.set(...S.p); m.rotation.y = S.ry; W.scene.add(m);
+      m.position.set(...S.p); m.rotation.y = S.ry; m.userData.noCull = true; W.scene.add(m);   // (seen through the windows too)
       whyCards.push({ S, cv, t, n: null, key: '' });
     }
   }
   function drawWhyCard(C) {
     const c = C.cv.getContext('2d'), w = C.cv.width, h = C.cv.height, n = C.n;
-    if (!n) {   // an empty frame waiting for a story
-      c.fillStyle = '#ebe6dc'; c.fillRect(0, 0, w, h); c.strokeStyle = '#c9c1b2'; c.setLineDash([16, 12]); c.lineWidth = 6; c.strokeRect(20, 20, w - 40, h - 40); c.setLineDash([]);
-      c.fillStyle = '#8f877a'; c.textAlign = 'center'; c.font = `800 44px ${FONT}`; c.fillText('YOUR STORY HERE', w / 2, h / 2 - 6); c.font = `500 28px ${FONT}`; c.fillText('Tap ADD YOUR STORY by the door', w / 2, h / 2 + 40); c.textAlign = 'left'; C.t.needsUpdate = true; return;
+    if (!n) {   // an empty frame waiting for a story (Ben, 28 Oct: black, white text)
+      c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.strokeStyle = '#f3f2f2'; c.setLineDash([16, 12]); c.lineWidth = 6; c.strokeRect(20, 20, w - 40, h - 40); c.setLineDash([]);
+      c.fillStyle = '#fff'; c.textAlign = 'center'; c.font = `800 44px ${FONT}`; c.fillText('YOUR STORY HERE', w / 2, h / 2 - 6); c.font = `500 28px ${FONT}`; c.fillText('Tap ADD YOUR STORY by the door', w / 2, h / 2 + 40); c.textAlign = 'left'; C.t.needsUpdate = true; return;
     }
-    c.fillStyle = '#f9f8f6'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, 0, 12, h);
+    c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, 0, 12, h);
     const ph = pic(n, () => { if (C.n === n) drawWhyCard(C); });
     let tx = 40, tw = w - 80;
-    if (ph) { const bw = h - 60, k = Math.min(bw / ph.naturalWidth, bw / ph.naturalHeight), iw = ph.naturalWidth * k, ih = ph.naturalHeight * k; c.fillStyle = '#1d1c1b'; c.fillRect(30, 30, bw, bw); c.drawImage(ph, 30 + (bw - iw) / 2, 30 + (bw - ih) / 2, iw, ih); tx = 30 + bw + 26; tw = w - tx - 30; }
-    c.fillStyle = pending(n) ? '#b8860b' : '#ec3013'; c.font = `800 22px ${FONT}`; c.fillText(pending(n) ? 'WAITING FOR APPROVAL' : n.au ? '\u{1F50A} A STORY IN THEIR VOICE' : 'A STORY', tx, 58);
-    c.fillStyle = '#1d1c1b'; let fs = 40; c.font = `800 ${fs}px ${FONT}`; while (c.measureText(n.name.toUpperCase()).width > tw && fs > 22) { fs -= 2; c.font = `800 ${fs}px ${FONT}`; } c.fillText(n.name.toUpperCase(), tx, 104);
-    c.font = `500 26px ${FONT}`; c.fillStyle = '#2b2928'; const lines = []; let line = '';
+    if (ph) { const bw = h - 60, k = Math.min(bw / ph.naturalWidth, bw / ph.naturalHeight), iw = ph.naturalWidth * k, ih = ph.naturalHeight * k; c.fillStyle = '#000'; c.fillRect(30, 30, bw, bw); c.drawImage(ph, 30 + (bw - iw) / 2, 30 + (bw - ih) / 2, iw, ih); tx = 30 + bw + 26; tw = w - tx - 30; }
+    c.fillStyle = pending(n) ? '#f2c94c' : '#fff'; c.font = `800 22px ${FONT}`; c.fillText(pending(n) ? 'WAITING FOR APPROVAL' : n.au ? '\u{1F50A} A STORY IN THEIR VOICE' : 'A STORY', tx, 58);
+    c.fillStyle = '#fff'; let fs = 40; c.font = `800 ${fs}px ${FONT}`; while (c.measureText(n.name.toUpperCase()).width > tw && fs > 22) { fs -= 2; c.font = `800 ${fs}px ${FONT}`; } c.fillText(n.name.toUpperCase(), tx, 104);
+    c.font = `500 26px ${FONT}`; c.fillStyle = '#fff'; const lines = []; let line = '';
     for (const wd of (n.text || (n.au ? '(a voice story: walk up and listen)' : '')).split(' ')) { const t = line ? line + ' ' + wd : wd; if (c.measureText(t).width > tw && line) { lines.push(line); line = wd; } else line = t; } if (line) lines.push(line);
     const room = Math.floor((h - 160) / 34); lines.slice(0, room).forEach((l, i, a) => c.fillText(i === a.length - 1 && lines.length > a.length ? l + '\u2026' : l, tx, 150 + i * 34));
-    c.fillStyle = '#9a948c'; c.font = `600 20px ${FONT}`; c.fillText(ago(n.at), tx, h - 30); C.t.needsUpdate = true;
+    c.fillStyle = '#d9d6d2'; c.font = `600 20px ${FONT}`; c.fillText(ago(n.at), tx, h - 30); C.t.needsUpdate = true;
   }
   function drawWhy() {
     if (!whyCards.length) return; const list = visible('why');
@@ -248,8 +248,9 @@ export async function setupNotes({ G, net, cfg, myName, announce, esc, readAloud
     const one = item.id ? notes.get(item.id) : null;
     const wrap = el('div');
     if (one) { wrap.appendChild(noteRow(one, () => openWhy({}))); if (one.au && readAloud()) playVoice(one); }
+    else if (item.art) { const im = el('img', 'display:block;width:min(100%,300px);aspect-ratio:1;border:2px solid var(--ink,#f3f2f2);margin:0 0 10px'); im.src = item.art; im.alt = 'Your coloured picture: ' + (item.artName || 'art'); wrap.appendChild(im); wrap.appendChild(el('p', 'margin:0;font:400 15px/1.5 ' + FONT, 'Your coloured picture is ready to hang in the WHY House. Add a few words: why do you create, or what this picture means to you. (It shows once the gallery team has looked at it.)')); }
     else wrap.appendChild(el('p', 'margin:0;font:400 15px/1.5 ' + FONT, 'Why do you create? Why do you care? Tell us in your own words, record it in your own voice, and add a photo of yourself or of your art. Your story hangs here on the walls of the WHY House for everyone who visits. (Photos and voices show once the gallery team has looked at them.)'));
-    const c = composer(one ? 'Add your own story…' : 'Why do you create? Why do you care?', 'Add my story', (t, a) => post('why', t, { ...a }), { art: true });
+    const c = composer(one ? 'Add your own story…' : 'Why do you create? Why do you care?', 'Add my story', (t, a) => post('why', t, { ...a }), { art: true, img: item.art || null });
     wrap.appendChild(c.f);
     const list = visible('why');
     if (!one) { wrap.appendChild(el('div', 'font:800 11px/1 ' + FONT + ';letter-spacing:.14em;text-transform:uppercase;color:#ff9783;margin:18px 0 4px', list.length ? list.length + (list.length === 1 ? ' story' : ' stories') + ' so far' : 'No stories yet: yours can be the first')); list.slice(0, 60).forEach(n => wrap.appendChild(noteRow(n, () => openWhy({})))); }
@@ -303,7 +304,7 @@ export async function setupNotes({ G, net, cfg, myName, announce, esc, readAloud
     st.setAttribute('aria-live', 'polite');
     const say = (msg, bad) => { st.textContent = msg; st.style.color = bad ? '#ff9783' : MUTED; announce(msg); };
     // ---- a photo of yourself and a voice clip, both optional
-    const att = { img: null, au: null, secs: 0 };
+    const att = { img: opt.img || null, au: null, secs: 0 };
     const media = el('div', 'display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap');
     const micB = el('button', BTN, '\u{1F399} Record voice'), camB = el('button', BTN, opt.art ? '\u{1F5BC} Add a photo (you or your art)' : '\u{1F4F7} Add your photo');
     micB.setAttribute('aria-label', 'Record a voice note, up to ' + AU_SECS + ' seconds'); camB.setAttribute('aria-label', opt.art ? 'Add a photo of yourself or of your art' : 'Add a photo of yourself');
@@ -350,7 +351,7 @@ export async function setupNotes({ G, net, cfg, myName, announce, esc, readAloud
       const tick = () => { const s = (performance.now() - recT) / 1000; micB.textContent = '\u25A0 Stop \u00B7 ' + Math.ceil(AU_SECS - s) + 's'; if (s >= AU_SECS) stopRec(); };
       tick(); recTimer = setInterval(tick, 250); say('Recording. Tap Stop when you\u2019re done.');
     };
-    media.append(micB, camB, fileIn, prev);
+    media.append(micB, camB, fileIn, prev); if (att.img) drawPrev();   // (a picture handed in, like a coloured page from the art corner)
     // a big picture and a voice clip together would make the note too large for the note servers: shrink the picture to fit
     const shrink = (d, lim) => new Promise(res => { const im = new Image(); im.onload = () => { let k = 1, out = d; const cv = document.createElement('canvas');
       while (out.length > lim && k > 0.2) { k *= 0.8; cv.width = Math.round(im.naturalWidth * k); cv.height = Math.round(im.naturalHeight * k); cv.getContext('2d').drawImage(im, 0, 0, cv.width, cv.height); out = cv.toDataURL('image/jpeg', 0.7); }

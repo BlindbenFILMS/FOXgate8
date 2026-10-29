@@ -137,17 +137,26 @@ export function buildEye({ scene, lowEnd }) {
     shape.moveTo(Math.cos(inner[0][0]) * inner[0][1], Math.sin(inner[0][0]) * inner[0][1]);
     for (const [a, r] of inner) shape.lineTo(Math.cos(a) * r, Math.sin(a) * r);
     for (const [a, r] of outer.reverse()) shape.lineTo(Math.cos(a) * r, Math.sin(a) * r);
-    const geo = new THREE.ExtrudeGeometry(shape, { depth: 0.5, bevelEnabled: false, curveSegments: 4 });
-    const lid = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color: 0x2b2a29 }));
+    const geo = new THREE.ExtrudeGeometry(shape, { depth: 0.5, bevelEnabled: true, bevelThickness: 0.12, bevelSize: 0.12, bevelSegments: 3, curveSegments: 4 });   // (28 Oct) a rounded edge, deep navy like the canopy
+    const lid = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color: 0x1b2450 }));
     lid.position.set(-22.1, C.y, C.z); lid.rotation.y = Math.PI / 2; lid.scale.x = -1; scene.add(lid);
     // a thin red line along its lower edge (the house accent)
-    const pts = inner.map(([a, r]) => new THREE.Vector3(-21.58, C.y + Math.sin(a) * (r + 0.06), C.z + Math.cos(a) * (r + 0.06)));
+    const pts = inner.map(([a, r]) => new THREE.Vector3(-21.42, C.y + Math.sin(a) * (r + 0.06), C.z + Math.cos(a) * (r + 0.06)));
     const tube = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 96, 0.07, 6, false), new THREE.MeshBasicMaterial({ color: 0xec3013 })); scene.add(tube);
+    // (28 Oct) a cove light hidden under the lid's edge: a soft warm-white glow washing down the white band, strongest at night
+    { const cv = document.createElement('canvas'); cv.width = 4; cv.height = 64; const c = cv.getContext('2d'), gr = c.createLinearGradient(0, 0, 0, 64);
+      gr.addColorStop(0, 'rgba(255,236,206,0.9)'); gr.addColorStop(0.35, 'rgba(255,236,206,0.35)'); gr.addColorStop(1, 'rgba(255,236,206,0)'); c.fillStyle = gr; c.fillRect(0, 0, 4, 64);
+      const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace;
+      const P = [], UV = [], IX = [], W = 1.5;
+      inner.slice().reverse().forEach(([a, r0], i, arr) => { const ca = Math.cos(a), sa = Math.sin(a); P.push(-21.4, C.y + sa * r0, C.z + ca * r0, -21.4, C.y + sa * (r0 - W), C.z + ca * (r0 - W)); const u = i / (arr.length - 1); UV.push(u, 1, u, 0); if (i) { const k = i * 2; IX.push(k - 2, k - 1, k, k - 1, k + 1, k); } });
+      const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(UV, 2)); g.setIndex(IX);
+      out.coveM = new THREE.MeshBasicMaterial({ map: t, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, opacity: 0.35 });
+      const cove = new THREE.Mesh(g, out.coveM); cove.renderOrder = 6; scene.add(cove); }
   }
   // ------------------------------------------------ uplights in the lake: four lamps in the water throw angled beams up at the glass,
   // and mist drifting up off the water catches the light as it passes through them
   {
-    const WY = -0.75, beamV = `varying vec3 vN; varying vec3 vW; varying float vY; uniform float uL;
+    const WY = -0.22,   /* (28 Oct) the water's new level */ beamV = `varying vec3 vN; varying vec3 vW; varying float vY; uniform float uL;
       void main() { vY = position.y / uL; vN = normalize(mat3(modelMatrix) * normal); vec4 wp = modelMatrix * vec4(position, 1.0); vW = wp.xyz; gl_Position = projectionMatrix * viewMatrix * wp; }`;
     const beamF = `varying vec3 vN; varying vec3 vW; varying float vY; uniform float uI;
       void main() { float f = abs(dot(normalize(vN), normalize(cameraPosition - vW))); float k = pow(f, 2.2) * pow(1.0 - vY, 0.8) * smoothstep(0.0, 0.08, vY) * uI;
@@ -168,9 +177,9 @@ export function buildEye({ scene, lowEnd }) {
     }
     out.mats[0].uniforms.uHit.value.forEach((v, i) => v.copy(out.hits[i]));
     // mist: soft puffs rising off the water in front of the facade (not over the bridge)
-    const N = lowEnd ? 70 : 150, pos = new Float32Array(N * 3), colr = new Float32Array(N * 3), P = [];
+    const N = lowEnd ? 100 : 220, pos = new Float32Array(N * 3), colr = new Float32Array(N * 3), P = [];
     const cv = document.createElement('canvas'); cv.width = cv.height = 64; const c = cv.getContext('2d'); const gr = c.createRadialGradient(32, 32, 2, 32, 32, 31); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.5, 'rgba(255,255,255,.35)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); c.fillStyle = gr; c.fillRect(0, 0, 64, 64);
-    const spawn = (p, fresh) => { const z = (Math.random() < 0.5 ? -1 : 1) * (4.2 + Math.random() * 5.6); p.x = -22.5 + Math.random() * 8.0; p.z = z; p.y = WY + (fresh ? Math.random() * 3.2 : Math.random() * 0.3); p.life = fresh ? Math.random() : 0; p.sp = 0.12 + Math.random() * 0.14; p.dx = (Math.random() - 0.5) * 0.12; };
+    const spawn = (p, fresh) => { const z = (Math.random() < 0.5 ? -1 : 1) * (4.2 + Math.random() * 5.6); p.x = -22.5 + Math.random() * 8.8; p.z = (z < 0 ? -1 : 1) * Math.min(Math.abs(z) + Math.random() * 1.4, 11); p.y = WY + (fresh ? Math.random() * 6.5 : Math.random() * 0.3); p.life = fresh ? Math.random() : 0; p.sp = 0.22 + Math.random() * 0.2; /* (28 Oct) rises higher + a little faster */ p.dx = (Math.random() - 0.5) * 0.12; };
     for (let i = 0; i < N; i++) { const p = {}; spawn(p, true); P.push(p); }
     const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3)); geo.setAttribute('color', new THREE.BufferAttribute(colr, 3));
     const mist = new THREE.Points(geo, new THREE.PointsMaterial({ size: lowEnd ? 3.6 : 3.0, map: new THREE.CanvasTexture(cv), vertexColors: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true, fog: true }));
@@ -178,18 +187,19 @@ export function buildEye({ scene, lowEnd }) {
     const tmp = new THREE.Vector3(), q = new THREE.Vector3();
     out.mist = { tick(dt, light) {
       for (let i = 0; i < N; i++) {
-        const p = P[i]; p.life += dt / 9; p.y += p.sp * dt; p.x += p.dx * dt; if (p.life >= 1 || p.y > WY + 3.6) spawn(p, false);
+        const p = P[i]; p.life += dt / 13; p.y += p.sp * dt; p.x += p.dx * dt; if (p.life >= 1 || p.y > WY + 7.5) spawn(p, false);
         pos[i * 3] = p.x; pos[i * 3 + 1] = p.y; pos[i * 3 + 2] = p.z;
         let k = 0; q.set(p.x, p.y, p.z);
         for (const b of out.beams) { tmp.copy(q).sub(b.S); const s = Math.max(0, Math.min(1, tmp.dot(b.d) / b.L)); tmp.copy(b.S).addScaledVector(b.d, s * b.L); const rr = b.r0 + (b.r1 - b.r0) * s; k += Math.exp(-q.distanceToSquared(tmp) / (rr * rr)) * (1 - s * 0.5); }
-        const fade = Math.sin(Math.PI * Math.min(1, p.life)) * Math.min(1, (p.y - WY) / 0.6 + 0.2), v = (0.05 + 0.75 * k * light) * fade;
+        const fade = Math.sin(Math.PI * Math.min(1, p.life)) * Math.min(1, (p.y - WY) / 0.6 + 0.2), v = (0.05 + 0.75 * k * light) * fade * (p.y - WY > 3.5 ? 0.3 : 0.55);   /* (28 Oct) softer, and fainter as it rises, so the beams don't turn to white fog */
         colr[i * 3] = v * 0.82; colr[i * 3 + 1] = v * 0.93; colr[i * 3 + 2] = v;
       }
       geo.attributes.position.needsUpdate = true; geo.attributes.color.needsUpdate = true;
     } };
   }
   // ------------------------------------------------ the name sign, up on two posts in the water in front of the museum
-  {
+  // (27 Oct, Ben) REMOVED for a calmer park: the big BLIND CANVAS PROJECT banner with the red stroke
+  if (false) {
     const SW = 14, SH = 3.0, X = 21.6, Y0 = 4.4;   // (11 Oct: narrower, posts just inside the ring so the ring path is clear; the walk to the museum passes between them)
     const cv = document.createElement('canvas'); cv.width = 2048; cv.height = Math.round(2048 * SH / SW); const c = cv.getContext('2d');
     const draw = () => {
@@ -219,8 +229,9 @@ export function buildEye({ scene, lowEnd }) {
   return { update(t, night) {
     const dt = lastT == null ? 0 : Math.min(0.1, Math.max(0, t - lastT)); lastT = t;
     const light = 0.45 + 0.55 * night;   // the uplights read faintly by day, strongly at night
-    for (const m of out.mats) { m.uniforms.uT.value = t; m.uniforms.uNight.value = night; m.uniforms.uLit.value = light * 0.8; }
-    if (out.beams) for (const b of out.beams) b.mat.uniforms.uI.value = 0.38 + 0.7 * night;
+    for (const m of out.mats) { m.uniforms.uT.value = t; m.uniforms.uNight.value = night; m.uniforms.uLit.value = light * 0.6; }
+    if (out.beams) for (const b of out.beams) b.mat.uniforms.uI.value = 0.3 + 0.38 * night;   // (28 Oct) softer: at night they were blowing the glass out to white
+    if (out.coveM) out.coveM.opacity = 0.22 + 0.5 * night;
     if (out.mist) out.mist.tick(dt, light);
     if (out.glint) out.glint.material.opacity = 0.8 - night * 0.45; }, ...out };
 }

@@ -6,12 +6,13 @@
 // The overlay maths are the same as the page's (same severity curves, gaze waypoints and floater spots).
 import * as THREE from '../vendor/three/three.module.js';
 
+// (s29, Ben) top row: Diabetic Retinopathy · Regular Vision · Macular Degeneration; bottom row: Retinitis Pigmentosa · Cataracts · Glaucoma
 const ORDER = [
-  { id: 'cataracts', label: 'Cataracts', mode: 1 },
+  { id: 'floaters', label: 'Diabetic Retinopathy', mode: 3 },
   { id: 'none', label: 'Regular Vision', mode: 0 },
   { id: 'amd', label: 'Macular Degeneration', mode: 2 },
-  { id: 'floaters', label: 'Diabetic Retinopathy', mode: 3 },
   { id: 'rp', label: 'Retinitis Pigmentosa', mode: 4 },
+  { id: 'cataracts', label: 'Cataracts', mode: 1 },
   { id: 'glaucoma', label: 'Glaucoma', mode: 5 },
 ];
 const SPOTS = [[12, 18, 5], [24, 38, 7], [33, 14, 4], [44, 30, 8], [18, 60, 6], [30, 74, 5], [9, 42, 4.5], [40, 52, 6.5], [52, 20, 5], [58, 44, 8], [66, 24, 4.5], [73, 52, 7], [49, 66, 6], [62, 72, 5], [78, 34, 5.5], [86, 58, 6.5], [88, 22, 4], [70, 12, 4], [22, 86, 5], [54, 86, 6], [82, 80, 5.5], [36, 90, 4.5], [16, 30, 4], [92, 44, 5]];
@@ -21,7 +22,7 @@ const VERT = `varying vec2 vUv; void main() { vUv = uv; gl_Position = projection
 const FRAG = `
 precision mediump float;
 varying vec2 vUv;
-uniform sampler2D map; uniform float sev, aspect; uniform vec2 gaze; uniform vec4 crop; uniform vec3 spots[24]; uniform vec2 fshift;
+uniform sampler2D map; uniform vec3 lev; uniform float sev, aspect; uniform vec2 gaze; uniform vec4 crop; uniform vec3 spots[24]; uniform vec2 fshift;
 // CSS-style helpers (everything in sRGB, like the browser does it)
 float farR(vec2 c, float a) { // farthest-corner radius from c, in tile-height units (x scaled by aspect)
   vec2 p = vec2(c.x * a, c.y); float r = 0.0;
@@ -29,7 +30,8 @@ float farR(vec2 c, float a) { // farthest-corner radius from c, in tile-height u
 float pct(vec2 uv, vec2 c, float a) { return length(vec2((uv.x - c.x) * a, uv.y - c.y)) / farR(c, a) * 100.0; }
 float ramp4(float t, float t0, float a0, float t1, float a1, float t2, float a2, float t3, float a3) {
   if (t <= t0) return a0; if (t <= t1) return mix(a0, a1, (t - t0) / max(t1 - t0, 1e-4)); if (t <= t2) return mix(a1, a2, (t - t1) / max(t2 - t1, 1e-4)); if (t <= t3) return mix(a2, a3, (t - t2) / max(t3 - t2, 1e-4)); return a3; }
-vec3 vid(vec2 uv) { vec2 q = clamp(uv, 0.0, 1.0); return texture2D(map, crop.xy + vec2(q.x, 1.0 - q.y) * crop.zw).rgb; }
+vec3 vid(vec2 uv) { vec2 q = clamp(uv, 0.0, 1.0); vec3 c = texture2D(map, crop.xy + vec2(q.x, 1.0 - q.y) * crop.zw).rgb;
+  c = clamp((c - lev.x) / (1.0 - lev.x), 0.0, 1.0); c = (c - 0.5) * lev.y + 0.5; float l = dot(c, vec3(0.299, 0.587, 0.114)); return clamp(mix(vec3(l), c, lev.z), 0.0, 1.0); }   // (28 Oct) per-wall levels: black point, contrast, saturation
 vec3 blurred(vec2 uv, float px) {   // css blur(px): gaussian, approximated by two rings of taps (px measured against a ~515 px tall tile)
   if (px < 0.05) return vid(uv);
   float r = px / 515.0; vec3 acc = vid(uv) * 0.2; float w = 0.2;
@@ -92,13 +94,23 @@ const FONT = 'Archivo, Arimo, Helvetica, Arial, sans-serif';
 const LOW = /iPhone|iPad|Android/i.test(navigator.userAgent);
 export function buildSimWalls({ scene, walls, src, kiosk, kiosks, zone }) {
   // one video for every tile on every wall: always in sync
-  const video = document.createElement('video'); video.muted = true; video.loop = true; video.playsInline = true; video.setAttribute('playsinline', ''); video.preload = 'none'; video.crossOrigin = 'anonymous';
+  const video = document.createElement('video'); video.muted = true; video.defaultMuted = true; video.volume = 0; video.loop = true; video.playsInline = true; video.setAttribute('playsinline', ''); video.preload = 'none'; video.crossOrigin = 'anonymous';
   const vtex = new THREE.VideoTexture(video); vtex.colorSpace = THREE.NoColorSpace;   // shader works in sRGB like CSS
+  // (28 Oct, Ben) each wall can show its own picture: simImg = a still (the big wall: the Snellen eye chart), simVid = its own film
+  // (the small wall: the doctor talking, centre-cropped to a square); anything else plays the shared film above
+  const extra = [];   // [{ video, tex }] own films, played / let go with the room like the shared one
+  const srcFor = w => {
+    if (w.simImg) { const t = new THREE.TextureLoader().load(w.simImg); t.colorSpace = THREE.NoColorSpace; return { tex: t, crop: new THREE.Vector4(0, 0, 1, 1), lev: new THREE.Vector3(0, 1, 1) }; }
+    if (w.simVid) { const v = document.createElement('video'); v.muted = true; v.defaultMuted = true; v.volume = 0; v.setAttribute('muted', ''); v.loop = true; v.playsInline = true; v.setAttribute('playsinline', ''); v.preload = 'none'; v.crossOrigin = 'anonymous';
+      const t = new THREE.VideoTexture(v); t.colorSpace = THREE.NoColorSpace; const crop = new THREE.Vector4(0, 0, 1, 1);
+      v.addEventListener('loadedmetadata', () => { const a = v.videoWidth / v.videoHeight; if (a > 1) crop.set((1 - 1 / a) / 2, 0, 1 / a, 1); else crop.set(0, (1 - a) / 2, 1, a); });
+      extra.push({ video: v, src: w.simVid }); return { tex: t, crop, lev: new THREE.Vector3(0.09, 1.22, 1.3) }; }   // (Ben: the HDR film came out grey + washed out: deeper blacks, more contrast + colour)
+    return { tex: vtex, crop: new THREE.Vector4(0, 0, 1, 1), lev: new THREE.Vector3(0, 1, 1) }; };
   const st = { sev: 0.85, shown: 0.85, playing: false, phase: 0, t: 0 };
   const tiles = [];   // { mat, i }
   const heads = [];
   for (const w of walls) {
-    const g = new THREE.Group(); g.position.set(...w.p); g.quaternion.set(...w.q); scene.add(g);
+    const g = new THREE.Group(); g.position.set(...w.p); g.quaternion.set(...w.q); scene.add(g); const SRC = srcFor(w);
     const W = w.s[2] * 1.01, H = w.s[1] * 1.01, HH = H * 0.14, gap = 0.08, gw = (W - gap * 4) / 3, gh = (H - HH - gap * 3) / 2;
     const dark = new THREE.Mesh(new THREE.BoxGeometry(w.s[0] * 1.04, H, W), new THREE.MeshBasicMaterial({ color: 0x08080a })); g.add(dark);
     for (const side of [1, -1]) {
@@ -107,18 +119,32 @@ export function buildSimWalls({ scene, walls, src, kiosk, kiosks, zone }) {
       const mkHead = (txt, color) => { const t = textTex(2048, Math.round(2048 * HH / W), (c, cw, ch) => { c.fillStyle = color; c.font = `800 ${Math.round(ch * 0.5)}px ${FONT}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(txt.split('').join(String.fromCharCode(8202)), cw / 2, ch * 0.54); });
         const m = new THREE.Mesh(new THREE.PlaneGeometry(W, HH), new THREE.MeshBasicMaterial({ map: t, transparent: true })); m.position.set(0, H / 2 - HH / 2, 0.005); face.add(m); return m; };
       heads.push([mkHead('VISION SIMULATOR', '#f3f1ee'), mkHead('BLINDNESS SPECTRUM', '#e8b26a')]);
+      // (s27, Ben) a tight 3 x 2 grid of SQUARE pictures, as big as the screen allows, each with its name right under it. The name
+      // band is exactly the picture's width, and ONE font size is set so the longest line (DEGENERATION) spans the picture edge to
+      // edge; every other name uses that same size. Two-word names on two lines.
+      const labs = ORDER.map(o => { const w = o.label.toUpperCase().split(' '); return w.length > 1 ? [w.slice(0, Math.ceil(w.length / 2)).join(' '), w.slice(Math.ceil(w.length / 2)).join(' ')] : w; });
+      const LW = 1024, mc = document.createElement('canvas').getContext('2d'); mc.font = `800 100px ${FONT}`;
+      const fs = Math.floor(100 * LW * 0.995 / Math.max(...labs.flat().map(l => mc.measureText(l).width)));   // px on a picture-wide canvas
+      const LH = Math.ceil(fs * 2.25), BR = LH / LW;                     // band height as a share of the picture's side
+      // (s28, Ben) gaps 50 % wider; the VISION SIMULATOR title sits just above the grid, and title + grid are centred together
+      const M = W * 0.03, G2 = 0.075, GY = 0.05, LG = 0.025, HG = 0.02;   // (G2 = left-right gap, 50 % wider; GY = between the rows, unchanged)             // edge margin, gap between cells, picture → name, title → grid (x S)
+      const availW = W - 2 * M, availH = H - HH - 2 * M * 0.6;
+      const S = Math.min(availW / (3 + 2 * G2), (availH - 0.02 * H) / (2 * (1 + LG + BR) + GY));
+      const cellH = S * (1 + LG + BR), gridH = 2 * cellH + S * GY, block = HH * 0.72 + S * HG + gridH, bTop = block / 2;
+      for (const m of heads[heads.length - 1]) m.position.y = bTop - HH / 2 + HH * 0.22;   // (the title's letters sit in the middle of its band)
+      const top = bTop - HH * 0.72 - S * HG;
+      // (s30, Ben) the plaza screen hugs its content: the same margin all round as from PIGMENTOSA to the bottom edge
+      { const mg = H / 2 - block / 2, W2 = 3 * S + 2 * S * G2 + 2 * mg; dark.scale.z = W2 / W; g.userData.fitW = W2; }
       ORDER.forEach((o, i) => {
-        const cx = -W / 2 + gap + gw / 2 + (i % 3) * (gw + gap), cy = H / 2 - HH - gap - gh / 2 - Math.floor(i / 3) * (gh + gap);
-        const aspect = gw / gh, crop = aspect > 1 ? new THREE.Vector4(0, (1 - 1 / aspect) / 2, 1, 1 / aspect) : new THREE.Vector4((1 - aspect) / 2, 0, aspect, 1);   // object-fit: cover (square film)
-        const mat = new THREE.ShaderMaterial({ vertexShader: VERT, fragmentShader: FRAG, defines: { MODE: o.mode, TAPS: LOW ? 6 : 8 }, uniforms: { map: { value: vtex }, sev: { value: st.sev }, aspect: { value: aspect }, gaze: { value: new THREE.Vector2(50, 40) }, crop: { value: crop }, spots: { value: SPOTS.map(p => new THREE.Vector3(...p)) }, fshift: { value: new THREE.Vector2() } } });
+        const col = i % 3, row = Math.floor(i / 3), cx = (col - 1) * S * (1 + G2), cTop = top - row * (cellH + S * GY);
+        const aspect = 1, crop = SRC.crop;   // the square picture (a wide film is centre-cropped to a square)
+        const mat = new THREE.ShaderMaterial({ vertexShader: VERT, fragmentShader: FRAG, defines: { MODE: o.mode, TAPS: LOW ? 6 : 8 }, uniforms: { map: { value: SRC.tex }, lev: { value: SRC.lev }, sev: { value: st.sev }, aspect: { value: aspect }, gaze: { value: new THREE.Vector2(50, 40) }, crop: { value: crop }, spots: { value: SPOTS.map(p => new THREE.Vector3(...p)) }, fshift: { value: new THREE.Vector2() } } });
         mat.toneMapped = false;
-        const tile = new THREE.Mesh(new THREE.PlaneGeometry(gw, gh), mat); tile.position.set(cx, cy, 0.01); face.add(tile);
-        // the label pill, bottom left (Regular Vision in gold, like the page)
-        const reg = o.id === 'none', label = o.label.toUpperCase();
-        const mc = document.createElement('canvas').getContext('2d'); mc.font = `700 40px ${FONT}`; const PW = Math.ceil(mc.measureText(label).width + 64);
-        const lt = textTex(PW, 96, (c, cw, ch) => { c.font = `700 40px ${FONT}`; c.fillStyle = reg ? '#e8b26a' : 'rgba(255,255,255,0.92)'; c.beginPath(); c.roundRect(2, 8, cw - 4, ch - 16, (ch - 16) / 2); c.fill(); c.fillStyle = '#111'; c.textBaseline = 'middle'; c.fillText(label, 32, ch / 2 + 2); });
-        const ph = gh * 0.1, pw = ph * PW / 96, pill = new THREE.Mesh(new THREE.PlaneGeometry(pw, ph), new THREE.MeshBasicMaterial({ map: lt, transparent: true }));
-        pill.position.set(cx - gw / 2 + pw / 2 + gw * 0.03, cy - gh / 2 + ph / 2 + gh * 0.04, 0.02); face.add(pill);
+        const tile = new THREE.Mesh(new THREE.PlaneGeometry(S, S), mat); tile.position.set(cx, cTop - S / 2, 0.01); face.add(tile);
+        const reg = o.id === 'none';
+        const lt = textTex(LW, LH, (c, cw, ch) => { c.fillStyle = '#08080a'; c.fillRect(0, 0, cw, ch); c.fillStyle = reg ? '#e8b26a' : '#ffffff'; c.font = `800 ${fs}px ${FONT}`; c.textAlign = 'center'; c.textBaseline = 'middle';
+          const L = labs[i]; if (L.length > 1) { c.fillText(L[0], cw / 2, ch * 0.5 - fs * 0.53); c.fillText(L[1], cw / 2, ch * 0.5 + fs * 0.55); } else c.fillText(L[0], cw / 2, ch * 0.27); });
+        const bh = S * BR, band = new THREE.Mesh(new THREE.PlaneGeometry(S, bh), new THREE.MeshBasicMaterial({ map: lt })); band.position.set(cx, cTop - S - S * LG - bh / 2, 0.012); face.add(band);
         tile.visible = false; tiles.push({ mat, i, id: o.id, mesh: tile });
       });
     }
@@ -145,25 +171,28 @@ export function buildSimWalls({ scene, walls, src, kiosk, kiosks, zone }) {
     for (const k of kioskList) {
       const t = new THREE.Group(); t.position.set(...k.p); t.rotation.y = k.face || 0; scene.add(t);
       const foot = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.08, 0.8), ink); foot.position.y = 0.04; t.add(foot);
-      const colm = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.95, 0.36), ink); colm.position.set(0, 0.52, -0.05); t.add(colm);
-      const top = new THREE.Group(); top.position.set(0, 1.08, 0); top.rotation.x = TILT; t.add(top);
+      const kh = k.h || 1;   // (s28) the plaza kiosk is half as tall
+      const colm = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.95 * kh, 0.36), ink); colm.position.set(0, 0.04 + 0.95 * kh / 2, -0.05); t.add(colm);
+      const top = new THREE.Group(); top.position.set(0, 0.04 + 1.04 * kh, 0); top.rotation.x = TILT; t.add(top);
       const back = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.16, 0.08), ink); top.add(back);
       const scr = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.07), scrM); scr.position.z = 0.045; top.add(scr);
       const bar = new THREE.Mesh(new THREE.BoxGeometry(1.62, 0.05, 0.1), red); bar.position.set(0, 0.6, 0); top.add(bar);
       t.updateMatrixWorld(true);
     }
   }
-  const zoneBox = new THREE.Box3(new THREE.Vector3(...zone[0]), new THREE.Vector3(...zone[1]));
+  // (s24) one zone or a list of zones (the hall + the welcome plaza): the film plays while you're in any of them
+  const zoneBoxes = (Array.isArray(zone[0][0]) ? zone : [zone]).map(z => new THREE.Box3(new THREE.Vector3(...z[0]), new THREE.Vector3(...z[1])));
   return {
     kioskPos: kioskList.length ? new THREE.Vector3(...kioskList[0].p) : null,
     kioskPositions: kioskList.map(k => new THREE.Vector3(...k.p)),
     get severity() { return st.sev; },
     setSeverity(v) { st.sev = THREE.MathUtils.clamp(v, 0, 1); drawKiosk(); },
     update(dt, px, py, pz) {
+      if (!(dt >= 0 && dt < 1)) dt = 0;   // (s25) the first frame on the plaza can hand in a bad dt: keep the clock sane
       st.t += dt;
-      const inRoom = zoneBox.containsPoint(new THREE.Vector3(px, py + 0.5, pz));
-      if (inRoom && !st.playing) { st.playing = true; for (const T of tiles) T.mesh.visible = true; if (!video.getAttribute('src')) { video.src = src; video.load(); } const p = video.play(); if (p && p.catch) p.catch(() => {}); }
-      else if (!inRoom && st.playing) { st.playing = false; video.pause(); video.removeAttribute('src'); video.load(); for (const T of tiles) T.mesh.visible = false; }   // left the room: screens off and the film let go of (memory)   // outside the room (or upstairs): screens off, no effect to draw
+      const pp = new THREE.Vector3(px, py + 0.5, pz), inRoom = zoneBoxes.some(b => b.containsPoint(pp));
+      if (inRoom && !st.playing) { st.playing = true; for (const T of tiles) T.mesh.visible = true; for (const v of [{ video, src }, ...extra]) { if (!v.video.getAttribute('src')) { v.video.src = v.src; v.video.load(); } const p = v.video.play(); if (p && p.catch) p.catch(() => {}); } }
+      else if (!inRoom && st.playing) { st.playing = false; for (const v of [video, ...extra.map(e => e.video)]) { v.pause(); v.removeAttribute('src'); v.load(); } for (const T of tiles) T.mesh.visible = false; }   // left the room: screens off and the film let go of (memory)   // outside the room (or upstairs): screens off, no effect to draw
       if (!st.playing) return;
       st.shown += THREE.MathUtils.clamp(st.sev - st.shown, -dt * 1.5, dt * 1.5);   // the wall eases to a new severity
       const ph = Math.floor(st.t / 5) % 2, k = THREE.MathUtils.clamp((st.t % 5) / 0.9, 0, 1);
@@ -171,7 +200,7 @@ export function buildSimWalls({ scene, walls, src, kiosk, kiosks, zone }) {
       const TRAVEL = 2.2, DWELL = 1.7, CYCLE = TRAVEL + DWELL, ease = t => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
       for (const T of tiles) {
         const u = T.mat.uniforms; u.sev.value = st.shown;
-        const el = st.t + T.i * 1.3, seg = Math.floor(el / CYCLE) + T.i * 2, inSeg = el % CYCLE, a = WP[seg % WP.length], b = WP[(seg + 1) % WP.length], kk = inSeg < TRAVEL ? ease(inSeg / TRAVEL) : 1;
+        const el = st.t + T.i * 1.3, seg = Math.floor(el / CYCLE) + T.i * 2, inSeg = el % CYCLE, a = WP[((seg % WP.length) + WP.length) % WP.length] || WP[0], b = WP[(((seg + 1) % WP.length) + WP.length) % WP.length] || WP[0], kk = inSeg < TRAVEL ? ease(inSeg / TRAVEL) : 1;
         const gx = a.x + (b.x - a.x) * kk + Math.sin(st.t * 1.3 + T.i) * 1.2, gy = a.y + (b.y - a.y) * kk + Math.cos(st.t * 1.1 + T.i) * 1.0;
         u.gaze.value.set(gx, gy); u.fshift.value.set((gx - 50) * 0.0062, (gy - 45) * 0.0062);
       }

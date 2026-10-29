@@ -10,8 +10,8 @@ export function setupVoice({ G, net, button, announce, nameOf }) {
 
   function label() {
     const others = G.remote.count() > 0;
-    button.style.display = others || mine ? '' : 'none';
-    button.textContent = mine ? 'MIC\nON' : 'MIC\nOFF';
+    button.style.display = '';   // (28 Oct, Ben) always beside the wave
+    if (window.tbSet) window.tbSet(button, mine ? 'mic' : 'micOff', mine ? 'MIC ON' : 'MIC'); else button.textContent = mine ? 'MIC ON' : 'MIC';
     button.classList.toggle('on', !!mine);
     button.setAttribute('aria-pressed', mine ? 'true' : 'false');
     button.setAttribute('aria-label', mine ? 'Microphone on. Tap to turn it off' : 'Microphone off. Tap to talk to the other visitors');
@@ -27,7 +27,7 @@ export function setupVoice({ G, net, button, announce, nameOf }) {
       announce('Your mic is on. Everyone in the gallery can hear you.');
     } catch (e) {
       announce(e && e.name === 'NotAllowedError' ? 'The microphone was blocked. Allow it in your browser settings to talk.' : 'No microphone was found.');
-      button.textContent = 'NO\nMIC'; setTimeout(label, 2500); busy = false; return;
+      if (window.tbSet) window.tbSet(button, 'micOff', 'NO MIC'); else button.textContent = 'NO MIC'; setTimeout(label, 2500); busy = false; return;
     }
     busy = false; label();
   }

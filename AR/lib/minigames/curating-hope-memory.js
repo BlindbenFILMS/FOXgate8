@@ -1,5 +1,7 @@
 // CURATING HOPE (Ben Fox): LIGHT MEMORY, a song we remember together.
-// The people under the tree are the voices: each one lights up and sings a note (low on the left, high on the right).
+// Three of the people under the tree are the voices (every other person, so each one is easy to see light up and easy
+// to tap): blue on the left sings low, gold in the middle, orange on the right sings high, the painting's own colours.
+// Each has a pool of light at their feet, and a big button of their colour at the bottom that lights up with them.
 // Listen to the community sing a little of their song, then sing it back by tapping the people in the same order.
 // Each round the song is one note longer, and each round you remember fills more of the tree with light: a shared
 // memory growing. Get one wrong and nobody is out: the community just sings it again, together. At the end the whole
@@ -9,12 +11,13 @@
 import * as THREE from 'three';
 import * as K from './kit.js';
 
-const PEOPLE = [   // u, v of each singer (mid-body), and their voice
-  { u: 0.19, v: 0.725, vowel: 'oo' }, { u: 0.27, v: 0.72, vowel: 'ah' }, { u: 0.43, v: 0.70, vowel: 'oh' },
-  { u: 0.585, v: 0.715, vowel: 'ah' }, { u: 0.68, v: 0.72, vowel: 'oo' }, { u: 0.785, v: 0.725, vowel: 'oh' },
+const PEOPLE = [   // u, v of each singer (mid-body), their voice, their colour and their button
+  { u: 0.19, v: 0.725, vowel: 'oo', col: '#8fc3ff', btn: '#2f6fd6', label: 'Low' },
+  { u: 0.43, v: 0.70, vowel: 'oh', col: '#ffd47a', btn: '#f0b429', label: 'Middle' },
+  { u: 0.68, v: 0.72, vowel: 'ah', col: '#ff8a5a', btn: '#ec5a13', label: 'High' },
 ];
-const NOTES = [60, 62, 64, 67, 69, 72];             // C D E G A C: low on the left, high on the right
-const SONG = [2, 3, 4, 3, 5, 4, 3, 2];              // the community's song (the melody you'll remember)
+const NOTES = [60, 64, 67];                         // C E G: low on the left, high on the right
+const SONG = [1, 2, 1, 0, 2, 1, 2, 0];              // the community's song (the melody you'll remember), ending home on C
 const FIRST = 3;                                     // the first round sings 3 notes; then 4, 5 ... 8
 const CANOPY = [[0.22, 0.25], [0.78, 0.25], [0.36, 0.14], [0.64, 0.14], [0.5, 0.3], [0.15, 0.45], [0.85, 0.45], [0.5, 0.08]];
 const FORM = { ah: [800, 1150, 2900], oh: [500, 900, 2600], oo: [330, 870, 2300] };
@@ -40,8 +43,9 @@ export function lightMemoryGame() {
   }
   function light(i, dur = 0.5) {
     const P = G.ppl[i]; P.on = 1; P.dur = dur;
+    const b = G.btns && G.btns[i]; if (b) { b.classList.add('lit'); clearTimeout(b._lit); b._lit = setTimeout(() => b.classList.remove('lit'), dur * 1000 + 120); }
     sing(G.ac, G.bus, G.ac.currentTime + 0.01, NOTES[i], dur, PEOPLE[i].vowel, 0.55, (PEOPLE[i].u - 0.5) * 1.6);
-    const [x, y] = G.S.P(PEOPLE[i].u, PEOPLE[i].v - 0.04); G.fx.add(x, y, '#ffd98a', 6, 0.12);
+    const [x, y] = G.S.P(PEOPLE[i].u, PEOPLE[i].v - 0.04); G.fx.add(x, y, PEOPLE[i].col, 10, 0.16);
   }
   // the community sings the song so far
   function listen() {
@@ -76,10 +80,10 @@ export function lightMemoryGame() {
     G.phase = 'chorus'; G.glows.forEach(g => g.target = 1);
     const t0 = G.ac.currentTime + 0.3, gap = 0.62;
     SONG.forEach((n, k) => {
-      const t = t0 + k * gap, up = Math.min(5, n + 2);   // a harmony a little above
+      const t = t0 + k * gap;   // the melody, an octave below, and a harmony a fifth above
       sing(G.ac, G.bus, t, NOTES[n], gap * 0.95, 'ah', 0.45, -0.5);
       sing(G.ac, G.bus, t, NOTES[n] - 12, gap * 0.95, 'oh', 0.35, 0.5);
-      sing(G.ac, G.bus, t, NOTES[up], gap * 0.95, 'oo', 0.25, 0);
+      sing(G.ac, G.bus, t, NOTES[n] + 7, gap * 0.95, 'oo', 0.22, 0);
       G.queue.push({ at: G.t + 0.3 + k * gap, n, dur: gap * 0.9, all: true });
     });
     G.settle = 0.3 + SONG.length * gap + 1.2;
@@ -92,22 +96,28 @@ export function lightMemoryGame() {
       if (G) this.stop();
       G = K.makeBase(ctx);
       Object.assign(G, { round: 0, len: FIRST, pos: 0, misses: 0, phase: 'intro', queue: [], queueEnd: 0, waitT: 0, after: null, settle: 0, t0: 0, botAt: 0 });
-      G.ac = K.audio(); G.bus = G.ac.createGain(); G.bus.gain.value = 1.4; G.bus.connect(G.ac.destination);
+      G.ac = K.audio(); G.bus = G.ac.createGain(); G.bus.gain.value = 0.9; G.bus.connect(G.ac.destination);
       // a soft dusk over the painting so the lights glow
       G.dim = new THREE.Mesh(new THREE.PlaneGeometry(1.004, G.h + 0.004), new THREE.MeshBasicMaterial({ color: 0x050812, transparent: true, opacity: 0, depthWrite: false }));
       G.dim.position.z = 0.03; G.dim.renderOrder = 11; G.root.add(G.dim);
       G.ppl = PEOPLE.map(p => {
         const [x, y] = G.S.P(p.u, p.v);
-        const halo = K.sprite(K.glowTex, 0.16, { color: '#ffcf6b', additive: true, opacity: 0, order: 14 }); halo.position.set(x, y, 0.05); G.root.add(halo);
-        const [bx, by] = G.S.P(p.u, p.v - 0.22);   // a ribbon of light up into the branches
-        const beam = K.sprite(K.glowTex, 0.12, { color: '#ffe0a0', additive: true, opacity: 0, order: 13 }); beam.position.set(bx, by, 0.045); beam.scale.set(0.09, 0.42, 1); G.root.add(beam);
-        return { halo, beam, on: 0, dur: 0.5 };
+        const halo = K.sprite(K.glowTex, 0.26, { color: p.col, additive: true, opacity: 0, order: 14 }); halo.position.set(x, y, 0.05); G.root.add(halo);
+        const [bx, by] = G.S.P(p.u, p.v - 0.24);   // a ribbon of light up into the branches
+        const beam = K.sprite(K.glowTex, 0.12, { color: p.col, additive: true, opacity: 0, order: 13 }); beam.position.set(bx, by, 0.045); beam.scale.set(0.16, 0.5, 1); G.root.add(beam);
+        const [gx, gy] = G.S.P(p.u, p.v + 0.065);   // a pool of light at their feet: always there, so you know who sings
+        const pool = K.sprite(K.glowTex, 0.2, { color: p.col, additive: true, opacity: 0, order: 13 }); pool.position.set(gx, gy, 0.045); pool.scale.set(0.2, 0.07, 1); G.root.add(pool);
+        return { halo, beam, pool, on: 0, dur: 0.5 };
       });
       G.glows = CANOPY.map(([u, v], i) => { const [x, y] = G.S.P(u, v); const s = K.sprite(K.glowTex, 0.34, { color: i % 2 ? '#ffb45a' : '#9fc4ff', additive: true, opacity: 0, order: 12 }); s.position.set(x, y, 0.04); G.root.add(s); return { s, target: 0, v: 0 }; });
-      G.ui.buttons([{ label: 'Again', icon: '↻', kind: 'red', aria: 'Hear the song again', press: () => G.playing && again() }]);
+      // a big button for each singer, in their colour (they light up when that person sings), then Again
+      G.btns = G.ui.buttons(PEOPLE.map((p, i) => ({ label: p.label, aria: `${p.label} voice, ${['left', 'middle', 'right'][i]}`, press: () => G.playing && press(i) }))
+        .concat([{ label: '', icon: '↻', kind: 'black', aria: 'Hear the song again', press: () => G.playing && again() }]));
+      G.btns.forEach((b, i) => { if (i < PEOPLE.length) { b.style.background = PEOPLE[i].btn; b.style.color = i === 1 ? '#14100c' : '#fff'; b.style.transition = 'transform .08s, box-shadow .08s, filter .08s'; } else b.style.flex = '0 0 66px'; });
+      if (!document.getElementById('chm-css')) { const st = document.createElement('style'); st.id = 'chm-css'; st.textContent = '.mgk-btns button.lit{filter:brightness(1.35);transform:scale(1.06);box-shadow:0 0 0 4px #fff,0 0 26px 6px rgba(255,230,160,.9)}'; document.head.appendChild(st); }
       hud();
       G.onGo = () => { G.t0 = G.t; listen(); };
-      K.intro(G, { title: 'Light memory', how: 'The community sings a little of their song. Sing it back: tap the people in the same order. Low notes on the left, high on the right.',
+      K.intro(G, { title: 'Light memory', how: 'Three people under the tree sing a little of their song. Sing it back: tap them, or their buttons, in the same order. Low on the left, high on the right.',
         say: 'Light memory. The people under the tree sing a song together, a few notes at a time. Listen, then sing it back by tapping them in the same order. Low notes are on the left, high notes on the right, and you can tap anywhere across the screen. Each round you remember fills the tree with light.' });
     },
     update(dt) {
@@ -116,7 +126,9 @@ export function lightMemoryGame() {
       G.dim.material.opacity += ((G.over ? 0 : 0.42) - G.dim.material.opacity) * Math.min(1, dt * 1.5);
       // the people glow while they sing
       G.ppl.forEach(P => { if (P.on > 0) P.on = Math.max(0, P.on - dt / (P.dur + 0.25)); const a = Math.min(1, P.on * 1.6);
-        P.halo.material.opacity = a * 0.95; P.halo.scale.setScalar(0.12 + a * 0.08); P.beam.material.opacity = a * 0.55; });
+        const rest = G.over ? 0 : 1;   // between notes each singer keeps a soft glow and a pool of light, so you know who sings
+        P.halo.material.opacity = Math.max(a * 0.95, rest * 0.28); P.halo.scale.setScalar(0.16 + a * 0.12); P.beam.material.opacity = a * 0.6;
+        P.pool.material.opacity = Math.min(1, rest * 0.7 + a * 0.5); P.pool.scale.set(0.2 + a * 0.06, 0.07 + a * 0.02, 1); });
       G.glows.forEach(g => { g.v += (g.target - g.v) * Math.min(1, dt * 1.2); g.s.material.opacity = g.v * (0.75 + Math.sin(G.t * 1.7 + g.s.position.x * 9) * 0.12); });
       // play queued notes (the community singing)
       for (let i = G.queue.length - 1; i >= 0; i--) { const q = G.queue[i]; if (G.t >= q.at) { G.queue.splice(i, 1);
@@ -136,7 +148,7 @@ export function lightMemoryGame() {
       // left to right picks the singer: use the painting if the touch lands on it, else the screen
       const p = G.S.toBoard(ev, G.root);
       const u = p && p.u >= 0 && p.u <= 1 ? p.u : ev.clientX / innerWidth;
-      let best = 0, bd = 9; PEOPLE.forEach((q, i) => { const d = Math.abs(q.u - u); if (d < bd) { bd = d; best = i; } });
+      let best = 0, bd = 9; PEOPLE.forEach((q, i) => { const d = Math.abs(q.u - u); if (d < bd) { bd = d; best = i; } });   // (three wide zones: left, middle, right)
       press(best);
     },
     pause() { if (G) G.paused = true; },

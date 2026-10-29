@@ -450,3 +450,159 @@ Ben's PlayCanvas project (BCP export) was exported with PlayCanvas's own GltfExp
 - 27 Oct: no browser zoom (viewport user-scalable=no plus pinch / double-tap / ctrl+wheel / ctrl +/- blocked), so buttons can't be zoomed off screen.
 - 27 Oct: new loading screen: the white Blind Canvas Project logo on a deep blue glow, and a card of five blindness tips (from the "Tips to be loved by the blind" kiosk) that turns over every 7 s (tap for the next). Fits 375x667, 390x844 and phones on their side (two columns).
 - 27 Oct: the avatar choice is Joe or Jane, each a portrait drawn live from their own fox (G.portrait). Joe = the suited fox with his cane, Jane = the vixen in her chair; no mention of cane or wheelchair anywhere in the choice. ☰ has "Be: Joe / Jane"; Gear is None / Glasses.
+
+## FROM CLAUDE DESIGN (29 Oct): gallery notes from its BUILD_PLAN
+
+### WHY HOUSE RUG + STAND (Ben, 28 Oct; gallery-campus.js): the black BCP logo rug moved up to just inside the door (centre z0 + 5.4); the ADD YOUR STORY stand now right behind it (z0 + 9.4), straight ahead as you come in, between the benches.
+
+### WHY HOUSE: FOUR EASELS, FOUR PICTURES (Ben, 28 Oct; gallery-colour.js): easels in all four corners of the WHY House, each starting on its own picture: HEART (front left; a true heart curve with two hearts inside), HELPING HAND (front right; open palm with a heart in it), SUNRISE (back left; sun over the horizon, rays, hills), BRIGHT IDEA (back right; lightbulb, filament, rays). All 8 pictures are in every easel's picker.
+
+### WHY HOUSE EASELS + COMMENT SPOT OUT FRONT (Ben, 28 Oct): two more colouring easels INSIDE the WHY House in the front corners by the door, turned to the room (Heart, Fish; gallery-colour.js EASELS inside: 1). The WHY House YOUR COMMENTS HERE pad moved out front: on the lawn left of the door at (33.6, 23.0), facing the walk (gallery-comments.js; backup *.pre-why-move.js).
+
+### ART CORNER (Ben, 28 Oct; gallery-colour.js, gallery-notes.js; backups *.pre-polish / *.pre-colour-share): the colouring easels moved off the walks to an ART CORNER beside the WHY House's west wall: 3 easels (Eye, Flower, Home) in an arc on a pale gravel pad with an ink edge, a round paint table with 8 pots + a brush jar, a palette with dabs on each easel shelf, the sign at the corner by the north walk. Panel: picture thumbnails (5), UNDO (12 steps), CLEAR, HANG ON THE EASEL, SHARE IN THE WHY HOUSE (hangs it, then opens the WHY House story form with the picture attached (360 px jpeg, < 38k); the visitor adds words; it shows after the gallery team approves, like other photos).
+
+### AMB RAMP + CINEMA SEATS (Ben, 28 Oct; backups *.pre-ramp-fix / *.pre-seat-fix): the red rail + hidden blocker across the top of each AMB ramp (between its top patch and the steps) removed: the ramp now leads onto the landing and in at the door (walk-tested from the west ramp's foot to inside the door). Cinema seats: the gold cap was one bar right across the seat front (looked closed); now a small gold cap on the front of each arm only.
+
+### COLOUR INSIDE THE LINES (Ben, 28 Oct; NEW engine/gallery-colour.js, wired in gallery.html as window.COLOUR + ACTIONS kind 'colour'): two oak easels on the lawn south-east of the ring (EASELS: (62.2, -20.6) The Eye, (66.2, -21.4) Home) + a COLOUR INSIDE THE LINES sign between them. Walk up, COLOUR: a full-screen panel (dark, Modernist): the picture's lines are RAISED (flood-filled regions: a stroke started in a shape only fills that shape), touching a line / crossing out = phone buzz (Android) + hum + red edge. 12 colours, THIN / MEDIUM / BIG, NEW PICTURE (eye · house · fish · flower · heart), CLEAR, DONE · HANG IT (shows on the easel, saved on this device: localStorage bcp.colour). TODO ideas: share hung pictures with other visitors (net event), easel colliders, a community wall.
+
+### SIM ROOM KIOSKS OPEN (Ben, 28 Oct; gallery.json edu, simRoom: 1): copies of the entrance's TIPS TO BE LOVED (blindnessAllyTips) + TOOLS FOR THE BLIND (blindnessTools) learning stations at the room's two big stands (-160.1, -19.8) / (-160.1, 19.4), reach 4.2 m: walk up + ACTIONS / E opens the same panel as at the entrance.
+
+### VISION SIM ROOM, PASS 3 (Ben, 28 Oct; backups *.pre-simroom2.*): the EYE CHART Six Views screen moved to the west wall's NORTH pier, same 4.6 x 4.6 size as the doctor screen (the two now flank the TO ORA EYE GALLERY door), its severity kiosk in front. North wall: RETINITIS PIGMENTOSA card · a LARGE TOOLS FOR THE BLIND stand (6.0 x 4.5) · a new GLAUCOMA card (gallery/img/blindness_edu_glaucoma.png). Six Views shader: per-wall levels (lev = black point, contrast, saturation); the doctor film gets 0.09 / 1.22 / 1.3 so it's no longer grey + washed out (it's an HDR clip). All sim films hard-muted (muted, defaultMuted, volume 0).
+
+### SIX VIEWS: EYE CHART + DOCTOR (Ben, 28 Oct; gallery-simwall.js srcFor, gallery.json vids[8].simImg / vids[24].simVid; backup gallery-simwall.pre-eyechart.js): the big north Six Views wall shows Ben's Snellen EYE CHART (gallery/img/sim_eyechart.png, 1024 sq) through the six conditions; the small west wall shows the DOCTOR TALKING film (gallery/video/sim_doctor.mp4, centre-cropped square, muted, loops, loads only in the room). The plaza screen keeps the shared sim_hero film. NB: sim_doctor.mp4 must be uploaded to the live site too (GMEDIA is not used for it).
+
+### LOAD SCREEN (Ben, 28 Oct; gallery.html #load): big BCP logo · NAME other gallery visitors see (input) · blue load bar (fades out when ready) · blue ENTER THE GALLERY → (glow, focus ring) · the blindness tips below. No sound-on text, no lines under the name. Soft blue glow behind the logo; tip label + dots + rule in blue. Landscape: logo + tips left, name / bar / Enter right.
+
+### VISION SIM ROOM SWAP (Ben, 28 Oct; gallery.json, gallery-remodel.js; backups *.pre-simroom-cards.*): the SOUTH Six Views screen (vids[24]) moved to the west wall's south pier (p -173.25, -0.6, -12.05; 4.6 x 4.6, facing east) with its SEVERITY kiosk (simKiosks[0] at -169.4, -12.05, face PI/2) in front. The south wall now: DIABETIC RETINOPATHY card (signs[119], learnmore_02) left · a LARGE TIPS TO BE LOVED BY THE BLIND stand (6.0 x 4.5, ALLY_TIPS) centred at x -160.1 · a new CATARACTS card (gallery/img/blindness_edu_cataracts.png, drawn to match) right.
+
+### EYE POOL RAISED + HIGHER MIST (Ben, 28 Oct): the pool under the bridge (gallery-world.js POOL) raised from -0.75 to -0.22 (just under the deck) and widened to z ±16: it now covers the wooden bowl either side out to about z ±11.5, up to the facade (not over it). The uplights + mist moved up with it (gallery-eye.js WY). Mist: 220 puffs (100 on phones), rises to 7.5 m (was 3.6), lives longer, fades as it climbs so the beams stay soft. NB: no // comments inside one-line code in gallery-eye.js (one broke the page today).
+
+### EYE FRONT POLISH (Ben, 28 Oct; backups *.pre-front.js): the big dark canopy over the eye (GLB mesh Meditate_with_Morten__15_, front part x > -40 by vertex colour) is deep Ora navy, lighter toward its crown, with smoother normals (60°); the eyelid is bevelled + navy, its red edge line moved forward so the bevel doesn't hide it; a warm cove light under the lid washes down the white band (stronger at night); the lake uplights are softer (they blew the glass out to white at night).
+
+### START SPOT + NO SCREEN-DRAG LOOK (Ben, 28 Oct): spawn = the start platform's red ring, east edge, centred under the BCP logo, in line with the main walk, facing the eye (garden-plan CAMPUS.spawn 44.7, 0). Dragging the screen no longer turns the camera; only LOOK AROUND (press + drag) does (?draglook restores screen drag). Bottom-right stack: LOOK AROUND (84) · ACTIONS (152) · LEAVE NOTE (220).
+
+### TOP STRIP (Ben, 28 Oct; gallery.html body.barFull): the top bar is a full-width strip pinned to the top (logo + room + TAP FOR FAST TRAVEL MAP left; wave · MIC · CAM · ☰ right, menu last). Menu / camera panels open from the right under it. Portrait phones: smaller logo, room name on one line (ellipsis), 44 px buttons. ?topbar=old = the old floating bar. Foxes-here count removed. Phone preview page: 3D/phone-preview.html (?phonepreview shows the joystick on a computer).
+
+### MUSEUM MAP POLISH (Ben, 28 Oct; gallery.html openMuseumMap): 'Fast travel · Where to?' panel: map + list side by side (stacks on narrow screens). Map laid out the way you walk (entrance right, west left, north up); every room has a big number matching its list row; the room you're in is ringed red + YOU ARE HERE in the list; yellow arrow = you; the Eye Platform is a dashed ring over the music room.
+
+### MUSEUM MAP + TELEPORT (Ben, 28 Oct; gallery.html openMuseumMap + ROOMS_IN, gallery-game.js G.goSpot; backup gallery.pre-museum-map.html): MAP in the menu opens the museum map when you're inside (x < -13), the park map outside; each links to the other. 8 rooms, tap the map or the list to fade straight there: Entrance · Main Gallery · New Artists North / South · Vision Simulator · Music Room · The Eye Platform (top floor) · Meditate with Morten. Red dot = you. Add a room: one line in ROOMS_IN (at = x, y, z, face; r = rect or ell = ellipse on the map).
+
+### MORTEN ROOM PLANTS (Ben, 28 Oct; gallery-zen.js): bamboo groves moved off the reading lines: now (-263, 24.2) between The Gray Zone and the meditation film, (-263, 8.4) between The Mirror and The Gray Zone card, (-247.3, 6.4) behind the Morten Bonde card. The side paper lanterns moved over the benches (r 8.2, ±24°) so they no longer hang in front of Inner Peace / The Gray Zone.
+
+### MAIN GALLERY WALL TONES (Ben, 28 Oct; gallery-wing.js woodify walls; backup gallery-wing.pre-hall-tones.js): ground floor x -145.5..-66, |z| < 23, y < 5.4: long walls warm limestone (0.80, 0.765, 0.70 linear), every wall face that faces along the hall (end walls, the big screen's back wall, the ORA wall, the short piers between bays) deep Ora navy lighter as it rises, ink skirting 0.16 m. Upstairs + ceilings unchanged. Ideas if Ben wants more: a different deep tone per upstairs room.
+
+### FILMS FROZEN ON BLACK (Ben, 28 Oct; gallery-game.js after unlockSound): when the browser won't allow a film's sound, Chrome froze it on frame 0 (black screen, not 'paused'). Watchdog: a film with sound that hasn't moved for 1.5 s goes muted and plays (picture runs); the next tap / key tries the sound again.
+
+### KEY EASING (Ben, 28 Oct): the arrow / WASD keys now ease in and out (St.kx / St.kz, rate 5, ~0.3 s) only when a key is let go while the other axis is still held (presses + letting go of the last key are instant), so letting go of LEFT / RIGHT while holding UP no longer jerks the fox and camera 45°. Stick unchanged.
+
+### MOVEMENT RESTORED (Ben, 28 Oct): move() + the camera follow are back to Ben's uploaded version (uploads/gallery-design-kit/code/engine/gallery-game.js): assisted camera-relative stick + keys, the camera swings round behind as you turn (rate 3.0). The keyboard 'car' steering, the spin-to-face change and the Meru-walk experiment below are all undone.
+
+### (UNDONE) MERU WALK IN THE GALLERY (Ben, 28 Oct; gallery-game.js move + updateCamera; backup gallery-game.pre-movement.js)
+- Same scheme as Deep Space Fox + the player planet: stick AND keys camera-relative (up = away, down = towards the camera: the fox turns and walks at you, face visible; left/right = across the screen). Replaces the keyboard 'car' steering and the lagging stick heading.
+- Weight: velocity Pl.vx/vz eases (13 accelerate, 10 settle, chair 6), fox turns to face its motion (rate 11), small lean into turns (player.rotation.z, chair 40 %).
+- Camera: drifts in behind (rate 1.4) only while walking away from it (cos > 0.2); across or towards it holds still, so it never spins. Drag to look still free. First person: left/right turn the view.
+- Teleports, sitting, standing, respawn zero the velocity.
+
+### CAM = SCREEN HEAD TOGGLE (Ben, 28 Oct; gallery.html): the CAM button beside MIC is one toggle now: tap = Screen head on (CAMHEAD.start('screen')), tap again = off. Fox copies my face + Face mask are gone from the UI (hidden stub buttons keep the old handlers safe). Blocked camera: a red CAMERA BLOCKED box under the bar for 12 s (the preview frame always blocks it; test on the live site / own tab).
+
+### SEE YOUR FOX'S FACE (Ben, 28 Oct; gallery-game.js move + updateCamera): keyboard LEFT / RIGHT on the spot now turns only the fox (the camera stays), so it can spin all the way round to face you; with UP / DOWN held the camera turns with it as before, and once you walk it swings gently round behind (kbHead: full follow at rate 2.2). First person: camera still turns with the fox. Dragging the screen still orbits freely without turning the fox.
+
+### MENU POLISH + HOST LOCK + MIC / CAM (Ben, 28 Oct; gallery.html, gallery-voice.js; backups *.pre-menu-polish.*)
+- Menu rebuilt in sections with 2px rules (dark ground, light ink): big red PARK MAP · Your fox (Joe/Jane, looks, glasses) · Reading & sound (ON/OFF toggles) · Visiting together (name, room link, comment, who's here) · Lost? (entrance, Lite) · Host mode · back to the galaxy.
+- HOST MODE is locked: 'I'm hosting this visit' asks for the password BCP (any case; unlocked for that tab via sessionStorage bcp.hostOk). Host this visit + Lead a tour only show after unlocking.
+- Top bar: MIC (always shown now) + new CAM button beside the wave. CAM opens Fox copies my face / Screen head / Face mask / Camera off (moved out of the menu).
+
+### WELCOME FILM FRAME + AMB BENCH (Ben, 28 Oct): the hanging film's ink frame, header bar and 2 steel cables (gallery-remodel.js buildKiosks → kiosks.filmFrame, kept out of the merge) now hide with the film once you're past it, so looking back the eye is clear. The ring bench that stood on the line from the AMB door (garden-plan angle 4.71) moved to 4.3 (west, off the door line).
+
+### ROOM SIGNS LOAD FIRST (Ben, 28 Oct; gallery-game.js): the plate signs in gallery.json (k 't' + plate: MUSIC ROOM, MAIN GALLERY, ACADEMY OF MUSIC…, ~27) now load first on arrival whatever the distance, are never unloaded, never hidden by the label distance, the occlusion rays or the small-thing cull. Other signs: unchanged.
+
+### MEDITATE WITH MORTEN REDESIGN (Ben, 28 Oct): DONE, needs Ben's eyes. New file engine/gallery-zen.js. Backups: backup/gallery/*.pre-zen.js
+- A quiet garden room. Old flat blue pond, its rim and the 5 little stones carved (gallery-remodel.js CARVES 'morten pond …', 'morten stones').
+- NEW KOI POND on the east side (ZEN.pond -249.6, 20.2, oval 2.3 x 4.2): stone coping, pale pebble border, dark pebble bed, water shader (depth, shimmer, sky at the edges, ripples from the spout), 6 lily pads, 2 lotus, 3 koi, a SHISHI-ODOSHI (fills 7 s, tips, knocks: window.__zenTok). Solid: you walk round it.
+- SITTING CIRCLE facing the meditation film: round straw mat, 5 cushions on oak plinths + 2 oak benches behind, all SITTABLE (sitting turns you to the film); a stone POND BENCH at the pond's south end (looks over the water). zen.benches → BENCHES.
+- 3 paper lanterns over the circle + soft floor light pools; bamboo groves (instanced) in the NE corner, SW corner, by the Morten Bonde film and in the west window gap.
+- Walls: soft sage, darker toward the floor, ink skirting, warm charcoal for black pieces (gallery-wing.js woodify walls, zone x -267..-246.4, z -7.2..35).
+- ONE WAY IN: the south side (low parapet onto the open deck, 2 gaps + the SW corner) glazed floor → 3.8 m with ink mullions + a solid blocker. The room's only door is the one from the curved hall.
+- Big eye-level MEDITATE WITH MORTEN plaque on the door's north jamb (curved hall side); the small sign over the door stays.
+- SOUND (gallery-sound.js): a soft trickle within 14 m of the pond + the shishi-odoshi's knock; ducked while a film plays, hushed with the rest.
+- Phone: whole room group only drawn while the camera is within 14 m of it. Not yet checked on a real iPhone.
+- PASS 3 (Ben, 28 Oct): the door's north black jamb now ends at the threshold where the stones start (CARVES 'morten door jamb west' hides mesh_34 #2; #3 stays); the old pond's sunken basin walls (a 0.75 m beam from the Morten card to the gravel garden) carved ('morten pond basin'); the room's floor is warm slate pavers in running bond with mossy joints (gallery-wing.js woodify floor branch, zone x -266.5..-246.4, z -6.7..34.5) instead of hardwood.
+- PASS 2 (Ben, 28 Oct; backups *.pre-zen2.js): STEPPING-STONE PATH from the door to the circle (instanced, flat) lined by 4 glowing stone lanterns (toro, solid); a RAKED GRAVEL GARDEN (karesansui, x -260.5..-256.3, z 7..12.6, ink curb, 3 solid stones) with a sittable GARDEN BENCH on its east edge; puffy round zafu cushions; paper lanterns moved up (FY+3.7) and out to r 9.4 so they never cover the film, with soft halos; a BREATHE ring round the mat (swells 4 s in, fades 6 s out); river rocks + moss on the pond coping; a splash ring when the bamboo tube pours; sitting on a cushion or the meditation benches rings a SINGING BOWL (window.__zenBell → gallery-sound.js bowl()).
+
+### CURVED HALL + MUSIC ROOM POLISH (Ben, 28 Oct): DONE, needs Ben's eyes. Backups: backup/gallery/*.pre-ring-polish.js
+- ONE WAY IN, ONE WAY OUT: every ground-level gap in the outer ring is glazed solid (gallery-ringglass.js LOW_SPANS: clear glass floor → 4.3 m, ink mullions ~2.4 m, sill, hand-height rail, solid 'see:' blockers = ringGlass.col, registered as ringLow in gallery-game.js). Open: opening 9 (from the vision simulator room) and the gap round corner 20 (x -246, z ≈ -4..4.5) to Meditate with Morten. Ray check after: only those two are open.
+- Walls (gallery-wing.js woodify, walls branch, zone x < -177.4 within 41 m of (-210, 0), y -3.6..17): white walls → warm limestone that darkens toward the floor; the black music-room drum + black frames → deep Ora navy, lighter as it rises; ink skirting (0.16 m) and an ink line at 4.3 m (y 4.3) running round the ring with the glazing transoms.
+- If Ben wants more: vary the tone per bay / pillar, or a different drum colour (one line each in the shader).
+
+### VISION SIMULATOR ROOM POLISH (Ben, 28 Oct): pass 1 DONE, needs Ben's eyes. Backups: backup/gallery/*.pre-sim-polish.js
+- Walls no longer black: side walls warm grey #a39d95, the two SCREEN walls (north + south, faces |z| > 18) a deeper #6b6661 so the screens lead (gallery-game.js SIM_WALL / SIM_SCR, same per-vertex + instance-colour block after carveWorld).
+- BUG FIXED: the walk-through black panel was a SIM_SKIN plane. Skins now only go on THIN walls (≤ 1.2 m) whose room face sits on the room edge (≤ 1.2 m); only 2 remain, high on the east wall (y 5.8..12.5). Console '[sim room] wall faces: n skins: […]' lists them.
+- The black door jambs at the ORA / MUSIC ROOM doors are the GLB's own black pieces (mesh_34), solid, unchanged.
+- ?at=sim spawns you in the room (x -149, facing west) for testing.
+- Next ideas (ask Ben): a big eye-level VISION SIMULATOR ROOM door sign at the main-gallery side; warm light pools under the two screens; the room screens are content-hugging (s30 fit applies to them too) = 9.5 m wide on a 45 m wall: make them bigger?
+- Not yet checked on a real phone at 390x844 / 844x390 (only colours changed, no UI).
+
+### WHY HOUSE POLISH (Ben, 28 Oct): DONE, needs Ben's eyes. Backups: backup/gallery/*.pre-why-polish.js
+- Story slots: ONE ROW at eye height (y 2.0): back wall 5 + each side 4 = 13 slots (was 26 in two rows). More stories than 13: only the newest 13 hang. Ask Ben if he wants the house deeper for more.
+- Every sign black + white text: name plate, back-wall header, story stand, guest book, empty YOUR STORY HERE frames, the story cards (gallery-notes.js) and ALL the YOUR COMMENTS HERE signs + pads campus-wide (gallery-comments.js, were yellow).
+- Logo rug black with a white border + white logo.
+- Shape: walls 6.0 m tall (was 5.4). Real see-through windows (wallH in gallery-campus.js: wall pieces round each hole, clear glass, ink frame + cross, invisible blocker): 2 big front windows either side of the door, 4 high windows on each side wall over the stories. Fake painted windows removed. One shared clapboard texture (UVs per metre) instead of a texture per wall.
+- Speed-savers: WHY House contents are noCull now (gallery-game.js inA + the story cards), so they show through the windows.
+- WELCOME SCREEN (Ben, 28 Oct; gallery.html, backup gallery.pre-random-avatar.html): CHOOSE YOUR AVATAR removed; every visit WHO(random joe/jane) + a shirt art no other fox in the room wears (G.randomStyle(G.remote.arts()), re-checked after 3.5 s). The YOUR NAME box now sits above the 'Videos in each room…' line.
+- WELCOME FILM (Ben, 28 Oct): the hanging film inside the eye (vids[0], keep, x -48) hides while the camera is past it (x < -48.4), so looking back from inside the eye door is clear; coming in it stays until you've walked under it (gallery-game.js, just before render).
+- LOAD DISTANCES +25 % (Ben, 28 Oct; gallery-game.js, backup *.pre-load-dist.js): small-thing cull (LITE near 22/36, k 0.016/0.009, art 75/110, labels 32/50), art NEAR 120/175 + SHARP 55 on phones, wings load 100/120/160 (unload 155/215), rooms 90/110/140 (unload 150/220), room/wing groups shown within 95 m, staff 60 m, other visitors 90 m. If phones get slow, step these back first.
+- VISION SIMULATOR ROOM BLACK (Ben, 28 Oct): the walls are inside the big merged GLB meshes (mesh_32, Arch__1_…), so gallery-game.js (after carveWorld) paints black VERTEX COLOURS on every wall face inside the room box x -177.6..-145.9, z -22.7..22.3 that faces into the room (those meshes get a material copy with vertexColors). Console '[sim room] black wall faces: n'. (The first try, recolouring whole pieces, matched nothing.) ORA SPONSOR text (behind the ORA screen in the main gallery, gallery.json sign at x -119.103): now 3 lines (\n), plane y -3.3..-1.95 between the floor and the screen (screen bottom -1.912), fs 28.
+- AMB WINDOWS SEE-THROUGH (Ben, 28 Oct): the 4 tall front windows are real holes now. gallery.json rooms amb "frontWins" [zc, w, y0, y1] (wing-local) → buildWing (gallery-wing.js sideWall) cuts them + an unseen blocker; gallery-amb.js draws clear glass (warm glint at night), ink frames through the wall, mullions. Window blockers carry userData.see (collision label 'see:' so the behind-a-wall rays look past them); WHY House blockers too. Backups: backup/gallery/*.pre-amb-windows.*
+
+
+## HANDOFF_GALLERY_29OCT.md (Claude Design)
+
+# Blind Canvas gallery: handoff (28–29 Oct 2026)
+
+Paste this into the original chat: "Read HANDOFF_GALLERY_29OCT.md and continue BUILD_PLAN.md (gallery)."
+
+## Files changed (upload all of these, same paths)
+New:
+- 3D/engine/gallery-puzzle.js (LIVING PUZZLE, window.PUZZLE)
+- 3D/engine/gallery-paint.js (PAINT TOGETHER, window.PAINT)
+- 3D/engine/gallery-hunt.js (ART HUNT, window.HUNT)
+- 3D/engine/gallery-bingo.js (ART BINGO, window.BINGO)
+
+Edited:
+- 3D/gallery.html (loads the four above, net events, shared clock GSES, red ✕ observer, side tabs hide when busy, park map labels + CHESS / PAINT boxes, every fox starts as a cane fox in the Art suit)
+- 3D/engine/gallery-game.js (pupil hallway, Stevie zone +4 m, main film skips first 2 s, hands = fur colour)
+- 3D/engine/gallery-campus.js (WHY House banner lower, Talking Chess + Paint Together spots / routes)
+- 3D/engine/gallery-remodel.js (Blindness Tip 1 moved across the walk)
+- 3D/engine/gallery-fun-props.js (chess tables moved, TALKING CHESS sign)
+- 3D/engine/gallery-chess.js (TALKING CHESS name)
+- 3D/engine/gallery-studio.js (Fox / Vixen tee + camera section removed, 6 fur colours)
+- 3D/gallery/gallery.json (second notes admin key for the admin link)
+- BUILD_PLAN.md (progress notes)
+
+## What was built
+- LIVING PUZZLE: VIEW ART panel → PLAY AS A LIVING PUZZLE. Tiles on the wall in front of the painting (3×3 / 4×4), camera frames it, shared board for friends (net 'pzl'), solved = flash + living mp4.
+- PAINT TOGETHER: canvas at the end of the walk north of the Academy (-9, -53). 8 colours, THIN/MID/THICK, live strokes for all (net 'pnt'), black invite text until the first stroke (hidden in full screen), clears every hour on the shared clock.
+- ART HUNT: left tab (n/5). 5 clue cards per 30 min, same paintings for all, each player's own order. Stand in front = ★ stamp. RACING YOU list (net 'hnt').
+- ART BINGO: only with 2+ foxes (tab under ART HUNT). 3×3 of painting squares decided ONLY by Ben's list (BINGO_TAGS / BINGO_NOT in gallery-bingo.js). Fills by itself in Art Hunt range, no hand ticking, one painting = one square (the rarest it fits). First line = bell for all (net 'bng').
+- SHARED CLOCK (window.GSES): starts with the first fox in; later foxes adopt it; empty gallery → fresh clock. Hunt + bingo 30 min, paint 60 min.
+- TALKING CHESS (renamed) moved to the end of the walk north of the WHY House; both new spots on the park map + place list.
+- Park map labels auto-fit their boxes; every ✕ button red with the ✕ centred.
+- ART HUNT / ART BINGO tabs appear only after the load screen and hide during full screen / games.
+- Start fox: cane fox in the Art suit (art square front, BCP logo back), a different art per fox.
+- Pupil hallway: black tube behind the eye's pupil (far end 33 % wider), fades as you walk in, hidden inside.
+- Stevie Wonder film starts 4 m sooner; main screen film skips its first 2 s.
+
+## Admin link (keep private)
+gallery.html?admin=bcp-409799cbfdeac3df2b34e9cb → Approve / Hide on stories with photos or voice.
+
+## Still to check
+- Phone check (390×844 + 844×390) of the puzzle, paint panel, hunt and bingo cards.
+- Two-device test: shared puzzle, live paint, hunt race, bingo bell, shared clock.
+- Bingo needs 2 foxes to show. The main film's 2 s skip only applies to the local mp4.
+- Pupil hallway: the film's side edges may clip from outside (widen if so).
+
+
+### 29 OCT INSTALL (Ben, 29 Oct; this chat): Claude Design's complete update (bcp_gallery_complete.zip) installed over 3D/. Kept from the PC: gallery.glb, img.pack, anim/*, audio/*, other video/*, vendor/face-api.
+- Screen 1 (south, the left theatre facing the doors): SURFING FOR VISION, gallery/video/surfing_for_vision.mp4 (640x360 H.264 200k + AAC 64k, 30 min, 62 MB), a show every 45 min (gallery-campus.js CINEMA_SHOW). Between-shows still: img2/cinema_surfing_for_vision.webp. The festival film it replaced stays in video/. The poster still reads "Surfing While Blind" (poster_surfing_while_blind.jpg).
+- Living painting: 5 Weeks On My Side (Ben Fox) = gallery/anim/5_weeks_ben_fox_270128946.mp4 (480x480, no audio), first in gallery.json anims.
+- PHONE DRAW CALLS (load check + optimisation; NO load/appear distances changed): ring stained-glass frames + clear panes now in mergeStatic (ringGlass.group); the zen garden merged too (gallery-zen.js marks its koi, pads, lanterns, tube, stream, splash, breathe ring userData.dyn); the shirt booth merges its still parts via G.world.merge (new, = mergeStatic); the chess pieces (instanced, were frustumCulled = false so drawn from everywhere, ~70k tris) now have one bounding sphere round both tables and are frustum-culled. Spawn 628 -> 489 draws, 451k -> 381k tris; entry 415 -> 360; zen 116; chess corner 96.

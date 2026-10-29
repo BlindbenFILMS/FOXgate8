@@ -161,14 +161,17 @@ export function visionOverlay({ container, onExit = () => {}, onGuided = () => {
   // kept as small as it can be, so the simulated view gets the screen: the conditions on one line, Learn, then severity + Back
   ui.innerHTML = `<div class="row" id="vsChips"></div>
     <div class="row"><button id="vsL" class="learn">Learn about: <span id="vsLn"></span></button></div>
-    <div class="row"><label for="vsSev">Severity <span id="vsP">60%</span><input id="vsSev" type="range" min="0" max="100" value="60"></label>
+    <div class="row"><label for="vsSev">Severity <span id="vsP">85%</span><input id="vsSev" type="range" min="0" max="100" value="85"></label>
       <button id="vsX" class="x">← Back</button><button id="vsS" aria-pressed="false" style="display:none">👥 Show everyone</button></div>`;
   document.body.appendChild(ui);
   const $ = id => ui.querySelector('#' + id);
   const live = document.createElement('div'); live.setAttribute('aria-live', 'polite'); live.style.cssText = 'position:absolute;left:-9999px'; document.body.appendChild(live);
-  const st = { t0: 0, on: false, cond: 'rp', sev: 0.6, shown: 0, gx: 50, gy: 50, lead: [0, 0], lag: [0, 0], lagV: [0, 0], t: 0, guided: false };
+  const SEV0 = 0.85;   // (27 Oct, Ben) every condition starts at 85 %
+  const st = { t0: 0, on: false, cond: 'rp', sev: SEV0, tr: null, shown: 0, gx: 50, gy: 50, lead: [0, 0], lag: [0, 0], lagV: [0, 0], t: 0, guided: false };
   CONDITIONS.forEach(c => { const b = document.createElement('button'); b.textContent = c.chip; b.dataset.c = c.id; b.onclick = () => setCond(c.id); $('vsChips').appendChild(b); });
+  const setSev = v => { st.sev = v; $('vsSev').value = Math.round(v * 100); $('vsP').textContent = Math.round(v * 100) + '%'; };
   function setCond(id) {
+    if (id !== st.cond) setSev(SEV0);   // each condition you pick starts at 85 %
     st.cond = id; const c = CONDITIONS.find(x => x.id === id);
     $('vsLn').textContent = id === 'floaters' ? 'Diabetic Retinopathy' : c.label;   // floaters are what diabetic retinopathy looks like; the Learn page explains it
     ui.querySelectorAll('#vsChips button').forEach(b => { b.classList.toggle('on', b.dataset.c === id); b.setAttribute('aria-pressed', b.dataset.c === id); });
@@ -203,11 +206,12 @@ export function visionOverlay({ container, onExit = () => {}, onGuided = () => {
     st,
     open(cond) {
       st.guest = null;
-      st.on = true; st.shown = 0; st.t0 = st.t; if (cond) setCond(cond); ui.style.display = 'block'; ov.style.opacity = 1;
+      // (27 Oct, Ben) always opens on TUNNEL at 85 %, closing in from full sight: the exact reverse of stepping off
+      st.on = true; st.shown = 0; st.t0 = st.t; st.cond = null; setCond('rp'); setSev(SEV0); st.tr = { from: 0, t: 0 }; ui.style.display = 'block'; ov.style.transition = 'none'; ov.style.opacity = 1;
       live.textContent = 'Vision simulator on. ' + CONDITIONS.find(x => x.id === st.cond).label + '. ' + (touch ? 'Drag to look around.' : 'Drag or use the arrow keys to look around. Press Escape to step off.');
     },
     learnOpen: () => lp.style.display === 'flex', closeLearn: () => closeLearn(),
-    close() { if (st.sharing) setSharing(false); closeLearn(); st.on = false; ui.style.display = 'none'; st.guided = false; live.textContent = 'Vision simulator off.'; },
+    close() { if (st.sharing) setSharing(false); closeLearn(); st.on = false; st.tr = { from: st.shown, t: 0 }; ui.style.display = 'none'; st.guided = false; live.textContent = 'Vision simulator off.'; },
     // group vision: the page turns on "Show everyone" once multiplayer is ready
     setShareHandler(fn, others) { onShare = fn; $('vsS').style.display = fn && others ? '' : 'none'; },
     sharing: () => !!st.sharing,
@@ -216,7 +220,7 @@ export function visionOverlay({ container, onExit = () => {}, onGuided = () => {
       if (st.on && !st.guest) return false;
       const c = CONDITIONS.find(x => x.id === cond); if (!c) return false;
       if (!st.guest) { st.t0 = st.t; st.shown = 0; live.textContent = 'You are seeing through ' + who + "'s eyes: " + c.label + '.'; }
-      st.guest = who; st.on = true; st.cond = cond; st.sev = Math.max(0, Math.min(1, +sev || 0.6)); ov.style.opacity = 1; return true;
+      st.guest = who; st.on = true; st.cond = cond; st.sev = Math.max(0, Math.min(1, +sev || SEV0)); ov.style.opacity = 1; return true;
     },
     guestEnd() { if (!st.guest) return; st.guest = null; st.on = false; live.textContent = 'Your own view is back.'; },
     isGuest: () => st.guest,
@@ -224,10 +228,12 @@ export function visionOverlay({ container, onExit = () => {}, onGuided = () => {
     // dt seconds; yawRate/pitchRate: how fast the view is turning (rad/s)
     update(dt, yawRate, pitchRate) {
       st.t += dt;
-      // sight settles in over ~2.5 s when you step on, clears over ~1 s when you step off
-      const target = st.on ? st.sev : 0, rate = !st.on ? 0.9 : st.t - st.t0 < 2.6 ? 0.42 : 3;
-      st.shown += THREE.MathUtils.clamp(target - st.shown, -rate * dt, rate * dt);
-      if (!st.on && st.shown <= 0.001) { ov.style.opacity = 0; blurL.style.background = 'none'; blurL.style.backdropFilter = blurL.style.webkitBackdropFilter = 'none'; spotL.style.background = 'none'; return; }
+      // stepping on and stepping off are the same eased move, mirrored: the tunnel closes in from full sight over 1.4 s, and
+      // opens back out to full screen over 1.4 s. In between, the severity slider follows quickly.
+      const target = st.on ? st.sev : 0;
+      if (st.tr) { st.tr.t = Math.min(1, st.tr.t + dt / 1.4); const k = st.tr.t, e = k * k * (3 - 2 * k); st.shown = st.tr.from + (target - st.tr.from) * e; if (k >= 1) st.tr = null; }
+      else st.shown += THREE.MathUtils.clamp(target - st.shown, -3 * dt, 3 * dt);
+      if (!st.on && st.shown <= 0.001) { st.tr = null; ov.style.transition = ''; ov.style.opacity = 0; blurL.style.background = 'none'; blurL.style.backdropFilter = blurL.style.webkitBackdropFilter = 'none'; spotL.style.background = 'none'; return; }
       // eyes lead the turn a little (saccade), then settle back to the centre
       const lx = THREE.MathUtils.clamp(-yawRate * 7, -14, 14), ly = THREE.MathUtils.clamp(pitchRate * 6, -10, 10);
       st.lead[0] += (lx - st.lead[0]) * Math.min(1, dt * 6); st.lead[1] += (ly - st.lead[1]) * Math.min(1, dt * 6);

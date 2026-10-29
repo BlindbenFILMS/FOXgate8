@@ -1,7 +1,7 @@
 // WALK THROUGH FEAR (Ben Fox): SEE IT MY WAY, a game about sight.
 // Words are hidden in the painting, and the painting is seen through Ben's vision-condition filters (the same maths as
-// the Blindness Spectrum Simulator / Patient Experience simulator): cataracts, macular degeneration, glaucoma, and last,
-// retinitis pigmentosa, Ben's own diagnosis. Find and tap each hidden word. Where the filter has a centre (macular
+// the Blindness Spectrum Simulator / Patient Experience simulator). It starts with how Ben sees: retinitis pigmentosa,
+// his own diagnosis, a tunnel that closes in and narrows as you go. Then cataracts, macular degeneration and glaucoma. Find and tap each hidden word. Where the filter has a centre (macular
 // degeneration's smudge, glaucoma's and RP's tunnel), it follows where the phone points, so you have to look around,
 // or look just beside a word, the way people with these conditions really do. The last three words spell the painting.
 // By ear: a soft hum grows when your finger or aim is near a hidden word, Hint says which way to look, and each round
@@ -10,15 +10,18 @@ import * as THREE from 'three';
 import * as K from './kit.js';
 // (Textures read by a custom shader stay in their own colours: NoColorSpace, so they match the painting exactly.)
 
+// sev: how strong the filter is; narrow: how much stronger it gets as each word is found (Ben's tunnel keeps closing);
+// slow: how slowly the filter comes over the painting at the start of the round (1 = the usual speed)
 const ROUNDS = [
-  { mode: 1, sev: 0.62, name: 'Cataracts', kicker: 'Round 1 of 4', words: ['BREATHE', 'STEP'],
+  { mode: 4, sev: 0.36, narrow: 0.2, slow: 0.35, name: 'Retinitis pigmentosa', kicker: 'Round 1 of 4 · how Ben sees', words: ['BREATHE', 'STEP'],
+    desc: 'Ben’s own diagnosis: a narrowing tunnel of sight, and night blindness.', tip: 'Sweep slowly, like a cane.',
+    done: ['That’s how Ben sees', 'Every day. Here it is without the filter.'] },
+  { mode: 1, sev: 0.62, name: 'Cataracts', kicker: 'Round 2 of 4', words: ['TRUST', 'LISTEN'],
     desc: 'The eye’s lens clouds over: a milky haze, faded colour and contrast.', tip: 'Look for shapes, not details.' },
-  { mode: 2, sev: 0.62, name: 'Macular degeneration', kicker: 'Round 2 of 4', words: ['TRUST', 'LISTEN'],
+  { mode: 2, sev: 0.62, name: 'Macular degeneration', kicker: 'Round 3 of 4', words: ['COURAGE', 'FORWARD'],
     desc: 'The centre goes dark and blurry, right where you look. The edges stay.', tip: 'Look just beside a word to see it.' },
-  { mode: 5, sev: 0.78, name: 'Glaucoma', kicker: 'Round 3 of 4', words: ['COURAGE', 'FORWARD'],
+  { mode: 5, sev: 0.78, name: 'Glaucoma', kicker: 'Round 4 of 4', words: ['WALK', 'THROUGH', 'FEAR'],
     desc: 'The edges fade into a foggy frame that closes in.', tip: 'Move your phone to look around.' },
-  { mode: 4, sev: 0.47, name: 'Retinitis pigmentosa', kicker: 'Round 4 of 4 · how Ben sees', words: ['WALK', 'THROUGH', 'FEAR'],
-    desc: 'Ben’s own diagnosis: a narrowing tunnel of sight, and night blindness.', tip: 'Sweep slowly, like a cane.' },
 ];
 // where words can hide (u, v from the top-left of the painting)
 const SLOTS = [[0.2, 0.16], [0.5, 0.1], [0.8, 0.17], [0.16, 0.42], [0.84, 0.4], [0.3, 0.62], [0.72, 0.64], [0.2, 0.86], [0.55, 0.88], [0.84, 0.86], [0.5, 0.36], [0.62, 0.5]];
@@ -86,7 +89,7 @@ export function seeItMyWayGame() {
   function compose() {
     const W = 1024, H = Math.round(1024 * G.h), c = G.cv; c.width = W; c.height = H; const g = c.getContext('2d');
     if (G.img) g.drawImage(G.img, 0, 0, W, H); else { g.fillStyle = '#333'; g.fillRect(0, 0, W, H); }
-    for (const w of G.words) if (!w.got) {
+    for (const w of G.words) if (!w.got && !G.hideWords) {
       g.save(); g.translate(w.u * W, w.v * H); g.rotate(w.rot);
       g.font = `900 ${w.size * W}px Archivo, "Arial Black", Arial, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
       g.lineJoin = 'round'; g.lineWidth = w.size * W * 0.16; g.strokeStyle = 'rgba(0,0,0,.75)'; g.strokeText(w.text, 0, 0);
@@ -100,13 +103,16 @@ export function seeItMyWayGame() {
     const R = ROUNDS[G.r]; if (!R) return;
     const slots = SLOTS.map(s => s.slice()).sort(() => Math.random() - 0.5);
     G.words = R.words.map((text, i) => ({ text, u: slots[i][0] + (Math.random() - 0.5) * 0.06, v: slots[i][1] + (Math.random() - 0.5) * 0.04, rot: (Math.random() - 0.5) * 0.3, size: text.length > 6 ? 0.075 : 0.09, got: false }));
-    compose();
-    G.uni.mode.value = R.mode; G.uni.sev.value = R.sev; G.fadeTo = 1; G.roundT = 0;
-    G.ui.banner(R.name, R.desc + ' ' + R.tip, 0, R.kicker); G.bannerT = 3.2;
-    G.say(`${R.kicker.replace(' · ', ', ')}. ${R.name}. ${R.desc} ${R.tip} Find ${R.words.length} hidden words.`);
+    G.hideWords = !!R.slow; compose();   // in Ben's round, the words appear once his tunnel has closed in
+    G.uni.mode.value = R.mode; G.uni.sev.value = R.sev; G.sevTo = R.sev; G.fadeTo = 1; G.fadeRate = 1.6 * (R.slow || 1); G.roundT = 0;
+    G.ui.banner(R.name, R.desc + ' ' + R.tip, 0, R.kicker); G.bannerT = R.slow ? 4.6 : 3.2;
+    // said as short sentences, so each one plays Ben's own recording ("Round 1 of 4." "How Ben sees." …)
+    const kick = R.kicker.split(' · ').map(k => k[0].toUpperCase() + k.slice(1) + '.').join(' ');
+    G.say(`${kick} ${R.name}. ${R.desc} ${R.tip} Find ${R.words.length} hidden words.`);
     hud();
   }
   function tryFind(u, v) {
+    if (G.hideWords) return;   // still closing in
     const w = G.words.find(w => !w.got && Math.abs(u - w.u) < w.hw + 0.03 && Math.abs(v - w.v) < w.hh + 0.035);
     if (!w) { K.tone(180, 0.12, { type: 'triangle', vol: 0.05 }); return; }
     w.got = true; G.found.push(w.text); compose();
@@ -114,10 +120,11 @@ export function seeItMyWayGame() {
     const s = K.plane(K.wordTex(w.text), 0.36, 0.09, { order: 30 }); s.position.set(x, y, 0.06); s.rotation.z = -w.rot; s.scale.setScalar(0.2); G.root.add(s); G.pops.push({ s, t: 0 });
     K.sfx.good(pan, G.found.length); G.fx.add(x, y, '#ffffff', 20, 0.25); G.buzz([30, 30, 60]);
     G.say(w.text.toLowerCase() + '.'); hud();
+    { const R = ROUNDS[G.r]; if (R && R.narrow) G.sevTo = R.sev + R.narrow * G.words.filter(w => w.got).length / G.words.length; }   // the tunnel closes in a little more
     if (G.words.every(w => w.got)) {
       G.r++;
       if (G.r >= ROUNDS.length) { G.fadeTo = 0; G.settle = 2.6; G.ui.alert('You walked through fear', 'Now see it clearly.', 2.4, 'red'); G.say('Walk through fear. You found every word. Now see it clearly.'); }
-      else { G.fadeTo = 0; G.settle = 2.2; G.ui.alert('Round cleared', 'Here it is without the filter.', 2, 'black'); }
+      else { const D = ROUNDS[G.r - 1].done || ['Round cleared', 'Here it is without the filter.']; G.fadeTo = 0; G.fadeRate = 1.6; G.settle = ROUNDS[G.r - 1].done ? 3 : 2.2; G.ui.alert(D[0], D[1], ROUNDS[G.r - 1].done ? 2.8 : 2, 'black'); }
     }
   }
   function hint() {
@@ -145,8 +152,8 @@ export function seeItMyWayGame() {
       G.ui.buttons([{ label: 'Hint', icon: '?', kind: 'red', aria: 'Hint: where to look', press: () => G.playing && hint() }]);
       hud();
       G.onGo = () => { G.t0 = G.t; startRound(); };
-      K.intro(G, { title: 'See it my way', how: 'Words are hidden in Ben’s painting. Find them through four kinds of low vision, ending with Ben’s own. Tap each word you find.',
-        say: 'See it my way. Words are hidden in Ben’s painting, Walk Through Fear. You’ll look for them through four kinds of low vision, ending with retinitis pigmentosa, Ben’s own. Move your phone to look around, and tap each word you find. A soft hum means you’re close.' });
+      K.intro(G, { title: 'See it my way', how: 'Words are hidden in Ben’s painting. Find them through four kinds of low vision, starting with how Ben sees. Tap each word you find.',
+        say: 'See it my way. Words are hidden in Ben’s painting, Walk Through Fear. You’ll look for them through four kinds of low vision. Move your phone to look around, and tap each word you find. A soft hum means you’re close.' });
     },
     update(dt) {
       if (!G || G.paused) return;
@@ -154,7 +161,9 @@ export function seeItMyWayGame() {
       if (G.bannerT > 0) { G.bannerT -= dt; if (G.bannerT <= 0) G.ui.hideBanner(); }
       // the painting under the filter fades in, and the filter fades in and out between rounds
       G.uni.alpha.value += ((G.over ? 0 : 1) - G.uni.alpha.value) * Math.min(1, dt * 2);
-      G.uni.fade.value += (G.fadeTo - G.uni.fade.value) * Math.min(1, dt * 1.6);
+      G.uni.fade.value += (G.fadeTo - G.uni.fade.value) * Math.min(1, dt * (G.fadeRate || 1.6));
+      if (G.hideWords && G.uni.fade.value > 0.85) { G.hideWords = false; compose(); }
+      if (G.sevTo != null) G.uni.sev.value += (G.sevTo - G.uni.sev.value) * Math.min(1, dt * 1.2);
       // where you look: a finger on the screen, else the middle of the screen (where the phone points)
       if (G.bot && G.playing) { const w = G.words.find(w => !w.got); if (w) { G.aim.u += (w.u - G.aim.u) * Math.min(1, dt * 2); G.aim.v += (w.v - G.aim.v) * Math.min(1, dt * 2); } }
       else if (G.touch) G.aim = { ...G.touch };
@@ -172,7 +181,7 @@ export function seeItMyWayGame() {
       if (!G.playing) return;
       // by ear: a soft hum, from the word's side, that grows as you look near a hidden word
       const w = G.words.filter(w => !w.got).sort((a, b) => Math.hypot(a.u - G.aim.u, a.v - G.aim.v) - Math.hypot(b.u - G.aim.u, b.v - G.aim.v))[0];
-      if (w) { const d = Math.hypot(w.u - G.aim.u, (w.v - G.aim.v) * G.h); G.humT -= dt;
+      if (w && !G.hideWords) { const d = Math.hypot(w.u - G.aim.u, (w.v - G.aim.v) * G.h); G.humT -= dt;
         if (d < 0.35 && G.humT <= 0) { G.humT = 0.18 + d * 1.6; K.tone(330 + (0.35 - d) * 900, 0.12, { type: 'sine', vol: 0.02 + (0.35 - d) * 0.09, pan: Math.max(-1, Math.min(1, (w.u - G.aim.u) * 3)) }); } }
       if (G.bot) { G.botT -= dt; if (w && G.botT <= 0 && Math.hypot(w.u - G.aim.u, w.v - G.aim.v) < 0.02) { G.botT = 0.4; tryFind(w.u, w.v); } }
     },
@@ -189,7 +198,7 @@ export function seeItMyWayGame() {
     pause() { if (G) G.paused = true; },
     resume() { if (G) G.paused = false; },
     get over() { return !!(G && G.over); },
-    get debug() { return G && { engine: 'see-it-my-way', playing: G.playing, over: G.over, settle: +G.settle.toFixed(2), paused: G.paused, t: +G.t.toFixed(1), round: G.r, found: G.found.length, total, words: G.words.map(w => `${w.text}@${w.u.toFixed(2)},${w.v.toFixed(2)}${w.got ? '✓' : ''}`) }; },
+    get debug() { return G && { engine: 'see-it-my-way', playing: G.playing, over: G.over, settle: +G.settle.toFixed(2), paused: G.paused, t: +G.t.toFixed(1), round: G.r, hidden: !!G.hideWords, found: G.found.length, total, words: G.words.map(w => `${w.text}@${w.u.toFixed(2)},${w.v.toFixed(2)}${w.got ? '✓' : ''}`) }; },
     stop() { K.cleanup(G); G = null; },
   };
 }

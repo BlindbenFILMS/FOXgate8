@@ -10,8 +10,9 @@ export const COMMENT_SPOTS = [
   { id: 'ring-se', name: 'the ring path, south-east', x: 57.27, z: -16.27, y: 0, face: -0.834, w: 2.2, d: 2.2, sign: 'back' },
   { id: 'north-walk', name: 'the north walk, by the WHY House', x: 18.97, z: 32.81, y: 0, face: 1.077, w: 2.2, d: 2.2, sign: 'back' },
   { id: 'south-walk', name: 'the south walk, by the Academy of Music', x: 18.41, z: -33.85, y: 0, face: 2.065, w: 2.2, d: 2.2, sign: 'back' },
-  { id: 'why', name: 'the WHY House', x: 36.6, z: 28.6, y: 0.06, face: Math.PI, w: 2.2, d: 2.2, sign: 'back' },
-  { id: 'hall', name: 'the Wall of Why hallway', x: -66.6, z: 2.2, y: -3.327, face: -Math.PI / 2, w: 2.0, d: 2.2, sign: 'back' },
+  { id: 'why', name: 'outside the WHY House', x: 33.6, z: 23.0, y: 0, face: Math.PI, w: 2.2, d: 2.2, sign: 'back' },   // (Ben, 28 Oct) moved out front, left of the door on the lawn (inside, the art easels have the room)
+  { id: 'hall', name: 'the Wall of Why hallway', x: -66.6, z: 0, y: -3.327, face: Math.PI / 2,   // (Ben, 28 Oct) turned round: it faces you as you walk in from the eye
+    w: 2.0, d: 2.2, sign: 'back', signTop: 3.0 },   // (Ben: in the middle of the walk, so its board is raised for a fox to just walk under)
 ];
 const FONT = 'Archivo, Arimo, Helvetica, Arial, sans-serif';
 const PAD_H = 0.07;   // how high the pad stands (the fox steps up onto it)
@@ -27,19 +28,19 @@ export function buildCommentSpots({ THREE, scene, spots = COMMENT_SPOTS }) {
   };
   // the pad's top: sunflower yellow, a dashed ink border, a speech bubble with a smiley in the middle
   const padTex = tex(512, 512, (c, w, h) => {
-    c.fillStyle = '#f6c443'; c.fillRect(0, 0, w, h);
-    c.strokeStyle = '#1d1c1b'; c.lineWidth = 14; c.setLineDash([34, 22]); c.strokeRect(34, 34, w - 68, h - 68); c.setLineDash([]);
-    c.fillStyle = '#fff6dc'; c.strokeStyle = '#1d1c1b'; c.lineWidth = 12;
+    c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h);   // (Ben, 28 Oct: every sign black with white)
+    c.strokeStyle = '#f3f2f2'; c.lineWidth = 14; c.setLineDash([34, 22]); c.strokeRect(34, 34, w - 68, h - 68); c.setLineDash([]);
+    c.fillStyle = '#1d1c1b'; c.strokeStyle = '#f3f2f2'; c.lineWidth = 12;
     c.beginPath(); c.moveTo(130, 140); c.lineTo(382, 140); c.quadraticCurveTo(406, 140, 406, 164); c.lineTo(406, 318); c.quadraticCurveTo(406, 342, 382, 342); c.lineTo(230, 342); c.lineTo(172, 396); c.lineTo(180, 342); c.lineTo(130, 342); c.quadraticCurveTo(106, 342, 106, 318); c.lineTo(106, 164); c.quadraticCurveTo(106, 140, 130, 140); c.closePath(); c.fill(); c.stroke();
-    smiley(c, 256, 240, 72, '#1d1c1b', '#f6c443');
+    smiley(c, 256, 240, 72, '#1d1c1b', '#f3f2f2');
   });
   // the sign: YOUR COMMENTS HERE, with a big smiley
   const signTex = tex(840, 560, (c, w, h) => {
     c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h);
-    c.fillStyle = '#f6c443'; c.fillRect(18, 18, w - 36, h - 36);
+    c.fillStyle = '#f3f2f2'; c.fillRect(18, 18, w - 36, 6); c.fillRect(18, 18, 6, h - 36); c.fillRect(w - 24, 18, 6, h - 36);
     c.fillStyle = '#ec3013'; c.fillRect(18, h - 54, w - 36, 36);
-    smiley(c, 168, 252, 118, '#1d1c1b', '#ffe07a');
-    c.fillStyle = '#1d1c1b'; c.textBaseline = 'alphabetic';
+    smiley(c, 168, 252, 118, '#1d1c1b', '#f3f2f2');
+    c.fillStyle = '#ffffff'; c.textBaseline = 'alphabetic';
     const fit = (txt, max, size) => { let s = size; c.font = `900 ${s}px ${FONT}`; while (c.measureText(txt).width > max && s > 30) { s -= 2; c.font = `900 ${s}px ${FONT}`; } return s; };
     const L = 318, M = w - L - 44;
     fit('YOUR', M, 110); c.fillText('YOUR', L, 168);
@@ -48,7 +49,7 @@ export function buildCommentSpots({ THREE, scene, spots = COMMENT_SPOTS }) {
     c.fillStyle = '#ffffff'; c.font = `800 26px ${FONT}`; c.textAlign = 'center'; c.fillText('STEP ON · TAP LEAVE NOTE', w / 2, h - 27);
   });
   const ink = new THREE.MeshLambertMaterial({ color: 0x1d1c1b });
-  const yellow = new THREE.MeshLambertMaterial({ color: 0xf6c443 });
+  const yellow = new THREE.MeshLambertMaterial({ color: 0x1d1c1b });   // (was sunflower yellow; now ink, Ben 28 Oct)
   const topM = new THREE.MeshLambertMaterial({ map: padTex });
   const signM = new THREE.MeshBasicMaterial({ map: signTex });
   const list = [];
@@ -60,7 +61,7 @@ export function buildCommentSpots({ THREE, scene, spots = COMMENT_SPOTS }) {
     // what the fox stands on (invisible, just the pad's top)
     const c = new THREE.Mesh(new THREE.BoxGeometry(S.w + 0.14, PAD_H, S.d + 0.14)); c.position.set(S.x, S.y + PAD_H / 2, S.z); c.rotation.y = S.face; c.updateMatrixWorld(true); col.push(c);
     // the sign: on the pad's back edge, off to one side so it never stands in the way, facing the same way as the spot
-    const sx = S.w / 2 - 0.25, sz = -S.d / 2 + 0.08, BW = 1.5, BH = 1.0, top = 2.15;
+    const sx = S.w / 2 - 0.25, sz = -S.d / 2 + 0.08, BW = 1.5, BH = 1.0, top = S.signTop || 2.15;
     // (22 Oct) a thick board (thicker than the post), and the post stops inside it, so it never crosses the words on either face
     const T = 0.2, postTop = top - BH + 0.3;
     const post = new THREE.Mesh(new THREE.BoxGeometry(0.09, postTop, 0.09), ink); post.position.set(sx, postTop / 2, sz); g.add(post);

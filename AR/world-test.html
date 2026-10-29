@@ -1,0 +1,86 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Painting games · in a 3D room (test)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@800;900&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#111;font-family:Archivo,Arial,sans-serif}#v{position:fixed;inset:0}
+#go{position:fixed;left:50%;bottom:calc(30px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:20;min-height:64px;padding:0 28px;border:3px solid #000;background:#ec3013;color:#fff;font:900 20px Archivo,Arial;text-transform:uppercase;box-shadow:6px 6px 0 #000;cursor:pointer}
+#go[hidden],#again[hidden]{display:none}#again{position:fixed;left:50%;bottom:calc(112px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:20;min-height:56px;padding:0 24px;border:3px solid #000;background:#fff;color:#000;font:900 18px Archivo,Arial;text-transform:uppercase;box-shadow:6px 6px 0 #000;cursor:pointer}#tip{position:fixed;left:12px;right:12px;top:14px;z-index:20;color:#fff;font:800 15px Archivo,Arial;text-align:center;text-shadow:0 2px 6px #000}</style>
+<script type="importmap">{"imports":{"three":"./lib/three/three.module.js"}}</script></head><body><div id="v"></div>
+<p id="tip">A test room: walk up to the painting, then press Play the game.</p><button id="go" type="button">Play the game</button><button id="again" type="button" hidden>Play again</button>
+<script type="module">
+// A stand-in for the 3D gallery: a room, a painting on a side wall, a camera that walks up to it, then the game on the painting.
+import * as THREE from 'three';
+import { playOnPainting } from './lib/minigames/in-world.js';
+import { seeItMyWayGame } from './lib/minigames/walk-through-fear-see.js';
+import { lightMemoryGame } from './lib/minigames/curating-hope-memory.js';
+import { sistersFishGame } from './lib/minigames/reflections-fish.js';
+import { familyApplesGame } from './lib/minigames/roots-apples.js';
+import { napkinsGame } from './lib/minigames/napkins.js';
+const q = new URLSearchParams(location.search);
+// which painting: ?art=walk-through-fear (See it my way, the default), ?art=curating-hope (Light memory) or ?art=reflections-of-sisterhood (Fish for the sisters) ?art=roots-of-kinship (Family apples) or ?art=napkin-please (Napkin Please)
+const ARTS = {
+  'walk-through-fear': { make: seeItMyWayGame, work: { id: 'walk-through-fear', title: 'Walk Through Fear', artist: 'Ben Fox', image: 'targets/walk-through-fear.jpg',
+    quote: '“… when you walk through the fear, you are the only thing that is left.” — Ben Fox', overlay: { anim: '../3D/gallery/anim/wix_walk_through_fear.mp4' } } },
+  'curating-hope': { make: lightMemoryGame, work: { id: 'curating-hope', title: 'Curating Hope', artist: 'Ben Fox', image: 'targets/curating-hope.jpg',
+    quote: '“It’s so important to curate hope together — to share it, and to take notice not just of what we’re doing right now, but of the fact that there’s enough human spirit left in us that we’re willing to pause for some things still today. And I am honored to know that blindness is a cause people still pause for.” — Ben Fox',
+    overlay: { anim: '../3D/gallery/anim/wix_curating_hope.mp4' } } },
+  'reflections-of-sisterhood': { make: sistersFishGame, work: { id: 'reflections-of-sisterhood', title: 'Reflections of Sisterhood', artist: 'April & Melissa', image: 'targets/reflections-of-sisterhood.jpg',
+    quote: '“… that’s where our parents were from, Guanaja. That’s where we went every summer. It’s a little house and their backyard is water. So, we would sit back there, kick our feet in.” — April & Melissa',
+    overlay: { anim: '../3D/gallery/anim/wix_am_sisterhood.mp4', audio: '../3D/gallery/audio/art_10.mp3' } } },
+  'roots-of-kinship': { make: familyApplesGame, work: { id: 'roots-of-kinship', title: 'Roots of Kinship', artist: 'April & Melissa', image: 'targets/roots-of-kinship.jpg',
+    quote: '“I work side by side with my sister and I love her dearly. We’re now, as a family, cohesively dealing with the same genetic disease. So you get through it — life is on the other side. It’s different, but you can live a fulfilled life.” — April & Melissa',
+    overlay: { anim: '../3D/gallery/anim/wix_am_familytree.mp4', clip: 'media/clips/roots-of-kinship.mp4' } } },
+  'napkin-please': { make: napkinsGame, work: { id: 'napkin-please', title: 'Napkin, Please', artist: 'Wayne Pearcy', image: 'targets/napkin-please.jpg',
+    quote: '“One of those stereotypes is blind people are just inadvertently messy eaters and they’re going to need tons of napkins. I’ll ask, can I have some napkins? And they’ll bring me like a whole Bible’s worth of them. And I’m thinking, who do you think I am?” — Wayne Pearcy',
+    overlay: { anim: '../3D/gallery/anim/wix_wayne_napkins.mp4', clip: 'media/clips/napkin-please.mp4' } } },
+};
+const ART = ARTS[q.get('art')] || ARTS['walk-through-fear'];
+const renderer = new THREE.WebGLRenderer({ antialias: true }); renderer.setPixelRatio(Math.min(2, devicePixelRatio)); renderer.setSize(innerWidth, innerHeight); renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.getElementById('v').appendChild(renderer.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#1b1a19'); scene.fog = new THREE.Fog('#1b1a19', 12, 30);
+const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.05, 100);
+scene.add(new THREE.HemisphereLight('#fff6ea', '#3a332c', 1.2));
+// the room: floor, walls; the painting hangs on the right-hand wall (facing -x), 2 m wide, its middle 1.7 m up
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), new THREE.MeshLambertMaterial({ color: '#5a4636' })); floor.rotation.x = -Math.PI / 2; scene.add(floor);
+const wall = new THREE.Mesh(new THREE.PlaneGeometry(30, 5), new THREE.MeshLambertMaterial({ color: '#d9d2c6' })); wall.position.set(6, 2.5, 0); wall.rotation.y = -Math.PI / 2; scene.add(wall);
+const PAINT = { center: new THREE.Vector3(5.97, 1.7, -2), normal: new THREE.Vector3(-1, 0, 0), width: 2, height: 2 };
+const tex = new THREE.TextureLoader().load(ART.work.image); tex.colorSpace = THREE.SRGBColorSpace;
+const art = new THREE.Mesh(new THREE.PlaneGeometry(PAINT.width, PAINT.height), new THREE.MeshBasicMaterial({ map: tex })); art.position.copy(PAINT.center); art.lookAt(PAINT.center.clone().add(PAINT.normal)); scene.add(art);
+const frame = new THREE.Mesh(new THREE.BoxGeometry(2.2, 2.2, 0.05), new THREE.MeshLambertMaterial({ color: '#1a1410' })); frame.position.copy(PAINT.center).addScaledVector(PAINT.normal, -0.03); frame.lookAt(PAINT.center.clone().add(PAINT.normal)); scene.add(frame);
+// the camera starts across the room at an angle, as if the fox walked up
+const look = (pos, at) => { camera.position.copy(pos); camera.lookAt(at); };
+const startPos = new THREE.Vector3(0, 1.6, 3), startAt = new THREE.Vector3(5.9, 1.6, -1);
+look(startPos, startAt);
+// standing in front: square on, far enough that the whole picture fits with a little room (whatever the screen shape)
+function frontView() {
+  const fov = THREE.MathUtils.degToRad(camera.fov), fitH = PAINT.height * 1.35 / 2 / Math.tan(fov / 2), fitW = PAINT.width * 1.15 / 2 / Math.tan(fov / 2) / camera.aspect;
+  return PAINT.center.clone().addScaledVector(PAINT.normal, Math.max(fitH, fitW));
+}
+let play = null, move = null;
+const work = ART.work;
+window.__says = [];
+function startGame() {
+  document.getElementById('go').hidden = true; document.getElementById('tip').hidden = true;
+  move = { from: camera.position.clone(), to: frontView(), t: 0 };
+  play = playOnPainting({ make: ART.make, scene, camera, renderer, ...PAINT, work,
+    say: t => { window.__says.push(t); try { speechSynthesis.cancel(); speechSynthesis.speak(new SpeechSynthesisUtterance(t)); } catch (e) {} },
+    buzz: p => { try { navigator.vibrate && navigator.vibrate(p); } catch (e) {} },
+    story: () => { const a = work.overlay && (work.overlay.audio || work.overlay.clip); if (a) { const m = /\.mp4$/.test(a) ? Object.assign(document.createElement('video'), { src: a, controls: true, playsInline: true, style: 'position:fixed;inset:10% 5%;width:90%;height:80%;z-index:30;background:#000' }) : new Audio(a); if (m.tagName) { document.body.appendChild(m); m.onended = () => m.remove(); } m.play().catch(() => {}); } else window.open('https://blindcanvasproject.com/ben-fox/', '_blank'); },   // the artist's interview
+    onEnd: () => { const b = document.getElementById('go'), a = document.getElementById('again'); b.textContent = 'Leave the game'; b.hidden = false; b.onclick = endGame;
+      a.hidden = false; a.onclick = () => { a.hidden = true; b.hidden = true; play.restart(); }; } });
+  window.__play = play;
+}
+function endGame() { document.getElementById('again').hidden = true; if (play) play.stop(); play = null; move = { from: camera.position.clone(), to: startPos.clone(), t: 0, back: true }; const b = document.getElementById('go'); b.textContent = 'Play the game'; b.onclick = startGame; }
+document.getElementById('go').onclick = startGame;
+if (q.has('auto')) setTimeout(startGame, 400);
+addEventListener('resize', () => { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); if (play) { camera.position.copy(frontView()); camera.lookAt(PAINT.center); } });
+camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+let last = performance.now();
+window.__camera = camera;
+renderer.setAnimationLoop(() => {
+  const now = performance.now(), dt = Math.min(0.05, (now - last) / 1000); last = now;
+  if (move) { move.t = Math.min(1, move.t + dt / 1.2); const k = move.t * move.t * (3 - 2 * move.t); camera.position.lerpVectors(move.from, move.to, k);
+    const at = move.back ? PAINT.center.clone().lerp(startAt, k) : startAt.clone().lerp(PAINT.center, k); camera.lookAt(at); if (move.t >= 1) move = null; }
+  if (play) { play.update(dt); window.__mg = play.game.debug; }
+  renderer.render(scene, camera);
+});
+</script></body></html>
