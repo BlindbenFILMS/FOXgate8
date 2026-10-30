@@ -16,7 +16,7 @@ export const BINGO_TAGS = {
   'Find Your Village': ['building', 'tree', 'night', 'abstract'],
   'Take Time to Bloom': ['flower', 'abstract'],
   'Pour In The Love': ['heart', 'water', 'night'],
-  'Roots of Kinship': ['tree', 'bird', 'person', 'water', 'flower'],
+  'Roots of Kinship': ['tree', 'bird', 'person', 'flower'],   // (29 Oct, Ben) not water
   'All Life’s Beauty': ['person', 'flower'],
   'The Only Light We’ll See': ['water', 'tree', 'night'],
   'Pathways Unveiled': ['abstract', 'building'],
@@ -86,7 +86,7 @@ export const BINGO_NOT = {
   'Curating Hope': ['flower', 'building'],
   'Find Your Village': ['person', 'water'],
   'Pour In The Love': ['building', 'person'],
-  'Roots of Kinship': ['heart'],
+  'Roots of Kinship': ['heart', 'water'],   // (29 Oct, Ben) water never counts here
   'The Only Light We’ll See': ['building', 'person', 'bird'],
   'Pathways Unveiled': ['vehicle', 'bridge'],
   'Reflections of Sisterhood': ['bridge'],

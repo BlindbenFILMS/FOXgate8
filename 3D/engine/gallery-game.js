@@ -626,18 +626,21 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     const fail = () => { vidFail.add(url); if (curUrl === url) { curUrl = null; playUrl(url); } };
     // the gallery's own copy (in the site, 3D/gallery/video/) first; the original Vimeo stream if that fails
     const loc = (vids.find(v => v.u === url && v.local) || {}).local;
-    if (loc && !localFail.has(url)) {
+    // (29 Oct) a film kept in the site as small streaming pieces (an .m3u8 playlist, e.g. Surfing For Vision) plays through HLS
+    const hlsLoc = loc && /\.m3u8(\?|$)/.test(loc) ? new URL((window.GMEDIA || (u => u))(loc), location.href).href : null;
+    if (loc && !hlsLoc && !localFail.has(url)) {
       video.onerror = () => { localFail.add(url); if (curUrl === url) { curUrl = null; if (/^https?:/.test(url)) playUrl(url); else fail(); } };
       video.src = (window.GMEDIA || (u => u))(loc); video.muted = !soundOK; video.play().catch(() => {}); return;
     }
-    if (!/^https?:/.test(url)) return fail();
+    const src = hlsLoc || url;
+    if (!/^https?:/.test(src)) return fail();
     try {
-      if (video.canPlayType('application/vnd.apple.mpegurl')) video.src = url;
+      if (video.canPlayType('application/vnd.apple.mpegurl')) video.src = src;
       else {
         if (!window.Hls) await new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'vendor/hls/hls.light.min.js'; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
         if (!window.Hls.isSupported()) return fail();
         hls = new window.Hls({ capLevelToPlayerSize: true, maxBufferLength: 20 }); hls.on(window.Hls.Events.ERROR, (e, d) => { if (d.fatal) fail(); });
-        hls.loadSource(url); hls.attachMedia(video);
+        hls.loadSource(src); hls.attachMedia(video);
       }
       video.onerror = fail;
       video.muted = !soundOK; await video.play().catch(() => {});
