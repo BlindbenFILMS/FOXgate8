@@ -12,7 +12,7 @@ import { buildHeights } from './meru2-heights.js?v=s727';
 import { paintDesert, paintLinks } from './meru2-roads3.js';
 import { buildPaths } from './meru2-paths.js';
 import { buildSigns } from './meru2-signs.js';
-import { buildNature } from './meru2-nature.js?v=s723';
+import { buildNature } from './meru2-nature.js?v=s731e';
 import { rangerGrassOff } from './meru2-ranger.js';
 import { buildDistricts } from './meru2-districts.js?v=s727d';
 import { buildBreeze } from './meru2-breeze.js';
@@ -438,7 +438,9 @@ export async function createBlockout({ container, onState = () => {} }) {
   const plazaDress = __TM('buildPlazaDress', buildPlazaDress)({ THREE, scene, L, bases: towers.userData.bases, districts, touch, terrainAt: heights.terrainAt });   // exterior polish round 9: kiosks, planters, bikes, totems on the skyline plazas
   const hillsDress = __TM('buildHillsDress', buildHillsDress)({ THREE, scene, L, heights, touch });
   const trainSide = __TM('buildTrainSide', buildTrainSide)({ THREE, scene, L, train, touch });   // exterior polish round 11: pillar footings + bands, guideway light line, station aprons, metro totems, platform boards, night pools   // exterior polish round 10: trail posts + steps + benches, falls spray / veil / rocks / reeds, lookout + park dressing
-  nature.bakeGrass([...city.colliders, ...city.props, ...train.colliders, ...heights.colliders, ...((paths && paths.colliders) || []), ...districts.colliders, ...breeze.colliders, ...trainSide.grassOff, ...rangerGrassOff(), ...(L.BUILDINGS || []).filter(b => b.kind === 'club' && b.f).map(b => ({ f: [b.f[0] - 24, b.f[1] + 2, b.f[2] - 6, (b.green ? b.green[3] : b.f[3]) + 1] }))]);   // s60: no meadow grass on the club grounds + valet lot · grass v2: never through props
+  const __bakeG = () => { const __g0 = performance.now(); nature.bakeGrass([...city.colliders, ...city.props, ...train.colliders, ...heights.colliders, ...((paths && paths.colliders) || []), ...districts.colliders, ...breeze.colliders, ...trainSide.grassOff, ...rangerGrassOff(), ...(L.BUILDINGS || []).filter(b => b.kind === 'club' && b.f).map(b => ({ f: [b.f[0] - 24, b.f[1] + 2, b.f[2] - 6, (b.green ? b.green[3] : b.f[3]) + 1] }))]);   // s60: no meadow grass on the club grounds + valet lot · grass v2: never through props
+  (window.__loadTimes = window.__loadTimes || []).push(['bakeGrass', Math.round(performance.now() - __g0)]); /[?&]loadlog=1/.test(location.search) && console.log('[load] bakeGrass ' + Math.round(performance.now() - __g0) + ' ms'); };
+  { let done = false; const go = () => { if (done) return; done = true; window.__m2bakeGrass = null; __bakeG(); }; if (/[?&]grassnow=1/.test(location.search)) go(); else { window.__m2bakeGrass = go; setTimeout(go, 45000); } }   // s731 LOAD TIME: the meadow grass (~1.3 s) is baked right after GO TO MERU (meru2-walk __late calls window.__m2bakeGrass; 45 s fallback for pages without the walk); ?grassnow=1 = old way
   // ---------- the train (step 2b): worlds/meru2-train.js ----------
 
   // ---------- lamps along the foot paths (instanced) ----------

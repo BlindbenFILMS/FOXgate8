@@ -1,10 +1,12 @@
 // s721 GLOBAL MUTE (Ben: mute while Claude works so previews don't bleed sound). Plain script, loads first in <helmet>.
-// MUTED by default. Unmute: add ?sound=1 to the URL, or run localStorage.setItem('fg8.sound', '1') once (then reload).
+// MUTED by default in Claude's preview only (s731: the GitHub site + local play are always ON). Unmute here: add ?sound=1 to the URL, or run localStorage.setItem('fg8.sound', '1') once (then reload).
 // s722b: contexts stay RUNNING (a suspended context froze the page: code that waits for state 'running' looped forever);
 // anything wired to the speakers goes through a silent gain instead.
 (function () {
   let on = false;
   try { on = /[?&]sound=1/.test(location.search) || localStorage.getItem('fg8.sound') === '1'; } catch (e) {}
+  // s731 (Ben: "no sound anywhere at the GitHub link"): the mute is ONLY for Claude's previews. Real play = sound on: the GitHub site, your own PC (PLAY-MERU.bat / localhost / a file).
+  try { if (/github\.io$/i.test(location.hostname) || /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === 'file:') on = true; } catch (e) {}
   if (/[?&]sound=0/.test(location.search)) on = false;
   window.__fg8Muted = !on;
   if (on) return;

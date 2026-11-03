@@ -8,9 +8,9 @@ export function buildNature({ THREE, scene, L, groundCanvas, heightAt, touch }) 
   // module has placed its props. Mask R = grass amount (green ground minus every collider + bench + lamp, softened), G = ground height / 40, B = town (mown).
   // Two layers that wrap round the camera: NEAR (dense, fine blades) and FAR (sparser, bigger clumps) out to ~95 m, cross-faded, so there is no
   // ring edge. Natural variation from low-frequency noise: meadow vs short, yellow-green vs blue-green drifts, clumping; wildflowers outside town.
-  let grassLayers = [], maskData = null, maskN = 1, maskTex = null;
+  let grassLayers = [], maskData = null, maskN = 1, maskTex = null; const CLR_Q = [];   // s731: clears asked for before the (now late) bake are replayed after it
   const maskAt = (x, z) => { if (!maskData) return [0, 0, 0]; const i = Math.max(0, Math.min(maskN - 1, Math.floor((x + H) / SZ * maskN))), j = Math.max(0, Math.min(maskN - 1, Math.floor((z + H) / SZ * maskN))), p = (j * maskN + i) * 4; return [maskData[p] / 255, maskData[p + 1] / 255 * 40, maskData[p + 2] / 255]; };
-  function bakeGrass(blockers = []) {
+  async function bakeGrass(blockers = []) { let __yt = performance.now(); const __y = async () => { if (performance.now() - __yt > 24) { await new Promise(r => setTimeout(r, 0)); __yt = performance.now(); } };   // s731: async, yields every ~24 ms so play never freezes while it bakes
     const MN = touch ? 768 : 1280, mc = document.createElement('canvas'); mc.width = mc.height = MN; const g = mc.getContext('2d');
     g.drawImage(groundCanvas, 0, 0, MN, MN); const k = MN / SZ, X = x => (x + H) * k, Z = z => (z + H) * k;
     const src = g.getImageData(0, 0, MN, MN).data, cv2 = document.createElement('canvas'); cv2.width = cv2.height = MN; const g2 = cv2.getContext('2d'), id = g2.createImageData(MN, MN);
@@ -28,12 +28,19 @@ export function buildNature({ THREE, scene, L, groundCanvas, heightAt, touch }) 
     for (const c of blockers) { if (c.y0 != null && c.y0 > 1) continue; if (c.c) { g2.beginPath(); g2.arc(X(c.c[0]), Z(c.c[1]), (c.c[2] + 0.45) * k, 0, 7); g2.fill(); } else if (c.f) g2.fillRect(X(c.f[0] - 0.4), Z(c.f[2] - 0.4), (c.f[1] - c.f[0] + 0.8) * k, (c.f[3] - c.f[2] + 0.8) * k); }
     const cv3 = document.createElement('canvas'); cv3.width = cv3.height = MN; const g3 = cv3.getContext('2d'); g3.filter = 'blur(' + (touch ? 0.8 : 1.1) + 'px)'; g3.drawImage(cv2, 0, 0); const mk = g3.getImageData(0, 0, MN, MN).data;
     const data = new Uint8Array(MN * MN * 4);
-    for (let j = 0; j < MN; j++) for (let i = 0; i < MN; i++) { const p = (j * MN + i) * 4, x = (i + 0.5) / k - H, z = (j + 0.5) / k - H, isl = L.islandAt ? L.islandAt(x, z) : 0, wet = L.inLake && L.inLake(x, z);
-      let m = mk[p] / 255; if (m > 0.02 && L.surfaceAt && L.surfaceAt(x, z) !== 'grass') m = 0; if (wet) m = isl > 2.4 ? Math.min(1, (isl - 2.4) / 1.5) * m : 0;
-      const h = Math.max(0, wet ? isl : (heightAt(x, z) || 0)); data[p] = m * 255; data[p + 1] = Math.min(255, h / 40 * 255); data[p + 2] = Math.abs(x) < 158 && Math.abs(z) < 148 ? 255 : 0; data[p + 3] = 255; }
+    // s731 LOAD TIME (was ~3.6 s, the single biggest load step): the costly lookups (surface, lake, island, height) only run where grass can be:
+    // pass 1 = grass amount only where the painted mask has some; pass 2 = height only on grass pixels + their 1-px ring (the grass shader
+    // blends neighbours), everywhere else 0 (no blades there; the bugs only read grass > 0.6). Same picture as before.
+    const MM = new Float32Array(MN * MN), WET = new Uint8Array(MN * MN), ISL = new Float32Array(MN * MN);
+    for (let j = 0; j < MN; j++) { await __y(); for (let i = 0; i < MN; i++) { const q = j * MN + i; let m = mk[q * 4] / 255; if (m <= 0.02) continue; const x = (i + 0.5) / k - H, z = (j + 0.5) / k - H;
+      if (L.surfaceAt && L.surfaceAt(x, z) !== 'grass') continue; const wet = L.inLake && L.inLake(x, z); if (wet) { const isl = L.islandAt ? L.islandAt(x, z) : 0; WET[q] = 1; ISL[q] = isl; m = isl > 2.4 ? Math.min(1, (isl - 2.4) / 1.5) * m : 0; } MM[q] = m; } }
+    for (let j = 0; j < MN; j++) { await __y(); for (let i = 0; i < MN; i++) { const q = j * MN + i, p = q * 4, x = (i + 0.5) / k - H, z = (j + 0.5) / k - H, m = MM[q];
+      let near = m > 0; if (!near) for (let dj = -1; dj <= 1 && !near; dj++) for (let di = -1; di <= 1; di++) { const ii = i + di, jj = j + dj; if (ii >= 0 && jj >= 0 && ii < MN && jj < MN && MM[jj * MN + ii] > 0) { near = true; break; } }
+      let h = 0; if (near) { let wet = WET[q], isl = ISL[q]; if (m <= 0) { wet = L.inLake && L.inLake(x, z); if (wet) isl = L.islandAt ? L.islandAt(x, z) : 0; } h = Math.max(0, wet ? isl : (heightAt(x, z) || 0)); }
+      data[p] = m * 255; data[p + 1] = Math.min(255, h / 40 * 255); data[p + 2] = Math.abs(x) < 158 && Math.abs(z) < 148 ? 255 : 0; data[p + 3] = 255; } }
     let on = 0; for (let p = 0; p < MN * MN; p++) if (data[p * 4] > 128) on++; bakeGrass.info = { MN, on: on / (MN * MN), src0: [src[((MN / 2 + 40) * MN + MN / 2 + 120) * 4], src[((MN / 2 + 40) * MN + MN / 2 + 120) * 4 + 1], src[((MN / 2 + 40) * MN + MN / 2 + 120) * 4 + 2]] };
     maskData = data; maskN = MN;
-    const mask = new THREE.DataTexture(data, MN, MN, THREE.RGBAFormat); mask.magFilter = mask.minFilter = THREE.LinearFilter; mask.needsUpdate = true; maskTex = mask;
+    const mask = new THREE.DataTexture(data, MN, MN, THREE.RGBAFormat); mask.magFilter = mask.minFilter = THREE.LinearFilter; mask.needsUpdate = true; maskTex = mask; if (CLR_Q.length) { for (const f of CLR_Q.splice(0)) try { clearGrass(f); } catch (e) {} }
     const SEG = touch ? 2 : 3, clump = (NB, wMul) => { const pos = [], hh = [], idx = [];   // phone perf s32: 2-segment blades on phones (grass was ~190k of every phone frame)
       for (let b = 0; b < NB; b++) { const a = b / NB * Math.PI * 2 + R(), r = (0.03 + R() * 0.16) * wMul, ox = Math.cos(a) * r, oz = Math.sin(a) * r, fa = R() * Math.PI, fx = Math.cos(fa), fz = Math.sin(fa), ht = 0.65 + R() * 0.6, lean = (0.08 + R() * 0.22), base = pos.length / 3;
         for (let s = 0; s <= SEG; s++) { const t = s / SEG, w = 0.024 * wMul * (1 - t * 0.9), lx = ox + Math.cos(a) * lean * t * t, lz = oz + Math.sin(a) * lean * t * t; for (const sd of [-1, 1]) { pos.push(lx + fx * w * sd, t * ht, lz + fz * w * sd); hh.push(t); } }
@@ -140,6 +147,6 @@ export function buildNature({ THREE, scene, L, groundCanvas, heightAt, touch }) 
     bOffA.needsUpdate = true; bYawA.needsUpdate = true; }
   function setNight(n) { uNight.value = n; nightK = n; for (const c of clouds) { c.sp.material.color.setRGB(1 - 0.72 * n, 1 - 0.7 * n, 1 - 0.6 * n); c.sp.material.opacity = 0.92 - 0.35 * n; } birdMesh.visible = n < 0.6; }
   // s33: no grass on the yellow brick road / spurs / building aprons (pred(x, z) true = bare)
-  function clearGrass(pred) { if (!maskData || !maskTex) return 0; let c = 0; const k = maskN / SZ; for (let j = 0; j < maskN; j++) { const z = (j + 0.5) / k - H; if (Math.abs(z) > 460) continue; for (let i = 0; i < maskN; i++) { const p = (j * maskN + i) * 4; if (!maskData[p]) continue; const x = (i + 0.5) / k - H; if (pred(x, z)) { maskData[p] = 0; c++; } } } maskTex.needsUpdate = true; return c; }
+  function clearGrass(pred) { if (!maskData || !maskTex) { CLR_Q.push(pred); return 0; } let c = 0; const k = maskN / SZ; for (let j = 0; j < maskN; j++) { const z = (j + 0.5) / k - H; if (Math.abs(z) > 460) continue; for (let i = 0; i < maskN; i++) { const p = (j * maskN + i) * 4; if (!maskData[p]) continue; const x = (i + 0.5) / k - H; if (pred(x, z)) { maskData[p] = 0; c++; } } } maskTex.needsUpdate = true; return c; }
   return { tick, setNight, bakeGrass, clearGrass, get grass() { return grassLayers; }, clouds: cloudG, birds: birdMesh, stats: { clouds: clouds.length, birds: NBI } };
 }

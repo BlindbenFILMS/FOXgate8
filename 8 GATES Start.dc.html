@@ -29,7 +29,7 @@
         <sc-if value="{{ hasSave }}" hint-placeholder-val="{{ false }}">
           <button onClick="{{ cont }}" style-hover="background:var(--color-accent-900)" style="min-height:56px;padding:0 18px;border:2px solid #f3f2f2;border-radius:0;background:transparent;color:#f3f2f2;font-family:var(--font-heading);font-weight:800;font-size:22px;letter-spacing:0.04em;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px"><span>CONTINUE</span><span style="font-size:14px;font-weight:600;color:#c9c6c4">{{ saveName }}</span></button>
         </sc-if>
-        <button onClick="{{ toggleSound }}" style-hover="background:var(--color-accent-900)" style="min-height:48px;padding:0 18px;border:2px solid #f3f2f2;border-radius:0;background:transparent;color:#f3f2f2;font-family:var(--font-heading);font-weight:700;font-size:16px;letter-spacing:0.06em;text-align:left;cursor:pointer">{{ soundLabel }}</button>
+        <sc-if value="{{ hasVideo }}" hint-placeholder-val="{{ false }}"><button onClick="{{ toggleSound }}" style-hover="background:var(--color-accent-900)" style="min-height:48px;padding:0 18px;border:2px solid #f3f2f2;border-radius:0;background:transparent;color:#f3f2f2;font-family:var(--font-heading);font-weight:700;font-size:16px;letter-spacing:0.06em;text-align:left;cursor:pointer">{{ soundLabel }}</button></sc-if>
       </div>
     </sc-if>
     <sc-if value="{{ onName }}" hint-placeholder-val="{{ false }}">
@@ -75,7 +75,7 @@ class Component extends DCLogic {
   renderVals() {
     const S = this.state, portrait = S.vh >= S.vw, d = S.save, done = !!(d && d.flags && d.flags.ppOpenDone), pn = this.planetName();
     return {
-      vidRef: this.vidRef, noVideo: S.noVideo, vidDisp: S.noVideo ? 'none' : 'block',
+      vidRef: this.vidRef, noVideo: S.noVideo, hasVideo: !S.noVideo, vidDisp: S.noVideo ? 'none' : 'block',
       dir: portrait ? 'column' : 'row', vidPos: portrait ? 'relative' : 'absolute', vidFlex: portrait ? '1 1 auto' : 'none', fit: portrait ? 'contain' : 'cover',
       panelPos: portrait ? 'relative' : 'absolute', panelW: portrait ? '100%' : 'min(420px, 46vw)', panelRule: portrait ? '0' : '2px solid #f3f2f2',
       onTitle: S.step === 'title', onName: S.step === 'name', hasSave: !!pn, saveName: pn ? pn + (done ? ' · MERU' : '') : '',

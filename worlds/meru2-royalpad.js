@@ -19,7 +19,7 @@ export function buildRoyalPad({ THREE, scene, kit, save, sayTo, ground, cols, fl
   const qs = typeof location !== 'undefined' ? location.search : '';
   const forceOpen = /[?&]royal=open/.test(qs);
   if (forceOpen) { const real = save, F = { heliToArena: false, tournamentWon: false }; save = Object.create(real); save.flag = k => (k in F ? F[k] : real.flag(k)); save.setFlag = (k, v = true) => { if (k in F) F[k] = v; else real.setFlag(k, v); }; }
-  let arrive = /[?&]arrive=telepad/.test(qs) || forceOpen; try { if (sessionStorage.getItem('meru2.arrive') === 'telepad') { arrive = true; sessionStorage.removeItem('meru2.arrive'); } } catch (e) {}
+  let arrive = /[?&]arrive=telepad/.test(qs) || forceOpen || (typeof window !== 'undefined' && !!window.__m2TeleStart);   // s731 every normal start = beamed in on the telepad try { if (sessionStorage.getItem('meru2.arrive') === 'telepad') { arrive = true; sessionStorage.removeItem('meru2.arrive'); } } catch (e) {}
   const toonC = new Map(), toon = c => { if (!toonC.has(c)) toonC.set(c, new THREE.MeshToonMaterial({ color: c })); return toonC.get(c); };
   const basic = (c, o = 1, add) => new THREE.MeshBasicMaterial({ color: c, transparent: o < 1 || !!add, opacity: o, depthWrite: !(o < 1 || add), blending: add ? THREE.AdditiveBlending : THREE.NormalBlending });
   const CT = (w, h, f) => { const c = document.createElement('canvas'); c.width = w; c.height = h; f(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; };
