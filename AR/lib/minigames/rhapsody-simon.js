@@ -1,7 +1,6 @@
 // RHAPSODY IN BLUE (Marcus Roberts): JAZZ SAYS, a musical Simon Says.
-// Five players live in the painting: the clarinet (the big white curl, top left), the trumpet (the gold streak, top
-// right), the piano (the black-and-white keys, left), the drums (the round cymbals, bottom middle) and the bass (the
-// black notes, bottom right). The band plays a phrase; you play it back by tapping the players (on the painting or with
+// Five players live in the painting: the drums in the middle, and the clarinet (top left), trumpet (top right), piano
+// (bottom left) and bass (bottom right) in the four corners. The band plays a phrase; you play it back by tapping the players (on the painting or with
 // the buttons). Every round the phrase grows by one note, up to eight. A soft swing groove plays underneath, and the
 // painting answers the music: each note sends ripples across the canvas from its player, lights it up and lets notes
 // float out of it, the blue swirl turns with the groove, and a finished phrase makes the whole painting dance.
@@ -11,17 +10,17 @@
 // shimmer, and coloured notes fly out. The band swings: ride cymbal, hi-hat, walking bass, piano comping, drum fills.
 import * as THREE from 'three';
 import * as K from './kit.js';
-import { thingCanvas } from './rhapsody-things.js';
+import { thingCanvas, badgeCanvas } from './rhapsody-things.js';
 // (Textures read by a custom shader stay in their own colours: NoColorSpace, so they match the painting exactly.)
 
 const PLAYERS = [
-  { id: 'clarinet', name: 'Clarinet', u: 0.13, v: 0.2, color: '#ffffff', note: 77, pan: -0.7 },
-  { id: 'trumpet', name: 'Trumpet', u: 0.72, v: 0.24, color: '#ffc93c', note: 74, pan: 0.6 },
-  { id: 'piano', name: 'Piano', u: 0.25, v: 0.45, color: '#7fd0ff', note: 70, pan: -0.4 },
-  { id: 'drums', name: 'Drums', u: 0.45, v: 0.68, color: '#ff6fb5', note: 0, pan: 0 },
-  { id: 'bass', name: 'Bass', u: 0.76, v: 0.82, color: '#9b8cff', note: 46, pan: 0.5 },
+  { id: 'clarinet', name: 'Clarinet', u: 0.2, v: 0.2, color: '#ffffff', note: 77, pan: -0.7 },
+  { id: 'trumpet', name: 'Trumpet', u: 0.8, v: 0.2, color: '#ffc93c', note: 74, pan: 0.6 },
+  { id: 'piano', name: 'Piano', u: 0.2, v: 0.8, color: '#7fd0ff', note: 70, pan: -0.4 },
+  { id: 'drums', name: 'Drums', u: 0.5, v: 0.5, color: '#ff6fb5', note: 0, pan: 0 },
+  { id: 'bass', name: 'Bass', u: 0.8, v: 0.8, color: '#9b8cff', note: 46, pan: 0.5 },
 ];
-const START = 2, GOAL = 8, HIT_R = 0.16, INST = 0.2;   // INST: how big the instruments are on the painting
+const START = 2, GOAL = 8, HIT_R = 0.18, INST = 0.33;   // INST: how big the instruments are on the painting
 const midi = m => 440 * Math.pow(2, (m - 69) / 12);
 
 /* ───────────────────────── the band ───────────────────────── */
@@ -217,8 +216,10 @@ export function jazzSaysGame() {
       G.rings = PLAYERS.map(P => { const s = K.sprite(K.ringTex, 0.2, { color: P.color, opacity: 0, order: 16 }); const [x, y] = G.S.P(P.u, P.v); s.position.set(x, y, 0.045); G.root.add(s); return s; });
       // the instruments themselves, drawn on the painting
       G.hop = PLAYERS.map(() => 0);
-      G.inst = PLAYERS.map(P => { const t = new THREE.CanvasTexture(thingCanvas(P.id, 256)); t.colorSpace = THREE.SRGBColorSpace;
-        const s = K.sprite(t, INST, { order: 17, opacity: 0 }), [x, y] = G.S.P(P.u, P.v); s.position.set(x, y, 0.048); G.root.add(s); return { s, x, y }; });
+      // each sits on a dark spotlight disc ringed in its colour, so it stands out on the busy blue
+      G.inst = PLAYERS.map(P => { const t = new THREE.CanvasTexture(thingCanvas(P.id, 512)); t.colorSpace = THREE.SRGBColorSpace;
+        const bt = new THREE.CanvasTexture(badgeCanvas(P.color, 256)); bt.colorSpace = THREE.SRGBColorSpace; const disc = K.sprite(bt, INST * 1.08, { order: 16, opacity: 0 });
+        const s = K.sprite(t, INST, { order: 17, opacity: 0 }), [x, y] = G.S.P(P.u, P.v); s.position.set(x, y, 0.048); disc.position.set(x, y, 0.046); G.root.add(disc); G.root.add(s); return { s, disc, x, y }; });
       G.band = K.audio() ? band(K.audio()) : new Proxy({ beat: 0.5 }, { get: (o, k) => (k in o ? o[k] : k === 'now' ? () => performance.now() / 1000 : k === 'nextBeat' ? () => performance.now() / 1000 + 0.5 : () => {}) });
       G.band.start();
       // the buttons: each instrument's picture, in its colour; five fit across a phone
@@ -229,7 +230,7 @@ export function jazzSaysGame() {
       hud();
       G.onGo = () => { G.t0 = G.t; G.band.overture(); G.overT = 2.8; G.band.groove(0.55); };
       K.intro(G, { title: 'Jazz says', how: 'The band plays a phrase. Play it back by tapping the instruments on the painting, or the buttons. Every round adds a note.',
-        say: 'Jazz says. Five players live in this painting: the clarinet, top left. The trumpet, top right. The piano, on the left. The drums, in the middle at the bottom. And the bass, bottom right. The band plays a phrase. Then you play it back, by tapping the instruments on the painting, or with the buttons. Each round, the phrase grows by one note. Listen to the painting move!' });
+        say: 'Jazz says. Five players live in this painting: the drums, right in the middle. The clarinet, top left. The trumpet, top right. The piano, bottom left. And the bass, bottom right. The band plays a phrase. Then you play it back, by tapping the instruments on the painting, or with the buttons. Each round, the phrase grows by one note. Listen to the painting move!' });
     },
     update(dt) {
       if (!G || G.paused) return;
@@ -260,7 +261,7 @@ export function jazzSaysGame() {
       // the beat (for the painting's notes to pulse) and the instruments: swaying with the groove, jumping when they play
       const bt = (G.band.now() / G.band.beat) % 1; U.uBeat.value = Math.pow(1 - bt, 3);
       G.inst.forEach((I, i) => { G.hop[i] = Math.max(0, G.hop[i] - dt * 3); const h = Math.sin(G.hop[i] * Math.PI), id = PLAYERS[i].id, sw = Math.sin(G.t * Math.PI * 2 / (G.band.beat * 2) + i);
-        I.s.material.opacity = U.uA.value;
+        I.s.material.opacity = U.uA.value; I.disc.material.opacity = U.uA.value; I.disc.scale.setScalar(INST * (1.08 + h * 0.12));
         I.s.position.set(I.x + (id === 'drums' ? Math.sin(G.t * 60) * 0.004 * G.hop[i] : 0), I.y + h * 0.04 + sw * 0.004, 0.048);
         I.s.material.rotation = sw * 0.04 + h * ({ trumpet: 0.35, clarinet: -0.3, bass: 0.18, piano: 0, drums: 0 }[id]) ;
         I.s.scale.setScalar(INST * (1 + h * 0.25 + (G.phase === 'you' ? 0.03 * Math.sin(G.t * 4 + i) : 0))); });

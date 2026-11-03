@@ -4,8 +4,8 @@
 // Voice 2, the inky head on the right, answers it back, kindly, like a best friend would.
 // Press Talk and record each one, changing your own voice for each head, then pick a voice changer
 // (deep, squeaky, robot, echo or normal). Then the heads play your conversation back: the speaking head's jaw
-// drops with every word, a glow runs around its outline, its colours swirl, and a cloud of coloured smoke drifts
-// from its mouth to the other head, like the painting's own animation. Up to 3 back-and-forths.
+// opens wide and flaps with every word, a glow runs around its outline, its colours swirl, and a cloud of coloured
+// smoke rises from its forehead and arcs over into the other head's forehead: two minds trading ideas. Up to 3 back-and-forths.
 // No microphone, or rather type? Press Type and the head says your words in a computer voice.
 // Everything stays on this phone: nothing is uploaded or saved.
 import * as THREE from 'three';
@@ -26,8 +26,8 @@ const STYLES = [
 ];
 const MAX_REC = 10;
 const SIDE = [
-  { name: 'the worry', mouth: [0.428, 0.474], col: ['#e8452c', '#f2c12e', '#3aa655', '#2f6db5', '#8e3fb0', '#f07c22'], bar: '#6b3fd0' },
-  { name: 'the answer', mouth: [0.566, 0.476], col: ['#e2381b', '#f08a24', '#f6c445', '#c0261a', '#ff6a3d'], bar: '#f08a24' },
+  { name: 'the worry', mouth: [0.428, 0.474], brow: [0.395, 0.335], col: ['#e8452c', '#f2c12e', '#3aa655', '#2f6db5', '#8e3fb0', '#f07c22'], bar: '#6b3fd0' },
+  { name: 'the answer', mouth: [0.566, 0.476], brow: [0.6, 0.33], col: ['#e2381b', '#f08a24', '#f6c445', '#c0261a', '#ff6a3d'], bar: '#f08a24' },
 ];
 
 const VERT = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
@@ -46,7 +46,7 @@ vec2 jaw(vec2 p, vec2 H, float line, float back, float dir, float open, inout fl
                        : (1.0 - smoothstep(back - 0.05, back, p.x)) * smoothstep(0.52, 0.545, p.x);
   float wy = 1.0 - smoothstep(0.535, 0.57, p.y);
   float below = step(line, p.y);
-  float a = open * 0.22 * wx * wy * below * dir;
+  float a = open * 0.4 * wx * wy * below * dir;   // (wider since 3 Nov: the jaw drops almost twice as far)
   if (a == 0.0) return p;
   vec2 d = (p - H) * vec2(1.0, uH);
   vec2 q = H + rot(d, -a) / vec2(1.0, uH);
@@ -240,23 +240,29 @@ export function selfTalkGame() {
       say: 'You talked it out. Good communication starts with healthy self-talk. ' + ((G.work && G.work.quote) || '') });
   }
 
-  // ── smoke: a cloud of colour drifting from the speaker's mouth to the other head ──
+  // ── ideas: a cloud of colour rising from the speaker's forehead and arcing over into the other head's forehead ──
   function puff(side, strength) {
-    const m = SIDE[side].mouth, dir = side ? -1 : 1;
-    const [x, y] = G.S.P(m[0] + dir * 0.008, m[1] + (Math.random() - 0.5) * 0.02);
+    const a = SIDE[side].brow, b = SIDE[1 - side].brow, j = () => (Math.random() - 0.5) * 0.03;
+    const A = G.S.P(a[0] + j(), a[1] + j()), B = G.S.P(b[0] + j(), b[1] + j()), C = G.S.P((a[0] + b[0]) / 2 + j() * 2, Math.min(a[1], b[1]) - 0.12 - Math.random() * 0.08);   // up and over, like a thought
     const col = SIDE[side].col[Math.floor(Math.random() * SIDE[side].col.length)];
     const s = K.sprite(G.smokeTex[Math.floor(Math.random() * G.smokeTex.length)], 0.02, { color: col, order: 20, opacity: 0 });
-    s.position.set(x, y, 0.05 + Math.random() * 0.01); s.material.rotation = Math.random() * 6.28; G.root.add(s);
-    G.smoke.push({ s, x, y, vx: dir * (0.05 + Math.random() * 0.03) * (0.7 + strength * 0.6), vy: (Math.random() - 0.5) * 0.02, age: 0, life: 2.6 + Math.random() * 1.6,
-      size: 0.06 + Math.random() * 0.08 + strength * 0.05, ph: Math.random() * 6.28, spin: (Math.random() - 0.5) * 1.2, op: 0.35 + Math.random() * 0.3 });
+    s.position.set(A[0], A[1], 0.05 + Math.random() * 0.01); s.material.rotation = Math.random() * 6.28; G.root.add(s);
+    G.smoke.push({ s, A, B, C, age: 0, life: (1.8 + Math.random() * 0.9) / (0.8 + strength * 0.4),
+      size: 0.05 + Math.random() * 0.06 + strength * 0.05, ph: Math.random() * 6.28, spin: (Math.random() - 0.5) * 1.2, op: 0.4 + Math.random() * 0.3 });
+    if (strength > 0.3 && Math.random() < 0.25) {   // now and then a little spark of an idea rides along
+      const sp = K.sprite(K.glowTex, 0.03, { color: '#fff6c8', additive: true, order: 21, opacity: 0 }); sp.position.set(A[0], A[1], 0.065); G.root.add(sp);
+      G.smoke.push({ s: sp, A, B, C, age: 0, life: 1.6, size: 0.025, ph: Math.random() * 6.28, spin: 0, op: 0.9, spark: true });
+    }
   }
   function updateSmoke(dt) {
     for (let i = G.smoke.length - 1; i >= 0; i--) {
-      const p = G.smoke[i]; p.age += dt; const k = p.age / p.life;
-      p.x += (p.vx * (1 - k * 0.6)) * dt; p.y += (p.vy + Math.sin(G.t * 1.7 + p.ph) * 0.018 + Math.sin(p.x * 30 + p.ph) * 0.012) * dt;
-      p.s.position.x = p.x; p.s.position.y = p.y; p.s.material.rotation += p.spin * dt;
-      const sz = 0.02 + p.size * Math.min(1, k * 1.3); p.s.scale.set(sz, sz, 1);
-      p.s.material.opacity = p.op * Math.min(1, k * 5) * (1 - Math.max(0, (k - 0.55) / 0.45));
+      const p = G.smoke[i]; p.age += dt; const k = Math.min(1, p.age / p.life), e = k * k * (3 - 2 * k), u = 1 - e;
+      const x = u * u * p.A[0] + 2 * u * e * p.C[0] + e * e * p.B[0], y = u * u * p.A[1] + 2 * u * e * p.C[1] + e * e * p.B[1];
+      const wob = Math.sin(G.t * 1.7 + p.ph) * 0.012 * Math.sin(k * Math.PI);
+      p.s.position.x = x + wob; p.s.position.y = y + Math.sin(G.t * 2.3 + p.ph) * 0.01 * Math.sin(k * Math.PI); p.s.material.rotation += p.spin * dt;
+      const sz = p.spark ? p.size * (1 + 0.4 * Math.sin(G.t * 12 + p.ph)) : 0.02 + p.size * Math.sin(Math.min(1, k * 1.15) * Math.PI);   // grows in the air, sinks into the other head
+      p.s.scale.set(sz, sz, 1);
+      p.s.material.opacity = p.op * Math.min(1, k * 6) * (1 - Math.max(0, (k - 0.8) / 0.2));
       if (k >= 1) { G.root.remove(p.s); p.s.material.dispose(); G.smoke.splice(i, 1); }
     }
   }
@@ -328,7 +334,8 @@ export function selfTalkGame() {
       G.level = lvl; G.who = who;
       for (let s = 0; s < 2; s++) {
         const me = who === s, l = me ? lvl : 0;
-        G.open[s] += ((l > 0.06 ? Math.min(1, l * 1.5) : 0) - G.open[s]) * Math.min(1, dt * 22);
+        const flap = 0.6 + 0.4 * Math.abs(Math.sin(G.t * 13 + s));   // flaps with the syllables, so it never just hangs open
+        G.open[s] += ((l > 0.06 ? Math.min(1, l * 2.4) * flap : 0) - G.open[s]) * Math.min(1, dt * 24);
         G.glow[s] += ((me ? 0.6 + 0.4 * Math.min(1, l * 1.6) : 0) - G.glow[s]) * Math.min(1, dt * (me ? 8 : 2.5));
         G.swirl[s] += ((me ? 0.3 + 0.7 * Math.min(1, l * 1.4) : 0) - G.swirl[s]) * Math.min(1, dt * 4);
         // the smoke leaves the mouth with the words

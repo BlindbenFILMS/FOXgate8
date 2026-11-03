@@ -57,6 +57,7 @@ import { calmCrossingGame } from './communion-bridge.js';
 import { selfTalkGame } from './scope-selftalk.js';
 import { styleTheDreamGame } from './haute-style.js';
 import { holdOnTogetherGame } from './unity-together.js';
+import { callAndAnswerGame } from './unity-call.js';
 import { sunsetJoyrideGame } from './joyride-sunset.js';
 import { lightTheNightGame } from './onlylight-find.js';
 import { catchTheWordsGame } from './visions-eye.js';
@@ -95,7 +96,7 @@ export const SPECIAL = {
   'the-visions-that-we-share': catchTheWordsGame, // Catch the words: the eye looks left and right and blinks to catch the words of a shared poem
   'the-only-light-well-see': lightTheNightGame, // Light the night: search the dark with your light; each find becomes a star until the whole night is lit
   'joyride': sunsetJoyrideGame, // Sunset joyride: steer down the moving boulevard, switch radio stations, and describe the world her way
-  'embracing-unity': holdOnTogetherGame, // Hold on together: link the family hand to hand, then walk them home and bring back anyone who drifts off
+  'embracing-unity': callAndAnswerGame, // Call and answer: Shardasia calls for her family in the busy city; tap whoever answers “Here!” to bring them home (the earlier Hold on together: unity-together.js)
   'haute-couture-dreams': styleTheDreamGame, // Style the dream: dress Shardasia for three clients (clothes fly off the wall), then pose on the runway
   'the-scope-of-communication': selfTalkGame, // self-talk puppets: record the worry and the kind answer, change your voice, watch the heads talk it out
   'moment-of-communion': calmCrossingGame,     // Calm the crossing: soothe the storms so the people can meet in the middle of the bridge (its first game: &classic=1)

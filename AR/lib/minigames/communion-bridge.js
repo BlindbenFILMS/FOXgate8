@@ -2,9 +2,10 @@
 // Two towns face each other across the river, and a fragile bridge joins them. People from both sides start at the
 // ends of the bridge and walk toward each other, to meet in the middle (the moment of communion). The river runs
 // under the bridge and falls into the deep below. But storms keep rolling in: dark clouds swirl in the sky, rain falls,
-// lightning flashes, and the people stop and huddle and wait. Calm the storm with slow, gentle strokes across the
-// screen (soothe it; fast, rough swipes only stir it up and make thunder). Or hold the Calm button. When the sky is
-// calm, they walk on. Three storms; when everyone meets in the middle, the clouds part and the sun pours down.
+// lightning flashes, and the people stop and huddle and wait. Calm the storm by lighting the windows: dark windows
+// glow in both towns, tap each one (or press Light a window) and it lights up warm, and every warm light pushes the
+// storm back. When the sky is calm, they walk on. Three storms (3, 4, then 5 windows); the towns get cosier with each,
+// and when everyone meets in the middle the clouds part and the sun pours down.
 // The people were cut out of the painting (media/games/communion/p1–p5.png) and the bridge filled in (bridge.jpg).
 // Lofi music plays throughout (the storm muffles it). By ear: the storm's wind and thunder, a soft rising chime for every
 // gentle stroke, footsteps when they walk, and everything is spoken.
@@ -23,7 +24,26 @@ const PEOPLE = [
 ];
 const feetV = u => (u < 0.62 ? 0.594 : 0.594 - (u - 0.62) * 0.07);   // the bridge deck, rising a little on the right
 const WALK = 0.0115;
-const STORMS = [{ at: 4, need: 1.0 }, { at: 0, need: 1.4 }, { at: 0, need: 1.8 }];   // when each storm comes (after the last calm) and how much calming it takes
+const STORMS = [{ at: 4 }, { at: 0 }, { at: 0 }];   // when the first storm comes
+// the windows to light, storm by storm (u, v on the painting), back and forth between the two towns
+const WINDOWS = [
+  [[0.17, 0.33], [0.78, 0.33], [0.25, 0.27]],
+  [[0.12, 0.42], [0.88, 0.38], [0.21, 0.18], [0.72, 0.2]],
+  [[0.08, 0.22], [0.93, 0.25], [0.3, 0.38], [0.83, 0.15], [0.68, 0.3]],
+];
+const WIN = 0.075, WIN_HIT = 0.14;   // how big a window looks, and how close a tap must be
+// a little town window: arched, four panes, a wooden frame; dark, or lit warm from inside
+function windowTex(lit) {
+  return K.canvasTex(128, 128, (g) => {
+    if (lit) { const h = g.createRadialGradient(64, 66, 4, 64, 66, 62); h.addColorStop(0, 'rgba(255,214,120,.9)'); h.addColorStop(.5, 'rgba(255,170,60,.35)'); h.addColorStop(1, 'rgba(255,160,40,0)'); g.fillStyle = h; g.fillRect(0, 0, 128, 128); }
+    const path = () => { g.beginPath(); g.moveTo(40, 100); g.lineTo(40, 50); g.arc(64, 50, 24, Math.PI, 0); g.lineTo(88, 100); g.closePath(); };
+    path(); g.lineWidth = 12; g.strokeStyle = '#3a2716'; g.stroke();
+    path(); g.fillStyle = lit ? (() => { const f = g.createLinearGradient(0, 26, 0, 100); f.addColorStop(0, '#fff3c4'); f.addColorStop(1, '#ffb347'); return f; })() : '#1d2433'; g.fill();
+    g.lineWidth = 5; g.strokeStyle = lit ? '#8a5a26' : '#3a2716'; g.beginPath(); g.moveTo(64, 28); g.lineTo(64, 100); g.moveTo(40, 64); g.lineTo(88, 64); g.stroke();
+    g.fillStyle = '#4a321c'; g.fillRect(34, 98, 60, 9);   // the sill
+    if (!lit) { g.fillStyle = 'rgba(160,190,230,.25)'; g.fillRect(44, 40, 14, 20); }   // a gleam on the dark glass
+  });
+}
 const WATER = [
   [[0.47, 0.33], [0.53, 0.33], [0.56, 0.42], [0.565, 0.5], [0.56, 0.575], [0.42, 0.575], [0.43, 0.5], [0.45, 0.42]],
   [[0.27, 0.505], [0.3, 0.47], [0.36, 0.44], [0.41, 0.445], [0.38, 0.47], [0.33, 0.49], [0.29, 0.52]],
@@ -137,39 +157,45 @@ export function calmCrossingGame() {
 
   function hud() {
     const there = G.people.filter(p => Math.abs(p.u - p.to) < 0.005).length;
-    const sub = G.wave >= 0 && G.sky > 0.35 ? (G.noStroke ? 'Hold Calm, or stroke the sky gently' : 'Stroke the screen slowly and gently to calm the storm') : there === G.people.length ? 'Together' : 'They walk while the sky is calm';
+    const left = G.storming ? G.wins.filter(w => w.wave === G.wave && !w.lit).length : 0;
+    const sub = G.storming ? `Tap the glowing windows to light them · ${left} to go` : there === G.people.length ? 'Together' : 'They walk while the sky is calm';
     G.ui.panel(G.sky > 0.35 ? `Storm ${G.wave + 1} of ${STORMS.length}` : 'Calm the crossing', `${there}<small>of ${G.people.length} in the middle</small>`, { segs: [G.cleared, STORMS.length], sub, warn: G.sky > 0.35 });
   }
   function startStorm() {
-    G.wave++; G.calmAmt = 0; G.storming = true;
-    G.ui.alert(G.wave === 0 ? 'A storm is coming' : 'Another storm', 'Stroke the screen slowly to calm it', 2.6, 'red');
-    G.say(G.wave === 0 ? 'A storm is rolling in, and the people stop to wait. Calm it: stroke the screen slowly and gently, like soothing it. Rough, fast swipes only stir it up.' : ['Here comes another storm. Calm it gently.', 'One more storm. Slow and gentle.'][G.wave - 1]);
+    G.wave++; G.storming = true;
+    for (const w of G.wins) if (w.wave === G.wave) w.show = true;   // this storm's windows appear, dark, waiting to be lit
+    const n = WINDOWS[G.wave].length;
+    G.ui.alert(G.wave === 0 ? 'A storm is coming' : 'Another storm', `Light the ${n} windows to calm it`, 2.6, 'red');
+    G.say(G.wave === 0 ? `A storm is rolling in, and the people stop to wait. Light the windows to calm it: tap the ${n} glowing windows in the towns, or press Light a window. Every warm light pushes the storm back.` : [`Here comes another storm. Light ${n} more windows.`, `One more storm. Light the last ${n} windows.`][G.wave - 1]);
     G.band.thunder(0, 0.5);
   }
   function calmed() {
-    G.storming = false; G.cleared++; G.band.calm(); G.buzz([30, 30, 80]); G.flash = 0;
+    G.storming = false; G.cleared++; G.botT = 2.5; G.band.calm(); G.buzz([30, 30, 80]); G.flash = 0;
     G.ui.alert('The storm is calm', 'They walk on', 2, 'blue'); G.say('The storm is calm. They walk on.');
     G.nextStorm = G.cleared < STORMS.length ? 6 + Math.random() * 2.5 : -1;
     hud();
   }
-  function soothe(amount) {
-    if (!G.storming) return;
-    G.calmAmt += amount; G.sky = Math.max(0, G.sky - amount * 0.9);
-    G.chimeT -= amount * 8; if (G.chimeT <= 0) { G.chimeT = 1; G.band.soothe(G.chimes++); }
-    if (G.calmAmt >= STORMS[G.wave].need) calmed();
+  // light a window: it glows warm, the light pushes the storm back, and when this storm's windows are all lit it's calm
+  function light(w) {
+    if (!G.storming || !w || w.lit || w.wave !== G.wave) return;
+    w.lit = true; w.pop = 1; w.s.material.map = G.winTex.on; w.s.material.needsUpdate = true;
+    const left = G.wins.filter(x => x.wave === G.wave && !x.lit).length, n = WINDOWS[G.wave].length;
+    G.band.soothe(G.chimes++); G.buzz([20, 30, 40]);
+    const [x, y] = G.S.P(w.u, w.v); G.fx.add(x, y, '#ffd88a', 18, 0.25);
+    G.warm.push({ x, y, t: 0 });
+    G.sky = Math.min(G.sky, 0.25 + 0.75 * left / n);   // each light pushes the clouds back a step
+    if (!left) calmed(); else { G.ui.pop(left === 1 ? 'One more!' : 'Warm!'); if (left === 1) G.say('One more window.'); }
+    hud();
   }
-  function stir() {
-    if (!G.storming) return;
-    G.sky = Math.min(1, G.sky + 0.1); G.stirT = (G.stirT || 0);
-    if (G.t - G.stirT > 1.6) { G.stirT = G.t; G.band.thunder((Math.random() - 0.5) * 1.4, 0.6); G.flash = 0.6; G.ui.pop('Gently…'); G.say('Gently.'); }
-  }
+  const nextWin = (near) => { const ws = G.wins.filter(w => w.wave === G.wave && !w.lit); if (!ws.length) return null;
+    return near ? ws.sort((a, b) => Math.hypot(a.u - near.u, (a.v - near.v) * G.h) - Math.hypot(b.u - near.u, (b.v - near.v) * G.h))[0] : ws[0]; };
 
   return {
     title: 'Calm the crossing',
     start(ctx) {
       if (G) this.stop();
       G = K.makeBase(ctx);
-      Object.assign(G, { wave: -1, cleared: 0, sky: 0, storming: false, calmAmt: 0, nextStorm: STORMS[0].at, flash: 0, sun: 0, chimeT: 1, chimes: 0, last: null, btn: false, endT: -1, t0: 0, boltT: 3, trail: [], said: {} });
+      Object.assign(G, { wave: -1, cleared: 0, sky: 0, storming: false, nextStorm: STORMS[0].at, warm: [], winHum: 0, flash: 0, sun: 0, chimeT: 1, chimes: 0, last: null, btn: false, endT: -1, t0: 0, boltT: 3, trail: [], said: {} });
       G.uni = { map: { value: null }, uMask: { value: maskTex() }, uT: { value: 0 }, uH: { value: G.h }, uA: { value: 0 }, uS: { value: 0 }, uFlash: { value: 0 }, uSun: { value: 0 } };
       G.plane = new THREE.Mesh(new THREE.PlaneGeometry(1.002, G.h + 0.002), new THREE.ShaderMaterial({ uniforms: G.uni, vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: false }));
       G.plane.position.z = 0.03; G.plane.renderOrder = 12; G.root.add(G.plane);
@@ -185,11 +211,18 @@ export function calmCrossingGame() {
       G.root.add(G.bolt);
       G.band = K.audio() ? band(K.audio()) : new Proxy({}, { get: () => () => {} });
       G.band.start && G.band.start();
-      G.ui.buttons([{ label: 'Calm', icon: '〰', kind: 'blue', aria: 'Calm the storm (hold)', press: () => { G.btn = true; }, release: () => { G.btn = false; } }]);
+      // the windows, all twelve, hidden until their storm
+      G.winTex = { off: windowTex(false), on: windowTex(true) };
+      G.wins = WINDOWS.flatMap((list, wave) => list.map(([u, v]) => {
+        const s = K.sprite(G.winTex.off, WIN, { order: 15, opacity: 0 }), [x, y] = G.S.P(u, v); s.position.set(x, y, 0.045); G.root.add(s);
+        const ring = K.sprite(K.ringTex, WIN * 1.5, { color: '#ffd27a', opacity: 0, order: 15 }); ring.position.set(x, y, 0.044); G.root.add(ring);
+        const glow = K.sprite(K.glowTex, WIN * 3, { color: '#ffb347', additive: true, opacity: 0, order: 13 }); glow.position.set(x, y, 0.042); G.root.add(glow);
+        return { u, v, wave, s, ring, glow, show: false, lit: false, pop: 0, a: 0 }; }));
+      G.ui.buttons([{ label: 'Light a window', icon: '💡', kind: 'red', aria: 'Light a window', press: () => light(nextWin()) }]);
       hud();
       G.onGo = () => { G.t0 = G.t; G.say('They start to walk toward each other.'); };
-      K.intro(G, { title: 'Calm the crossing', how: 'People from both towns are crossing the bridge to meet in the middle. When a storm rolls in, they stop. Calm it with slow, gentle strokes across the screen.',
-        say: 'Calm the crossing. People from both towns are crossing the bridge, to meet each other in the middle. The river runs beneath them. But storms keep rolling in, and when they do, everyone stops and waits. Calm the storm with slow, gentle strokes across the screen, or hold the calm button. Fast, rough swipes only stir it up.' });
+      K.intro(G, { title: 'Calm the crossing', how: 'People from both towns are crossing the bridge to meet in the middle. When a storm rolls in, they stop. Calm it by lighting the windows: tap each glowing window.',
+        say: 'Calm the crossing. People from both towns are crossing the bridge, to meet each other in the middle. The river runs beneath them. But storms keep rolling in, and when they do, everyone stops and waits. Calm the storm by lighting the windows. Tap each glowing window in the towns, or press Light a window. Every warm light pushes the storm back.' });
     },
     update(dt) {
       if (!G || G.paused) return;
@@ -198,9 +231,11 @@ export function calmCrossingGame() {
       // the storms come and go
       if (G.playing && !G.storming && G.nextStorm >= 0 && G.endT < 0) { G.nextStorm -= dt; if (G.nextStorm <= 0) { G.nextStorm = -1; startStorm(); } }
       if (G.storming) {
-        G.sky = Math.min(1, G.sky + dt * (0.1 + G.wave * 0.03));
-        if (G.btn) soothe(dt * 0.18);
-        if (G.bot && G.sky > 0.75) soothe(dt * 0.35);   // the robot lets each storm build up first
+        { const n = WINDOWS[G.wave].length, left = G.wins.filter(w => w.wave === G.wave && !w.lit).length; G.sky = Math.min(0.25 + 0.75 * left / n, G.sky + dt * (0.1 + G.wave * 0.03)); }
+        G.sky = Math.max(G.sky, 0);
+        if (G.bot) { G.botT = (G.botT ?? 2.5) - dt; if (G.botT <= 0) { G.botT = 1.0; light(nextWin()); } }   // the robot lets each storm build up a moment first
+        // by ear: the next dark window hums softly from its side
+        G.winHum -= dt; if (G.winHum <= 0) { G.winHum = 1.6; const w = nextWin(); if (w) K.tone(660, 0.25, { type: 'triangle', vol: 0.04, pan: Math.max(-1, Math.min(1, (w.u - 0.5) * 1.8)) }); }
         if (G.sky > 0.72) { G.boltT -= dt; if (G.boltT <= 0) { G.boltT = 2.5 + Math.random() * 3; G.flash = 1; const u = 0.3 + Math.random() * 0.4; G.band.thunder((u - 0.5) * 1.6, 0.8); const [x, y] = G.S.P(u, 0.25); G.bolt.position.set(x, y, 0.05); G.bolt.material.opacity = 1; } }
       } else G.sky = Math.max(0, G.sky - dt * 0.4);
       G.flash = Math.max(0, G.flash - dt * 2.5); G.bolt.material.opacity = Math.max(0, G.bolt.material.opacity - dt * 3);
@@ -233,24 +268,27 @@ export function calmCrossingGame() {
             cells: [{ k: 'Storms calmed', v: `${G.cleared}/${STORMS.length}` }, { k: 'Time', v: Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0') }] });
           G.band.volume && G.band.volume(0.6);
         } }
+      // the windows: fade in with their storm, pulse a glowing ring until lit, then glow warm for the rest of the game
+      for (const w of G.wins) {
+        w.a += ((w.show && !G.over ? 1 : 0) - w.a) * Math.min(1, dt * 3); w.pop = Math.max(0, w.pop - dt * 2.5);
+        const waiting = w.show && !w.lit && G.storming && w.wave === G.wave;
+        w.s.material.opacity = w.a * U.uA.value; w.s.scale.setScalar(WIN * (1 + Math.sin(w.pop * Math.PI) * 0.5 + (waiting ? 0.08 * Math.sin(G.t * 5) : 0)));
+        w.ring.material.opacity = waiting ? w.a * (0.5 + 0.4 * Math.sin(G.t * 5)) : 0; w.ring.scale.setScalar(WIN * (1.4 + 0.25 * Math.sin(G.t * 5)));
+        w.glow.material.opacity = w.lit ? w.a * (0.4 + 0.08 * Math.sin(G.t * 2 + w.u * 9)) * (1 - G.sun * 0.5) : 0;
+      }
+      for (let i = G.warm.length - 1; i >= 0; i--) { const r = G.warm[i]; r.t += dt;   // a warm wave of light spreading out from a lit window
+        if (!r.s) { r.s = K.sprite(K.ringTex, 0.05, { color: '#ffcf7a', additive: true, opacity: 0.9, order: 16 }); r.s.position.set(r.x, r.y, 0.05); G.root.add(r.s); }
+        r.s.scale.setScalar(0.05 + r.t * 0.7); r.s.material.opacity = Math.max(0, 0.9 - r.t * 0.9); if (r.t > 1) { G.root.remove(r.s); G.warm.splice(i, 1); } }
       // a soft trail where you stroke
       for (let i = G.trail.length - 1; i >= 0; i--) { const s = G.trail[i]; s.t += dt; s.s.material.opacity = Math.max(0, 0.6 - s.t * 0.8); if (s.t > 0.8) { G.root.remove(s.s); G.trail.splice(i, 1); } }
       G.hudT = (G.hudT || 0) - dt; if (G.hudT <= 0) { G.hudT = 0.3; hud(); }
     },
     pointer(kind, ev) {
-      if (!G || !G.playing || G.paused) return;
-      if (kind === 'up') { G.last = null; return; }
+      if (!G || !G.playing || G.paused || kind !== 'down' || !G.storming) return;
       const p = G.S.toBoard(ev, G.root); if (!p) return;
-      const now = performance.now() / 1000;
-      if (kind === 'down') { G.last = { u: p.u, v: p.v, t: now }; return; }
-      if (kind === 'move' && G.last) {
-        const d = Math.hypot(p.u - G.last.u, (p.v - G.last.v) * G.h), sp = d / Math.max(0.008, now - G.last.t);
-        if (d > 0.004) {
-          if (sp < 1.0) soothe(d * 1.1); else if (sp > 1.8) stir();   // slow and gentle calms; fast and rough stirs it up
-          if (G.trail.length < 40) { const s = K.sprite(K.dotTex, 0.035, { color: sp < 1.0 ? '#cfe9ff' : '#ff9a7a', additive: true, opacity: 0.6, order: 17 }); const [x, y] = G.S.P(p.u, p.v); s.position.set(x, y, 0.06); G.root.add(s); G.trail.push({ s, t: 0 }); }
-          G.last = { u: p.u, v: p.v, t: now };
-        }
-      }
+      const w = nextWin(p); if (!w) return;
+      if (Math.hypot(w.u - p.u, (w.v - p.v) * G.h) < WIN_HIT) light(w);
+      else { w.pop = 0.6; const s = K.sprite(K.dotTex, 0.035, { color: '#ffd27a', additive: true, opacity: 0.6, order: 17 }); const [x, y] = G.S.P(p.u, p.v); s.position.set(x, y, 0.06); G.root.add(s); G.trail.push({ s, t: 0 }); }   // missed: the nearest window nudges
     },
     pause() { if (G) { G.paused = true; G.band.volume && G.band.volume(0); } },
     resume() { if (G) { G.paused = false; G.band.volume && G.band.volume(G.over ? 0.6 : 0.9); } },
