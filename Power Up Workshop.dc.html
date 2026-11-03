@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#f3f2f2}a{color:var(--color-accent-700)}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:fixed;inset:0;display:flex;flex-direction:column;font-family:var(--font-body);color:var(--color-text);background:var(--color-bg)" data-screen-label="Power Up Workshop">
+  <div style="display:flex;flex-wrap:wrap;align-items:center;column-gap:12px;row-gap:2px;padding:10px 14px;border-bottom:2px solid var(--color-text);flex:none">
+    <div style="font-family:var(--font-heading);font-weight:800;font-size:18px;letter-spacing:0.02em">POWER UP WORKSHOP</div>
+    <div style="font-size:13px;color:var(--color-neutral-700);text-wrap:pretty">Every pickup in every battle map · saved on this device</div>
+  </div>
+  <div style="flex:1;min-height:0;display:flex;flex-wrap:wrap;overflow-y:auto;align-content:stretch">
+    <div ref="{{ stage }}" style="flex:1 1 420px;min-height:260px;position:relative"></div>
+    <div style="flex:1 1 320px;max-width:100%;max-height:100%;min-height:0;overflow-y:auto;border-left:2px solid var(--color-text);display:flex;flex-direction:column">
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-bottom:2px solid var(--color-text)">
+        <sc-for list="{{ kinds }}" as="k" hint-placeholder-count="10">
+          <button onClick="{{ k.pick }}" style="min-height:48px;padding:6px 12px;text-align:left;font:700 13px var(--font-body);letter-spacing:0.04em;background:{{ k.bg }};color:{{ k.fg }};border:0;border-right:2px solid var(--color-text);border-bottom:2px solid var(--color-text);cursor:pointer;display:flex;align-items:center;gap:8px">
+            <span style="width:12px;height:12px;flex:none;background:{{ k.col }};border:2px solid var(--color-text)"></span>{{ k.name }}
+          </button>
+        </sc-for>
+      </div>
+      <div style="padding:12px 14px;display:flex;flex-direction:column;gap:4px;border-bottom:2px solid var(--color-text)">
+        <div style="font-family:var(--font-heading);font-weight:800;font-size:20px">{{ selName }}</div>
+        <div style="font-size:13px;color:var(--color-neutral-700)">{{ selTip }}</div>
+      </div>
+      <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px;border-bottom:2px solid var(--color-text)">
+        <div style="font-weight:800;font-size:12px;letter-spacing:0.06em">COLOUR</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <sc-for list="{{ swatches }}" as="s" hint-placeholder-count="8">
+            <button onClick="{{ s.pick }}" aria-label="{{ s.c }}" style="width:44px;height:44px;background:{{ s.c }};border:{{ s.border }};cursor:pointer"></button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="padding:12px 14px;display:grid;grid-template-columns:64px minmax(0,1fr) 44px;align-items:center;gap:10px;font-size:12px;font-weight:700;border-bottom:2px solid var(--color-text)">
+        <div>SIZE</div><input type="range" min="0.6" max="1.8" step="0.05" value="{{ size }}" onChange="{{ setSize }}" style="width:100%;accent-color:var(--color-accent)"><div>{{ sizeTxt }}</div>
+        <div>SPIN</div><input type="range" min="0" max="3" step="0.1" value="{{ spin }}" onChange="{{ setSpin }}" style="width:100%;accent-color:var(--color-accent)"><div>{{ spinTxt }}</div>
+        <div>PULSE</div><input type="range" min="0" max="2" step="0.1" value="{{ pulse }}" onChange="{{ setPulse }}" style="width:100%;accent-color:var(--color-accent)"><div>{{ pulseTxt }}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+        <button onClick="{{ toggleRing }}" style="min-height:56px;padding:8px 14px;text-align:left;font:700 14px var(--font-body);background:transparent;color:var(--color-text);border:0;border-right:2px solid var(--color-text);border-bottom:2px solid var(--color-text);cursor:pointer" style-hover="background:var(--color-accent-100)">WHITE RING · {{ ringTxt }}</button>
+        <button onClick="{{ onReset }}" style="min-height:56px;padding:8px 14px;text-align:left;font:700 14px var(--font-body);background:var(--color-accent);color:#ffffff;border:0;border-bottom:2px solid var(--color-text);cursor:pointer" style-active="background:var(--color-accent-600)">RESET ALL</button>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { sel: 'health', looks: {}, ready: false };
+  stage = React.createRef();
+  sw = ['#ff2a2a', '#ff5a2a', '#ffd23a', '#7cff9b', '#2ee6ff', '#4fdff2', '#7d8bff', '#ff3df2', '#ffffff'];
+  async componentDidMount() {
+    this.pu = await import('./engine/powerups.js?v=s209');
+    const m = await import('./engine/powerup-workshop.js?v=s209');
+    this.ws = await m.startPowerupWorkshop(this.stage.current); window.__puWorkshop = this.ws;
+    this.reload();
+  }
+  componentWillUnmount() { this.ws && this.ws.destroy(); }
+  reload() { const looks = {}; for (const k of Object.keys(this.pu.POWERUPS)) looks[k] = this.pu.puLook(k); this.setState({ looks, ready: true }); }
+  set(part) { const k = this.state.sel; this.ws.set(k, part); this.setState(s => ({ looks: { ...s.looks, [k]: { ...s.looks[k], ...part } } })); }
+  renderVals() {
+    const P = this.pu ? this.pu.POWERUPS : {}, sel = this.state.sel, L = this.state.looks[sel] || { size: 1, spin: 1, pulse: 1, ring: 1, col: '#ffffff' };
+    return {
+      stage: this.stage,
+      kinds: Object.keys(P).map(k => ({ name: P[k].name, col: (this.state.looks[k] || {}).col || P[k].col, bg: k === sel ? 'var(--color-text)' : 'transparent', fg: k === sel ? 'var(--color-bg)' : 'var(--color-text)', pick: () => { this.setState({ sel: k }); this.ws && this.ws.pick(k); } })),
+      selName: P[sel] ? P[sel].name : '', selTip: P[sel] ? P[sel].tip : '',
+      swatches: this.sw.map(c => ({ c, border: (L.col || '').toLowerCase() === c ? '4px solid var(--color-text)' : '2px solid var(--color-text)', pick: () => this.set({ col: c }) })),
+      size: L.size, sizeTxt: Math.round(L.size * 100) + '%', setSize: e => this.set({ size: +e.target.value }),
+      spin: L.spin, spinTxt: (+L.spin).toFixed(1) + 'x', setSpin: e => this.set({ spin: +e.target.value }),
+      pulse: L.pulse, pulseTxt: (+L.pulse).toFixed(1) + 'x', setPulse: e => this.set({ pulse: +e.target.value }),
+      ringTxt: L.ring ? 'ON' : 'OFF', toggleRing: () => this.set({ ring: L.ring ? 0 : 1 }),
+      onReset: () => { if (!this.ws) return; this.ws.reset(); this.reload(); },
+    };
+  }
+}
+</script>
+</body>
+</html>

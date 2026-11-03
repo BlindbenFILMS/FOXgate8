@@ -1,0 +1,2535 @@
+{
+ "meta": {
+  "world": "jidda",
+  "version": 9,
+  "date": "2026-10-22",
+  "from": "uploads/JIDDA_BRIEF.md (Jidda section of 8GATES_DESIGN_BRIEF_ALL.md) + uploads/surface_jidda.html (add it)",
+  "notes": "DRAFT by Claude (s348) for Ben. JIDDA = the WATER WORLD: a bright turquoise LAGOON ARCHIPELAGO where the water is the road, with PLENTY OF OPEN SEA TO SAIL AND JETSKI (Ben s348). The whole map is sea; ISLANDS (new \"islands\" field) are the land. TOWN ISLAND (round, the hub) with the crest mooring + transport pad; piers + causeways to: the CASTLE HEADLAND (N, the sea fortress + lighthouse) and the BARRACKS ISLE (rope bridge), FARM ISLAND (S), the SURF beach island (E: contest stands, Marina, volleyball, swim + tube starts) with OCEAN WORLD (NE) and the SPACE DOCK isle (SE). CORSAIR REACH (W) is across the FERRY LANE (a boat ride in the 2D game). A wide ring of OPEN SEA round everything for sailing, the jetski run, the speedboat + the regatta; a lonely sandbar holds the relic. 2D keys (jTown, jFarm…) are kept in \"room2d\"; 3D keys start with jidda. EVERY BUILDING UNIQUE (\"outside\" note) + roof sign + eye-level door sign. CORSAIR REACH (Ben s348) = FOUR separate islands (Landing, The Crag, The Shoals, Pirate Hideout) joined by HIGH ARCHED BRIDGES; open channels between them so you can JETSKI / boat between the areas and under the bridges. Every water crossing on the map (causeway, piers, rope bridges, boardwalk) is a high bridge with room for jet skis + boats underneath. VENICE (Ben s348): Town Island is a Venice-style canal town: the GRAND CANAL (water with \"canal\": true cuts the island) + 2 side rios, fondamenta walks both banks, 3 bridges over the Grand Canal (Crest Bridge in the middle), Piazza della Cresta + campanile on the north bank, gondola + water taxi stop. SPREAD OUT (Ben s348): map.half 540; Farm Island moved 150 m south, the castle headland + barracks isle 80 m north, the surf beach, Ocean World + dock isles 80 m east, so there are wide channels of open sea between Town Island and every other island.",
+  "rooms": {
+   "jiddaTown": "zone (jTown)",
+   "jiddaCastlePath": "zone (jCastlePath)",
+   "jiddaFarmIsland": "zone (jFarm)",
+   "jiddaSurfBeach": "zone (jSurfContest)",
+   "jiddaReachLanding": "zone (jReachLanding)",
+   "jiddaReachCrag": "zone (jReachCrag)",
+   "jiddaReachShoals": "zone (jReachShoals)",
+   "jiddaReachHideout": "zone (jReachHideout)",
+   "jiddaSink": "gate battle map (jSink)",
+   "jiddaDrop": "gate cave (jDrop → jGallery → jShaft)",
+   "jiddaTavern": "building (jTavern)",
+   "jiddaShop": "building (jShop)",
+   "jiddaArmory": "building (jArmory)",
+   "jiddaSurfShop": "building (jSurfShop)",
+   "jiddaSmoothie": "building (jSmoothie)",
+   "jiddaThrone": "building (jThrone)",
+   "jiddaBarracks": "building (jBarracks)",
+   "jiddaHideoutHut": "building (jHideoutHut)"
+  }
+ },
+ "map": {
+  "half": 540,
+  "spawn": [
+   0,
+   -26
+  ],
+  "spawnFace": "N"
+ },
+ "palette": {
+  "path": "#e8dcc0",
+  "wall": "#f0ece0",
+  "roof": "#2a9ab0",
+  "trim": "#3ac8e0",
+  "notes": "Sun-bleached white stone + pale timber, CYAN-BLUE trim + turquoise domes, coral pink accents, rope + netting."
+ },
+ "islands": [
+  {
+   "key": "jiddaTownIsland",
+   "r": [
+    -140,
+    140,
+    -116,
+    116
+   ],
+   "blob": true
+  },
+  {
+   "key": "jiddaHeadland",
+   "r": [
+    -116,
+    70,
+    -470,
+    -336
+   ],
+   "blob": true
+  },
+  {
+   "key": "jiddaBarracksIsle",
+   "r": [
+    120,
+    270,
+    -420,
+    -300
+   ],
+   "blob": true
+  },
+  {
+   "key": "jiddaFarmIsland",
+   "r": [
+    -80,
+    80,
+    330,
+    440
+   ],
+   "blob": true
+  },
+  {
+   "key": "jiddaSurfIsland",
+   "r": [
+    276,
+    448,
+    -96,
+    106
+   ],
+   "blob": true
+  },
+  {
+   "key": "jiddaOceanIsle",
+   "r": [
+    328,
+    440,
+    -374,
+    -252
+   ],
+   "blob": true
+  },
+  {
+   "key": "jiddaDockIsle",
+   "r": [
+    330,
+    430,
+    300,
+    390
+   ],
+   "blob": true
+  },
+  {
+   "key": "jiddaSandbar",
+   "r": [
+    -380,
+    -320,
+    420,
+    450
+   ],
+   "blob": true
+  },
+  {
+   "key": "jiddaReachLandingIsle",
+   "r": [
+    -350,
+    -290,
+    -40,
+    40
+   ],
+   "blob": true
+  },
+  {
+   "key": "jiddaReachCragIsle",
+   "r": [
+    -450,
+    -350,
+    -170,
+    -80
+   ],
+   "blob": true
+  },
+  {
+   "key": "jiddaReachShoalsIsle",
+   "r": [
+    -450,
+    -350,
+    80,
+    170
+   ],
+   "blob": true
+  },
+  {
+   "key": "jiddaReachHideoutIsle",
+   "r": [
+    -480,
+    -410,
+    -50,
+    50
+   ],
+   "blob": true
+  }
+ ],
+ "zones": [
+  {
+   "key": "jiddaTown",
+   "label": "Jidda Town Square",
+   "r": [
+    -130,
+    130,
+    -110,
+    110
+   ],
+   "music": "town",
+   "depth": 220,
+   "room2d": "jTown"
+  },
+  {
+   "key": "jiddaCastlePath",
+   "label": "Castle Path",
+   "r": [
+    -116,
+    70,
+    -470,
+    -336
+   ],
+   "music": "castlepath",
+   "depth": 150,
+   "room2d": "jCastlePath"
+  },
+  {
+   "key": "jiddaBarracksIsle",
+   "label": "Barracks Isle",
+   "r": [
+    120,
+    270,
+    -420,
+    -300
+   ],
+   "music": "castlepath",
+   "depth": 150,
+   "new": true
+  },
+  {
+   "key": "jiddaFarmIsland",
+   "label": "Farm Island",
+   "r": [
+    -80,
+    80,
+    330,
+    440
+   ],
+   "music": "farm",
+   "depth": 110,
+   "room2d": "jFarm"
+  },
+  {
+   "key": "jiddaSurfBeach",
+   "label": "Surf Contest",
+   "r": [
+    280,
+    440,
+    -80,
+    100
+   ],
+   "music": "surf",
+   "depth": 160,
+   "room2d": "jSurfContest"
+  },
+  {
+   "key": "jiddaOceanIsle",
+   "label": "Ocean World",
+   "r": [
+    328,
+    440,
+    -374,
+    -252
+   ],
+   "music": "ocean",
+   "depth": 120,
+   "new": true
+  },
+  {
+   "key": "jiddaDockIsle",
+   "label": "Jidda Space Dock",
+   "r": [
+    330,
+    430,
+    300,
+    390
+   ],
+   "music": "dock",
+   "depth": 90,
+   "new": true
+  },
+  {
+   "key": "jiddaReachLanding",
+   "label": "Corsair Reach — Landing",
+   "r": [
+    -350,
+    -290,
+    -40,
+    40
+   ],
+   "music": "reach",
+   "depth": 60,
+   "room2d": "jReachLanding"
+  },
+  {
+   "key": "jiddaReachCrag",
+   "label": "Corsair Reach — The Crag",
+   "r": [
+    -450,
+    -350,
+    -170,
+    -80
+   ],
+   "music": "reach",
+   "depth": 80,
+   "room2d": "jReachCrag"
+  },
+  {
+   "key": "jiddaReachShoals",
+   "label": "Corsair Reach — The Shoals",
+   "r": [
+    -450,
+    -350,
+    80,
+    170
+   ],
+   "music": "reach",
+   "depth": 80,
+   "room2d": "jReachShoals"
+  },
+  {
+   "key": "jiddaReachHideout",
+   "label": "Corsair Reach — Pirate Hideout",
+   "r": [
+    -480,
+    -410,
+    -50,
+    50
+   ],
+   "music": "hideout",
+   "depth": 50,
+   "room2d": "jReachHideout"
+  },
+  {
+   "key": "jiddaSurfBreak",
+   "label": "The Break",
+   "r": [
+    468,
+    540,
+    -80,
+    100
+   ],
+   "music": "surf",
+   "depth": 76,
+   "new": true,
+   "note": "SURF ZONE (water): waves roll in from the east",
+   "sea": true
+  }
+ ],
+ "surfaces": [
+  {
+   "s": "stone",
+   "r": [
+    -26,
+    26,
+    -38,
+    -12
+   ],
+   "note": "PIAZZA DELLA CRESTA: the big square on the north bank facing the Grand Canal (like St Mark's): CAMPANILE, the crest mooring + transport pad, pigeons, cafe tables"
+  },
+  {
+   "s": "tile",
+   "r": [
+    -6,
+    6,
+    -30,
+    -18
+   ],
+   "note": "crest + transport pad"
+  },
+  {
+   "s": "stone",
+   "r": [
+    -40,
+    40,
+    -394,
+    -342
+   ],
+   "note": "CASTLE FORECOURT: a wide paved parade ground before the palace gate (fountain, crest flags, guards)"
+  },
+  {
+   "s": "stone",
+   "r": [
+    -106,
+    -46,
+    -396,
+    -364
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    -96,
+    -84,
+    -386,
+    -374
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    -64,
+    -56,
+    -384,
+    -376
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    112,
+    124,
+    -26,
+    -14
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    414,
+    426,
+    74,
+    86
+   ]
+  },
+  {
+   "s": "sand",
+   "r": [
+    350,
+    440,
+    10,
+    100
+   ],
+   "note": "surf beach"
+  },
+  {
+   "s": "wood",
+   "r": [
+    280,
+    336,
+    46,
+    56
+   ],
+   "note": "Marina floating dock"
+  },
+  {
+   "s": "dirt",
+   "r": [
+    -60,
+    60,
+    394,
+    436
+   ],
+   "note": "carrot rows"
+  },
+  {
+   "s": "wood",
+   "r": [
+    -350,
+    -290,
+    -8,
+    8
+   ],
+   "note": "pirate pier"
+  },
+  {
+   "s": "sand",
+   "r": [
+    -430,
+    -350,
+    90,
+    170
+   ],
+   "note": "the Shoals: wreck on the bar + DIG SITE"
+  },
+  {
+   "s": "sand",
+   "r": [
+    446,
+    458,
+    -70,
+    90
+   ],
+   "note": "the surf beach shoreline (waves break here)"
+  },
+  {
+   "s": "stone",
+   "r": [
+    176,
+    220,
+    -312,
+    -300
+   ],
+   "note": "parade ground + practice dummies"
+  }
+ ],
+ "water": [
+  {
+   "r": [
+    -540,
+    540,
+    -540,
+    540
+   ],
+   "note": "THE SEA: turquoise lagoon by the islands, deep blue open sea round the edge (sail + jetski anywhere)"
+  },
+  {
+   "r": [
+    -175,
+    175,
+    -7,
+    5
+   ],
+   "canal": true,
+   "note": "THE GRAND CANAL: right through the town, open to the sea at both ends; gondolas, water taxis, jet skis + the speedboat (slow zone)"
+  },
+  {
+   "r": [
+    -114,
+    -106,
+    -120,
+    120
+   ],
+   "canal": true,
+   "note": "Rio West (side canal)"
+  },
+  {
+   "r": [
+    104,
+    112,
+    -120,
+    120
+   ],
+   "canal": true,
+   "note": "Rio East (side canal)"
+  }
+ ],
+ "roads": [],
+ "paths": [
+  {
+   "key": "jiddaCrestStreet",
+   "label": "Crest Street",
+   "w": 8,
+   "p": [
+    [
+     0,
+     -110
+    ],
+    [
+     0,
+     110
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20,
+   "note": "crosses the Grand Canal on THE CREST BRIDGE (Rialto-style: a big covered stone arch with little shops on top, high enough for boats)",
+   "bridge": true
+  },
+  {
+   "key": "jiddaHarbourRowN",
+   "label": "Harbour Row North",
+   "w": 8,
+   "p": [
+    [
+     -104,
+     -40
+    ],
+    [
+     104,
+     -40
+    ]
+   ],
+   "lining": "trees",
+   "every": 18
+  },
+  {
+   "key": "jiddaHarbourRowS",
+   "label": "Harbour Row South",
+   "w": 8,
+   "p": [
+    [
+     -104,
+     40
+    ],
+    [
+     104,
+     40
+    ]
+   ],
+   "lining": "trees",
+   "every": 18
+  },
+  {
+   "key": "jiddaCastleCauseway",
+   "label": "Castle Causeway",
+   "w": 8,
+   "p": [
+    [
+     0,
+     -110
+    ],
+    [
+     0,
+     -396
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20,
+   "note": "stone causeway over the water to the headland. HIGH ARCHED BRIDGE: jet skis, the speedboat + small boats pass UNDER it",
+   "bridge": true
+  },
+  {
+   "key": "jiddaRoyalWalk",
+   "label": "Royal Walk",
+   "w": 6,
+   "p": [
+    [
+     0,
+     -335
+    ],
+    [
+     -74,
+     -335
+    ],
+    [
+     -74,
+     -366
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "jiddaLighthouseWalk",
+   "label": "Lighthouse walk",
+   "w": 6,
+   "p": [
+    [
+     170,
+     -350
+    ],
+    [
+     200,
+     -350
+    ],
+    [
+     200,
+     -400
+    ],
+    [
+     226,
+     -400
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "jiddaBarracksBridge",
+   "label": "Barracks bridge",
+   "w": 6,
+   "p": [
+    [
+     0,
+     -346
+    ],
+    [
+     162,
+     -346
+    ],
+    [
+     162,
+     -350
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20,
+   "note": "HIGH ARCHED BRIDGE from the castle gate to Barracks Isle: jet skis, the speedboat + small boats pass UNDER it",
+   "bridge": true
+  },
+  {
+   "key": "jiddaFarmPier",
+   "label": "Farm Pier",
+   "w": 6,
+   "p": [
+    [
+     0,
+     110
+    ],
+    [
+     0,
+     342
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20,
+   "bridge": true,
+   "note": "HIGH ARCHED BRIDGE: jet skis, the speedboat + small boats pass UNDER it"
+  },
+  {
+   "key": "jiddaSurfBoardwalk",
+   "label": "Surf Boardwalk",
+   "w": 8,
+   "p": [
+    [
+     136,
+     8
+    ],
+    [
+     160,
+     0
+    ],
+    [
+     420,
+     0
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20,
+   "note": "boardwalk over the water, then the beach road. HIGH ARCHED BRIDGE: jet skis, the speedboat + small boats pass UNDER it",
+   "bridge": true
+  },
+  {
+   "key": "jiddaOceanPier",
+   "label": "Ocean World pier",
+   "w": 6,
+   "p": [
+    [
+     300,
+     0
+    ],
+    [
+     300,
+     -110
+    ],
+    [
+     381,
+     -190
+    ],
+    [
+     381,
+     -270
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20,
+   "bridge": true,
+   "note": "HIGH ARCHED BRIDGE: jet skis, the speedboat + small boats pass UNDER it"
+  },
+  {
+   "key": "jiddaDockPier",
+   "label": "Dock pier",
+   "w": 6,
+   "p": [
+    [
+     380,
+     0
+    ],
+    [
+     380,
+     318
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20,
+   "bridge": true,
+   "note": "HIGH ARCHED BRIDGE: jet skis, the speedboat + small boats pass UNDER it"
+  },
+  {
+   "key": "jiddaMarinaWalk",
+   "label": "Marina walk",
+   "w": 6,
+   "p": [
+    [
+     308,
+     0
+    ],
+    [
+     308,
+     6
+    ]
+   ],
+   "lining": "lamps",
+   "every": 10
+  },
+  {
+   "key": "jiddaHospitalWalk",
+   "label": "Medevac walk",
+   "w": 6,
+   "p": [
+    [
+     98,
+     -20
+    ],
+    [
+     112,
+     -20
+    ]
+   ],
+   "lining": "lamps",
+   "every": 10,
+   "note": "small bridge over Rio East"
+  },
+  {
+   "key": "jiddaFerryLane",
+   "label": "Ferry Lane to the Reach",
+   "w": 6,
+   "p": [
+    [
+     -136,
+     -10
+    ],
+    [
+     -160,
+     0
+    ],
+    [
+     -290,
+     0
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20,
+   "note": "BOAT crossing (2D: W boat): buoy lights mark the lane; a ferry / your boat takes you across"
+  },
+  {
+   "key": "jiddaContestSpur",
+   "label": "Contest walk",
+   "w": 6,
+   "p": [
+    [
+     380,
+     0
+    ],
+    [
+     380,
+     -16
+    ]
+   ],
+   "lining": "lamps",
+   "every": 10
+  },
+  {
+   "key": "jiddaReachLandingPier",
+   "label": "Corsair Reach, Landing",
+   "w": 8,
+   "p": [
+    [
+     -290,
+     0
+    ],
+    [
+     -350,
+     0
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 14,
+   "note": "the pirate pier where boats tie up"
+  },
+  {
+   "key": "jiddaCragBridge",
+   "label": "Crag Bridge",
+   "w": 6,
+   "p": [
+    [
+     -340,
+     0
+    ],
+    [
+     -340,
+     -60
+    ],
+    [
+     -380,
+     -90
+    ],
+    [
+     -380,
+     -110
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 14,
+   "bridge": true,
+   "note": "HIGH ARCHED BRIDGE: jet skis, the speedboat + small boats pass UNDER it"
+  },
+  {
+   "key": "jiddaShoalsBridge",
+   "label": "Shoals Bridge",
+   "w": 6,
+   "p": [
+    [
+     -340,
+     0
+    ],
+    [
+     -340,
+     60
+    ],
+    [
+     -380,
+     90
+    ],
+    [
+     -380,
+     120
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 14,
+   "bridge": true,
+   "note": "HIGH ARCHED BRIDGE: jet skis, the speedboat + small boats pass UNDER it"
+  },
+  {
+   "key": "jiddaHideoutBridge",
+   "label": "Entry Bridge",
+   "w": 6,
+   "p": [
+    [
+     -350,
+     0
+    ],
+    [
+     -432,
+     0
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 14,
+   "bridge": true,
+   "note": "the ENTRY BRIDGE the stockade gate faces. HIGH ARCHED BRIDGE: jet skis, the speedboat + small boats pass UNDER it"
+  },
+  {
+   "key": "jiddaCragHideoutBridge",
+   "label": "Crag–Hideout rope bridge",
+   "w": 5,
+   "p": [
+    [
+     -430,
+     -90
+    ],
+    [
+     -430,
+     -40
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 12,
+   "bridge": true,
+   "note": "HIGH ARCHED BRIDGE: jet skis, the speedboat + small boats pass UNDER it"
+  },
+  {
+   "key": "jiddaShoalsHideoutBridge",
+   "label": "Shoals–Hideout rope bridge",
+   "w": 5,
+   "p": [
+    [
+     -430,
+     90
+    ],
+    [
+     -430,
+     40
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 12,
+   "bridge": true,
+   "note": "HIGH ARCHED BRIDGE: jet skis, the speedboat + small boats pass UNDER it"
+  },
+  {
+   "key": "jiddaFondamentaNord",
+   "label": "Fondamenta North",
+   "w": 4,
+   "p": [
+    [
+     -136,
+     -10
+    ],
+    [
+     136,
+     -10
+    ]
+   ],
+   "lining": "trees",
+   "every": 16,
+   "note": "canal-side walk, striped mooring poles, gondolas tied up (palms + potted lemon trees)"
+  },
+  {
+   "key": "jiddaFondamentaSud",
+   "label": "Fondamenta South",
+   "w": 4,
+   "p": [
+    [
+     -136,
+     8
+    ],
+    [
+     136,
+     8
+    ]
+   ],
+   "lining": "trees",
+   "every": 16,
+   "note": "canal-side walk (palms + potted lemon trees)"
+  },
+  {
+   "key": "jiddaBridgeWest",
+   "label": "Ponte dei Pescatori",
+   "w": 4,
+   "p": [
+    [
+     -80,
+     -10
+    ],
+    [
+     -80,
+     8
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 10,
+   "bridge": true,
+   "note": "arched stone footbridge over the Grand Canal (high: gondolas + jet skis pass under)"
+  },
+  {
+   "key": "jiddaBridgeEast",
+   "label": "Ponte delle Onde",
+   "w": 4,
+   "p": [
+    [
+     80,
+     -10
+    ],
+    [
+     80,
+     8
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 10,
+   "bridge": true,
+   "note": "arched stone footbridge over the Grand Canal"
+  }
+ ],
+ "buildings": [
+  {
+   "key": "jiddaTavern",
+   "label": "Tavern",
+   "role": "tavern",
+   "f": [
+    -96,
+    -64,
+    -72,
+    -46
+   ],
+   "door": [
+    -80,
+    -46
+   ],
+   "face": "S",
+   "h": 9,
+   "color": "#3a8aa0",
+   "interior": true,
+   "room2d": "jTavern",
+   "note": "Bar + shelf, LONG BOARD shuffleboard (2D), jukebox, darts. UNIQUE TAVERN GAME: CORNHOLE + WASHERS (boards out on the beach deck too). Jody (map piece), Jago, Jamos.",
+   "games": [
+    "3D-GAMES/g/8-gates-minigames-phone-preview/Cornhole.dc.html",
+    "3D-GAMES/g/8-gates-minigames-phone-preview/Washers.dc.html"
+   ],
+   "outside": "Venetian osteria on the Fondamenta: pastel ochre plaster, gothic pointed-arch windows, a wooden altana roof terrace, fishing nets + glass floats, a LONG BOARD sign, cornhole boards out on a canal-side deck.",
+   "sign": {
+    "roof": "TAVERN",
+    "door": "TAVERN · CORNHOLE · WASHERS · LONG BOARD"
+   }
+  },
+  {
+   "key": "jiddaShop",
+   "label": "Item Shop",
+   "role": "itemshop",
+   "f": [
+    -58,
+    -32,
+    -72,
+    -48
+   ],
+   "door": [
+    -45,
+    -48
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#e8e0cc",
+   "interior": true,
+   "room2d": "jShop",
+   "note": "Jetsam: shelves, counter, crates.",
+   "outside": "Narrow pink palazzino shop with a striped awning over the water steps, crates of shells + lobster pots, an anchor sign.",
+   "sign": {
+    "roof": "ITEM SHOP",
+    "door": "ITEM SHOP · JETSAM"
+   }
+  },
+  {
+   "key": "jiddaArmory",
+   "label": "Armory",
+   "role": "armory",
+   "f": [
+    32,
+    58,
+    -72,
+    -48
+   ],
+   "door": [
+    45,
+    -48
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#5a6a7a",
+   "interior": true,
+   "room2d": "jArmory",
+   "note": "Jarl: weapon racks, counter.",
+   "outside": "Small stone fort-house on the canal with iron-barred arches, crossed harpoons + cutlasses, a cannon on the water steps.",
+   "sign": {
+    "roof": "ARMORY",
+    "door": "ARMORY · JARL"
+   }
+  },
+  {
+   "key": "jiddaSmoothie",
+   "label": "Foxy Blends",
+   "role": "restaurant",
+   "f": [
+    64,
+    94,
+    -72,
+    -48
+   ],
+   "door": [
+    79,
+    -48
+   ],
+   "face": "S",
+   "h": 7,
+   "color": "#f08a7a",
+   "interior": true,
+   "room2d": "jSmoothie",
+   "note": "Four stools, blender, menu board, NOW HIRING. Julep. + FOX GELATO kiosk outside.",
+   "games": [
+    "3D-GAMES/Jidda Smoothie.dc.html",
+    "3D-GAMES/g/fox-gelato/Main.dc.html"
+   ],
+   "outside": "Coral-pink café with a canal-side terrace under a striped awning, a giant pineapple-cup on the roof, the FOX GELATO cart by the bridge.",
+   "sign": {
+    "roof": "FOXY BLENDS",
+    "door": "SMOOTHIES · NOW HIRING"
+   }
+  },
+  {
+   "key": "jiddaBank",
+   "label": "Pearl Bank",
+   "role": "bank",
+   "f": [
+    -96,
+    -66,
+    -34,
+    -12
+   ],
+   "door": [
+    -81,
+    -34
+   ],
+   "face": "N",
+   "h": 10,
+   "color": "#e8f0f0",
+   "interior": true,
+   "new": true,
+   "outside": "White marble palazzo with a row of pointed gothic arches + a pearl in a shell over the door (the grandest after the castle).",
+   "sign": {
+    "roof": "PEARL BANK",
+    "door": "PEARL BANK"
+   }
+  },
+  {
+   "key": "jiddaPost",
+   "label": "Galactic Post Office (Meru Embassy)",
+   "role": "post",
+   "f": [
+    -60,
+    -32,
+    -34,
+    -12
+   ],
+   "door": [
+    -46,
+    -34
+   ],
+   "face": "N",
+   "h": 9,
+   "color": "#d8c8a8",
+   "interior": true,
+   "new": true,
+   "outside": "Rose-brick post house with a little clock tower + the Meru flag, bottle-post rack, the Galactic Post dish on the altana.",
+   "sign": {
+    "roof": "POST OFFICE",
+    "door": "GALACTIC POST · MERU EMBASSY"
+   }
+  },
+  {
+   "key": "jiddaSurfShop",
+   "label": "Jib's Surf Shop",
+   "role": "specialty",
+   "f": [
+    32,
+    60,
+    -34,
+    -12
+   ],
+   "door": [
+    46,
+    -34
+   ],
+   "face": "N",
+   "h": 8,
+   "color": "#ffd23a",
+   "interior": true,
+   "room2d": "jSurfShop",
+   "note": "Boards to the ceiling, surfboard rack, counter. Jib. Get the SURFBOARD here.",
+   "games": [
+    "3D-GAMES/g/jibs-surf-shop/Main.dc.html"
+   ],
+   "outside": "Bright yellow boathouse with surfboards racked up the front like a fence, a giant board standing on end at the water steps.",
+   "sign": {
+    "roof": "SURF SHOP",
+    "door": "JIB'S SURF SHOP"
+   }
+  },
+  {
+   "key": "jiddaHospital",
+   "label": "Harbour Infirmary",
+   "role": "hospital",
+   "f": [
+    66,
+    98,
+    -34,
+    -10
+   ],
+   "door": [
+    82,
+    -34
+   ],
+   "face": "N",
+   "h": 11,
+   "color": "#f4f8f8",
+   "interior": true,
+   "new": true,
+   "outside": "Cream palazzo with blue shutters + a cloister courtyard, a lifebuoy + red cross banner, the medevac helipad across Rio East.",
+   "sign": {
+    "roof": "INFIRMARY",
+    "door": "HARBOUR INFIRMARY"
+   }
+  },
+  {
+   "key": "jiddaWatch",
+   "label": "Harbour Watch",
+   "role": "police",
+   "f": [
+    -96,
+    -66,
+    10,
+    34
+   ],
+   "door": [
+    -81,
+    34
+   ],
+   "face": "S",
+   "h": 9,
+   "color": "#3a5a8a",
+   "interior": true,
+   "new": true,
+   "outside": "Blue-shuttered watch house on the corner of Rio West with a spyglass loggia on the roof + a patrol boat at the steps.",
+   "sign": {
+    "roof": "HARBOUR WATCH",
+    "door": "HARBOUR WATCH · POLICE"
+   }
+  },
+  {
+   "key": "jiddaFire",
+   "label": "Sea Rescue & Fire",
+   "role": "fire",
+   "f": [
+    -60,
+    -32,
+    10,
+    34
+   ],
+   "door": [
+    -46,
+    34
+   ],
+   "face": "S",
+   "h": 9,
+   "color": "#c8302a",
+   "interior": true,
+   "new": true,
+   "outside": "Red boathouse with a big arched water gate: the red rescue boat slides straight into the Grand Canal.",
+   "sign": {
+    "roof": "SEA RESCUE",
+    "door": "SEA RESCUE + FIRE"
+   }
+  },
+  {
+   "key": "jiddaNews",
+   "label": "The Tide Times",
+   "role": "news",
+   "f": [
+    32,
+    60,
+    10,
+    34
+   ],
+   "door": [
+    46,
+    34
+   ],
+   "face": "S",
+   "h": 10,
+   "color": "#5a8aa0",
+   "interior": true,
+   "new": true,
+   "outside": "Tall thin palazzo striped in blue + white with a radio mast on the altana, sea-flag ticker on the balcony.",
+   "sign": {
+    "roof": "TIDE TIMES",
+    "door": "THE TIDE TIMES · NEWS"
+   }
+  },
+  {
+   "key": "jiddaWeapons",
+   "label": "Hook & Harpoon",
+   "role": "weapons",
+   "f": [
+    66,
+    92,
+    10,
+    32
+   ],
+   "door": [
+    79,
+    32
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#2a3a4a",
+   "interior": true,
+   "note": "SPECIAL WEAPONS: the 8 extra ranged + melee",
+   "new": true,
+   "outside": "Dark tarred-timber shop under a portico, a giant harpoon through the sign, racks behind net screens.",
+   "sign": {
+    "roof": "HOOK & HARPOON",
+    "door": "SPECIAL WEAPONS"
+   }
+  },
+  {
+   "key": "jiddaHome",
+   "label": "Driftwood Cottage",
+   "role": "home",
+   "f": [
+    -96,
+    -66,
+    46,
+    68
+   ],
+   "door": [
+    -81,
+    46
+   ],
+   "face": "N",
+   "h": 8,
+   "color": "#c8b08a",
+   "interior": true,
+   "note": "the player rents / buys it",
+   "new": true,
+   "outside": "Your house: a little pastel canal house with its own water gate, window boxes of red geraniums, a wooden altana terrace.",
+   "sign": {
+    "roof": "DRIFTWOOD COTTAGE",
+    "door": "YOUR COTTAGE"
+   }
+  },
+  {
+   "key": "jiddaRelicShop",
+   "label": "The Sea Chest",
+   "role": "relicShop",
+   "f": [
+    -58,
+    -36,
+    46,
+    64
+   ],
+   "door": [
+    -47,
+    46
+   ],
+   "face": "N",
+   "h": 7,
+   "color": "#8a5a2a",
+   "interior": true,
+   "note": "The famous Jidda relic to BUY (DRAFT: Ben picks)",
+   "new": true,
+   "outside": "Tiny shop shaped like an open treasure chest at the foot of a bridge, gold coins spilling over the step.",
+   "sign": {
+    "roof": "THE SEA CHEST",
+    "door": "RELICS"
+   }
+  },
+  {
+   "key": "jiddaHouse1",
+   "label": "Shell House",
+   "role": "housing",
+   "f": [
+    -28,
+    -10,
+    46,
+    62
+   ],
+   "door": [
+    -19,
+    46
+   ],
+   "face": "N",
+   "h": 7,
+   "color": "#f0d8c8",
+   "interior": true,
+   "new": true,
+   "outside": "Burano-style house painted bright pink with a white door frame + a washing line over the rio.",
+   "sign": {
+    "roof": "HOUSE",
+    "door": "HOUSE"
+   }
+  },
+  {
+   "key": "jiddaHouse2",
+   "label": "Boat House",
+   "role": "housing",
+   "f": [
+    32,
+    54,
+    46,
+    66
+   ],
+   "door": [
+    43,
+    46
+   ],
+   "face": "N",
+   "h": 8,
+   "color": "#4a8a9a",
+   "interior": true,
+   "new": true,
+   "outside": "Burano-style house painted turquoise with an upturned old boat hull as a porch roof.",
+   "sign": {
+    "roof": "HOUSE",
+    "door": "HOUSE"
+   }
+  },
+  {
+   "key": "jiddaHouse3",
+   "label": "Stilt House",
+   "role": "housing",
+   "f": [
+    60,
+    82,
+    46,
+    66
+   ],
+   "door": [
+    71,
+    46
+   ],
+   "face": "N",
+   "h": 9,
+   "color": "#e0e8e0",
+   "interior": true,
+   "new": true,
+   "outside": "Burano-style house painted lemon yellow, tall + thin, flower boxes on every window.",
+   "sign": {
+    "roof": "HOUSE",
+    "door": "HOUSE"
+   }
+  },
+  {
+   "key": "jiddaThrone",
+   "label": "The Castle",
+   "role": "castle",
+   "f": [
+    -50,
+    50,
+    -456,
+    -396
+   ],
+   "door": [
+    0,
+    -396
+   ],
+   "face": "S",
+   "h": 26,
+   "color": "#e8e4d8",
+   "interior": true,
+   "room2d": "jThrone",
+   "note": "Twelve columns, a very long carpet, no windows; throne. Jest on the throne.",
+   "outside": "The grandest building: a DOGE-style sea palace on the headland: pink + white diamond-patterned walls over two storeys of white gothic arcades, turquoise domes on the corner towers, a sea gate with a portcullis, the crest on a balcony over the water.",
+   "sign": {
+    "roof": "JIDDA CASTLE",
+    "door": "THRONE ROOM · JEST"
+   }
+  },
+  {
+   "key": "jiddaBarracks",
+   "label": "Barracks",
+   "role": "barracks",
+   "f": [
+    170,
+    214,
+    -370,
+    -330
+   ],
+   "door": [
+    170,
+    -350
+   ],
+   "face": "W",
+   "h": 9,
+   "color": "#a8a090",
+   "interior": true,
+   "room2d": "jBarracks",
+   "note": "Eight bunks, stove, THE CIRCLE sparring ring. Jory, Jem.",
+   "outside": "Barracks isle: a round stone keep with a worn sparring ring on the roof, eight bunk windows, a boat landing.",
+   "sign": {
+    "roof": "BARRACKS",
+    "door": "BARRACKS · THE CIRCLE"
+   }
+  },
+  {
+   "key": "jiddaLighthouse",
+   "label": "Lighthouse",
+   "role": "other",
+   "f": [
+    234,
+    254,
+    -410,
+    -390
+   ],
+   "door": [
+    234,
+    -400
+   ],
+   "face": "W",
+   "h": 30,
+   "color": "#f0f0f0",
+   "interior": true,
+   "note": "LIGHTHOUSE KEEPER job (NOT BUILT YET).",
+   "new": true,
+   "outside": "Tall red + white striped lighthouse with a turning lamp at night, a keeper's hut at its foot.",
+   "sign": {
+    "roof": "LIGHTHOUSE",
+    "door": "LIGHTHOUSE"
+   }
+  },
+  {
+   "key": "jiddaFarm",
+   "label": "Farm Island",
+   "role": "farm",
+   "f": [
+    -40,
+    40,
+    350,
+    390
+   ],
+   "door": [
+    0,
+    350
+   ],
+   "face": "N",
+   "h": 8,
+   "color": "#a87a4a",
+   "interior": true,
+   "room2d": "jFarm",
+   "note": "Carrot rows, WHACK A MOLE (2D), MOLE HOLE. Jute, Jed, Jarrow, 4 flamingos.",
+   "games": [
+    "3D-GAMES/g/fox-farm/Main.dc.html"
+   ],
+   "outside": "The only field on Jidda: a thatched farmhouse at the head of the carrot rows, a windmill, the WHACK A MOLE marquee.",
+   "sign": {
+    "roof": "FARM ISLAND",
+    "door": "FARM · NOW HIRING"
+   }
+  },
+  {
+   "key": "jiddaSurfContest",
+   "label": "Surf Contest Stands",
+   "role": "sport",
+   "f": [
+    340,
+    420,
+    -70,
+    -24
+   ],
+   "door": [
+    380,
+    -24
+   ],
+   "face": "S",
+   "h": 12,
+   "color": "#2ab0c0",
+   "interior": true,
+   "room2d": "jSurfContest",
+   "note": "THE BREAK surf minigame (three waves, one heat). Job (champion), Joss, 3 flamingos.",
+   "games": [
+    "3D-GAMES/Jidda Surf.dc.html"
+   ],
+   "outside": "UNIQUE SPORT: wooden grandstands facing the break, a judges' tower with flags, the HEAT SHEET board, five boards standing in the sand.",
+   "sign": {
+    "roof": "SURF CONTEST",
+    "door": "THE BREAK · SURF CONTEST"
+   }
+  },
+  {
+   "key": "jiddaMarina",
+   "label": "Jidda Marina",
+   "role": "carRental",
+   "f": [
+    292,
+    324,
+    14,
+    42
+   ],
+   "door": [
+    308,
+    14
+   ],
+   "face": "N",
+   "h": 7,
+   "color": "#3a9ad0",
+   "interior": true,
+   "note": "Car rental Jidda style: JET SKI, SPEEDBOAT, SAILBOAT. WATER TAXI PILOT job (NOT BUILT YET).",
+   "new": true,
+   "outside": "Boat hire on the pier: a blue boathouse with a sail-shaped roof, jet skis + a speedboat + sailboats tied up at the floating dock.",
+   "sign": {
+    "roof": "MARINA",
+    "door": "MARINA · JET SKI · SPEEDBOAT · SAIL"
+   }
+  },
+  {
+   "key": "jiddaOceanWorld",
+   "label": "Ocean World",
+   "role": "shop",
+   "f": [
+    346,
+    416,
+    -346,
+    -278
+   ],
+   "door": [
+    381,
+    -278
+   ],
+   "face": "S",
+   "h": 12,
+   "color": "#2a7ab0",
+   "interior": true,
+   "games": [
+    "3D-GAMES/g/ocean-world-aquarium/Main.dc.html"
+   ],
+   "new": true,
+   "outside": "Big aquarium dome of blue glass with a dolphin show pool out front, a giant leaping-dolphin statue over the gate.",
+   "sign": {
+    "roof": "OCEAN WORLD",
+    "door": "OCEAN WORLD · DOLPHIN TRAINER"
+   }
+  },
+  {
+   "key": "jiddaHideoutHut",
+   "label": "Corsair Hut",
+   "role": "other",
+   "f": [
+    -470,
+    -440,
+    -16,
+    16
+   ],
+   "door": [
+    -440,
+    0
+   ],
+   "face": "E",
+   "h": 7,
+   "color": "#5a4a3a",
+   "interior": true,
+   "room2d": "jHideoutHut",
+   "note": "Bunks, CHART TABLE, locked STRONGBOX, DIG SPOT under a floorboard (third map piece). Corsair Cutlass x5.",
+   "outside": "Tarred pirate hut inside the stockade, a skull-and-fox flag, a lantern, barred until the yard is cleared.",
+   "sign": {
+    "roof": "CORSAIR HUT",
+    "door": "KEEP OUT"
+   }
+  }
+ ],
+ "spots": [
+  {
+   "key": "jiddaJamos",
+   "at": [
+    -14,
+    -18
+   ],
+   "kind": "npc",
+   "note": "Jamos (harbour board)",
+   "draft": true
+  },
+  {
+   "key": "jiddaJorn",
+   "at": [
+    14,
+    -14
+   ],
+   "kind": "npc",
+   "note": "Jorn (crest skiff)",
+   "draft": true
+  },
+  {
+   "key": "jiddaTownsfolk",
+   "at": [
+    -20,
+    20
+   ],
+   "kind": "crowd",
+   "note": "Netter Pell, Cooper Wray, Marram, Brother Kelp, Bosun Tarn, Oarsman Dray, Sister Shoal, Fishwife Ivo"
+  },
+  {
+   "key": "jiddaHiring",
+   "at": [
+    20,
+    -20
+   ],
+   "kind": "hiring",
+   "note": "NOW HIRING board in the square"
+  },
+  {
+   "key": "jiddaWaterTaxi",
+   "at": [
+    -124,
+    8
+   ],
+   "kind": "hiring",
+   "note": "WATER TAXI PILOT board at the ferry quay (NOT BUILT YET)"
+  },
+  {
+   "key": "jiddaFishMarket",
+   "at": [
+    -116,
+    -10
+   ],
+   "kind": "hiring",
+   "note": "FISH MARKET AUCTION on the ferry quay (NOT BUILT YET)"
+  },
+  {
+   "key": "jiddaKeeper",
+   "at": [
+    222,
+    -392
+   ],
+   "kind": "hiring",
+   "note": "LIGHTHOUSE KEEPER job (NOT BUILT YET)"
+  },
+  {
+   "key": "jiddaMole",
+   "at": [
+    20,
+    410
+   ],
+   "kind": "game",
+   "note": "WHACK A MOLE marquee + MOLE HOLE (2D) on Farm Island"
+  },
+  {
+   "key": "jiddaVolleyball",
+   "at": [
+    380,
+    40
+   ],
+   "kind": "game",
+   "note": "BEACH VOLLEYBALL court on the surf beach (3D-GAMES/g/volleyball/Volleyball.dc.html)"
+  },
+  {
+   "key": "jiddaSwim",
+   "at": [
+    420,
+    60
+   ],
+   "kind": "game",
+   "note": "SWIM TRIALS start buoys off the surf beach (3D-GAMES/Jidda Swim.dc.html)"
+  },
+  {
+   "key": "jiddaInnerTube",
+   "at": [
+    420,
+    -50
+   ],
+   "kind": "game",
+   "note": "INNER TUBE RUN start (3D-GAMES/Jidda Inner Tube.dc.html)"
+  },
+  {
+   "key": "jiddaJetskiRun",
+   "at": [
+    330,
+    48
+   ],
+   "kind": "game",
+   "note": "JETSKI RUN start at the Marina (3D-GAMES/Jidda Jetski.dc.html): the course loops the OPEN SEA"
+  },
+  {
+   "key": "jiddaDeepDive",
+   "at": [
+    490,
+    -330
+   ],
+   "kind": "game",
+   "note": "DEEP DIVE buoy off Ocean World (3D-GAMES/Jidda Deep Dive.dc.html)"
+  },
+  {
+   "key": "jiddaSubmarine",
+   "at": [
+    320,
+    -310
+   ],
+   "kind": "game",
+   "note": "SUBMARINE dock at Ocean World (3D-GAMES/Jidda Submarine.dc.html)"
+  },
+  {
+   "key": "jiddaRegatta",
+   "at": [
+    150,
+    150
+   ],
+   "kind": "game",
+   "note": "SAILING REGATTA course: 6 buoys round the open sea between the islands (DRAFT)"
+  },
+  {
+   "key": "jiddaJetSki",
+   "at": [
+    316,
+    50
+   ],
+   "kind": "vehicle",
+   "note": "JET SKI (Vehicle Workshop ?v=jetski) at the Marina"
+  },
+  {
+   "key": "jiddaSpeedboat",
+   "at": [
+    300,
+    50
+   ],
+   "kind": "vehicle",
+   "note": "SPEEDBOAT (Ben s348, Vehicle Workshop ?v=speedboat, DRAFT model) at the Marina: fast, carries 4, the fastest way across the open sea"
+  },
+  {
+   "key": "jiddaSailboat",
+   "at": [
+    284,
+    50
+   ],
+   "kind": "vehicle",
+   "note": "SAILBOAT (DRAFT, Vehicle Workshop ?v=sail) at the Marina: wind + sail trim, slow and lovely, for the regatta"
+  },
+  {
+   "key": "jiddaSurfboard",
+   "at": [
+    46,
+    -6
+   ],
+   "kind": "vehicle",
+   "note": "SURFBOARD (Vehicle Workshop ?v=surf) from Jib's Surf Shop"
+  },
+  {
+   "key": "jiddaTurtle",
+   "at": [
+    60,
+    430
+   ],
+   "kind": "vehicle",
+   "note": "GIANT TURTLE (Vehicle Workshop ?v=turtle) on the Farm Island beach: ride it across the lagoon"
+  },
+  {
+   "key": "jiddaRelicFind",
+   "at": [
+    -350,
+    435
+   ],
+   "kind": "relicFind",
+   "note": "DRAFT: the legendary + historical relic to find on the lonely SANDBAR islet in the open sea (sail, jetski or swim to it) (Ben picks)"
+  },
+  {
+   "key": "jiddaRoyalHelipad",
+   "at": [
+    -84,
+    -374
+   ],
+   "kind": "helipad",
+   "note": "ROYAL HELIPAD west of the castle (Meru 2 worlds/meru2-royalpad.js): the royal 8 helicopter flies you to the other pads."
+  },
+  {
+   "key": "jiddaRoyalTelepad",
+   "at": [
+    -56,
+    -374
+   ],
+   "kind": "telepad",
+   "note": "ROYAL TELEPORT PAD west of the castle: E / TALK → beam out → the Jidda Space Dock; arriving by telepad beams you in here."
+  },
+  {
+   "key": "jiddaInfirmaryHelipad",
+   "at": [
+    118,
+    -20
+   ],
+   "kind": "helipad",
+   "note": "INFIRMARY HELIPAD (medevac + sea rescue)"
+  },
+  {
+   "key": "jiddaSurfHelipad",
+   "at": [
+    420,
+    80
+   ],
+   "kind": "helipad",
+   "note": "SURF CONTEST HELIPAD on the beach"
+  },
+  {
+   "key": "jiddaDigSite",
+   "at": [
+    -392,
+    132
+   ],
+   "kind": "game",
+   "note": "THE DIG SITE on The Shoals (2D reach hoard, 600 gold): an X marked in the sand beside the wreck. Dig with the spade → the FLOOR GIVES WAY: a sand sinkhole opens, the player falls through into THE DROP [jDrop] (dark flooded rock, no way back up). Mark it clearly: a big X of red-painted driftwood + a crack ring in the sand."
+  },
+  {
+   "key": "jiddaMoleHoleExit",
+   "at": [
+    -10,
+    420
+   ],
+   "kind": "game",
+   "note": "THE MOLE HOLE on Farm Island: where you CLIMB OUT of the cave at the end (from THE MOLE SHAFT [jShaft])."
+  },
+  {
+   "key": "jiddaTheBreak",
+   "at": [
+    500,
+    20
+   ],
+   "kind": "game",
+   "note": "THE BREAK (surf): the surf zone off the east side of the Surf beach island, facing the contest stands. Waves roll in from the open sea (east) onto the beach: 3 lines of breaking waves between x 365 and 430. The SURF CONTEST minigame (3D-GAMES/Jidda Surf.dc.html: three waves, one heat) runs here; free surfing on the Surfboard any time."
+  },
+  {
+   "key": "jiddaCrestSkiff",
+   "at": [
+    -136,
+    -6
+   ],
+   "kind": "vehicle",
+   "note": "JORN'S CREST SKIFF at the ferry quay (2D): the boat across the Ferry Lane to Corsair Reach"
+  },
+  {
+   "key": "jiddaGondola",
+   "at": [
+    -40,
+    -2
+   ],
+   "kind": "vehicle",
+   "note": "GONDOLA (DRAFT model, Vehicle Workshop ?v=gondola): a gondolier rows you down the Grand Canal + the rios; slow, no fuel"
+  },
+  {
+   "key": "jiddaVaporetto",
+   "at": [
+    60,
+    -2
+   ],
+   "kind": "hiring",
+   "note": "WATER TAXI stop (vaporetto) on the Grand Canal: the WATER TAXI PILOT job (NOT BUILT YET) runs from here round the islands"
+  }
+ ],
+ "dock": {
+  "key": "jiddaSpacedock",
+  "pad": [
+   380,
+   332
+  ],
+  "r": 14,
+  "face": "N"
+ },
+ "gates": [
+  {
+   "key": "jiddaSink",
+   "at": [
+    50,
+    420
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "THE SINK [jSink] battle map, the landing fight: defend the transport pad, put down all 4 GATES. Corsair Cutlass x3, Gunner x3, Captain x3, Sand Serpent x3."
+  },
+  {
+   "key": "jiddaLandingFight",
+   "at": [
+    -320,
+    -24
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "REACH LANDING: Corsair Cutlass x5, Gunner x5, Flamingo x4"
+  },
+  {
+   "key": "jiddaCragFight",
+   "at": [
+    -380,
+    -110
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "THE CRAG: broken pillars + a cave mouth. Cutlass x6, Gunner x6, Flamingo x2, Sand Serpent"
+  },
+  {
+   "key": "jiddaHideoutFight",
+   "at": [
+    -432,
+    30
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "PIRATE HIDEOUT stockade: Cutlass x7, Gunner x6, Flamingo x2, CORSAIR CAPTAIN, Sand Serpent. Clear it to open the Corsair Hut."
+  },
+  {
+   "key": "jiddaDrop",
+   "at": [
+    -380,
+    120
+   ],
+   "r": 8,
+   "kind": "cave",
+   "note": "THE SHOALS DIG SITE (spot jiddaDigSite, the red X): dig → the floor gives way → you FALL into THE DROP [jDrop] → THE FLOODED GALLERY [jGallery] (raft) → THE MOLE SHAFT [jShaft] (THE JIDDA CRYSTAL, boss THE DRAIN SERPENT) → climb out of the MOLE HOLE on Farm Island (spot jiddaMoleHoleExit)."
+  }
+ ],
+ "wild": [
+  {
+   "key": "jiddaFarmWild",
+   "r": [
+    -80,
+    -20,
+    400,
+    440
+   ],
+   "for": "jiddaSink",
+   "creatures": [
+    "creatures"
+   ],
+   "note": "flamingos"
+  },
+  {
+   "key": "jiddaLandingWild",
+   "r": [
+    -312,
+    -294,
+    12,
+    38
+   ],
+   "for": "jiddaLandingFight",
+   "creatures": [
+    "monsters",
+    "creatures"
+   ]
+  },
+  {
+   "key": "jiddaCragWild",
+   "r": [
+    -450,
+    -395,
+    -170,
+    -125
+   ],
+   "for": "jiddaCragFight",
+   "creatures": [
+    "monsters"
+   ]
+  },
+  {
+   "key": "jiddaHideoutWild",
+   "r": [
+    -480,
+    -445,
+    20,
+    48
+   ],
+   "for": "jiddaHideoutFight",
+   "creatures": [
+    "monsters",
+    "robots"
+   ],
+   "note": "corsairs + their salvaged SENTRY BOTS (HACKED Machine Fleet units the pirates rewired: free them) (DRAFT)"
+  }
+ ],
+ "props": [
+  {
+   "k": "statue",
+   "at": [
+    0,
+    -24
+   ],
+   "note": "CREST MOORING + transport pad"
+  },
+  {
+   "k": "sign",
+   "at": [
+    -14,
+    -20
+   ],
+   "note": "LONG BOARD marquee"
+  },
+  {
+   "k": "lamp",
+   "at": [
+    18,
+    18
+   ],
+   "note": "harbour lamp"
+  },
+  {
+   "k": "crate",
+   "at": [
+    -126,
+    4
+   ],
+   "note": "ferry quay bollards"
+  },
+  {
+   "k": "fence",
+   "at": [
+    0,
+    -150
+   ],
+   "note": "causeway rail"
+  },
+  {
+   "k": "statue",
+   "at": [
+    0,
+    -342
+   ],
+   "note": "the FORTRESS WALL gate (wall to wall across the headland)"
+  },
+  {
+   "k": "sign",
+   "at": [
+    380,
+    -14
+   ],
+   "note": "HEAT SHEET"
+  },
+  {
+   "k": "crate",
+   "at": [
+    390,
+    20
+   ],
+   "note": "five-board surf lineup"
+  },
+  {
+   "k": "statue",
+   "at": [
+    -410,
+    140
+   ],
+   "note": "WRECK on the bar"
+  },
+  {
+   "k": "statue",
+   "at": [
+    -410,
+    100
+   ],
+   "note": "occupied WATCHTOWER"
+  },
+  {
+   "k": "rock",
+   "at": [
+    -400,
+    -140
+   ],
+   "note": "broken pillars"
+  },
+  {
+   "k": "fence",
+   "at": [
+    -416,
+    -12
+   ],
+   "note": "stockade GATE facing the entry bridge"
+  },
+  {
+   "k": "rock",
+   "at": [
+    -360,
+    430
+   ],
+   "note": "sandbar driftwood"
+  },
+  {
+   "k": "sign",
+   "at": [
+    100,
+    180
+   ],
+   "note": "regatta buoy"
+  },
+  {
+   "k": "sign",
+   "at": [
+    180,
+    120
+   ],
+   "note": "regatta buoy"
+  },
+  {
+   "k": "sign",
+   "at": [
+    -180,
+    200
+   ],
+   "note": "regatta buoy"
+  },
+  {
+   "k": "sign",
+   "at": [
+    -392,
+    124
+   ],
+   "note": "the X marks the spot: red driftwood X + a ring of cracks in the sand (the floor that gives way)"
+  },
+  {
+   "k": "sign",
+   "at": [
+    436,
+    -60
+   ],
+   "note": "SURF ZONE flags (red + yellow)"
+  },
+  {
+   "k": "sign",
+   "at": [
+    436,
+    90
+   ],
+   "note": "SURF ZONE flags"
+  },
+  {
+   "k": "statue",
+   "at": [
+    -20,
+    -32
+   ],
+   "note": "the CAMPANILE: tall brick bell tower with a green pointed top (the town landmark, seen from every island)"
+  },
+  {
+   "k": "statue",
+   "at": [
+    -12,
+    -14
+   ],
+   "note": "twin columns at the water steps (winged fox + crest)"
+  },
+  {
+   "k": "bench",
+   "at": [
+    16,
+    -30
+   ],
+   "note": "cafe tables"
+  },
+  {
+   "k": "fence",
+   "at": [
+    -40,
+    -6
+   ],
+   "note": "striped mooring poles (red + white)"
+  },
+  {
+   "k": "fence",
+   "at": [
+    40,
+    4
+   ],
+   "note": "striped mooring poles (blue + white)"
+  },
+  {
+   "k": "statue",
+   "at": [
+    200,
+    -318
+   ],
+   "note": "practice dummies + archery butts"
+  },
+  {
+   "k": "fence",
+   "at": [
+    240,
+    -330
+   ],
+   "note": "sea wall with cannons"
+  },
+  {
+   "k": "fountain",
+   "at": [
+    24,
+    -370
+   ],
+   "note": "forecourt fountain"
+  },
+  {
+   "k": "sign",
+   "at": [
+    -24,
+    -380
+   ],
+   "note": "crest flags"
+  }
+ ],
+ "look": {
+  "sky": [
+   "#3ab0e8",
+   "#e8fbff"
+  ],
+  "fog": "#d8f4fa",
+  "sun": "#fffbe8",
+  "light": "#ffffff",
+  "grass": "#e8d8a8",
+  "sand": "#f4e8c8",
+  "ground": "#e8d8a8",
+  "water": "#2ac0d0",
+  "deepWater": "#1a6a9a",
+  "lamps": "#ffd890",
+  "banners": [
+   "#2ab0c8",
+   "#ffffff"
+  ],
+  "trees": [
+   "#1f8a4a",
+   "#2fa858",
+   "#5ac060"
+  ],
+  "notes": "VENICE ON THE SEA (Ben s348): a bright lagoon city. TOWN ISLAND is VENICE: the GRAND CANAL right through it with gondolas + water taxis, side rios, arched stone bridges (the big covered Crest Bridge like the Rialto), PIAZZA DELLA CRESTA with a tall brick CAMPANILE, pastel palazzi (ochre, rose, cream, terracotta) with white gothic arches, wooden altana roof terraces, striped mooring poles, geraniums in window boxes, lanterns on the fondamenta. The houses are Burano-bright (pink, turquoise, yellow). The castle is a pink + white Doge-style sea palace. The OUTER ISLANDS stay LUSH garden islands (palms, flowering bushes, sandy coves). Clear turquoise lagoon near the islands, deep blue open sea round the edge for sailing + jetski.",
+  "flowers": [
+   "#ff5a8a",
+   "#ffb03a",
+   "#ff3a3a",
+   "#c05aff"
+  ],
+  "canal": "#3aa8b0"
+ },
+ "terrain": {
+  "notes": "JIDDA = flat islands in the sea. The Crag on Corsair Reach is a rocky rise; the headland is a low cliff under the castle. Everything else flat sand + grass. PALMS on every island beach.",
+  "hills": [
+   {
+    "key": "jiddaCrag",
+    "c": [
+     -450,
+     -140
+    ],
+    "r": 26,
+    "h": 14
+   }
+  ],
+  "cuts": [],
+  "forests": [
+   {
+    "key": "jiddaJungleTownIsland",
+    "r": [
+     -150,
+     150,
+     -130,
+     130
+    ],
+    "every": 9,
+    "mix": "tropical",
+    "giants": 0.06
+   },
+   {
+    "key": "jiddaJungleHeadland",
+    "r": [
+     -136,
+     90,
+     -490,
+     -320
+    ],
+    "every": 6,
+    "mix": "tropical",
+    "giants": 0.06
+   },
+   {
+    "key": "jiddaJungleBarracksIsle",
+    "r": [
+     100,
+     290,
+     -440,
+     -280
+    ],
+    "every": 6,
+    "mix": "tropical",
+    "giants": 0.06
+   },
+   {
+    "key": "jiddaJungleFarmIsland",
+    "r": [
+     -100,
+     100,
+     310,
+     460
+    ],
+    "every": 6,
+    "mix": "tropical",
+    "giants": 0.06
+   },
+   {
+    "key": "jiddaJungleSurfIsland",
+    "r": [
+     256,
+     468,
+     -116,
+     126
+    ],
+    "every": 6,
+    "mix": "tropical",
+    "giants": 0.06
+   },
+   {
+    "key": "jiddaJungleOceanIsle",
+    "r": [
+     308,
+     460,
+     -394,
+     -232
+    ],
+    "every": 6,
+    "mix": "tropical",
+    "giants": 0.06
+   },
+   {
+    "key": "jiddaJungleDockIsle",
+    "r": [
+     310,
+     450,
+     280,
+     410
+    ],
+    "every": 6,
+    "mix": "tropical",
+    "giants": 0.06
+   },
+   {
+    "key": "jiddaJungleReachLandingIsle",
+    "r": [
+     -370,
+     -270,
+     -60,
+     60
+    ],
+    "every": 6,
+    "mix": "tropical",
+    "giants": 0.06
+   },
+   {
+    "key": "jiddaJungleReachCragIsle",
+    "r": [
+     -470,
+     -330,
+     -190,
+     -60
+    ],
+    "every": 6,
+    "mix": "tropical",
+    "giants": 0.06
+   },
+   {
+    "key": "jiddaJungleReachShoalsIsle",
+    "r": [
+     -470,
+     -330,
+     60,
+     190
+    ],
+    "every": 6,
+    "mix": "tropical",
+    "giants": 0.06
+   },
+   {
+    "key": "jiddaJungleReachHideoutIsle",
+    "r": [
+     -500,
+     -390,
+     -70,
+     70
+    ],
+    "every": 6,
+    "mix": "tropical",
+    "giants": 0.06
+   },
+   {
+    "key": "jiddaSandbarPalms",
+    "r": [
+     -370,
+     -330,
+     425,
+     445
+    ],
+    "every": 8,
+    "mix": "palm",
+    "giants": 0
+   }
+  ],
+  "clearings": [
+   {
+    "key": "jiddaRoyalCourt",
+    "r": [
+     -108,
+     -44,
+     -400,
+     -362
+    ]
+   },
+   {
+    "key": "jiddaSurfBeachOpen",
+    "r": [
+     350,
+     440,
+     -20,
+     70
+    ]
+   },
+   {
+    "key": "jiddaForecourt",
+    "r": [
+     -44,
+     44,
+     -396,
+     -338
+    ]
+   }
+  ]
+ }
+}

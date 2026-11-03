@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0;background:#201e1d}@keyframes ncTick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}</style></helmet>
+<div style="padding:16px;display:flex;flex-direction:column;gap:16px;font-family:Archivo,sans-serif;color:#f3f2f2">
+  <div style="font-weight:900;font-size:20px">MERU NEWS · load-screen preview</div>
+  <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:stretch;width:min(640px,100%)">
+    <button type="button" onClick="{{ record }}" disabled="{{ recBusy }}" style="min-height:48px;padding:0 18px;border:2px solid #f3f2f2;border-radius:0;background:#ec3013;color:#f3f2f2;font:900 16px Archivo,sans-serif;letter-spacing:0.08em;text-align:left;cursor:pointer" style-hover="background:#c92a10">RECORD THE VIDEO ▶</button>
+    <div style="flex:1;min-width:200px;display:flex;align-items:center;border:2px solid #f3f2f2;padding:0 12px;font-weight:700;font-size:14px;letter-spacing:0.04em">{{ recMsg }}</div>
+  </div>
+  <div style="position:relative;width:min(640px,100%);aspect-ratio:4/3;border:2px solid #f3f2f2;overflow:hidden;background:#000">
+    <div ref="{{ box }}" style="position:absolute;inset:0"></div>
+    <div style="position:absolute;left:0;right:0;bottom:0;display:flex;align-items:stretch;background:#f3f2f2;color:#201e1d;border-top:2px solid #201e1d;overflow:hidden;font-weight:900;font-size:clamp(13px,1.8vw,17px)">
+      <span style="flex:none;background:#ec3013;color:#f3f2f2;padding:8px 12px;letter-spacing:0.14em;z-index:1">{{ kicker }}</span>
+      <div style="flex:1;overflow:hidden"><div style="display:flex;white-space:nowrap;padding:8px 0;animation:ncTick 22s linear infinite"><span style="padding:0 28px">{{ ticker }}</span><span style="padding:0 28px">{{ ticker }}</span></div></div>
+    </div>
+  </div>
+  <div style="font-weight:900;font-size:20px">PHONE · portrait picture box (358 px) · landscape (440 x 350)</div>
+  <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+    <div ref="{{ ph1 }}" style="position:relative;width:358px;aspect-ratio:4/3;border:2px solid #f3f2f2;overflow:hidden;background:#000"></div>
+    <div ref="{{ ph2 }}" style="position:relative;width:440px;height:350px;border:2px solid #f3f2f2;overflow:hidden;background:#000"></div>
+  </div>
+  <div style="font-weight:900;font-size:20px">IN-WORLD TV (apartment sets, Meru TV studio wall)</div>
+  <canvas ref="{{ tv }}" width="256" height="144" style="width:min(512px,100%);aspect-ratio:16/9;border:2px solid #f3f2f2;background:#000;image-rendering:auto"></canvas>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  box = React.createRef(); tv = React.createRef(); ph1 = React.createRef(); ph2 = React.createRef(); state = { kicker: 'BREAKING', ticker: '', recBusy: false, recMsg: 'Records the full newscast WITH SOUND (intro sting, Sterling, outro sting, about 46 s, 960 x 720). It plays in real time: keep this tab in front.' };
+  // s649 record the newscast as a video: downloads news-<id>.mp4 (put it in MERU/news/ for every device) + keeps it in this browser at once
+  record = async () => { if (this.state.recBusy) return; this.setState({ recBusy: true, recMsg: 'RECORDING · 0 %' });
+    try { const m = await import(new URL('engine/news-cast.js?v=s652', document.baseURI).href), it = m.pickNews()[0];
+      const blob = await m.recordNewsVideo({ list: [it], onProgress: p => { const v = Math.round(p * 100); if (v % 5 === 0) this.setState({ recMsg: 'RECORDING · ' + v + ' %' }); } });
+      await m.storeNewsVideo(it.id, blob); const ext = /mp4/.test(blob.type) ? 'mp4' : 'webm', a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'news-' + it.id + '.' + ext; document.body.appendChild(a); a.click(); a.remove();
+      window.__newsBlob = blob; this.setState({ recBusy: false, recMsg: 'DONE · news-' + it.id + '.' + ext + ' · ' + (blob.size / 1048576).toFixed(1) + ' MB · saved in this browser + downloaded' }); }
+    catch (e) { this.setState({ recBusy: false, recMsg: 'FAILED · ' + (e.message || e) }); } };
+  async componentDidMount() { try { const m = await import(new URL('engine/news-cast.js?v=s652', document.baseURI).href); const all = m.pickNews();
+      this.setState({ kicker: all[0].kicker, ticker: all.map(n => n.text).join('   \u2022   ') + '   \u2022   MERU NEWS' });
+      this.nc = await m.startNewsCast(this.box.current, all, { muted: true });
+      this.p1 = await m.startNewsCast(this.ph1.current, all, { muted: true }); this.p2 = await m.startNewsCast(this.ph2.current, all, { muted: true });
+      this.feed = m.newsFeed({ w: 320, h: 180 }); let last = performance.now(); const c = this.tv.current, g = c.getContext('2d');
+      const loop = () => { this.raf = requestAnimationFrame(loop); const now = performance.now(), dt = Math.min(0.05, (now - last) / 1000); last = now; this.feed.draw(g, c.width, c.height, dt); }; loop();
+      window.__nc = this.nc; window.__newsShot = async s => { this.nc.stop(); this.nc = await m.startNewsCast(this.box.current, all, { muted: true, shotAt: s }); }; } catch (e) { console.error('news', e); } }
+  componentWillUnmount() { this.nc && this.nc.stop(); this.p1 && this.p1.stop(); this.p2 && this.p2.stop(); this.feed && this.feed.stop(); cancelAnimationFrame(this.raf); }
+  renderVals() { return { record: this.record, recBusy: this.state.recBusy, recMsg: this.state.recMsg, box: this.box, tv: this.tv, ph1: this.ph1, ph2: this.ph2, kicker: this.state.kicker, ticker: this.state.ticker }; }
+}
+</script>
+</body>
+</html>

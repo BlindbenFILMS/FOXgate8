@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;background:#201e1d;overflow:hidden}a{color:#f3f2f2}a:hover{color:#ec3013}</style>
+</helmet>
+<div style="position:fixed;inset:0;display:flex;flex-direction:{{ dir }};background:#201e1d;color:#f3f2f2;font-family:var(--font-body);user-select:none;-webkit-user-select:none">
+  <div style="position:relative;flex:{{ stageFlex }};min-height:0;min-width:0">
+    <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+    <div style="position:absolute;left:14px;top:12px;right:14px;display:flex;flex-direction:column;gap:4px;pointer-events:none">
+      <div style="font-size:22px;font-weight:900;letter-spacing:0.02em">{{ title }}</div>
+      <div style="font-size:14px;font-weight:700;max-width:420px;text-wrap:pretty">{{ note }}</div>
+    </div>
+    <div style="position:absolute;left:14px;bottom:12px;display:flex;align-items:center;gap:8px;pointer-events:none">
+      <div style="width:14px;height:14px;background:{{ clearCol }}"></div>
+      <div style="font-size:13px;font-weight:900">{{ clearTxt }}</div>
+    </div>
+    <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute;left:14px;top:90px;font-size:16px;font-weight:900">LOADING…</div>
+    </sc-if>
+  </div>
+  <div style="flex:{{ panelFlex }};min-height:0;overflow-y:auto;border-left:{{ panelBl }};border-top:{{ panelBt }};padding:14px;display:flex;flex-direction:column;gap:14px;box-sizing:border-box">
+    <div style="display:flex;flex-wrap:wrap;gap:6px">
+      <button onClick="{{ togglePause }}" style="min-height:44px;padding:0 12px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:13px;font-weight:900;text-align:left;cursor:pointer" style-hover="background:#4a1a10" style-active="background:#7a2410">{{ pauseLabel }}</button>
+      <button onClick="{{ toggleSlow }}" style="min-height:44px;padding:0 12px;background:{{ slowBg }};color:#f3f2f2;border:2px solid {{ slowBd }};border-radius:0;font-size:13px;font-weight:900;text-align:left;cursor:pointer">SLOW ¼</button>
+      <button onClick="{{ toggleZoom }}" style="min-height:44px;padding:0 12px;background:{{ zoomBg }};color:#f3f2f2;border:2px solid {{ zoomBd }};border-radius:0;font-size:13px;font-weight:900;text-align:left;cursor:pointer">CLOSE-UP</button>
+      <sc-for list="{{ views }}" as="v" hint-placeholder-count="4">
+        <button onClick="{{ v.pick }}" style="min-height:44px;padding:0 12px;background:{{ v.bg }};color:#f3f2f2;border:2px solid {{ v.bd }};border-radius:0;font-size:13px;font-weight:900;text-align:left;cursor:pointer" style-hover="background:#4a1a10" style-active="background:#7a2410">{{ v.label }}</button>
+      </sc-for>
+    </div>
+    <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+      <div style="display:flex;flex-direction:column;gap:8px;border-top:2px solid #f3f2f2;padding-top:10px">
+        <div style="font-size:12px;font-weight:900;letter-spacing:0.08em">{{ g.name }}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <sc-for list="{{ g.items }}" as="m" hint-placeholder-count="6">
+            <button onClick="{{ m.pick }}" style="min-height:44px;padding:0 12px;background:{{ m.bg }};color:#f3f2f2;border:2px solid {{ m.bd }};border-radius:0;font-size:13px;font-weight:900;text-align:left;cursor:pointer" style-hover="background:#4a1a10" style-active="background:#7a2410">{{ m.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { loading: true, cur: null, paused: false, slow: false, view: 'auto', clear: 0, list: [], wide: true };
+  stageRef = React.createRef();
+  async componentDidMount() {
+    this.onR = () => this.setState({ wide: innerWidth > innerHeight && innerWidth > 640 }); this.onR(); addEventListener('resize', this.onR);
+    try { const m = await import('./engine/fox-anim-lab.js?v=s645'); this.st = await m.startAnimLab(this.stageRef.current, w => this.setState({ clear: w })); window.__lab = this.st; this.setState({ list: m.ANIM_LIST }); this.pick('bowl'); } catch (e) { console.error(e); }
+    this.setState({ loading: false });
+  }
+  componentWillUnmount() { removeEventListener('resize', this.onR); this.st && this.st.destroy(); }
+  pick(k) { this.setState({ cur: k, paused: false, clear: 0 }); this.st && this.st.play(k); }
+  renderVals() {
+    const S = this.state, on = b => ({ bg: b ? '#ec3013' : '#201e1d', bd: b ? '#ec3013' : '#f3f2f2' }), cur = S.list.find(a => a.key === S.cur);
+    const ORDER = ['SOCIAL', 'PLAYER', 'PETS', 'STORY 2', 'WORK', 'LIFE', 'DRIVE', 'HANDLEBARS', 'AROUND TOWN', 'TALK GESTURES', 'SWIM', 'CLIMB', 'SKATE', 'SPORT', 'CASINO', 'CASINO FLOOR', 'LANES + DINER', 'KEEPERS', 'CUSTOMERS', 'DANCE', 'DANCE 2', 'EMOTIONS', 'EMOTIONS 2', 'EMOTION TALK', 'MOUTH', 'HAIR', 'EARS', 'HAND STUDY', 'HANDS', 'EMOTES', 'STORY', 'FIGHT'];
+    const groups = [...ORDER, ...[...new Set(S.list.map(a => a.group))].filter(g => g && !ORDER.includes(g))].map(g => ({ name: g, items: S.list.filter(a => a.group === g).map(a => ({ label: a.label, ...on(a.key === S.cur), pick: () => this.pick(a.key) })) }));
+    const ok = S.clear < 0.03;
+    return {
+      stageRef: this.stageRef, loading: S.loading, dir: S.wide ? 'row' : 'column', stageFlex: S.wide ? '1 1 auto' : '0 0 56%', panelFlex: S.wide ? '0 0 340px' : '1 1 auto',
+      panelBl: S.wide ? '2px solid #f3f2f2' : 'none', panelBt: S.wide ? 'none' : '2px solid #f3f2f2',
+      title: cur ? cur.label : 'OUR FOX', note: cur ? cur.note : '', groups,
+      clearCol: ok ? '#3fbf6a' : '#ec3013', clearTxt: ok ? 'PAWS CLEAR OF BODY + HEAD' : 'PAW TOUCHING BODY (' + Math.round(S.clear * 100) + '%)',
+      pauseLabel: S.paused ? 'PLAY' : 'PAUSE', togglePause: () => { const p = !S.paused; this.setState({ paused: p }); this.st && this.st.pause(p); },
+      ...(o => ({ zoomBg: o.bg, zoomBd: o.bd }))(on(S.zoom)), toggleZoom: () => { const z = !S.zoom; this.setState({ zoom: z }); this.st && this.st.zoom(z); },
+      ...(o => ({ slowBg: o.bg, slowBd: o.bd }))(on(S.slow)), toggleSlow: () => { const s = !S.slow; this.setState({ slow: s }); this.st && this.st.speed(s ? 0.25 : 1); },
+      views: [['auto', 'AUTO CAM'], ['front', 'FRONT'], ['three', '¾'], ['side', 'SIDE']].map(([k, l]) => ({ label: l, ...on(S.view === k), pick: () => { this.setState({ view: k }); this.st && this.st.view(k); } })),
+    };
+  }
+}
+</script>
+</body>
+</html>

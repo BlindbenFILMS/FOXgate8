@@ -1,0 +1,320 @@
+{
+ "who": "kActor",
+ "title": "THE FOX WIFE",
+ "sub": "three masks, and the fox gets the better lines",
+ "masks": [
+  {
+   "key": "girl",
+   "label": "THE WIFE",
+   "col": "#f2a7c0",
+   "q": {
+    "scale": 0.76,
+    "lean": 0.06,
+    "loose": 0
+   }
+  },
+  {
+   "key": "old",
+   "label": "THE FARMER",
+   "col": "#8fc0f0",
+   "q": {
+    "scale": 1.12,
+    "lean": -0.05,
+    "loose": 0
+   }
+  },
+  {
+   "key": "fox",
+   "label": "THE FOX",
+   "col": "#f2a03c",
+   "q": {
+    "scale": 1.48,
+    "lean": 0,
+    "loose": 1
+   }
+  }
+ ],
+ "foxMask": "fox",
+ "lines": [
+  {
+   "scene": "THE GATE",
+   "mask": "old",
+   "text": "THE FARMER: I found her at the gate in the rain, and I did not ask.",
+   "frames": 168,
+   "set": "gate",
+   "cue": "THE FARMER",
+   "act": "sashi",
+   "speaker": "THE FARMER"
+  },
+  {
+   "scene": null,
+   "mask": "girl",
+   "text": "THE WIFE: You did not ask. That was the whole of the bargain.",
+   "frames": 168,
+   "set": "gate",
+   "cue": "THE WIFE",
+   "act": "hiraki",
+   "speaker": "THE WIFE"
+  },
+  {
+   "scene": null,
+   "mask": "girl",
+   "text": "THE WIFE: I will keep your house. I will not keep your questions.",
+   "frames": 162,
+   "set": "house",
+   "cue": "THE WIFE",
+   "act": "shikake",
+   "speaker": "THE WIFE"
+  },
+  {
+   "scene": null,
+   "mask": "fox",
+   "text": "THE FOX — and her shadow on the paper wall has four tails in it.",
+   "frames": 162,
+   "set": "house",
+   "cue": "THE FOX",
+   "act": "kake",
+   "prop": "tails",
+   "speaker": "THE FOX"
+  },
+  {
+   "scene": null,
+   "mask": "old",
+   "text": "THE FARMER: The rice came in twice. The well never went dry.",
+   "frames": 156,
+   "set": "field",
+   "cue": "THE FARMER",
+   "act": "terasu",
+   "speaker": "THE FARMER"
+  },
+  {
+   "scene": "THE CHILD",
+   "mask": "girl",
+   "text": "THE WIFE: A son. And he has your hands.",
+   "frames": 150,
+   "set": "house",
+   "cue": "THE WIFE",
+   "act": "shiori",
+   "speaker": "THE WIFE"
+  },
+  {
+   "scene": null,
+   "mask": "old",
+   "text": "THE FARMER: And your eyes, which are not a farmer’s eyes.",
+   "frames": 150,
+   "set": "house",
+   "cue": "THE FARMER",
+   "act": "stand",
+   "speaker": "THE FARMER"
+  },
+  {
+   "scene": null,
+   "mask": "fox",
+   "text": "THE FOX — the child sleeps, and she sings something nobody in that village knows.",
+   "frames": 150,
+   "set": "house",
+   "cue": "THE FOX",
+   "act": "mawari",
+   "prop": "child",
+   "speaker": "THE FOX"
+  },
+  {
+   "scene": null,
+   "mask": "old",
+   "text": "THE FARMER: The dog will not come in the house any more.",
+   "frames": 144,
+   "set": "house",
+   "cue": "THE FARMER",
+   "act": "stamp",
+   "prop": "dog",
+   "speaker": "THE FARMER"
+  },
+  {
+   "scene": null,
+   "mask": "girl",
+   "text": "THE WIFE: Dogs are stupid. Put it outside.",
+   "frames": 144,
+   "set": "house",
+   "cue": "THE WIFE",
+   "act": "sashi",
+   "speaker": "THE WIFE"
+  },
+  {
+   "scene": "THE WATER",
+   "mask": "old",
+   "text": "THE FARMER: There is a bowl of still water by the door, wife. Look in it.",
+   "frames": 144,
+   "set": "door",
+   "cue": "THE FARMER",
+   "act": "shikake",
+   "prop": "bowl",
+   "speaker": "THE FARMER"
+  },
+  {
+   "scene": null,
+   "mask": "fox",
+   "text": "THE FOX — she looks, and the water is honest.",
+   "frames": 144,
+   "set": "door",
+   "cue": "THE FOX",
+   "act": "kumorasu",
+   "prop": "bowl",
+   "speaker": "THE FOX"
+  },
+  {
+   "scene": null,
+   "mask": "girl",
+   "text": "THE WIFE: You asked. That was the whole of the bargain.",
+   "frames": 144,
+   "set": "door",
+   "cue": "THE WIFE",
+   "act": "hiraki",
+   "speaker": "THE WIFE"
+  },
+  {
+   "scene": null,
+   "mask": "old",
+   "text": "THE FARMER: Nine years. I could have gone on not asking.",
+   "frames": 144,
+   "set": "door",
+   "cue": "THE FARMER",
+   "act": "shiori",
+   "speaker": "THE FARMER"
+  },
+  {
+   "scene": null,
+   "mask": "fox",
+   "text": "THE FOX — she goes out of the door on four feet, and does not look back.",
+   "frames": 144,
+   "set": "door",
+   "cue": "THE FOX",
+   "act": "ori",
+   "prop": "gone",
+   "speaker": "THE FOX"
+  },
+  {
+   "scene": "THE WOOD",
+   "mask": "old",
+   "text": "THE FARMER: There is a wood on the mountain where they say the foxes are.",
+   "frames": 144,
+   "set": "wood",
+   "cue": "THE FARMER",
+   "act": "sashi",
+   "speaker": "THE FARMER"
+  },
+  {
+   "scene": null,
+   "mask": "old",
+   "text": "THE FARMER: It is nine miles and I am not a young man. Come out.",
+   "frames": 144,
+   "set": "wood",
+   "cue": "THE FARMER",
+   "act": "shikake",
+   "speaker": "THE FARMER"
+  },
+  {
+   "scene": null,
+   "mask": "fox",
+   "text": "THE FOX — something keeps pace with him in the trees and does not come out.",
+   "frames": 144,
+   "set": "wood",
+   "cue": "THE FOX",
+   "act": "mawari",
+   "prop": "eyes",
+   "speaker": "THE FOX"
+  },
+  {
+   "scene": null,
+   "mask": "girl",
+   "text": "THE WIFE, WHO IS NOT HERE: Tell him his mother kept a farmer’s house for nine years.",
+   "frames": 144,
+   "set": "wood",
+   "cue": "THE WIFE",
+   "act": "kumorasu",
+   "prop": "eyes",
+   "speaker": "THE WIFE"
+  },
+  {
+   "scene": null,
+   "mask": "girl",
+   "text": "THE WIFE, WHO IS NOT HERE: That is a true thing, and he may have it.",
+   "frames": 144,
+   "set": "wood",
+   "cue": "THE WIFE",
+   "act": "hiraki",
+   "speaker": "THE WIFE"
+  },
+  {
+   "scene": null,
+   "mask": "old",
+   "text": "THE FARMER — and the trees are only trees, and he is a man standing in a wood.",
+   "frames": 144,
+   "set": "wood",
+   "cue": "THE FARMER",
+   "act": "stand",
+   "speaker": "THE FARMER"
+  },
+  {
+   "scene": null,
+   "mask": "old",
+   "text": "THE FARMER, ALONE: I did not ask. For nine years, I did not ask.",
+   "frames": 148,
+   "set": "dawn",
+   "cue": "THE FARMER",
+   "act": "stamp",
+   "speaker": "THE FARMER"
+  }
+ ],
+ "intro": 120,
+ "swap": 16,
+ "frames": 150,
+ "house0": 34,
+ "house": 3,
+ "foxHouse": 7,
+ "wrong": -12,
+ "between": -16,
+ "foxSlip": 0,
+ "cool": 4,
+ "slipMax": 100,
+ "pass": 60,
+ "great": 90,
+ "goldPer": 1.6,
+ "xp": 240,
+ "why": "a night at the theatre",
+ "houseLabel": "THE HOUSE",
+ "slipLabel": "THEY NOTICE",
+ "goodCall": "THE HOUSE LEANS IN",
+ "foxCall": "THE HOUSE HOLDS ITS BREATH",
+ "missCall": "SOMEBODY COUGHS",
+ "betweenCall": "A MAN HOLDING A MASK",
+ "wonTitle": "THEY WILL TALK ABOUT IT",
+ "thinTitle": "A POLITE HOUSE",
+ "caughtTitle": "THE WATER IS HONEST",
+ "caughtBody": "The performance came apart, the house stopped believing it, and in a bowl of still water on a stage a hundred people saw a fox looking back.",
+ "sets": "played",
+ "note": {
+  "title": "YOU PLAYED THE FOX",
+  "body": "A house of a hundred people, and they went home talking about the third scene. The old actor will have you back."
+ },
+ "greatSets": "playedWell",
+ "greatNote": {
+  "title": "FORTY YEARS AND HE HAS SEEN IT TWICE",
+  "body": "You did not act frightened when the water came out. You went still, the way a thing goes still."
+ },
+ "caughtNote": {
+  "title": "SEEN, ON A STAGE",
+  "body": "Too many wrong faces and the illusion came apart in front of a hundred people. Nobody in that house believed what they saw, which is the only reason you walked out of it. One rule: the face the chorus asks for, every time."
+ },
+ "thinNote": {
+  "title": "THEY WERE POLITE",
+  "body": "Nobody coughed on the way out, which is the worst thing an audience can do to you."
+ },
+ "fade": 20,
+ "listen": 0.35,
+ "slide": 11,
+ "wrongSlip": 30,
+ "betweenSlip": 42,
+ "warnAt": 0.5,
+ "foxMissCall": "THE WRONG FACE, ON HER LINE",
+ "warnCall": "SOMEBODY IN THE FRONT ROW IS STARING"
+}

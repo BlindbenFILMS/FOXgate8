@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#201e1d}a{color:#f3f2f2}a:hover{color:var(--color-accent)}button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}input[type=range]{width:100%;height:44px;margin:0;accent-color:#ec3013;background:transparent}</style>
+</helmet>
+<div style="display:grid;grid-template-rows:auto minmax(0,1fr);height:100vh;height:100dvh;background:var(--color-text);color:var(--color-bg);font-family:var(--font-body)" data-screen-label="Ore Shaft Machine Workshop">
+  <div style="display:flex;align-items:stretch;border-bottom:2px solid var(--color-bg);min-width:0">
+    <div style="padding:10px 16px;display:flex;flex-direction:column;gap:2px;flex:1;min-width:0">
+      <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;color:var(--color-accent);white-space:nowrap">8 GATES · DEEP SPACE FOX · ORE SHAFT</div>
+      <div style="font-family:var(--font-heading);font-size:20px;font-weight:800;line-height:1.05">Machine Workshop</div>
+    </div>
+    <div style="display:flex;align-items:center;padding:0 14px;border-left:2px solid var(--color-bg);font:800 11px var(--font-heading);letter-spacing:0.1em;color:{{ savedCol }};white-space:nowrap">{{ savedTxt }}</div>
+  </div>
+
+  <div style="display:grid;grid-template-areas:{{ areas }};grid-template-columns:{{ cols }};grid-template-rows:{{ rows }};min-height:0">
+    <div style="grid-area:tabs;display:flex;flex-direction:{{ tabsDir }};overflow:auto;border-right:{{ tabsBorderR }};border-bottom:{{ tabsBorderB }};min-width:0">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="7">
+        <button onClick="{{ t.pick }}" style="flex:none;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;min-height:52px;padding:8px 14px;border:0;border-bottom:{{ t.bb }};border-right:{{ t.br }};border-radius:0;background:{{ t.bg }};color:var(--color-bg);text-align:left;cursor:pointer" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">
+          <span style="font:800 13px var(--font-heading);letter-spacing:0.05em;white-space:nowrap">{{ t.name }}</span>
+          <span style="font:700 10px var(--font-heading);letter-spacing:0.1em;color:{{ t.mc }};white-space:nowrap">{{ t.meta }}</span>
+        </button>
+      </sc-for>
+    </div>
+
+    <div style="grid-area:view;position:relative;min-width:0;min-height:0;overflow:hidden;border-bottom:{{ viewBorderB }}">
+      <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+      <div style="position:absolute;left:8px;right:8px;top:8px;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:start;gap:6px;pointer-events:none">
+        <div style="display:flex;flex-direction:column;gap:3px;min-width:0">
+          <div style="height:20px;border:2px solid var(--color-bg);background:#000;position:relative;overflow:hidden">
+            <div style="position:absolute;top:0;bottom:0;right:0;width:{{ botLag }};background:#ffd23a;transition:width 0.6s ease 0.25s"></div>
+            <div style="position:absolute;top:0;bottom:0;right:0;width:{{ botW }};background:{{ botCol }};transition:width 0.12s"></div>
+          </div>
+          <span style="font:900 13px var(--font-heading);letter-spacing:0.08em;color:var(--color-bg);text-shadow:0 2px 0 #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ botTag }}</span>
+        </div>
+        <div style="min-width:48px;height:42px;display:flex;align-items:center;justify-content:center;background:var(--color-text);border:2px solid var(--color-bg);font:900 26px var(--font-heading);font-variant-numeric:tabular-nums;color:{{ timeCol }};padding:0 6px">{{ timer }}</div>
+        <div style="display:flex;flex-direction:column;gap:3px;min-width:0">
+          <div style="height:20px;border:2px solid var(--color-bg);background:#000;position:relative;overflow:hidden">
+            <div style="position:absolute;top:0;bottom:0;left:0;width:{{ foxLag }};background:#ffd23a;transition:width 0.6s ease 0.25s"></div>
+            <div style="position:absolute;top:0;bottom:0;left:0;width:{{ foxW }};background:{{ foxCol }};transition:width 0.12s"></div>
+          </div>
+          <span style="align-self:flex-end;font:900 13px var(--font-heading);letter-spacing:0.08em;color:var(--color-bg);text-shadow:0 2px 0 #000;white-space:nowrap">FOX · P1</span>
+        </div>
+      </div>
+      <sc-if value="{{ hasBanner }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:0;right:0;top:38%;display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none">
+          <div style="background:{{ banBg }};border-top:2px solid var(--color-bg);border-bottom:2px solid var(--color-bg);width:100%;display:flex;justify-content:center;padding:6px 0">
+            <span style="font:900 clamp(36px,9vw,72px)/1 var(--font-heading);letter-spacing:0.04em;color:{{ banCol }};text-shadow:0 4px 0 #000">{{ banner }}</span>
+          </div>
+          <span style="font:900 14px var(--font-heading);letter-spacing:0.14em;color:var(--color-bg);text-shadow:0 2px 0 #000">{{ banSub }}</span>
+        </div>
+      </sc-if>
+      <div style="position:absolute;left:8px;bottom:104px;max-width:min(420px,calc(100% - 16px));display:flex;flex-direction:column;gap:6px;pointer-events:none">
+        <sc-if value="{{ showInfo }}" hint-placeholder-val="{{ false }}">
+          <div style="background:var(--color-text);border:2px solid var(--color-bg);padding:8px 12px;display:flex;flex-direction:column;gap:3px">
+            <span style="font:600 13px var(--font-body);line-height:1.35;text-wrap:pretty">{{ selRole }}</span>
+          </div>
+        </sc-if>
+        <div style="align-self:flex-start;background:#000;border:2px solid {{ voiceCol }};padding:6px 10px;display:flex;flex-direction:column;gap:2px">
+          <span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:{{ voiceCol }}">{{ voiceTag }}</span>
+          <span style="font:800 15px var(--font-heading);line-height:1.25;color:var(--color-bg);text-wrap:pretty">{{ voiceLine }}</span>
+        </div>
+        <sc-if value="{{ hasMsg }}" hint-placeholder-val="{{ false }}">
+          <div style="align-self:flex-start;background:#000;border:2px solid {{ msgCol }};padding:4px 10px;font:900 15px var(--font-heading);letter-spacing:0.06em;color:{{ msgCol }}">{{ msg }}</div>
+        </sc-if>
+      </div>
+      <div style="position:absolute;left:8px;bottom:8px;right:8px;display:flex;flex-wrap:wrap;gap:0;pointer-events:none">
+        <div style="display:flex;flex-wrap:wrap;border:2px solid var(--color-bg);background:var(--color-text);pointer-events:auto">
+          <sc-for list="{{ viewBtns }}" as="b" hint-placeholder-count="6">
+            <button onClick="{{ b.go }}" style="min-height:44px;padding:0 12px;border:0;border-right:2px solid var(--color-bg);border-radius:0;background:{{ b.bg }};color:var(--color-bg);font:800 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;white-space:nowrap" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">{{ b.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <div style="grid-area:panel;min-height:0;overflow-y:auto;border-left:{{ panelBorderL }}">
+      <div style="padding:10px 16px;border-bottom:2px solid var(--color-bg);font:800 11px var(--font-heading);letter-spacing:0.12em;color:var(--color-accent)">LOOK</div>
+      <sc-for list="{{ colorRows }}" as="c" hint-placeholder-count="5">
+        <div style="padding:10px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;background:{{ c.val }};border:2px solid var(--color-bg);display:block"></span><span style="font:800 12px var(--font-heading);letter-spacing:0.08em">{{ c.label }}</span><span style="font:700 11px var(--font-heading);color:#b8b2ac;letter-spacing:0.06em">{{ c.val }}</span></div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px">
+            <sc-for list="{{ c.sw }}" as="s" hint-placeholder-count="12">
+              <button onClick="{{ s.pick }}" aria-label="{{ s.hex }}" style="width:44px;height:44px;padding:0;border:{{ s.bd }};border-radius:0;background:{{ s.hex }};cursor:pointer;box-sizing:border-box"></button>
+            </sc-for>
+            <label style="position:relative;width:44px;height:44px;border:2px dashed #b8b2ac;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font:900 18px var(--font-heading);color:var(--color-bg);cursor:pointer">+<input type="color" value="{{ c.val }}" onChange="{{ c.custom }}" style="position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;border:0;padding:0"></label>
+          </div>
+        </div>
+      </sc-for>
+      <sc-for list="{{ lookSliders }}" as="r" hint-placeholder-count="1">
+        <div style="padding:8px 16px 0;border-bottom:2px solid #3a3836">
+          <div style="display:flex;align-items:baseline;gap:8px"><span style="font:800 12px var(--font-heading);letter-spacing:0.08em">{{ r.label }}</span><span style="font:800 13px var(--font-heading);font-variant-numeric:tabular-nums;color:{{ r.vc }}">{{ r.txt }}</span></div>
+          <input type="range" min="{{ r.min }}" max="{{ r.max }}" step="{{ r.step }}" value="{{ r.val }}" onChange="{{ r.set }}">
+        </div>
+      </sc-for>
+      <div style="padding:10px 16px;border-bottom:2px solid var(--color-bg);border-top:2px solid var(--color-bg);margin-top:8px;font:800 11px var(--font-heading);letter-spacing:0.12em;color:var(--color-accent)">FIGHT + UNHACK</div>
+      <sc-for list="{{ statRows }}" as="r" hint-placeholder-count="8">
+        <div style="padding:8px 16px 0;border-bottom:2px solid #3a3836">
+          <div style="display:flex;align-items:baseline;gap:8px"><span style="font:800 12px var(--font-heading);letter-spacing:0.08em">{{ r.label }}</span><span style="font:800 13px var(--font-heading);font-variant-numeric:tabular-nums;color:{{ r.vc }}">{{ r.txt }}</span></div>
+          <input type="range" min="{{ r.min }}" max="{{ r.max }}" step="{{ r.step }}" value="{{ r.val }}" onChange="{{ r.set }}">
+        </div>
+      </sc-for>
+      <div style="display:flex;flex-direction:column;padding:16px;gap:8px">
+        <button onClick="{{ resetBot }}" style="min-height:48px;padding:0 16px;border:2px solid var(--color-bg);border-radius:0;background:var(--color-text);color:var(--color-bg);font:800 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">RESET {{ selName }}</button>
+        <span style="font:600 12px var(--font-body);line-height:1.4;color:#b8b2ac;text-wrap:pretty">Changes save on their own (ore.machines) and the Ore Shaft cave will read them. Yellow numbers differ from the original.</span>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { vw: 1200, vh: 800, type: 'r8', m: null, loop: true, ring: true, face: false, hacked: true, msg: '', msgCol: '#ffd23a', line: '', lineHacked: true, saved: false };
+  stageRef = React.createRef();
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs();
+    try {
+      this.B = await import(new URL('worlds/ore-machines.js?v=s364aj', document.baseURI).href);
+      const W = await import(new URL('worlds/ore-machine-workshop.js?v=s364aj', document.baseURI).href);
+      const m = this.B.loadMachines(); this.setState({ m });
+      this.lab = await W.createMachineWorkshop({ container: this.stageRef.current, onEvent: e => {
+        if (e.round) { this.fightReset(); return; }
+        if (e.hit != null) { const f = Math.max(0, this.state.foxHp - e.hit); this.setState({ foxHp: f }); clearTimeout(this.lagT1); this.lagT1 = setTimeout(() => this.setState({ foxLagHp: this.state.foxHp }), 50); if (f <= 0) { this.showBanner('K.O.', 'FOX DOWN · BACK UP', '#ec3013'); setTimeout(() => this.setState({ foxHp: 100, foxLagHp: 100 }), 1600); } return; }
+        if (e.un != null) { const b = Math.round(100 * (1 - e.un)); this.setState({ botHp: b }); clearTimeout(this.lagT2); this.lagT2 = setTimeout(() => this.setState({ botLagHp: this.state.botHp }), 50); return; }
+        if (e.ko) { this.setState({ botHp: 0, botLagHp: 0 }); this.showBanner(e.ko === 'freed' ? 'FREED!' : 'K.O.', e.ko === 'freed' ? 'UNHACKED · FREE WILL' : 'SIGNAL RELAY DESTROYED', e.ko === 'freed' ? '#5fe3ff' : '#ec3013'); return; }
+        if (e.line != null) { this.setState({ line: e.line, lineHacked: e.hacked, hacked: this.lab ? this.lab.hacked : true }); return; }
+        clearTimeout(this.mt); this.setState({ msg: e.msg, msgCol: e.col || '#ffd23a', hacked: this.lab ? this.lab.hacked : true }); this.mt = setTimeout(() => this.setState({ msg: '' }), 1600); } });
+      window.__orews = this.lab; this.show(this.state.type, m);
+    } catch (e) { console.warn('machine workshop failed: ' + (e && e.stack || e)); }
+  }
+  componentWillUnmount() { this.lab && this.lab.destroy(); removeEventListener('resize', this.onRs); clearInterval(this.clk); }
+  // s364ab FIGHT HUD: machine bar left, fox bar right, 99 timer, ROUND / FIGHT / K.O. / FREED banners
+  fightReset() { clearInterval(this.clk); this.setState({ foxHp: 100, foxLagHp: 100, botHp: 100, botLagHp: 100, time: 99 }); this.showBanner('ROUND 1', '', '#f3f2f2', 900, () => this.showBanner('FIGHT!', '', '#ffd23a', 800));
+    this.clk = setInterval(() => this.setState(s => ({ time: s.time > 0 ? s.time - 1 : 99 })), 1000); }
+  showBanner(banner, banSub, banCol, ms = 1600, then) { clearTimeout(this.bt); this.setState({ banner, banSub, banCol }); this.bt = setTimeout(() => { this.setState({ banner: '' }); then && then(); }, ms); }
+  onRs = () => this.setState({ vw: innerWidth, vh: innerHeight });
+  show(t, m) { if (!this.lab) return; this.lab.show(t, m.look[t], m.stats[t]); this.setState({ hacked: true, face: false }); }
+  commit(m, rebuild) { this.B.saveMachines(m); this.setState({ m, saved: true }); clearTimeout(this.st); this.st = setTimeout(() => this.setState({ saved: false }), 1200); const t = this.state.type; if (!this.lab) return; if (rebuild) this.show(t, m); else this.lab.tune(m.stats[t]); }
+  setLook(k, v) { const m = this.state.m, t = this.state.type; this.commit({ ...m, look: { ...m.look, [t]: { ...m.look[t], [k]: v } } }, true); }
+  setStat(k, v) { const m = this.state.m, t = this.state.type; this.commit({ ...m, stats: { ...m.stats, [t]: { ...m.stats[t], [k]: v } } }, false); }
+  pick(t) { this.setState({ type: t }); const m = this.state.m; if (m) this.show(t, m); }
+  renderVals() {
+    const S = this.state, B = this.B, m = S.m, t = S.type, { vw, vh } = S, wide = vw >= 900, land = !wide && vw > vh;
+    const PAL = ['#f3f2f2', '#c8ccd2', '#9aa0a6', '#6a7078', '#3b4049', '#2a2d33', '#1a1c20', '#ec3013', '#ff2a1a', '#d0782c', '#c9a23a', '#e0b020', '#1a3fb8', '#5fe3ff', '#7cff9b'];
+    const fmt = (v, st) => st < 1 ? (+v).toFixed(st < 0.1 ? 2 : 1) : String(Math.round(v));
+    const sliders = (obj, base, keys, set) => keys.map(k => { const [label, min, max, step, unit] = B.STAT_UI[k] || ['SIZE', 0.5, 2.5, 0.05, '×'], v = obj[k]; return { label, min, max, step, val: v, txt: fmt(v, step) + (unit ? ' ' + unit : ''), vc: v !== base[k] ? '#ffd23a' : 'var(--color-bg)', set: e => set(k, parseFloat(e.target.value)) }; });
+    const types = B ? B.TYPES : ['r8', 'pick', 'drill', 'survey', 'hauler', 'relay', 'rig'];
+    const isRelay = B && B.BOSS[t] === 'destroy', lab = this.lab;
+    const KINDN = { ranged: 'RANGED', melee: 'MELEE', charge: 'CHARGER', pulse: 'BOSS 1', boss: 'BOSS 2' };
+    const bt = (label, on, go) => ({ label, bg: on ? '#ec3013' : 'var(--color-text)', go });
+    return {
+      stageRef: this.stageRef,
+      areas: wide ? '"tabs view panel"' : land ? '"view tabs" "view panel"' : '"view" "tabs" "panel"',
+      cols: wide ? '220px minmax(0,1fr) 340px' : land ? 'minmax(0,1fr) 300px' : 'minmax(0,1fr)',
+      rows: wide ? 'minmax(0,1fr)' : land ? 'auto minmax(0,1fr)' : 'minmax(0,46%) auto minmax(0,1fr)',
+      tabsDir: wide ? 'column' : 'row', tabsBorderR: wide ? '2px solid var(--color-bg)' : '0', tabsBorderB: wide ? '0' : '2px solid var(--color-bg)', viewBorderB: !wide && !land ? '2px solid var(--color-bg)' : '0', panelBorderL: wide || land ? '2px solid var(--color-bg)' : '0',
+      tabs: types.map(k => ({ name: B ? B.INFO[k].name : k.toUpperCase(), meta: m && B ? KINDN[B.KIND[k]] + ' · ' + m.stats[k].hp + ' HP' : '', mc: k === t ? 'var(--color-bg)' : '#b8b2ac', bg: k === t ? '#ec3013' : 'var(--color-text)', bb: wide ? '2px solid #3a3836' : '0', br: wide ? '0' : '2px solid #3a3836', pick: () => this.pick(k) })),
+      selName: B ? B.INFO[t].name : '', selRole: B ? B.INFO[t].role : '',
+      botW: (S.botHp ?? 100) + '%', botLag: (S.botLagHp ?? 100) + '%', botCol: S.hacked ? '#ec3013' : '#5fe3ff', botTag: (B ? B.INFO[t].name : '') + (S.hacked ? '' : ' · FREE'),
+      foxW: (S.foxHp ?? 100) + '%', foxLag: (S.foxLagHp ?? 100) + '%', foxCol: (S.foxHp ?? 100) < 30 ? '#ec3013' : '#7cff9b',
+      timer: String(S.time ?? 99).padStart(2, '0'), timeCol: (S.time ?? 99) <= 10 ? '#ec3013' : 'var(--color-bg)',
+      showInfo: !!S.info, hasBanner: !!S.banner, banner: S.banner, banSub: S.banSub, banCol: S.banCol, banBg: 'rgba(32,30,29,0.88)',
+      voiceTag: S.lineHacked ? 'HACKED · NOT ITS OWN VOICE' : 'FREED · ITS OWN VOICE', voiceCol: S.lineHacked ? '#ff6b5a' : '#5fe3ff', voiceLine: S.line,
+      hasMsg: !!S.msg, msg: S.msg, msgCol: S.msgCol,
+      savedTxt: S.saved ? 'SAVED' : 'AUTO-SAVE', savedCol: S.saved ? '#7cff9b' : '#b8b2ac',
+      viewBtns: [
+        bt(S.hacked ? 'HACKED' : 'FREED', false, () => { if (!lab) return; const v = !lab.hacked; lab.setHacked(v); this.setState({ hacked: v }); }),
+        bt(isRelay ? 'DESTROY IT' : 'UNHACK IT', false, () => lab && lab.unhack()),
+        bt('ATTACK NOW', false, () => lab && lab.attackNow()),
+        bt(S.loop ? 'LOOP · ON' : 'LOOP · OFF', S.loop, () => { const v = !S.loop; this.setState({ loop: v }); lab && lab.setLoop(v); }),
+        bt('FACE', S.face, () => { const v = !S.face; this.setState({ face: v }); lab && lab.setFace(v); }),
+        bt(S.ring ? 'RING · ON' : 'RING · OFF', false, () => { const v = !S.ring; this.setState({ ring: v }); lab && lab.setRing(v); }),
+        bt('INFO', !!S.info, () => this.setState({ info: !S.info })),
+      ],
+      colorRows: m ? Object.keys(B.LOOK0[t]).filter(k => k !== 'size').map(k => ({ label: B.LOOK_UI[k], val: m.look[t][k], custom: e => this.setLook(k, e.target.value), sw: PAL.map(hex => ({ hex, bd: hex.toLowerCase() === String(m.look[t][k]).toLowerCase() ? '3px solid #f3f2f2' : '2px solid #3a3836', pick: () => this.setLook(k, hex) })) })) : [],
+      lookSliders: m ? sliders(m.look[t], B.LOOK0[t], ['size'], (k, v) => this.setLook(k, v)) : [],
+      statRows: m ? sliders(m.stats[t], B.STATS0[t], Object.keys(B.STATS0[t]), (k, v) => this.setStat(k, v)) : [],
+      resetBot: () => { const mm = this.state.m; this.commit({ look: { ...mm.look, [t]: { ...B.LOOK0[t] } }, stats: { ...mm.stats, [t]: { ...B.STATS0[t] } } }, true); },
+    };
+  }
+}
+</script>
+</body>
+</html>

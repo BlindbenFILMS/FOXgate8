@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<style>body{margin:0;background:#201e1d;color:#f3f2f2;font-family:Archivo,sans-serif}a{color:#f3f2f2}a:hover{color:#ec3013}input[type=range]{accent-color:#ec3013}</style>
+</helmet>
+<div style="min-height:100vh;background:var(--color-text);color:var(--color-bg);display:flex;flex-direction:column">
+  <div style="padding:16px 20px;border-bottom:2px solid var(--color-bg);display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between">
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <span style="font:900 26px var(--font-heading);letter-spacing:0.02em">MUSIC WORKSHOP</span>
+      <span style="font:500 15px/1.4 var(--font-body);max-width:560px;text-wrap:pretty">Every space song. Pick one, press PLAY, then slide DANGER to hear the battle song fade in over it. Settings save on their own and the Space Map uses them.</span>
+    </div>
+    <a href="Space Map.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 14px;border:2px solid var(--color-bg);font:800 12px var(--font-heading);letter-spacing:0.08em;text-decoration:none">OPEN SPACE MAP</a>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));flex:1">
+    <div style="padding:16px 20px;border-right:2px solid var(--color-bg);border-bottom:2px solid var(--color-bg);display:flex;flex-direction:column;gap:8px">
+      <span style="font:800 11px var(--font-heading);letter-spacing:0.12em">SONG SET</span>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <sc-for list="{{ sets }}" as="q" hint-placeholder-count="2">
+          <button onClick="{{ q.pick }}" style="min-height:56px;display:flex;flex-direction:column;justify-content:center;gap:2px;padding:6px 12px;border:2px solid var(--color-bg);border-radius:0;background:{{ q.bg }};color:var(--color-bg);text-align:left;cursor:pointer" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">
+            <span style="font:900 14px var(--font-heading);letter-spacing:0.04em">{{ q.name }}</span>
+            <span style="font:600 12px/1.3 var(--font-body)">{{ q.sub }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <span style="font:800 11px var(--font-heading);letter-spacing:0.12em;padding-top:6px">BATTLE MUSIC</span>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px">
+        <sc-for list="{{ battles }}" as="q" hint-placeholder-count="2">
+          <button onClick="{{ q.pick }}" style="min-height:56px;display:flex;flex-direction:column;justify-content:center;gap:2px;padding:6px 12px;border:2px solid var(--color-bg);border-radius:0;background:{{ q.bg }};color:var(--color-bg);text-align:left;cursor:pointer" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">
+            <span style="font:900 14px var(--font-heading);letter-spacing:0.04em">{{ q.name }}</span>
+            <span style="font:600 12px/1.3 var(--font-body)">{{ q.sub }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <span style="font:800 11px var(--font-heading);letter-spacing:0.12em;padding-top:6px">SONGS</span>
+      <sc-for list="{{ songs }}" as="g" hint-placeholder-count="11">
+        <button onClick="{{ g.pick }}" style="min-height:52px;display:flex;flex-direction:column;justify-content:center;gap:2px;padding:6px 14px;border:2px solid var(--color-bg);border-radius:0;background:{{ g.bg }};color:var(--color-bg);text-align:left;cursor:pointer" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">
+          <span style="font:900 15px var(--font-heading);letter-spacing:0.04em">{{ g.title }}</span>
+          <span style="font:700 11px var(--font-heading);letter-spacing:0.1em;opacity:0.85">{{ g.where }}</span>
+        </button>
+      </sc-for>
+    </div>
+    <div style="padding:16px 20px;border-bottom:2px solid var(--color-bg);display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;flex-direction:column;gap:6px;border-bottom:2px solid var(--color-bg);padding-bottom:14px">
+        <span style="font:800 11px var(--font-heading);letter-spacing:0.12em">NOW</span>
+        <span style="font:900 22px var(--font-heading)">{{ nowTitle }}</span>
+        <span style="font:600 14px var(--font-body)">{{ mixTxt }}</span>
+        <button onClick="{{ playStop }}" style="min-height:56px;padding:0 18px;border:2px solid var(--color-bg);border-radius:0;background:var(--color-accent);color:#ffffff;font:900 18px var(--font-heading);letter-spacing:0.08em;text-align:left;cursor:pointer" style-hover="background:var(--color-accent-600)" style-active="background:var(--color-accent-700)">{{ playTxt }}</button>
+      </div>
+      <sc-for list="{{ sliders }}" as="s" hint-placeholder-count="5">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;justify-content:space-between;gap:10px"><span style="font:800 13px var(--font-heading);letter-spacing:0.08em">{{ s.label }}</span><span style="font:900 14px var(--font-heading);color:{{ s.col }}">{{ s.txt }}</span></div>
+          <input type="range" min="0" max="{{ s.max }}" step="0.01" value="{{ s.v }}" onInput="{{ s.set }}" style="width:100%;min-height:32px">
+          <span style="font:500 13px/1.35 var(--font-body);opacity:0.85;text-wrap:pretty">{{ s.help }}</span>
+        </div>
+      </sc-for>
+      <button onClick="{{ resetMix }}" style="min-height:44px;padding:0 14px;border:2px solid var(--color-bg);border-radius:0;background:transparent;color:var(--color-bg);font:800 12px var(--font-heading);letter-spacing:0.08em;text-align:left;cursor:pointer" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">RESET MIX</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { ready: false, playing: false, cur: 'meru', danger: 0, tick: 0 };
+  WHERE = { home: 'YOUR HOME PLANET (LATER)', deep: 'OPEN SPACE · PAST THE PLANETS', meru: 'MERU · CENTRE OF THE GALAXY', shasta: 'SHASTA', luxor: 'LUXOR', ur: 'UR', gaya: 'GAYA', zion: 'ZION', nebo: 'NEBO', kufa: 'KUFA', jidda: 'JIDDA' };
+  async componentDidMount() { const M = await import(new URL('engine/space-lofi.js?v=s459', document.baseURI).href); this.M = M; this.L = M.spaceLofi(); this.setState({ ready: true }); this.iv = setInterval(() => this.state.playing && this.setState({ tick: this.state.tick + 1 }), 400); }
+  componentWillUnmount() { clearInterval(this.iv); this.L && this.L.stop(); }
+  play() { const L = this.L; L.start(); L.resume(); L.jumpWorld(this.state.cur); L.danger(this.state.danger); this.setState({ playing: true }); }
+  renderVals() {
+    const st = this.state, M = this.M, L = this.L, mix = L ? L.getMix() : { world: 1, battle: 1, duck: 0.7, volume: 0.5 };
+    const keys = M ? Object.keys(M.THEMES) : Object.keys(this.WHERE);
+    const pct = v => Math.round(v * 100) + ' %';
+    const set = (k, v) => { if (!L) return; if (k === 'volume') L.volume(v); else L.setMix({ [k]: v }); this.forceUpdate(); };
+    const sliders = [
+      { label: 'DANGER (PREVIEW)', v: st.danger, max: 1, txt: pct(st.danger), col: st.danger > 0 ? '#ffd23a' : 'var(--color-bg)', help: 'Not saved. 0 = safe, 100 % = an enemy right on you. The battle song RED ALERT builds in 3 steps: bass + hats, then full drums (35 %), then alarm stabs + siren lead (65 %).', set: e => { const v = Number(e.target.value); this.setState({ danger: v }); L && L.danger(v); } },
+      { label: 'MUSIC VOLUME', v: mix.volume, max: 1, txt: pct(mix.volume), col: 'var(--color-bg)', help: 'Everything together.', set: e => set('volume', Number(e.target.value)) },
+      { label: 'WORLD SONGS', v: mix.world, max: 1.5, txt: pct(mix.world), col: mix.world !== 1 ? '#ffd23a' : 'var(--color-bg)', help: 'How loud the calm world songs are.', set: e => set('world', Number(e.target.value)) },
+      { label: 'BATTLE SONG', v: mix.battle, max: 1.5, txt: pct(mix.battle), col: mix.battle !== 1 ? '#ffd23a' : 'var(--color-bg)', help: 'How loud the battle song is at full danger.', set: e => set('battle', Number(e.target.value)) },
+      { label: 'FADE THE WORLD SONG UNDER BATTLE', v: mix.duck, max: 1, txt: pct(mix.duck), col: mix.duck !== 0.7 ? '#ffd23a' : 'var(--color-bg)', help: '0 = an even crossfade (both songs heard mid-fade). 100 % = the world song is gone by about a third of the danger, so the battle song plays alone.', set: e => set('duck', Number(e.target.value)) },
+    ];
+    const k = L ? L.mix : 0;
+    const curSet = L ? L.getSet() : 1;
+    return {
+      battles: [[1, 'V1 · RED ALERT', 'Driving bass, alarm stabs, siren lead'], [2, 'V2 · UNDER ATTACK', 'Starship alarm, pounding drums, screaming lead'], [3, 'V3 · ADVENTURE', 'Fast breakbeat, heroic brass, soaring lead']].map(([n, name, sub]) => ({ name, sub, bg: L && n === L.getBattle() ? 'var(--color-accent)' : 'transparent', pick: () => { if (L) { L.setBattle(n); if (!st.danger) { this.setState({ danger: 1 }); L.danger(1); } this.forceUpdate(); } } })),
+      sets: [[1, 'SET 1 · LOFI', 'Today\'s songs, saved'], [2, 'SET 2 · MYSTIC', 'Choirs, bells, deep pads, long echoes']].map(([n, name, sub]) => ({ name, sub, bg: n === curSet ? 'var(--color-accent)' : 'transparent', pick: () => { if (L) { L.setSet(n); this.forceUpdate(); } } })),
+      songs: keys.map(key => ({ title: M ? M.THEMES[key].title : key.toUpperCase(), where: this.WHERE[key] || key.toUpperCase(), bg: key === st.cur ? 'var(--color-accent)' : 'transparent',
+        pick: () => { this.setState({ cur: key }); if (L && st.playing) L.jumpWorld(key); } })),
+      nowTitle: M ? M.THEMES[st.cur].title : '', playTxt: !st.ready ? 'LOADING…' : st.playing ? 'STOP' : 'PLAY',
+      mixTxt: st.playing ? 'World song ' + pct(Math.cos(Math.min(1, k * (1 + mix.duck * 2)) * Math.PI / 2)) + ' · battle song ' + pct(Math.sin(k * Math.PI / 2)) : 'Press PLAY to listen.',
+      playStop: () => { if (!L) return; if (st.playing) { L.stop(); this.setState({ playing: false }); } else this.play(); },
+      sliders, resetMix: () => { if (!L) return; L.setMix({ world: 1, battle: 1, duck: 0.7 }); L.volume(0.5); this.forceUpdate(); },
+    };
+  }
+}
+</script>
+</body>
+</html>

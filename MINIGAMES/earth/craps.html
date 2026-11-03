@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Casino 8 — Craps</title>
+<style>
+  html, body {
+    margin: 0; padding: 0; height: 100%; overflow: hidden; background: #04070d;
+    font-family: 'Trebuchet MS', 'Segoe UI', Arial, sans-serif;
+    color: #dbe7f3; -webkit-text-size-adjust: 100%;
+  }
+  /* THE SAME ROOM AS THE WHEEL NEXT DOOR. Two tables in one casino should look
+     like two tables in one casino, so this page is the roulette page's shell
+     with dice in it. */
+  #stage {
+    position: absolute; left: 50%; top: 50%; width: 1180px; height: 720px;
+    transform-origin: 50% 50%;
+    background:
+      radial-gradient(120% 90% at 50% 0%, rgba(35,70,110,0.55), rgba(4,7,13,0) 60%),
+      linear-gradient(#070c15, #04070d);
+    border: 2px solid #16304a; border-radius: 14px; box-sizing: border-box;
+    display: flex; gap: 18px; padding: 18px;
+  }
+  #left { width: 400px; display: flex; flex-direction: column; gap: 12px; }
+  #right { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+  #diceWrap {
+    position: relative; flex: 1;
+    background: radial-gradient(60% 60% at 50% 42%, rgba(30,60,95,0.5), rgba(6,10,18,0) 70%);
+    border: 1px solid #1d3450; border-radius: 12px;
+  }
+  #dice { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #callBox {
+    position: absolute; left: 0; right: 0; bottom: 10px; text-align: center;
+    font-size: 13px; letter-spacing: 4px; color: #7fd4ff; text-transform: uppercase;
+  }
+  #moneyRow { display: flex; gap: 12px; flex: none; }
+  .money {
+    flex: 1; padding: 8px 14px; background: rgba(10,18,30,0.72);
+    border: 1px solid #1d3450; border-radius: 10px;
+  }
+  .money .k { font-size: 11px; letter-spacing: 3px; color: #6f8aa5; }
+  #purse { font-size: 27px; font-weight: 900; color: #ffd166; }
+  #down { font-size: 27px; font-weight: 900; color: #7fd4ff; }
+  #resultBox {
+    min-height: 84px; display: flex; align-items: center; gap: 14px; padding: 8px 14px;
+    flex: none; box-sizing: border-box;
+    background: rgba(10,18,30,0.72); border: 1px solid #1d3450; border-radius: 10px;
+  }
+  #resultNum {
+    width: 58px; height: 58px; border-radius: 12px; display: flex;
+    align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 900; color: #0a0f18; background: #cfd8e3;
+    border: 2px solid #8fa4b8; flex: none;
+  }
+  #resultMid { min-width: 0; flex: 1; }
+  #resultText { font-size: 13px; letter-spacing: 2px; color: #9fb6cc; }
+  #resultWin { font-size: 19px; font-weight: 900; letter-spacing: 1px; color: #ffd166; }
+  #history { display: flex; gap: 5px; flex-wrap: wrap; max-width: 120px;
+             justify-content: flex-end; flex: none; }
+  .hchip {
+    width: 26px; height: 26px; border-radius: 7px; font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; color: #0a0f18;
+    background: #b9c6d4; border: 1px solid rgba(255,255,255,0.25);
+  }
+  .hchip.seven { background: #d8323b; color: #fff; }
+  .hchip.craps { background: #16181c; color: #e5e5e5; }
+  #feltWrap { flex: 1; position: relative; border-radius: 12px; overflow: hidden; }
+  #felt { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #bar {
+    height: 92px; display: flex; align-items: center; gap: 9px; padding: 0 12px;
+    overflow: hidden;
+    background: rgba(10,18,30,0.72); border: 1px solid #1d3450; border-radius: 10px;
+  }
+  #chipRow { display: flex; gap: 9px; padding: 5px; border-radius: 14px; flex: none;
+             border: 2px solid transparent; transition: border-color .2s ease; }
+  #chipRow.lit {
+    border-color: rgba(127,212,255,0.85);
+    animation: glowRow 1.15s ease-in-out infinite;
+  }
+  @keyframes glowRow {
+    0%, 100% { box-shadow: 0 0 0 rgba(127,212,255,0); }
+    50%      { box-shadow: 0 0 22px rgba(127,212,255,0.55); }
+  }
+  #feltWrap.lit { animation: glowFelt 1.3s ease-in-out infinite; }
+  @keyframes glowFelt {
+    0%, 100% { box-shadow: inset 0 0 0 2px rgba(127,212,255,0.25); }
+    50%      { box-shadow: inset 0 0 0 3px rgba(127,212,255,0.9), 0 0 26px rgba(127,212,255,0.35); }
+  }
+  .chip {
+    width: 52px; height: 52px; border-radius: 50%; cursor: pointer; flex: none;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 16px; color: #0a0f18;
+    border: 3px dashed rgba(255,255,255,0.55); box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+    user-select: none; transition: transform .08s ease;
+  }
+  .chip.sel { outline: 3px solid #ffd166; outline-offset: 3px; transform: translateY(-3px); }
+  button.act {
+    height: 52px; padding: 0 14px; border-radius: 9px; cursor: pointer;
+    background: #132234; color: #cfe6ff; border: 2px solid #2f5b80;
+    font-size: 13px; letter-spacing: 2px; font-weight: 700; flex: none;
+  }
+  button.act:hover { background: #1a2f47; }
+  button.act:disabled { opacity: .35; cursor: default; }
+  #roll {
+    background: linear-gradient(#7a2ea8, #45156a); border-color: #b06fe0; color: #fff;
+    flex: 1 1 auto; min-width: 150px; font-size: 17px;
+  }
+  #roll.pulse { animation: pulseRoll 0.9s ease-in-out infinite; }
+  /* GLOW, NOT MOVEMENT: a button that changes size is a target that moves under
+     a thumb, and one an automated harness will never call stable enough to press. */
+  @keyframes pulseRoll {
+    0%, 100% { box-shadow: 0 0 0 rgba(224,132,255,0);    border-color: #b06fe0; }
+    50%      { box-shadow: 0 0 28px rgba(224,132,255,0.8); border-color: #f0c2ff; }
+  }
+  .coach {
+    position: absolute; pointer-events: none; opacity: 0;
+    transition: opacity .25s ease; z-index: 40;
+    font-size: 19px; font-weight: 900; letter-spacing: 4px; color: #eaf7ff;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.9), 0 0 22px rgba(127,212,255,0.75);
+    text-align: center;
+  }
+  .coach.on { opacity: 1; animation: bob 1.15s ease-in-out infinite; }
+  .coach span {
+    display: inline-block; padding: 7px 16px; border-radius: 999px;
+    background: rgba(8,18,30,0.82); border: 2px solid rgba(127,212,255,0.75);
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+  }
+  #feltHint { left: 0; right: 0; top: 6px; }
+  #barHint { left: 460px; right: 18px; bottom: 104px; }
+  #mark {
+    position: absolute; right: 16px; top: 12px; font-size: 11px; letter-spacing: 5px;
+    color: #35506c;
+  }
+  #back {
+    position: fixed; left: 10px; top: 10px; z-index: 2147483647;
+    padding: 8px 13px; border-radius: 6px; border: 2px solid #5fe3ff;
+    background: rgba(4,10,18,0.92); color: #bff2ff; font-size: 13px;
+    letter-spacing: 2px; font-weight: 700; cursor: pointer;
+    font-family: 'Trebuchet MS', Arial, sans-serif;
+  }
+  #note {
+    position: absolute; left: 0; right: 0; top: 44%; text-align: center;
+    font-size: 40px; font-weight: 900; letter-spacing: 6px; color: #fff;
+    text-shadow: 0 0 24px rgba(140,220,255,.9); pointer-events: none; opacity: 0;
+    transition: opacity .25s ease;
+  }
+</style>
+</head>
+<body>
+<button id="back">&#9664; BACK TO CASINO</button>
+<div id="stage">
+  <div id="mark">8 GATES</div>
+  <div id="left">
+    <div id="diceWrap">
+      <canvas id="dice"></canvas>
+      <div id="callBox">come out roll</div>
+    </div>
+    <div id="moneyRow">
+      <div class="money"><div class="k">YOUR PURSE</div><div id="purse">0</div></div>
+      <div class="money"><div class="k">ON THE TABLE</div><div id="down">0</div></div>
+    </div>
+    <div id="resultBox">
+      <div id="resultNum">&mdash;</div>
+      <div id="resultMid">
+        <div id="resultText">no roll yet</div>
+        <div id="resultWin"></div>
+      </div>
+      <div id="history"></div>
+    </div>
+  </div>
+  <div id="right">
+    <div id="feltWrap"><canvas id="felt"></canvas>
+      <div id="feltHint" class="coach"><span></span></div>
+    </div>
+    <div id="bar">
+      <div id="chipRow">
+        <div class="chip" data-v="1"   style="background:#e8e8e8">1</div>
+        <div class="chip" data-v="5"   style="background:#e0524d">5</div>
+        <div class="chip" data-v="25"  style="background:#3fa45b">25</div>
+        <div class="chip" data-v="100" style="background:#2f6fd0;color:#eaf4ff">100</div>
+      </div>
+      <button class="act" id="undo">UNDO</button>
+      <button class="act" id="clear">CLEAR</button>
+      <button class="act" id="roll">ROLL</button>
+    </div>
+  </div>
+  <div id="note"></div>
+  <div id="barHint" class="coach"><span></span></div>
+</div>
+
+<script>
+(function () {
+'use strict';
+
+/* ===========================================================================
+   CRAPS, at the table that has said CRAPS since build 021 and has never had a
+   game on it.
+
+   THE WHOLE OF CRAPS IS TWO ROUNDS. On the COME OUT, seven and eleven win the
+   line, two three and twelve lose it, and anything else becomes THE POINT. From
+   then on the only two numbers that matter are the point and the seven, and the
+   entire table is people betting on which of those turns up first.
+
+   Everything else on the felt — the place numbers, the field, the hardways, the
+   props — is another way of having an opinion about the same two dice.
+
+   IT KEEPS ITS OWN MONEY, in its own key, like every other game in this
+   building, and it says one thing to its parent, ever: `backToCasino`.
+   ======================================================================== */
+
+var PURSE_KEY = 'craps_fox_credits';
+var TAUGHT_KEY = 'craps_fox_taught';
+var START = 1000;
+var ODDS_CAP = 3;                     // three times the line, which is the cheap house
+
+var S = {
+  purse: START,
+  chip: 5,
+  phase: 'come',                      // 'come' out, or a 'point' is on
+  point: 0,
+  bets: {},                           // id -> amount
+  order: [],                          // the order they went down, for UNDO
+  rolling: false,
+  dice: [1, 1],
+  history: [],
+  pickedChip: false,
+  taught: false,
+};
+
+/* ---- the felt ----------------------------------------------------------- */
+var felt = document.getElementById('felt');
+var fx = felt.getContext('2d');
+var FW = 730, FH = 392;
+
+var PLACE_N = [4, 5, 6, 8, 9, 10];
+
+/* EVERY BOX ON THE TABLE, and the money each one pays. `pay` is written as the
+   odds a croupier would say out loud — 9 to 5 on a place four — and the payout
+   code multiplies by it and hands the stake back on top. */
+function boxes() {
+  var B = [], x, i;
+  var pw = 730 / 6;
+  for (i = 0; i < 6; i++) {
+    var n = PLACE_N[i];
+    B.push({ id: 'place:' + n, x: i * pw + 4, y: 8, w: pw - 8, h: 74,
+             text: String(n), sub: n === 6 || n === 8 ? '7 to 6' : (n === 5 || n === 9 ? '7 to 5' : '9 to 5'),
+             big: true });
+  }
+  B.push({ id: 'dontcome', x: 4, y: 90, w: 186, h: 58, text: "DON'T COME", sub: 'bar 12' });
+  B.push({ id: 'come', x: 196, y: 90, w: 530, h: 58, text: 'COME', sub: '' });
+
+  B.push({ id: 'field', x: 4, y: 156, w: 722, h: 62, text: 'FIELD',
+           sub: '2 3 4 9 10 11 12   ·   2 pays double, 12 pays triple' });
+
+  var props = [['any7', 'ANY 7', '4 to 1'], ['anycraps', 'ANY CRAPS', '7 to 1'],
+               ['p2', '2', '30 to 1'], ['p3', '3', '15 to 1'],
+               ['p11', '11', '15 to 1'], ['p12', '12', '30 to 1']];
+  var ppw = 730 / 6;
+  for (i = 0; i < props.length; i++)
+    B.push({ id: props[i][0], x: i * ppw + 4, y: 226, w: ppw - 8, h: 52,
+             text: props[i][1], sub: props[i][2] });
+
+  var hard = [['h4', 'HARD 4', '7 to 1'], ['h6', 'HARD 6', '9 to 1'],
+              ['h8', 'HARD 8', '9 to 1'], ['h10', 'HARD 10', '7 to 1']];
+  var hpw = 730 / 4;
+  for (i = 0; i < hard.length; i++)
+    B.push({ id: hard[i][0], x: i * hpw + 4, y: 286, w: hpw - 8, h: 44,
+             text: hard[i][1], sub: hard[i][2] });
+
+  B.push({ id: 'dontpass', x: 4, y: 338, w: 200, h: 50, text: "DON'T PASS", sub: 'bar 12' });
+  B.push({ id: 'dpodds', x: 208, y: 338, w: 140, h: 50, text: 'LAY ODDS', sub: 'true odds' });
+  B.push({ id: 'pass', x: 352, y: 338, w: 234, h: 50, text: 'PASS LINE', sub: 'even money' });
+  B.push({ id: 'passodds', x: 590, y: 338, w: 136, h: 50, text: 'ODDS', sub: 'true odds' });
+  return B;
+}
+var BOX = boxes();
+function boxOf(id) { for (var i = 0; i < BOX.length; i++) if (BOX[i].id === id) return BOX[i]; return null; }
+
+/* ---- money -------------------------------------------------------------- */
+function load() {
+  try {
+    var v = parseInt(localStorage.getItem(PURSE_KEY), 10);
+    if (isFinite(v) && v >= 0) S.purse = v;
+    S.taught = localStorage.getItem(TAUGHT_KEY) === '1';
+  } catch (e) {}
+}
+function save() { try { localStorage.setItem(PURSE_KEY, String(S.purse)); } catch (e) {} }
+function taught() {
+  S.taught = true;
+  try { localStorage.setItem(TAUGHT_KEY, '1'); } catch (e) {}
+}
+
+var AC = null;
+function blip(f, len, type, vol) {
+  try {
+    if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+    var o = AC.createOscillator(), g = AC.createGain();
+    o.type = type || 'square'; o.frequency.value = f;
+    g.gain.value = vol === undefined ? 0.05 : vol;
+    g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + len);
+    o.connect(g); g.connect(AC.destination);
+    o.start(); o.stop(AC.currentTime + len);
+  } catch (e) {}
+}
+
+/* ---- what you are allowed to bet, and when ------------------------------ */
+/* A TABLE SAYS NO BY NOT TAKING THE CHIP. Odds behind a line with no point on
+   it, or a come bet on a come-out roll, are not decisions a player gets to make
+   at a real table — the dealer just does not let the chip land there. */
+function allowed(id) {
+  if (id === 'come' || id === 'dontcome') return S.phase === 'point';
+  if (id === 'passodds') return S.phase === 'point' && (S.bets.pass || 0) > 0;
+  if (id === 'dpodds') return S.phase === 'point' && (S.bets.dontpass || 0) > 0;
+  if (id === 'pass' || id === 'dontpass') return S.phase === 'come';
+  return true;
+}
+function refuse(id) {
+  if (id === 'come' || id === 'dontcome') return 'NOT ON A COME OUT';
+  if (id === 'passodds') return (S.bets.pass || 0) > 0 ? 'NO POINT YET' : 'BET THE LINE FIRST';
+  if (id === 'dpodds') return (S.bets.dontpass || 0) > 0 ? 'NO POINT YET' : "BET DON'T PASS FIRST";
+  if (id === 'pass' || id === 'dontpass') return 'THE POINT IS ON';
+  return 'NOT NOW';
+}
+function cap(id) {
+  /* AND THE ODDS ARE CAPPED, because free odds are the only bet in this
+     building the house has no edge on and a table that let you back a five
+     dollar line with a thousand dollars of odds would be a charity. */
+  if (id === 'passodds') return (S.bets.pass || 0) * ODDS_CAP;
+  if (id === 'dpodds') return (S.bets.dontpass || 0) * ODDS_CAP;
+  return Infinity;
+}
+
+function place(id) {
+  if (S.rolling || !id) return;
+  if (!allowed(id)) { flash(refuse(id)); blip(130, 0.14, 'sawtooth', 0.04); return; }
+  if (S.purse < S.chip) { flash('NOT ENOUGH'); blip(120, 0.15, 'sawtooth', 0.04); return; }
+  var lim = cap(id);
+  if ((S.bets[id] || 0) + S.chip > lim) {
+    flash('ODDS ARE CAPPED AT ' + ODDS_CAP + 'x'); blip(130, 0.14, 'sawtooth', 0.04); return;
+  }
+  S.bets[id] = (S.bets[id] || 0) + S.chip;
+  S.order.push({ id: id, amt: S.chip });
+  S.purse -= S.chip;
+  S.pickedChip = true;
+  save();
+  blip(520, 0.05, 'square', 0.035);
+  sync();
+}
+
+function undo() {
+  if (S.rolling || !S.order.length) return;
+  var last = S.order.pop();
+  S.bets[last.id] -= last.amt;
+  if (S.bets[last.id] <= 0) delete S.bets[last.id];
+  S.purse += last.amt;
+  save(); sync();
+}
+function clearBets() {
+  if (S.rolling) return;
+  /* THE CONTRACT BETS STAY. A pass line bet with a point on it cannot be taken
+     back — that is the whole of what a contract bet means, and it is the one
+     rule of this game somebody will notice missing. */
+  for (var id in S.bets) {
+    if (S.phase === 'point' && (id === 'pass' || id.indexOf('come:') === 0)) continue;
+    S.purse += S.bets[id];
+    delete S.bets[id];
+  }
+  S.order = S.order.filter(function (o) {
+    return S.phase === 'point' && (o.id === 'pass' || o.id.indexOf('come:') === 0);
+  });
+  save(); sync();
+}
+
+function totalDown() {
+  var t = 0; for (var k in S.bets) t += S.bets[k]; return t;
+}
+
+/* ---- the dice ----------------------------------------------------------- */
+var dice = document.getElementById('dice');
+var dx = dice.getContext('2d');
+var D = { t: 0, dur: 0, show: [1, 1] };
+
+function pips(ctx, n, s) {
+  var q = s * 0.25, c = 0;
+  var spots = {
+    1: [[0, 0]], 2: [[-q, -q], [q, q]], 3: [[-q, -q], [0, 0], [q, q]],
+    4: [[-q, -q], [q, -q], [-q, q], [q, q]],
+    5: [[-q, -q], [q, -q], [0, 0], [-q, q], [q, q]],
+    6: [[-q, -q], [q, -q], [-q, 0], [q, 0], [-q, q], [q, q]],
+  }[n] || [];
+  ctx.fillStyle = '#1a1108';
+  for (c = 0; c < spots.length; c++) {
+    ctx.beginPath();
+    ctx.arc(spots[c][0], spots[c][1], s * 0.085, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function drawDice() {
+  var w = dice.width, h = dice.height, k = Math.min(w, h);
+  dx.setTransform(1, 0, 0, 1, 0, 0);
+  dx.clearRect(0, 0, w, h);
+
+  // the point puck, up in the corner of the table
+  var pr = k * 0.10;
+  dx.save();
+  dx.translate(w * 0.5, h * 0.17);
+  dx.beginPath(); dx.arc(0, 0, pr, 0, Math.PI * 2);
+  dx.fillStyle = S.phase === 'point' ? '#e8e2d0' : '#12161f';
+  dx.fill();
+  dx.lineWidth = 4; dx.strokeStyle = S.phase === 'point' ? '#ffd166' : '#3a4658';
+  dx.stroke();
+  dx.fillStyle = S.phase === 'point' ? '#0f1520' : '#7b8ea1';
+  dx.font = '900 ' + Math.round(pr * 0.7) + 'px Trebuchet MS, Arial';
+  dx.textAlign = 'center'; dx.textBaseline = 'middle';
+  dx.fillText(S.phase === 'point' ? String(S.point) : 'OFF', 0, 2);
+  dx.font = '700 ' + Math.round(pr * 0.3) + 'px Trebuchet MS, Arial';
+  dx.fillText(S.phase === 'point' ? 'ON' : '', 0, -pr * 0.55);
+  dx.restore();
+
+  var s = k * 0.30, gap = s * 0.34;
+  var cy = h * 0.58;
+  for (var i = 0; i < 2; i++) {
+    var cx = w / 2 + (i === 0 ? -(s / 2 + gap / 2) : (s / 2 + gap / 2));
+    var wob = S.rolling ? Math.sin((D.t + i * 7) * 0.5) * 0.22 : 0;
+    var lift = S.rolling ? Math.abs(Math.sin((D.t + i * 5) * 0.35)) * s * 0.18 : 0;
+    dx.save();
+    dx.translate(cx, cy - lift);
+    dx.rotate(wob);
+    dx.fillStyle = 'rgba(0,0,0,0.45)';
+    dx.beginPath(); dx.roundRect(-s / 2 + 4, -s / 2 + 8, s, s, s * 0.18); dx.fill();
+    var g = dx.createLinearGradient(-s / 2, -s / 2, s / 2, s / 2);
+    g.addColorStop(0, '#fffdf6'); g.addColorStop(1, '#d8cfbb');
+    dx.fillStyle = g;
+    dx.beginPath(); dx.roundRect(-s / 2, -s / 2, s, s, s * 0.18); dx.fill();
+    dx.lineWidth = 2; dx.strokeStyle = '#9a907c'; dx.stroke();
+    pips(dx, D.show[i], s);
+    dx.restore();
+  }
+  dx.setTransform(1, 0, 0, 1, 0, 0);
+}
+
+/* ---- a roll ------------------------------------------------------------- */
+function roll() {
+  if (S.rolling) return;
+  if (S.phase === 'come' && !(S.bets.pass || S.bets.dontpass)) {
+    flash('BET THE LINE FIRST'); blip(130, 0.14, 'sawtooth', 0.04); return;
+  }
+  if (!totalDown()) { flash('NOTHING IS DOWN'); return; }
+  S.rolling = true;
+  D.t = 0; D.dur = 64 + Math.floor(Math.random() * 16);
+  setCall('the dice are out');
+  blip(300, 0.06, 'square', 0.04);
+  sync();
+}
+
+/* WHAT TWO DICE DID TO EVERY BET ON THE TABLE.
+   Returns what was won; anything resolved is taken off. */
+function settle(a, b) {
+  var t = a + b, hard = a === b;
+  /* WHICH ROUND THIS ROLL BELONGED TO, taken before anything is resolved. The
+     line is settled halfway down this function and can flip the table from a
+     point back to a come out — and a come bet that travelled by looking at
+     `S.phase` afterwards would be reading the NEXT round's rules for a roll
+     that happened in this one. */
+  var wasPoint = S.phase === 'point';
+  var won = 0, notes = [];
+  var B = S.bets;
+
+  function pay(id, odds) {                 // odds to one, stake comes back too
+    if (!B[id]) return;
+    won += B[id] + Math.round(B[id] * odds);
+    notes.push(id);
+    delete B[id];
+  }
+  function lose(id) { if (B[id]) delete B[id]; }
+  function trueOdds(n) { return (n === 4 || n === 10) ? 2 : (n === 5 || n === 9) ? 1.5 : 6 / 5; }
+  function layOdds(n) { return 1 / trueOdds(n); }
+
+  /* ---- the one-roll bets, which do not care what round it is ---------- */
+  if (B.field) {
+    if (t === 2) pay('field', 2);
+    else if (t === 12) pay('field', 3);
+    else if (t === 3 || t === 4 || t === 9 || t === 10 || t === 11) pay('field', 1);
+    else lose('field');
+  }
+  if (B.any7) { if (t === 7) pay('any7', 4); else lose('any7'); }
+  if (B.anycraps) { if (t === 2 || t === 3 || t === 12) pay('anycraps', 7); else lose('anycraps'); }
+  if (B.p2) { if (t === 2) pay('p2', 30); else lose('p2'); }
+  if (B.p3) { if (t === 3) pay('p3', 15); else lose('p3'); }
+  if (B.p11) { if (t === 11) pay('p11', 15); else lose('p11'); }
+  if (B.p12) { if (t === 12) pay('p12', 30); else lose('p12'); }
+
+  /* ---- the hardways, which sit there until the number or a seven ------ */
+  [[4, 'h4', 7], [6, 'h6', 9], [8, 'h8', 9], [10, 'h10', 7]].forEach(function (h) {
+    if (!B[h[1]]) return;
+    if (t === 7) { lose(h[1]); return; }
+    if (t !== h[0]) return;
+    if (hard) pay(h[1], h[2]); else lose(h[1]);   // the easy way kills it
+  });
+
+  /* ---- the come and don't come bets that already travelled ------------ */
+  PLACE_N.concat([]).forEach(function (n) {
+    if (B['come:' + n]) {
+      if (t === n) pay('come:' + n, 1);
+      else if (t === 7) lose('come:' + n);
+    }
+    if (B['dc:' + n]) {
+      if (t === 7) pay('dc:' + n, 1);
+      else if (t === n) lose('dc:' + n);
+    }
+  });
+
+  /* ---- the place bets, which are OFF on a come out -------------------- */
+  if (wasPoint) {
+    PLACE_N.forEach(function (n) {
+      var id = 'place:' + n;
+      if (!B[id]) return;
+      if (t === n) pay(id, n === 6 || n === 8 ? 7 / 6 : (n === 5 || n === 9 ? 7 / 5 : 9 / 5));
+      else if (t === 7) lose(id);
+    });
+  }
+
+  /* ---- and the line, which is the whole game -------------------------- */
+  if (!wasPoint) {
+    if (t === 7 || t === 11) { pay('pass', 1); lose('dontpass'); }
+    else if (t === 2 || t === 3) { lose('pass'); pay('dontpass', 1); }
+    else if (t === 12) { lose('pass'); notes.push('push'); }   // bar twelve
+    else {
+      S.point = t; S.phase = 'point';
+      setCall('the point is ' + t);
+    }
+  } else {
+    var p = S.point;
+    if (t === p) {
+      pay('pass', 1);
+      if (B.passodds) pay('passodds', trueOdds(p));
+      lose('dontpass'); lose('dpodds');
+      S.phase = 'come'; S.point = 0;
+    } else if (t === 7) {
+      lose('pass'); lose('passodds');
+      pay('dontpass', 1);
+      if (B.dpodds) pay('dpodds', layOdds(p));
+      S.phase = 'come'; S.point = 0;
+      /* SEVEN OUT TAKES THE WHOLE TABLE WITH IT — every come bet, every place
+         bet, everything that was waiting for a number. They were cleared above;
+         this is only what the felt says about it. */
+      notes.push('seven out');
+    }
+    /* A COME BET IS A LINE BET THAT STARTS LATE. Its own come out is whatever
+       roll it happens to be sitting there for: seven and eleven win it, two
+       three and twelve lose it, and any point number carries it into that
+       number's box — including the roll that seven-outs everybody else, which
+       is the one thing about a come bet that reads as a bug and is not. */
+    var travels = PLACE_N.indexOf(t) >= 0;
+    if (S.bets.come) {
+      if (travels) {
+        S.bets['come:' + t] = (S.bets['come:' + t] || 0) + S.bets.come;
+        delete S.bets.come;
+      } else if (t === 7 || t === 11) pay('come', 1);
+      else lose('come');                       // 2, 3 or 12
+    }
+    if (S.bets.dontcome) {
+      if (travels) {
+        S.bets['dc:' + t] = (S.bets['dc:' + t] || 0) + S.bets.dontcome;
+        delete S.bets.dontcome;
+      } else if (t === 2 || t === 3) pay('dontcome', 1);
+      else if (t === 7 || t === 11) lose('dontcome');
+      // twelve is a push and the bet stays where it is
+    }
+  }
+
+  S.purse += won;
+  taught();
+  save();
+  S.order = [];                    // the table is settled; UNDO starts again
+  return { won: won, total: t, hard: hard, notes: notes };
+}
+
+function finishRoll() {
+  var a = 1 + Math.floor(Math.random() * 6), b = 1 + Math.floor(Math.random() * 6);
+  D.show = [a, b];
+  S.dice = [a, b];
+  var wasPoint = S.phase === 'point' ? S.point : 0;
+  var r = settle(a, b);
+  S.rolling = false;
+  S.history.unshift(r.total);
+  if (S.history.length > 10) S.history.pop();
+
+  var el = document.getElementById('resultNum');
+  el.textContent = String(r.total);
+  el.style.background = r.total === 7 ? '#d8323b' :
+    (r.total === 2 || r.total === 3 || r.total === 12) ? '#16181c' : '#cfd8e3';
+  el.style.color = (r.total === 7 || r.total === 2 || r.total === 3 || r.total === 12)
+    ? '#fff' : '#0a0f18';
+
+  var what = a + ' and ' + b + (r.hard ? '  ·  the hard way' : '');
+  if (S.phase === 'point') what += '  ·  point is ' + S.point;
+  else if (wasPoint && r.total === 7) what += '  ·  seven out';
+  else if (wasPoint) what += '  ·  the point is made';
+  document.getElementById('resultText').textContent = what;
+  document.getElementById('resultWin').textContent = r.won ? '+' + r.won : '';
+  document.getElementById('resultWin').style.color = r.won ? '#ffd166' : '#7b8ea1';
+
+  if (r.won) { flash('+' + r.won); blip(660, 0.12, 'triangle', 0.06);
+               setTimeout(function () { blip(990, 0.16, 'triangle', 0.05); }, 110); }
+  else if (r.total === 7 && wasPoint) { flash('SEVEN OUT'); blip(140, 0.3, 'sawtooth', 0.04); }
+  else blip(200, 0.12, 'square', 0.03);
+
+  setCall(S.phase === 'point' ? 'the point is ' + S.point : 'come out roll');
+  sync();
+}
+
+function flash(t) {
+  var el = document.getElementById('note');
+  el.textContent = t; el.style.opacity = '1';
+  setTimeout(function () { el.style.opacity = '0'; }, 900);
+}
+function setCall(t) { document.getElementById('callBox').textContent = t; }
+
+/* ---- drawing the felt --------------------------------------------------- */
+function feltFit() {
+  var k = Math.min(felt.width / FW, felt.height / FH);
+  return { k: k, ox: (felt.width - FW * k) / 2, oy: (felt.height - FH * k) / 2 };
+}
+
+function drawFelt() {
+  fx.setTransform(1, 0, 0, 1, 0, 0);
+  fx.clearRect(0, 0, felt.width, felt.height);
+  var F = feltFit();
+  fx.setTransform(F.k, 0, 0, F.k, F.ox, F.oy);
+
+  fx.fillStyle = '#0b3a25';
+  fx.fillRect(0, 0, FW, FH);
+  fx.strokeStyle = 'rgba(255,255,255,0.07)';
+  fx.lineWidth = 1;
+  for (var i = 0; i < 40; i++) {
+    fx.beginPath(); fx.moveTo(0, i * 11); fx.lineTo(FW, i * 11 - 40); fx.stroke();
+  }
+
+  for (var b = 0; b < BOX.length; b++) {
+    var o = BOX[b];
+    var live = allowed(o.id);
+    var isPoint = S.phase === 'point' && o.id === 'place:' + S.point;
+    fx.fillStyle = isPoint ? 'rgba(255,209,102,0.16)'
+                 : live ? 'rgba(0,0,0,0.20)' : 'rgba(0,0,0,0.42)';
+    fx.fillRect(o.x, o.y, o.w, o.h);
+    fx.strokeStyle = isPoint ? '#ffd166' : (live ? '#e8e2d0' : '#5d7a68');
+    fx.lineWidth = isPoint ? 3 : 2;
+    fx.strokeRect(o.x, o.y, o.w, o.h);
+
+    fx.fillStyle = live ? '#f4f1e6' : '#88a394';
+    fx.textAlign = 'center'; fx.textBaseline = 'middle';
+    fx.font = '900 ' + (o.big ? 30 : 15) + 'px Trebuchet MS, Arial';
+    fx.fillText(o.text, o.x + o.w / 2, o.y + (o.sub ? o.h * 0.40 : o.h / 2));
+    if (o.sub) {
+      fx.font = '700 11px Trebuchet MS, Arial';
+      fx.fillStyle = live ? 'rgba(240,236,220,0.72)' : 'rgba(136,163,148,0.8)';
+      fx.fillText(o.sub, o.x + o.w / 2, o.y + o.h * 0.76);
+    }
+    /* THE PUCK SITS ON THE POINT, on the felt, where a real one does. */
+    if (isPoint) {
+      fx.beginPath(); fx.arc(o.x + o.w - 16, o.y + 15, 11, 0, Math.PI * 2);
+      fx.fillStyle = '#e8e2d0'; fx.fill();
+      fx.strokeStyle = '#ffd166'; fx.lineWidth = 2; fx.stroke();
+      fx.fillStyle = '#0f1520'; fx.font = '900 8px Trebuchet MS, Arial';
+      fx.fillText('ON', o.x + o.w - 16, o.y + 16);
+    }
+  }
+
+  // and the chips on top of them
+  for (var id in S.bets) {
+    var pos = chipSpot(id);
+    if (pos) drawChip(pos.x, pos.y, S.bets[id]);
+  }
+}
+
+/* WHERE A CHIP FOR THIS BET SITS. A come bet that has travelled to the six has
+   no box of its own on the felt — it lives in the six, up in the corner of it,
+   which is exactly where the dealer would have put it. */
+function chipSpot(id) {
+  var o = boxOf(id);
+  if (o) return { x: o.x + o.w / 2, y: o.y + o.h - 16 };
+  var m = /^come:(\d+)$/.exec(id);
+  if (m) { o = boxOf('place:' + m[1]); return o ? { x: o.x + 22, y: o.y + 20 } : null; }
+  m = /^dc:(\d+)$/.exec(id);
+  if (m) { o = boxOf('place:' + m[1]); return o ? { x: o.x + o.w - 22, y: o.y + 56 } : null; }
+  return null;
+}
+
+var CHIPCOL = { 1: '#e8e8e8', 5: '#e0524d', 25: '#3fa45b', 100: '#2f6fd0' };
+function chipColour(v) {
+  return v >= 100 ? CHIPCOL[100] : v >= 25 ? CHIPCOL[25] : v >= 5 ? CHIPCOL[5] : CHIPCOL[1];
+}
+function drawChip(x, y, amt) {
+  fx.save();
+  fx.translate(x, y);
+  fx.beginPath(); fx.arc(0, 3, 14, 0, Math.PI * 2);
+  fx.fillStyle = 'rgba(0,0,0,0.45)'; fx.fill();
+  fx.beginPath(); fx.arc(0, 0, 14, 0, Math.PI * 2);
+  fx.fillStyle = chipColour(amt); fx.fill();
+  fx.lineWidth = 3; fx.setLineDash([5, 4]);
+  fx.strokeStyle = 'rgba(255,255,255,0.75)'; fx.stroke();
+  fx.setLineDash([]);
+  fx.fillStyle = amt >= 100 ? '#eaf4ff' : '#0a0f18';
+  fx.font = '900 ' + (amt > 999 ? 9 : amt > 99 ? 10 : 12) + 'px Trebuchet MS, Arial';
+  fx.textAlign = 'center'; fx.textBaseline = 'middle';
+  fx.fillText(String(amt), 0, 1);
+  fx.restore();
+}
+
+function feltHit(x, y) {
+  for (var i = 0; i < BOX.length; i++) {
+    var o = BOX[i];
+    if (x >= o.x && x <= o.x + o.w && y >= o.y && y <= o.y + o.h) return o.id;
+  }
+  return null;
+}
+
+/* ---- the coach ---------------------------------------------------------- */
+/* THREE THINGS NOBODY IS BORN KNOWING, and at a craps table the second one is
+   not "put a chip anywhere" — a come out roll with nothing on the line is not a
+   round of craps at all, so the hint names the box. */
+function coach() {
+  var chipRow = document.getElementById('chipRow');
+  var feltWrap = document.getElementById('feltWrap');
+  var rollBtn = document.getElementById('roll');
+  var fh = document.getElementById('feltHint');
+  var bh = document.getElementById('barHint');
+
+  var lineOn = (S.bets.pass || 0) + (S.bets.dontpass || 0) > 0;
+  var step = 'none';
+  if (!S.rolling) {
+    if (S.phase === 'come' && !lineOn) step = S.pickedChip || S.taught ? 'line' : 'chip';
+    else if (totalDown()) step = 'roll';
+  }
+
+  chipRow.classList.toggle('lit', step === 'chip');
+  feltWrap.classList.toggle('lit', step === 'line' && !S.taught);
+  rollBtn.classList.toggle('pulse', step === 'roll');
+
+  var barWord = step === 'chip' ? 'BET HOW MUCH?'
+              : (step === 'roll' && !S.taught) ? 'NOW ROLL THEM' : '';
+  bh.querySelector('span').textContent = barWord;
+  bh.classList.toggle('on', !!barWord);
+
+  var feltWord = (step === 'line' && !S.taught) ? 'BET THE PASS LINE' : '';
+  fh.querySelector('span').textContent = feltWord;
+  fh.classList.toggle('on', !!feltWord);
+}
+
+function sync() {
+  if (S.purse <= 0 && !totalDown() && !S.rolling) {
+    S.purse = 100; save();
+    flash('THE HOUSE STAKES YOU');
+  }
+  document.getElementById('purse').textContent = S.purse;
+  document.getElementById('down').textContent = totalDown();
+  document.getElementById('roll').disabled = S.rolling || !totalDown();
+  document.getElementById('undo').disabled = S.rolling || !S.order.length;
+  document.getElementById('clear').disabled = S.rolling || !totalDown();
+  var h = document.getElementById('history');
+  h.innerHTML = '';
+  for (var i = 0; i < S.history.length; i++) {
+    var n = S.history[i], d = document.createElement('div');
+    d.className = 'hchip' + (n === 7 ? ' seven' : (n === 2 || n === 3 || n === 12 ? ' craps' : ''));
+    d.textContent = String(n);
+    d.style.opacity = String(1 - i * 0.06);
+    h.appendChild(d);
+  }
+  drawFelt();
+  coach();
+}
+
+/* ---- the loop ----------------------------------------------------------- */
+function tick() {
+  if (S.rolling) {
+    D.t++;
+    if (D.t % 3 === 0) D.show = [1 + Math.floor(Math.random() * 6),
+                                 1 + Math.floor(Math.random() * 6)];
+    if (D.t % 12 === 0) blip(900 + Math.random() * 400, 0.02, 'square', 0.02);
+    if (D.t >= D.dur) finishRoll();
+  }
+  drawDice();
+  requestAnimationFrame(tick);
+}
+
+/* ---- wiring ------------------------------------------------------------- */
+function feltPoint(ev) {
+  var r = felt.getBoundingClientRect();
+  var t = (ev.touches && ev.touches[0]) || ev;
+  var F = feltFit();
+  var cx = (t.clientX - r.left) * (felt.width / r.width);
+  var cy = (t.clientY - r.top) * (felt.height / r.height);
+  return { x: (cx - F.ox) / F.k, y: (cy - F.oy) / F.k };
+}
+felt.addEventListener('click', function (ev) {
+  var p = feltPoint(ev);
+  place(feltHit(p.x, p.y));
+});
+felt.addEventListener('mousemove', function (ev) {
+  var p = feltPoint(ev);
+  felt.style.cursor = feltHit(p.x, p.y) ? 'pointer' : 'default';
+});
+
+var chips = document.querySelectorAll('.chip');
+for (var ci = 0; ci < chips.length; ci++) {
+  (function (el) {
+    el.addEventListener('click', function () {
+      S.chip = parseInt(el.getAttribute('data-v'), 10);
+      S.pickedChip = true;
+      for (var k = 0; k < chips.length; k++) chips[k].classList.remove('sel');
+      el.classList.add('sel');
+      blip(700, 0.04, 'square', 0.03);
+      coach();
+    });
+  })(chips[ci]);
+}
+document.querySelector('.chip[data-v="5"]').classList.add('sel');
+
+document.getElementById('roll').addEventListener('click', roll);
+document.getElementById('undo').addEventListener('click', undo);
+document.getElementById('clear').addEventListener('click', clearBets);
+
+function goBack(e) {
+  if (e) e.preventDefault();
+  try { parent.postMessage('backToCasino', '*'); } catch (err) {}
+}
+document.getElementById('back').addEventListener('click', goBack);
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') goBack();
+  if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); roll(); }
+});
+
+function fit() {
+  var w = window.innerWidth, h = window.innerHeight;
+  var k = Math.min(w / 1180, h / 720);
+  document.getElementById('stage').style.transform =
+    'translate(-50%,-50%) scale(' + k + ')';
+  var dpr = Math.min(2, window.devicePixelRatio || 1);
+  felt.width = Math.round(felt.clientWidth * dpr);
+  felt.height = Math.round(felt.clientHeight * dpr);
+  dice.width = Math.round(dice.clientWidth * dpr);
+  dice.height = Math.round(dice.clientHeight * dpr);
+  drawFelt(); drawDice();
+}
+window.addEventListener('resize', function () { setTimeout(fit, 60); });
+window.addEventListener('orientationchange', function () { setTimeout(fit, 300); });
+
+load();
+fit();
+sync();
+tick();
+})();
+</script>
+</body>
+</html>

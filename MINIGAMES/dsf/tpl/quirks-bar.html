@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="6f29f2a7-38a2-4b3a-8c0b-24008920ec92"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+
+<style>/* Modernist — design-system tokens and component classes. This file is the source of truth for the system's look; retune it here and see readme.md. */
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("479eb537-f9ed-46e5-9d97-06486103d9a9") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("3a031771-2083-482f-8720-3ec6451073d7") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("1fc0dfce-219f-46f9-b858-3f2c03cc6627") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("479eb537-f9ed-46e5-9d97-06486103d9a9") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("3a031771-2083-482f-8720-3ec6451073d7") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("1fc0dfce-219f-46f9-b858-3f2c03cc6627") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("479eb537-f9ed-46e5-9d97-06486103d9a9") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("3a031771-2083-482f-8720-3ec6451073d7") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("1fc0dfce-219f-46f9-b858-3f2c03cc6627") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+
+:root {
+  --color-bg: #f3f2f2;
+  --color-surface: #eae9e9;
+  --color-text: #201e1d;
+  --color-accent: #ec3013;
+  --color-accent-2: #e15b47;
+  --color-divider: color-mix(in srgb, #201e1d 40%, transparent);
+
+  /* Tonal ramps — generated in OKLCH on one shared lightness scale, so the
+     same step of any role matches the others in visual value. */
+  --color-neutral-100: #f8f4f4;
+  --color-neutral-200: #eae7e7;
+  --color-neutral-300: #d7d3d3;
+  --color-neutral-400: #bab6b6;
+  --color-neutral-500: #9b9797;
+  --color-neutral-600: #7d7979;
+  --color-neutral-700: #605d5d;
+  --color-neutral-800: #444141;
+  --color-neutral-900: #2d2b2b;
+
+  --color-accent-100: #fff2ef;
+  --color-accent-200: #ffe0d9;
+  --color-accent-300: #ffc4b8;
+  --color-accent-400: #ff9783;
+  --color-accent-500: #ff563c;
+  --color-accent-600: #dd2b0f;
+  --color-accent-700: #ae1800;
+  --color-accent-800: #7c1405;
+  --color-accent-900: #4d170e;
+
+  --color-accent-2-100: #fff2ef;
+  --color-accent-2-200: #ffe0da;
+  --color-accent-2-300: #ffc4b9;
+  --color-accent-2-400: #ff9784;
+  --color-accent-2-500: #ef6853;
+  --color-accent-2-600: #c94b39;
+  --color-accent-2-700: #9e3526;
+  --color-accent-2-800: #71261b;
+  --color-accent-2-900: #471d16;
+
+  --font-heading: "Archivo", system-ui, sans-serif;
+  --font-heading-weight: 800;
+  --font-body: "Archivo", system-ui, sans-serif;
+
+  --space-1: 4.0px;
+  --space-2: 8.0px;
+  --space-3: 12.0px;
+  --space-4: 16.0px;
+  --space-6: 24.0px;
+  --space-8: 32.0px;
+
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+
+  /* Elevation — derived from the ground: soft ink-tinted shadows on a
+     light theme, a hairline edge + ambient darkness on a dark one. */
+  --shadow-sm: 0 1px 2px color-mix(in srgb, #2d2b2b 14%, transparent);
+  --shadow-md: 0 3px 10px color-mix(in srgb, #2d2b2b 16%, transparent);
+  --shadow-lg: 0 12px 32px color-mix(in srgb, #2d2b2b 22%, transparent);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: var(--font-heading-weight); }
+
+.grayscale{filter:grayscale(1) contrast(1.08)}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Components — built with the tokens above. Plain CSS
+   on plain HTML: no JavaScript, no build step. Each class is documented in
+   readme.md and demonstrated in foundations/ and components/.
+   ══════════════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-size: 15px; line-height: 1.55; font-weight: 400; }
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 var(--space-2);
+}
+h1 { font-size: 42px; }
+h2 { font-size: 32px; }
+h3 { font-size: 25px; }
+h4 { font-size: 20px; }
+h5 { font-size: 16px; }
+h6 { font-size: 13px; }
+h6 { letter-spacing: 0.08em; text-transform: uppercase; }
+p { margin: 0 0 var(--space-3); }
+a { color: var(--color-accent); text-underline-offset: 3px; }
+img { display: block; max-width: 100%; }
+figure { margin: 0; }
+figcaption {
+  font-size: 11px; margin-top: var(--space-1);
+  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+}
+.text-muted { color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
+
+/* — rules — */
+.hr {
+  height: 2px; border: 0; margin: var(--space-4) 0;
+  background: var(--color-divider);
+}
+
+/* — buttons — */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  cursor: pointer; text-decoration: none;
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 14px; line-height: 1.2; color: var(--color-text); /* matches the .input's 14px —
+     the pair sits side by side in sign-up rows */
+  background: transparent; border: 1px solid transparent;
+  padding: var(--space-2) calc(var(--space-3) * 1.2);
+  border-radius: var(--radius-md);
+}
+.btn svg { display: block; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-primary { background: var(--color-accent); color: var(--color-bg); }
+.btn-primary:hover { background: var(--color-accent-600); }
+.btn-primary:active { background: var(--color-accent-700); }
+.btn-secondary { border-color: var(--color-divider); }
+.btn-secondary:hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.btn-secondary:active { background: color-mix(in srgb, var(--color-text) 14%, transparent); }
+.btn-ghost { color: var(--color-accent); padding-inline: var(--space-1); }
+.btn-ghost:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+.btn-ghost:active { background: color-mix(in srgb, var(--color-accent) 18%, transparent); }
+.btn-icon { width: 36px; height: 36px; padding: 0; }
+.btn-block { width: 100%; margin-top: var(--space-2); justify-content: flex-start; text-align: left; }
+
+/* — forms — */
+.field > label {
+  display: block; font-size: 12px; margin-bottom: 5px;
+  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+}
+.input {
+  width: 100%; min-height: 36px; padding: 6px 10px; font: inherit;
+  font-size: 14px; color: var(--color-text); caret-color: var(--color-accent);
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+}
+.input:hover { border-color: color-mix(in srgb, var(--color-text) 45%, transparent); }
+.input:focus-visible { border-color: var(--color-accent); outline-offset: 0; }
+textarea.input { min-height: 90px; resize: vertical; }
+.radio { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
+.radio input, .seg-opt input {
+  position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;
+}
+.radio .dot {
+  width: 16px; height: 16px; flex: none; border-radius: 50%;
+  border: 1.5px solid var(--color-divider);
+}
+.radio:hover .dot { border-color: var(--color-accent); }
+.radio input:checked + .dot {
+  border-color: var(--color-accent); background: var(--color-accent);
+  box-shadow: inset 0 0 0 4px var(--color-bg);
+}
+.radio input:focus-visible + .dot { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.seg {
+  display: inline-flex; overflow: hidden;
+  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+}
+.seg-opt {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 12px; font-size: 13px; cursor: pointer;
+}
+.seg-opt + .seg-opt { border-left: 1px solid var(--color-divider); }
+.seg-opt:has(input:checked) { background: var(--color-accent); color: var(--color-bg); }
+.seg-opt:not(:has(input:checked)):hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.seg-opt:has(input:focus-visible) { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+
+/* — cards — */
+.card {
+  display: flex; flex-direction: column; gap: var(--space-2);
+  padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-surface);
+}
+.card-kicker { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent); }
+.card-title {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 17px; line-height: 1.2;
+}
+.card-body { margin: 0; font-size: 13px; opacity: 0.8; flex: 1; }
+.card-meta {
+  display: flex; align-items: center; gap: 6px; font-size: 11px;
+  color: color-mix(in srgb, var(--color-text) 50%, transparent);
+}
+.elev-sm { box-shadow: var(--shadow-sm); }
+.elev-md { box-shadow: var(--shadow-md); }
+.elev-lg { box-shadow: var(--shadow-lg); }
+
+/* — tags — */
+.tag {
+  display: inline-flex; align-items: center; font-size: 11px;
+  letter-spacing: 0.02em; padding: 3px 10px;
+  border-radius: calc(var(--radius-md) * 0.75);
+}
+.tag-accent { background: var(--color-accent-100); color: var(--color-accent-800); }
+.tag-accent-2 { background: var(--color-accent-2-100); color: var(--color-accent-2-800); }
+.tag-neutral { background: var(--color-neutral-100); color: var(--color-neutral-800); }
+.tag-outline { border: 1px solid var(--color-accent); color: var(--color-accent); }
+
+/* — navigation — */
+.nav {
+  display: flex; align-items: center; gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 2px solid var(--color-divider);
+}
+.nav-brand {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 18px; margin-right: auto;
+}
+.nav a { color: inherit; text-decoration: none; font-size: 14px; }
+.nav a:hover, .nav a[aria-current='page'] { color: var(--color-accent); }
+
+/* — tables — */
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table th {
+  text-align: left; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  padding: var(--space-2); border-bottom: 2px solid var(--color-divider);
+}
+.table td {
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--color-divider);
+}
+.table tbody tr:hover { background: color-mix(in srgb, var(--color-text) 4%, transparent); }
+
+/* — dialog — */
+.dialog-backdrop {
+  position: fixed; inset: 0; display: grid; place-items: center;
+  padding: var(--space-4);
+  background: color-mix(in srgb, var(--color-neutral-900) 50%, transparent);
+}
+.dialog {
+  width: min(440px, 100%); display: flex; flex-direction: column; gap: var(--space-3);
+  padding: var(--space-4); border-radius: var(--radius-lg);
+  background: var(--color-surface); box-shadow: var(--shadow-lg);
+}
+.dialog-title {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 20px;
+}
+.dialog-body { font-size: 14px; opacity: 0.85; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-2); }
+
+</style>
+<script src="3706a85d-5815-47b5-8cf5-efb4994de12a"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("479eb537-f9ed-46e5-9d97-06486103d9a9") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("3a031771-2083-482f-8720-3ec6451073d7") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("1fc0dfce-219f-46f9-b858-3f2c03cc6627") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("479eb537-f9ed-46e5-9d97-06486103d9a9") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("3a031771-2083-482f-8720-3ec6451073d7") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("1fc0dfce-219f-46f9-b858-3f2c03cc6627") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("479eb537-f9ed-46e5-9d97-06486103d9a9") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("3a031771-2083-482f-8720-3ec6451073d7") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("1fc0dfce-219f-46f9-b858-3f2c03cc6627") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("479eb537-f9ed-46e5-9d97-06486103d9a9") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("3a031771-2083-482f-8720-3ec6451073d7") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("1fc0dfce-219f-46f9-b858-3f2c03cc6627") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+<style>
+  html, body { margin: 0; height: 100%; background: #241a26; overflow: hidden; }
+  * { box-sizing: border-box; }
+  a { color: #ec3013; }
+  a:hover { color: #b8250e; }
+  @keyframes qbIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes qbTitle { 0% { opacity: 0; transform: scale(.94); } 16% { opacity: 1; transform: scale(1); } 78% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes qbPop { 0% { transform: scale(.5); opacity: 0; } 60% { transform: scale(1.12); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes qbRing { 0%, 100% { opacity: .35; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } }
+  @keyframes qbGlow { 0%, 100% { opacity: .2; } 50% { opacity: .38; } }
+  @keyframes qbStar { 0%, 100% { opacity: .3; } 50% { opacity: 1; } }
+  @keyframes qbFizz { 0% { opacity: .8; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-9px); } }
+  @keyframes qbUrgent { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+  @keyframes qbShakeHint { 0%, 100% { transform: translateX(-2px); } 50% { transform: translateX(2px); } }
+  @keyframes qbShakeIt {
+    0% { transform: translate(-2.4px, 0.6px) rotate(-5deg); }
+    50% { transform: translate(2.4px, -0.6px) rotate(5deg); }
+    100% { transform: translate(-2.4px, 0.6px) rotate(-5deg); }
+  }
+  @keyframes qbLidOff {
+    0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+    100% { transform: translate(7px, -15px) rotate(38deg); opacity: 0; }
+  }
+</style>
+</helmet>
+
+<div style="position:absolute; inset:0; display:flex; flex-direction:column; background:#241a26; font-family:var(--font-body), Archivo, sans-serif; color:#201e1d; user-select:none; -webkit-user-select:none">
+
+  <div style="display:flex; flex-wrap:wrap; align-items:stretch; background:#f3f2f2; border-bottom:2px solid #201e1d; flex:0 0 auto; z-index:4">
+    <div style="padding:9px 14px; display:flex; flex-direction:column; gap:1px; flex:0 0 auto">
+      <span style="font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:#ec3013; font-weight:700; white-space:nowrap">{{ hudKicker }}</span>
+      <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:15px; font-weight:800; letter-spacing:-.01em; text-transform:uppercase; line-height:1.1; white-space:nowrap; width:max-content">Quirk's Bar</span>
+    </div>
+    <div style="border-left:2px solid #201e1d; padding:9px 14px; display:flex; flex-direction:column; gap:1px; justify-content:center; flex:1 1 auto; min-width:0">
+      <span style="font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:#6b6864; font-weight:700">{{ ticketLabel }}</span>
+      <span style="font-size:10px; font-weight:700; line-height:1.3; overflow-wrap:break-word">{{ ticketText }}</span>
+    </div>
+    <div style="border-left:2px solid #201e1d; padding:9px 13px; display:flex; align-items:center; gap:11px; flex:0 0 auto">
+      <div style="display:flex; flex-direction:column; gap:1px">
+        <span style="font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:#6b6864; font-weight:700">Served</span>
+        <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:16px; font-weight:800; line-height:1; color:#2f7d3a; font-variant-numeric:tabular-nums">{{ servedText }}</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:1px">
+        <span style="font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:#6b6864; font-weight:700">Queue</span>
+        <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:16px; font-weight:800; line-height:1; color:{{ queueColor }}; font-variant-numeric:tabular-nums">{{ queueText }}</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:1px">
+        <span style="font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:#6b6864; font-weight:700">Walked</span>
+        <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:16px; font-weight:800; line-height:1; color:{{ walkColor }}; font-variant-numeric:tabular-nums">{{ walkText }}</span>
+      </div>
+    </div>
+    <div style="display:flex; align-items:stretch; flex:0 0 auto">
+      <button sc-camel-on-click="{{ toggleMusic }}" style="padding:0 12px; border:0; border-left:2px solid #201e1d; background:#f3f2f2; color:{{ musicColor }}; font-family:var(--font-body), Archivo, sans-serif; font-size:9px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; white-space:nowrap" style-hover="background:#e6e4dd">{{ musicLabel }}</button>
+      <button sc-camel-on-click="{{ toggleSound }}" style="padding:0 12px; border:0; border-left:2px solid #201e1d; background:#f3f2f2; color:{{ soundColor }}; font-family:var(--font-body), Archivo, sans-serif; font-size:9px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; white-space:nowrap" style-hover="background:#e6e4dd">{{ soundLabel }}</button>
+    </div>
+  </div>
+
+  <div data-screen-label="{{ stageLabel }}" style="position:relative; flex:1 1 auto; min-height:0; overflow:hidden; background:#241a26; touch-action:none; cursor:crosshair" sc-camel-on-pointer-down="{{ onDown }}" sc-camel-on-pointer-move="{{ onMove }}" sc-camel-on-pointer-up="{{ onUp }}" sc-camel-on-pointer-leave="{{ onUp }}" sc-camel-on-pointer-cancel="{{ onUp }}">
+
+    <svg sc-camel-view-box="0 0 200 140" sc-camel-preserve-aspect-ratio="xMidYMid slice" style="position:absolute; inset:0; width:100%; height:100%; display:block">
+      <rect x="0" y="0" width="200" height="140" fill="#2b1f2e"></rect>
+      <rect x="0" y="0" width="200" height="52" fill="#352640"></rect>
+      <g>
+        <ellipse cx="100" cy="8" rx="66" ry="16" fill="#0d1420" stroke="#54406b" stroke-width="1.6"></ellipse>
+        <g fill="#f6f4ef">
+          <circle cx="72" cy="6" r="0.7" style="animation:qbStar 3s ease-in-out infinite"></circle>
+          <circle cx="104" cy="4" r="0.6" style="animation:qbStar 2.5s ease-in-out .6s infinite"></circle>
+          <circle cx="128" cy="9" r="0.6" style="animation:qbStar 3.4s ease-in-out 1.2s infinite"></circle>
+        </g>
+      </g>
+      <g stroke="#3f2f4a" stroke-width="0.8" fill="none">
+        <path d="M 0 26 L 200 26"></path>
+        <path d="M 34 0 L 34 52"></path><path d="M 166 0 L 166 52"></path>
+      </g>
+      <g>
+        <ellipse cx="24" cy="20" rx="10" ry="4" fill="#ec3013" opacity="0.22" style="animation:qbGlow 3.6s ease-in-out infinite"></ellipse>
+        <ellipse cx="176" cy="20" rx="10" ry="4" fill="#2fd6c0" opacity="0.22" style="animation:qbGlow 4.2s ease-in-out 1s infinite"></ellipse>
+      </g>
+      <rect x="0" y="128" width="200" height="12" fill="#1d1520"></rect>
+    </svg>
+
+    <svg ref="{{ svgRef }}" sc-camel-view-box="0 0 200 140" sc-camel-preserve-aspect-ratio="xMidYMid meet" style="position:absolute; inset:0; width:100%; height:100%; display:block; z-index:1">
+      <defs>
+        <radialGradient id="qbHalo" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#f0c040" stop-opacity="0.42"></stop>
+          <stop offset="100%" stop-color="#f0c040" stop-opacity="0"></stop>
+        </radialGradient>
+      </defs>
+
+      <sc-for list="{{ stools }}" as="st" hint-placeholder-count="4">
+        <g>
+          <sc-if value="{{ st.busy }}" hint-placeholder-val="{{ false }}">
+            <g transform="{{ st.t }}" sc-camel-on-click="{{ st.onTap }}" style="cursor:pointer">
+              <sc-if value="{{ st.active }}" hint-placeholder-val="{{ false }}">
+                <rect x="-22" y="-13" width="44" height="42" fill="none" stroke="#f0c040" stroke-width="1.6" style="transform-box:fill-box; transform-origin:center; animation:qbRing 1.3s ease-in-out infinite"></rect>
+              </sc-if>
+              <g transform="translate(0 -2)">
+                <path d="{{ st.earL }}" fill="{{ st.fur }}" stroke="{{ st.dark }}" stroke-width="1"></path>
+                <path d="{{ st.earR }}" fill="{{ st.fur }}" stroke="{{ st.dark }}" stroke-width="1"></path>
+                <path d="M -9 6 L 9 6 L 12 16 L -12 16 Z" fill="{{ st.cloth }}" stroke="{{ st.clothDark }}" stroke-width="1"></path>
+                <ellipse cx="0" cy="-1" rx="8" ry="7.4" fill="{{ st.fur }}" stroke="{{ st.dark }}" stroke-width="1"></ellipse>
+                <ellipse cx="0" cy="2.4" rx="4.2" ry="3.6" fill="{{ st.inner }}"></ellipse>
+                <circle cx="-3" cy="-2" r="1" fill="#241d2c"></circle>
+                <circle cx="3" cy="-2" r="1" fill="#241d2c"></circle>
+                <path d="{{ st.mouth }}" fill="none" stroke="#241d2c" stroke-width="0.8"></path>
+              </g>
+              <g>
+                <rect x="-21" y="8" width="42" height="15" fill="#f3f2f2" stroke="#201e1d" stroke-width="1.2"></rect>
+                <foreignObject x="-20" y="8.6" width="40" height="6" style="overflow:hidden">
+                  <div xmlns="http://www.w3.org/1999/xhtml" style="width:40px; display:flex; justify-content:center">
+                    <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:4.2px; font-weight:800; letter-spacing:.02em; color:#201e1d; white-space:nowrap">{{ st.drink }}</span>
+                  </div>
+                </foreignObject>
+                <sc-if value="{{ st.isTap }}" hint-placeholder-val="{{ false }}">
+                  <g transform="translate(0 18)">
+                    <rect x="{{ st.glyphX }}" y="-3.6" width="8" height="7.2" fill="{{ st.colour }}" stroke="#201e1d" stroke-width="1"></rect>
+                    <sc-if value="{{ st.hasIce }}" hint-placeholder-val="{{ false }}">
+                      <g>
+                        <sc-for list="{{ st.iceChips }}" as="ic" hint-placeholder-count="0">
+                          <g transform="translate({{ ic.x }} 0) scale(0.8)"><rect x="-1.9" y="-1.9" width="3.8" height="3.8" fill="#dff0f6" stroke="#7fa8bc" stroke-width="1.1"></rect>
+              <path d="M -1.9 0.6 L -0.4 -1.9" stroke="#ffffff" stroke-width="0.9" opacity="0.9"></path></g>
+                        </sc-for>
+                      </g>
+                    </sc-if>
+                  </g>
+                </sc-if>
+                <sc-if value="{{ st.isShaken }}" hint-placeholder-val="{{ false }}">
+                  <g transform="translate(0 18)">
+                    <g transform="translate({{ st.glyphCx }} 0)">
+                      <sc-for list="{{ st.mix }}" as="mx" hint-placeholder-count="2">
+                        <rect x="-3.4" y="{{ mx.y }}" width="6.8" height="{{ mx.h }}" fill="{{ mx.fill }}"></rect>
+                      </sc-for>
+                      <path d="M -4 -4.8 L 4 -4.8 L 3.2 4.8 L -3.2 4.8 Z" fill="none" stroke="#201e1d" stroke-width="0.9"></path>
+                    </g>
+                    <sc-if value="{{ st.hasIce }}" hint-placeholder-val="{{ false }}">
+                      <g>
+                        <sc-for list="{{ st.iceChips }}" as="ic" hint-placeholder-count="0">
+                          <g transform="translate({{ ic.x }} 0) scale(0.8)"><rect x="-1.9" y="-1.9" width="3.8" height="3.8" fill="#dff0f6" stroke="#7fa8bc" stroke-width="1.1"></rect>
+              <path d="M -1.9 0.6 L -0.4 -1.9" stroke="#ffffff" stroke-width="0.9" opacity="0.9"></path></g>
+                        </sc-for>
+                      </g>
+                    </sc-if>
+                  </g>
+                </sc-if>
+              </g>
+              <rect x="-21" y="25" width="42" height="3.6" fill="#4a3b50" stroke="#201e1d" stroke-width="0.8"></rect>
+              <rect x="-20.4" y="25.6" width="{{ st.patW }}" height="2.4" fill="{{ st.patColour }}"></rect>
+            </g>
+          </sc-if>
+          <sc-if value="{{ st.empty }}" hint-placeholder-val="{{ true }}">
+            <g transform="{{ st.t }}">
+              <rect x="-21" y="8" width="42" height="15" fill="none" stroke="#4a3b50" stroke-width="1.2" stroke-dasharray="3 2.6"></rect>
+            </g>
+          </sc-if>
+        </g>
+      </sc-for>
+
+      <g>
+        <rect x="0" y="50" width="200" height="10" fill="#8a6a4e" stroke="#5c4531" stroke-width="1.4"></rect>
+        <rect x="0" y="50" width="200" height="2.4" fill="#a88566"></rect>
+        <rect x="0" y="58" width="200" height="2" fill="#6b5039"></rect>
+      </g>
+
+      <g sc-camel-on-click="{{ onTapTower }}" style="cursor:pointer">
+        <rect x="12" y="64" width="20" height="28" fill="#3d3348" stroke="#241d2c" stroke-width="1.4"></rect>
+        <rect x="12" y="64" width="20" height="3" fill="#5c4f6b"></rect>
+        <rect x="19" y="58" width="6" height="6" fill="#5c4f6b" stroke="#241d2c" stroke-width="1"></rect>
+        <path d="M 22 72 L 22 85 L 30 85" fill="none" stroke="#c9ccd0" stroke-width="2.4" stroke-linecap="round"></path>
+        <g transform="{{ handleT }}">
+          <rect x="-1.6" y="-12" width="3.2" height="13" fill="#c9ccd0" stroke="#5c6367" stroke-width="0.9"></rect>
+          <circle cx="0" cy="-13.4" r="2.6" fill="#ec3013" stroke="#8f2b1e" stroke-width="0.9"></circle>
+        </g>
+        <foreignObject x="8" y="94" width="28" height="7" style="overflow:hidden">
+          <div xmlns="http://www.w3.org/1999/xhtml" style="width:28px; display:flex; justify-content:center">
+            <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:4px; font-weight:800; letter-spacing:.1em; color:{{ tapInk }}; white-space:nowrap">HOLD TAP</span>
+          </div>
+        </foreignObject>
+      </g>
+
+      <g transform="{{ stationT }}">
+        <sc-if value="{{ vesselReady }}" hint-placeholder-val="{{ false }}">
+          <circle cx="0" cy="-6" r="22" fill="url(#qbHalo)"></circle>
+        </sc-if>
+
+        <sc-if value="{{ noVessel }}" hint-placeholder-val="{{ true }}">
+          <g style="pointer-events:none">
+            <path d="M -7.6 -14.6 L 7.6 -14.6 L 6.1 12.6 L -6.1 12.6 Z" fill="#dfe7ec"></path>
+            <path d="M -8 -15 L 8 -15 L 6.4 13 L -6.4 13 Z" fill="none" stroke="#5c4f6b" stroke-width="1.4" stroke-dasharray="3 2.6"></path>
+          </g>
+        </sc-if>
+
+        <sc-if value="{{ isShaker }}" hint-placeholder-val="{{ false }}">
+          <g style="{{ shakeStyle }}">
+            <path d="M -8 -15 L 8 -15 L 6.4 13 L -6.4 13 Z" fill="#e8ecef" opacity="0.14"></path>
+            <path d="M -7.6 -14.6 L 7.6 -14.6 L 6.1 12.6 L -6.1 12.6 Z" fill="#dfe7ec"></path>
+            <sc-for list="{{ layers }}" as="ly" hint-placeholder-count="0">
+              <path d="{{ ly.d }}" fill="{{ ly.fill }}" stroke="#201e1d" stroke-width="1" stroke-linejoin="round"></path>
+            </sc-for>
+            <sc-if value="{{ hasLayers }}" hint-placeholder-val="{{ false }}">
+              <path d="{{ blendD }}" fill="{{ vesselColour }}" opacity="{{ blendO }}" stroke="#201e1d" stroke-width="1.1" stroke-linejoin="round" stroke-opacity="{{ blendO }}"></path>
+            </sc-if>
+            <path d="M -8 -15 L -3.4 -15 L -4.6 13 L -6.4 13 Z" fill="#ffffff" opacity="0.2"></path>
+            <path d="M -8 -15 L 8 -15 L 6.4 13 L -6.4 13 Z" fill="none" stroke="#c9ccd0" stroke-width="1.4"></path>
+            <sc-if value="{{ showLid }}" hint-placeholder-val="{{ false }}">
+              <g>
+                <path d="M -9.6 -18 L 9.6 -18 L 8.8 -14.4 L -8.8 -14.4 Z" fill="#cdd2d5" stroke="#5c6367" stroke-width="1.3"></path>
+                <rect x="-4.4" y="-21.4" width="8.8" height="3.6" rx="1.4" fill="#b8bcc0" stroke="#5c6367" stroke-width="1.2"></rect>
+                <path d="M -9.6 -18 L 9.6 -18" stroke="#eef1f2" stroke-width="0.7" opacity="0.8"></path>
+              </g>
+            </sc-if>
+          </g>
+        </sc-if>
+
+        <sc-if value="{{ isGlass }}" hint-placeholder-val="{{ false }}">
+          <g>
+            <path d="M -8 -15 L 8 -15 L 6.4 13 L -6.4 13 Z" fill="#e8ecef" opacity="0.16" stroke="#c9ccd0" stroke-width="1.4"></path>
+            <path d="M -7.6 -14.6 L 7.6 -14.6 L 6.1 12.6 L -6.1 12.6 Z" fill="#dfe7ec"></path>
+            <path d="{{ glassFillD }}" fill="{{ vesselColour }}" stroke="#201e1d" stroke-width="1.1" stroke-linejoin="round"></path>
+            <sc-if value="{{ hasHead }}" hint-placeholder-val="{{ false }}">
+              <path d="{{ glassHeadD }}" fill="#f6efdc" stroke="#201e1d" stroke-width="1" stroke-linejoin="round"></path>
+            </sc-if>
+            <path d="M -8 -15 L -3.4 -15 L -4.6 13 L -6.4 13 Z" fill="#ffffff" opacity="0.2"></path>
+            <path d="M -8 -15 L 8 -15 L 6.4 13 L -6.4 13 Z" fill="none" stroke="#c9ccd0" stroke-width="1.4"></path>
+          </g>
+        </sc-if>
+
+        <sc-if value="{{ hasCubes }}" hint-placeholder-val="{{ false }}">
+          <g style="{{ shakeStyle }}">
+           <g style="pointer-events:none">
+            <sc-for list="{{ cubes }}" as="cb" hint-placeholder-count="0">
+              <g transform="{{ cb.t }}" opacity="0.92"><rect x="-1.9" y="-1.9" width="3.8" height="3.8" fill="#dff0f6" stroke="#7fa8bc" stroke-width="0.9"></rect>
+              <path d="M -1.9 0.6 L -0.4 -1.9" stroke="#ffffff" stroke-width="0.7" opacity="0.9"></path></g>
+            </sc-for>
+           </g>
+          </g>
+        </sc-if>
+
+        <sc-if value="{{ showLidOff }}" hint-placeholder-val="{{ false }}">
+          <g style="transform-box:fill-box; transform-origin:center; animation:qbLidOff .65s ease-out forwards; pointer-events:none">
+            <path d="M -9.6 -18 L 9.6 -18 L 8.8 -14.4 L -8.8 -14.4 Z" fill="#cdd2d5" stroke="#5c6367" stroke-width="1.3"></path>
+            <rect x="-4.4" y="-21.4" width="8.8" height="3.6" rx="1.4" fill="#b8bcc0" stroke="#5c6367" stroke-width="1.2"></rect>
+          </g>
+        </sc-if>
+
+        <sc-if value="{{ showBand }}" hint-placeholder-val="{{ false }}">
+          <g style="pointer-events:none">
+            <rect x="-11.5" y="{{ bandY }}" width="23" height="{{ bandH }}" fill="#2f7d3a" opacity="0.34"></rect>
+            <path d="M -12 {{ bandTop }} L 12 {{ bandTop }}" stroke="#6fd48a" stroke-width="0.9" stroke-dasharray="2 1.6"></path>
+            <path d="M -12 {{ bandBot }} L 12 {{ bandBot }}" stroke="#6fd48a" stroke-width="0.9" stroke-dasharray="2 1.6"></path>
+          </g>
+        </sc-if>
+
+        <sc-if value="{{ showPourBottle }}" hint-placeholder-val="{{ false }}">
+          <g style="pointer-events:none">
+            <path d="{{ pourStreamD }}" fill="none" stroke="{{ pourColour }}" stroke-width="2" stroke-linecap="round"></path>
+            <path d="{{ pourStreamD }}" fill="none" stroke="#ffffff" stroke-width="0.6" opacity="0.4" stroke-linecap="round"></path>
+            <g transform="{{ pourBottleT }}">
+              <rect x="-5.4" y="-8" width="10.8" height="18" fill="{{ pourColour }}" stroke="#201e1d" stroke-width="1.2"></rect>
+              <rect x="-2.6" y="-12.4" width="5.2" height="4.6" fill="{{ pourCap }}" stroke="#201e1d" stroke-width="1"></rect>
+              <rect x="-5.4" y="-8" width="3.2" height="18" fill="#ffffff" opacity="0.22"></rect>
+              <rect x="-5.4" y="6" width="10.8" height="4" fill="#201e1d" opacity="0.14"></rect>
+            </g>
+          </g>
+        </sc-if>
+
+        <sc-for list="{{ fizz }}" as="fz" hint-placeholder-count="0">
+          <circle cx="{{ fz.x }}" cy="{{ fz.y }}" r="{{ fz.r }}" fill="#f6f4ef" opacity="0.7" style="{{ fz.style }}"></circle>
+        </sc-for>
+
+        <sc-if value="{{ showShakeDial }}" hint-placeholder-val="{{ false }}">
+          <g style="pointer-events:none">
+            <circle cx="0" cy="-2" r="20" fill="none" stroke="#1d1520" stroke-width="3.4" opacity="0.6"></circle>
+            <circle cx="0" cy="-2" r="20" fill="none" stroke="#f6f4ef" stroke-width="1.5" opacity="0.4"></circle>
+            <g transform="rotate(-90)">
+              <circle cx="0" cy="-2" r="20" fill="none" stroke="#2f7d3a" stroke-width="3.2" stroke-dasharray="{{ shakeTDash }}" stroke-dashoffset="{{ shakeTOff }}"></circle>
+              <circle cx="0" cy="-2" r="20" fill="none" stroke="{{ shakeInk }}" stroke-width="2.4" stroke-dasharray="{{ shakeFDash }}"></circle>
+            </g>
+          </g>
+        </sc-if>
+
+        <foreignObject x="-34" y="16" width="68" height="8" style="overflow:hidden">
+          <div xmlns="http://www.w3.org/1999/xhtml" style="width:68px; display:flex; justify-content:center">
+            <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:4.4px; font-weight:800; letter-spacing:.08em; color:#f3f2f2; background:#1d1520; padding:0.6px 3px; white-space:nowrap">{{ stationNote }}</span>
+          </div>
+        </foreignObject>
+      </g>
+
+      <g>
+        <sc-if value="{{ bucketLit }}" hint-placeholder-val="{{ false }}">
+          <rect x="148" y="62" width="38" height="36" fill="none" stroke="#f0c040" stroke-width="1.4" style="transform-box:fill-box; transform-origin:center; animation:qbRing 1.2s ease-in-out infinite"></rect>
+        </sc-if>
+        <path d="M 152 68 L 182 68 L 178 96 L 156 96 Z" fill="#5c6b73" stroke="#2f3a40" stroke-width="1.4"></path>
+        <rect x="149" y="64" width="36" height="5" rx="1" fill="#8a9aa3" stroke="#2f3a40" stroke-width="1.3"></rect>
+        <path d="M 152 68 L 158 68 L 158.6 96 L 156 96 Z" fill="#ffffff" opacity="0.18"></path>
+        <g>
+          <g transform="translate(160 74)"><rect x="-1.9" y="-1.9" width="3.8" height="3.8" fill="#dff0f6" stroke="#7fa8bc" stroke-width="1"></rect>
+              <path d="M -1.9 0.6 L -0.4 -1.9" stroke="#ffffff" stroke-width="0.8" opacity="0.9"></path></g>
+          <g transform="translate(167 72) rotate(16)"><rect x="-1.9" y="-1.9" width="3.8" height="3.8" fill="#dff0f6" stroke="#7fa8bc" stroke-width="1"></rect>
+              <path d="M -1.9 0.6 L -0.4 -1.9" stroke="#ffffff" stroke-width="0.8" opacity="0.9"></path></g>
+          <g transform="translate(174 75) rotate(-12)"><rect x="-1.9" y="-1.9" width="3.8" height="3.8" fill="#dff0f6" stroke="#7fa8bc" stroke-width="1"></rect>
+              <path d="M -1.9 0.6 L -0.4 -1.9" stroke="#ffffff" stroke-width="0.8" opacity="0.9"></path></g>
+          <g transform="translate(164 79) rotate(24)"><rect x="-1.9" y="-1.9" width="3.8" height="3.8" fill="#dff0f6" stroke="#7fa8bc" stroke-width="1"></rect>
+              <path d="M -1.9 0.6 L -0.4 -1.9" stroke="#ffffff" stroke-width="0.8" opacity="0.9"></path></g>
+          <g transform="translate(171 80) rotate(-8)"><rect x="-1.9" y="-1.9" width="3.8" height="3.8" fill="#dff0f6" stroke="#7fa8bc" stroke-width="1"></rect>
+              <path d="M -1.9 0.6 L -0.4 -1.9" stroke="#ffffff" stroke-width="0.8" opacity="0.9"></path></g>
+        </g>
+        <foreignObject x="150" y="98" width="34" height="7" style="overflow:hidden">
+          <div xmlns="http://www.w3.org/1999/xhtml" style="width:34px; display:flex; justify-content:center">
+            <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:4px; font-weight:800; letter-spacing:.1em; color:{{ bucketInk }}; white-space:nowrap">ICE</span>
+          </div>
+        </foreignObject>
+      </g>
+
+      <g>
+        <rect x="16" y="106" width="172" height="20" fill="#1d1520" stroke="#4a3b50" stroke-width="1.2"></rect>
+        <sc-for list="{{ bottles }}" as="bt" hint-placeholder-count="6">
+          <g transform="{{ bt.t }}" opacity="{{ bt.dim }}" style="cursor:pointer">
+            <sc-if value="{{ bt.wanted }}" hint-placeholder-val="{{ false }}">
+              <rect x="-10" y="-11" width="20" height="22" fill="none" stroke="#f0c040" stroke-width="1.4" style="transform-box:fill-box; transform-origin:center; animation:qbRing 1.2s ease-in-out infinite"></rect>
+            </sc-if>
+            <rect x="-5" y="-9" width="10" height="17" fill="{{ bt.fill }}" stroke="#201e1d" stroke-width="1.1"></rect>
+            <rect x="-2" y="-13" width="4" height="4" fill="{{ bt.cap }}" stroke="#201e1d" stroke-width="0.9"></rect>
+            <rect x="-5" y="-9" width="3" height="17" fill="#ffffff" opacity="0.2"></rect>
+            <sc-if value="{{ bt.used }}" hint-placeholder-val="{{ false }}">
+              <path d="M -4 -4 L 4 4 M 4 -4 L -4 4" stroke="#2f7d3a" stroke-width="1.6"></path>
+            </sc-if>
+          </g>
+        </sc-for>
+      </g>
+
+      <sc-if value="{{ carryingIce }}" hint-placeholder-val="{{ false }}">
+        <g transform="{{ iceDragT }}" style="pointer-events:none">
+          <path d="M -1.2 -14 Q -5.6 -7 -4 -0.6" fill="none" stroke="#c9ccd0" stroke-width="1.8" stroke-linecap="round"></path>
+          <path d="M 1.2 -14 Q 5.6 -7 4 -0.6" fill="none" stroke="#c9ccd0" stroke-width="1.8" stroke-linecap="round"></path>
+          <circle cx="0" cy="-14.4" r="1.8" fill="#8f959a" stroke="#5c6367" stroke-width="0.9"></circle>
+          <g transform="translate(-1.6 2.2) rotate(-12)"><rect x="-1.9" y="-1.9" width="3.8" height="3.8" fill="#dff0f6" stroke="#7fa8bc" stroke-width="1"></rect>
+              <path d="M -1.9 0.6 L -0.4 -1.9" stroke="#ffffff" stroke-width="0.8" opacity="0.9"></path></g>
+          <g transform="translate(1.8 0.2) rotate(14)"><rect x="-1.9" y="-1.9" width="3.8" height="3.8" fill="#dff0f6" stroke="#7fa8bc" stroke-width="1"></rect>
+              <path d="M -1.9 0.6 L -0.4 -1.9" stroke="#ffffff" stroke-width="0.8" opacity="0.9"></path></g>
+        </g>
+      </sc-if>
+
+      <sc-if value="{{ dragging }}" hint-placeholder-val="{{ false }}">
+        <g transform="{{ dragT }}" style="pointer-events:none">
+          <path d="M -7 -13 L 7 -13 L 5.6 11 L -5.6 11 Z" fill="{{ vesselColour }}" stroke="#f3f2f2" stroke-width="1.4"></path>
+          <path d="M -7 -13 L 7 -13 L 6.6 -9 L -6.6 -9 Z" fill="#f6efdc" opacity="0.9"></path>
+        </g>
+      </sc-if>
+
+      <sc-for list="{{ pops }}" as="pp" hint-placeholder-count="0">
+        <g transform="{{ pp.t }}" style="pointer-events:none; transform-box:fill-box; transform-origin:center; animation:qbPop .3s ease-out">
+          <circle cx="0" cy="0" r="8" fill="{{ pp.fill }}" stroke="#201e1d" stroke-width="1.4"></circle>
+          <path d="{{ pp.d }}" fill="none" stroke="#f3f2f2" stroke-width="2" stroke-linecap="round"></path>
+        </g>
+      </sc-for>
+    </svg>
+
+    <sc-if value="{{ showHint }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute; left:0; right:0; bottom:0; z-index:2; background:#201e1d; padding:9px 14px; display:flex; align-items:center; gap:9px">
+        <span style="flex:0 0 auto; width:2px; align-self:stretch; background:#ec3013"></span>
+        <span style="flex:1 1 auto; min-width:0; font-size:12px; font-weight:700; color:#f3f2f2; line-height:1.35; overflow-wrap:break-word">{{ hintText }}</span>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showTitleCard }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute; inset:0; z-index:5; display:flex; align-items:center; justify-content:center; pointer-events:none; animation:qbTitle 1.7s ease-out forwards">
+        <div style="background:#f3f2f2; border:2px solid #201e1d; padding:16px 26px; max-width:78%">
+          <div style="font-family:var(--font-heading), Archivo, sans-serif; font-size:clamp(24px, 6vw, 42px); font-weight:800; line-height:.98; letter-spacing:-.02em; text-transform:uppercase">{{ cardTitle }}</div>
+          <div style="height:2px; background:#ec3013; width:56px; margin:9px 0"></div>
+          <div style="font-size:13px; color:#201e1d; line-height:1.4">{{ cardHint }}</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showIntro }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute; inset:0; z-index:6; background:rgba(26,18,28,.9); display:flex; flex-direction:column; padding:22px; overflow:auto">
+        <div style="margin:auto 0; flex:0 0 auto; display:flex; flex-wrap:wrap-reverse; align-items:center; gap:26px">
+          <svg sc-camel-view-box="0 0 220 200" sc-camel-preserve-aspect-ratio="xMidYMid meet" style="flex:0 1 min(44%, 420px); min-width:0; aspect-ratio:220 / 200; max-height:min(420px, 68vh); order:2; pointer-events:none">
+            <defs>
+              <radialGradient id="qbHaloArt" cx="50%" cy="40%" r="56%">
+                <stop offset="0%" stop-color="#f0c040" stop-opacity="0.3"></stop>
+                <stop offset="100%" stop-color="#f0c040" stop-opacity="0"></stop>
+              </radialGradient>
+            </defs>
+            <ellipse cx="110" cy="96" rx="100" ry="88" fill="url(#qbHaloArt)"></ellipse>
+            <ellipse cx="110" cy="30" rx="64" ry="18" fill="#0d1420" stroke="#54406b" stroke-width="3"></ellipse>
+            <g fill="#f6f4ef">
+              <circle cx="86" cy="26" r="1.6"></circle><circle cx="112" cy="22" r="1.4"></circle><circle cx="136" cy="30" r="1.5"></circle>
+            </g>
+            <g>
+              <rect x="14" y="112" width="192" height="12" fill="#8a6a4e" stroke="#5c4531" stroke-width="3"></rect>
+              <rect x="14" y="112" width="192" height="3" fill="#a88566"></rect>
+            </g>
+            <g transform="translate(60 76)">
+              <path d="M -12 -20 L 12 -20 L 10 20 L -10 20 Z" fill="#b8bcc0" stroke="#6b7075" stroke-width="3"></path>
+              <rect x="-14" y="-26" width="28" height="7" fill="#cdd2d5" stroke="#6b7075" stroke-width="2.6"></rect>
+              <path d="M -11 -4 L 11 -4 L 10 20 L -10 20 Z" fill="#2fd6c0" opacity="0.9"></path>
+              <path d="M -12 -20 L -5 -20 L -6 20 L -10 20 Z" fill="#ffffff" opacity="0.25"></path>
+            </g>
+            <g stroke="#f0c040" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.9">
+              <path d="M 34 50 q -8 6 -2 13"></path>
+              <path d="M 86 50 q 8 6 2 13"></path>
+            </g>
+            <g transform="translate(150 82)">
+              <rect x="-16" y="-34" width="26" height="38" fill="#3d3348" stroke="#241d2c" stroke-width="3"></rect>
+              <path d="M -3 -24 L -3 -4 L 8 -4" fill="none" stroke="#c9ccd0" stroke-width="4" stroke-linecap="round"></path>
+              <rect x="-4" y="-48" width="4" height="15" fill="#c9ccd0" stroke="#5c6367" stroke-width="2"></rect>
+              <circle cx="-2" cy="-50" r="4" fill="#ec3013" stroke="#8f2b1e" stroke-width="2"></circle>
+              <g>
+                <path d="M -2 12 L 18 12 L 16 44 L 0 44 Z" fill="#8a5a2a" stroke="#c9ccd0" stroke-width="2.6"></path>
+                <path d="M -2 12 L 18 12 L 17.4 19 L -1.4 19 Z" fill="#f6efdc"></path>
+              </g>
+            </g>
+            <g>
+              <circle cx="44" cy="150" r="13" fill="#ee7d24" stroke="#b8531a" stroke-width="2.6"></circle>
+              <path d="M 34 141 L 30 128 L 42 136 Z" fill="#ee7d24" stroke="#b8531a" stroke-width="2.4"></path>
+              <path d="M 54 141 L 58 128 L 46 136 Z" fill="#ee7d24" stroke="#b8531a" stroke-width="2.4"></path>
+              <circle cx="39" cy="148" r="1.8" fill="#241d2c"></circle>
+              <circle cx="49" cy="148" r="1.8" fill="#241d2c"></circle>
+              <path d="M 39 156 q 5 4 10 0" fill="none" stroke="#241d2c" stroke-width="2"></path>
+            </g>
+            <g>
+              <rect x="80" y="140" width="54" height="20" fill="#4a3b50" stroke="#241d2c" stroke-width="2.4"></rect>
+              <rect x="82" y="142" width="30" height="16" fill="#ec3013"></rect>
+            </g>
+            <g>
+              <circle cx="168" cy="150" r="13" fill="#dedcd6" stroke="#a8a6a0" stroke-width="2.6"></circle>
+              <path d="M 159 141 L 156 130 L 166 137 Z" fill="#dedcd6" stroke="#a8a6a0" stroke-width="2.4"></path>
+              <path d="M 177 141 L 180 130 L 170 137 Z" fill="#dedcd6" stroke="#a8a6a0" stroke-width="2.4"></path>
+              <circle cx="163" cy="148" r="1.8" fill="#241d2c"></circle>
+              <circle cx="173" cy="148" r="1.8" fill="#241d2c"></circle>
+              <path d="M 163 157 q 5 -3 10 0" fill="none" stroke="#241d2c" stroke-width="2"></path>
+            </g>
+          </svg>
+          <div style="flex:1 1 320px; min-width:0; order:1; display:flex; flex-direction:column; gap:12px; max-width:560px">
+            <div style="display:flex; flex-direction:column">
+              <span style="font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#f0c040; font-weight:700">Space Station 8 · promenade level</span>
+              <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:clamp(32px, 7.6vw, 58px); font-weight:800; line-height:.92; letter-spacing:-.03em; text-transform:uppercase; color:#f3f2f2">Quirk's Bar</span>
+            </div>
+            <div style="height:2px; background:#ec3013; width:116px"></div>
+            <p style="margin:0; font-size:16px; font-weight:700; line-height:1.4; color:#f3f2f2; text-wrap:pretty">Tap a customer to take their order, make it, then drag it to them.</p>
+            <div style="display:grid; grid-template-columns:max-content 1fr; column-gap:10px; row-gap:6px; align-items:start">
+              <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:12px; font-weight:800; line-height:1.45; color:#f2643f; white-space:nowrap">ON&nbsp;TAP</span>
+              <span style="font-size:12.5px; line-height:1.45; color:#f3f2f2">Hold the tap handle. Stop the pour inside the green band.</span>
+              <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:12px; font-weight:800; line-height:1.45; color:#f2643f; white-space:nowrap">SHAKEN</span>
+              <span style="font-size:12.5px; line-height:1.45; color:#f3f2f2">Hold each bottle to pour its layer to the band — the ticket shows the drink — then shake side to side.</span>
+              <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:12px; font-weight:800; line-height:1.45; color:#f2643f; white-space:nowrap">ICE</span>
+              <span style="font-size:12.5px; line-height:1.45; color:#f3f2f2">Most drinks want six cubes first. The tongs lift two a time from the bucket.</span>
+            </div>
+            <p style="margin:0; font-size:13px; line-height:1.45; color:#f0c040">Every customer's patience is running down, and the queue keeps filling. Let one run out and they walk.</p>
+            <button sc-camel-on-click="{{ begin }}" style="align-self:flex-start; margin-top:2px; padding:16px 26px; border:0; background:#ec3013; color:#f3f2f2; font-family:var(--font-heading), Archivo, sans-serif; font-size:18px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; text-align:left; cursor:pointer" style-hover="background:#b8250e">Open up</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showCard }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute; inset:0; z-index:6; background:rgba(20,14,22,.86); display:flex; align-items:center; justify-content:center; padding:18px">
+        <div style="width:100%; max-width:390px; max-height:100%; min-height:0; display:flex; flex-direction:column; background:#f3f2f2; border:2px solid #201e1d; padding:20px; animation:qbIn .18s ease-out">
+          <div style="flex:0 0 auto">
+            <div style="font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:#ec3013; font-weight:700">{{ cardKicker }}</div>
+            <div style="font-family:var(--font-heading), Archivo, sans-serif; font-size:30px; font-weight:800; line-height:1; letter-spacing:-.02em; margin:7px 0 4px">{{ cardScore }}</div>
+            <div style="font-size:12px; margin-bottom:14px">{{ cardMood }}</div>
+            <div style="height:2px; background:#201e1d; margin-bottom:13px"></div>
+          </div>
+          <div style="flex:1 1 auto; min-height:0; overflow:auto">
+            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px">
+              <sc-for list="{{ cardRows }}" as="r" hint-placeholder-count="0">
+                <div style="display:flex; align-items:center; gap:9px">
+                  <span style="flex:0 0 88px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em">{{ r.name }}</span>
+                  <div style="flex:1 1 auto; height:8px; background:#dedcd6; border:1px solid #201e1d">
+                    <div style="height:100%; width:{{ r.pct }}%; background:{{ r.color }}"></div>
+                  </div>
+                  <span style="flex:0 0 34px; text-align:right; font-size:12px; font-weight:700; font-variant-numeric:tabular-nums">{{ r.val }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ hasNotes }}" hint-placeholder-val="{{ false }}">
+              <div style="border-top:2px solid #201e1d; padding-top:12px; margin-bottom:16px; display:flex; flex-direction:column; gap:6px">
+                <sc-for list="{{ cardNotes }}" as="nt" hint-placeholder-count="0">
+                  <div style="display:flex; gap:8px; font-size:11px; line-height:1.35">
+                    <span style="color:#ec3013; font-weight:800">—</span>
+                    <span>{{ nt.text }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+          <button sc-camel-on-click="{{ cardAction }}" style="flex:0 0 auto; width:100%; padding:14px 16px; border:0; background:#ec3013; color:#f3f2f2; font-family:var(--font-heading), Archivo, sans-serif; font-size:15px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; text-align:left; cursor:pointer" style-hover="background:#b8250e">{{ cardCta }}</button>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;sound&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Audio&quot;},&quot;music&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Audio&quot;}}">
+const n = v => Math.round(v * 1000) / 1000;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+const STOOL_X = [32, 78, 124, 170];
+const STOOL_Y = 20;
+const STATION = { x: 100, y: 78 };
+const BOTTLE_X = [30, 56, 82, 108, 134, 160];
+const BOTTLE_Y = 116;
+const TAP = { x: 12, y: 56, w: 24, h: 44 };
+const MAX_QUEUE = 4;
+
+// the speed rail: the ticket shows these as colour chips, so it reads without words
+const BOTTLES = [
+  { key: "amber", fill: "#d9a84e", cap: "#8f6b28" },
+  { key: "rose", fill: "#d9628a", cap: "#8f2b4e" },
+  { key: "teal", fill: "#2fbfae", cap: "#1c7a70" },
+  { key: "violet", fill: "#8a6ad9", cap: "#4e3a8f" },
+  { key: "green", fill: "#6f9d4a", cap: "#3f6b28" },
+  { key: "cream", fill: "#e8dcc0", cap: "#a89670" }
+];
+const BFILL = {};
+BOTTLES.forEach(b => { BFILL[b.key] = b.fill; });
+
+// Quirk's list — the house pours and the shaken ones
+const DRINKS = [
+  { name: "Root Beer", kind: "tap", colour: "#95561f", head: true, ice: 6 },
+  { name: "Slug-o-Kola", kind: "tap", colour: "#3f9455", head: true, ice: 6 },
+  { name: "Bloodvine", kind: "tap", colour: "#b02334", head: false, ice: 0 },
+  { name: "Romulon Ale", kind: "tap", colour: "#2f6bcf", head: true, ice: 6 },
+  { name: "Warp Core Breech", kind: "shaken", colour: "#2fd6c0", mix: ["teal", "violet"], ice: 6 },
+  { name: "Samerian Sunset", kind: "shaken", colour: "#e06a8a", mix: ["rose", "amber"], ice: 6 },
+  { name: "Black Hole", kind: "shaken", colour: "#5a3fa0", mix: ["violet", "green"], ice: 6 },
+  { name: "Tranyo", kind: "shaken", colour: "#e8913a", mix: ["amber", "cream"], ice: 6 },
+  { name: "Kanor", kind: "shaken", colour: "#cfc63f", mix: ["amber", "green"], ice: 6 },
+  { name: "Raktajine", kind: "shaken", colour: "#53341f", mix: ["cream", "violet"], ice: 0 }
+];
+const BUCKET = { x: 150, y: 64, w: 34, h: 32 };
+const ICE_PER_GRAB = 2;
+// where each cube settles in the glass
+const ICE_PILE = [
+  [-3.2, 8.2, -12], [0.7, 9.2, 16], [3.9, 7.4, -6],
+  [-2.5, 4.2, 22], [1.5, 4.9, -18], [-0.4, 0.8, 9]
+];
+
+const SPECIES = [
+  { fur: "#ee7d24", dark: "#b8531a", inner: "#f9ecd9", cloth: "#1f3350", clothDark: "#16263c", ear: "fox" },
+  { fur: "#dedcd6", dark: "#a8a6a0", inner: "#f6f4ef", cloth: "#4a3a5c", clothDark: "#332745", ear: "cat" },
+  { fur: "#9a6f4a", dark: "#6b4a2c", inner: "#d9bb96", cloth: "#3f5d47", clothDark: "#2b4232", ear: "bear" },
+  { fur: "#f0e6da", dark: "#bfae99", inner: "#f8f2ea", cloth: "#8f2b1e", clothDark: "#661a10", ear: "rabbit" },
+  { fur: "#8fb8d6", dark: "#5c86a8", inner: "#e0f0fa", cloth: "#2f4a3a", clothDark: "#1f3327", ear: "cat" },
+  { fur: "#c8a86a", dark: "#95783f", inner: "#f2e6c8", cloth: "#3a2f4a", clothDark: "#261f33", ear: "fox" }
+];
+const EARS = {
+  fox: { l: "M -6 -5 L -10 -16 L -2 -9 Z", r: "M 6 -5 L 10 -16 L 2 -9 Z" },
+  cat: { l: "M -6 -5 L -9 -13 L -1.4 -8 Z", r: "M 6 -5 L 9 -13 L 1.4 -8 Z" },
+  bear: { l: "M -7.4 -6 a 3.6 3.6 0 1 1 3.4 -2", r: "M 7.4 -6 a 3.6 3.6 0 1 0 -3.4 -2" },
+  rabbit: { l: "M -4.6 -6 q -4.6 -11 -1.4 -15 q 4 2 3.4 14 Z", r: "M 4.6 -6 q 4.6 -11 1.4 -15 q -4 2 -3.4 14 Z" }
+};
+
+const SHIFTS = [
+  { name: "Quiet shift", total: 6, every: 5.6, patience: 26, pourTol: 13, shakeTol: 20, need: 5 },
+  { name: "Freighter crews in", total: 9, every: 4.6, patience: 23, pourTol: 11, shakeTol: 17, need: 6 },
+  { name: "Docking day rush", total: 12, every: 3.8, patience: 20, pourTol: 9.5, shakeTol: 14, need: 7 },
+  { name: "Station's birthday", total: 15, every: 3.2, patience: 18, pourTol: 8, shakeTol: 12, need: 8 }
+];
+
+const POUR_RATE = 30;
+const SHAKE_PER = 11;
+
+function rng(seed) {
+  let s = seed + 0x9e3779b9;
+  return () => {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const MUSIC = (() => {
+  const notes = [];
+  // lounge bar loop: walking bass, brushed tick, a lazy vibe melody
+  const bass = [38, 45, 41, 48, 36, 43, 40, 47];
+  bass.forEach((m, i) => {
+    notes.push({ b: i * 4, m, d: 3.4, v: "bass" });
+    notes.push({ b: i * 4 + 2, m: m + 7, d: 1.4, v: "bass" });
+  });
+  [[1, 74], [2.5, 77], [4, 79], [6.5, 77], [9, 74], [10.5, 72], [13, 69],
+   [17, 76], [18.5, 79], [21, 81], [23.5, 79], [25, 76], [27.5, 72], [30, 74]
+  ].forEach(p => notes.push({ b: p[0], m: p[1], d: 1.8, v: "vibe" }));
+  for (let b = 0; b < 32; b += 1) notes.push({ b: b + 0.5, m: 92, d: 0.07, v: "tick" });
+  return { notes, beats: 32, spb: 0.44 };
+})();
+const midiHz = m => 440 * Math.pow(2, (m - 69) / 12);
+
+let CID = 0;
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.svgRef = React.createRef();
+    this.state = Object.assign({ overlay: "intro", muted: false, musicOff: false }, this.freshShift(0));
+  }
+
+  freshShift(round) {
+    const cfg = SHIFTS[round % SHIFTS.length];
+    const rand = rng(round * 5431 + 7);
+    const orders = [];
+    // exactly one drink in every four comes without ice, its slot picked at random
+    const iced = DRINKS.filter(x => (x.ice || 0) > 0);
+    const plain = DRINKS.filter(x => (x.ice || 0) === 0);
+    const plainAt = {};
+    for (let g = 0; g * 4 < cfg.total; g++) plainAt[g * 4 + Math.floor(rand() * 4)] = true;
+    for (let i = 0; i < cfg.total; i++) {
+      const pool = plainAt[i] ? plain : iced;
+      const d = pool[Math.floor(rand() * pool.length)];
+      const mixTargets = (d.mix || []).map(() => 30 + Math.floor(rand() * 16));
+      orders.push({
+        drink: d,
+        sp: SPECIES[Math.floor(rand() * SPECIES.length)],
+        // a target fill high in the glass, but never the same twice running
+        target: 58 + Math.floor(rand() * 30),
+        mixTargets,
+        shakeTarget: 45 + Math.floor(rand() * 34)
+      });
+    }
+    return {
+      round, cfg, orders, nextIn: 0.9, spawned: 0,
+      stools: [null, null, null, null], queue: [],
+      active: null,
+      vessel: null,
+      served: 0, walked: 0, wrong: 0, accSum: 0, accN: 0, patSum: 0, dumpedAt: 0,
+      drag: null, pops: [], t: 0, done: false,
+      titleCard: [cfg.name, cfg.total + " customers · serve " + cfg.need],
+      cardAt: Date.now()
+    };
+  }
+
+  componentDidMount() {
+    window.__quirksTarget = this;
+    this.started = false;
+    this.killMusic();
+    setTimeout(() => this.loop(), 0);
+  }
+
+  componentWillUnmount() {
+    if (this.raf) cancelAnimationFrame(this.raf);
+    this.raf = null;
+    this.killMusic();
+  }
+
+  muted() { return this.state.muted || (this.props.sound ?? true) === false; }
+  musicOn() { return !this.muted() && (this.props.music ?? true) !== false && !this.state.musicOff; }
+
+  audio() {
+    if (this.muted() || !this.started) return null;
+    if (!window.__quirksAC) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      window.__quirksAC = new AC();
+      const b = window.__quirksAC.createBuffer(1, window.__quirksAC.sampleRate * 1.2, window.__quirksAC.sampleRate);
+      const d = b.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      window.__quirksNoise = b;
+      window.addEventListener("pagehide", () => { try { window.__quirksAC.close(); } catch (e) {} });
+    }
+    this.actx = window.__quirksAC;
+    this.noise = window.__quirksNoise;
+    if (this.actx.state === "suspended") this.actx.resume();
+    return this.actx;
+  }
+
+  tone(freq, dur, gain, type, to) {
+    const ac = this.audio();
+    if (!ac) return;
+    const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime;
+    o.type = type || "sine";
+    o.frequency.setValueAtTime(freq, t);
+    if (to) o.frequency.exponentialRampToValueAtTime(Math.max(20, to), t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(gain, t + 0.014);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(ac.destination);
+    o.start(t); o.stop(t + dur + 0.03);
+  }
+
+  burst(o) {
+    const ac = this.audio();
+    if (!ac) return;
+    const src = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain(), t = ac.currentTime;
+    src.buffer = this.noise; src.loop = true;
+    f.type = o.type || "bandpass";
+    f.Q.value = o.q == null ? 1 : o.q;
+    f.frequency.setValueAtTime(o.f0, t);
+    f.frequency.exponentialRampToValueAtTime(Math.max(60, o.f1), t + o.dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(o.gain, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + o.dur);
+    src.connect(f); f.connect(g); g.connect(ac.destination);
+    src.start(t); src.stop(t + o.dur + 0.05);
+  }
+
+  sfx(kind) {
+    if (!this.audio()) return;
+    if (kind === "ticket") this.tone(880, 0.06, 0.035, "triangle", 1180);
+    else if (kind === "pour") this.burst({ f0: 900, f1: 500, dur: 0.2, gain: 0.035, type: "lowpass", q: 0.8 });
+    else if (kind === "bottle") this.tone(560, 0.06, 0.04, "square", 780);
+    else if (kind === "shake") this.burst({ f0: 2400, f1: 1400, dur: 0.07, gain: 0.05, type: "bandpass", q: 1.6 });
+    else if (kind === "serve") [0, 7, 12].forEach((s, i) => setTimeout(() => this.tone(midiHz(76 + s), 0.14, 0.045, "triangle"), i * 55));
+    else if (kind === "great") [0, 4, 7, 12].forEach((s, i) => setTimeout(() => this.tone(midiHz(76 + s), 0.2, 0.05, "triangle"), i * 80));
+    else if (kind === "bad") this.tone(170, 0.24, 0.06, "square", 108);
+    else if (kind === "walk") { this.tone(300, 0.18, 0.05, "square", 150); setTimeout(() => this.tone(220, 0.22, 0.05, "square", 120), 190); }
+    else if (kind === "arrive") this.tone(640, 0.07, 0.028, "sine", 820);
+    else if (kind === "close") [0, 5, 9, 12].forEach((s, i) => setTimeout(() => this.tone(midiHz(72 + s), 0.26, 0.05, "triangle"), i * 110));
+  }
+
+  voice(nt, at) {
+    const ac = this.actx, g = ac.createGain(), o = ac.createOscillator();
+    const dur = nt.d * MUSIC.spb;
+    let peak = 0.02;
+    if (nt.v === "bass") { o.type = "triangle"; peak = 0.046; }
+    else if (nt.v === "vibe") { o.type = "sine"; peak = 0.036; }
+    else { o.type = "square"; peak = 0.007; }
+    o.frequency.setValueAtTime(midiHz(nt.m), at);
+    g.gain.setValueAtTime(0.0001, at);
+    g.gain.exponentialRampToValueAtTime(peak, at + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+    o.connect(g); g.connect(window.__quirksMusicBus);
+    o.start(at); o.stop(at + dur + 0.03);
+  }
+
+  scheduleMusic() {
+    const ac = this.actx;
+    if (!ac || !this.musicOn()) return;
+    if (!window.__quirksMusicBus) {
+      const bus = ac.createGain();
+      bus.gain.value = 0.5;
+      bus.connect(ac.destination);
+      window.__quirksMusicBus = bus;
+      this.musicStart = ac.currentTime + 0.12;
+      this.musicBar = 0;
+    }
+    const barLen = MUSIC.beats * MUSIC.spb;
+    while (this.musicStart + this.musicBar * barLen < ac.currentTime + 0.9) {
+      const base = this.musicStart + this.musicBar * barLen;
+      MUSIC.notes.forEach(nt => {
+        const at = base + nt.b * MUSIC.spb;
+        if (at > ac.currentTime - 0.05) this.voice(nt, at);
+      });
+      this.musicBar++;
+    }
+  }
+
+  killMusic() {
+    const bus = window.__quirksMusicBus;
+    if (bus) { try { bus.gain.value = 0; bus.disconnect(); } catch (e) {} }
+    window.__quirksMusicBus = null;
+    this.musicBar = 0;
+  }
+
+  pop(x, y, ok) {
+    this.setState(s => ({
+      pops: s.pops.filter(p => Date.now() - p.at < 1100)
+        .concat([{ x, y, ok, at: Date.now() }])
+    }));
+  }
+
+  loop = () => {
+    this.raf = requestAnimationFrame(this.loop);
+    const now = Date.now();
+    const dt = Math.min(0.045, (now - (this.last || now)) / 1000);
+    this.last = now;
+    const s = this.state;
+    if (this.started && window.__quirksTarget === this && window.__quirksAC) {
+      if (this.musicOn()) this.scheduleMusic();
+      else if (window.__quirksMusicBus) this.killMusic();
+    }
+    if (s.overlay || s.done) return;
+
+    const patch = { t: s.t + dt };
+    if (s.titleCard && now - s.cardAt > 1700) patch.titleCard = null;
+    if (s.titleCard) { this.setState(patch); return; }
+
+    const cfg = s.cfg;
+    let stools = s.stools.slice();
+    let queue = s.queue.slice();
+    let spawned = s.spawned, walked = s.walked, patSum = s.patSum;
+    let active = s.active;
+
+    // arrivals: take a stool if there is one, otherwise wait in line
+    let nextIn = s.nextIn - dt;
+    if (nextIn <= 0 && spawned < cfg.total) {
+      const o = s.orders[spawned];
+      const seat = stools.indexOf(null);
+      const guest = { id: ++CID, drink: o.drink, sp: o.sp, target: o.target,
+        mixTargets: o.mixTargets, shakeTarget: o.shakeTarget,
+        pat: cfg.patience, max: cfg.patience };
+      if (seat >= 0) { stools[seat] = guest; this.sfx("arrive"); spawned++; nextIn = cfg.every; }
+      else if (queue.length < MAX_QUEUE) { queue.push(guest); spawned++; nextIn = cfg.every; }
+      else nextIn = 0.6;
+    } else if (spawned < cfg.total) patch.nextIn = nextIn;
+    if (nextIn !== s.nextIn) patch.nextIn = nextIn;
+
+    // seat anyone waiting as soon as a stool frees
+    let seatOpen = stools.indexOf(null);
+    while (seatOpen >= 0 && queue.length) {
+      stools[seatOpen] = queue.shift();
+      seatOpen = stools.indexOf(null);
+    }
+
+    // patience runs down for everyone at the bar
+    let changed = false, dumped = false;
+    stools = stools.map((g, i) => {
+      if (!g) return g;
+      const pat = g.pat - dt;
+      changed = true;
+      if (pat <= 0) {
+        this.sfx("walk");
+        this.pop(STOOL_X[i], STOOL_Y + 6, false);
+        walked++;
+        if (active === i) { active = null; dumped = true; }
+        return null;
+      }
+      return Object.assign({}, g, { pat });
+    });
+    if (changed) patch.stools = stools;
+    if (dumped) { patch.vessel = null; patch.dumpedAt = now; }
+    patch.queue = queue;
+    patch.spawned = spawned;
+    patch.walked = walked;
+    patch.active = active;
+
+    // a held bottle grows its own layer in the mixing glass
+    if (s.vessel && s.vessel.pouring) {
+      const v = Object.assign({}, s.vessel);
+      const pours = v.pours.slice();
+      const cur = Object.assign({}, pours[v.step]);
+      const below = pours.slice(0, v.step).reduce((a, p) => a + p.amount, 0);
+      cur.amount = cur.amount + POUR_RATE * dt;
+      pours[v.step] = cur;
+      v.pours = pours;
+      patch.vessel = v;
+      if (below + cur.amount >= 112) {
+        this.sfx("bad");
+        patch.vessel = Object.assign({}, v, { pouring: false, spilled: true, step: v.drink.mix.length, phase: "shaking" });
+      }
+    }
+
+    // pouring while the tap handle is held
+    if (s.vessel && s.vessel.phase === "pouring") {
+      const v = Object.assign({}, s.vessel);
+      v.fill = Math.min(118, v.fill + POUR_RATE * dt);
+      patch.vessel = v;
+      if (v.fill >= 118) {
+        this.sfx("bad");
+        patch.vessel = Object.assign({}, v, { phase: "ready", spilled: true });
+      }
+    }
+
+    const allGone = spawned >= cfg.total && stools.every(g => !g) && !queue.length;
+    if (allGone) {
+      patch.done = true;
+      this.sfx("close");
+      setTimeout(() => this.setState({ overlay: "card" }), 1100);
+    }
+
+    this.setState(patch);
+  };
+
+  local(e) {
+    const svg = this.svgRef.current;
+    if (!svg || !Number.isFinite(e.clientX)) return null;
+    const r = svg.getBoundingClientRect();
+    const scale = Math.min(r.width / 200, r.height / 140);
+    const ox = (r.width - 200 * scale) / 2, oy = (r.height - 140 * scale) / 2;
+    return { x: (e.clientX - r.left - ox) / scale, y: (e.clientY - r.top - oy) / scale };
+  }
+
+  ticket() {
+    const s = this.state;
+    return s.active != null ? s.stools[s.active] : null;
+  }
+
+  // take an order: this is what tells the station what it is building
+  takeOrder = i => {
+    const s = this.state;
+    if (s.overlay || s.done || !s.stools[i]) return;
+    this.audio();
+    this.sfx("ticket");
+    const g = s.stools[i];
+    this.setState({
+      active: i,
+      vessel: { drink: g.drink,
+        phase: (g.drink.ice || 0) > 0 ? "ice" : (g.drink.kind === "tap" ? "empty" : "loading"),
+        ice: 0, fill: 0, pours: [], step: 0, pouring: false, shake: 0, strokes: 0, spilled: false }
+    });
+  };
+
+  onTapTower = () => {};
+
+  grabIce(p) {
+    const v = this.state.vessel;
+    if (!v || v.phase !== "ice") return false;
+    this.audio();
+    this.sfx("bottle");
+    this.setState({ iceDrag: { x: p.x, y: p.y } });
+    return true;
+  }
+
+  dropIce(p) {
+    const v = this.state.vessel;
+    this.setState({ iceDrag: null });
+    if (!v || v.phase !== "ice") return;
+    if (Math.hypot(p.x - STATION.x, p.y - STATION.y) > 24) return;
+    this.sfx("shake");
+    const need = v.drink.ice || 0;
+    const ice = Math.min(need, v.ice + ICE_PER_GRAB);
+    const full = ice >= need;
+    this.setState({ vessel: Object.assign({}, v, {
+      ice,
+      phase: full ? (v.drink.kind === "tap" ? "empty" : "loading") : "ice"
+    }) });
+  }
+
+  startPour(key) {
+    const s = this.state;
+    const v = s.vessel;
+    const g = this.ticket();
+    if (!v || !g || v.drink.kind !== "shaken" || v.phase !== "loading") return;
+    this.audio();
+    const want = v.drink.mix[v.step];
+    if (key !== want) {
+      this.sfx("bad");
+      const bi = BOTTLES.findIndex(b => b.key === key);
+      if (bi >= 0) this.pop(BOTTLE_X[bi], BOTTLE_Y - 16, false);
+      this.setState(st => ({ wrong: st.wrong + 1 }));
+      return;
+    }
+    this.sfx("pour");
+    this.setState({ vessel: Object.assign({}, v, {
+      pouring: true,
+      pours: v.pours.length > v.step ? v.pours : v.pours.concat([{ key, amount: 0 }])
+    }) });
+  }
+
+  endPour() {
+    const v = this.state.vessel;
+    if (!v || !v.pouring) return;
+    this.sfx("bottle");
+    const step = v.step + 1;
+    const done = step >= v.drink.mix.length;
+    this.setState({ vessel: Object.assign({}, v, {
+      pouring: false, step, phase: done ? "shaking" : "loading"
+    }) });
+  }
+
+  onDown = e => {
+    const s = this.state;
+    if (s.overlay || s.done || s.titleCard) return;
+    this.audio();
+    const p = this.local(e);
+    if (!p) return;
+
+    // hold the tap to pour a draught
+    const v = s.vessel;
+    if (v && v.drink.kind === "tap" && (v.phase === "empty" || v.phase === "pouring")
+      && p.x > TAP.x - 4 && p.x < TAP.x + TAP.w + 6 && p.y > TAP.y && p.y < TAP.y + TAP.h) {
+      this.sfx("pour");
+      this.setState({ vessel: Object.assign({}, v, { phase: "pouring" }) });
+      return;
+    }
+
+    // pick the finished drink up off the rail to carry it over
+    if (v && v.phase === "ready" && Math.hypot(p.x - STATION.x, p.y - STATION.y) < 24) {
+      this.setState({ drag: { x: p.x, y: p.y } });
+      return;
+    }
+
+    // lift a cube out of the bucket
+    if (v && v.phase === "ice"
+      && p.x > BUCKET.x - 4 && p.x < BUCKET.x + BUCKET.w + 4
+      && p.y > BUCKET.y - 4 && p.y < BUCKET.y + BUCKET.h + 4) {
+      if (this.grabIce(p)) return;
+    }
+
+    // press and hold a bottle to pour it
+    if (v && v.drink.kind === "shaken" && v.phase === "loading"
+      && p.y > BOTTLE_Y - 16 && p.y < BOTTLE_Y + 12) {
+      let bi = -1;
+      BOTTLE_X.forEach((x, i) => { if (Math.abs(p.x - x) < 12) bi = i; });
+      if (bi >= 0) { this.startPour(BOTTLES[bi].key); return; }
+    }
+
+    // shaking: the stroke counter starts on the first drag
+    if (v && v.phase === "shaking" && Math.hypot(p.x - STATION.x, p.y - STATION.y) < 26) {
+      this.shakeFrom = p.x;
+      this.shakeDir = 0;
+      this.setState({ shaking: true });
+      return;
+    }
+  };
+
+  onMove = e => {
+    const s = this.state;
+    if (s.overlay || s.done) return;
+    const p = this.local(e);
+    if (!p) return;
+
+    if (s.iceDrag) { this.setState({ iceDrag: { x: p.x, y: p.y } }); return; }
+    if (s.drag) { this.setState({ drag: { x: p.x, y: p.y } }); return; }
+
+    if (s.shaking && s.vessel && s.vessel.phase === "shaking") {
+      const dx = p.x - (this.shakeFrom == null ? p.x : this.shakeFrom);
+      const dir = dx > 2 ? 1 : dx < -2 ? -1 : 0;
+      if (dir !== 0 && dir !== this.shakeDir) {
+        this.shakeDir = dir;
+        this.shakeFrom = p.x;
+        this.sfx("shake");
+        this.setState(st => {
+          const v = st.vessel;
+          return { vessel: Object.assign({}, v, {
+            strokes: v.strokes + 1,
+            shake: Math.min(125, v.shake + SHAKE_PER)
+          }) };
+        });
+      }
+    }
+  };
+
+  onUp = e => {
+    const s = this.state;
+    if (s.overlay || s.done) return;
+
+    if (s.drag) {
+      const p = s.drag;
+      let hit = -1;
+      STOOL_X.forEach((x, i) => {
+        if (Math.abs(p.x - x) < 24 && p.y < 58) hit = i;
+      });
+      this.setState({ drag: null }, () => { if (hit >= 0) this.serve(hit); });
+      return;
+    }
+
+    if (s.iceDrag) { this.dropIce(s.iceDrag); return; }
+
+    if (s.vessel && s.vessel.pouring) { this.endPour(); return; }
+
+    if (s.vessel && s.vessel.phase === "pouring") {
+      this.setState({ vessel: Object.assign({}, s.vessel, { phase: "ready" }) });
+      return;
+    }
+
+    if (s.shaking) {
+      this.shakeFrom = null;
+      const v = s.vessel;
+      this.setState({ shaking: false,
+        vessel: v && v.strokes > 0
+          ? Object.assign({}, v, { phase: "ready", readyAt: Date.now() }) : v });
+    }
+  };
+
+  serve(i) {
+    const s = this.state;
+    const g = s.stools[i];
+    const v = s.vessel;
+    if (!g || !v || v.phase !== "ready") return;
+
+    if (g.drink.name !== v.drink.name) {
+      this.sfx("bad");
+      this.pop(STOOL_X[i], STOOL_Y + 6, false);
+      this.setState(st => ({ wrong: st.wrong + 1, vessel: null, active: null }));
+      return;
+    }
+
+    const cfg = s.cfg;
+    let acc;
+    if (v.drink.kind === "tap") {
+      acc = v.spilled ? 0 : clamp(100 - Math.abs(v.fill - g.target) * (100 / (cfg.pourTol * 2.6)), 0, 100);
+    } else {
+      const shakeAcc = clamp(100 - Math.abs(v.shake - g.shakeTarget) * (100 / (cfg.shakeTol * 2.6)), 0, 100);
+      let pourAcc = 0;
+      const tgts = g.mixTargets || [];
+      tgts.forEach((t, i) => {
+        const got = v.pours[i] ? v.pours[i].amount : 0;
+        pourAcc += clamp(100 - Math.abs(got - t) * (100 / (cfg.pourTol * 2.6)), 0, 100);
+      });
+      pourAcc = tgts.length ? pourAcc / tgts.length : 0;
+      acc = v.spilled ? 0 : pourAcc * 0.55 + shakeAcc * 0.45;
+    }
+    const patLeft = clamp(g.pat / g.max, 0, 1) * 100;
+    this.sfx(acc >= 82 ? "great" : "serve");
+    this.pop(STOOL_X[i], STOOL_Y + 6, true);
+
+    const stools = s.stools.slice();
+    stools[i] = null;
+    this.setState({
+      stools, vessel: null, active: null,
+      served: s.served + 1,
+      accSum: s.accSum + acc, accN: s.accN + 1,
+      patSum: s.patSum + patLeft
+    });
+  }
+
+  begin = () => { this.started = true; this.audio(); this.setState({ overlay: null }); };
+
+  cardAction = () => {
+    this.setState(s => Object.assign(
+      this.freshShift(s.served >= s.cfg.need ? s.round + 1 : s.round),
+      { overlay: null, muted: s.muted, musicOff: s.musicOff }));
+  };
+
+  toggleSound = () => {
+    if (!this.state.muted) this.killMusic();
+    this.setState(s => ({ muted: !s.muted }));
+  };
+
+  toggleMusic = () => {
+    this.audio();
+    if (this.musicOn()) this.killMusic();
+    this.setState(s => ({ musicOff: !s.musicOff }));
+  };
+
+  renderVals() {
+    const s = this.state, cfg = s.cfg;
+    const v = s.vessel;
+    const tick = this.ticket();
+    const now = Date.now();
+
+    const stools = STOOL_X.map((x, i) => {
+      const g = s.stools[i];
+      if (!g) return { t: "translate(" + x + " " + STOOL_Y + ")", busy: false, empty: true };
+      const ears = EARS[g.sp.ear];
+      const pf = clamp(g.pat / g.max, 0, 1);
+      const iceN = g.drink.ice || 0;
+      const GW = 8, GAP = 4.2, CW = 3.4;
+      const rowW = GW + (iceN ? GAP + CW : 0);
+      const rowX = -rowW / 2;
+      const iceChips = iceN ? [{ x: n(rowX + GW + GAP + CW / 2) }] : [];
+      let acc1 = 0;
+      const totT = (g.mixTargets || []).reduce((a, t) => a + t, 0) || 1;
+      const mixChips = g.drink.kind === "shaken"
+        ? g.drink.mix.map((k, j) => {
+            const t = (g.mixTargets || [])[j] || 0;
+            const y0 = 4.6 - 9.2 * (acc1 / totT);
+            acc1 += t;
+            const y1 = 4.6 - 9.2 * (acc1 / totT);
+            return { y: n(y1), h: n(Math.max(1, y0 - y1)), fill: BFILL[k] };
+          })
+        : [];
+      return {
+        t: "translate(" + x + " " + STOOL_Y + ")",
+        busy: true, empty: false,
+        active: s.active === i,
+        onTap: () => this.takeOrder(i),
+        fur: g.sp.fur, dark: g.sp.dark, inner: g.sp.inner,
+        cloth: g.sp.cloth, clothDark: g.sp.clothDark,
+        earL: ears.l, earR: ears.r,
+        mouth: pf > 0.5 ? "M -2.4 3.4 q 2.4 2 4.8 0" : "M -2.4 4.4 q 2.4 -1.8 4.8 0",
+        drink: g.drink.name,
+        isTap: g.drink.kind === "tap",
+        isShaken: g.drink.kind === "shaken",
+        colour: g.drink.colour,
+        mix: mixChips,
+        iceChips, hasIce: iceN > 0,
+        glyphX: n(rowX), glyphMid: n(rowX + 8), glyphCx: n(rowX + 4),
+        patW: n(40.8 * pf),
+        patColour: pf > 0.5 ? "#2f7d3a" : pf > 0.25 ? "#c2560f" : "#c2210f"
+      };
+    });
+
+    // geometry shared by every level in the vessel
+    const gTopY = -15, gBotY = 13, gH = 28;
+    const hwAt = y => 6.4 + ((gBotY - y) / gH) * 0 + 1.6 * ((gBotY - y) / gH === 0 ? 0 : 0) + (6.4 + 1.6 * (1 - (gBotY - y) / gH) - 6.4);
+    const halfW = y => 6.4 + 1.6 * ((gBotY - y) / gH);
+    const yOf = L => gBotY - gH * clamp(L / 100, 0, 1.12);
+    const band = (lo, hi) => ({ top: n(yOf(hi)), bot: n(yOf(lo)) });
+    const trap = (lo, hi) => {
+      const yT = yOf(hi), yB = yOf(lo);
+      return "M " + n(-halfW(yT)) + " " + n(yT) + " L " + n(halfW(yT)) + " " + n(yT)
+        + " L " + n(halfW(yB)) + " " + n(yB) + " L " + n(-halfW(yB)) + " " + n(yB) + " Z";
+    };
+
+    // each poured ingredient is its own visible layer
+    const layers = [];
+    if (v && v.drink.kind === "shaken") {
+      let acc0 = 0;
+      (v.pours || []).forEach(p => {
+        layers.push({ d: trap(acc0, acc0 + p.amount), fill: BFILL[p.key] });
+        acc0 += p.amount;
+      });
+    }
+    const poured = (v && v.pours ? v.pours.reduce((a, p) => a + p.amount, 0) : 0);
+
+    // the vessel: a glass for draught, a shaker for mixed
+    const isShaker = !!v && v.drink.kind === "shaken" && v.phase !== "ready";
+    const isGlass = !!v && (v.drink.kind === "tap" || v.phase === "ready");
+    const fillPct = v ? (v.drink.kind === "tap" ? v.fill : (v.phase === "ready" ? Math.max(60, poured) : poured)) : 0;
+    const gh = gH, gTop = gTopY;
+    const lvl = clamp(fillPct / 100, 0, 1);
+    const liqTop = yOf(fillPct);
+    const headH = v && v.drink.head && v.phase === "ready" ? 3.4 : 0;
+
+    const isMixPour = !!v && v.drink.kind === "shaken" && v.phase === "loading";
+    const stepTarget = isMixPour && tick && tick.mixTargets ? (tick.mixTargets[v.step] || 0) : 0;
+    const below = isMixPour ? (v.pours || []).slice(0, v.step).reduce((a, p) => a + p.amount, 0) : 0;
+    const target = tick ? (v && v.drink.kind === "tap" ? tick.target : tick.shakeTarget) : 70;
+    const tol = (v && v.drink.kind === "tap") || isMixPour ? cfg.pourTol : cfg.shakeTol;
+    const bnd = isMixPour
+      ? band(below + stepTarget - tol, below + stepTarget + tol)
+      : band(target - tol, target + tol);
+    const bTop = bnd.top, bBot = bnd.bot;
+
+    const circ = 2 * Math.PI * 20;
+    const sf = x => clamp(x / 125, 0, 1);
+
+    const fizz = [];
+    if (v && (v.phase === "pouring" || v.pouring)) {
+      for (let i = 0; i < 3; i++) {
+        fizz.push({ x: n(-3 + i * 3), y: n(liqTop + 2), r: n(0.8 + (i % 2) * 0.5),
+          style: "animation:qbFizz " + (0.5 + i * 0.14) + "s linear infinite" });
+      }
+    }
+
+    let stationNote = "Take an order";
+    if (!v && s.dumpedAt && now - s.dumpedAt < 2200) stationNote = "Poured away";
+    else if (v && v.phase === "ice") {
+      const left = (v.drink.ice || 0) - v.ice;
+      stationNote = left > ICE_PER_GRAB ? left + " more ice" : "Last of the ice";
+    } else
+    if (v && v.drink.kind === "tap") {
+      if (v.phase === "empty") stationNote = "Hold the tap";
+      else if (v.phase === "pouring") stationNote = v.fill > target + tol ? "TOO FULL" : "Stop in the band";
+      else if (v.phase === "ready") stationNote = v.spilled ? "Overflowed" : "Carry it over";
+    } else if (v) {
+      if (v.phase === "loading") stationNote = v.pouring ? "Stop in the band" : "Hold the lit bottle";
+      else if (v.phase === "shaking") stationNote = v.strokes ? "Shake into the band" : "Drag side to side";
+      else if (v.phase === "ready") stationNote = "Carry it over";
+    }
+
+    const bottles = BOTTLES.map((b, i) => ({
+      t: "translate(" + BOTTLE_X[i] + " " + BOTTLE_Y + ")",
+      fill: b.fill, cap: b.cap,
+      wanted: !!v && v.phase === "loading" && v.drink.mix && v.drink.mix[v.step] === b.key,
+      dim: !!v && v.phase === "loading" && v.drink.mix && v.drink.mix[v.step] !== b.key ? 0.34 : 1,
+      used: !!v && !!v.pours && v.pours.some(p => p.key === b.key)
+    }));
+
+    const served = s.served, tot = cfg.total;
+    const acc = s.accN ? Math.round(s.accSum / s.accN) : 0;
+    const keep = s.accN ? Math.round(s.patSum / s.accN) : 0;
+    const rate = Math.round((served / tot) * 100);
+    const score = Math.round(rate * 0.46 + acc * 0.34 + keep * 0.2) - s.wrong * 3;
+    const passed = served >= cfg.need;
+
+    const notes = [];
+    if (s.walked) notes.push({ text: s.walked + " customer" + (s.walked > 1 ? "s" : "") + " walked out." });
+    if (s.wrong) notes.push({ text: s.wrong + " wrong pour" + (s.wrong > 1 ? "s" : "") + " down the drain." });
+    if (!s.walked && served === tot) notes.push({ text: "Served the whole room without losing one." });
+    if (!passed) notes.push({ text: "Quirk wanted " + cfg.need + " served. You got " + served + "." });
+
+    return {
+      svgRef: this.svgRef,
+      hudKicker: "Shift " + ((s.round % 4) + 1) + " of 4",
+      stageLabel: cfg.name,
+      ticketLabel: tick ? "Making" : "Order",
+      ticketText: tick ? tick.drink.name + (tick.drink.kind === "tap" ? " · on tap" : " · shaken")
+        : "Tap a customer to take their order",
+      servedText: served + "/" + tot,
+      queueText: s.queue.length + "",
+      queueColor: s.queue.length >= MAX_QUEUE ? "#c2210f" : s.queue.length ? "#c2560f" : "#6b6864",
+      walkText: s.walked + "",
+      walkColor: s.walked > 0 ? "#c2210f" : "#6b6864",
+      musicLabel: this.musicOn() ? "Music on" : "Music off",
+      musicColor: this.musicOn() ? "#201e1d" : "#a8a6a0",
+      soundLabel: this.muted() ? "Sound off" : "Sound on",
+      soundColor: this.muted() ? "#a8a6a0" : "#201e1d",
+      toggleMusic: this.toggleMusic, toggleSound: this.toggleSound,
+      onDown: this.onDown, onMove: this.onMove, onUp: this.onUp,
+      onTapTower: this.onTapTower,
+
+      stools,
+
+      handleT: v && v.phase === "pouring" ? "translate(22 72) rotate(26)" : "translate(22 72)",
+      tapInk: v && v.drink.kind === "tap" && v.phase !== "ready" ? "#f0c040" : "#9c8fa8",
+
+      stationT: "translate(" + STATION.x + " " + STATION.y + ")",
+      isShaker, isGlass, noVessel: !v,
+      showLid: !!v && v.drink.kind === "shaken" && v.phase === "shaking",
+      shakeStyle: s.shaking && v && v.phase === "shaking"
+        ? "transform-box:fill-box; transform-origin:center; animation:qbShakeIt .17s linear infinite" : "",
+      showLidOff: !!v && v.drink.kind === "shaken" && v.phase === "ready"
+        && !!v.readyAt && now - v.readyAt < 700,
+      layers,
+      hasLayers: layers.length > 0,
+      blendD: trap(0, Math.max(0, poured)),
+      blendO: v && v.drink.kind === "shaken"
+        ? (v.phase === "ready" ? 1 : clamp((v.shake || 0) / 100, 0, 0.9)) : 0,
+      vesselReady: !!v && v.phase === "ready",
+      vesselColour: v ? v.drink.colour : "#4a3b50",
+      glassFillD: "M " + n(-8 + 1.6 * (1 - lvl)) + " " + n(liqTop) + " L " + n(8 - 1.6 * (1 - lvl)) + " " + n(liqTop)
+        + " L 6.4 13 L -6.4 13 Z",
+      hasHead: headH > 0,
+      glassHeadD: "M " + n(-8 + 1.6 * (1 - lvl)) + " " + n(liqTop) + " L " + n(8 - 1.6 * (1 - lvl)) + " " + n(liqTop)
+        + " L " + n(7.6 - 1.6 * (1 - lvl)) + " " + n(liqTop + headH) + " L " + n(-7.6 + 1.6 * (1 - lvl)) + " " + n(liqTop + headH) + " Z",
+      shakerFillD: "M -8.4 " + n(liqTop) + " L 8.4 " + n(liqTop) + " L 7 12 L -7 12 Z",
+
+      showBand: !!v && !!tick && v.phase !== "ready",
+      bandY: n(bTop), bandH: n(Math.max(1.5, bBot - bTop)),
+      bandTop: n(bTop), bandBot: n(bBot),
+
+      showShakeDial: !!v && v.drink.kind === "shaken" && (v.phase === "shaking" || v.phase === "loading"),
+      shakeTDash: n((sf(target + tol) - sf(Math.max(0, target - tol))) * circ) + " " + n(circ),
+      shakeTOff: n(-sf(Math.max(0, target - tol)) * circ),
+      shakeFDash: n(sf(v ? v.shake : 0) * circ) + " " + n(circ),
+      shakeInk: v && Math.abs((v.shake || 0) - target) <= tol ? "#f6f4ef" : "#f0c040",
+
+      fizz, stationNote,
+      cubes: v && v.ice ? ICE_PILE.slice(0, Math.min(v.ice, ICE_PILE.length)).map(p => ({
+        t: "translate(" + p[0] + " " + p[1] + ") rotate(" + p[2] + ")"
+      })) : [],
+      hasCubes: !!v && v.ice > 0,
+      carryingIce: !!s.iceDrag,
+      iceDragT: s.iceDrag ? "translate(" + n(s.iceDrag.x) + " " + n(s.iceDrag.y) + ")" : "translate(0 0)",
+      bucketLit: !!v && v.phase === "ice",
+      bucketInk: v && v.phase === "ice" ? "#9fd8e8" : "#9c8fa8",
+      showPourBottle: !!v && !!v.pouring,
+      pourColour: v && v.pouring && v.pours[v.step] ? BFILL[v.pours[v.step].key] : "#d9a84e",
+      pourCap: v && v.pouring && v.pours[v.step]
+        ? (BOTTLES.find(b => b.key === v.pours[v.step].key) || BOTTLES[0]).cap : "#8f6b28",
+      pourBottleT: "translate(16.4 -18.1) rotate(265)",
+      pourStreamD: "M 4 -16.4 Q 3.2 " + n((-16.4 + liqTop) / 2) + " 2 " + n(liqTop + 1),
+      bottles,
+
+      dragging: !!s.drag,
+      dragT: s.drag ? "translate(" + n(s.drag.x) + " " + n(s.drag.y) + ")" : "translate(0 0)",
+
+      pops: (s.pops || []).filter(p => now - p.at < 1100).map(p => ({
+        t: "translate(" + n(p.x) + " " + n(p.y) + ")",
+        fill: p.ok ? "#2f7d3a" : "#c2210f",
+        d: p.ok ? "M -3.6 0 L -1 2.8 L 3.8 -2.6" : "M -3 -3 L 3 3 M 3 -3 L -3 3"
+      })),
+
+      showHint: !s.overlay && !s.titleCard,
+      hintText: tick && v && v.phase === "ice"
+        ? "Press the ice bucket and drag the tongs to the glass — two cubes a time, " + (tick.drink.ice || 0) + " in all."
+        : tick
+        ? (tick.drink.kind === "tap"
+            ? "Hold the tap handle and stop the pour inside the green band, then drag the glass to " + tick.drink.name + "'s customer."
+            : "Hold the lit bottle to pour each layer to its band, then shake side to side and drag it over.")
+        : "Tap a customer to take their order. Watch the patience bars — they walk when one empties.",
+
+      showTitleCard: !!s.titleCard && !s.overlay,
+      cardTitle: s.titleCard ? s.titleCard[0] : "",
+      cardHint: s.titleCard ? s.titleCard[1] : "",
+
+      showIntro: s.overlay === "intro",
+      begin: this.begin,
+
+      showCard: s.overlay === "card",
+      cardKicker: passed ? cfg.name + " · closed out" : cfg.name + " · Quirk is not pleased",
+      cardScore: clamp(score, 0, 100) + " / 100",
+      cardMood: !passed ? "Not enough served. Quirk wants the shift run again."
+        : score >= 90 ? "A blinding shift. Quirk almost smiled."
+        : score >= 75 ? "Good shift. The till is happy."
+        : "The drinks went out, more or less.",
+      cardRows: [
+        { name: "Served", val: rate, pct: rate, color: rate >= 75 ? "#2f7d3a" : rate >= 45 ? "#b07d00" : "#c2210f" },
+        { name: "Accuracy", val: acc, pct: acc, color: acc >= 75 ? "#2f7d3a" : acc >= 45 ? "#b07d00" : "#c2210f" },
+        { name: "Patience", val: keep, pct: keep, color: keep >= 60 ? "#2f7d3a" : keep >= 30 ? "#b07d00" : "#c2210f" }
+      ],
+      cardNotes: notes, hasNotes: notes.length > 0,
+      cardCta: !passed ? "Run the shift again"
+        : s.round + 1 >= 4 ? "Open up again" : "Next shift",
+      cardAction: this.cardAction
+    };
+  }
+}
+</script>
+
+
+</body></html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<style>body{margin:0;background:#201e1d;color:#f3f2f2;font-family:Archivo,sans-serif}a{color:#f3f2f2}a:hover{color:#ec3013}</style>
+</helmet>
+<div style="min-height:100vh;background:var(--color-text);color:var(--color-bg);padding:20px;box-sizing:border-box;display:flex;flex-direction:column;gap:14px;max-width:900px">
+  <div style="display:flex;flex-direction:column;gap:4px;border-bottom:2px solid var(--color-bg);padding-bottom:12px">
+    <span style="font:900 26px var(--font-heading);letter-spacing:0.02em">RUNWAY · THRUSTER SOUNDS</span>
+    <span style="font:500 16px/1.4 var(--font-body)">9 sounds. Copy all of it and paste it into Runway as one message.</span>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+    <button onClick="{{ copy }}" style="min-height:56px;min-width:220px;padding:0 20px;border:2px solid var(--color-bg);border-radius:0;background:var(--color-accent);color:#ffffff;font:900 18px var(--font-heading);letter-spacing:0.08em;text-align:left;cursor:pointer" style-hover="background:var(--color-accent-600)" style-active="background:var(--color-accent-700)">{{ btn }}</button>
+    <span style="font:700 15px var(--font-body);color:#7cf3c4">{{ note }}</span>
+  </div>
+  <textarea ref="{{ taRef }}" readonly="readonly" value="{{ text }}" onFocus="{{ selectAll }}" style="width:100%;min-height:62vh;box-sizing:border-box;padding:14px;border:2px solid var(--color-bg);border-radius:0;background:#2b2927;color:var(--color-bg);font:500 15px/1.5 ui-monospace,Menlo,Consolas,monospace;resize:vertical"></textarea>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { copied: false };
+  taRef = React.createRef();
+  TEXT = `Please make these 9 sound effects for a toon-shaded sci-fi fox space game. They are the sounds of a ship MOVING through space: rushing thrust and whoosh, like wind streaming past. No engine hum, no motor, no music, no voices. Mono, clean start with no silence, punchy and clear on phone speakers.
+
+IMPORTANT FILE NAMES: start every file name with the short title before the colon, exactly as written (for example "8G THRUST SMALL LOOP"), so the files are easy to find. Make each LOOP loop seamlessly: steady level, no fade in or out, no click where the end meets the start.
+
+8G THRUST SMALL LOOP: a small fast spaceship gliding forward, a soft steady rushing whoosh of thrusters like wind streaming past, smooth flowing motion, 4 seconds, seamless loop
+
+8G THRUST HEAVY LOOP: a heavy armoured spaceship pushing forward, a deep powerful rushing thrust with a low airy roar like a strong wind tunnel, steady motion, 4 seconds, seamless loop
+
+8G THRUST HUGE LOOP: a giant flagship moving slowly through space, a vast slow deep whoosh of thrust like a huge gust that never ends, majestic flowing motion, 4 seconds, seamless loop
+
+8G THRUST BURST LOOP: a starfighter at full burst speed, an intense fast rushing jet of thrust with wind tearing past, bright and powerful, pure motion, 3 seconds, seamless loop
+
+8G THRUST PIRATE LOOP: a rough pirate ship flying past, a harsh rushing thrust with gritty crackle and a rattling whoosh, 4 seconds, seamless loop
+
+8G THRUST MACHINE LOOP: a robot ship gliding, a clean airy rushing thrust with a faint shimmering digital flutter, smooth motion, 4 seconds, seamless loop
+
+8G THRUST PUFF: one short burst from a small steering thruster, a quick soft gas puff whoosh, 0.4 seconds, single sound
+
+8G THRUST START: a spaceship starting to move from still, a rising rushing whoosh of thrusters building into steady flow, 1 second, single sound
+
+8G THRUST STOP: a spaceship easing to a stop, the rushing thrust whoosh fading down into silence with a soft final puff, 1 second, single sound`;
+  doCopy() {
+    const ta = this.taRef.current, done = () => { this.setState({ copied: true }); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ copied: false }), 2500); };
+    const fallback = () => { if (!ta) return; ta.focus(); ta.select(); try { document.execCommand('copy'); done(); } catch (e) {} };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(this.TEXT).then(done, fallback); else fallback();
+  }
+  renderVals() {
+    return { text: this.TEXT, taRef: this.taRef, copy: () => this.doCopy(), selectAll: e => e.target.select(),
+      btn: this.state.copied ? 'COPIED ✓' : 'COPY ALL', note: this.state.copied ? 'Now paste it into Runway.' : '' };
+  }
+}
+</script>
+</body>
+</html>

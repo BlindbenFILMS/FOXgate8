@@ -1,0 +1,573 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Dusty Gulch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&display=swap">
+<style>
+/* Modernist — design-system tokens and component classes. This file is the source of truth for the system's look; retune it here and see readme.md. */
+
+
+:root {
+  --color-bg: #f3f2f2;
+  --color-surface: #eae9e9;
+  --color-text: #201e1d;
+  --color-accent: #ec3013;
+  --color-accent-2: #e15b47;
+  --color-divider: color-mix(in srgb, #201e1d 40%, transparent);
+
+  /* Tonal ramps — generated in OKLCH on one shared lightness scale, so the
+     same step of any role matches the others in visual value. */
+  --color-neutral-100: #f8f4f4;
+  --color-neutral-200: #eae7e7;
+  --color-neutral-300: #d7d3d3;
+  --color-neutral-400: #bab6b6;
+  --color-neutral-500: #9b9797;
+  --color-neutral-600: #7d7979;
+  --color-neutral-700: #605d5d;
+  --color-neutral-800: #444141;
+  --color-neutral-900: #2d2b2b;
+
+  --color-accent-100: #fff2ef;
+  --color-accent-200: #ffe0d9;
+  --color-accent-300: #ffc4b8;
+  --color-accent-400: #ff9783;
+  --color-accent-500: #ff563c;
+  --color-accent-600: #dd2b0f;
+  --color-accent-700: #ae1800;
+  --color-accent-800: #7c1405;
+  --color-accent-900: #4d170e;
+
+  --color-accent-2-100: #fff2ef;
+  --color-accent-2-200: #ffe0da;
+  --color-accent-2-300: #ffc4b9;
+  --color-accent-2-400: #ff9784;
+  --color-accent-2-500: #ef6853;
+  --color-accent-2-600: #c94b39;
+  --color-accent-2-700: #9e3526;
+  --color-accent-2-800: #71261b;
+  --color-accent-2-900: #471d16;
+
+  --font-heading: "Archivo", system-ui, sans-serif;
+  --font-heading-weight: 800;
+  --font-body: "Archivo", system-ui, sans-serif;
+
+  --space-1: 4.0px;
+  --space-2: 8.0px;
+  --space-3: 12.0px;
+  --space-4: 16.0px;
+  --space-6: 24.0px;
+  --space-8: 32.0px;
+
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+
+  /* Elevation — derived from the ground: soft ink-tinted shadows on a
+     light theme, a hairline edge + ambient darkness on a dark one. */
+  --shadow-sm: 0 1px 2px color-mix(in srgb, #2d2b2b 14%, transparent);
+  --shadow-md: 0 3px 10px color-mix(in srgb, #2d2b2b 16%, transparent);
+  --shadow-lg: 0 12px 32px color-mix(in srgb, #2d2b2b 22%, transparent);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: var(--font-heading-weight); }
+
+.grayscale{filter:grayscale(1) contrast(1.08)}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Components — built with the tokens above. Plain CSS
+   on plain HTML: no JavaScript, no build step. Each class is documented in
+   readme.md and demonstrated in foundations/ and components/.
+   ══════════════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-size: 15px; line-height: 1.55; font-weight: 400; }
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 var(--space-2);
+}
+h1 { font-size: 42px; }
+h2 { font-size: 32px; }
+h3 { font-size: 25px; }
+h4 { font-size: 20px; }
+h5 { font-size: 16px; }
+h6 { font-size: 13px; }
+h6 { letter-spacing: 0.08em; text-transform: uppercase; }
+p { margin: 0 0 var(--space-3); }
+a { color: var(--color-accent); text-underline-offset: 3px; }
+img { display: block; max-width: 100%; }
+figure { margin: 0; }
+figcaption {
+  font-size: 11px; margin-top: var(--space-1);
+  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+}
+.text-muted { color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
+
+/* — rules — */
+.hr {
+  height: 2px; border: 0; margin: var(--space-4) 0;
+  background: var(--color-divider);
+}
+
+/* — buttons — */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  cursor: pointer; text-decoration: none;
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 14px; line-height: 1.2; color: var(--color-text); /* matches the .input's 14px —
+     the pair sits side by side in sign-up rows */
+  background: transparent; border: 1px solid transparent;
+  padding: var(--space-2) calc(var(--space-3) * 1.2);
+  border-radius: var(--radius-md);
+}
+.btn svg { display: block; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-primary { background: var(--color-accent); color: var(--color-bg); }
+.btn-primary:hover { background: var(--color-accent-600); }
+.btn-primary:active { background: var(--color-accent-700); }
+.btn-secondary { border-color: var(--color-divider); }
+.btn-secondary:hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.btn-secondary:active { background: color-mix(in srgb, var(--color-text) 14%, transparent); }
+.btn-ghost { color: var(--color-accent); padding-inline: var(--space-1); }
+.btn-ghost:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+.btn-ghost:active { background: color-mix(in srgb, var(--color-accent) 18%, transparent); }
+.btn-icon { width: 36px; height: 36px; padding: 0; }
+.btn-block { width: 100%; margin-top: var(--space-2); justify-content: flex-start; text-align: left; }
+
+/* — forms — */
+.field > label {
+  display: block; font-size: 12px; margin-bottom: 5px;
+  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+}
+.input {
+  width: 100%; min-height: 36px; padding: 6px 10px; font: inherit;
+  font-size: 14px; color: var(--color-text); caret-color: var(--color-accent);
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+}
+.input:hover { border-color: color-mix(in srgb, var(--color-text) 45%, transparent); }
+.input:focus-visible { border-color: var(--color-accent); outline-offset: 0; }
+textarea.input { min-height: 90px; resize: vertical; }
+.radio { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
+.radio input, .seg-opt input {
+  position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;
+}
+.radio .dot {
+  width: 16px; height: 16px; flex: none; border-radius: 50%;
+  border: 1.5px solid var(--color-divider);
+}
+.radio:hover .dot { border-color: var(--color-accent); }
+.radio input:checked + .dot {
+  border-color: var(--color-accent); background: var(--color-accent);
+  box-shadow: inset 0 0 0 4px var(--color-bg);
+}
+.radio input:focus-visible + .dot { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.seg {
+  display: inline-flex; overflow: hidden;
+  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+}
+.seg-opt {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 12px; font-size: 13px; cursor: pointer;
+}
+.seg-opt + .seg-opt { border-left: 1px solid var(--color-divider); }
+.seg-opt:has(input:checked) { background: var(--color-accent); color: var(--color-bg); }
+.seg-opt:not(:has(input:checked)):hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.seg-opt:has(input:focus-visible) { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+
+/* — cards — */
+.card {
+  display: flex; flex-direction: column; gap: var(--space-2);
+  padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-surface);
+}
+.card-kicker { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent); }
+.card-title {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 17px; line-height: 1.2;
+}
+.card-body { margin: 0; font-size: 13px; opacity: 0.8; flex: 1; }
+.card-meta {
+  display: flex; align-items: center; gap: 6px; font-size: 11px;
+  color: color-mix(in srgb, var(--color-text) 50%, transparent);
+}
+.elev-sm { box-shadow: var(--shadow-sm); }
+.elev-md { box-shadow: var(--shadow-md); }
+.elev-lg { box-shadow: var(--shadow-lg); }
+
+/* — tags — */
+.tag {
+  display: inline-flex; align-items: center; font-size: 11px;
+  letter-spacing: 0.02em; padding: 3px 10px;
+  border-radius: calc(var(--radius-md) * 0.75);
+}
+.tag-accent { background: var(--color-accent-100); color: var(--color-accent-800); }
+.tag-accent-2 { background: var(--color-accent-2-100); color: var(--color-accent-2-800); }
+.tag-neutral { background: var(--color-neutral-100); color: var(--color-neutral-800); }
+.tag-outline { border: 1px solid var(--color-accent); color: var(--color-accent); }
+
+/* — navigation — */
+.nav {
+  display: flex; align-items: center; gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 2px solid var(--color-divider);
+}
+.nav-brand {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 18px; margin-right: auto;
+}
+.nav a { color: inherit; text-decoration: none; font-size: 14px; }
+.nav a:hover, .nav a[aria-current='page'] { color: var(--color-accent); }
+
+/* — tables — */
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table th {
+  text-align: left; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  padding: var(--space-2); border-bottom: 2px solid var(--color-divider);
+}
+.table td {
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--color-divider);
+}
+.table tbody tr:hover { background: color-mix(in srgb, var(--color-text) 4%, transparent); }
+
+/* — dialog — */
+.dialog-backdrop {
+  position: fixed; inset: 0; display: grid; place-items: center;
+  padding: var(--space-4);
+  background: color-mix(in srgb, var(--color-neutral-900) 50%, transparent);
+}
+.dialog {
+  width: min(440px, 100%); display: flex; flex-direction: column; gap: var(--space-3);
+  padding: var(--space-4); border-radius: var(--radius-lg);
+  background: var(--color-surface); box-shadow: var(--shadow-lg);
+}
+.dialog-title {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 20px;
+}
+.dialog-body { font-size: 14px; opacity: 0.85; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-2); }
+
+
+:root{color-scheme:dark;background:#000}
+html,body{height:100%;margin:0;overflow:hidden;background:#000;overscroll-behavior:none}
+</style>
+<script src="dusty-gulch.bundle.js"></script>
+<script src="support.js"></script>
+<x-dc>
+<helmet>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}[data-card]>*{flex-shrink:0}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100%;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;touch-action:none" data-screen-label="Dusty Gulch">
+  <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+  <div aria-hidden="true" style="position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.38) 100%)"></div>
+  <div aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap">{{ liveTxt }}</div>
+
+  <!-- PLAY HUD · PORTRAIT: top bar (score · time · combo · pause) + bottom bar (corks · reload) -->
+  <sc-if value="{{ hudPort }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="top" style="position:absolute;left:0;right:0;top:0;z-index:3;pointer-events:none;display:flex;flex-direction:column">
+      <div style="background:#000;border-bottom:2px solid #ffd23a;display:flex;align-items:stretch;padding-top:env(safe-area-inset-top)">
+        <sc-if value="{{ playerOn }}" hint-placeholder-val="{{ false }}"><span style="flex:none;width:8px;background:{{ playerCol }};display:block"></span></sc-if>
+        <div style="flex:1;min-width:0;padding:6px 12px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ scoreLbl }}</span><span style="font:900 26px var(--font-heading);line-height:1;font-variant-numeric:tabular-nums">{{ h.score }}</span></div>
+        <div style="flex:none;padding:6px 12px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">{{ midLbl }}</span><span style="font:900 26px var(--font-heading);line-height:1;font-variant-numeric:tabular-nums;color:{{ timeCol }}">{{ timeTxt }}</span></div>
+        <div style="flex:none;width:64px;padding:6px 10px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836;background:{{ comboBg }}"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:{{ comboLblCol }}">{{ c3Lbl }}</span><span style="font:900 22px var(--font-heading);line-height:1;color:{{ comboCol }}">{{ multTxt }}</span></div>
+        <button onClick="{{ pauseGo }}" aria-label="{{ pauseAria }}" disabled="{{ pauseOff }}" style="flex:none;width:52px;min-height:52px;padding:0;border:0;border-radius:0;background:#000;color:#fff;cursor:pointer;pointer-events:auto;display:flex;align-items:center;justify-content:center;opacity:{{ pauseOp }}" style-hover="background:#2a2826"><svg width="22" height="22" viewBox="0 0 24 24"><sc-if value="{{ isOnline }}" hint-placeholder-val="{{ false }}"><path d="M6 6l12 12M18 6L6 18" stroke="#fff" stroke-width="4" stroke-linecap="square"></path></sc-if><sc-if value="{{ notOnline }}" hint-placeholder-val="{{ true }}"><path d="M7 4v16M17 4v16" stroke="#fff" stroke-width="4" stroke-linecap="square"></path></sc-if></svg></button>
+      </div>
+      <sc-if value="{{ chipsOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:repeat({{ chipN }},minmax(0,1fr));background:rgba(0,0,0,0.86);border-bottom:2px solid #3a3836">
+          <sc-for list="{{ chips }}" as="c" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:6px;padding:4px 8px;min-width:0;background:{{ c.bg }}"><span style="flex:none;width:9px;height:9px;background:{{ c.col }};display:block"></span><span style="font:800 10px var(--font-heading);letter-spacing:0.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#cfcac4">{{ c.name }}</span><span style="margin-left:auto;font:900 13px var(--font-heading);font-variant-numeric:tabular-nums;color:{{ c.vc }}">{{ c.score }}</span></div></sc-for>
+        </div>
+      </sc-if>
+    </div>
+    <div data-safe="bottom" style="position:absolute;left:0;right:0;bottom:0;z-index:3;pointer-events:none;background:#000;border-top:2px solid #ffd23a;padding-bottom:env(safe-area-inset-bottom);display:flex;align-items:stretch">
+      <div style="flex:1;min-width:0;padding:8px 12px;display:flex;flex-direction:column;justify-content:center;gap:5px">
+        <span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:{{ ammoLblCol }}">{{ ammoLbl }}</span>
+        <div style="display:flex;gap:4px;height:20px;align-items:stretch"><sc-for list="{{ corks }}" as="k" hint-placeholder-count="3"><span style="flex:none;width:12px;background:{{ k.c }};border:2px solid {{ k.b }};border-top:6px solid {{ k.cap }};border-radius:6px 6px 1px 1px;box-sizing:border-box;display:block"></span></sc-for><sc-if value="{{ tallyOn }}" hint-placeholder-val="{{ false }}"><span style="width:10px"></span><sc-for list="{{ tally }}" as="k" hint-placeholder-count="10"><span style="flex:1;max-width:28px;min-width:0;display:flex;align-items:center;justify-content:center;color:{{ k.c }};border-bottom:3px solid {{ k.b }};box-sizing:border-box"><svg viewBox="0 0 24 16" width="26" height="18" style="display:block"><path d="M12 0.8l2 4.6 5 .4-3.8 3.3 1.2 4.9L12 11.4 7.6 14l1.2-4.9L5 5.8l5-.4z" fill="currentColor" stroke="#000" stroke-width="1.2" stroke-linejoin="round"></path></svg></span></sc-for></sc-if></div>
+      </div>
+      <button onClick="{{ reloadGo }}" aria-label="Reload" disabled="{{ reloadOff }}" style="flex:none;width:112px;min-height:60px;padding:0 14px;border:0;border-left:2px solid #3a3836;border-radius:0;background:{{ reloadBg }};color:{{ reloadFg }};font:900 15px var(--font-heading);letter-spacing:0.1em;cursor:pointer;pointer-events:auto;text-align:left" style-hover="filter:brightness(1.1)">{{ reloadTxt }}</button>
+    </div>
+  </sc-if>
+
+  <!-- PLAY HUD · LANDSCAPE: left column (score · time · combo · board · pause) + right column (corks · reload) -->
+  <sc-if value="{{ hudLand }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="left" style="position:absolute;left:0;top:0;bottom:0;width:calc(124px + env(safe-area-inset-left));z-index:3;pointer-events:none;background:#000;border-right:2px solid #ffd23a;padding-left:env(safe-area-inset-left);box-sizing:border-box;display:flex;flex-direction:column">
+      <sc-if value="{{ playerOn }}" hint-placeholder-val="{{ false }}"><div style="flex:none;height:6px;background:{{ playerCol }}"></div></sc-if>
+      <div style="padding:6px 10px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#ffd23a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ scoreLbl }}</span><span style="font:900 26px var(--font-heading);line-height:1;font-variant-numeric:tabular-nums">{{ h.score }}</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:2px solid #3a3836">
+        <div style="padding:5px 10px;border-right:2px solid #3a3836;display:flex;flex-direction:column"><span style="font:800 9px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">{{ midLbl }}</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;color:{{ timeCol }}">{{ timeTxt }}</span></div>
+        <div style="padding:5px 8px;display:flex;flex-direction:column;background:{{ comboBg }}"><span style="font:800 9px var(--font-heading);letter-spacing:0.1em;color:{{ comboLblCol }}">{{ c3Lbl }}</span><span style="font:900 18px var(--font-heading);color:{{ comboCol }}">{{ multTxt }}</span></div>
+      </div>
+      <div style="flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column">
+        <sc-if value="{{ chipsOn }}" hint-placeholder-val="{{ false }}"><sc-for list="{{ chips }}" as="c" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:6px;padding:4px 10px;border-bottom:2px solid #2a2826;background:{{ c.bg }}"><span style="flex:none;width:9px;height:9px;background:{{ c.col }};display:block"></span><span style="font:800 10px var(--font-heading);letter-spacing:0.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#cfcac4">{{ c.name }}</span><span style="margin-left:auto;font:900 12px var(--font-heading);font-variant-numeric:tabular-nums;color:{{ c.vc }}">{{ c.score }}</span></div></sc-for></sc-if>
+      </div>
+      <button onClick="{{ pauseGo }}" aria-label="{{ pauseAria }}" disabled="{{ pauseOff }}" style="flex:none;min-height:48px;padding:0 10px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;pointer-events:auto;text-align:left;opacity:{{ pauseOp }};padding-bottom:env(safe-area-inset-bottom)" style-hover="background:#2a2826">{{ pauseLbl }}</button>
+    </div>
+    <div data-safe="right" style="position:absolute;right:0;top:0;bottom:0;width:calc(96px + env(safe-area-inset-right));z-index:3;pointer-events:none;background:#000;border-left:2px solid #ffd23a;padding-right:env(safe-area-inset-right);box-sizing:border-box;display:flex;flex-direction:column">
+      <div style="padding:6px 10px;display:flex;flex-direction:column;gap:5px;flex:1;min-height:0">
+        <span style="font:800 9px var(--font-heading);letter-spacing:0.1em;color:{{ ammoLblCol }}">{{ ammoLblShort }}</span>
+        <div style="flex:none;display:flex;gap:3px;flex-wrap:wrap"><sc-for list="{{ corks }}" as="k" hint-placeholder-count="3"><span style="flex:none;width:12px;height:28px;background:{{ k.c }};border:2px solid {{ k.b }};border-top:8px solid {{ k.cap }};border-radius:6px 6px 1px 1px;box-sizing:border-box;display:block"></span></sc-for></div><sc-if value="{{ tallyOn }}" hint-placeholder-val="{{ false }}"><span style="font:800 9px var(--font-heading);letter-spacing:0.1em;color:#cfcac4;margin-top:6px">{{ tallyLbl }}</span><div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3px"><sc-for list="{{ tally }}" as="k" hint-placeholder-count="10"><span style="display:flex;align-items:center;justify-content:center;color:{{ k.c }};border-bottom:2px solid {{ k.b }}"><svg viewBox="0 0 24 16" width="15" height="10" style="display:block"><path d="M12 0.8l2 4.6 5 .4-3.8 3.3 1.2 4.9L12 11.4 7.6 14l1.2-4.9L5 5.8l5-.4z" fill="currentColor" stroke="#000" stroke-width="1.2" stroke-linejoin="round"></path></svg></span></sc-for></div></sc-if>
+      </div>
+      <button onClick="{{ reloadGo }}" aria-label="Reload" disabled="{{ reloadOff }}" style="flex:none;min-height:72px;padding:0 10px;border:0;border-top:2px solid #3a3836;border-radius:0;background:{{ reloadBg }};color:{{ reloadFg }};font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;pointer-events:auto;text-align:left;padding-bottom:env(safe-area-inset-bottom)" style-hover="filter:brightness(1.1)">{{ reloadTxt }}</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ countOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);z-index:5;pointer-events:none;width:120px;height:120px;background:#000;border:3px solid #ffd23a;display:flex;align-items:center;justify-content:center;font:900 76px var(--font-heading);color:#ffd23a;font-variant-numeric:tabular-nums">{{ h.count }}</div>
+  </sc-if>
+  <sc-if value="{{ bannerOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:{{ demoL }};right:{{ demoR }};top:38%;transform:translateY(-50%);z-index:5;pointer-events:none;display:flex;justify-content:center">
+      <div style="background:#000;border:3px solid #ffd23a;display:flex;flex-direction:column;align-items:flex-start;padding:10px 18px;min-width:200px"><span style="font:900 clamp(26px,8vw,44px) var(--font-heading);line-height:1;color:#ffd23a;letter-spacing:0.02em">{{ bannerBig }}</span><span style="font:800 12px var(--font-heading);letter-spacing:0.12em;color:#fff;margin-top:4px">{{ bannerSub }}</span></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ sayPillOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:{{ sayPillB }};z-index:4;pointer-events:none;max-width:calc(100% - 24px);background:#000;border:2px solid #22c55e;padding:6px 12px;display:flex;gap:8px;align-items:baseline"><span style="font:900 10px var(--font-heading);letter-spacing:0.12em;color:#22c55e;white-space:nowrap">{{ keeperShort }}</span><span style="font:800 14px var(--font-body);color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ h.say }}</span></div>
+  </sc-if>
+  <sc-if value="{{ flashOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ flashTop }};transform:translateX(-50%);z-index:5;pointer-events:none;max-width:calc(100% - 24px);background:rgba(0,0,0,0.9);border:2px solid {{ flashCol }};display:flex;align-items:stretch">
+      <span style="flex:none;width:12px;background:{{ flashCol }};display:block"></span>
+      <span style="padding:8px 16px;font:900 clamp(16px,4.4vw,24px) var(--font-heading);letter-spacing:0.05em;line-height:1.1;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ flashTxt }}</span>
+    </div>
+  </sc-if>
+
+  <!-- DEMO caption + exit -->
+  <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:{{ demoL }};right:{{ demoR }};top:{{ demoTop }};z-index:6;pointer-events:none;display:flex;justify-content:center">
+      <div style="width:min(460px,100%);background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 12px;border-bottom:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;background:#ec3013;display:block"></span>DEMO</span><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">{{ demoN }}</span></div>
+        <div style="display:flex;align-items:stretch"><sc-if value="{{ demoKeyOn }}" hint-placeholder-val="{{ false }}"><div style="flex:none;min-width:56px;display:flex;align-items:center;justify-content:center;padding:0 8px;background:{{ demoKeyBg }};color:{{ demoKeyFg }};font:900 {{ demoKeyFs }} var(--font-heading);border-right:2px solid #3a3836">{{ demoKey }}</div></sc-if><div style="padding:8px 12px;font:900 clamp(14px,3.8vw,18px) var(--font-heading);letter-spacing:0.02em;line-height:1.25;color:#fff;text-wrap:pretty">{{ demoCap }}</div></div>
+        <div style="height:4px;background:#3a3836"><div style="height:100%;width:{{ demoW }};background:#ffd23a"></div></div>
+      </div>
+    </div>
+    <button onClick="{{ demoExit }}" aria-label="Exit the demo" style="position:absolute;left:50%;transform:translateX(-50%);bottom:{{ demoExitB }};z-index:7;pointer-events:auto;min-width:64px;min-height:48px;padding:0 18px;border:2px solid #ec3013;border-radius:0;background:#ec3013;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer" style-hover="background:#c82a10">EXIT DEMO · PLAY</button>
+  </sc-if>
+
+  <!-- WELCOME -->
+  <sc-if value="{{ introOn }}" hint-placeholder-val="{{ true }}">
+    <div data-card="1" data-safe="{{ introSafe }}" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:10;width:{{ cardW }};max-height:{{ cardMaxH }};overflow-y:auto;background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column;box-sizing:border-box;pointer-events:auto">
+      <div style="padding:10px 14px 8px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:2px">
+        <span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ kicker }}</span>
+        <span style="font:900 26px var(--font-heading);line-height:1">Insert Coin</span>
+      </div>
+      <sc-if value="{{ sayOn }}" hint-placeholder-val="{{ true }}"><div style="padding:8px 14px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:2px"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#8a847e">{{ keeperName }}</span><span style="font:700 15px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">{{ h.say }}</span></div></sc-if>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr))">
+        <sc-for list="{{ modeBtns }}" as="b" hint-placeholder-count="3">
+          <button onClick="{{ b.go }}" aria-pressed="{{ b.pressed }}" style="min-height:52px;padding:6px 12px 6px 14px;border:0;border-bottom:2px solid #3a3836;border-right:2px solid #3a3836;border-radius:0;background:{{ b.bg }};color:{{ b.fg }};cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px;box-shadow:inset 6px 0 0 {{ b.bar }}" style-hover="filter:brightness(1.15)"><span style="font:900 14px var(--font-heading);letter-spacing:0.05em;white-space:nowrap">{{ b.name }}</span><span style="font:800 9px var(--font-heading);letter-spacing:0.06em;opacity:0.8;white-space:nowrap">{{ b.sub }}</span></button>
+        </sc-for>
+      </div>
+      <button onClick="{{ playGo }}" style="min-height:56px;padding:4px 14px;border:0;border-bottom:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:1px" style-hover="background:#c82a10" style-active="background:#a8230d"><span style="font:900 18px var(--font-heading);letter-spacing:0.08em">PLAY SOLO</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;opacity:0.9">{{ playSub }}</span></button>
+      <sc-if value="{{ passPickOff }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ passOpen }}" style="min-height:52px;padding:4px 14px;border:0;border-bottom:2px solid #3a3836;border-radius:0;background:#000;color:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:1px" style-hover="background:#2a2826"><span style="font:900 15px var(--font-heading);letter-spacing:0.08em">PASS &amp; PLAY</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;color:#cfcac4">2–5 PLAYERS ON ONE PHONE · GULCH RUSH · SAME TARGETS</span></button>
+      </sc-if>
+      <sc-if value="{{ passPickOn }}" hint-placeholder-val="{{ false }}">
+        <div style="border-bottom:2px solid #3a3836;display:flex;flex-direction:column">
+          <span style="padding:6px 14px 4px;font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">PASS &amp; PLAY · HOW MANY?</span>
+          <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) auto">
+            <sc-for list="{{ passBtns }}" as="b" hint-placeholder-count="4"><button onClick="{{ b.go }}" aria-label="{{ b.aria }}" style="min-height:52px;padding:0;border:0;border-top:2px solid #2a2826;border-right:2px solid #2a2826;border-radius:0;background:#000;color:#fff;font:900 20px var(--font-heading);cursor:pointer;box-shadow:inset 0 -5px 0 {{ b.col }}" style-hover="background:#2a2826">{{ b.n }}</button></sc-for>
+            <button onClick="{{ passClose }}" aria-label="Close the player picker" style="min-height:52px;min-width:56px;padding:0 12px;border:0;border-top:2px solid #2a2826;border-radius:0;background:#000;color:#cfcac4;font:900 11px var(--font-heading);letter-spacing:0.08em;cursor:pointer" style-hover="background:#2a2826">BACK</button>
+          </div>
+        </div>
+      </sc-if>
+      <button onClick="{{ netOpenGo }}" style="min-height:52px;padding:4px 14px;border:0;border-bottom:2px solid #3a3836;border-radius:0;background:#000;color:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:1px" style-hover="background:#2a2826"><span style="font:900 15px var(--font-heading);letter-spacing:0.08em;color:#7dd3fc">ONLINE</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;color:#cfcac4">UP TO 5 FRIENDS · SAME TARGETS · FIRST HIT WINS</span></button>
+      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr))">
+        <button onClick="{{ assistGo }}" aria-pressed="{{ assistPressed }}" style="min-height:48px;padding:4px 10px;border:0;border-right:2px solid #3a3836;border-radius:0;background:{{ assistBg }};color:{{ assistFg }};cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center" style-hover="filter:brightness(1.15)"><span style="font:900 12px var(--font-heading);letter-spacing:0.06em">ASSIST</span><span style="font:800 9px var(--font-heading);letter-spacing:0.06em;opacity:0.8">{{ assistSub }}</span></button>
+        <button onClick="{{ muteGo }}" aria-pressed="{{ soundPressed }}" aria-label="Sound: tap to switch between music and effects, effects only, or off" style="min-height:48px;padding:4px 10px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center" style-hover="background:#2a2826"><span style="font:900 12px var(--font-heading);letter-spacing:0.06em">SOUND</span><span style="font:800 9px var(--font-heading);letter-spacing:0.06em;color:#cfcac4">{{ soundSub }}</span></button>
+        <button onClick="{{ demoGo }}" aria-label="Watch the demo" style="min-height:48px;padding:4px 10px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ffd23a;color:#000;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center" style-hover="background:#ffe27a"><span style="font:900 12px var(--font-heading);letter-spacing:0.06em">DEMO</span><span style="font:800 9px var(--font-heading);letter-spacing:0.06em">WATCH</span></button>
+        <button onClick="{{ helpGo }}" aria-label="How to play" style="min-height:48px;padding:4px 10px;border:0;border-radius:0;background:#000;color:#ffd23a;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center" style-hover="background:#2a2826"><span style="font:900 12px var(--font-heading);letter-spacing:0.06em">HELP</span><span style="font:800 9px var(--font-heading);letter-spacing:0.06em;color:#cfcac4">HOW TO</span></button>
+      </div>
+      <div style="padding:6px 14px 8px;border-top:2px solid #3a3836;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#8a847e">PRIZES</span><sc-for list="{{ prizes }}" as="p" hint-placeholder-count="3"><span style="font:800 10px var(--font-heading);letter-spacing:0.06em;color:{{ p.c }};white-space:nowrap">{{ p.t }}</span></sc-for></div>
+    </div>
+  </sc-if>
+
+  <!-- PASS THE PHONE -->
+  <sc-if value="{{ passOn }}" hint-placeholder-val="{{ false }}">
+    <div data-card="1" data-safe="{{ introSafe }}" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:10;width:{{ cardW }};max-height:{{ cardMaxH }};overflow-y:auto;background:#000;border:2px solid {{ nextCol }};display:flex;flex-direction:column;box-sizing:border-box;pointer-events:auto">
+      <div style="padding:10px 14px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:4px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ passKicker }}</span><span style="display:flex;align-items:center;gap:10px"><span style="width:22px;height:22px;background:{{ nextCol }};display:block"></span><span style="font:900 30px var(--font-heading);line-height:1">{{ nextName }}</span></span><span style="font:700 13px var(--font-body);color:#cfcac2">Same targets for everyone. Highest score wins.</span></div>
+      <sc-for list="{{ passRows }}" as="r" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 14px;border-bottom:2px solid #2a2826;background:{{ r.bg }}"><span style="width:12px;height:12px;background:{{ r.col }};display:block"></span><span style="font:900 13px var(--font-heading);letter-spacing:0.05em">{{ r.name }}</span><span style="font:900 14px var(--font-heading);font-variant-numeric:tabular-nums;color:{{ r.vc }}">{{ r.v }}</span></div></sc-for>
+      <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr)">
+        <button onClick="{{ turnGo }}" style="min-height:56px;padding:0 14px;border:0;border-right:2px solid #3a3836;border-radius:0;background:{{ nextCol }};color:#000;font:900 15px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="filter:brightness(1.1)">{{ turnBtn }}</button>
+        <button onClick="{{ quitGo }}" style="min-height:56px;padding:0 14px;border:0;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">QUIT</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ONLINE LOBBY (up to 5) -->
+  <sc-if value="{{ netOn }}" hint-placeholder-val="{{ false }}">
+    <div data-card="1" data-safe="{{ introSafe }}" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:10;width:{{ cardW }};max-height:{{ cardMaxH }};overflow-y:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column;box-sizing:border-box;pointer-events:auto">
+      <div style="padding:10px 14px 8px;display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-bottom:2px solid #3a3836"><span style="display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">DUSTY GULCH</span><span style="font:900 24px var(--font-heading);line-height:1">Online · Gulch Rush</span></span><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:{{ netStatC }};white-space:nowrap">{{ netStat }}</span></div>
+      <sc-if value="{{ netCodeOn }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:10px 14px;border-bottom:2px solid #3a3836;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:12px"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#8a847e">ROOM</span><span style="font:900 44px var(--font-heading);line-height:1;letter-spacing:0.12em;color:#ffd23a">{{ netCode }}</span></div><button onClick="{{ netShare }}" style="min-height:44px;padding:0 14px;border:2px solid #ffd23a;border-radius:0;background:#000;color:#ffd23a;font:900 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;white-space:nowrap" style-hover="background:#2a2826">{{ netShareTxt }}</button></div>
+      </sc-if>
+      <span style="padding:8px 14px;border-bottom:2px solid #3a3836;font:700 14px var(--font-body);line-height:1.4;color:#e8e4de;text-wrap:pretty">{{ netMsg }}</span>
+      <sc-for list="{{ netRows }}" as="r" hint-placeholder-count="2">
+        <div style="min-height:44px;padding:4px 14px;border-bottom:2px solid #2a2826;display:grid;grid-template-columns:12px minmax(0,1fr) auto;align-items:center;gap:10px"><span style="width:12px;height:12px;background:{{ r.col }};display:block"></span><span style="display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font:900 14px var(--font-heading);letter-spacing:0.05em;white-space:nowrap">{{ r.name }}</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;color:#8a847e;white-space:nowrap">{{ r.sub }}</span></span><span style="font:900 10px var(--font-heading);letter-spacing:0.1em;color:{{ r.tagC }}">{{ r.tag }}</span></div>
+      </sc-for>
+      <sc-if value="{{ netModeOn }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+          <sc-for list="{{ netModes }}" as="b" hint-placeholder-count="2">
+            <button onClick="{{ b.go }}" aria-pressed="{{ b.pressed }}" style="min-height:48px;padding:6px 12px 6px 14px;border:0;border-bottom:2px solid #2a2826;border-radius:0;background:{{ b.bg }};color:{{ b.fg }};cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px;box-shadow:inset 6px 0 0 {{ b.bar }}" style-hover="filter:brightness(1.15)"><span style="font:900 13px var(--font-heading);letter-spacing:0.05em;white-space:nowrap">{{ b.name }}</span><span style="font:800 9px var(--font-heading);letter-spacing:0.06em;opacity:0.75;white-space:nowrap">{{ b.sub }}</span></button>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ netJoinOn }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ netCreate }}" style="min-height:52px;padding:4px 14px;border:0;border-radius:0;background:#ec3013;color:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:1px" style-hover="background:#c82a10" style-active="background:#a8230d"><span style="font:900 16px var(--font-heading);letter-spacing:0.08em">CREATE ROOM</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;opacity:0.9;white-space:nowrap">GET A CODE TO SHARE · UP TO 5</span></button>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;border-top:2px solid #3a3836">
+          <input value="{{ netCodeIn }}" onChange="{{ netCodeType }}" onKeyDown="{{ netCodeKey }}" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Room code" placeholder="CODE" style="min-width:0;min-height:52px;padding:0 14px;border:0;border-radius:0;background:#1a1918;color:#ffd23a;font:900 24px var(--font-heading);letter-spacing:0.2em;text-transform:uppercase;outline:none;box-sizing:border-box" style-focus="background:#2a2826"></input>
+          <button onClick="{{ netJoinGo }}" style="min-height:52px;padding:0 18px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">JOIN</button>
+        </div>
+      </sc-if>
+      <div style="flex:none;display:grid;grid-template-columns:{{ netBtnCols }};border-top:2px solid #3a3836">
+        <sc-if value="{{ netReadyOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ netReady }}" style="min-height:52px;padding:4px 14px;border:0;border-right:2px solid #3a3836;border-radius:0;background:{{ netReadyBg }};color:{{ netReadyFg }};cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:1px" style-hover="filter:brightness(1.1)"><span style="font:900 16px var(--font-heading);letter-spacing:0.08em">{{ netReadyTxt }}</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;opacity:0.9;white-space:nowrap">{{ netReadySub }}</span></button></sc-if>
+        <button onClick="{{ netBack }}" style="min-height:52px;padding:0 14px;border:0;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">{{ netBackTxt }}</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- RESULTS -->
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+    <div data-card="1" data-safe="{{ introSafe }}" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:11;width:{{ cardW }};max-height:{{ cardMaxH }};overflow-y:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column;box-sizing:border-box;pointer-events:auto">
+      <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+        <div style="padding:10px 14px;flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.1em;color:#ffd23a">{{ d.kicker }}</span><span style="font:900 24px var(--font-heading);line-height:1.05">{{ d.title }}</span><span style="font:700 12px var(--font-body);color:#cfcac2">{{ bestTxt }}</span></div>
+        <div style="width:84px;flex:none;display:flex;align-items:center;justify-content:center;background:{{ gradeBg }};color:{{ gradeFg }};font:900 {{ gradeFs }} var(--font-heading)">{{ d.grade }}</div>
+      </div>
+      <sc-for list="{{ prizeWon }}" as="p" hint-placeholder-count="0"><div style="display:flex;align-items:center;gap:12px;padding:8px 14px;background:#ffd23a;color:#000;border-bottom:2px solid #000"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="square"><path d="M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3M12 14v4M8 21h8M9 18h6"></path></svg><span style="font:900 13px var(--font-heading);letter-spacing:0.06em">{{ p.t }}</span></div></sc-for>
+      <sc-if value="{{ lineOn }}" hint-placeholder-val="{{ false }}"><div style="padding:8px 14px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:2px"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#8a847e">{{ keeperName }}</span><span style="font:700 14px var(--font-body);line-height:1.35">{{ d.line }}</span></div></sc-if>
+      <sc-for list="{{ boardRows }}" as="r" hint-placeholder-count="0"><div style="display:grid;grid-template-columns:22px 12px minmax(0,1fr) auto;gap:8px;align-items:center;padding:7px 14px;border-bottom:2px solid #2a2826"><span style="font:900 13px var(--font-heading);color:#8a847e">{{ r.place }}</span><span style="width:12px;height:12px;background:{{ r.col }};display:block"></span><span style="display:flex;flex-direction:column;min-width:0"><span style="font:900 14px var(--font-heading);letter-spacing:0.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.name }}</span><span style="font:800 9px var(--font-heading);letter-spacing:0.06em;color:#8a847e">{{ r.sub }}</span></span><span style="font:900 16px var(--font-heading);font-variant-numeric:tabular-nums;color:{{ r.vc }}">{{ r.score }}</span></div></sc-for>
+      <sc-if value="{{ rowsOn }}" hint-placeholder-val="{{ true }}"><div style="display:grid;grid-template-columns:repeat({{ rowCols }},minmax(0,1fr))"><sc-for list="{{ rows }}" as="r" hint-placeholder-count="6"><div style="display:flex;flex-direction:column;gap:1px;padding:5px 14px;border-bottom:2px solid #2a2826;border-right:2px solid #2a2826;min-width:0"><span style="font:700 11px var(--font-body);color:#cfcac2;white-space:nowrap">{{ r.k }}</span><span style="font:800 14px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.v }}</span></div></sc-for></div></sc-if>
+      <sc-if value="{{ totalOn }}" hint-placeholder-val="{{ true }}"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;padding:10px 14px;font:900 18px var(--font-heading)"><span>SCORE</span><span style="font-variant-numeric:tabular-nums;color:#ffd23a">{{ d.total }}</span></div></sc-if>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:2px solid #3a3836">
+        <button onClick="{{ againGo }}" style="min-height:56px;padding:0 16px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10">{{ againLbl }}</button>
+        <button onClick="{{ menuGo }}" style="min-height:56px;padding:0 16px;border:0;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">{{ menuLbl }}</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- HOW TO PLAY -->
+  <sc-if value="{{ helpOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:20;background:rgba(0,0,0,0.88);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;pointer-events:auto">
+      <div style="width:min(460px,100%);max-height:100%;overflow-y:auto;background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column;margin:auto 0">
+        <div style="padding:10px 14px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">HOW TO PLAY</span><span style="font:900 22px var(--font-heading);line-height:1.05">Tap an outlaw to shoot</span><span style="font:700 13px var(--font-body);line-height:1.4;color:#cfcac2;text-wrap:pretty">{{ helpTxt }}</span></div>
+        <sc-for list="{{ legend }}" as="r" hint-placeholder-count="8"><div style="display:grid;grid-template-columns:14px minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 14px;border-bottom:2px solid #2a2826"><span style="width:14px;height:14px;background:{{ r.col }};border:2px solid #fff;box-sizing:border-box;display:block"></span><span style="font:800 13px var(--font-heading);letter-spacing:0.04em">{{ r.name }}</span><span style="font:900 14px var(--font-heading);font-variant-numeric:tabular-nums;color:{{ r.vc }}">{{ r.pts }}</span></div></sc-for>
+        <div style="padding:8px 14px;font:700 13px var(--font-body);line-height:1.4;color:#cfcac2;text-wrap:pretty">SHOWDOWN + BOTTLE TOSS: 3 bullets a wave, 2 targets a wave, 10 a round. GREEN FRAME = TOWNSFOLK: never shoot them (-1000). Hit the quota or it is game over; 10 of 10 = PERFECT +5000. GULCH RUSH: 45 s, 6-shot cylinder, reload any time; 5 hits in a row = ×2, 10 = ×3. Two birds with one shot = DOUBLE.</div>
+        <button onClick="{{ demoGo }}" style="min-height:52px;padding:0 16px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WATCH THE DEMO</button>
+        <button onClick="{{ helpClose }}" style="min-height:56px;padding:0 16px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 15px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">GOT IT</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- PAUSED -->
+  <sc-if value="{{ pauseOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:20;background:rgba(0,0,0,0.8);display:flex;align-items:center;padding:12px;box-sizing:border-box;pointer-events:auto">
+      <div style="width:min(360px,100%);background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+        <span style="padding:12px 14px;font:900 26px var(--font-heading);border-bottom:2px solid #3a3836">Paused</span>
+        <button onClick="{{ pauseGo }}" style="min-height:56px;padding:0 16px;border:0;border-bottom:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 15px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">RESUME</button>
+        <button onClick="{{ quitGo }}" style="min-height:52px;padding:0 16px;border:0;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">BACK TO THE CABINET</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ?embed=1: back to the world -->
+  <sc-if value="{{ backOn }}" hint-placeholder-val="{{ false }}">
+    <button onClick="{{ backGo }}" aria-label="Leave Dusty Gulch" style="position:absolute;right:max(12px, env(safe-area-inset-right));top:calc(12px + env(safe-area-inset-top));z-index:12;min-width:64px;min-height:48px;padding:0 14px;border:2px solid #ffd23a;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left;pointer-events:auto" style-hover="background:#2a2826">← BACK</button>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { h: null, vw: 1200, vh: 800, help: false, passPick: false, pick: 'classic', codeIn: '', copied: false };
+  stageRef = React.createRef();
+  embed = /[?&]embed=1/.test(location.search);
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs(); try { this.ro = new ResizeObserver(this.onRs); this.stageRef.current && this.ro.observe(this.stageRef.current.parentElement); } catch (e) {}
+    try { // a bundled copy (data-sg-bundle script, used by previews) wins; otherwise load the repo module
+      if (!window.DustyGulch && document.querySelector('script[data-dg-bundle]')) await new Promise(r => { addEventListener('dusty-gulch-ready', r, { once: true }); setTimeout(r, 15000); });
+      const m = window.DustyGulch || await import(new URL('minigames/arcade/dusty-gulch.js', document.baseURI).href); this.M = m;
+      const g = await m.createDustyGulch({ container: this.stageRef.current, onState: h => { if (!this.gone) this.setState({ h }); } }); if (this.gone) { g.destroy(); return; } this.g = g; window.__gulch = g;
+      const rm = /[?&]room=([A-Za-z0-9]{4})/.exec(location.search); if (rm) { this.g.netOpen(); this.g.netJoin(rm[1]); }
+      if (/[?&]demo=1/.test(location.search) || (window.__gulchAutoDemo !== false && !window.__gulchDemoDone && (window.__gulchDemoDone = true))) setTimeout(() => this.g && this.g.demoStart(), 400);
+      const md = /[?&]mode=(classic|clay|rush)/.exec(location.search); if (md) this.setState({ pick: md[1] });
+    } catch (e) { console.warn('dusty gulch failed: ' + (e && e.stack || String(e))); }
+  }
+  componentDidUpdate() { const root = this.stageRef.current && this.stageRef.current.parentElement; if (!root || !this.g) return; const rb = root.getBoundingClientRect(); let top = 0, bot = 0, left = 0, right = 0;
+    root.querySelectorAll('[data-safe]').forEach(el => { const r = el.getBoundingClientRect(); if (!r.height) return; const k = el.dataset.safe; if (k === 'top') top = Math.max(top, r.bottom - rb.top); else if (k === 'left') left = Math.max(left, r.right - rb.left); else if (k === 'right') right = Math.max(right, rb.right - r.left); else bot = Math.max(bot, rb.bottom - r.top + 8); });
+    const W = rb.width, H = rb.height; this.g.setSafe(Math.round(Math.min(top, H * 0.3)), Math.round(Math.min(bot, H * 0.66)), Math.round(Math.min(left, W * 0.6)), Math.round(Math.min(right, W * 0.3))); }
+  componentWillUnmount() { this.gone = true; removeEventListener('resize', this.onRs); try { this.ro && this.ro.disconnect(); } catch (e) {} this.g && this.g.destroy(); }
+  onRs = () => { const el = this.stageRef.current, r = el && el.parentElement ? el.parentElement.getBoundingClientRect() : null; this.setState({ vw: r && r.width ? r.width : innerWidth, vh: r && r.height ? r.height : innerHeight }); };
+  back = () => { const h = this.state.h, d = h && h.done; try { window.parent && window.parent !== window && window.parent.postMessage({ type: '8gates:minigame', game: 'dustyGulch', action: 'close', result: d ? { kind: d.kind, score: d.total, gold: d.gold || 0, prizes: d.prizes || [] } : null }, '*'); } catch (e) {} };
+  renderVals() {
+    const S = this.state, g = this.g, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur(), MD = (this.M && this.M.MODES) || { classic: { name: 'SHOWDOWN', line: 'OUTLAWS POP UP · 3 BULLETS A WAVE' }, clay: { name: 'BOTTLE TOSS', line: 'CANS + BOTTLES · 3 BULLETS' }, rush: { name: 'GULCH RUSH', line: '45 SECONDS · EVERYTHING AT ONCE' } };
+    const h = S.h || { phase: 'intro', score: 0, time: 45, shells: 3, shellsMax: 3, reloading: 0, mult: 1, streak: 0, board: [], tally: [], bests: {}, prizes: [], say: 'Howdy, partner! Tap an outlaw to knock him down.', retriever: { name: 'SHERIFF RUSTY' }, assist: false, muted: false };
+    const port = S.vh >= S.vw, phone = Math.min(S.vw, S.vh) < 560, play = (h.phase === 'play' || h.phase === 'count'), d = h.done || { total: 0, rows: [] }, n = h.net;
+    const mmss = s => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0'), timeTxt = h.time < 10 && play ? h.time.toFixed(1) : mmss(Math.ceil(h.time));
+    const full = !!(n && n.full), m = n ? n.members : [], allReady = m.length >= 2 && m.every(x => x.ready), rc = m.filter(x => x.ready).length;
+    const cardW = port ? 'calc(100% - 24px - env(safe-area-inset-left) - env(safe-area-inset-right))' : 'min(400px, 52%)', cardMaxH = port ? '70%' : 'calc(100% - 24px - env(safe-area-inset-bottom))';
+    const chips = (h.board || []).map(b => ({ name: b.name, col: b.col, score: b.score, bg: b.me ? '#2a2826' : 'transparent', vc: b.me ? '#ffd23a' : '#ffffff' }));
+    const reloading = h.reloading > 0, low = h.shells <= 1, timed = !!h.timed, hitsNow = (h.tally || []).filter(x => x === 'hit').length;
+    return {
+      stageRef: this.stageRef, h, d,
+      hudPort: play && port, hudLand: play && !port, playerOn: !!h.player, playerCol: h.player ? h.player.col : '#000',
+      scoreLbl: h.player ? h.player.name + ' · SCORE' : 'SCORE', timeTxt: timed ? timeTxt : String(h.round || 1), midLbl: timed ? 'TIME' : 'ROUND', c3Lbl: timed ? 'STREAK' : 'HITS', timeCol: play && timed && h.time <= 10 ? '#ff9a8a' : '#ffffff',
+      multTxt: timed ? '×' + h.mult : hitsNow + '/' + (h.quota || 6), comboBg: (timed ? h.mult > 1 : hitsNow >= (h.quota || 99)) ? '#ffd23a' : '#000000', comboCol: (timed ? h.mult > 1 : hitsNow >= (h.quota || 99)) ? '#000000' : '#ffffff', comboLblCol: (timed ? h.mult > 1 : hitsNow >= (h.quota || 99)) ? '#000000' : '#cfcac4',
+      pauseGo: e => { blur(e); if (!g) return; if (h.kind === 'online' && !h.paused) g.netLeave(); else g.pause(); }, pauseOff: !!h.demo, pauseOp: h.demo ? 0.35 : 1, pauseAria: h.kind === 'online' ? 'Leave the online round' : 'Pause', pauseLbl: h.kind === 'online' ? 'LEAVE ROUND' : 'PAUSE', isOnline: h.kind === 'online', notOnline: h.kind !== 'online',
+      chipsOn: chips.length > 1, chips, chipN: Math.max(1, chips.length),
+      corks: Array.from({ length: h.shellsMax || 3 }, (_, i) => ({ c: i < h.shells ? '#d8a84a' : '#2a2826', cap: i < h.shells ? '#a8a8b0' : '#3a3836', b: i < h.shells ? '#1a1626' : '#3a3836' })), tallyOn: !timed && (h.tally || []).length > 0,
+      tally: Array.from({ length: 10 }, (_, i) => { const k = (h.tally || [])[i]; return { c: k === 'hit' ? '#ec3013' : k === 'miss' ? '#ffffff' : k === 'now' ? '#ffd23a' : '#3a3836', b: i === (h.quota || 0) - 1 ? '#22c55e' : 'transparent' }; }), tallyLbl: (h.mode === 'clay' ? 'CANS ' : 'OUTLAWS ') + hitsNow + ' · NEED ' + (h.quota || 6),
+      ammoLbl: reloading ? 'RELOADING…' : timed ? (h.shells === 0 ? 'EMPTY · RELOAD' : 'BULLETS ' + h.shells + ' / ' + h.shellsMax) : 'BULLETS · ' + (h.mode === 'clay' ? 'CANS ' : 'OUTLAWS ') + hitsNow + ' / 10 · NEED ' + (h.quota || 6), ammoLblShort: reloading ? 'LOADING' : 'BULLETS ' + h.shells, ammoLblCol: reloading || h.shells === 0 ? '#ff9a8a' : '#ffd23a',
+      reloadGo: e => { blur(e); g && g.reload(); }, reloadOff: !timed, reloadTxt: !timed ? (h.sky || 'GULCH') : reloading ? Math.round(h.reloading * 100) + '%' : 'RELOAD', reloadBg: !timed ? '#000000' : reloading ? '#3a3836' : h.shells === 0 ? '#ff4a2a' : low ? '#ec3013' : '#000000', reloadFg: !timed ? '#8a847e' : '#ffffff',
+      bannerOn: play && !!h.banner && !h.demo, bannerBig: h.banner ? h.banner.big : '', bannerSub: h.banner ? h.banner.sub : '', sayPillOn: play && !!h.foxUp && !h.banner && !h.demo, sayPillB: port ? 'calc(80px + env(safe-area-inset-bottom))' : '14px', keeperShort: (h.retriever ? h.retriever.name : 'SHERIFF RUSTY'),
+      countOn: h.phase === 'count' && h.count != null, flashOn: !!h.flash && play && !(h.demo && port), flashTxt: h.flash ? h.flash.txt : '', flashCol: h.flash ? h.flash.col : '#ffd23a', flashTop: port ? '30%' : '18%',
+      introOn: (h.phase === 'intro') && !S.help, introSafe: port ? 'bottom' : 'left', sayOn: S.vh >= 430, cardW, cardMaxH,
+      kicker: 'DUSTY GULCH · SALOON CABINET', keeperName: (h.retriever ? h.retriever.name : 'SHERIFF RUSTY') + ' · TOWN SHERIFF',
+      modeBtns: ['classic', 'clay', 'rush'].map(id => { const sel = S.pick === id, B = h.bests || {}, best = B[id] || 0, br = id === 'classic' ? B.classicRound : id === 'clay' ? B.clayRound : 0; return { name: id === 'rush' ? 'RUSH' : id === 'clay' ? 'BOTTLES' : 'SHOWDOWN', sub: br ? 'BEST R' + br : best ? 'BEST ' + best : id === 'rush' ? '45 S' : 'ROUNDS', pressed: sel ? 'true' : 'false', bg: sel ? '#f3f2f2' : '#000000', fg: sel ? '#201e1d' : '#ffffff', bar: sel ? '#ec3013' : 'transparent', go: e => { blur(e); this.setState({ pick: id }); } }; }),
+      playGo: e => { blur(e); g && g.start(S.pick); }, playSub: (MD[S.pick] || MD.classic).line,
+      passPickOn: S.passPick, passPickOff: !S.passPick, passOpen: e => { blur(e); this.setState({ passPick: true }); }, passClose: e => { blur(e); this.setState({ passPick: false }); },
+      passBtns: [2, 3, 4, 5].map((k, i) => ({ n: String(k), aria: k + ' players', col: ['#38bdf8', '#ffd23a', '#22c55e', '#a78bfa'][i], go: e => { blur(e); this.setState({ passPick: false }); g && g.startPass(k); } })),
+      netOpenGo: e => { blur(e); g && g.netOpen(); },
+      assistGo: e => { blur(e); g && g.setAssist(!h.assist); }, assistPressed: h.assist ? 'true' : 'false', assistSub: h.assist ? 'ON · BIG + SLOW' : 'OFF', assistBg: h.assist ? '#22c55e' : '#000000', assistFg: h.assist ? '#000000' : '#ffffff',
+      muteGo: e => { blur(e); g && (g.cycleSound ? g.cycleSound() : g.toggleMute()); }, soundPressed: h.muted ? 'false' : 'true', soundSub: h.sound === 'sfx' ? 'FX ONLY' : h.sound === 'off' || h.muted ? 'OFF' : 'MUSIC + FX',
+      helpGo: e => { blur(e); this.setState({ help: true }); }, helpOn: S.help, helpClose: e => { blur(e); this.setState({ help: false }); },
+      helpTxt: phone ? 'Tap right on an outlaw. Green frame = townsfolk: hold your fire! Sheriff Rusty pops up from the trough after each wave.' : 'Click an outlaw (or aim and press Space). R spins a reload in GULCH RUSH. Esc pauses.',
+      legend: Object.values((this.M && this.M.BIRDS) || {}).map(t => ({ name: t.name, col: t.col, pts: '+' + t.pts, vc: '#ffd23a' })),
+      prizes: (h.prizes || []).map(p => ({ t: (p.got ? '✓ ' : '') + p.name + ' · ' + p.rule, c: p.got ? '#22c55e' : '#cfcac4' })),
+      // pass & play
+      passOn: h.phase === 'pass' && !!h.pass, passKicker: h.pass ? 'PASS & PLAY · TURN ' + (h.pass.turn + 1) + ' OF ' + h.pass.n + ' · PASS THE PHONE TO' : '', nextCol: h.pass && h.pass.next ? h.pass.next.col : '#ffd23a', nextName: h.pass && h.pass.next ? h.pass.next.name : '',
+      passRows: h.pass ? h.pass.players.map((p, i) => ({ name: p.name + (i === h.pass.turn ? ' · UP NEXT' : ''), col: p.col, v: i < h.pass.turn ? String(p.score) : '—', vc: i < h.pass.turn ? '#ffd23a' : '#8a847e', bg: i === h.pass.turn ? '#2a2826' : '#000000' })) : [],
+      turnGo: e => { blur(e); g && g.nextTurn(); }, turnBtn: h.pass && h.pass.next ? "I'M " + h.pass.next.name + ' · START' : 'START',
+      quitGo: e => { blur(e); g && g.toIntro(); },
+      // online lobby
+      netOn: h.phase === 'lobby' && !!n, netStat: !n ? '' : full ? 'ROOM FULL' : n.status === 'local' ? 'TEST · TABS' : n.status === 'offline' ? 'OFFLINE' : n.status === 'off' ? 'NETWORK OFF' : n.status === 'online' ? (m.length > 1 ? m.length + ' IN THE GULCH' + (n.ping ? ' · ' + n.ping + ' MS' : '') : 'ONLINE') : n.st === 'menu' ? 'NO SERVER NEEDED' : 'CONNECTING…', netStatC: n && (n.status === 'offline' || full) ? '#ec3013' : '#ffd23a',
+      netCodeOn: !!n && !!n.code && n.st !== 'menu', netCode: n ? n.code : '',
+      netShare: async e => { blur(e); if (!n) return; let u; try { u = new URL(location.href); u.searchParams.set('room', n.code); u.searchParams.delete('embed'); } catch (er) { return; } try { if (navigator.share && phone) await navigator.share({ title: '8 GATES · Dusty Gulch', text: 'Ride with me in Dusty Gulch (8 GATES). Room ' + n.code, url: u.href }); else { await navigator.clipboard.writeText(u.href); this.setState({ copied: true }); setTimeout(() => this.setState({ copied: false }), 2000); } } catch (er) {} }, netShareTxt: S.copied ? 'LINK COPIED' : 'SHARE LINK',
+      netMsg: !n ? '' : n.msg ? n.msg : n.st === 'menu' ? 'Up to 5 friends shoot at the same targets at once. Make a room and send the link, or type a friend’s code.' : full ? 'Five gunslingers are already in room ' + n.code + '. Try another code.' : n.status === 'offline' ? 'Could not reach the network. Some school or work Wi-Fi blocks this.' : m.length < 2 ? 'Waiting for friends… Send them the link, or tell them the code.' : allReady ? 'Everyone is ready. Starting…' : 'Everyone taps READY. The round starts when all are ready.',
+      netRows: n && n.st !== 'menu' && !full ? m.map(x => ({ col: x.col, name: x.name + (x.me ? ' · YOU' : ''), sub: x.host ? 'HOST' : 'DEPUTY', tag: x.playing ? 'PLAYING' : x.ready ? 'READY' : '', tagC: x.ready ? '#22c55e' : '#8a847e' })) : [],
+      netModeOn: false, netModes: [],
+      netJoinOn: !!n && n.st === 'menu', netCodeIn: S.codeIn, netCodeType: e => this.setState({ codeIn: String(e.target.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4) }), netCodeKey: e => { if (e.key === 'Enter') { e.preventDefault(); g && g.netJoin(this.state.codeIn); } e.stopPropagation(); },
+      netJoinGo: e => { blur(e); g && g.netJoin(S.codeIn); }, netCreate: e => { blur(e); g && g.netCreate(); },
+      netReadyOn: !!n && n.st === 'room' && !full && m.length >= 2, netReady: e => { blur(e); g && g.netReady(); }, netReadyTxt: n && n.ready ? 'READY ✓' : 'READY', netReadySub: n && n.ready ? (allReady ? 'STARTING…' : 'WAITING · ' + rc + '/' + m.length + ' READY') : 'GULCH RUSH' + ' · ' + m.length + ' GUNSLINGERS', netReadyBg: n && n.ready ? '#22c55e' : '#ec3013', netReadyFg: n && n.ready ? '#000000' : '#ffffff',
+      netBtnCols: n && n.st === 'room' && !full && m.length >= 2 ? 'minmax(0,2fr) minmax(0,1fr)' : 'minmax(0,1fr)', netBackTxt: !n ? '' : n.st === 'menu' ? 'BACK' : full ? 'TRY ANOTHER CODE' : 'LEAVE', netBack: e => { blur(e); g && g.netBack(); },
+      // results
+      doneOn: h.phase === 'done' && !!h.done, bestTxt: !h.done ? '' : d.kind === 'solo' ? (d.newBest ? 'NEW BEST · ' : 'BEST ' + d.best + ' · ') + (d.gold ? '+' + d.gold + ' GOLD' : 'NO GOLD THIS TIME') : d.kind === 'online' ? (d.gold ? '+' + d.gold + ' GOLD · ' : '') + 'SAME TARGETS · FIRST HIT WINS' : 'SAME TARGETS FOR EVERYONE',
+      gradeBg: d.kind === 'solo' ? '#ec3013' : d.winCol || (d.won ? '#22c55e' : '#3a3836'), gradeFg: d.kind === 'pass' ? '#000000' : '#ffffff', gradeFs: d.kind === 'solo' ? (String(d.grade).length > 2 ? '34px' : '48px') : '26px',
+      prizeWon: d.prizes && d.prizes.length ? [{ t: (d.prizes.length > 1 ? 'PRIZES · ' : 'PRIZE · ') + d.prizes.join(' + ') + ' · IN YOUR BAG' }] : [], lineOn: !!d.line && !(S.vh < 520 && d.prizes && d.prizes.length),
+      boardRows: (d.board || []).map((b, i) => ({ place: String(i + 1), col: b.col, name: b.name, sub: b.sub || '', score: b.score, vc: i === 0 ? '#ffd23a' : '#ffffff' })),
+      rows: (d.rows || []).map(([k, v]) => ({ k, v })), rowsOn: !!(d.rows && d.rows.length), rowCols: S.vh < 520 ? 3 : 2, totalOn: d.kind !== 'pass',
+      againGo: e => { blur(e); g && g.again(); }, againLbl: d.kind === 'online' ? (n && n.ready ? 'READY ✓ ' + rc + '/' + m.length : m.length < 2 ? 'WAITING FOR FRIENDS' : 'REMATCH') : 'GO AGAIN',
+      menuGo: e => { blur(e); if (!g) return; if (d.kind === 'online') g.netLobby(); else g.toIntro(); }, menuLbl: d.kind === 'online' ? 'LOBBY' : 'THE CABINET',
+      pauseOn: !!h.paused, liveTxt: h.phase === 'done' && h.done ? h.done.title + '. Score ' + h.done.total : h.banner ? h.banner.big + '. ' + h.banner.sub : h.flash ? h.flash.txt : h.phase === 'count' ? String(h.count || '') : '',
+      demoGo: e => { blur(e); this.setState({ help: false }); g && g.demoStart(); }, demoOn: !!h.demo, demoCap: h.demo ? h.demo.cap : '', demoKey: h.demo ? h.demo.key : '', demoKeyOn: !!(h.demo && h.demo.key), demoKeyFs: h.demo && h.demo.key.length > 2 ? '16px' : '26px',
+      demoKeyBg: h.demo && h.demo.key === 'FOX' ? '#22c55e' : h.demo && /800|×2/.test(h.demo.key) ? '#ffd23a' : '#ec3013', demoKeyFg: h.demo && /800|×2|FOX/.test(h.demo.key) ? '#000000' : '#ffffff', demoN: h.demo ? h.demo.n + ' / ' + h.demo.of : '', demoW: h.demo ? Math.round(h.demo.n / h.demo.of * 100) + '%' : '0%',
+      demoTop: port ? 'calc(70px + env(safe-area-inset-top))' : '10px', demoL: port ? '12px' : 'calc(136px + env(safe-area-inset-left))', demoR: port ? '12px' : 'calc(108px + env(safe-area-inset-right))', demoExitB: port ? 'calc(84px + env(safe-area-inset-bottom))' : '12px',
+      demoExit: e => { blur(e); g && g.demoStop(); },
+      backOn: this.embed && (h.phase === 'intro' || h.phase === 'done' || h.phase === 'lobby') && !S.help, backGo: e => { blur(e); this.back(); },
+    };
+  }
+}
+</script>
+
+</body></html>

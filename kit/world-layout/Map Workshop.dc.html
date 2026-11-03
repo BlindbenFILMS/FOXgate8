@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&display=swap">
+<style>html,body{margin:0;height:100%;background:#201e1d;color:#f3f2f2;font-family:Archivo,'Arial Black',Arial,sans-serif;-webkit-text-size-adjust:100%}a{color:#f3f2f2}a:hover{color:#ec3013}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid #ec3013;outline-offset:2px}</style>
+</helmet>
+<div style="display:flex;flex-direction:column;height:100vh;height:100dvh;background:#201e1d;color:#f3f2f2;font-family:Archivo,'Arial Black',Arial,sans-serif">
+  <div style="display:flex;flex-wrap:wrap;align-items:stretch;border-bottom:2px solid #f3f2f2">
+    <div style="display:flex;flex-direction:column;justify-content:center;padding:8px 16px;border-right:2px solid #f3f2f2;min-height:44px">
+      <div style="font-size:11px;font-weight:800;letter-spacing:0.08em;color:#ec3013">8 GATES · WORLD KIT</div>
+      <div style="font-size:18px;font-weight:900">MAP WORKSHOP</div>
+    </div>
+    <label style="display:flex;align-items:center;gap:8px;padding:0 12px;border-right:2px solid #f3f2f2;min-height:48px;font-size:13px;font-weight:800">
+      WORLD
+      <select key="{{ world }}" value="{{ world }}" onChange="{{ onWorld }}" style="font:inherit;font-size:16px;font-weight:800;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;padding:6px 8px;min-height:40px">
+        <sc-for list="{{ worlds }}" as="w" hint-placeholder-count="3"><option value="{{ w.id }}" selected="{{ w.sel }}">{{ w.label }}</option></sc-for>
+      </select>
+    </label>
+    <button onClick="{{ onUndo }}" style="font:inherit;font-size:14px;font-weight:800;text-align:left;background:#201e1d;color:#f3f2f2;border:0;border-right:2px solid #f3f2f2;padding:0 16px;min-height:48px;cursor:pointer" style-hover="background:#4a1a12" style-active="background:#7a2614">UNDO</button>
+    <button onClick="{{ onExport }}" style="font:inherit;font-size:14px;font-weight:800;text-align:left;background:#201e1d;color:#f3f2f2;border:0;border-right:2px solid #f3f2f2;padding:0 16px;min-height:48px;cursor:pointer" style-hover="background:#4a1a12" style-active="background:#7a2614">DOWNLOAD JSON</button>
+    <button onClick="{{ onCopy }}" style="font:inherit;font-size:14px;font-weight:800;text-align:left;background:#201e1d;color:#f3f2f2;border:0;border-right:2px solid #f3f2f2;padding:0 16px;min-height:48px;cursor:pointer" style-hover="background:#4a1a12" style-active="background:#7a2614">COPY JSON</button>
+    <button onClick="{{ onFromFile }}" style="font:inherit;font-size:14px;font-weight:800;text-align:left;background:#201e1d;color:#f3f2f2;border:0;border-right:2px solid #f3f2f2;padding:0 16px;min-height:48px;cursor:pointer" style-hover="background:#4a1a12" style-active="background:#7a2614">RELOAD FROM FILE</button>
+    <a href="{{ walkUrl }}" style="display:flex;align-items:center;font-size:14px;font-weight:900;text-decoration:none;background:#ec3013;color:#f3f2f2;border-right:2px solid #f3f2f2;padding:0 20px;min-height:48px" style-hover="background:#c42410">WALK IT →</a>
+  </div>
+  <div style="display:flex;flex-direction:{{ bodyDir }};flex:1 1 0;min-height:0;overflow:{{ bodyOver }}">
+    <div ref="{{ mapRef }}" style="position:relative;flex:{{ mapFlex }};height:{{ mapH }};min-height:0;min-width:0;border-right:2px solid #f3f2f2;border-bottom:2px solid #f3f2f2;overflow:hidden;background:#2b2928">
+      <canvas ref="{{ canRef }}" style="position:absolute;inset:0;width:100%;height:100%;touch-action:none"></canvas>
+      <div style="position:absolute;left:0;bottom:0;right:0;background:#201e1d;border-top:2px solid #f3f2f2;padding:8px 12px;font-size:13px;font-weight:700;pointer-events:none;text-wrap:pretty">{{ hint }}</div>
+      <sc-if value="{{ drawing }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;right:0;top:0;display:flex;border-left:2px solid #f3f2f2;border-bottom:2px solid #f3f2f2">
+          <button onClick="{{ onUndoPoint }}" style="font:inherit;font-size:14px;font-weight:800;text-align:left;background:#201e1d;color:#f3f2f2;border:0;border-right:2px solid #f3f2f2;padding:0 16px;min-height:48px;cursor:pointer" style-hover="background:#4a1a12">← POINT</button>
+          <button onClick="{{ onDone }}" style="font:inherit;font-size:14px;font-weight:900;text-align:left;background:#ec3013;color:#f3f2f2;border:0;padding:0 18px;min-height:48px;cursor:pointer" style-hover="background:#c42410">DONE</button>
+        </div>
+      </sc-if>
+    </div>
+    <div style="flex:{{ panelFlex }};min-width:0;display:flex;flex-direction:column;min-height:0;overflow:auto">
+      <div style="padding:10px 16px;border-bottom:2px solid #f3f2f2;font-size:13px;font-weight:700">{{ status }}</div>
+      <div style="padding:10px 16px 12px;border-bottom:2px solid #f3f2f2">
+        <div style="font-size:12px;font-weight:800;letter-spacing:0.06em;margin-bottom:6px">TOOL</div>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:2px solid #f3f2f2">
+          <sc-for list="{{ tools }}" as="t" hint-placeholder-count="6">
+            <button onClick="{{ t.pick }}" style="font:inherit;font-size:14px;font-weight:900;text-align:left;background:{{ t.bg }};color:{{ t.fg }};border:0;border-right:2px solid #f3f2f2;border-bottom:2px solid #f3f2f2;padding:0 10px;min-height:48px;cursor:pointer" style-hover="background:#4a1a12">{{ t.label }}</button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ hasSubs }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
+            <sc-for list="{{ subs }}" as="o"><button onClick="{{ o.pick }}" style="font:inherit;font-size:13px;font-weight:800;text-align:left;background:{{ o.bg }};color:{{ o.fg }};border:2px solid #f3f2f2;padding:0 10px;min-height:44px;cursor:pointer">{{ o.label }}</button></sc-for>
+          </div>
+        </sc-if>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center;font-size:12px;font-weight:800">
+          GRID
+          <sc-for list="{{ grids }}" as="o"><button onClick="{{ o.pick }}" style="font:inherit;font-size:13px;font-weight:800;text-align:left;background:{{ o.bg }};color:{{ o.fg }};border:2px solid #f3f2f2;padding:0 10px;min-height:44px;min-width:52px;cursor:pointer">{{ o.label }}</button></sc-for>
+        </div>
+      </div>
+      <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:10px 16px 12px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+            <div style="font-size:15px;font-weight:900">{{ selTitle }}</div>
+            <button onClick="{{ onDelete }}" style="font:inherit;font-size:13px;font-weight:900;text-align:left;background:#201e1d;color:#ec3013;border:2px solid #ec3013;padding:0 12px;min-height:44px;cursor:pointer" style-hover="background:#4a1a12">DELETE</button>
+          </div>
+          <sc-for list="{{ fields }}" as="f" hint-placeholder-count="3">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:11px;font-weight:800;letter-spacing:0.06em;opacity:0.8">{{ f.label }}</div>
+              <sc-if value="{{ f.isText }}"><input value="{{ f.value }}" onChange="{{ f.onChange }}" style="font:inherit;font-size:16px;font-weight:700;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;padding:8px 10px;min-height:28px"></sc-if>
+              <sc-if value="{{ f.isNum }}">
+                <div style="display:flex;align-items:stretch;border:2px solid #f3f2f2;width:max-content">
+                  <button onClick="{{ f.dec }}" style="font:inherit;font-size:20px;font-weight:900;background:#201e1d;color:#f3f2f2;border:0;border-right:2px solid #f3f2f2;min-width:48px;min-height:44px;cursor:pointer" style-hover="background:#4a1a12">−</button>
+                  <div style="display:flex;align-items:center;padding:0 14px;font-size:16px;font-weight:800;min-width:56px">{{ f.value }}</div>
+                  <button onClick="{{ f.inc }}" style="font:inherit;font-size:20px;font-weight:900;background:#201e1d;color:#f3f2f2;border:0;border-left:2px solid #f3f2f2;min-width:48px;min-height:44px;cursor:pointer" style-hover="background:#4a1a12">+</button>
+                </div>
+              </sc-if>
+              <sc-if value="{{ f.isChoice }}">
+                <div style="display:flex;flex-wrap:wrap;gap:6px">
+                  <sc-for list="{{ f.options }}" as="o"><button onClick="{{ o.pick }}" style="font:inherit;font-size:13px;font-weight:800;text-align:left;background:{{ o.bg }};color:{{ o.fg }};border:2px solid #f3f2f2;padding:0 10px;min-height:44px;cursor:pointer">{{ o.label }}</button></sc-for>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+      <div style="padding:10px 16px 4px;display:flex;justify-content:space-between;align-items:baseline">
+        <div style="font-size:12px;font-weight:800;letter-spacing:0.06em">EVERY WORLD HAS</div>
+        <div style="font-size:13px;font-weight:900">{{ reqDone }}</div>
+      </div>
+      <div style="padding:0 0 12px">
+        <sc-for list="{{ req }}" as="r" hint-placeholder-count="6">
+          <button onClick="{{ r.go }}" style="display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:8px;align-items:center;width:100%;box-sizing:border-box;text-align:left;font:inherit;background:transparent;color:#f3f2f2;border:0;border-bottom:2px solid #3d3b3a;padding:6px 16px;min-height:44px;cursor:pointer" style-hover="background:#4a1a12">
+            <span style="font-size:16px;font-weight:900;color:{{ r.col }}">{{ r.mark }}</span>
+            <span style="font-size:14px;font-weight:700;text-wrap:pretty">{{ r.label }}</span>
+            <span style="font-size:12px;font-weight:900;color:{{ r.col }}">{{ r.act }}</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { world: 'gaya', tool: 'move', sub: 'npc', area: 'zone', grid: 2, sel: null, drawing: false, ver: 0, narrow: false };
+  mapRef = React.createRef(); canRef = React.createRef();
+  WORLDS = [['gaya', 'GAYA'], ['kyoto', 'KYOTO'], ['jidda', 'JIDDA'], ['kufa', 'KUFA'], ['luxor', 'LUXOR'], ['nebo', 'NEBO'], ['ur', 'UR'], ['zion', 'ZION'], ['shasta', 'SHASTA'], ['player', 'PLAYER PLANET'], ['home', 'HOME'], ['earth', 'EARTH'], ['dsf', 'DEEP SPACE FOX'], ['meru', 'MERU']];
+  HINTS = { move: 'MOVE: drag a building, spot or area. Drag the RED door square along the walls. Drag the WHITE corner to resize. Drag empty ground to pan.', path: 'PATH: tap to add points (they snap to other paths). DONE when finished.', road: 'ROAD: tap to add points. DONE when finished.', area: 'AREA: drag a box on the map.', place: 'PLACE: tap the map to drop it.', erase: 'ERASE: tap something to remove it.' };
+  url = p => new URL(p, location.href).href;
+  componentDidMount() {
+    this.onRs = () => { const n = innerWidth < 760; if (n !== this.state.narrow) this.setState({ narrow: n }); }; addEventListener('resize', this.onRs); this.onRs();
+    const q = new URLSearchParams(location.search); let w = q.get('world') || (localStorage.getItem('mapWorkshop.v') === '348j' ? localStorage.getItem('mapWorkshop.world') : 'jidda') || 'jidda'; try { localStorage.setItem('mapWorkshop.v', '348j'); } catch (e) {} if (!this.WORLDS.some(a => a[0] === w)) w = 'gaya';
+    this.undo = []; this.setupMap(); this.open(w);
+    this.onKey = e => { if (e.target && /INPUT|SELECT/.test(e.target.tagName)) return; if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); this.doUndo(); } if (e.key === 'Delete' || e.key === 'Backspace') this.delSel(); if (e.key === 'Enter' && this.state.drawing) this.endDraw(); if (e.key === 'Escape') { if (this.state.drawing) this.endDraw(); this.setState({ sel: null }, () => this.draw()); } };
+    addEventListener('keydown', this.onKey);
+  }
+  componentWillUnmount() { removeEventListener('resize', this.onRs); removeEventListener('keydown', this.onKey); if (this.ro) this.ro.disconnect(); }
+  key() { return this.world + '.layoutDraft'; }
+  blank(w) { return { meta: { world: w, version: 1, date: new Date().toISOString().slice(0, 10), from: 'uploads/surface_' + w + '.html', notes: '' }, map: { half: 300, spawn: [0, 24], spawnFace: 'N' }, palette: { path: '#e8c35a', wall: '#ddd5c8', roof: '#7a3b2a' },
+    zones: [{ key: w + 'Town', label: 'Town', r: [-70, 70, -70, 70], music: 'town', depth: 140 }], surfaces: [{ s: 'stone', r: [-30, 30, -30, 30] }], water: [], roads: [], paths: [], buildings: [], spots: [], gates: [], wild: [], props: [] }; }
+  async open(w) {
+    this.C = this.C || await import(this.url('./kit/layout-check.js?v=348v')); this.world = w; if (this.state.world !== w) this.setState({ world: w }); this.undo = []; this.view = null; this.userMoved = false; this.state.drawing = false;
+    try { localStorage.setItem('mapWorkshop.world', w); } catch (e) {}
+    let L = null, src = '';
+    let F = null; try { const r = await fetch('layout/' + w + '.layout.json', { cache: 'no-store' }); if (r.ok) F = JSON.parse(await r.text()); } catch (e) {}
+    try { const d = localStorage.getItem(this.key()); if (d) { L = JSON.parse(d); src = 'draft'; } } catch (e) {}
+    if (F && (!L || ((F.meta && F.meta.version) || 0) > ((L.meta && L.meta.version) || 0))) { L = F; src = 'file'; }   // a newer file (Claude bumped meta.version) wins over an older draft
+    if (!L) { L = this.blank(w); src = 'new'; }
+    this.L = this.norm(L); this.src = src; this.fit(); this.setState({ world: w, sel: null, drawing: false }); this.recheck(); this.draw();
+  }
+  norm(L) { for (const k of ['zones', 'surfaces', 'water', 'islands', 'roads', 'paths', 'buildings', 'spots', 'gates', 'wild', 'props']) if (!Array.isArray(L[k])) L[k] = []; L.map = L.map || { half: 300, spawn: [0, 24] }; L.meta = L.meta || { world: this.world, version: 1 }; L.palette = L.palette || {}; return L; }
+  snap(v) { const g = this.state.grid; return Math.round(v / g) * g; }
+  push() { this.undo.push(JSON.stringify(this.L)); if (this.undo.length > 60) this.undo.shift(); }
+  save() { try { localStorage.setItem(this.key(), JSON.stringify(this.L)); this.savedAt = new Date(); this.src = 'draft'; } catch (e) {} }
+  commit() { this.save(); this.recheck(); this.draw(); this.setState({ ver: this.state.ver + 1 }); }
+  recheck() { clearTimeout(this._rc); this._rc = setTimeout(() => { if (!this.L) return; this.res = this.C.checkLayout(this.L, {}); this.wl = this.C.worldList(this.L); this.setState({ ver: this.state.ver + 1 }); }, 250); }
+  doUndo() { const s = this.undo.pop(); if (!s) return; this.L = JSON.parse(s); this.state.sel = null; this.state.drawing = false; this.setState({ sel: null, drawing: false }); this.commit(); }
+  uniq(base) { const used = new Set(); for (const a of ['zones', 'paths', 'roads', 'buildings', 'spots', 'gates', 'wild']) for (const o of this.L[a]) if (o.key) used.add(o.key); if (this.L.dock) used.add(this.L.dock.key); if (!used.has(base)) return base; let i = 2; while (used.has(base + i)) i++; return base + i; }
+  cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+  setupMap() {
+    const cv = this.canRef.current, host = this.mapRef.current; if (!cv || !host) return;
+    this.ro = new ResizeObserver(() => { const dpr = Math.min(devicePixelRatio || 1, 2); cv.width = Math.max(1, Math.min(4096, host.clientWidth * dpr)); cv.height = Math.max(1, Math.min(4096, host.clientHeight * dpr)); this.dpr = dpr; if (!this.userMoved) this.fit(); this.draw(); }); this.ro.observe(host);
+    const P = new Map(); let pinch = null; const pt = e => [e.offsetX, e.offsetY];
+    cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); P.set(e.pointerId, pt(e)); if (!this.view) return;
+      if (P.size === 2) { this.drag = null; const [a, b] = [...P.values()]; pinch = { d: Math.hypot(a[0] - b[0], a[1] - b[1]) || 1, s: this.view.s }; return; }
+      this.down(e.offsetX, e.offsetY); });
+    cv.addEventListener('pointermove', e => { const p = P.get(e.pointerId); if (!p || !this.view) return; const dx = e.offsetX - p[0], dy = e.offsetY - p[1]; P.set(e.pointerId, pt(e));
+      if (P.size === 2 && pinch) { const [a, b] = [...P.values()]; this.view.s = Math.max(0.1, Math.min(40, pinch.s * Math.hypot(a[0] - b[0], a[1] - b[1]) / pinch.d)); this.userMoved = true; this.draw(); return; }
+      this.move(e.offsetX, e.offsetY, dx, dy); });
+    const up = e => { if (P.size === 1 && P.has(e.pointerId) && this.view) this.up(e.offsetX, e.offsetY); P.delete(e.pointerId); if (P.size < 2) pinch = null; };
+    cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', e => { P.delete(e.pointerId); pinch = null; this.drag = null; });
+    cv.addEventListener('wheel', e => { e.preventDefault(); if (!this.view) return; this.userMoved = true; const [wx, wz] = this.toW(e.offsetX, e.offsetY); this.view.s = Math.max(0.1, Math.min(40, this.view.s * Math.exp(-e.deltaY * 0.0015))); const [nx, nz] = this.toW(e.offsetX, e.offsetY); this.view.cx += wx - nx; this.view.cz += wz - nz; this.draw(); }, { passive: false });
+  }
+  fit() { const host = this.mapRef.current; if (!host || !this.L) return; const half = this.L.map.half || 300, W = host.clientWidth, H = host.clientHeight - 40; if (W < 50 || H < 50) return; this.view = { cx: 0, cz: 0, s: Math.max(0.1, Math.min(W, H) / (2 * half * 1.04)) }; }
+  toW(sx, sy) { const host = this.mapRef.current, v = this.view; return [v.cx + (sx - host.clientWidth / 2) / v.s, v.cz + (sy - (host.clientHeight - 40) / 2) / v.s]; }
+  hit(sx, sy) { const L = this.L, [x, z] = this.toW(sx, sy), tol = 14 / this.view.s, near = (p, r = tol) => p && Math.hypot(p[0] - x, p[1] - z) < r, sel = this.state.sel;
+    const inR = r => r && x > r[0] && x < r[1] && z > r[2] && z < r[3];
+    if (sel && sel.a === 'buildings') { const b = L.buildings[sel.i]; if (b) { if (near(b.door)) return { ...sel, part: 'door' }; if (near([b.f[1], b.f[3]])) return { ...sel, part: 'size' }; } }
+    if (sel && ['zones', 'wild', 'water', 'islands', 'surfaces'].includes(sel.a)) { const o = L[sel.a][sel.i]; if (o && o.r && near([o.r[1], o.r[3]])) return { ...sel, part: 'size' }; }
+    if (sel && (sel.a === 'paths' || sel.a === 'roads')) { const o = L[sel.a][sel.i]; if (o) for (let k = 0; k < o.p.length; k++) if (near(o.p[k])) return { ...sel, part: 'pt', k }; }
+    if (near(L.map.spawn)) return { a: 'spawn' };
+    for (let i = L.spots.length - 1; i >= 0; i--) if (near(L.spots[i].at)) return { a: 'spots', i };
+    for (let i = L.gates.length - 1; i >= 0; i--) if (near(L.gates[i].at, Math.max(tol, L.gates[i].r || 6))) return { a: 'gates', i };
+    if (L.dock && near(L.dock.pad, Math.max(tol, L.dock.r || 12))) return { a: 'dock' };
+    for (let i = L.buildings.length - 1; i >= 0; i--) if (inR(L.buildings[i].f)) return { a: 'buildings', i };
+    for (const a of ['paths', 'roads']) for (let i = L[a].length - 1; i >= 0; i--) { const o = L[a][i]; if (o.p && o.p.length > 1 && this.C.polyD(x, z, o.p) < (o.w || 4) / 2 + tol * 0.6) return { a, i }; }
+    let best = null, ba = Infinity; for (const a of ['wild', 'islands', 'water', 'surfaces', 'zones']) L[a].forEach((o, i) => { if (inR(o.r)) { const ar = (o.r[1] - o.r[0]) * (o.r[3] - o.r[2]); if (ar < ba) { ba = ar; best = { a, i }; } } }); return best; }
+  posOf(h) { const L = this.L; return JSON.parse(JSON.stringify(h.a === 'spawn' ? L.map.spawn : h.a === 'dock' ? L.dock : L[h.a][h.i])); }
+  down(sx, sy) { const t = this.state.tool, [x, z] = this.toW(sx, sy); this.dn = { moved: 0 };
+    if (t === 'move') { const h = this.hit(sx, sy); if (h) { this.drag = { h, x, z, orig: this.posOf(h), pushed: false }; if (!h.part && h.a !== 'spawn') this.setState({ sel: { a: h.a, i: h.i } }, () => this.draw()); } else this.drag = { pan: true }; return; }
+    if (t === 'area') { this.drag = { area: true, x0: this.snap(x), z0: this.snap(z), x1: this.snap(x), z1: this.snap(z) }; return; }
+    this.drag = { pan: true }; }
+  move(sx, sy, dx, dy) { const d = this.drag; if (!d || !this.dn) return; this.dn.moved += Math.abs(dx) + Math.abs(dy); const [x, z] = this.toW(sx, sy), L = this.L;
+    if (d.pan) { if (this.dn.moved < 4) return; this.userMoved = true; this.view.cx -= dx / this.view.s; this.view.cz -= dy / this.view.s; this.draw(); return; }
+    if (d.area) { d.x1 = this.snap(x); d.z1 = this.snap(z); this.draw(); return; }
+    if (this.dn.moved < 3) return; if (!d.pushed) { this.push(); d.pushed = true; }
+    const ddx = this.snap(x - d.x), ddz = this.snap(z - d.z), h = d.h, o = d.orig;
+    if (h.a === 'spawn') L.map.spawn = [o[0] + ddx, o[1] + ddz];
+    else if (h.a === 'dock') L.dock.pad = [o.pad[0] + ddx, o.pad[1] + ddz];
+    else if (h.a === 'spots' || h.a === 'gates') L[h.a][h.i].at = [o.at[0] + ddx, o.at[1] + ddz];
+    else if (h.a === 'buildings') { const b = L.buildings[h.i];
+      if (h.part === 'door') this.doorTo(b, x, z);
+      else if (h.part === 'size') { b.f = [o.f[0], Math.max(o.f[0] + 6, this.snap(x)), o.f[2], Math.max(o.f[2] + 6, this.snap(z))]; this.clampDoor(b); }
+      else { b.f = [o.f[0] + ddx, o.f[1] + ddx, o.f[2] + ddz, o.f[3] + ddz]; b.door = [o.door[0] + ddx, o.door[1] + ddz]; } }
+    else if (h.a === 'paths' || h.a === 'roads') { const p = L[h.a][h.i]; if (h.part === 'pt') p.p[h.k] = this.snapPt(x, z, p); else p.p = o.p.map(([a, b]) => [a + ddx, b + ddz]); }
+    else { const r = L[h.a][h.i]; if (h.part === 'size') r.r = [o.r[0], Math.max(o.r[0] + 4, this.snap(x)), o.r[2], Math.max(o.r[2] + 4, this.snap(z))]; else r.r = [o.r[0] + ddx, o.r[1] + ddx, o.r[2] + ddz, o.r[3] + ddz]; if (h.a === 'zones') r.depth = Math.max(30, Math.round(Math.max(r.r[1] - r.r[0], r.r[3] - r.r[2]))); }
+    this.draw(); }
+  up(sx, sy) { const d = this.drag, t = this.state.tool, moved = this.dn ? this.dn.moved : 0; this.drag = null;
+    if (d && d.pushed) { this.commit(); return; }
+    if (d && d.area) { const r = [Math.min(d.x0, d.x1), Math.max(d.x0, d.x1), Math.min(d.z0, d.z1), Math.max(d.z0, d.z1)]; if (r[1] - r[0] >= 4 && r[3] - r[2] >= 4) this.addArea(r); else this.draw(); return; }
+    if (moved > 6) return; const [x, z] = this.toW(sx, sy);
+    if (t === 'move') { if (!this.hit(sx, sy)) this.setState({ sel: null }, () => this.draw()); return; }
+    if (t === 'path' || t === 'road') { this.addPoint(x, z); return; }
+    if (t === 'place') { this.place(this.snap(x), this.snap(z)); return; }
+    if (t === 'erase') { const h = this.hit(sx, sy); if (h && h.a !== 'spawn') { this.state.sel = { a: h.a, i: h.i }; this.delSel(); } } }
+  doorTo(b, x, z) { const [x0, x1, z0, z1] = b.f, c = (v, a, bb) => Math.max(a, Math.min(bb, v)), d = { N: Math.abs(z - z0), S: Math.abs(z - z1), W: Math.abs(x - x0), E: Math.abs(x - x1) }, f = Object.keys(d).sort((a, bb) => d[a] - d[bb])[0];
+    b.face = f; if (f === 'N' || f === 'S') b.door = [c(this.snap(x), x0 + 2, x1 - 2), f === 'N' ? z0 : z1]; else b.door = [f === 'W' ? x0 : x1, c(this.snap(z), z0 + 2, z1 - 2)]; }
+  clampDoor(b) { const [x0, x1, z0, z1] = b.f, c = (v, a, bb) => Math.max(a, Math.min(bb, v)), f = b.face || 'S'; if (!b.door) return this.centerDoor(b); if (f === 'N' || f === 'S') b.door = [c(b.door[0], x0 + 2, x1 - 2), f === 'N' ? z0 : z1]; else b.door = [f === 'W' ? x0 : x1, c(b.door[1], z0 + 2, z1 - 2)]; }
+  centerDoor(b) { const [x0, x1, z0, z1] = b.f, f = b.face || 'S'; b.door = f === 'N' ? [(x0 + x1) / 2, z0] : f === 'S' ? [(x0 + x1) / 2, z1] : f === 'W' ? [x0, (z0 + z1) / 2] : [x1, (z0 + z1) / 2]; }
+  snapPt(x, z, self) { let best = null, bd = 5; for (const a of ['paths', 'roads']) for (const o of this.L[a]) { if (o === self) continue; for (const q of o.p) { const d = Math.hypot(q[0] - x, q[1] - z); if (d < bd) { bd = d; best = q; } } } return best ? [best[0], best[1]] : [this.snap(x), this.snap(z)]; }
+  addPoint(x, z) { const t = this.state.tool, arr = t === 'road' ? 'roads' : 'paths'; this.push();
+    if (!this.state.drawing || !this.state.sel || this.state.sel.a !== arr) { const o = t === 'road' ? { w: 10, p: [] } : { key: this.uniq(this.world + 'Path' + (this.L.paths.length + 1)), label: 'Path', w: 6, p: [], lining: 'lamps', every: 14 }; this.L[arr].push(o); this.state.sel = { a: arr, i: this.L[arr].length - 1 }; this.state.drawing = true; }
+    const o = this.L[arr][this.state.sel.i]; o.p.push(this.snapPt(x, z, o)); this.setState({ drawing: true, sel: this.state.sel }); this.commit(); }
+  endDraw() { const s = this.state.sel; if (s && this.L && this.L[s.a] && (s.a === 'paths' || s.a === 'roads')) { const o = this.L[s.a][s.i]; if (o && o.p.length < 2) { this.L[s.a].splice(s.i, 1); this.state.sel = null; } } this.state.drawing = false; this.setState({ drawing: false, sel: this.state.sel }); this.commit(); }
+  addArea(r) { const k = this.state.area, w = this.world; this.push(); let a, o;
+    if (k === 'zone') { a = 'zones'; o = { key: this.uniq(w + 'Zone' + (this.L.zones.length + 1)), label: 'New Zone', r, music: 'town', depth: Math.max(30, Math.round(Math.max(r[1] - r[0], r[3] - r[2]))) }; }
+    else if (k === 'wild') { a = 'wild'; const g = this.L.gates.find(q => q.kind === 'battle' && !this.L.wild.some(x => x.for === q.key)); o = { key: this.uniq(w + 'Wild' + (this.L.wild.length + 1)), r, for: g ? g.key : '', creatures: ['monsters'] }; }
+    else if (k === 'water') { a = 'water'; o = { r }; }
+    else if (k === 'island') { a = 'islands'; o = { key: this.uniq(w + 'Island' + (this.L.islands.length + 1)), r, blob: true }; }
+    else { a = 'surfaces'; o = { s: k, r }; }
+    this.L[a].push(o); this.state.sel = { a, i: this.L[a].length - 1 }; this.setState({ sel: this.state.sel }); this.commit(); }
+  place(x, z) { const k = this.state.sub, w = this.world, L = this.L; this.push(); let sel = null;
+    if (k === 'spawn') L.map.spawn = [x, z];
+    else if (k === 'dock') { L.dock = { key: w + 'Spacedock', pad: [x, z], r: 14, face: 'S' }; sel = { a: 'dock' }; }
+    else if (k === 'battle' || k === 'cave' || k === 'minigame') { L.gates.push({ key: this.uniq(w + this.cap(k) + (L.gates.filter(g => g.kind === k).length + 1)), at: [x, z], r: k === 'cave' ? 8 : 6, kind: k }); sel = { a: 'gates', i: L.gates.length - 1 }; }
+    else if (k === 'building') { const B = { key: this.uniq(w + 'Shop' + (L.buildings.length + 1)), label: 'New Building', role: 'shop', f: [x - 8, x + 8, z - 7, z + 7], face: 'S', h: 8 }; this.centerDoor(B); L.buildings.push(B); sel = { a: 'buildings', i: L.buildings.length - 1 }; }
+    else { L.spots.push({ key: this.uniq(w + this.cap(k) + (L.spots.filter(s => s.kind === k).length + 1)), at: [x, z], kind: k }); sel = { a: 'spots', i: L.spots.length - 1 }; }
+    this.state.sel = sel; this.setState({ sel }); this.commit(); }
+  addRole(r) { const v = this.view || { cx: 0, cz: 0 }, cx = this.snap(v.cx), cz = this.snap(v.cz), w = r.w, d = r.d; this.push();
+    const B = { key: this.uniq(this.world + this.cap(r.role)), label: r.label.replace(/ \(.*\)$/, ''), role: r.role, f: [cx - w / 2, cx + w / 2, cz - d / 2, cz + d / 2], face: 'S', h: r.h, interior: true };
+    this.centerDoor(B); this.L.buildings.push(B); this.state.sel = { a: 'buildings', i: this.L.buildings.length - 1 }; this.setState({ sel: this.state.sel, tool: 'move' }); this.commit(); }
+  focusOn(at) { if (!at || !this.view) return; this.view.cx = at[0]; this.view.cz = at[1]; this.view.s = Math.max(this.view.s, 2.5); this.userMoved = true; this.draw(); }
+  delSel() { const s = this.state.sel; if (!s) return; this.push(); if (s.a === 'dock') delete this.L.dock; else this.L[s.a].splice(s.i, 1); this.state.sel = null; this.state.drawing = false; this.setState({ sel: null, drawing: false }); this.commit(); }
+  selObj() { const s = this.state.sel; if (!s || !this.L) return null; return s.a === 'dock' ? this.L.dock : (this.L[s.a] || [])[s.i]; }
+  draw() {
+    const cv = this.canRef.current, host = this.mapRef.current; if (!cv || !host) return; const g = cv.getContext('2d'), dpr = this.dpr || 1;
+    g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = '#121110'; g.fillRect(0, 0, cv.width, cv.height); const L = this.L; if (!L || !this.view) return;
+    g.setTransform(dpr, 0, 0, dpr, 0, 0); const v = this.view, W = host.clientWidth, H = host.clientHeight - 40, S = v.s, sel = this.selObj();
+    const X = x => (x - v.cx) * S + W / 2, Z = z => (z - v.cz) * S + H / 2;
+    const rect = (r, fill, stroke, lw = 2) => { const x = X(r[0]), y = Z(r[2]), w = (r[1] - r[0]) * S, h = (r[3] - r[2]) * S; if (fill) { g.fillStyle = fill; g.fillRect(x, y, w, h); } if (stroke) { g.strokeStyle = stroke; g.lineWidth = lw; g.strokeRect(x, y, w, h); } };
+    const line = (p, w, col) => { if (!p || !p.length) return; g.strokeStyle = col; g.lineWidth = Math.max(2, w * S); g.lineCap = 'round'; g.lineJoin = 'round'; g.beginPath(); p.forEach(([x, z], i) => i ? g.lineTo(X(x), Z(z)) : g.moveTo(X(x), Z(z))); if (p.length === 1) g.lineTo(X(p[0][0]) + 0.1, Z(p[0][1])); g.stroke(); };
+    const text = (s, x, y, col = '#201e1d', size = 12, bg) => { g.font = `800 ${size}px Archivo, Arial, sans-serif`; if (bg) { const w = g.measureText(s).width; g.fillStyle = bg; g.fillRect(x - 3, y - size, w + 6, size + 5); } g.fillStyle = col; g.fillText(s, x, y); };
+    const handle = (p, col) => { if (!p) return; g.fillStyle = col; g.fillRect(X(p[0]) - 7, Z(p[1]) - 7, 14, 14); g.strokeStyle = '#201e1d'; g.lineWidth = 2; g.strokeRect(X(p[0]) - 7, Z(p[1]) - 7, 14, 14); };
+    const half = L.map.half || 300, SURF = { stone: '#4a4744', grass: '#2f3b26', sand: '#5a5040', wood: '#4a3624', dirt: '#4a3e2e', snow: '#8a8f96' };
+    rect([-half, half, -half, half], '#201e1d', '#f3f2f2', 2);
+    const step = S * 10 > 10 ? 10 : S * 50 > 10 ? 50 : 0; if (step) { g.lineWidth = 1; for (let k = -half; k <= half; k += step) { g.strokeStyle = k % 50 === 0 ? 'rgba(243,242,242,0.26)' : 'rgba(243,242,242,0.09)'; g.beginPath(); g.moveTo(X(k), Z(-half)); g.lineTo(X(k), Z(half)); g.moveTo(X(-half), Z(k)); g.lineTo(X(half), Z(k)); g.stroke(); } }
+    for (const s of L.surfaces) if (s.r) rect(s.r, SURF[s.s] || '#3d3b3a', s === sel ? '#ec3013' : null, 3);
+    const T = L.terrain || {}; for (const q of T.cuts || []) if (q.r) { rect(q.r, '#0a0a0a', '#f3f2f2', 1); }
+    for (const q of T.hills || []) { g.setLineDash([3, 5]); g.strokeStyle = 'rgba(243,242,242,0.55)'; g.lineWidth = 2; for (const k of [1, 0.66, 0.33]) { g.beginPath(); g.arc(X(q.c[0]), Z(q.c[1]), q.r * k * S, 0, 7); g.stroke(); } g.setLineDash([]); }
+    { g.setLineDash([4, 4]); for (const f of T.forests || []) if (f.r) rect(f.r, 'rgba(63,122,52,0.16)', '#5a8a34', 1.5); for (const q of T.clearings || []) if (q.r) rect(q.r, null, 'rgba(243,242,242,0.6)', 1.5); g.setLineDash([]); }
+    for (const w of L.wild) if (w.r) rect(w.r, 'rgba(110,150,70,0.35)', w === sel ? '#ec3013' : '#9bbf6a', w === sel ? 3 : 2);
+    for (const w of L.water) { g.fillStyle = '#1f4a66'; if (w.e) { g.beginPath(); g.ellipse(X(w.e[0]), Z(w.e[1]), w.e[2] * S, w.e[3] * S, 0, 0, 7); g.fill(); } else if (w.r) rect(w.r, '#1f4a66', w === sel ? '#ec3013' : null, 3); }
+    for (const o of L.islands) if (o.r) { const pts = this.C.islandOutline(o, 72); g.fillStyle = '#c9b27a'; g.beginPath(); pts.forEach(([x, z], i) => i ? g.lineTo(X(x), Z(z)) : g.moveTo(X(x), Z(z))); g.closePath(); g.fill(); if (o === sel) { g.strokeStyle = '#ec3013'; g.lineWidth = 3; g.stroke(); g.setLineDash([6, 4]); rect(o.r, null, '#ec3013', 1.5); g.setLineDash([]); } }
+    for (const q of L.water) if (q.canal && q.r) rect(q.r, '#1f4a66', q === sel ? '#ec3013' : null, 3);
+    if (L.islands.length) for (const s of L.surfaces) if (s.r) rect(s.r, SURF[s.s] || '#3d3b3a', s === sel ? '#ec3013' : null, 3);
+    for (const r of L.roads) line(r.p, r.w || 10, r === sel ? '#ec3013' : '#6b6966');
+    for (const p of L.paths) { line(p.p, (p.w || 4) + 0.8, p === sel ? '#ec3013' : '#f3f2f2'); line(p.p, p.w || 4, L.palette.path || '#e8b923'); }
+    if (S > 1.2) for (const p of L.paths) if (p.p && p.p.length > 1) { g.fillStyle = '#f3f2f2'; const e = p.every || 14, off = (p.w || 4) / 2 + 1.2; for (let i = 0; i < p.p.length - 1; i++) { const [ax, az] = p.p[i], [bx, bz] = p.p[i + 1], len = Math.hypot(bx - ax, bz - az); if (len < 0.1) continue; const ux = (bx - ax) / len, uz = (bz - az) / len; for (let t = e / 2; t < len; t += e) for (const sd of [-1, 1]) { g.beginPath(); g.arc(X(ax + ux * t - uz * off * sd), Z(az + uz * t + ux * off * sd), Math.max(1.5, 0.5 * S), 0, 7); g.fill(); } } }
+    for (const b of L.buildings) { if (!b.f) continue; rect(b.f, '#3a3836', b === sel ? '#ec3013' : '#f3f2f2', b === sel ? 4 : 2); if (b.door) { g.fillStyle = '#ec3013'; g.fillRect(X(b.door[0]) - 5, Z(b.door[1]) - 5, 10, 10); } }
+    for (const z of L.zones) if (z.r) { g.setLineDash([8, 5]); rect(z.r, null, z === sel ? '#ec3013' : '#f3f2f2', z === sel ? 3 : 2); g.setLineDash([]); }
+    const SC = { npc: '#38bdf8', keeper: '#a78bfa', crowd: '#7a8a99', hiring: '#ffd23a', game: '#f97316', relicFind: '#c9a227', vehicle: '#22c55e', helipad: '#facc15', telepad: '#22d3ee', plot: '#a3e635' };
+    for (const s of L.spots) if (s.at && s.kind === 'helipad') { const hx = X(s.at[0]), hz = Z(s.at[1]), hr = Math.max(9, 6 * S); g.fillStyle = '#3a3836'; g.fillRect(hx - hr, hz - hr, hr * 2, hr * 2); g.strokeStyle = s === sel ? '#ec3013' : '#facc15'; g.lineWidth = s === sel ? 4 : 2; g.beginPath(); g.arc(hx, hz, hr * 0.8, 0, 7); g.stroke(); g.fillStyle = '#facc15'; g.font = `700 ${Math.round(hr)}px Archivo, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('H', hx, hz + 1); g.textAlign = 'left'; g.textBaseline = 'alphabetic'; }
+    for (const s of L.spots) if (s.at && s.kind === 'telepad') { const hx = X(s.at[0]), hz = Z(s.at[1]), hr = Math.max(9, 4 * S); g.fillStyle = 'rgba(34,211,238,0.3)'; g.beginPath(); g.arc(hx, hz, hr, 0, 7); g.fill(); g.strokeStyle = s === sel ? '#ec3013' : '#22d3ee'; g.lineWidth = s === sel ? 4 : 3; g.stroke(); g.beginPath(); g.arc(hx, hz, hr * 0.5, 0, 7); g.stroke(); }
+    for (const s of L.spots) if (s.at && s.kind !== 'helipad' && s.kind !== 'telepad') { g.fillStyle = SC[s.kind] || '#38bdf8'; g.beginPath(); g.arc(X(s.at[0]), Z(s.at[1]), 7, 0, 7); g.fill(); g.strokeStyle = s === sel ? '#ec3013' : '#f3f2f2'; g.lineWidth = s === sel ? 4 : 2; g.stroke(); }
+    const ring = (p, r, col, lw = 3) => { g.strokeStyle = col; g.lineWidth = lw; g.beginPath(); g.arc(X(p[0]), Z(p[1]), Math.max(9, r * S), 0, 7); g.stroke(); };
+    for (const gt of L.gates) if (gt.at) ring(gt.at, gt.r || 6, gt === sel ? '#f3f2f2' : gt.kind === 'cave' ? '#f3f2f2' : '#ec3013', gt === sel ? 5 : 3);
+    if (L.dock && L.dock.pad) { g.fillStyle = 'rgba(236,48,19,0.25)'; g.beginPath(); g.arc(X(L.dock.pad[0]), Z(L.dock.pad[1]), Math.max(9, (L.dock.r || 12) * S), 0, 7); g.fill(); ring(L.dock.pad, L.dock.r || 12, L.dock === sel ? '#f3f2f2' : '#ec3013'); }
+    const sp = L.map.spawn; if (sp) { g.fillStyle = '#ec3013'; g.beginPath(); g.moveTo(X(sp[0]), Z(sp[1]) - 10); g.lineTo(X(sp[0]) + 8, Z(sp[1]) + 7); g.lineTo(X(sp[0]) - 8, Z(sp[1]) + 7); g.closePath(); g.fill(); g.strokeStyle = '#f3f2f2'; g.lineWidth = 2; g.stroke(); }
+    if (sel) { if (sel.f) { handle(sel.door, '#ec3013'); handle([sel.f[1], sel.f[3]], '#f3f2f2'); } else if (sel.r) handle([sel.r[1], sel.r[3]], '#f3f2f2'); else if (sel.p) sel.p.forEach(q => handle(q, '#f3f2f2')); }
+    const d = this.drag; if (d && d.area) { g.setLineDash([6, 4]); rect([Math.min(d.x0, d.x1), Math.max(d.x0, d.x1), Math.min(d.z0, d.z1), Math.max(d.z0, d.z1)], 'rgba(236,48,19,0.15)', '#ec3013', 2); g.setLineDash([]); }
+    for (const q of (L.terrain || {}).hills || []) text(`${q.cliff ? 'CLIFF' : 'HILL'} ${q.h} m`, X(q.c[0]) - 24, Z(q.c[1]) + 4, '#f3f2f2', 11, '#201e1d');
+    for (const q of (L.terrain || {}).forests || []) if (q.r) text('FOREST', X(q.r[0]) + 4, Z(q.r[3]) - 4, '#cfe3b0', 10, '#201e1d');
+    for (const q of (L.terrain || {}).cuts || []) if (q.r) text(`GORGE −${q.depth} m`, X(q.r[0]) + 4, Z(q.r[3]) - 4, '#f3f2f2', 11, '#201e1d');
+    for (const z of L.zones) if (z.r) text((z.label || z.key).toUpperCase(), X(z.r[0]) + 5, Z(z.r[2]) + 16, '#201e1d', 12, '#f3f2f2');
+    for (const b of L.buildings) if (b.f && (b.f[1] - b.f[0]) * S > 34) { text((b.label || b.key).toUpperCase(), X(b.f[0]) + 4, Z(b.f[2]) + 14, '#f3f2f2', 11); if ((b.f[3] - b.f[2]) * S > 34) text(b.role || '', X(b.f[0]) + 4, Z(b.f[2]) + 28, '#ff8a6a', 10); }
+    for (const gt of L.gates) if (gt.at) text((gt.kind || 'gate').toUpperCase(), X(gt.at[0]) + 12, Z(gt.at[1]) + 4, '#201e1d', 11, '#f3f2f2');
+    if (L.dock && L.dock.pad) text('DOCK', X(L.dock.pad[0]) + 12, Z(L.dock.pad[1]) + 4, '#201e1d', 11, '#f3f2f2');
+    if (S > 2) for (const s of L.spots) if (s.at) text(s.kind, X(s.at[0]) + 10, Z(s.at[1]) + 4, '#f3f2f2', 11, 'rgba(32,30,29,0.85)');
+    const sc = S * 10 > 20 ? 10 : S * 50 > 20 ? 50 : 100; text(`${sc} m`, 12, H - 12, '#f3f2f2', 12, '#201e1d'); g.fillStyle = '#f3f2f2'; g.fillRect(12, H - 7, sc * S, 3);
+  }
+  fieldsFor(o, a) {
+    const F = [], C = this.C, set = (k, v, re) => { this.push(); o[k] = v; if (re) re(); this.commit(); },
+      txt = (label, k) => F.push({ isText: true, label, value: o[k] ?? '', onChange: e => { o[k] = e.target.value; this.commit(); } }),
+      num = (label, get, put, step = 2) => F.push({ isNum: true, label, value: get(), dec: () => { this.push(); put(get() - step); this.commit(); }, inc: () => { this.push(); put(get() + step); this.commit(); } }),
+      choice = (label, opts, cur, pick) => F.push({ isChoice: true, label, options: opts.map(v => { const [val, lab] = Array.isArray(v) ? v : [v, String(v).toUpperCase()]; const on = Array.isArray(cur) ? cur.includes(val) : cur === val; return { label: lab, bg: on ? '#f3f2f2' : '#201e1d', fg: on ? '#201e1d' : '#f3f2f2', pick: () => pick(val) }; }) });
+    if (a === 'buildings') { txt('KEY', 'key'); txt('NAME', 'label'); choice('ROLE', C.ROLES, o.role, v => set('role', v));
+      num('WIDTH (m)', () => o.f[1] - o.f[0], v => { o.f[1] = o.f[0] + Math.max(6, v); this.clampDoor(o); });
+      num('DEPTH (m)', () => o.f[3] - o.f[2], v => { o.f[3] = o.f[2] + Math.max(6, v); this.clampDoor(o); });
+      num('HEIGHT (m)', () => o.h || 8, v => { o.h = Math.max(3, v); }, 1);
+      choice('DOOR FACES', ['N', 'E', 'S', 'W'], o.face, v => set('face', v, () => this.centerDoor(o)));
+      choice('HAS AN INSIDE', [[true, 'YES'], [false, 'NO']], !!o.interior, v => set('interior', v)); txt('NOTE (unique game, what it sells…)', 'note'); }
+    else if (a === 'paths') { txt('KEY', 'key'); txt('NAME', 'label'); num('WIDTH (m)', () => o.w || 4, v => { o.w = Math.max(2, v); }, 1); choice('LINED WITH', C.LININGS, o.lining, v => set('lining', v)); num('LIGHT EVERY (m)', () => o.every || 14, v => { o.every = Math.max(4, Math.min(20, v)); }, 2); }
+    else if (a === 'roads') num('WIDTH (m)', () => o.w || 10, v => { o.w = Math.max(6, v); }, 1);
+    else if (a === 'zones') { txt('KEY (the bracketed 2D name)', 'key'); txt('NAME ON SCREEN', 'label'); txt('MUSIC', 'music'); }
+    else if (a === 'wild') { txt('KEY', 'key'); choice('WHAT LIVES HERE', C.CREATURES, o.creatures || [], v => { this.push(); const s = new Set(o.creatures || []); s.has(v) ? s.delete(v) : s.add(v); o.creatures = [...s]; this.commit(); });
+      const gs = this.L.gates.filter(g => g.kind === 'battle').map(g => g.key); if (gs.length) choice('FOR BATTLE GATE', gs.map(k => [k, k]), o.for, v => set('for', v)); }
+    else if (a === 'water') choice('CANAL (cuts through islands)', [[true, 'YES'], [false, 'NO']], !!o.canal, v => set('canal', v));
+    else if (a === 'islands') { txt('KEY', 'key'); choice('COAST', [['blob', 'NATURAL'], ['round', 'ROUND'], ['box', 'SQUARE']], o.blob ? 'blob' : o.round ? 'round' : 'box', v => { this.push(); o.blob = v === 'blob'; o.round = v === 'round'; this.commit(); }); }
+    else if (a === 'surfaces') choice('GROUND', ['stone', 'grass', 'sand', 'wood', 'dirt'], o.s, v => set('s', v));
+    else if (a === 'spots') { txt('KEY', 'key'); choice('KIND', C.SPOT_KINDS, o.kind, v => set('kind', v)); choice('FROM THE 2D FILE', [[true, 'YES'], [false, 'NO']], !!o.from2d, v => set('from2d', v)); if (o.kind === 'game') txt('GAME PAGE (GAMES_INDEX.md path)', 'game'); txt('NOTE', 'note'); }
+    else if (a === 'gates') { txt('KEY', 'key'); choice('KIND', C.GATE_KINDS, o.kind, v => set('kind', v)); num('SIZE (radius m)', () => o.r || 6, v => { o.r = Math.max(3, v); }, 1); txt('NOTE', 'note'); }
+    else if (a === 'dock') num('SIZE (radius m)', () => o.r || 14, v => { o.r = Math.max(6, v); }, 1);
+    return F; }
+  renderVals() {
+    const s = this.state, nw = !!s.narrow, L = this.L, sel = this.selObj(), btn = (lab, active, pick) => ({ label: lab, bg: active ? '#f3f2f2' : '#201e1d', fg: active ? '#201e1d' : '#f3f2f2', pick });
+    const TOOLS = [['move', 'MOVE'], ['path', 'PATH'], ['road', 'ROAD'], ['area', 'AREA'], ['place', 'PLACE'], ['erase', 'ERASE']];
+    const SUBS = { place: [['building', 'BUILDING'], ['npc', 'NPC SPOT'], ['game', 'GAME'], ['hiring', 'NOW HIRING'], ['relicFind', 'RELIC'], ['vehicle', 'VEHICLE'], ['helipad', 'HELIPAD'], ['telepad', 'TELEPORT PAD'], ['battle', 'BATTLE GATE'], ['cave', 'CAVE'], ['minigame', 'MINIGAME GATE'], ['dock', 'DOCK'], ['spawn', 'START']], area: [['zone', 'ZONE'], ['wild', 'WILD'], ['water', 'WATER'], ['island', 'ISLAND'], ['stone', 'PLAZA'], ['grass', 'GRASS'], ['sand', 'SAND']] };
+    const subs = (SUBS[s.tool] || []).map(([k, lab]) => btn(lab, s.tool === 'place' ? s.sub === k : s.area === k, () => this.setState(s.tool === 'place' ? { sub: k } : { area: k })));
+    const wl = this.wl || [], done = wl.filter(x => x.ok).length, res = this.res, C = this.C;
+    const req = wl.map(x => { const role = x.role && C.REQUIRED.find(r => r.role === x.role);
+      return { label: x.label + (x.min > 1 ? ` (${x.have}/${x.min})` : ''), mark: x.ok ? '✓' : '✗', col: x.ok ? '#f3f2f2' : '#ec3013', act: role ? (x.ok ? 'FIND' : 'ADD +') : (x.ok ? '' : 'PLACE'),
+        go: () => { if (role) { if (!x.ok) this.addRole(role); else { const i = L.buildings.findIndex(b => b.role === x.role); if (i >= 0) { const b = L.buildings[i]; this.setState({ sel: { a: 'buildings', i } }); this.focusOn([(b.f[0] + b.f[1]) / 2, (b.f[2] + b.f[3]) / 2]); } } }
+          else { const m = { cave: ['place', 'cave'], battle: ['place', 'battle'], relicFind: ['place', 'relicFind'], vehicle: ['place', 'vehicle'], helipad: ['place', 'helipad'], telepad: ['place', 'telepad'], dock: ['place', 'dock'], monsters: ['area', 'wild'], creatures: ['area', 'wild'], robots: ['area', 'wild'] }[x.id]; if (m) this.setState(m[0] === 'place' ? { tool: 'place', sub: m[1] } : { tool: 'area', area: m[1] }); } } }; });
+    const st = this.src === 'draft' ? `DRAFT saved on this device${this.savedAt ? ' ' + this.savedAt.toLocaleTimeString() : ''}` : this.src === 'file' ? `Loaded layout/${this.world}.layout.json` : 'NEW MAP (nothing saved yet)';
+    const titles = { buildings: 'BUILDING', paths: 'PATH', roads: 'ROAD', zones: 'ZONE', wild: 'WILD AREA', water: 'WATER', islands: 'ISLAND', surfaces: 'GROUND', spots: 'SPOT', gates: 'GATE', dock: 'SPACE DOCK' };
+    return {
+      bodyDir: nw ? 'column' : 'row', bodyOver: nw ? 'auto' : 'hidden', mapFlex: nw ? '0 0 auto' : '3 1 0', mapH: nw ? '60vh' : 'auto', panelFlex: nw ? '0 0 auto' : '0 0 380px',
+      worlds: this.WORLDS.map(([id, label]) => ({ id, label, sel: id === s.world })), world: s.world, mapRef: this.mapRef, canRef: this.canRef,
+      status: `${st}${res ? ` · checker: ${res.counts.fail} FAIL · ${res.counts.warn} WARN` : ''}`, hint: this.HINTS[s.tool],
+      tools: TOOLS.map(([k, lab]) => btn(lab, s.tool === k, () => { if (this.state.drawing) this.endDraw(); this.setState({ tool: k }); })),
+      hasSubs: subs.length > 0, subs, grids: [1, 2, 5, 10].map(gv => btn(gv + ' m', s.grid === gv, () => this.setState({ grid: gv }))),
+      hasSel: !!sel, selTitle: sel ? (titles[s.sel.a] || '') + (sel.key ? ' · ' + sel.key : '') : '', fields: sel ? this.fieldsFor(sel, s.sel.a) : [], onDelete: () => this.delSel(),
+      req, reqDone: `${done} / ${wl.length}`, drawing: s.drawing, onDone: () => this.endDraw(), onUndoPoint: () => { if (sel && sel.p && sel.p.length) { this.push(); sel.p.pop(); this.commit(); } },
+      onWorld: e => this.open(e.target.value), onUndo: () => this.doUndo(),
+      onExport: () => { if (!L) return; L.meta.date = new Date().toISOString().slice(0, 10); const b = new Blob([JSON.stringify(L, null, 1)], { type: 'application/json' }), a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = this.world + '.layout.json'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); },
+      onCopy: () => { if (L && navigator.clipboard) navigator.clipboard.writeText(JSON.stringify(L, null, 1)); },
+      onFromFile: () => { if (!confirm('Throw away the draft on this device and load layout/' + this.world + '.layout.json?')) return; try { localStorage.removeItem(this.key()); } catch (e) {} this.open(this.world); },
+      walkUrl: 'Layout Viewer.dc.html?world=' + (s.world || 'gaya') + '&draft=1'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000000}a{color:#ff6b5a}a:hover{color:#ec3013}button:focus-visible,select:focus-visible{outline:2px solid #ec3013;outline-offset:2px}input[type=range]{accent-color:#ec3013}select{font:700 12px var(--font-body);background:#000000;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;min-height:40px;padding:0 8px}</style>
+</helmet>
+<div style="--color-bg:#000000;--color-text:#f3f2f2;--color-neutral-700:#b8b5b3;--color-accent-100:#3a0f08;position:fixed;inset:0;display:flex;flex-direction:column;font-family:var(--font-body);color:var(--color-text);background:var(--color-bg)" data-screen-label="Robot Sound Workshop">
+  <div style="display:flex;flex-wrap:wrap;align-items:baseline;column-gap:12px;row-gap:2px;padding:10px 14px;border-bottom:2px solid var(--color-text)">
+    <div style="font-family:var(--font-heading);font-weight:800;font-size:18px;letter-spacing:0.02em">ROBOT SOUND WORKSHOP</div>
+    <div style="font-size:13px;color:var(--color-neutral-700)">{{ status }}</div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));border-bottom:2px solid var(--color-text)">
+    <sc-for list="{{ robots }}" as="r" hint-placeholder-count="8">
+      <button onClick="{{ r.pick }}" style="min-height:48px;padding:0 12px;text-align:left;font:700 13px var(--font-body);background:{{ r.bg }};color:{{ r.fg }};border:0;border-right:2px solid var(--color-text);border-bottom:2px solid var(--color-text);margin:0 -2px -2px 0;cursor:pointer" style-hover="background:var(--color-accent-100)">{{ r.name }}</button>
+    </sc-for>
+  </div>
+  <div style="flex:1;min-height:0;display:flex;flex-direction:{{ dir }}">
+    <div style="position:relative;flex:{{ stageFlex }};min-height:0;min-width:0;border-bottom:{{ stageBb }};border-right:{{ stageBr }}">
+      <div ref="{{ stage }}" style="position:absolute;inset:0;touch-action:none"></div>
+      <div style="position:absolute;left:10px;bottom:10px;display:flex;flex-wrap:wrap;gap:8px">
+        <button onClick="{{ onAtk }}" style="min-height:44px;padding:0 14px;text-align:left;font:700 13px var(--font-body);background:{{ atkBg }};color:{{ atkFg }};border:2px solid var(--color-text);cursor:pointer">{{ atkLabel }}</button>
+        <button onClick="{{ onMove }}" style="min-height:44px;padding:0 14px;text-align:left;font:700 13px var(--font-body);background:{{ movBg }};color:{{ movFg }};border:2px solid var(--color-text);cursor:pointer">{{ movLabel }}</button>
+      </div>
+    </div>
+    <div style="flex:1;min-height:0;min-width:0;overflow-y:auto;overflow-x:hidden">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;border-bottom:2px solid var(--color-text)">
+        <div style="display:flex;flex-direction:column;gap:2px"><div style="font:800 15px var(--font-heading)">{{ selName }} · SOUNDS</div><div style="font:700 11px var(--font-body);color:#ff6b5a">CHANGES HERE ONLY AFFECT THE {{ selName }}</div></div>
+        <button onClick="{{ onResetAll }}" style="min-height:40px;padding:0 12px;text-align:left;font:700 12px var(--font-body);background:transparent;color:var(--color-text);border:2px solid var(--color-text);cursor:pointer" style-hover="background:var(--color-accent-100)">RESET {{ selName }}</button>
+      </div>
+      <sc-for list="{{ rows }}" as="row" hint-placeholder-count="9">
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px;padding:10px 14px;border-bottom:2px solid #3a3836">
+          <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
+            <span style="font:800 13px var(--font-body)">{{ row.label }}</span>
+            <span style="font:700 11px var(--font-body);color:{{ row.tagCol }}">{{ row.tag }}</span>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button onClick="{{ row.test }}" style="min-height:40px;min-width:64px;padding:0 12px;text-align:left;font:700 12px var(--font-body);background:#ec3013;color:#ffffff;border:2px solid #ec3013;cursor:pointer" style-active="background:#b8230e">▶ TEST</button>
+            <sc-if value="{{ row.own }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ row.clear }}" style="min-height:40px;padding:0 10px;text-align:left;font:700 12px var(--font-body);background:transparent;color:var(--color-text);border:2px solid var(--color-text);cursor:pointer" style-hover="background:var(--color-accent-100)">RESET</button>
+            </sc-if>
+          </div>
+          <select value="{{ row.s }}" onChange="{{ row.setS }}" style="grid-column:1 / -1;width:100%">
+            <sc-for list="{{ row.opts }}" as="o" hint-placeholder-count="6">
+              <option value="{{ o.k }}">{{ o.name }}</option>
+            </sc-for>
+          </select>
+          <div style="grid-column:1 / -1;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:4px 16px">
+            <label style="display:grid;grid-template-columns:52px minmax(0,1fr) 40px;align-items:center;gap:8px;min-height:36px;font:700 11px var(--font-body)"><span>VOLUME</span><input type="range" min="0" max="3" step="0.05" value="{{ row.v }}" onInput="{{ row.setV }}" style="width:100%"></input><span style="font-weight:400;color:var(--color-neutral-700)">{{ row.vTxt }}</span></label>
+            <label style="display:grid;grid-template-columns:52px minmax(0,1fr) 40px;align-items:center;gap:8px;min-height:36px;font:700 11px var(--font-body)"><span>PITCH</span><input type="range" min="0.4" max="2" step="0.02" value="{{ row.p }}" onInput="{{ row.setP }}" style="width:100%"></input><span style="font-weight:400;color:var(--color-neutral-700)">{{ row.pTxt }}</span></label>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { ready: false, sel: 'guard-sword', atk: true, mov: false, n: 0, wide: innerWidth > innerHeight * 1.1 };
+  stage = React.createRef();
+  async componentDidMount() {
+    this.onRs = () => this.setState({ wide: innerWidth > innerHeight * 1.1 }); addEventListener('resize', this.onRs);
+    this.S = await import(new URL('engine/fighter-sfx.js?v=s266', document.baseURI).href);
+    this.SFX = this.S.SFX || window.__fighterSfx;
+    try { this.B = await import(new URL('worlds/pearl-bots.js?v=s297', document.baseURI).href); const W = await import(new URL('worlds/pearl-bot-workshop.js?v=s251b', document.baseURI).href);
+      this.bots = this.B.loadBots(); this.lab = await W.createBotWorkshop({ container: this.stage.current, onEvent: () => {} }); } catch (e) { console.warn('robot preview: ' + e.message); }
+    this.setState({ ready: true }); this.showBot();
+    this.movIv = setInterval(() => { if (this.state.mov && this.SFX) { const r = this.cur(), ev = r && r.slots.find(k => k === 'botStep' || k === 'botTread' || k === 'botHum'); if (ev) this.SFX.near('ws-move', ev, 1, 1, r.key); } }, 150);
+  }
+  componentWillUnmount() { removeEventListener('resize', this.onRs); clearInterval(this.movIv); this.lab && this.lab.destroy && this.lab.destroy(); }
+  cur() { return this.S && this.S.ROBOTS_SFX.find(r => r.key === this.state.sel); }
+  showBot() { const r = this.cur(); if (!r || !this.lab || !this.bots) return; const t = r.type === 'boss' ? 'guard' : r.type === 'wall' ? 'gate' : r.type; try { this.lab.show(t, this.bots.look[t], this.bots.stats[t], r.v); this.lab.setLoop && this.lab.setLoop(this.state.atk); } catch (e) {} }
+  styleName(k) { const VN = { recVoice: 'VOICE · RANDOM LINE', recVoiceHelp: 'VOICE · "HELP"', recVoiceCleanup: 'VOICE · "CLEAN UP"', recVoiceBiologics: 'VOICE · "BIOLOGICS DETECTED"', recVoiceAngry: 'VOICE · ANGRY ROBOT', recLaser3: 'LASER · 3 TAKES', recPlasmaWind: 'PLASMA CANNON · WIND-UP', recPlasmaFire: 'PLASMA CANNON · FIRE', recPlasma: 'PLASMA CANNON · WIND-UP + FIRE', recBoxerPunch: 'TANK BOXER · PUNCH', recLzThin: 'LASER HIT · THIN METAL', recLzThick: 'LASER HIT · THICK METAL', recLzStone: 'LASER HIT · STONE (impact 1)', recLzStone2: 'LASER HIT · STONE (impact 2)', recLzStone3: 'LASER HIT · STONE (impact 3)' }; if (VN[k]) return VN[k]; const R = this.SFX && this.SFX.recNames; if (R && R[k]) return 'REC · ' + R[k].map(n => n.split('/').pop().toUpperCase()).join(' / '); return k === 'off' ? 'OFF (silent)' : k.toUpperCase() + ' · synth'; }
+  renderVals() {
+    const s = this.state, SFX = this.SFX, L = this.S ? this.S.ROBOTS_SFX : [], cur = this.cur(), LB = this.S ? this.S.SLOT_LABEL : {};
+    const bump = () => this.setState({ n: s.n + 1 });
+    const rows = !cur || !SFX ? [] : cur.slots.map(evt => { const c = SFX.botGet(cur.key, evt);
+      return { label: LB[evt] || evt, tag: c.own ? 'CHANGED · ' + cur.name + ' ONLY' : 'DEFAULT', tagCol: c.own ? '#ff6b5a' : '#b8b5b3', own: c.own, s: c.s, v: c.v, p: c.p, vTxt: Math.round(c.v * 100) + '%', pTxt: c.p.toFixed(2),
+        opts: SFX.stylesFor(evt).map(k => ({ k, name: this.styleName(k) })),
+        test: () => SFX.botTest(cur.key, evt),
+        clear: () => { SFX.botClear(cur.key, evt); bump(); },
+        setS: e => { SFX.botSet(cur.key, evt, { s: e.target.value }); bump(); setTimeout(() => SFX.botTest(cur.key, evt), 30); },
+        setV: e => { SFX.botSet(cur.key, evt, { v: +e.target.value }); bump(); },
+        setP: e => { SFX.botSet(cur.key, evt, { p: +e.target.value }); bump(); } }; });
+    const on = (b, a, z) => b ? a : z;
+    return {
+      stage: this.stage, dir: s.wide ? 'row' : 'column', stageFlex: s.wide ? '1.1' : '0 0 38%', stageBb: s.wide ? '0' : '2px solid #f3f2f2', stageBr: s.wide ? '2px solid #f3f2f2' : '0',
+      status: !s.ready ? 'Loading…' : 'Pick a robot · its sounds change for that robot only · saved on this device',
+      robots: L.map(r => ({ name: r.name, bg: on(r.key === s.sel, '#f3f2f2', 'transparent'), fg: on(r.key === s.sel, '#000000', '#f3f2f2'), pick: () => this.setState({ sel: r.key }, () => this.showBot()) })),
+      selName: cur ? cur.name : '',
+      rows,
+      onResetAll: () => { if (cur && SFX) { SFX.botClear(cur.key); bump(); } },
+      onAtk: () => this.setState({ atk: !s.atk }, () => this.lab && this.lab.setLoop && this.lab.setLoop(this.state.atk)), atkLabel: s.atk ? 'ATTACK LOOP · ON' : 'ATTACK LOOP · OFF', atkBg: on(s.atk, '#f3f2f2', '#000000'), atkFg: on(s.atk, '#000000', '#f3f2f2'),
+      onMove: () => this.setState({ mov: !s.mov }), movLabel: s.mov ? 'MOVING SOUND · ON' : 'MOVING SOUND · OFF', movBg: on(s.mov, '#f3f2f2', '#000000'), movFg: on(s.mov, '#000000', '#f3f2f2'),
+    };
+  }
+}
+</script>
+</body>
+</html>

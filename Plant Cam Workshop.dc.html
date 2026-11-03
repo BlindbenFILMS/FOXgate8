@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#0b0a0a}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}input[type=range]{width:100%;height:36px;margin:0;accent-color:#ec3013;background:transparent}</style>
+</helmet>
+<div style="display:grid;grid-template-rows:auto minmax(0,1fr);height:100vh;height:100dvh;background:#0b0a0a;color:#fff;font-family:var(--font-body)" data-screen-label="Plant Cam Workshop">
+  <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836;min-width:0">
+    <div style="padding:10px 16px;display:flex;flex-direction:column;gap:2px;flex:1;min-width:0">
+      <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;color:#ffd23a;white-space:nowrap">8 GATES · ROB · PEARL SAIL DOORS</div>
+      <div style="font-family:var(--font-heading);font-size:20px;font-weight:800;line-height:1.05">Plant Cam Workshop</div>
+    </div>
+    <div style="display:flex;align-items:center;padding:0 14px;border-left:2px solid #3a3836;font:800 11px var(--font-heading);letter-spacing:0.1em;color:{{ savedCol }};white-space:nowrap">{{ savedTxt }}</div>
+    <a href="Rob Demo.dc.html" style="display:flex;align-items:center;min-height:44px;padding:0 18px;background:#ec3013;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.1em;text-decoration:none;white-space:nowrap" style-hover="background:#c82a10">TEST IN DEMO</a>
+  </div>
+
+  <div style="display:grid;grid-template-columns:{{ cols }};grid-template-rows:{{ rows }};min-height:0">
+    <div style="position:relative;min-width:0;min-height:0;border-right:{{ viewBR }};border-bottom:{{ viewBB }}">
+      <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+      <div style="position:absolute;left:0;top:0;display:flex;gap:0;border:2px solid #3a3836;background:#0b0a0a">
+        <sc-for list="{{ views }}" as="v" hint-placeholder-count="2">
+          <button onClick="{{ v.pick }}" style="min-height:44px;padding:0 14px;border:0;border-radius:0;background:{{ v.bg }};color:#fff;font:800 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">{{ v.name }}</button>
+        </sc-for>
+      </div>
+      <div style="position:absolute;right:0;top:0;display:flex;gap:0;border:2px solid #3a3836;background:#0b0a0a">
+        <sc-for list="{{ frames }}" as="v" hint-placeholder-count="2">
+          <button onClick="{{ v.pick }}" style="min-height:44px;padding:0 14px;border:0;border-radius:0;background:{{ v.bg }};color:#fff;font:800 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">{{ v.name }}</button>
+        </sc-for>
+      </div>
+      <div style="position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;gap:4px;padding:8px 10px;background:rgba(11,10,10,0.82);border-top:2px solid #3a3836">
+        <div style="display:flex;align-items:center;gap:10px">
+          <button onClick="{{ togglePlay }}" style="flex:none;min-width:84px;min-height:44px;padding:0 12px;border:2px solid #fff;border-radius:0;background:#ec3013;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">{{ playTxt }}</button>
+          <input type="range" min="{{ tMin }}" max="{{ tMax }}" step="0.02" value="{{ tVal }}" onInput="{{ scrub }}">
+          <span style="flex:none;font:800 13px var(--font-heading);min-width:64px;text-align:right">{{ tTxt }}</span>
+        </div>
+        <div style="font:700 11px var(--font-heading);letter-spacing:0.08em;color:#ffd23a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ beatTxt }}</div>
+      </div>
+    </div>
+
+    <div style="overflow:auto;min-height:0;display:flex;flex-direction:column">
+      <div style="display:flex;flex-direction:column;border-bottom:2px solid #3a3836">
+        <sc-for list="{{ shots }}" as="s" hint-placeholder-count="3">
+          <button onClick="{{ s.pick }}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:8px 14px;border:0;border-bottom:1px solid #2a2826;border-left:4px solid {{ s.mark }};border-radius:0;background:{{ s.bg }};color:#fff;text-align:left;cursor:pointer" style-hover="background:#1d1b1a">
+            <span style="font:800 13px var(--font-heading);letter-spacing:0.05em">{{ s.name }}</span>
+            <span style="font:700 11px var(--font-heading);letter-spacing:0.08em;color:#8a847e;white-space:nowrap">{{ s.meta }}</span>
+          </button>
+        </sc-for>
+      </div>
+
+      <div style="display:flex;gap:0;border-bottom:2px solid #3a3836">
+        <sc-for list="{{ ends }}" as="v" hint-placeholder-count="2">
+          <button onClick="{{ v.pick }}" style="flex:1;min-height:44px;padding:0 14px;border:0;border-right:2px solid #3a3836;border-radius:0;background:{{ v.bg }};color:#fff;font:800 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">{{ v.name }}</button>
+        </sc-for>
+      </div>
+
+      <div style="padding:10px 14px;display:flex;flex-direction:column;gap:2px">
+        <div style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#8a847e;padding:4px 0">CAMERA · {{ endName }}</div>
+        <sc-for list="{{ camSl }}" as="q" hint-placeholder-count="3">
+          <label style="display:grid;grid-template-columns:96px minmax(0,1fr) 48px;align-items:center;gap:10px">
+            <span style="font:700 12px var(--font-heading);letter-spacing:0.04em">{{ q.label }}</span>
+            <input type="range" min="{{ q.min }}" max="{{ q.max }}" step="{{ q.step }}" value="{{ q.val }}" onInput="{{ q.set }}">
+            <span style="font:800 12px var(--font-heading);text-align:right">{{ q.txt }}</span>
+          </label>
+        </sc-for>
+        <div style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#8a847e;padding:10px 0 4px">LOOKS AT · {{ endName }}</div>
+        <div style="display:flex;gap:0;border:2px solid #3a3836">
+          <sc-for list="{{ lookModes }}" as="v" hint-placeholder-count="3">
+            <button onClick="{{ v.pick }}" style="flex:1;min-height:44px;padding:0 12px;border:0;border-right:2px solid #3a3836;border-radius:0;background:{{ v.bg }};color:#fff;font:800 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">{{ v.name }}</button>
+          </sc-for>
+        </div>
+        <sc-for list="{{ lookSl }}" as="q" hint-placeholder-count="0">
+          <label style="display:grid;grid-template-columns:96px minmax(0,1fr) 48px;align-items:center;gap:10px">
+            <span style="font:700 12px var(--font-heading);letter-spacing:0.04em">{{ q.label }}</span>
+            <input type="range" min="{{ q.min }}" max="{{ q.max }}" step="{{ q.step }}" value="{{ q.val }}" onInput="{{ q.set }}">
+            <span style="font:800 12px var(--font-heading);text-align:right">{{ q.txt }}</span>
+          </label>
+        </sc-for>
+        <div style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#8a847e;padding:10px 0 4px">SHOT</div>
+        <sc-for list="{{ shotSl }}" as="q" hint-placeholder-count="3">
+          <label style="display:grid;grid-template-columns:96px minmax(0,1fr) 48px;align-items:center;gap:10px">
+            <span style="font:700 12px var(--font-heading);letter-spacing:0.04em">{{ q.label }}</span>
+            <input type="range" min="{{ q.min }}" max="{{ q.max }}" step="{{ q.step }}" value="{{ q.val }}" onInput="{{ q.set }}">
+            <span style="font:800 12px var(--font-heading);text-align:right">{{ q.txt }}</span>
+          </label>
+        </sc-for>
+        <button onClick="{{ toggleHide }}" style="display:flex;align-items:center;justify-content:space-between;min-height:44px;margin-top:6px;padding:0 12px;border:2px solid #3a3836;border-radius:0;background:#0b0a0a;color:#fff;font:800 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">HIDE ROB'S BODY (PAWS ONLY)<span style="color:{{ hideCol }}">{{ hideTxt }}</span></button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:2px solid #3a3836">
+        <sc-for list="{{ actions }}" as="a" hint-placeholder-count="6">
+          <button onClick="{{ a.run }}" style="min-height:48px;padding:0 14px;border:0;border-right:1px solid #2a2826;border-bottom:1px solid #2a2826;border-radius:0;background:{{ a.bg }};color:#fff;font:800 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">{{ a.name }}</button>
+        </sc-for>
+      </div>
+      <div style="padding:12px 14px 20px;font:500 13px/1.45 var(--font-body);color:#bdb7b0;text-wrap:pretty">{{ help }}</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { vw: 1200, vh: 800, cfg: null, sel: 1, end: 'from', view: 'shot', frame: 'wide', play: true, T: -0.5, saved: false, msg: '' };
+  stageRef = React.createRef();
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs();
+    try {
+      this.C = await import(new URL('worlds/rob-plant-cam.js?v=10', document.baseURI).href);
+      const W = await import(new URL('worlds/rob-plant-workshop.js?v=11', document.baseURI).href);
+      const cfg = this.C.loadPlantCam(); this.lab = await W.createPlantWorkshop({ container: this.stageRef.current });
+      this.lab.set(cfg); this.lab.select(1, 'from'); let lt = 0; this.lab.onTime(T => { const n = performance.now(); if (n - lt > 90) { lt = n; this.setState({ T }); } });
+      this.setState({ cfg }); window.__plantws = this.lab;
+    } catch (e) { console.warn('plant cam workshop failed: ' + (e && e.stack || e)); }
+  }
+  componentWillUnmount() { this.lab && this.lab.destroy(); removeEventListener('resize', this.onRs); }
+  onRs = () => this.setState({ vw: innerWidth, vh: innerHeight });
+  commit(cfg) { this.C.savePlantCam(cfg); this.lab.set(cfg); this.setState({ cfg, saved: true }); clearTimeout(this.st); this.st = setTimeout(() => this.setState({ saved: false }), 1200); }
+  edit(fn) { const cfg = JSON.parse(JSON.stringify(this.state.cfg)); fn(cfg, cfg.shots[this.state.sel]); this.commit(cfg); }
+  pick(i) { const s = this.state.cfg.shots[i]; this.setState({ sel: i }); this.lab.select(i, this.state.end); const W = this.lab.WALK_T; this.lab.setT(s.phase === 'toDoor' ? -W + 0.05 : (s.t0 || 0) + 0.02); }
+  setEnd(e) { this.setState({ end: e }); this.lab.select(this.state.sel, e); }
+  renderVals() {
+    const S = this.state, cfg = S.cfg, wide = S.vw >= 900, W = this.lab ? this.lab.WALK_T : 1.6, PT = this.C ? this.C.PLANT_T : 5.6;
+    const sh = cfg ? cfg.shots[S.sel] : null, en = sh ? (sh[S.end] || sh.from) : null, fx = (v, d = 2) => (+v).toFixed(d);
+    const sl = (label, val, min, max, step, set, d = 2) => ({ label, val, min, max, step, txt: fx(val, d), set: e => set(+e.target.value) });
+    const setP = (k, i) => v => this.edit((c, s) => { const e = s[S.end] || (s[S.end] = JSON.parse(JSON.stringify(s.from))); e[k][i] = v; });
+    const camSl = en ? [sl('OUT', en.p[0], -2, 14, 0.05, setP('p', 0)), sl('SIDE', en.p[1], -10, 10, 0.05, setP('p', 1)), sl('HEIGHT', en.p[2], 0.1, 8, 0.05, setP('p', 2))] : [];
+    const lm = en ? (Array.isArray(en.l) ? 'point' : en.l) : 'point';
+    const setLook = m => this.edit((c, s) => { const e = s[S.end] || (s[S.end] = JSON.parse(JSON.stringify(s.from))); e.l = m === 'point' ? (Array.isArray(e.l) ? e.l : m === 'point' && e.l === 'charge' ? this.C.CHARGE_AT.slice() : [0.6, 0.3, 1.2]) : m; });
+    const lookSl = en && Array.isArray(en.l) ? [sl('OUT', en.l[0], -2, 10, 0.02, setP('l', 0)), sl('SIDE', en.l[1], -6, 6, 0.02, setP('l', 1)), sl('HEIGHT', en.l[2], 0, 4, 0.02, setP('l', 2))] : lm === 'rob' && sh ? [sl('ROB HEIGHT', sh.lookH ?? 1.15, 0.3, 2.2, 0.02, v => this.edit((c, s) => { s.lookH = v; }))] : [];
+    const shotSl = sh ? [sl('ZOOM (FOV)', sh.fov || 50, 15, 90, 1, v => this.edit((c, s) => { s.fov = v; }), 0), sl('BLEND IN', sh.blend || 0, 0, 2, 0.05, v => this.edit((c, s) => { s.blend = v; }))] : [];
+    if (sh && sh.phase === 'plant') shotSl.unshift(sl('STARTS AT', sh.t0 || 0, 0, PT - 0.2, 0.05, v => this.edit((c, s) => { s.t0 = v; if ((s.t1 ?? PT) < v + 0.2) s.t1 = Math.min(PT, v + 0.2); })), sl('ENDS AT', sh.t1 ?? PT, 0.2, PT, 0.05, v => this.edit((c, s) => { s.t1 = Math.max(v, (s.t0 || 0) + 0.2); })));
+    if (cfg) shotSl.push(sl('PHONE PULL-BACK', cfg.port || 1, 0.8, 2.2, 0.05, v => this.edit(c => { c.port = v; })));
+    const btn = (name, run, hot) => ({ name, run, bg: hot ? '#ec3013' : '#0b0a0a' });
+    const actions = [
+      btn('SET FROM FREE VIEW', () => { if (S.view !== 'free') { this.setState({ view: 'free' }); this.lab.setView('free'); this.lab.focus(en); return; } const v = this.lab.fromView(); this.edit((c, s) => { const e = s[S.end] || (s[S.end] = JSON.parse(JSON.stringify(s.from))); e.p = v.p; if (Array.isArray(e.l)) e.l = v.l; }); }, true),
+      btn('FROM → TO (HOLD STILL)', () => this.edit((c, s) => { s.to = JSON.parse(JSON.stringify(s.from)); })),
+      btn('ADD SHOT AFTER', () => { const i = S.sel; this.edit((c, s) => { const n = JSON.parse(JSON.stringify(s)); n.key = 'shot' + Date.now().toString(36); n.name = 'NEW SHOT'; if (s.phase === 'toDoor') { n.phase = 'plant'; n.t0 = 0; n.t1 = 1; } else { const m = ((s.t0 || 0) + (s.t1 ?? PT)) / 2; n.t0 = m; n.t1 = s.t1 ?? PT; s.t1 = m; } c.shots.splice(i + 1, 0, n); }); this.setState({ sel: i + 1 }); this.lab.select(i + 1, S.end); }),
+      btn('DELETE SHOT', () => { if (!sh || sh.phase === 'toDoor' || cfg.shots.filter(q => q.phase === 'plant').length < 2) return; this.edit(c => { c.shots.splice(S.sel, 1); }); const ni = Math.max(0, S.sel - 1); this.setState({ sel: ni }); this.lab.select(ni, S.end); }),
+      btn('RESET THIS SHOT', () => { const d = this.C.PLANT_DEFAULT.shots.find(q => q.key === sh.key); if (d) this.edit(c => { c.shots[S.sel] = JSON.parse(JSON.stringify(d)); }); }),
+      btn('RESET ALL', () => { this.commit(JSON.parse(JSON.stringify(this.C.PLANT_DEFAULT))); this.setState({ sel: 1 }); this.lab.select(1, S.end); })];
+    const shots = cfg ? cfg.shots.map((s, i) => ({ name: s.name, meta: s.phase === 'toDoor' ? 'ROB WALKS UP' : fx(s.t0 || 0, 1) + '–' + fx(s.t1 ?? PT, 1) + ' S' + (s.hideRob ? ' · PAWS' : ''), bg: i === S.sel ? '#1d1b1a' : '#0b0a0a', mark: i === S.sel ? '#ec3013' : 'transparent', pick: () => this.pick(i) })) : [];
+    const seg = (list, cur, set) => list.map(([k, n]) => ({ name: n, bg: k === cur ? '#ec3013' : '#0b0a0a', pick: () => set(k) }));
+    const T = S.T, beats = this.C ? this.C.PLANT_BEATS : [], beat = T < 0 ? 'ROB WALKS TO THE DOOR WITH THE CHARGE' : (beats.filter(b => b[0] <= T + 0.01).pop() || beats[0] || [0, ''])[1].toUpperCase();
+    const cur = cfg ? (T < 0 ? cfg.shots.find(q => q.phase === 'toDoor') : cfg.shots.filter(q => q.phase === 'plant' && (q.t0 || 0) <= T + 1e-6).sort((a, b) => (b.t0 || 0) - (a.t0 || 0))[0]) : null;
+    return {
+      stageRef: this.stageRef, cols: wide ? 'minmax(0,1fr) 400px' : 'minmax(0,1fr)', rows: wide ? 'minmax(0,1fr)' : 'minmax(300px,52vh) minmax(0,1fr)', viewBR: wide ? '2px solid #3a3836' : '0', viewBB: wide ? '0' : '2px solid #3a3836',
+      savedTxt: S.saved ? 'SAVED' : 'AUTO-SAVES', savedCol: S.saved ? '#7cff9b' : '#8a847e',
+      views: seg([['shot', 'SHOT'], ['free', 'FREE']], S.view, v => { this.setState({ view: v }); this.lab.setView(v); if (v === 'free') this.lab.focus(en); }),
+      frames: seg([['wide', 'WIDE'], ['phone', 'PHONE']], S.frame, v => { this.setState({ frame: v }); this.lab.setFrame(v); }),
+      ends: seg([['from', 'FROM (SHOT START)'], ['to', 'TO (SHOT END)']], S.end, v => this.setEnd(v)),
+      lookModes: seg([['rob', 'ROB'], ['charge', 'CHARGE'], ['point', 'A POINT']], lm, setLook),
+      endName: S.end === 'from' ? 'START' : 'END', camSl, lookSl, shotSl, shots, actions,
+      hideTxt: sh && sh.hideRob ? 'ON' : 'OFF', hideCol: sh && sh.hideRob ? '#7cff9b' : '#8a847e', toggleHide: () => this.edit((c, s) => { s.hideRob = !s.hideRob; }),
+      playTxt: S.play ? 'PAUSE' : 'PLAY', togglePlay: () => { const p = !S.play; this.setState({ play: p }); this.lab.setPlay(p); },
+      tMin: -W, tMax: PT + 0.6, tVal: T, tTxt: (T < 0 ? 'WALK ' : '') + fx(Math.max(0, T < 0 ? T + W : T), 1) + ' S', scrub: e => { const v = +e.target.value; this.lab.setPlay(false); this.lab.setT(v); this.setState({ play: false, T: v }); },
+      beatTxt: (cur ? cur.name + ' · ' : '') + beat,
+      help: 'SHOT shows what the game camera sees; FREE lets you fly round the set (drag to turn, pinch or wheel to zoom, shift-drag or right-drag to pan) with the selected camera drawn in yellow. Each shot moves from FROM to TO over its time. Line the FREE view up and tap SET FROM FREE VIEW to drop the camera there. Everything saves on this device and the demo uses it on the next run.'
+    };
+  }
+}
+</script>
+</body>
+</html>

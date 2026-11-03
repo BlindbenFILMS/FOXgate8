@@ -1,0 +1,69 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Rafiq's Spy Shop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&display=swap">
+<style>
+/* Layout: one phone on a dark shop counter, a mode switch above it. Single dark look, matching the game's Modernist HUD. */
+:root {
+  color-scheme: dark;
+  --bg: #120d0a; --panel: #000000; --ink: #f6f1ea; --muted: #b9b0a6;
+  --rule: #3a3836; --gold: #ffd23a; --red: #ec3013;
+  --head: 'Archivo', 'Arial Black', Arial, sans-serif;
+}
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--head); margin: 0; padding-inline: 16px; padding-block: 16px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.bar { width: min(100%, 900px); display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; }
+.name { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.kick { font: 800 11px var(--head); letter-spacing: 0.14em; color: var(--gold); }
+h1 { margin: 0; font: 900 24px/1.05 var(--head); text-wrap: balance; }
+.modes { display: flex; border: 2px solid var(--rule); }
+.modes button, .full { min-height: 44px; padding: 0 16px; border: 0; background: var(--panel); color: var(--ink); font: 900 12px var(--head); letter-spacing: 0.12em; cursor: pointer; }
+.modes button + button { border-left: 2px solid var(--rule); }
+.modes button[aria-pressed="true"] { background: var(--gold); color: #000; }
+.modes button:focus-visible, .full:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+.full { display: inline-flex; align-items: center; background: var(--red); color: #fff; text-decoration: none; }
+.stage { flex: 1; width: 100%; display: flex; align-items: flex-start; justify-content: center; min-height: 0; }
+.phone { position: relative; background: #000; border: 3px solid #2a2826; border-radius: 34px; padding: 12px; box-shadow: 0 0 0 2px #000, 0 24px 60px rgba(0,0,0,0.6); max-width: 100%; box-sizing: border-box; }
+.screen { display: block; width: 390px; height: 844px; border: 0; border-radius: 22px; background: #000; max-width: 100%; }
+.phone.land .screen { width: 844px; height: 390px; }
+.tip { font: 600 12px var(--head); color: var(--muted); letter-spacing: 0.04em; text-align: center; max-width: 60ch; }
+/* On a real phone, the game itself fills the screen */
+@media (max-width: 560px) {
+  body { padding-inline: 0; padding-block: 0; gap: 0; }
+  .bar, .tip { display: none; }
+  .phone { border: 0; border-radius: 0; padding: 0; box-shadow: none; width: 100%; height: 100%; }
+  .screen, .phone.land .screen { width: 100%; height: 100%; border-radius: 0; }
+  .stage { height: 100%; }
+}
+</style>
+
+<div class="bar">
+  <div class="name"><span class="kick">8 GATES · KUFA · [kufaSpyShop]</span><h1>Rafiq's Spy Shop</h1></div>
+  <div class="modes" role="group" aria-label="Phone orientation">
+    <button id="m-port" aria-pressed="true">PORTRAIT 390×844</button>
+    <button id="m-land" aria-pressed="false">LANDSCAPE 844×390</button>
+  </div>
+  <a class="full" href="play.html" target="_blank" rel="noopener">OPEN FULL SCREEN</a>
+</div>
+<div class="stage" id="stage"><div class="phone" id="phone"><iframe class="screen" id="screen" title="Rafiq's Spy Shop game" src="play.html" allow="autoplay; fullscreen"></iframe></div></div>
+<p class="tip">Drag and tap inside the phone with your mouse. On desktop: Space holds tension, arrow keys turn the safe dial, WASD walks. Your progress saves in this browser.</p>
+
+<script>
+(() => {
+  const phone = document.getElementById('phone'), stage = document.getElementById('stage');
+  const bp = document.getElementById('m-port'), bl = document.getElementById('m-land');
+  let land = false;
+  try { land = localStorage.getItem('spy.orient') === 'land'; } catch (e) {}
+  function fit() {
+    if (innerWidth <= 560) { phone.style.zoom = ''; return; }
+    const w = land ? 844 + 30 : 390 + 30, h = land ? 390 + 30 : 844 + 30;
+    const avail = stage.getBoundingClientRect(), k = Math.min(1, (innerWidth - 32) / w, Math.max(320, avail.height || innerHeight - 140) / h);
+    phone.style.zoom = k < 1 ? String(k) : '';
+  }
+  function set(l) { land = l; phone.classList.toggle('land', l); bp.setAttribute('aria-pressed', String(!l)); bl.setAttribute('aria-pressed', String(l)); try { localStorage.setItem('spy.orient', l ? 'land' : 'port'); } catch (e) {} fit(); }
+  bp.addEventListener('click', () => set(false)); bl.addEventListener('click', () => set(true));
+  addEventListener('resize', fit); set(land);
+})();
+</script>
+
+</body></html>

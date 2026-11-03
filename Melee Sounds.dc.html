@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+  <script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+  <style>body{margin:0;background:var(--color-text);} a{color:var(--color-accent-300);}</style>
+</helmet>
+<div style="max-width:1100px;padding:20px 16px 60px;font-family:var(--font-body);color:var(--color-bg);background:var(--color-text);display:flex;flex-direction:column;gap:20px;">
+  <div style="display:flex;flex-direction:column;gap:6px;border-bottom:2px solid var(--color-bg);padding-bottom:14px;">
+    <div style="font-family:var(--font-heading);font-weight:900;font-size:28px;letter-spacing:-0.01em;">MELEE SOUNDS · 90</div>
+    <div style="font-size:15px;line-height:1.45;text-wrap:pretty;">Tap a sound to hear it. For every sound marked ?, pick what it REALLY is in the box under it. Your picks save as you go; say DONE in chat and I will rename the files.</div>
+  </div>
+  <sc-for list="{{ rows }}" as="w" hint-placeholder-count="10">
+    <div style="display:flex;flex-direction:column;gap:10px;border-bottom:2px solid var(--color-bg);padding-bottom:18px;">
+      <div style="font-family:var(--font-heading);font-weight:800;font-size:20px;">{{ w.name }}</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;">
+        <sc-for list="{{ w.cells }}" as="c" hint-placeholder-count="9">
+          <div style="display:flex;flex-direction:column;border:2px solid var(--color-bg);">
+            <button onClick="{{ c.play }}" style="min-height:52px;padding:8px 10px;text-align:left;font-family:var(--font-body);font-weight:800;font-size:14px;background:var(--color-text);color:var(--color-bg);border:0;cursor:pointer;" style-hover="background:var(--color-accent-900);" style-active="background:var(--color-accent-700);">▶ {{ c.label }}</button>
+            <sc-if value="{{ c.missing }}" hint-placeholder-val="{{ false }}">
+              <select value="{{ c.fill }}" onChange="{{ c.onFill }}" style="min-height:44px;border:0;border-top:2px solid var(--color-bg);background:var(--color-accent-900);color:var(--color-bg);font-family:var(--font-body);font-size:13px;font-weight:700;padding:0 8px;">
+                <sc-for list="{{ c.fillOpts }}" as="o" hint-placeholder-count="12"><option value="{{ o.k }}">{{ o.t }}</option></sc-for>
+              </select>
+            </sc-if>
+            <sc-if value="{{ c.guess }}" hint-placeholder-val="{{ false }}">
+              <select value="{{ c.fix }}" onChange="{{ c.onFix }}" style="min-height:44px;border:0;border-top:2px solid var(--color-bg);background:var(--color-text);color:var(--color-bg);font-family:var(--font-body);font-size:13px;font-weight:700;padding:0 8px;">
+                <sc-for list="{{ opts }}" as="o" hint-placeholder-count="10"><option value="{{ o.k }}">{{ o.t }}</option></sc-for>
+              </select>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-for>
+  <div style="font-size:15px;font-weight:700;">{{ status }}</div>
+  <div style="display:flex;flex-direction:column;gap:8px;border-top:2px solid var(--color-bg);padding-top:14px;">
+    <div style="font-family:var(--font-heading);font-weight:800;font-size:18px;">MY PICKS (copy + paste into chat if Claude can't read them)</div>
+    <textarea readonly="readonly" value="{{ picksText }}" style="min-height:120px;background:var(--color-text);color:var(--color-bg);border:2px solid var(--color-bg);font-family:monospace;font-size:13px;padding:10px;"></textarea>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const SOUNDS = [['hit-cloth', 'CLOTH'], ['hit-wood', 'WOOD'], ['hit-stone', 'STONE'], ['hit-metalthick', 'THICK METAL'], ['hit-metalthin', 'THIN METAL'], ['hit-flesh', 'FLESH'], ['draw', 'DRAW'], ['holster', 'PUT AWAY'], ['swing', 'SWING']];
+const WEAPONS = [['sword', 'SWORD', []], ['racket', 'TENNIS RACKET', ['hit-stone', 'hit-metalthick']], ['gloves', 'BOXING GLOVES', []], ['spear', 'SPEAR', []], ['maul', 'WAR HAMMER', ['hit-stone']], ['halberd', 'HALBERD', ['hit-metalthick', 'hit-cloth']], ['bat', 'BASEBALL BAT', []], ['net', 'BUG NET', ['swing']], ['flail', 'BALL AND CHAIN', ['hit-metalthin']], ['whip', 'BULLWHIP', []]];
+const KEY = 'melee.sounds.fix';
+const EXTRA = {};   // spare takes
+class Component extends DCLogic {
+  componentDidMount() { try { const f = JSON.parse(localStorage.getItem(KEY) || '{}'); let ch = 0; for (const k of Object.keys(f)) if ((k.startsWith('flail/') || k.startsWith('net/')) && localStorage.getItem('melee.netSaved') !== '1') { delete f[k]; ch = 1; } if (ch || localStorage.getItem('melee.netSaved') !== '1') { localStorage.setItem('melee.netSaved', '1'); localStorage.setItem(KEY, JSON.stringify(f)); this.setState({ fix: f }); } } catch (e) {} }   // s339: ball and chain saved, its picks used up
+  state = { fix: (() => { try { return JSON.parse(localStorage.getItem(KEY)) || { 'maul/hit-cloth': 'hit-metalthick', 'maul/hit-wood': 'draw' }; } catch (e) { return {}; } })() };
+  play(src) { try { if (this.a) this.a.pause(); this.a = new Audio(src + '?v=' + Date.now()); this.a.play(); } catch (e) {} }
+  setFix(id, v) { const fix = { ...this.state.fix, [id]: v }; if (!v) delete fix[id]; this.setState({ fix }); try { localStorage.setItem(KEY, JSON.stringify(fix)); } catch (e) {} }
+  renderVals() {
+    const F = this.state.fix, n = Object.keys(F).length;
+    return { opts: [{ k: '', t: 'IS IT? (pick)' }, ...SOUNDS.map(([k, t]) => ({ k, t: 'REALLY ' + t }))], status: n ? n + ' picks saved.' : '', picksText: Object.entries(F).map(([a, b]) => a + ' = ' + b).join('\n'),
+      rows: WEAPONS.map(([k, name, g, miss = {}]) => ({ name, cells: SOUNDS.map(([s, l]) => { const id = k + '/' + s, guess = g === 'all' || g.includes(s);
+        const fill = F['fill:' + id] || '', files = SOUNDS.map(x => x[0]).filter(x => !miss[x]).concat(EXTRA[k] || []);
+        return { label: miss[s] ? l + (fill ? ' · TRYING ' + fill.toUpperCase() : ' · NONE YET') : l + (guess ? ' ?' : ''), guess, missing: !!miss[s], fill,
+          fillOpts: [{ k: '', t: 'USE CLIP… (pick + hear)' }, ...files.map(x => ({ k: x, t: 'USE ' + x.toUpperCase() }))],
+          onFill: e => { const v = e.target.value; this.setFix('fill:' + id, v); if (v) this.play('audio/melee/' + k + '-' + v + '.mp3'); }, fix: F[id] || '', onFix: e => this.setFix(id, e.target.value), play: () => this.play('audio/melee/' + k + '-' + (miss[s] ? fill : s) + '.mp3') }; }) })) };
+  }
+}
+</script>
+</body>
+</html>

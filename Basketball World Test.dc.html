@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Basketball World Test</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#8fc6e8}
+a{color:#ffd23a}a:hover{color:#ffffff}
+.wt-btn{min-height:48px;padding:0 18px;display:flex;align-items:center;justify-content:flex-start;text-align:left;border:2px solid #ffd23a;background:#ffd23a;color:#000;font-family:Archivo,"Arial Narrow",system-ui,sans-serif;font-size:14px;font-weight:900;letter-spacing:.06em;border-radius:0;cursor:pointer}
+</style>
+</helmet>
+<div style="position: relative; width: 100%; height: 100vh; overflow: hidden; background: #8fc6e8; font-family: Archivo, 'Arial Narrow', system-ui, sans-serif; color: #ffffff">
+  <div ref="{{setStage}}" style="position: absolute; inset: 0"></div>
+  <sc-if value="{{playing}}" hint-placeholder-val="{{ true }}">
+    <div style="position: absolute; inset: 0; pointer-events: none">
+      <dc-import name="Basketball" world="{{fakeWorld}}" hint-size="100%,100%"></dc-import>
+    </div>
+  </sc-if>
+  <sc-if value="{{walking}}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; left: 16px; bottom: 16px; right: 16px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px">
+      <div style="background: #000000; border: 2px solid #3a3836; padding: 10px 14px; font-size: 14px; font-weight: 600; max-width: 360px">WORLD TEST. A fake town renders the court inside a rotated, offset group.</div>
+      <button class="wt-btn" onClick="{{enter}}">PLAY BASKETBALL</button>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":844,"height":390}}'>
+class Component extends DCLogic {
+  state = { playing: false };
+
+  componentDidMount() {
+    this.dead = false;
+    this.boot(0);
+  }
+  async boot(n) {
+    if (this.dead) return;
+    if (!this.stage) { if (n < 120) requestAnimationFrame(() => this.boot(n + 1)); return; }
+    const base = document.baseURI;
+    const THREE = await import(new URL('vendor/three/three.module.js', base).href);
+    this.mod = await import(new URL('minigames/basketball/basketball.js', base).href);
+    const FK = await import(new URL('fox-kit.js', base).href), CA = await import(new URL('engine/cast.js', base).href), TX = await import(new URL('engine/textures.js', base).href);
+    if (this.dead) return;
+    this.THREE = THREE;
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.domElement.style.cssText = 'display:block;width:100%;height:100%;touch-action:none';
+    this.stage.appendChild(renderer.domElement);
+    this.renderer = renderer;
+    /* the fake town */
+    const town = new THREE.Scene();
+    town.background = new THREE.Color(0x8fc6e8);
+    town.fog = new THREE.Fog(0x8fc6e8, 80, 220);
+    town.add(new THREE.HemisphereLight(0xffffff, 0x557744, 1.4));
+    const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(-20, 40, 30); town.add(sun);
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.MeshLambertMaterial({ color: 0x7fa65a }));
+    ground.rotation.x = -Math.PI / 2; ground.position.y = -0.03; town.add(ground);
+    const houseMat = new THREE.MeshLambertMaterial({ color: 0xe9dcc6 }), roofMat = new THREE.MeshLambertMaterial({ color: 0xb4532a });
+    for (let i = 0; i < 14; i++) {
+      const a = (i / 14) * Math.PI * 2, r = 48 + (i % 3) * 10;
+      const h = new THREE.Mesh(new THREE.BoxGeometry(8, 6, 8), houseMat); h.position.set(20 + Math.cos(a) * r, 3, -15 + Math.sin(a) * r); town.add(h);
+      const roof = new THREE.Mesh(new THREE.ConeGeometry(6.4, 4, 4), roofMat); roof.position.set(h.position.x, 8, h.position.z); roof.rotation.y = Math.PI / 4; town.add(roof);
+    }
+    const parent = new THREE.Group();
+    parent.position.set(20, 0, -15);
+    parent.rotation.y = 0.9;
+    town.add(parent);
+    this.town = town; this.parent = parent;
+    /* 8 GATES: our real foxes (fox-kit + the cast): you = the player fox, the medium side = Hope, the hard side = Noble, everyone else a townsfox, all in their jerseys */
+    { const d = new Uint8Array([90, 90, 90, 255, 170, 170, 170, 255, 255, 255, 255, 255]), grad = new THREE.DataTexture(d, 3, 1, THREE.RGBAFormat); grad.minFilter = grad.magFilter = THREE.NearestFilter; grad.needsUpdate = true;
+      const cache = new Map(), toon = (c, ex) => { const k = c + (ex ? JSON.stringify(ex) : ''); if (!cache.has(k)) cache.set(k, new THREE.MeshToonMaterial({ color: c, gradientMap: grad, ...ex })); return cache.get(k); };
+      const outlineMat = new THREE.MeshBasicMaterial({ color: 0x1a1626, side: THREE.BackSide });
+      const addOutline = (m, t = 0.04, r) => { const g = m.geometry; g.computeBoundingBox(); const s = new THREE.Vector3(); g.boundingBox.getSize(s); const o = new THREE.Mesh(g, outlineMat); if (r) o.scale.setScalar(1 + t / r); else o.scale.set(1 + 2 * t / Math.max(s.x, 0.01), 1 + 2 * t / Math.max(s.y, 0.01), 1 + 2 * t / Math.max(s.z, 0.01)); m.add(o); return m; };
+      const M = (geo, mat, x = 0, y = 0, z = 0, par, ol = 0.02, r) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); if (ol) addOutline(m, ol, r); (par || town).add(m); return m; };
+      const clamp = (x, a, b) => Math.min(b, Math.max(a, x)), rr = (a, b) => a + Math.random() * (b - a), pick = a => a[Math.floor(Math.random() * a.length)], smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); }, damp = (a, b, k, dt) => a + (b - a) * (1 - Math.exp(-k * dt));
+      const ourKit = FK.foxKit({ THREE, scene: town, toon, M, grad, outlineMat, crestTex: TX.crestTex, rr, pick, clamp, smooth, damp }), C = CA.CAST;
+      this.kit = { makeFox: o => { const me = o.who === 'YOU' || o.who === 'P1' || o.who === 'RUSTY', base = me ? C.player : o.cast === 'medium' ? C.hope : o.cast === 'hard' ? C.noble : null;
+          const f = ourKit.makeFox({ ...(base || { look: { ...((o.slot + o.team) % 2 ? FK.PLAYER_FEMALE : FK.PLAYER_MALE) } }), torso: o.torso, outfit: 'tee', crest: '', gear: 'none', mood: o.mood || 'happy' });
+          const P = f.userData.P; if (P && P.sword) P.sword.visible = false; if (P && P.gun) P.gun.visible = false; return f; },
+        animFox: (f, dt, sp) => ourKit.animFox(f, dt, sp) }; }
+    this.townCam = new THREE.PerspectiveCamera(50, 1, 0.1, 600);
+    this.townCam.position.set(-30, 40, 60); this.townCam.lookAt(20, 0, -15);
+    this.onKey = (e) => { if (this.api) this.api.key(e); };
+    window.addEventListener('keydown', this.onKey);
+    window.addEventListener('keyup', this.onKey);
+    this.fakeWorld = {
+      _basketballCourt: {
+        g: () => this.api,
+        end: () => this.leave(),
+      },
+    };
+    this.last = performance.now();
+    const loop = (now) => {
+      if (this.dead) return;
+      this.raf = requestAnimationFrame(loop);
+      const dt = Math.min(0.05, (now - this.last) / 1000); this.last = now;
+      const el = renderer.domElement, w = el.clientWidth || 1, h = el.clientHeight || 1;
+      if (this.w !== w || this.h !== h) { this.w = w; this.h = h; renderer.setSize(w, h, false); }
+      const cam = this.townCam;
+      cam.aspect = w / h;
+      if (this.api) {
+        const g = this.api.camera;
+        const k = 1 - Math.exp(-dt * 4);
+        cam.position.lerp(g.position, k); cam.quaternion.slerp(g.quaternion, k); cam.fov += (g.fov - cam.fov) * k;
+      } else {
+        const t = now / 1000 * 0.08;
+        const goal = new THREE.Vector3(20 + Math.cos(t) * 55, 32, -15 + Math.sin(t) * 55);
+        cam.position.lerp(goal, 1 - Math.exp(-dt * 1.5)); cam.lookAt(20, 0, -15); cam.fov += (50 - cam.fov) * 0.05;
+      }
+      cam.updateProjectionMatrix();
+      renderer.render(town, cam);
+    };
+    this.raf = requestAnimationFrame(loop);
+    this.enterGame();
+  }
+  async enterGame() {
+    if (this.api || !this.mod) return;
+    this.api = await this.mod.createBasketball({
+      container: null,
+      onState: (h) => window.dispatchEvent(new CustomEvent('8g:basketballCourt', { detail: h })),
+      opts: { world: { renderer: this.renderer, camera: this.townCam, parent: this.parent }, kit: this.kit },
+    });
+    try { if (/[?&]debug\b/.test(location.search)) window.__bbApi = this.api; } catch (e) { /* */ }
+    this.setState({ playing: true });
+  }
+  leave() {
+    if (this.api) { this.api.destroy(); this.api = null; }
+    window.dispatchEvent(new CustomEvent('8g:basketballCourt', { detail: null }));
+    this.setState({ playing: false });
+  }
+  componentWillUnmount() {
+    this.dead = true;
+    cancelAnimationFrame(this.raf);
+    window.removeEventListener('keydown', this.onKey);
+    window.removeEventListener('keyup', this.onKey);
+    if (this.api) this.api.destroy();
+    if (this.renderer) { this.renderer.dispose(); this.renderer.domElement.remove(); }
+  }
+  renderVals() {
+    return {
+      setStage: (el) => { this.stage = el; },
+      playing: this.state.playing,
+      walking: !this.state.playing && !!this.renderer,
+      fakeWorld: this.fakeWorld || null,
+      enter: () => this.enterGame(),
+    };
+  }
+}
+</script>
+</body>
+</html>

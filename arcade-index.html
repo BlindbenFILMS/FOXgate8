@@ -1,0 +1,64 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>8 Gates Arcade</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&display=swap">
+<style>
+/* Layout: two phone frames side by side (stack on narrow screens), arcade-dark single look, Modernist rules */
+:root { --bg: #0b0a10; --fg: #ffffff; --muted: #cfcac4; --rule: #3a3836; --gold: #ffd23a; --red: #ec3013;
+  --font: "Archivo", system-ui, sans-serif; color-scheme: dark; }
+html, body { background: var(--bg); color: var(--fg); }
+body { font-family: var(--font); padding: 24px 16px 40px; }
+.wrap { max-width: 1320px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+header { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 28px; border-bottom: 2px solid var(--gold); padding-bottom: 14px; }
+.kick { font-size: 12px; font-weight: 800; letter-spacing: .14em; color: var(--gold); }
+h1 { margin: 2px 0 0; font-size: clamp(32px, 6vw, 52px); font-weight: 900; line-height: 1; text-wrap: balance; }
+header p { margin: 0; max-width: 560px; color: var(--muted); font-size: 15px; line-height: 1.45; }
+.row { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
+.dev { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.dev .lbl { font-size: 12px; font-weight: 800; letter-spacing: .12em; color: var(--gold); }
+.port { width: min(390px, 100%); }
+.land { flex: 1 1 520px; max-width: 844px; }
+.frame { position: relative; width: 100%; border: 2px solid var(--fg); background: #000; overflow: hidden; }
+.port .frame { aspect-ratio: 390 / 844; }
+.land .frame { aspect-ratio: 844 / 390; }
+.frame iframe { position: absolute; left: 0; top: 0; border: 0; transform-origin: 0 0; }
+.tips { display: flex; flex-direction: column; border-top: 2px solid var(--rule); max-width: 844px; }
+.tips div { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 12px; padding: 8px 0; border-bottom: 2px solid #2a2826; font-size: 14px; line-height: 1.4; color: var(--muted); }
+.tips b { color: var(--gold); font-weight: 900; }
+.tabs { display: flex; flex-wrap: wrap; gap: 0; border: 2px solid var(--gold); align-self: flex-start; }
+.tabs button { min-height: 48px; padding: 0 18px; border: 0; background: transparent; color: var(--fg); font: 900 14px var(--font); letter-spacing: .08em; cursor: pointer; }
+.tabs button[aria-selected="true"] { background: var(--gold); color: #000; }
+.tabs button:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+a.full { align-self: flex-start; display: inline-flex; align-items: center; min-height: 48px; padding: 0 18px; background: var(--red); color: #fff; font-weight: 900; letter-spacing: .08em; text-decoration: none; font-size: 14px; }
+a.full:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+</style>
+<div class="wrap">
+  <header>
+    <div><div class="kick" id="kick">8 GATES · ARCADE · PHONE PREVIEW</div><h1 id="ttl">GATE RUSH PINBALL</h1></div>
+    <p id="lede">Both iPhone sizes, live. Tap or click inside a phone to play: left half = left flipper, right half = right flipper. Hold the right side to pull the plunger, let go to launch.</p>
+  </header>
+  <div class="tabs" role="tablist"><button id="t-pin" role="tab" aria-selected="true" data-g="pin">PINBALL · GATE RUSH</button><button id="t-slots" role="tab" aria-selected="false" data-g="slots">SLOTS · LUCKY GATES</button></div>
+  <a class="full" id="full" href="pinball.dc.html" target="_blank" rel="noopener">OPEN FULL SCREEN · PLAY ON YOUR PHONE</a>
+  <div class="row">
+    <div class="dev port"><span class="lbl">IPHONE PORTRAIT · 390 × 844</span><div class="frame" data-w="390" data-h="844"><iframe id="fp" title="Pinball, iPhone portrait" src="pinball.dc.html" width="390" height="844"></iframe></div></div>
+    <div class="dev land"><span class="lbl">IPHONE LANDSCAPE · 844 × 390</span><div class="frame" data-w="844" data-h="390"><iframe id="fl" title="Pinball, iPhone landscape" src="pinball.dc.html" width="844" height="390"></iframe></div>
+      <div class="tips">
+        <div><b>DEMO</b><span>Tap DEMO on the menu to watch the machine play itself.</span></div>
+        <div><b>KEYS</b><span>Pinball: Z / ← and M / → flippers · SPACE launch · N nudge. Slots: SPACE spin · ↑ ↓ bet · 1 2 3 lines.</span></div>
+        <div><b>SOUND</b><span>Sound starts after your first tap. Try SETTINGS → SOUND BALL with headphones.</span></div>
+        <div><b>ONLINE</b><span>Room play needs engine/duel-net.js from your repo. Here it runs in test mode between two tabs.</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function fit() { document.querySelectorAll('.frame').forEach(f => { const w = +f.dataset.w, s = f.clientWidth / w, i = f.querySelector('iframe'); i.style.transform = 'scale(' + s + ')'; }); }
+addEventListener('resize', fit); fit(); setTimeout(fit, 300);
+const G = { pin: { src: 'pinball.dc.html', ttl: 'GATE RUSH PINBALL', kick: '8 GATES · MINIGAME #34 · PHONE PREVIEW', lede: 'Both iPhone sizes, live. Tap inside a phone to play: left half = left flipper, right half = right flipper. Hold the right side to pull the plunger, let go to launch.' },
+  slots: { src: 'slots.dc.html', ttl: 'LUCKY GATES SLOTS', kick: '8 GATES · 3-LINE SLOTS · PHONE PREVIEW', lede: 'Both iPhone sizes, live. Tap PLAY, pick lines and bet, then SPIN. It spends and pays the gold saved in this browser. DEMO spins free credits.' } };
+function pickGame(k) { const g = G[k]; document.getElementById('fp').src = g.src; document.getElementById('fl').src = g.src; document.getElementById('full').href = g.src; document.getElementById('ttl').textContent = g.ttl; document.getElementById('kick').textContent = g.kick; document.getElementById('lede').textContent = g.lede;
+  document.querySelectorAll('.tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.g === k))); try { localStorage.setItem('arcadePreview.game', k); } catch (e) {} }
+document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => pickGame(b.dataset.g)));
+let start = 'pin'; try { start = localStorage.getItem('arcadePreview.game') || 'pin'; } catch (e) {} if (location.hash === '#slots') start = 'slots'; if (start !== 'pin') pickGame(start);
+</script>
+
+</body></html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<script src="minigames/gyoza/gyoza-bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Foxy Gyoza">
+  <div ref="{{ stageRef }}" style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0"></div>
+  <sc-if value="{{ errOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:12px;right:12px;top:12px;z-index:20;background:#000;border:2px solid #ec3013;padding:10px 12px;font:700 13px var(--font-body);color:#fff">The 3D kitchen did not load: {{ errTxt }}</div></sc-if>
+  <sc-if value="{{ walkOn }}" hint-placeholder-val="{{ false }}">
+    <div data-hud-host="1" style="position:absolute;inset:0;pointer-events:none;z-index:5"><dc-import name="Game HUD" game="{{ engine }}" hud="{{ stdHud }}" started="{{ walkOn }}" busy="{{ hudBusy }}" on-hud="{{ onHud }}" world="{{ worldName }}" keys="{{ keysList }}" skip-keys="{{ skipKeys }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  </sc-if>
+  <sc-if value="{{ workOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="top" style="position:absolute;left:0;right:{{ dockR }};top:0;z-index:3;pointer-events:none;display:flex;flex-direction:column">
+      <div style="background:#000;border-bottom:2px solid #ffd23a;display:flex;align-items:stretch;padding-top:env(safe-area-inset-top)">
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">FOXY GYOZA · DAY {{ h.day }}</span><span style="font:900 22px var(--font-heading);font-variant-numeric:tabular-nums;color:{{ clockCol }}">{{ clock }}</span></div>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">EARNED</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;color:#e6b45a">{{ earnedTxt }}</span></div>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;min-width:0;flex:1"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4;white-space:nowrap">SERVED ★</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap">{{ servedTxt }}</span></div>
+        <button onClick="{{ soundToggle }}" aria-label="{{ soundAria }}" style="pointer-events:auto;flex:none;width:48px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:{{ soundCol }};cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#2a2826"><sc-if value="{{ soundOn }}" hint-placeholder-val="{{ true }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M4 9h4l5-4v14l-5-4H4z"></path><path d="M16.5 8.5a5 5 0 0 1 0 7"></path><path d="M19 6a8.5 8.5 0 0 1 0 12"></path></svg></sc-if><sc-if value="{{ soundOff }}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M4 9h4l5-4v14l-5-4H4z"></path><path d="M16 9l6 6M22 9l-6 6"></path></svg></sc-if></button>
+        <button onClick="{{ helpToggle }}" aria-label="How to work the stations" style="pointer-events:auto;flex:none;width:52px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 20px var(--font-heading);cursor:pointer" style-hover="background:#2a2826">?</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:6px;align-items:start">
+        <sc-for list="{{ tickets }}" as="o" hint-placeholder-count="2">
+          <div style="background:#fbfbf7;color:#201e1d;border:2px solid #201e1d;display:flex;flex-direction:column;min-width:0">
+            <div style="background:#c8102e;color:#fff;padding:3px 6px;font:900 11px var(--font-heading);letter-spacing:0.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.name }}</div>
+            <div style="height:5px;background:#e8e4da"><div style="height:100%;width:{{ o.patW }};background:{{ o.patCol }}"></div></div>
+            <sc-if value="{{ fullTix }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:3px 6px;display:flex;align-items:center;gap:5px;border-top:1px solid #e8e4da;min-width:0"><span style="flex:none;width:9px;height:9px;background:{{ o.fillCol }};border:1.5px solid #201e1d;display:block"></span><span style="font:900 11px var(--font-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.fill }} ×5</span></div>
+              <div style="padding:2px 6px;display:flex;align-items:center;gap:5px;border-top:1px solid #e8e4da;min-width:0"><span style="flex:none;width:9px;height:9px;background:{{ o.crustCol }};border:1.5px solid #201e1d;display:block"></span><span style="font:900 10px var(--font-heading);color:#7a4a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.crust }} CRUST</span></div>
+              <div style="padding:2px 6px;font:800 10px var(--font-heading);color:#0e5f8a;border-top:1px solid #e8e4da;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.extras }}</div>
+              <div style="padding:2px 6px;font:800 10px var(--font-heading);color:#7a746d;border-top:1px solid #e8e4da">{{ o.totalTxt }}</div>
+            </sc-if>
+            <sc-if value="{{ compactTix }}" hint-placeholder-val="{{ false }}"><div style="padding:2px 6px;font:800 10px var(--font-heading);color:#201e1d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.short }}</div></sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ dockOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="{{ dockSafe }}" style="position:absolute;left:{{ dk.l }};right:0;top:{{ dk.t }};bottom:0;width:{{ dk.w }};z-index:4;background:#000;border-top:{{ dk.bt }};border-left:{{ dk.bl }};padding:{{ dk.pad }};box-sizing:border-box;display:flex;flex-direction:column;pointer-events:auto">
+      <div style="flex:none;min-height:{{ dk.aH }};display:flex;flex-direction:column;justify-content:{{ dk.aJ }};border-bottom:2px solid #3a3836;padding:10px 12px;box-sizing:border-box;gap:6px">
+        <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;background:#ec3013;display:block"></span>DEMO</span><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">{{ demoN }}</span></div>
+          <div style="display:flex;align-items:stretch;gap:10px"><sc-if value="{{ demoKeyOn }}" hint-placeholder-val="{{ false }}"><div style="flex:none;min-width:58px;display:flex;align-items:center;justify-content:center;padding:4px 8px;background:#ec3013;color:#fff;font:900 14px var(--font-heading)">{{ h.demo.key }}</div></sc-if><div style="font:900 clamp(13px,3.6vw,17px) var(--font-heading);letter-spacing:0.02em;line-height:1.2;color:#fff;text-wrap:pretty">{{ h.demo.cap }}</div></div>
+        </sc-if>
+        <sc-if value="{{ meterOn }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap"><span style="font:900 clamp(24px,7vw,34px) var(--font-heading);line-height:1;color:{{ mt.zoneCol }};white-space:nowrap">{{ mt.zone }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em;color:#ffd23a">{{ mt.title }} · {{ mt.want }}</span></div>
+          <div style="position:relative;height:{{ dk.barH }};display:flex;gap:2px;margin:6px 0 4px">
+            <sc-for list="{{ mtSegs }}" as="sg" hint-placeholder-count="4"><span style="flex:{{ sg.f }} 1 0;background:{{ sg.col }};outline:{{ sg.out }};outline-offset:2px;display:block"></span></sc-for>
+            <sc-if value="{{ mtMark }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;top:-10px;bottom:-10px;left:{{ mtX }};width:8px;margin-left:-4px;background:#ffffff;border:1px solid #000;display:block"></span></sc-if>
+          </div>
+          <sc-if value="{{ mtHintOn }}" hint-placeholder-val="{{ false }}"><span style="font:800 11px var(--font-heading);letter-spacing:0.04em;color:#cfcac4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">NEXT · {{ hintTxt }}</span></sc-if>
+        </sc-if>
+        <sc-if value="{{ hintOn }}" hint-placeholder-val="{{ true }}">
+          <span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a">{{ hintKick }}</span>
+          <span style="font:900 clamp(14px,3.9vw,17px) var(--font-heading);line-height:1.2;color:#fff;text-wrap:pretty">{{ hintTxt }}</span>
+          <span style="font:700 12px var(--font-body);color:#cfcac4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ trayTxt }}</span>
+        </sc-if>
+      </div>
+      <sc-if value="{{ stOn }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;display:grid;grid-template-columns:{{ dk.cols }};grid-auto-rows:minmax(46px,1fr)">
+        <sc-for list="{{ stations }}" as="st" hint-placeholder-count="5">
+          <button onClick="{{ st.go }}" aria-label="{{ st.aria }}" style="min-height:{{ dk.btnH }};padding:{{ stPad }};border:0;border-right:2px solid #2a2826;border-bottom:{{ dk.btnB }};border-radius:0;background:{{ st.bg }};color:{{ st.fg }};cursor:pointer;text-align:left;display:flex;flex-direction:{{ dk.btnDir }};justify-content:{{ dk.btnJ }};align-items:{{ dk.btnA }};gap:3px;min-width:0" style-hover="filter:brightness(1.2)">
+            <span style="font:900 {{ stFs }} var(--font-heading);letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ st.label }}</span>
+            <span style="font:800 9px var(--font-heading);letter-spacing:0.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ st.bc }}">{{ st.badge }}</span>
+          </button>
+        </sc-for>
+      </div>
+      </sc-if>
+      <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ demoExit }}" aria-label="Exit the demo" style="flex:1;min-height:56px;padding:0 16px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">EXIT DEMO</button>
+      </sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{ revealOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="bottom" style="position:absolute;left:0;right:0;bottom:0;z-index:6;background:#000;border-top:2px solid #ffd23a;padding:10px max(12px, env(safe-area-inset-left)) calc(10px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ revKicker }}</span><span style="font:900 clamp(20px,5.5vw,28px) var(--font-heading);line-height:1.05">{{ h.reveal.name }}</span>
+        <sc-for list="{{ revNotes }}" as="n" hint-placeholder-count="2"><span style="font:700 13px var(--font-body);color:{{ n.col }};text-wrap:pretty">{{ n.t }}</span></sc-for></div>
+      <div style="display:grid;grid-template-columns:repeat({{ revCols }},minmax(0,1fr));gap:8px">
+        <sc-for list="{{ revBtns }}" as="b" hint-placeholder-count="2"><button onClick="{{ b.go }}" style="min-height:56px;padding:0 16px;border:2px solid {{ b.bd }};border-radius:0;background:{{ b.bg }};color:{{ b.fg }};font:900 15px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="filter:brightness(1.12)">{{ b.label }}</button></sc-for>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ reactOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="top" style="position:absolute;left:50%;top:{{ reactTop }};transform:translateX(-50%);z-index:6;pointer-events:none;width:min(420px, calc(100% - 24px));background:#000;border:3px solid {{ h.react.col }};display:flex;flex-direction:column">
+      <div style="display:flex;align-items:stretch"><div style="flex:1;padding:10px 14px;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">{{ h.react.who }}</span><span style="font:900 clamp(30px,9vw,44px) var(--font-heading);line-height:1;color:{{ h.react.col }}">{{ h.react.word }}</span></div><div style="flex:none;min-width:84px;padding:0 12px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;background:{{ h.react.col }};color:#000"><span style="font:900 20px var(--font-heading);letter-spacing:0.04em">{{ reactStars }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.08em">{{ reactTip }}</span></div></div>
+      <div style="padding:8px 14px 10px;border-top:2px solid #2a2826;font:700 15px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">“{{ h.react.line }}”</div>
+      <sc-if value="{{ reactNoteOn }}" hint-placeholder-val="{{ false }}"><div style="padding:6px 14px 8px;border-top:2px solid #2a2826;font:700 12px var(--font-body);color:#ff9a8a;text-wrap:pretty">{{ h.react.note }}</div></sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{ msgOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:6px;right:{{ msgR }};top:{{ msgTop }};z-index:7;pointer-events:none;display:flex;justify-content:center">
+      <div style="max-width:100%;background:rgba(0,0,0,0.94);border:2px solid {{ msgCol }};display:flex;align-items:stretch">
+        <span style="flex:none;width:10px;background:{{ msgCol }};display:block"></span>
+        <span style="padding:8px 14px;font:{{ msgFont }};letter-spacing:0.03em;line-height:1.25;color:#fff;text-wrap:pretty">{{ msgTxt }}</span>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ payOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="bottom" style="position:absolute;left:0;right:0;bottom:0;z-index:6;background:#000;border-top:2px solid #ffd23a;padding:10px max(12px, env(safe-area-inset-left)) calc(10px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline">
+        <span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">GIVE THE CHANGE</span>
+        <span style="font:700 14px var(--font-body);color:#cfcac2">{{ payLine }}</span>
+      </div>
+      <div style="display:flex;align-items:stretch;gap:8px;flex-wrap:wrap">
+        <div style="min-width:110px;padding:6px 12px;border:2px solid #3a3836;display:flex;flex-direction:column;justify-content:center"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">GIVEN / OWED</span><span style="font:900 24px var(--font-heading);font-variant-numeric:tabular-nums">{{ payGiven }}</span></div>
+        <sc-for list="{{ coins }}" as="cn" hint-placeholder-count="4">
+          <button onClick="{{ cn.give }}" style="min-width:64px;min-height:56px;padding:0 14px;border:2px solid #e6b45a;border-radius:0;background:#1a1612;color:#e6b45a;font:900 20px var(--font-heading);cursor:pointer;text-align:left" style-hover="background:#2a2420" style-active="background:#3a3020">{{ cn.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ introOn }}" hint-placeholder-val="{{ true }}">
+    <div data-safe="intro" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:6;width:min(420px, calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column">
+      <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:2px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ introKicker }}</span><button onClick="{{ soundToggle }}" aria-label="{{ soundAria }}" style="min-height:32px;padding:0 10px;border:2px solid #3a3836;border-radius:0;background:#000;color:{{ soundCol }};font:900 11px var(--font-heading);letter-spacing:0.1em;cursor:pointer" style-hover="background:#2a2826">{{ soundLbl }}</button></div><span style="font:900 26px var(--font-heading);line-height:1.05">Work a shift</span><sc-if value="{{ introDescOn }}" hint-placeholder-val="{{ true }}"><span style="font:700 13px var(--font-body);color:#cfcac2;text-wrap:pretty">Three minutes behind the counter. Fold, fry, steam, flip and sauce gyoza for the line, then give the right change. Pay is a wage plus prices plus tips, in gold.</span></sc-if></div>
+      <sc-for list="{{ introRows }}" as="r" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:76px minmax(0,1fr);gap:12px;padding:6px 16px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;color:#e6b45a">{{ r.v }}</span></div></sc-for>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+        <button onClick="{{ demoGo }}" style="min-height:48px;padding:0 16px;border:0;border-top:2px solid #3a3836;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 clamp(11px,3.4vw,14px) var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WATCH THE DEMO</button>
+        <button onClick="{{ walkGo }}" style="min-height:48px;padding:0 16px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 clamp(11px,3.4vw,14px) var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WALK AROUND</button>
+      </div>
+      <button onClick="{{ goWork }}" style="min-height:56px;padding:0 18px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">PUT ME TO WORK</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ helpOn }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ helpToggle }}" style="position:absolute;inset:0;z-index:9;background:rgba(0,0,0,0.82);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #ffd23a;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="padding:10px 14px;border-bottom:2px solid #3a3836;font:900 16px var(--font-heading);letter-spacing:0.06em;color:#ffd23a">HOW THE KITCHEN WORKS</div>
+        <sc-for list="{{ helpRows }}" as="r" hint-placeholder-count="7"><div style="display:grid;grid-template-columns:88px minmax(0,1fr);gap:10px;padding:7px 14px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body);line-height:1.35"><span style="font:900 11px var(--font-heading);letter-spacing:0.08em;color:#e6b45a">{{ r.k }}</span><span style="text-wrap:pretty">{{ r.v }}</span></div></sc-for>
+        <div style="padding:10px 14px;font:700 12px var(--font-body);color:#cfcac2">Tap anywhere to close</div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:8;background:rgba(0,0,0,0.78);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #3a3836;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+          <div style="padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ doneKicker }}</span><span style="font:900 24px var(--font-heading);line-height:1.05">Shift over</span><span style="font:700 12px var(--font-body);color:#cfcac2">{{ doneSub }}</span></div>
+          <div style="width:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#ec3013"><span style="font:900 30px var(--font-heading)">{{ d.total }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em">GOLD</span></div>
+        </div>
+        <sc-if value="{{ eodOn }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:10px;padding:10px 16px;background:#ffd23a;color:#000;border-bottom:2px solid #000;font:900 14px var(--font-heading);letter-spacing:0.06em"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18.5 21 12 16.8 5.5 21l2-7.5L2 9h7z" fill="#000"></path></svg>EMPLOYEE OF THE DAY</div></sc-if>
+        <sc-for list="{{ doneRows }}" as="r" hint-placeholder-count="6"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:7px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;font-variant-numeric:tabular-nums">{{ r.v }}</span></div></sc-for>
+        <sc-for list="{{ unlocks }}" as="u" hint-placeholder-count="1"><div style="padding:7px 16px;border-bottom:2px solid #2a2826;font:800 13px var(--font-heading);letter-spacing:0.04em;color:#22c55e">UNLOCKED · {{ u.t }}</div></sc-for>
+        <div style="padding:8px 16px 4px;font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">UPGRADE THE KITCHEN · YOU HAVE {{ goldTxt }}</div>
+        <sc-for list="{{ shop }}" as="s" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 16px;border-top:2px solid #2a2826">
+            <div style="display:flex;flex-direction:column;min-width:0"><span style="font:900 13px var(--font-heading);letter-spacing:0.04em">{{ s.name }}</span><span style="font:600 12px var(--font-body);color:#cfcac2">{{ s.line }}</span></div>
+            <button onClick="{{ s.buy }}" disabled="{{ s.off }}" style="min-width:84px;min-height:44px;padding:0 12px;border:2px solid {{ s.bd }};border-radius:0;background:{{ s.bg }};color:{{ s.fg }};font:900 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;opacity:{{ s.op }}" style-hover="filter:brightness(1.15)">{{ s.btn }}</button>
+          </div>
+        </sc-for>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:8px">
+          <button onClick="{{ goWork }}" style="min-height:52px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">NEXT SHIFT</button>
+          <button onClick="{{ walkGo }}" style="min-height:52px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">TAKE A BREAK</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"world":{"editor":"text","default":"","tsType":"string"},"owner":{"editor":"text","default":"KIKO","tsType":"string"},"walk":{"editor":"boolean","default":false,"tsType":"boolean"},"customers":{"editor":null,"tsType":"object[]"},"onExit":{"editor":null,"tsType":"() => void"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  state = { h: null, help: false, vw: 1200, vh: 800, hi: { pad: false, menu: false, split: false, bar: 0 } };
+  stageRef = React.createRef();
+  onHud = hi => this.setState({ hi });
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs(); try { this.ro = new ResizeObserver(this.onRs); this.stageRef.current && this.ro.observe(this.stageRef.current.parentElement); } catch (e) {}
+    try { let m = null; for (let i = 0; i < 100 && !(window.FoxyGyoza && window.FoxyGyoza.createGyozaShift); i++) await new Promise(r => setTimeout(r, 50)); m = window.FoxyGyoza && window.FoxyGyoza.createGyozaShift ? window.FoxyGyoza : await import(new URL('minigames/gyoza/gyoza-shift.js', document.baseURI).href); this.g = await m.createGyozaShift({ container: this.stageRef.current, onState: h => this.setState({ h }), options: (() => { const P = this.props || {}, o = { walk: !!P.walk || /[?&]walk=1/.test(location.search), owner: P.owner || 'KIKO', world: P.world || '' }; if (Array.isArray(P.customers) && P.customers.length) o.customers = P.customers; if (typeof P.onExit === 'function') o.onExit = () => P.onExit(); return o; })() }); window.__gyoza = this.g; this.forceUpdate(); if (/[?&]demo=1/.test(location.search)) setTimeout(() => this.g.demoStart(), 400); }
+    catch (e) { console.warn('gyoza failed: ' + (e && e.stack || String(e))); this.setState({ err: String(e && e.message || e) }); }
+  }
+  componentDidUpdate() { const root = this.stageRef.current && this.stageRef.current.parentElement; if (!root || !this.g || !this.g.setSafe) return; const rb = root.getBoundingClientRect(); let top = 0, bot = 0, left = 0, right = 0; root.querySelectorAll('[data-safe]').forEach(el => { const r = el.getBoundingClientRect(); if (!r.height) return; if (el.dataset.safe === 'top') top = Math.max(top, r.bottom - rb.top); else if (el.dataset.safe === 'right') right = Math.max(right, rb.right - r.left); else if (el.dataset.safe === 'left' || (el.dataset.safe === 'intro' && rb.width > rb.height)) left = Math.max(left, r.right - rb.left); else bot = Math.max(bot, rb.bottom - r.top); }); const H = rb.height; this.g.setSafe(Math.round(Math.min(top, H * 0.34)), Math.round(Math.min(bot, H * (this.g.hud().phase === 'intro' ? 0.62 : 0.3))), Math.round(Math.min(left, rb.width * 0.6)), Math.round(Math.min(right, rb.width * 0.5))); }
+  componentWillUnmount() { removeEventListener('resize', this.onRs); this.g && this.g.destroy(); }
+  onRs = () => { const el = this.stageRef.current, r = el && el.parentElement ? el.parentElement.getBoundingClientRect() : null; this.setState({ vw: r && r.width ? r.width : innerWidth, vh: r && r.height ? r.height : innerHeight }); };
+  renderVals() {
+    const S = this.state, g = this.g, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const h = S.h || { phase: 'intro', day: 1, left: 180, earned: 0, tips: 0, served: 0, lost: 0, stars: 0, orders: [], trayN: 0, trayList: [], plateTxt: '', passN: 0, pay: null, flash: null, say: '', done: null, gold: 0, upgrades: [], menu: [], crusts: [], extras: [], walk: null, badges: {} };
+    const work = h.phase === 'shift' || h.phase === 'glide', walk = h.phase === 'walk', d = h.done || { total: 0 }, m = Math.floor(h.left / 60), s = Math.floor(h.left % 60), port = S.vh > S.vw, narrow = S.vw < 480, bar = walk ? (S.hi.bar || 0) : 0;
+    let sv = null; try { sv = JSON.parse(localStorage.getItem('8gates.save.v1') || 'null'); } catch (e) {}
+    const W = h.walk || {}, stdHud = { hp: 100, hpMax: 100, en: 100, gold: h.gold, hour: 20, day: sv && sv.stats ? sv.stats.worldDay || 1 : 1, items: sv ? Object.entries(sv.items || {}).filter(([, n]) => n > 0).map(([id, n]) => ({ id, n, label: id })) : [], place: 'Foxy Gyoza', quest: { text: W.seated ? 'FOXY GYOZA · TAKING A SEAT' : 'FOXY GYOZA · TALK TO KIKO TO WORK A SHIFT' }, prompt: W.prompt || null, toast: W.toast || null, muted: false, weather: 'Clear', boat: false, inCave: false, weapons: [], dialog: W.dialog || null, vehicles: [], vehAmmo: [] };
+    const mt = h.meter || { zone: '', zoneCol: '#fff', title: '', want: '', segs: [], x: -1 };
+    const trayBottom = h.pay ? 'calc(150px + env(safe-area-inset-bottom))' : 'calc(70px + env(safe-area-inset-bottom))';
+    const land = !port, dockOn = work && !h.done && !h.pay && !h.reveal && !h.react, dockW = 'min(260px, 34%)';
+    const dk = land ? { l: 'auto', t: '0px', w: dockW, bt: '0', bl: '2px solid #ffd23a', pad: 'env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) 0', aH: '150px', barH: '44px', cols: '1fr', btnH: '44px', btnB: '2px solid #2a2826', btnDir: 'row', btnJ: 'space-between', btnA: 'center', aJ: 'flex-start' }
+      : { l: '0px', t: 'auto', w: 'auto', bt: '2px solid #ffd23a', bl: '0', pad: '0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)', aH: '124px', barH: '54px', cols: 'repeat(5,minmax(0,1fr))', btnH: '58px', btnB: '0', btnDir: 'column', btnJ: 'center', btnA: 'flex-start', aJ: 'flex-start' };
+    const meterShow = work && !!h.meter && !h.demo, msgTxt = h.flash ? h.flash.txt : (work && h.say && !h.react && !h.demo ? h.say : '');
+    return {
+      dockOn, dockSafe: land ? 'right' : 'bottom', dk, dockR: land && dockOn ? dockW : '0px', stOn: !h.demo, hintOn: !h.demo && !meterShow, hintKick: h.hint ? 'NEXT' : h.plateTxt ? 'PLATE' : 'READY TRAY · ' + h.trayN + ' / 10', hintTxt: h.hint ? h.hint.text : h.plateTxt ? h.plateTxt : 'Fold gyoza, then line the pan.',
+      msgOn: !!msgTxt && (work || !!h.done) && !h.react, msgTxt, msgCol: h.flash ? h.flash.col : '#3a3836', msgFont: h.flash ? '900 clamp(15px,4.2vw,22px) var(--font-heading)' : '700 13px var(--font-body)', msgTop: h.done ? 'calc(12px + env(safe-area-inset-top))' : land ? 'calc(52px + env(safe-area-inset-top))' : 'calc(58px + env(safe-area-inset-top))', msgR: land && dockOn ? 'calc(' + dockW + ' + 6px)' : '6px',
+      soundOn: !h.muted, soundOff: !!h.muted, soundCol: h.muted ? '#8a847e' : '#ffd23a', soundAria: h.muted ? 'Turn sound on' : 'Turn sound off', soundLbl: h.muted ? 'SOUND OFF' : 'SOUND ON', soundToggle: e => { blur(e); g && g.toggleSound(); this.forceUpdate(); },
+      stageRef: this.stageRef, h, d, engine: g, errOn: !!S.err, errTxt: S.err || '', stdHud, walkOn: walk && !!g, hudBusy: false, onHud: this.onHud, worldName: 'Foxy Gyoza', stageTop: bar + 'px',
+      keysList: [['WASD', 'walk'], ['E', 'talk · sit'], ['Space', 'hop'], ['1', 'wave'], ['M', 'map'], ['I', 'menu']], skipKeys: ['KeyT', 'KeyN', 'KeyV', 'KeyC'],
+      workOn: work && !h.done, introOn: h.phase === 'intro' && !h.demo, doneOn: !!h.done, helpOn: S.help && work,
+      introKicker: (this.props && this.props.world ? String(this.props.world).toUpperCase() + ' · ' : '') + 'FOXY GYOZA · DAY ' + h.day, clock: m + ':' + String(s).padStart(2, '0'), clockCol: h.left < 20 ? '#ff9a8a' : '#ffffff', earnedTxt: (h.earned + h.tips) + 'g', servedTxt: h.served + (h.lost ? ' · ' + h.lost + ' LEFT' : '') + ' · ★ ' + (h.stars || '–'),
+      fullTix: !(S.vw > S.vh && S.vh < 520), compactTix: S.vw > S.vh && S.vh < 520,
+      tickets: h.orders.map(o => ({ name: o.name, patW: Math.round(o.pat * 100) + '%', patCol: o.pat < 0.3 ? '#ec3013' : o.pat < 0.6 ? '#ffd23a' : '#22c55e', fill: o.fill, fillCol: o.fillCol, crust: o.crust, crustCol: o.crustCol, extras: o.extras.join(' + '), totalTxt: o.total + 'g' + (o.waiting ? '' : ' · ARRIVING'), short: o.fill + ' · ' + o.crust + (o.extras.length > 1 ? ' · +' + o.extras.slice(1).join(' +') : '') })),
+      trayBottom, barOn: work && !h.done && !h.pay && !h.reveal && !h.react, barPE: h.demo ? 'none' : 'auto', stPad: !port ? '0 12px' : narrow ? '6px 2px 6px 6px' : '6px 4px 6px 10px', stFs: narrow ? '12px' : '14px',
+      stations: [['all', 'ALL'], ['fold', 'FOLD'], ['pan', 'PAN'], ['sauce', 'SAUCE'], ['pass', 'PASS']].map(([id, label]) => { const on = (h.focus || 'all') === id, nx = !!(h.hint && h.hint.station === id && !on && h.focus !== 'all'), b = nx ? 'NEXT ▸' : (h.badges || {})[id] || '', hot = /LID|LIFT|FLIP|BURNT|SAUCE|UP|NEXT/.test(b); return { label, aria: 'Zoom to ' + label, badge: b || (on ? 'VIEWING' : ' '), bg: on ? '#ffd23a' : nx ? '#1f3a24' : '#000000', fg: on ? '#000000' : '#ffffff', bc: on ? '#000000' : hot ? (/BURNT/.test(b) ? '#ff9a8a' : /NEXT/.test(b) ? '#ffd23a' : '#22c55e') : '#8a847e', go: e => { blur(e); g && g.setFocus(id); } }; }),
+      trayHead: h.hint ? 'NEXT · ' + h.hint.text : h.plateTxt ? h.plateTxt : 'READY TRAY · ' + h.trayN + ' / 10', trayTxt: h.plateTxt ? h.plateTxt : h.trayN ? h.trayList.join(' · ') + ' folded' + (h.passN ? ' · ' + h.passN + ' plate' + (h.passN > 1 ? 's' : '') + ' on the pass' : '') : 'Empty. Hold a wrapper on the board to fill it.',
+      trayBody: !port || !h.hint, trayDisp: h.demo || h.react || h.reveal || h.pay || h.meter ? 'none' : 'flex', sayOn: !!h.say && !port && !h.demo && !h.react,
+      meterOn: meterShow, mtHintOn: meterShow && !!h.hint && !/FILL|PLEATS|SOY/.test(mt.title), mt, mtSegs: mt.segs.map(sg => ({ f: sg.f, col: sg.col, out: sg.out ? '3px solid #ffd23a' : 'none' })), mtMark: mt.x >= 0, mtX: (Math.max(0, mt.x) * 100).toFixed(1) + '%', meterBottom: 'calc(70px + env(safe-area-inset-bottom))', meterLeft: port ? '50%' : 'auto', meterRight: port ? 'auto' : 'max(10px, env(safe-area-inset-right))', meterTf: port ? 'translateX(-50%)' : 'none', meterW: port ? 'min(420px, calc(100% - 24px))' : 'min(340px, 42%)',
+      flashOn: !!h.flash && (work || !!h.done), flashTop: port ? '52%' : '46%', flashTxt: h.flash ? h.flash.txt : '', flashCol: h.flash ? h.flash.col : '#ffd23a',
+      payOn: !!h.pay, payLine: h.pay ? 'Bill ' + h.pay.total + 'g · they paid ' + h.pay.paid + 'g · tap coins to make ' + h.pay.owed + 'g' : '', payGiven: h.pay ? h.pay.given + ' / ' + h.pay.owed + 'g' : '',
+      coins: [1, 2, 5, 10].map(v => ({ label: v + 'g', give: e => { blur(e); g && g.giveCoin(v); } })),
+      introDescOn: !(S.vw > S.vh && S.vh < 500), introRows: [['Gold', h.gold + 'g'], ['Menu', h.menu.join(', ')], ...(S.vw > S.vh && S.vh < 500 ? [] : [['Crust', h.crusts.join(' · ')]]), ['Extras', ['SOY', ...h.extras].join(', ')], ['Uniform', h.uniform ? 'Yours · paper hat, towel + gyoza tee' : 'Serve 3 to keep it']].map(([k, v]) => ({ k, v })),
+      goWork: e => { blur(e); g && g.startShift(); }, walkGo: e => { blur(e); g && g.enterWalk(); },
+      revealOn: !!h.reveal, revKicker: h.reveal ? (h.reveal.ok ? 'GYOZA UP · FOR ' + h.reveal.who : 'GYOZA UP') : '', revNotes: h.reveal ? (h.reveal.perfect ? [{ t: 'Perfect plate. ' + h.reveal.who + ' is going to love this.', col: '#22c55e' }] : h.reveal.notes.map(t => ({ t, col: h.reveal.ok ? '#ffd23a' : '#ff9a8a' }))) : [],
+      revBtns: !h.reveal ? [] : [...(h.reveal.ok && h.reveal.waiting ? [{ label: 'SERVE ' + h.reveal.who, c: 'serve', bg: '#ec3013', fg: '#ffffff', bd: '#ec3013' }] : []), { label: 'ON THE PASS', c: 'tray', bg: h.reveal.ok && h.reveal.waiting ? '#000000' : '#ffd23a', fg: h.reveal.ok && h.reveal.waiting ? '#ffffff' : '#000000', bd: h.reveal.ok && h.reveal.waiting ? '#3a3836' : '#ffd23a' }, ...(!h.reveal.ok ? [{ label: 'BIN IT', c: 'bin', bg: '#ec3013', fg: '#ffffff', bd: '#ec3013' }] : [])].map(b => ({ ...b, go: e => { blur(e); g && g.revealChoice(b.c); } })), revCols: h.reveal && ((h.reveal.ok && h.reveal.waiting) || !h.reveal.ok) ? 2 : 1,
+      reactOn: !!h.react, reactTop: port ? 'calc(64px + env(safe-area-inset-top))' : '58px', reactStars: h.react ? (h.react.stars ? '★'.repeat(h.react.stars) + '☆'.repeat(3 - h.react.stars) : '✕') : '', reactTip: h.react ? (h.react.stars ? (h.react.tip ? 'TIP +' + h.react.tip + 'g' : 'NO TIP') : 'REFUSED') : '', reactNoteOn: !!(h.react && h.react.note),
+      demoGo: e => { blur(e); g && g.demoStart(); }, demoExit: e => { blur(e); g && g.demoStop(); }, demoOn: !!h.demo, demoKeyOn: !!(h.demo && h.demo.key), demoN: h.demo ? 'SERVED ' + h.demo.n + ' / ' + h.demo.of : '', helpToggle: e => { blur(e); this.setState({ help: !S.help }); },
+      helpRows: [['FOLD', 'Tap a filling bowl (the dot on the ticket shows which). HOLD the wrapper on the board: the spoon fills it. Let go in the GREEN. Too much = it bursts.'], ['PLEAT', 'Then WIGGLE back and forth across the dumpling. Every turn is one pleat. Enough pleats and it seals and hops onto the ready tray.'], ['PAN', 'Tap the pan: a gyoza hops in. Five make a plate and start frying. Watch the bar over the pan.'], ['WATER', 'When the crust matches the ticket (LIGHT, GOLDEN or DARK), tap the water jug, or drag it onto a pan.'], ['LID', 'Water in? SWIPE DOWN on the pan (or tap it) to slam the lid on. Fast = full steam.'], ['STEAM', 'SWIPE UP on the pan to lift the lid while the steam bar is in the green band.'], ['FLIP', 'FLICK UP on the pan: it flips onto the plate, crust up.'], ['SAUCE', 'HOLD the soy bottle, let go at the red line. Tap the chili oil 3 times if the ticket says CHILI. RUB over the plate for SCALLIONS.'], ['SERVE', 'Serve from the close-up, or tap or drag a plate on the pass to the customer. Then tap coins for the exact change.']].map(([k, v]) => ({ k, v })),
+      doneKicker: h.done ? 'DAY ' + d.day + ' · FOXY GYOZA' : '', doneSub: h.done ? (d.newDay ? 'Day ' + (d.day + 1) + ' tomorrow' : 'Serve ' + d.need + ' to move up a day') + ' · ★ ' + d.stars + ' employee stars' : '', eodOn: !!(h.done && d.eod),
+      doneRows: h.done ? [['Served', String(d.served)], ['Walked out', String(d.lost)], ['Average stars', String(d.avg)], ['Wage', d.wage + 'g'], ['Prices', d.earned + 'g'], ['Tips', d.tips + 'g']].map(([k, v]) => ({ k, v })) : [], unlocks: h.done ? d.unlock.map(t => ({ t })) : [], goldTxt: h.gold + 'g',
+      shop: h.upgrades.map(u => { const afford = h.gold >= u.cost; return { name: u.name, line: u.line, btn: u.owned ? 'OWNED' : u.cost + 'g', off: u.owned || !afford, bg: u.owned ? '#22c55e' : afford ? '#ffd23a' : '#000000', fg: u.owned || afford ? '#000000' : '#8a847e', bd: u.owned ? '#22c55e' : afford ? '#ffd23a' : '#3a3836', op: u.owned || afford ? 1 : 0.6, buy: e => { blur(e); g && g.buyUpgrade(u.id); } }; }),
+    };
+  }
+}
+</script>
+</body>
+</html>

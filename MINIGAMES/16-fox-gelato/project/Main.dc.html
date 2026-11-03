@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FOX Gelato</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="FOX Gelato">
+  <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+  <div data-hud-host="1" style="position:absolute;inset:0;pointer-events:none"><dc-import name="Game-HUD" game="{{ engine }}" hud="{{ stdHud }}" started="{{ walkOn }}" busy="{{ hudBusy }}" on-hud="{{ onHud }}" world="FOX" vehicle="gelato" keys="{{ keysList }}" skip-keys="{{ skipKeys }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  <sc-if value="{{ workOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="top" style="position:absolute;left:0;right:0;top:0;z-index:3;pointer-events:none;display:flex;flex-direction:column">
+      <div style="background:#000;border-bottom:2px solid #ffd23a;display:flex;align-items:stretch;padding-top:env(safe-area-inset-top)">
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap">GELATO · DAY {{ h.day }}</span><span style="font:900 22px var(--font-heading);font-variant-numeric:tabular-nums;color:{{ clockCol }}">{{ clock }}</span></div>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">EARNED</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;color:#e6b45a">{{ earnedTxt }}</span></div>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;min-width:0;flex:{{ servedFlex }};border-right:{{ servedBd }}"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">SERVED · STARS</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap">{{ servedTxt }}</span></div>
+        <sc-if value="{{ barHintOn }}" hint-placeholder-val="{{ false }}"><div style="flex:1;min-width:0;padding:6px 12px;display:flex;flex-direction:column;justify-content:center;gap:3px"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#ffd23a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ trayHead }}</span><span style="display:flex;align-items:center;gap:5px;min-width:0"><sc-for list="{{ buildChips }}" as="c" hint-placeholder-count="2"><span style="flex:none;width:11px;height:11px;border-radius:50%;background:{{ c.col }};border:1.5px solid #fff;display:block"></span></sc-for><span style="font:700 12px var(--font-body);color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ trayTxt }}</span></span></div></sc-if>
+        <button onClick="{{ helpToggle }}" aria-label="How the parlour works" style="pointer-events:auto;flex:none;margin-left:auto;width:52px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 20px var(--font-heading);cursor:pointer" style-hover="background:#2a2826">?</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:6px;align-items:start">
+        <sc-for list="{{ tickets }}" as="o" hint-placeholder-count="2">
+          <div style="background:#fbfbf7;color:#201e1d;border:2px solid {{ o.bd }};display:flex;flex-direction:column;min-width:0">
+            <div style="background:#d8405a;color:#fff;padding:3px 6px;font:900 11px var(--font-heading);letter-spacing:0.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.name }}</div>
+            <div style="height:5px;background:#e8e4da"><div style="height:100%;width:{{ o.patW }};background:{{ o.patCol }}"></div></div>
+            <sc-if value="{{ fullTix }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:2px 6px;font:900 11px var(--font-heading);letter-spacing:0.04em;color:#201e1d;border-top:1px solid #e8e4da;white-space:nowrap">{{ o.vessel }}</div>
+              <sc-for list="{{ o.scoops }}" as="s" hint-placeholder-count="2"><div style="display:flex;align-items:center;gap:5px;padding:2px 6px;border-top:1px solid #e8e4da;min-width:0"><span style="flex:none;width:10px;height:10px;border-radius:50%;background:{{ s.col }};border:1.5px solid #201e1d;display:block"></span><span style="font:800 10px var(--font-heading);color:#201e1d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.t }}</span></div></sc-for>
+              <sc-for list="{{ o.extras }}" as="x" hint-placeholder-count="1"><div style="padding:2px 6px;font:800 10px var(--font-heading);color:#a8432e;border-top:1px solid #e8e4da;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">+ {{ x.t }}</div></sc-for>
+              <div style="padding:2px 6px;font:800 10px var(--font-heading);color:#7a746d;border-top:1px solid #e8e4da">{{ o.totalTxt }}</div>
+            </sc-if>
+            <sc-if value="{{ compactTix }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:3px;padding:2px 6px;min-width:0"><span style="font:900 10px var(--font-heading);color:#201e1d;flex:none">{{ o.vShort }}</span><sc-for list="{{ o.scoops }}" as="s" hint-placeholder-count="2"><span style="flex:none;width:9px;height:9px;border-radius:50%;background:{{ s.col }};border:1.5px solid #201e1d;display:block"></span></sc-for><span style="font:800 9px var(--font-heading);color:#a8432e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.xShort }}</span></div></sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <sc-if value="{{ barOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="bottom" style="position:absolute;left:0;right:0;bottom:0;z-index:4;background:#000;border-top:2px solid #ffd23a;padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));pointer-events:{{ barPE }}">
+      <sc-for list="{{ stations }}" as="st" hint-placeholder-count="5">
+        <button onClick="{{ st.go }}" aria-label="{{ st.aria }}" style="min-height:58px;padding:{{ stPad }};border:0;border-right:2px solid #2a2826;border-radius:0;background:{{ st.bg }};color:{{ st.fg }};cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:3px;min-width:0" style-hover="filter:brightness(1.2)">
+          <span style="font:900 {{ stFs }} var(--font-heading);letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ st.label }}</span>
+          <span style="font:800 9px var(--font-heading);letter-spacing:0.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ st.bc }}">{{ st.badge }}</span>
+        </button>
+      </sc-for>
+    </div>
+    </sc-if>
+    <div data-safe="{{ traySafe }}" style="position:absolute;right:max(10px, env(safe-area-inset-right));bottom:{{ trayBottom }};z-index:3;pointer-events:none;max-width:min(260px, 62%);background:#000;border:2px solid #ffd23a;display:{{ trayDisp }};flex-direction:column">
+      <div style="padding:4px 10px;font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;border-bottom:2px solid #3a3836;text-wrap:pretty">{{ trayHead }}</div>
+      <sc-if value="{{ trayBody }}" hint-placeholder-val="{{ true }}"><div style="padding:6px 10px;display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;font:700 13px var(--font-body);line-height:1.3;color:#fff"><sc-for list="{{ buildChips }}" as="c" hint-placeholder-count="2"><span style="width:11px;height:11px;border-radius:50%;background:{{ c.col }};border:1.5px solid #fff;display:block"></span></sc-for><span style="text-wrap:pretty">{{ trayTxt }}</span></div></sc-if>
+    </div>
+    <sc-if value="{{ sayOn }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:max(10px, env(safe-area-inset-left));bottom:{{ trayBottom }};z-index:3;pointer-events:none;max-width:min(320px, 36%);background:rgba(0,0,0,0.88);border:2px solid #3a3836;padding:8px 10px;font:700 13px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">{{ h.say }}</div>
+    </sc-if>
+  </sc-if>
+  <sc-if value="{{ carveOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;bottom:calc(76px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:5;pointer-events:none;width:min(420px, calc(100% - 24px));background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:6px 12px"><span style="font:900 clamp(18px,5vw,24px) var(--font-heading);color:{{ carveCol }}">{{ carveWord }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em;color:#ffd23a;white-space:nowrap">{{ carveName }}</span></div>
+      <div style="position:relative;height:22px;margin:0 12px 10px;background:#3a3836">
+        <span style="position:absolute;top:0;bottom:0;left:{{ cLo }};width:{{ cW }};background:#22c55e;outline:3px solid #ffd23a;display:block"></span>
+        <span style="position:absolute;top:0;bottom:0;left:{{ cHi }};right:0;background:#ec3013;display:block"></span>
+        <span style="position:absolute;top:-6px;bottom:-6px;left:{{ cX }};width:4px;margin-left:-2px;background:#ffffff;display:block"></span>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ heldOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;bottom:calc(76px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:5;pointer-events:none;max-width:calc(100% - 24px);background:#000;border:2px solid {{ heldCol }};display:flex;align-items:stretch">
+      <span style="flex:none;padding:0 10px;display:flex;align-items:center;background:{{ heldCol }};color:#000;font:900 13px var(--font-heading);letter-spacing:0.06em">{{ heldWord }}</span>
+      <span style="padding:7px 12px;font:800 13px var(--font-heading);letter-spacing:0.04em;color:#fff;text-wrap:pretty">TAP WHEN IT IS OVER THE CONE</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:{{ demoL }};right:{{ demoR }};top:{{ demoT }};bottom:{{ demoB }};z-index:7;pointer-events:none;width:{{ demoW }};background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 12px;border-bottom:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;background:#ec3013;display:block"></span>DEMO · NOTHING IS SAVED</span><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">{{ demoN }}</span></div>
+      <div style="display:flex;align-items:stretch"><sc-if value="{{ demoKeyOn }}" hint-placeholder-val="{{ false }}"><div style="flex:none;min-width:64px;display:flex;align-items:center;justify-content:center;padding:0 10px;background:#ec3013;color:#fff;font:900 15px var(--font-heading);border-right:2px solid #3a3836">{{ h.demo.key }}</div></sc-if><div style="padding:{{ demoPad }};font:900 {{ demoFs }} var(--font-heading);letter-spacing:0.03em;line-height:1.2;color:#fff;text-wrap:pretty">{{ h.demo.cap }}</div></div>
+    </div>
+    <button onClick="{{ demoExit }}" aria-label="Exit the demo" style="position:absolute;right:max(10px, env(safe-area-inset-right));bottom:{{ trayBottom }};z-index:7;min-width:64px;min-height:48px;padding:0 14px;border:2px solid #ec3013;border-radius:0;background:#ec3013;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">EXIT DEMO</button>
+  </sc-if>
+  <sc-if value="{{ reactOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="top" style="position:absolute;left:50%;top:{{ reactTop }};transform:translateX(-50%);z-index:6;pointer-events:none;width:min(420px, calc(100% - 24px));background:#000;border:3px solid {{ h.react.col }};display:flex;flex-direction:column">
+      <div style="display:flex;align-items:stretch"><div style="flex:1;padding:10px 14px;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">{{ h.react.who }}</span><span style="font:900 clamp(30px,9vw,44px) var(--font-heading);line-height:1;color:{{ h.react.col }}">{{ h.react.word }}</span></div><div style="flex:none;min-width:84px;padding:0 12px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;background:{{ h.react.col }};color:#000"><span style="font:900 20px var(--font-heading);letter-spacing:0.04em">{{ reactStars }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.08em">{{ reactTip }}</span></div></div>
+      <div style="padding:8px 14px 6px;border-top:2px solid #2a2826;font:700 15px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">“{{ h.react.line }}”</div>
+      <div style="padding:0 14px 9px;font:800 10px var(--font-heading);letter-spacing:0.08em;line-height:1.4;color:#ffd23a;text-wrap:pretty">{{ h.react.note }}</div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ flashOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ flashTop }};transform:translateX(-50%);z-index:5;pointer-events:none;max-width:calc(100% - 24px);background:rgba(0,0,0,0.9);border:2px solid {{ flashCol }};display:flex;align-items:stretch">
+      <span style="flex:none;width:10px;background:{{ flashCol }};display:block"></span>
+      <span style="padding:8px 14px;font:900 clamp(15px,4vw,24px) var(--font-heading);letter-spacing:0.04em;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ flashTxt }}</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ payOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="bottom" style="position:absolute;left:0;right:0;bottom:0;z-index:6;background:#000;border-top:2px solid #ffd23a;padding:10px max(12px, env(safe-area-inset-left)) calc(10px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline">
+        <span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">GIVE THE CHANGE</span>
+        <span style="font:700 14px var(--font-body);color:#cfcac2">{{ payLine }}</span>
+      </div>
+      <div style="display:flex;align-items:stretch;gap:8px;flex-wrap:wrap">
+        <div style="min-width:110px;padding:6px 12px;border:2px solid #3a3836;display:flex;flex-direction:column;justify-content:center"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">GIVEN / OWED</span><span style="font:900 24px var(--font-heading);font-variant-numeric:tabular-nums">{{ payGiven }}</span></div>
+        <sc-for list="{{ coins }}" as="cn" hint-placeholder-count="4">
+          <button onClick="{{ cn.give }}" style="min-width:64px;min-height:56px;padding:0 14px;border:2px solid #e6b45a;border-radius:0;background:#1a1612;color:#e6b45a;font:900 20px var(--font-heading);cursor:pointer;text-align:left" style-hover="background:#2a2420" style-active="background:#3a3020">{{ cn.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ introOn }}" hint-placeholder-val="{{ true }}">
+    <div data-safe="intro" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:6;width:min(420px, calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column">
+      <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ introKicker }}</span><span style="font:900 26px var(--font-heading);line-height:1.05">Work a shift</span><sc-if value="{{ introLong }}" hint-placeholder-val="{{ true }}"><span style="font:700 13px var(--font-body);color:#cfcac2;text-wrap:pretty">{{ introText }}</span></sc-if></div>
+      <sc-for list="{{ introRows }}" as="r" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:76px minmax(0,1fr);gap:12px;padding:6px 16px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;color:#e6b45a">{{ r.v }}</span></div></sc-for>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+        <button onClick="{{ sndGo }}" aria-pressed="{{ sndOn }}" style="min-height:44px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:{{ sndCol }};font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">{{ sndTxt }}</button>
+        <button onClick="{{ voiceGo }}" aria-pressed="{{ voiceOn }}" style="min-height:44px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-left:2px solid #3a3836;border-radius:0;background:#000;color:{{ voiceCol }};font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">{{ voiceTxt }}</button>
+      </div>
+      <button onClick="{{ demoGo }}" style="min-height:48px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WATCH THE DEMO</button>
+      <button onClick="{{ walkGo }}" style="min-height:48px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">{{ walkTxt }}</button>
+      <button onClick="{{ goWork }}" style="min-height:56px;padding:0 18px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">PUT ME TO WORK</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ helpOn }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ helpToggle }}" style="position:absolute;inset:0;z-index:9;background:rgba(0,0,0,0.82);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #ffd23a;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="padding:10px 14px;border-bottom:2px solid #3a3836;font:900 16px var(--font-heading);letter-spacing:0.06em;color:#ffd23a">HOW THE PARLOUR WORKS</div>
+        <sc-for list="{{ helpRows }}" as="r" hint-placeholder-count="7"><div style="display:grid;grid-template-columns:88px minmax(0,1fr);gap:10px;padding:7px 14px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body);line-height:1.35"><span style="font:900 11px var(--font-heading);letter-spacing:0.08em;color:#e6b45a">{{ r.k }}</span><span style="text-wrap:pretty">{{ r.v }}</span></div></sc-for>
+        <div style="padding:10px 14px;font:700 12px var(--font-body);color:#cfcac2">Tap anywhere to close</div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:8;background:rgba(0,0,0,0.78);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #3a3836;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+          <div style="padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ doneKicker }}</span><span style="font:900 24px var(--font-heading);line-height:1.05">Shift over</span><span style="font:700 12px var(--font-body);color:#cfcac2">{{ doneSub }}</span></div>
+          <div style="width:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#ec3013"><span style="font:900 30px var(--font-heading)">{{ d.total }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em">GOLD</span></div>
+        </div>
+        <sc-if value="{{ eodOn }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:10px;padding:10px 16px;background:#ffd23a;color:#000;border-bottom:2px solid #000;font:900 14px var(--font-heading);letter-spacing:0.06em"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18.5 21 12 16.8 5.5 21l2-7.5L2 9h7z" fill="#000"></path></svg>EMPLOYEE OF THE DAY</div></sc-if>
+        <sc-for list="{{ doneRows }}" as="r" hint-placeholder-count="6"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:7px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;font-variant-numeric:tabular-nums">{{ r.v }}</span></div></sc-for>
+        <sc-for list="{{ unlocks }}" as="u" hint-placeholder-count="1"><div style="padding:7px 16px;border-bottom:2px solid #2a2826;font:800 13px var(--font-heading);letter-spacing:0.04em;color:#22c55e">UNLOCKED · {{ u.t }}</div></sc-for>
+        <div style="padding:8px 16px 4px;font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">UPGRADE THE PARLOUR · YOU HAVE {{ goldTxt }}</div>
+        <sc-for list="{{ shop }}" as="s" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 16px;border-top:2px solid #2a2826">
+            <div style="display:flex;flex-direction:column;min-width:0"><span style="font:900 13px var(--font-heading);letter-spacing:0.04em">{{ s.name }}</span><span style="font:600 12px var(--font-body);color:#cfcac2">{{ s.line }}</span></div>
+            <button onClick="{{ s.buy }}" disabled="{{ s.off }}" style="min-width:84px;min-height:44px;padding:0 12px;border:2px solid {{ s.bd }};border-radius:0;background:{{ s.bg }};color:{{ s.fg }};font:900 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;opacity:{{ s.op }}" style-hover="filter:brightness(1.15)">{{ s.btn }}</button>
+          </div>
+        </sc-for>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:8px">
+          <button onClick="{{ goWork }}" style="min-height:52px;padding:0 14px;border:0;border-top:2px solid #3a3836;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10">NEXT SHIFT</button>
+          <button onClick="{{ walkGoHere }}" style="min-height:52px;padding:0 14px;border:0;border-top:2px solid #3a3836;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WALK AROUND</button>
+          <button onClick="{{ toIntro }}" style="min-height:52px;padding:0 14px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">TAKE A BREAK</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { h: null, help: false, vw: 1200, vh: 800, hi: { pad: false, menu: false, split: false, bar: 0 } };
+  stageRef = React.createRef();
+  onHud = hi => this.setState({ hi });
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs(); try { this.ro = new ResizeObserver(this.onRs); this.stageRef.current && this.ro.observe(this.stageRef.current.parentElement); } catch (e) {}
+    try { const m = await import(new URL('minigames/gelato/gelato-shift.js', document.baseURI).href); this.embed = /[?&]embed=1/.test(location.search); this.g = await m.createGelatoShift({ container: this.stageRef.current, onState: h => { this.setState({ h }); if (!this.embed) return; if (h.done && h.phase === 'done' && !this.sentDone) { this.sentDone = true; try { parent.postMessage({ type: 'foxGelato:done', ...h.done }, '*'); } catch (e) {} } else if (!h.done) this.sentDone = false; }, opts: { embed: this.embed, keeper: /[?&]keeper=magpie/.test(location.search) ? { name: 'MAGPIE', role: 'Scooping as payback', fur: '#3a3d44', furDark: '#1f2126', inner: '#f3f2f2', torso: ['#e8e6e1', '#1d1d22', '#ec3013'], look: 'm' } : undefined, onExit: () => { try { parent.postMessage({ type: 'foxGelato:exit' }, '*'); parent.postMessage({ type: '8gates:minigame-back' }, '*'); } catch (e) {} } } }); window.__gelato = this.g; this.forceUpdate();
+      if (/[?&]demo=1/.test(location.search)) setTimeout(() => this.g.demoStart(), 400); else if (/[?&]start=work/.test(location.search)) setTimeout(() => this.g.startShift(), 400); else if (/[?&]walk=1/.test(location.search)) setTimeout(() => this.g.startWalk(), 300); }
+    catch (e) { console.warn('gelato failed: ' + (e && e.stack || String(e))); }
+  }
+  componentDidUpdate() { const root = this.stageRef.current && this.stageRef.current.parentElement; if (!root || !this.g || !this.g.setSafe) return; const rb = root.getBoundingClientRect(); let top = 0, bot = 0, left = 0; root.querySelectorAll('[data-safe]').forEach(el => { const r = el.getBoundingClientRect(); if (!r.height) return; if (el.dataset.safe === 'top') top = Math.max(top, r.bottom - rb.top); else if (el.dataset.safe === 'left' || (el.dataset.safe === 'intro' && rb.width > rb.height)) left = Math.max(left, r.right - rb.left); else bot = Math.max(bot, rb.bottom - r.top); }); const H = rb.height, ph = this.g.hud().phase; this.g.setSafe(Math.round(Math.min(top, H * 0.36)), Math.round(Math.min(bot, H * (ph === 'intro' ? 0.62 : 0.3))), Math.round(Math.min(left, rb.width * 0.6))); }
+  componentWillUnmount() { removeEventListener('resize', this.onRs); this.g && this.g.destroy(); }
+  onRs = () => { const el = this.stageRef.current, r = el && el.parentElement ? el.parentElement.getBoundingClientRect() : null; this.setState({ vw: r && r.width ? r.width : innerWidth, vh: r && r.height ? r.height : innerHeight }); };
+  renderVals() {
+    const S = this.state, g = this.g, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const h = S.h || { phase: 'intro', day: 1, left: 180, earned: 0, tips: 0, served: 0, lost: 0, stars: 0, orders: [], build: { vessel: '', scoops: [], sauce: '', cov: 0, spr: 0, wafer: false, lean: 0, melt: 0 }, carve: null, held: null, pay: null, flash: null, say: '', done: null, gold: 0, upgrades: [], menu: [], extras: [], badges: {}, shop: 'FOX GELATO', keeper: 'PIPPA', walk: null };
+    const work = h.phase === 'shift' || h.phase === 'glide', walk = h.phase === 'walk', d = h.done || { total: 0 }, m = Math.floor(h.left / 60), s = Math.floor(h.left % 60), port = S.vh > S.vw, short = S.vw > S.vh && S.vh < 520, phone = Math.min(S.vw, S.vh) < 520;
+    const W = h.walk || {}, stdHud = { hp: 100, hpMax: 100, en: W.en != null ? W.en : 100, gold: h.gold, hour: 15, day: h.day, items: [], place: W.place || h.shop, quest: { text: W.quest || '' }, prompt: W.prompt || null, toast: W.toast || null, muted: false, weather: 'Clear', boat: false, inCave: false, weapons: [], dialog: W.dialog || null, vehicles: [], vehAmmo: [] };
+    const B = h.build, overlay = !!(h.demo || h.react || h.pay || h.carve || h.held);
+    const zoneWord = { small: 'KEEP GOING', ok: 'LET GO NOW!', big: 'TOO BIG' }, zoneCol = { small: '#ffffff', ok: '#22c55e', big: '#ec3013' }, heldWord = { ok: 'STEADY', lean: 'LEANING', topple: 'TIPPING', slide: 'SLIDES OFF', miss: 'MISSES' }, heldCol = { ok: '#22c55e', lean: '#e6b45a', topple: '#ec3013', slide: '#ec3013', miss: '#ec3013' };
+    const trayItems = [B.vessel || 'NO CONE YET', ...(B.sauce ? [B.sauce + ' ' + B.cov + '%'] : []), ...(B.spr ? [B.spr + ' SPRINKLES'] : []), ...(B.wafer ? ['WAFER'] : []), ...(B.melt > 40 ? ['MELTING ' + B.melt + '%'] : [])];
+    return {
+      stageRef: this.stageRef, h, d, engine: g, stdHud, walkOn: walk, hudBusy: !walk, onHud: this.onHud,
+      keysList: [['WASD', 'walk'], ['E', 'talk'], ['1', 'wave'], ['2', 'taste'], ['Space', 'hop'], ['M', 'map'], ['I', 'menu']], skipKeys: ['KeyT', 'KeyV', 'KeyJ', 'KeyO', 'KeyH'],
+      workOn: work && !h.done, introOn: h.phase === 'intro', doneOn: !!h.done && h.phase === 'done', helpOn: S.help && work,
+      clock: m + ':' + String(s).padStart(2, '0'), clockCol: h.left < 20 ? '#ff9a8a' : '#ffffff', earnedTxt: (h.earned + h.tips) + 'g', servedTxt: h.served + (h.lost ? ' · ' + h.lost + ' LEFT' : '') + ' · ★ ' + (h.stars || '–'),
+      fullTix: !short, compactTix: short,
+      tickets: h.orders.map(o => ({ name: o.name, bd: o.top ? '#ffd23a' : '#201e1d', patW: Math.round(o.pat * 100) + '%', patCol: o.pat < 0.3 ? '#ec3013' : o.pat < 0.6 ? '#ffd23a' : '#22c55e', vessel: o.vessel, vShort: o.vessel, scoops: o.scoops, extras: o.extras.map(t => ({ t })), xShort: o.extras.length ? '+' + o.extras.map(x => x.split(' ')[0]).join('+') : '', totalTxt: o.total + 'g' + (o.waiting ? '' : ' · ARRIVING') })),
+      barOn: work && !h.done && !h.pay && !h.react, barPE: h.demo ? 'none' : 'auto', stPad: S.vw < 480 ? '6px 2px 6px 6px' : '6px 4px 6px 10px', stFs: S.vw < 480 ? '11px' : '13px',
+      stations: [['all', 'ALL'], ['case', 'SCOOP'], ['cone', 'CONE'], ['tops', 'TOPS'], ['serve', 'SERVE']].map(([id, label]) => { const on = (h.focus || 'all') === id, nx = !!(h.hint && h.hint.station === id && !on), b = nx ? 'NEXT ▸' : (h.badges || {})[id] || '', hot = /READY|DROP|NEXT|MELT|WOBBL/.test(b); return { label, aria: 'Zoom to ' + label, badge: b || (on ? 'VIEWING' : ' '), bg: on ? '#ffd23a' : nx ? '#1f3a24' : '#000000', fg: on ? '#000000' : '#ffffff', bc: on ? '#000000' : hot ? (/MELT|WOBBL/.test(b) ? '#ff9a8a' : /NEXT/.test(b) ? '#ffd23a' : '#22c55e') : '#8a847e', go: e => { blur(e); g && g.setFocus(id); } }; }),
+      trayBottom: h.pay ? 'calc(150px + env(safe-area-inset-bottom))' : 'calc(70px + env(safe-area-inset-bottom))', trayDisp: overlay || short ? 'none' : 'flex', traySafe: port ? 'bottom' : 'none', barHintOn: short && !h.demo, servedFlex: short ? 'none' : '1', servedBd: short ? '2px solid #3a3836' : '0', trayBody: !(port && h.hint) || B.scoops.length > 0,
+      trayHead: h.hint ? 'NEXT · ' + h.hint.text : 'YOUR CONE', buildChips: B.scoops.map(c => ({ col: c.col })), trayTxt: trayItems.join(' · '),
+      sayOn: !!h.say && !port && !h.demo && !h.react, flashOn: !!h.flash, flashTxt: h.flash ? h.flash.txt : '', flashCol: h.flash ? h.flash.col : '#ffd23a', flashTop: walk ? '30%' : '46%',
+      carveOn: !!h.carve && !h.demo, carveWord: h.carve ? zoneWord[h.carve.zone] : '', carveCol: h.carve ? zoneCol[h.carve.zone] : '#fff', carveName: h.carve ? 'SCOOP SIZE · ' + h.carve.name : '', cLo: h.carve ? (h.carve.lo * 100).toFixed(1) + '%' : '0%', cW: h.carve ? ((h.carve.hi - h.carve.lo) * 100).toFixed(1) + '%' : '0%', cHi: h.carve ? (h.carve.hi * 100).toFixed(1) + '%' : '100%', cX: h.carve ? Math.min(100, h.carve.v * 100).toFixed(1) + '%' : '0%',
+      heldOn: !!h.held && !h.demo && !h.carve, heldWord: h.held ? heldWord[h.held.pr] : '', heldCol: h.held ? heldCol[h.held.pr] : '#22c55e',
+      payOn: !!h.pay, payLine: h.pay ? 'Bill ' + h.pay.total + 'g · they paid ' + h.pay.paid + 'g · tap coins to make ' + h.pay.owed + 'g' : '', payGiven: h.pay ? h.pay.given + ' / ' + h.pay.owed + 'g' : '',
+      coins: [1, 2, 5, 10].map(v => ({ label: v + 'g', give: e => { blur(e); g && g.giveCoin(v); } })),
+      introKicker: h.shop + ' · ' + h.keeper + '’S PARLOUR · DAY ' + h.day, introText: 'Three minutes behind the gelato case. Carve each scoop to size, stack it without toppling, drizzle, sprinkle and serve before it melts. Pay is a wage plus prices plus tips, in gold.',
+      introLong: !short, introRows: [['Gold', h.gold + 'g' + (h.best ? ' · best shift ' + h.best + 'g' : '')], ['Flavours', h.menu.join(', ')], ['Extras', h.extras.join(', ') || 'CONES'], ['Uniform', h.uniform ? 'Yours · paper hat, towel + cone tee' : 'Serve 3 to keep it']].slice(0, short ? 1 : 4).map(([k, v]) => ({ k, v })),
+      goWork: e => { blur(e); g && g.startShift(); }, walkGo: e => { blur(e); if (!g) return; if (this.embed) { try { parent.postMessage({ type: 'foxGelato:exit', gold: h.gold }, '*'); parent.postMessage({ type: '8gates:minigame-back' }, '*'); } catch (er) {} g.toIntro(); } else g.startWalk(); }, walkTxt: this.embed ? 'BACK TO TOWN' : 'WALK AROUND THE PARLOUR', sndGo: e => { blur(e); g && g.toggleSound(); }, sndOn: String(!h.muted), sndCol: h.muted ? '#8a847e' : '#ffffff', sndTxt: h.muted ? 'SOUND · OFF' : 'SOUND · ON', voiceGo: e => { blur(e); g && g.setVoice(!h.voice); }, voiceOn: String(!!h.voice), voiceCol: h.voice ? '#ffffff' : '#8a847e', voiceTxt: h.voice ? 'VOICE HINTS · ON' : 'VOICE HINTS · OFF', walkGoHere: e => { blur(e); g && g.startWalk('here'); },
+      reactOn: !!h.react, reactTop: port ? 'calc(64px + env(safe-area-inset-top))' : '58px', reactStars: h.react ? (h.react.stars ? '★'.repeat(h.react.stars) + '☆'.repeat(3 - h.react.stars) : '✕') : '', reactTip: h.react ? (h.react.stars ? (h.react.tip ? 'TIP +' + h.react.tip + 'g' : 'NO TIP') : 'REFUSED') : '',
+      demoL: short ? 'auto' : 'max(10px, env(safe-area-inset-left))', demoR: short ? 'max(10px, env(safe-area-inset-right))' : 'auto', demoT: short ? '58px' : 'auto', demoB: short ? 'auto' : 'calc(70px + env(safe-area-inset-bottom))', demoW: short ? 'min(420px, 52%)' : 'min(460px, calc(100% - 96px))', demoFs: short ? '14px' : 'clamp(14px,3.8vw,19px)', demoPad: short ? '6px 10px' : '9px 12px', demoGo: e => { blur(e); g && g.demoStart(); }, demoExit: e => { blur(e); g && g.demoStop(); }, demoOn: !!h.demo, demoKeyOn: !!(h.demo && h.demo.key), demoN: h.demo ? 'SERVED ' + h.demo.n + ' / ' + h.demo.of : '', toIntro: e => { blur(e); g && g.toIntro(); }, helpToggle: e => { blur(e); this.setState({ help: !S.help }); },
+      helpRows: [['CONE / CUP', 'Tap the cones (or the striped cups) on the left: one goes in the holder. The ticket says which.'], ['SCOOP', 'Press inside the right tub and drag round and round. The ball grows as you go. Let go when it fills the ghost bubble (the bar turns green). Smooth circles = better scoops.'], ['STACK', 'The scoop swings over the cone. Tap when it is right above it, or hold and drag it, then let go. Keep the balance line over the cone or the tower topples.'], ['SAUCE', 'Hold a bottle and drag it over the scoops. Cover them well; sauce that misses hits the counter.'], ['SPRINKLES', 'Hold the shaker and shake it side to side over the cone. Every shake throws a pinch. 9 or more.'], ['WAFER', 'Tap the wafer jar. It sticks in the top scoop.'], ['SERVE', 'Drag the finished cone over the counter onto the customer. Hurry: scoops melt!'], ['BIN', 'Wrong cone? Tap the mint bin on the left to start again.'], ['PAY', 'Tap coins to give the exact change. Fast + right = tips.']].map(([k, v]) => ({ k, v })),
+      doneKicker: h.done ? 'DAY ' + d.day + ' · ' + h.shop : '', doneSub: h.done ? (d.newDay ? 'Day ' + (d.day + 1) + ' tomorrow' : 'Serve ' + (3 + d.day) + ' to move up a day') + ' · ★ ' + d.stars + ' employee stars' : '', eodOn: !!(h.done && d.eod),
+      doneRows: h.done ? [['Served', String(d.served)], ['Walked out', String(d.lost)], ['Average stars', String(d.avg)], ['Toppled towers', String(d.topples || 0)], ['Wage', d.wage + 'g'], ['Prices', d.earned + 'g'], ['Tips', d.tips + 'g']].map(([k, v]) => ({ k, v })) : [], unlocks: h.done ? d.unlock.map(t => ({ t })) : [], goldTxt: h.gold + 'g',
+      shop: h.upgrades.map(u => { const afford = h.gold >= u.cost; return { name: u.name, line: u.line, btn: u.owned ? 'OWNED' : u.cost + 'g', off: u.owned || !afford, bg: u.owned ? '#22c55e' : afford ? '#ffd23a' : '#000000', fg: u.owned || afford ? '#000000' : '#8a847e', bd: u.owned ? '#22c55e' : afford ? '#ffd23a' : '#3a3836', op: u.owned || afford ? 1 : 0.6, buy: e => { blur(e); g && g.buyUpgrade(u.id); } }; }),
+    };
+  }
+}
+</script>
+</body>
+</html>

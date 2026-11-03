@@ -1,0 +1,2696 @@
+{
+ "meta": {
+  "world": "meru",
+  "version": 1,
+  "date": "2026-10-22",
+  "from": "worlds/meru2-layout.js (Meru 2 export)",
+  "legacy": true,
+  "notes": "REFERENCE ONLY: Meru 2 exported into the kit format to show scale + density. Old Meru keys are not world-prefixed (legacy). Cluster buildings, the lake shoreline noise, props and lamps are built by code in Meru, so they are not in this file."
+ },
+ "map": {
+  "half": 540,
+  "spawn": [
+   0,
+   30
+  ],
+  "spawnFace": "N"
+ },
+ "palette": {
+  "path": "#e8c35a",
+  "trim": "#201e1d"
+ },
+ "zones": [
+  {
+   "key": "meruTown",
+   "label": "Fountain Plaza",
+   "music": "town",
+   "depth": 80,
+   "r": [
+    -45,
+    45,
+    -40,
+    40
+   ]
+  },
+  {
+   "key": "meruMarket",
+   "label": "Market Plaza",
+   "music": "market",
+   "depth": 105,
+   "r": [
+    -150,
+    -45,
+    -40,
+    40
+   ]
+  },
+  {
+   "key": "meruLanesCourt",
+   "label": "Lanes Court",
+   "music": "court",
+   "depth": 105,
+   "r": [
+    45,
+    150,
+    -40,
+    40
+   ]
+  },
+  {
+   "key": "meruCivic",
+   "label": "Civic Row",
+   "music": "civic",
+   "depth": 90,
+   "r": [
+    -120,
+    120,
+    -130,
+    -40
+   ]
+  },
+  {
+   "key": "meruSouth",
+   "label": "South Gardens",
+   "music": "gardens",
+   "depth": 100,
+   "r": [
+    -120,
+    120,
+    40,
+    140
+   ]
+  },
+  {
+   "key": "meruCastlePath",
+   "label": "Castle Path",
+   "music": "castlepath",
+   "depth": 200,
+   "r": [
+    -30,
+    30,
+    -330,
+    -130
+   ]
+  },
+  {
+   "key": "meruOrchard",
+   "label": "Russet Orchard",
+   "music": "castlepath",
+   "depth": 200,
+   "r": [
+    -82,
+    -12,
+    -262,
+    -196
+   ]
+  },
+  {
+   "key": "meruCornFarm",
+   "label": "Cobb Farm",
+   "music": "castlepath",
+   "depth": 200,
+   "r": [
+    12,
+    54,
+    -272,
+    -204
+   ]
+  },
+  {
+   "key": "meruPasture",
+   "label": "Woolly Acres",
+   "music": "castlepath",
+   "depth": 200,
+   "r": [
+    -76,
+    -12,
+    -330,
+    -268
+   ]
+  },
+  {
+   "key": "meruBarracks",
+   "label": "Barracks",
+   "music": "barracks",
+   "depth": 120,
+   "r": [
+    -100,
+    260,
+    -450,
+    -330
+   ]
+  },
+  {
+   "key": "meruArenaPath",
+   "label": "Arena Path",
+   "music": "arenapath",
+   "depth": 210,
+   "r": [
+    150,
+    360,
+    -30,
+    30
+   ]
+  },
+  {
+   "key": "meruArena",
+   "label": "Meru Arena",
+   "music": "arena",
+   "depth": 90,
+   "r": [
+    360,
+    450,
+    -60,
+    60
+   ]
+  },
+  {
+   "key": "meruRuinsPath",
+   "label": "Ruins Path",
+   "music": "ruinspath",
+   "depth": 160,
+   "r": [
+    -400,
+    -240,
+    -40,
+    40
+   ]
+  },
+  {
+   "key": "meruRuins",
+   "label": "The Ruins",
+   "music": "ruins",
+   "depth": 50,
+   "r": [
+    -450,
+    -400,
+    -80,
+    80
+   ]
+  },
+  {
+   "key": "meruAviary",
+   "label": "Bird Aviary",
+   "music": "gardens",
+   "depth": 68,
+   "r": [
+    190,
+    264,
+    84,
+    144
+   ]
+  },
+  {
+   "key": "meruLakePath",
+   "label": "Lake Path",
+   "music": "lakepath",
+   "depth": 75,
+   "r": [
+    -30,
+    30,
+    140,
+    215
+   ]
+  },
+  {
+   "key": "meruLake",
+   "label": "The Lake",
+   "music": "lake",
+   "depth": 235,
+   "r": [
+    -350,
+    340,
+    215,
+    490
+   ]
+  },
+  {
+   "key": "pearlIsland",
+   "label": "Pearl Island",
+   "music": "island",
+   "depth": 140,
+   "c": [
+    0,
+    372,
+    108
+   ]
+  },
+  {
+   "key": "meruSpeedboatBay",
+   "label": "Speedboat Bay",
+   "music": "lake",
+   "depth": 425,
+   "r": [
+    -121,
+    371,
+    490,
+    941
+   ]
+  },
+  {
+   "key": "tonysPark",
+   "label": "Tony's Park",
+   "music": "skate",
+   "depth": 90,
+   "r": [
+    -283,
+    -191,
+    -178,
+    -42
+   ]
+  },
+  {
+   "key": "meruTankRange",
+   "label": "Tank Range",
+   "music": "barracks",
+   "depth": 600,
+   "r": [
+    20,
+    330,
+    -1290,
+    -545
+   ]
+  },
+  {
+   "key": "meruFalls",
+   "label": "Meru Falls",
+   "music": "falls",
+   "depth": 70,
+   "c": [
+    -385,
+    320,
+    70
+   ]
+  },
+  {
+   "key": "meruRidge",
+   "label": "Castle Ridge",
+   "music": "ridge",
+   "depth": 80,
+   "r": [
+    -300,
+    -100,
+    -450,
+    -372
+   ]
+  },
+  {
+   "key": "meruCastle",
+   "label": "Meru Castle",
+   "music": "castle",
+   "depth": 60,
+   "r": [
+    -286,
+    -222,
+    -449,
+    -411
+   ]
+  },
+  {
+   "key": "meruRuinsHills",
+   "label": "Ruins Hills",
+   "music": "ruinspath",
+   "depth": 90,
+   "r": [
+    -450,
+    -290,
+    -175,
+    -85
+   ]
+  },
+  {
+   "key": "meruRuinsHillsS",
+   "label": "Ruins Hills",
+   "music": "ruinspath",
+   "depth": 85,
+   "r": [
+    -450,
+    -290,
+    85,
+    170
+   ]
+  },
+  {
+   "key": "meruHillPark",
+   "label": "Hill Park",
+   "music": "park",
+   "depth": 60,
+   "c": [
+    240,
+    -180,
+    62
+   ]
+  },
+  {
+   "key": "meruFireStation",
+   "label": "Fire Station",
+   "music": "lakepath",
+   "depth": 44,
+   "r": [
+    -74,
+    -30,
+    184,
+    236
+   ]
+  }
+ ],
+ "surfaces": [
+  {
+   "s": "stone",
+   "r": [
+    -45,
+    45,
+    -40,
+    40
+   ]
+  },
+  {
+   "s": "grass",
+   "r": [
+    -12,
+    12,
+    -12,
+    12
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -150,
+    -45,
+    -15,
+    15
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    45,
+    150,
+    -15,
+    15
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -120,
+    120,
+    -75,
+    -45
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -6,
+    6,
+    -330,
+    -130
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -60,
+    60,
+    -400,
+    -330
+   ]
+  },
+  {
+   "s": "grit",
+   "r": [
+    -100,
+    260,
+    -450,
+    -400
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    160,
+    200,
+    -20,
+    20
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    240,
+    280,
+    -20,
+    20
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    320,
+    360,
+    -20,
+    20
+   ]
+  },
+  {
+   "s": "grit",
+   "r": [
+    200,
+    240,
+    -5,
+    5
+   ]
+  },
+  {
+   "s": "grit",
+   "r": [
+    280,
+    320,
+    -5,
+    5
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    360,
+    386,
+    -16,
+    16
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    360,
+    450,
+    -60,
+    60
+   ]
+  },
+  {
+   "s": "grit",
+   "r": [
+    -400,
+    -240,
+    -6,
+    6
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -450,
+    -400,
+    -80,
+    80
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -283,
+    -191,
+    -178,
+    -42
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    192,
+    270,
+    -326,
+    -315
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    168,
+    294,
+    -305,
+    -294
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    62,
+    94,
+    -300,
+    -274
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    362,
+    394,
+    60,
+    86
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -38,
+    -27,
+    191.6,
+    197.4
+   ]
+  },
+  {
+   "s": "sand",
+   "r": [
+    -345,
+    335,
+    200,
+    240
+   ]
+  },
+  {
+   "s": "wood",
+   "r": [
+    -2.5,
+    2.5,
+    214,
+    238
+   ]
+  }
+ ],
+ "water": [
+  {
+   "e": [
+    -5,
+    362,
+    340,
+    122
+   ]
+  },
+  {
+   "r": [
+    -95,
+    345,
+    455,
+    915
+   ]
+  }
+ ],
+ "roads": [
+  {
+   "w": 12,
+   "p": [
+    [
+     -160,
+     -140
+    ],
+    [
+     160,
+     -140
+    ],
+    [
+     160,
+     150
+    ],
+    [
+     -160,
+     150
+    ],
+    [
+     -160,
+     -140
+    ]
+   ]
+  },
+  {
+   "w": 10,
+   "p": [
+    [
+     60,
+     -140
+    ],
+    [
+     60,
+     -310
+    ],
+    [
+     300,
+     -310
+    ]
+   ]
+  },
+  {
+   "w": 10,
+   "p": [
+    [
+     160,
+     50
+    ],
+    [
+     466,
+     50
+    ],
+    [
+     466,
+     0
+    ]
+   ]
+  },
+  {
+   "w": 10,
+   "p": [
+    [
+     -160,
+     50
+    ],
+    [
+     -232,
+     50
+    ]
+   ]
+  },
+  {
+   "w": 10,
+   "p": [
+    [
+     100,
+     150
+    ],
+    [
+     100,
+     200
+    ]
+   ]
+  },
+  {
+   "w": 10,
+   "p": [
+    [
+     300,
+     -310
+    ],
+    [
+     446,
+     -310
+    ],
+    [
+     446,
+     -121
+    ]
+   ]
+  },
+  {
+   "w": 10,
+   "p": [
+    [
+     -130,
+     -140
+    ],
+    [
+     -130,
+     -251
+    ],
+    [
+     -378,
+     -251
+    ]
+   ]
+  },
+  {
+   "w": 10,
+   "p": [
+    [
+     360,
+     50
+    ],
+    [
+     360,
+     326
+    ],
+    [
+     410,
+     326
+    ]
+   ]
+  },
+  {
+   "w": 10,
+   "p": [
+    [
+     -160,
+     150
+    ],
+    [
+     -160,
+     240
+    ],
+    [
+     -221,
+     240
+    ],
+    [
+     -221,
+     400
+    ]
+   ]
+  },
+  {
+   "w": 10,
+   "p": [
+    [
+     446,
+     -310
+    ],
+    [
+     446,
+     -321
+    ],
+    [
+     472,
+     -321
+    ]
+   ]
+  }
+ ],
+ "paths": [
+  {
+   "key": "toArena",
+   "label": "Square → Arena",
+   "w": 4,
+   "p": [
+    [
+     0,
+     0
+    ],
+    [
+     150,
+     0
+    ],
+    [
+     360,
+     0
+    ],
+    [
+     400,
+     0
+    ]
+   ],
+   "lining": "lamps",
+   "every": 14
+  },
+  {
+   "key": "toRuins",
+   "label": "Square → Ruins",
+   "w": 4,
+   "p": [
+    [
+     0,
+     0
+    ],
+    [
+     -150,
+     0
+    ],
+    [
+     -240,
+     0
+    ],
+    [
+     -432,
+     0
+    ]
+   ],
+   "lining": "lamps",
+   "every": 14
+  },
+  {
+   "key": "toLake",
+   "label": "Square → Lake",
+   "w": 4,
+   "p": [
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     140
+    ],
+    [
+     0,
+     230
+    ]
+   ],
+   "lining": "lamps",
+   "every": 14
+  },
+  {
+   "key": "toCastle",
+   "label": "Square → Castle",
+   "w": 4,
+   "p": [
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     -130
+    ],
+    [
+     0,
+     -400
+    ]
+   ],
+   "lining": "lamps",
+   "every": 14
+  }
+ ],
+ "buildings": [
+  {
+   "key": "tavern",
+   "label": "Tavern",
+   "f": [
+    -58,
+    -18,
+    -122,
+    -82
+   ],
+   "door": [
+    -38,
+    -82
+   ],
+   "face": "S",
+   "h": 8,
+   "room": {
+    "w": 24,
+    "d": 20,
+    "floor": "wood"
+   },
+   "interior": true
+  },
+  {
+   "key": "casino",
+   "label": "Casino",
+   "f": [
+    14.5,
+    78.5,
+    -127.5,
+    -82.5
+   ],
+   "door": [
+    46.5,
+    -82.5
+   ],
+   "face": "S",
+   "h": 8,
+   "room": {
+    "w": 30,
+    "d": 24,
+    "floor": "rug"
+   },
+   "interior": true
+  },
+  {
+   "key": "bowling",
+   "label": "Meru Lanes",
+   "f": [
+    102,
+    147,
+    -67,
+    -19
+   ],
+   "door": [
+    102,
+    -43
+   ],
+   "face": "W",
+   "h": 8,
+   "room": {
+    "w": 28,
+    "d": 30,
+    "floor": "wood"
+   },
+   "interior": true
+  },
+  {
+   "key": "itemshop",
+   "label": "Item Shop",
+   "f": [
+    -146,
+    -98,
+    18.5,
+    63.5
+   ],
+   "door": [
+    -98,
+    46.5
+   ],
+   "face": "E",
+   "h": 8,
+   "room": {
+    "w": 43,
+    "d": 46,
+    "floor": "stone"
+   },
+   "interior": true
+  },
+  {
+   "key": "armory",
+   "label": "Armory",
+   "f": [
+    -117,
+    -101,
+    67,
+    87
+   ],
+   "door": [
+    -101,
+    77
+   ],
+   "face": "E",
+   "h": 8,
+   "room": {
+    "w": 12,
+    "d": 10,
+    "floor": "wood"
+   },
+   "interior": true
+  },
+  {
+   "key": "fortune",
+   "label": "Fortune Teller",
+   "f": [
+    -96,
+    -84,
+    97,
+    121
+   ],
+   "door": [
+    -90,
+    97
+   ],
+   "face": "N",
+   "h": 8,
+   "room": {
+    "w": 10,
+    "d": 22,
+    "floor": "rug"
+   },
+   "interior": true
+  },
+  {
+   "key": "burgers",
+   "label": "Burgers",
+   "f": [
+    103,
+    147,
+    19,
+    51
+   ],
+   "door": [
+    103,
+    35
+   ],
+   "face": "W",
+   "h": 8,
+   "room": {
+    "w": 40,
+    "d": 28,
+    "floor": "wood"
+   },
+   "interior": true
+  },
+  {
+   "key": "police",
+   "label": "Police",
+   "f": [
+    -143.5,
+    -98.5,
+    -66.5,
+    -18.5
+   ],
+   "door": [
+    -98.5,
+    -42.5
+   ],
+   "face": "E",
+   "h": 8,
+   "room": {
+    "w": 12,
+    "d": 12,
+    "floor": "stone"
+   },
+   "interior": true
+  },
+  {
+   "key": "bank",
+   "label": "Bank",
+   "f": [
+    -63,
+    -15,
+    93.2,
+    138.2
+   ],
+   "door": [
+    -39,
+    93.2
+   ],
+   "face": "N",
+   "h": 8,
+   "room": {
+    "w": 22,
+    "d": 20,
+    "floor": "stone"
+   },
+   "interior": true
+  },
+  {
+   "key": "carRental",
+   "label": "Car Rental",
+   "f": [
+    84,
+    98,
+    -87,
+    -75
+   ],
+   "door": [
+    91,
+    -75
+   ],
+   "face": "S",
+   "h": 8,
+   "room": {
+    "w": 10,
+    "d": 8,
+    "floor": "wood"
+   },
+   "interior": true
+  },
+  {
+   "key": "carRental2",
+   "label": "Car Rental",
+   "f": [
+    -86,
+    -72,
+    -128,
+    -116
+   ],
+   "door": [
+    -79,
+    -128
+   ],
+   "face": "N",
+   "h": 8,
+   "room": {
+    "w": 10,
+    "d": 8,
+    "floor": "wood"
+   },
+   "interior": true
+  },
+  {
+   "key": "crest",
+   "label": "Crestview House",
+   "f": [
+    -149,
+    -113,
+    -128.2,
+    -88.2
+   ],
+   "door": [
+    -113,
+    -108.2
+   ],
+   "face": "E",
+   "h": 8,
+   "room": {
+    "w": 24,
+    "d": 24,
+    "floor": "wood"
+   },
+   "interior": true
+  },
+  {
+   "key": "lake",
+   "label": "Lakeside Tower",
+   "f": [
+    61,
+    101,
+    80,
+    120
+   ],
+   "door": [
+    81,
+    80
+   ],
+   "face": "N",
+   "h": 8,
+   "room": {
+    "w": 24,
+    "d": 24,
+    "floor": "wood"
+   },
+   "interior": true
+  },
+  {
+   "key": "stationTown",
+   "label": "Town Square Station",
+   "f": [
+    12,
+    52,
+    116,
+    136
+   ],
+   "door": [
+    32,
+    116
+   ],
+   "face": "N",
+   "h": 8,
+   "room": {
+    "w": 40,
+    "d": 20,
+    "floor": "stone"
+   },
+   "interior": true
+  },
+  {
+   "key": "barracks",
+   "label": "Barracks",
+   "f": [
+    -40,
+    40,
+    -440,
+    -400
+   ],
+   "door": [
+    0,
+    -400
+   ],
+   "face": "S",
+   "h": 8,
+   "room": {
+    "w": 30,
+    "d": 24,
+    "floor": "stone"
+   },
+   "interior": true
+  },
+  {
+   "key": "tankWorks",
+   "label": "Tread's Tank Works",
+   "f": [
+    70,
+    120,
+    -430,
+    -390
+   ],
+   "door": [
+    70,
+    -410
+   ],
+   "face": "W",
+   "h": 8,
+   "room": {
+    "w": 26,
+    "d": 22,
+    "floor": "stone"
+   },
+   "interior": true
+  },
+  {
+   "key": "tankRange",
+   "label": "Tank Range hangar",
+   "f": [
+    150,
+    200,
+    -440,
+    -405
+   ],
+   "door": [
+    175,
+    -405
+   ],
+   "face": "S",
+   "h": 8,
+   "room": {
+    "w": 24,
+    "d": 20,
+    "floor": "stone"
+   },
+   "interior": true
+  },
+  {
+   "key": "defense",
+   "label": "Planet Defense Base",
+   "f": [
+    225,
+    255,
+    -445,
+    -415
+   ],
+   "door": [
+    225,
+    -430
+   ],
+   "face": "W",
+   "h": 8,
+   "room": {
+    "w": 22,
+    "d": 14,
+    "floor": "stone"
+   },
+   "interior": true
+  },
+  {
+   "key": "castle",
+   "label": "Meru Castle",
+   "f": [
+    -284,
+    -224,
+    -447,
+    -413
+   ],
+   "door": [
+    -224,
+    -430
+   ],
+   "face": "E",
+   "h": 8,
+   "room": {
+    "w": 20,
+    "d": 40,
+    "floor": "stone"
+   },
+   "interior": true
+  },
+  {
+   "key": "pearlSail",
+   "label": "Pearl Sail",
+   "f": [
+    402,
+    406,
+    344.6,
+    345.4
+   ],
+   "door": [
+    404,
+    344.6
+   ],
+   "face": "N",
+   "h": 8
+  },
+  {
+   "key": "museum",
+   "label": "Ruins Museum",
+   "f": [
+    -415,
+    -365,
+    -70,
+    -45
+   ],
+   "door": [
+    -380,
+    -45
+   ],
+   "face": "S",
+   "h": 8,
+   "room": {
+    "w": 48,
+    "d": 23,
+    "floor": "stone"
+   },
+   "interior": true
+  },
+  {
+   "key": "permit",
+   "label": "Permit Office",
+   "f": [
+    -262,
+    -248,
+    -38,
+    -26
+   ],
+   "door": [
+    -255,
+    -26
+   ],
+   "face": "S",
+   "h": 8,
+   "room": {
+    "w": 12,
+    "d": 10,
+    "floor": "wood"
+   },
+   "interior": true
+  },
+  {
+   "key": "cave",
+   "label": "Ruins Cave",
+   "f": [
+    -450,
+    -432,
+    -12,
+    12
+   ],
+   "door": [
+    -432,
+    0
+   ],
+   "face": "E",
+   "h": 8,
+   "room": {
+    "w": 34,
+    "d": 80,
+    "floor": "grit"
+   },
+   "interior": true
+  },
+  {
+   "key": "blindSchool",
+   "label": "School for the Blind",
+   "f": [
+    -250,
+    -190,
+    170,
+    205
+   ],
+   "door": [
+    -220,
+    205
+   ],
+   "face": "S",
+   "h": 8,
+   "room": {
+    "w": 40,
+    "d": 30,
+    "floor": "wood"
+   },
+   "interior": true
+  },
+  {
+   "key": "boatworks",
+   "label": "Jon's Boatworks",
+   "f": [
+    -130,
+    -95,
+    205,
+    230
+   ],
+   "door": [
+    -112,
+    205
+   ],
+   "face": "N",
+   "h": 8,
+   "room": {
+    "w": 24,
+    "d": 20,
+    "floor": "wood"
+   },
+   "interior": true
+  },
+  {
+   "key": "boathouse",
+   "label": "Speedboat Bay boathouse",
+   "f": [
+    60,
+    90,
+    205,
+    228
+   ],
+   "door": [
+    75,
+    205
+   ],
+   "face": "N",
+   "h": 8,
+   "room": {
+    "w": 22,
+    "d": 20,
+    "floor": "wood"
+   },
+   "interior": true
+  },
+  {
+   "key": "aviary",
+   "label": "Bird Aviary",
+   "f": [
+    196,
+    264,
+    84,
+    144
+   ],
+   "door": [
+    196,
+    114
+   ],
+   "face": "W",
+   "h": 8
+  },
+  {
+   "key": "tonysPark",
+   "label": "Tony's Park",
+   "f": [
+    -281,
+    -193,
+    -176,
+    -44
+   ],
+   "door": [
+    -237,
+    -44
+   ],
+   "face": "S",
+   "h": 8
+  },
+  {
+   "key": "ferryDock",
+   "label": "Pearl Ferry Dock",
+   "f": [
+    140,
+    170,
+    205,
+    225
+   ],
+   "door": [
+    155,
+    205
+   ],
+   "face": "N",
+   "h": 8
+  },
+  {
+   "key": "stationLakeside",
+   "label": "Lakeside Station",
+   "f": [
+    380,
+    410,
+    296,
+    316
+   ],
+   "door": [
+    395,
+    316
+   ],
+   "face": "S",
+   "h": 8,
+   "room": {
+    "w": 30,
+    "d": 20,
+    "floor": "stone"
+   },
+   "interior": true
+  },
+  {
+   "key": "stationArena",
+   "label": "Arena Station",
+   "f": [
+    479,
+    499,
+    -15,
+    15
+   ],
+   "door": [
+    479,
+    0
+   ],
+   "face": "W",
+   "h": 8,
+   "room": {
+    "w": 30,
+    "d": 20,
+    "floor": "stone"
+   },
+   "interior": true
+  },
+  {
+   "key": "stationSpire",
+   "label": "Spire Station",
+   "f": [
+    479,
+    499,
+    -336,
+    -306
+   ],
+   "door": [
+    479,
+    -321
+   ],
+   "face": "W",
+   "h": 8,
+   "room": {
+    "w": 30,
+    "d": 20,
+    "floor": "stone"
+   },
+   "interior": true
+  },
+  {
+   "key": "stationCastleRd",
+   "label": "Castle Station",
+   "f": [
+    -60,
+    -30,
+    -499,
+    -479
+   ],
+   "door": [
+    -45,
+    -479
+   ],
+   "face": "S",
+   "h": 8,
+   "room": {
+    "w": 30,
+    "d": 20,
+    "floor": "stone"
+   },
+   "interior": true
+  },
+  {
+   "key": "stationDeco",
+   "label": "Deco Station",
+   "f": [
+    -499,
+    -479,
+    -172,
+    -142
+   ],
+   "door": [
+    -479,
+    -157
+   ],
+   "face": "E",
+   "h": 8,
+   "room": {
+    "w": 30,
+    "d": 20,
+    "floor": "stone"
+   },
+   "interior": true
+  },
+  {
+   "key": "stationRuins",
+   "label": "Ruins Station",
+   "f": [
+    -499,
+    -479,
+    40,
+    70
+   ],
+   "door": [
+    -479,
+    55
+   ],
+   "face": "E",
+   "h": 8,
+   "room": {
+    "w": 30,
+    "d": 20,
+    "floor": "stone"
+   },
+   "interior": true
+  },
+  {
+   "key": "stationGarden",
+   "label": "Garden Island Station",
+   "f": [
+    -190,
+    -160,
+    346,
+    366
+   ],
+   "door": [
+    -175,
+    366
+   ],
+   "face": "S",
+   "h": 8,
+   "room": {
+    "w": 30,
+    "d": 20,
+    "floor": "stone"
+   },
+   "interior": true
+  },
+  {
+   "key": "extramv4ird5f",
+   "label": "Barber Shop",
+   "f": [
+    -54,
+    -40,
+    -168,
+    -152
+   ],
+   "door": [
+    -47,
+    -152
+   ],
+   "face": "S",
+   "h": 9,
+   "style": {
+    "wall": "brick"
+   },
+   "color": "#8a4a3a"
+  },
+  {
+   "key": "extramv4inbym",
+   "label": "Tailor Shop",
+   "f": [
+    -34,
+    -16,
+    -170,
+    -152
+   ],
+   "door": [
+    -25,
+    -152
+   ],
+   "face": "S",
+   "h": 10,
+   "style": {
+    "wall": "stone"
+   },
+   "color": "#b7a58a"
+  },
+  {
+   "key": "extramv4iruy4",
+   "label": "Foxes' Chocolates",
+   "f": [
+    -111,
+    -91,
+    -167.8,
+    -151.8
+   ],
+   "door": [
+    -101,
+    -151.8
+   ],
+   "face": "S",
+   "h": 9,
+   "style": {
+    "wall": "brick"
+   },
+   "color": "#6b3f2a"
+  },
+  {
+   "key": "extramv4is68x",
+   "label": "Fox Feet Shoes",
+   "f": [
+    -154.8,
+    -140.8,
+    -167,
+    -153
+   ],
+   "door": [
+    -147.8,
+    -153
+   ],
+   "face": "S",
+   "h": 6.5,
+   "style": {
+    "wall": "glass"
+   },
+   "color": "#2e4a6b"
+  },
+  {
+   "key": "extramv4l8oxs",
+   "label": "Meru Hospital",
+   "f": [
+    72,
+    106,
+    -180,
+    -152
+   ],
+   "door": [
+    89,
+    -152
+   ],
+   "face": "S",
+   "h": 14,
+   "style": {
+    "wall": "panel"
+   },
+   "color": "#e8e4dc"
+  },
+  {
+   "key": "extramv4lbt6h",
+   "label": "Meru Motel",
+   "f": [
+    112,
+    146,
+    -188,
+    -172
+   ],
+   "door": [
+    129,
+    -172
+   ],
+   "face": "S",
+   "h": 7,
+   "style": {
+    "wall": "panel"
+   },
+   "color": "#c9b48a"
+  },
+  {
+   "key": "extramv4it4hx",
+   "label": "Pie Shop",
+   "f": [
+    -188,
+    -172,
+    -130,
+    -114
+   ],
+   "door": [
+    -172,
+    -122
+   ],
+   "face": "E",
+   "h": 6,
+   "style": {
+    "wall": "brick"
+   },
+   "color": "#b0623f"
+  },
+  {
+   "key": "extramv4itjlg",
+   "label": "Minimart",
+   "f": [
+    -190,
+    -172,
+    -104,
+    -80
+   ],
+   "door": [
+    -172,
+    -92
+   ],
+   "face": "E",
+   "h": 7,
+   "style": {
+    "wall": "panel"
+   },
+   "color": "#3f7a52"
+  },
+  {
+   "key": "extramv4iuriu",
+   "label": "Kind Chiropractor",
+   "f": [
+    -188,
+    -172,
+    61,
+    77
+   ],
+   "door": [
+    -180,
+    61
+   ],
+   "face": "N",
+   "h": 7,
+   "style": {
+    "wall": "panel"
+   },
+   "color": "#ecebe6"
+  },
+  {
+   "key": "extramv4itw99",
+   "label": "Skate Shop",
+   "f": [
+    -208,
+    -192,
+    61,
+    77
+   ],
+   "door": [
+    -200,
+    61
+   ],
+   "face": "N",
+   "h": 7,
+   "style": {
+    "wall": "panel"
+   },
+   "color": "#201e1d"
+  },
+  {
+   "key": "extramv4iv2va",
+   "label": "Big Tall's Rock Wall",
+   "f": [
+    -238,
+    -214,
+    61,
+    85
+   ],
+   "door": [
+    -226,
+    61
+   ],
+   "face": "N",
+   "h": 18,
+   "style": {
+    "wall": "panel"
+   },
+   "color": "#7a8a96"
+  },
+  {
+   "key": "hardware",
+   "label": "Meru Hardware",
+   "f": [
+    12,
+    48,
+    -176,
+    -150
+   ],
+   "door": [
+    30,
+    -150
+   ],
+   "face": "S",
+   "h": 8,
+   "style": {
+    "wall": "brick"
+   },
+   "color": "#b5482e"
+  },
+  {
+   "key": "extramvedpjst",
+   "label": "Russet Orchard",
+   "f": [
+    -41,
+    -21,
+    -228,
+    -208
+   ],
+   "door": [
+    -21,
+    -218
+   ],
+   "face": "E",
+   "h": 8
+  },
+  {
+   "key": "farmCobb",
+   "label": "Cobb Farm",
+   "f": [
+    30,
+    50,
+    -222,
+    -206
+   ],
+   "door": [
+    30,
+    -214
+   ],
+   "face": "W",
+   "h": 8
+  },
+  {
+   "key": "farmWoolly",
+   "label": "Woolly Acres",
+   "f": [
+    -48,
+    -30,
+    -327,
+    -313
+   ],
+   "door": [
+    -30,
+    -320
+   ],
+   "face": "E",
+   "h": 8
+  },
+  {
+   "key": "extramv4koqiu",
+   "label": "Hobby Shop",
+   "f": [
+    -148,
+    -132,
+    118,
+    134
+   ],
+   "door": [
+    -148,
+    126
+   ],
+   "face": "W",
+   "h": 6,
+   "style": {
+    "wall": "brick"
+   },
+   "color": "#9b4b37"
+  },
+  {
+   "key": "extramv4ldbfh",
+   "label": "Bait Shop",
+   "f": [
+    -27,
+    -15,
+    204,
+    214
+   ],
+   "door": [
+    -15,
+    209
+   ],
+   "face": "E",
+   "h": 5,
+   "style": {
+    "wall": "panel"
+   },
+   "color": "#8b6a48"
+  },
+  {
+   "key": "fireStation",
+   "label": "Meru Fire Station",
+   "f": [
+    -66,
+    -38,
+    190,
+    210
+   ],
+   "door": [
+    -38,
+    194.5
+   ],
+   "face": "E",
+   "h": 9,
+   "style": {
+    "wall": "brick"
+   },
+   "color": "#a8322a"
+  },
+  {
+   "key": "extramv4lcdtp",
+   "label": "Flower Shop",
+   "f": [
+    172,
+    184,
+    -46,
+    -34
+   ],
+   "door": [
+    172,
+    -40
+   ],
+   "face": "W",
+   "h": 5,
+   "style": {
+    "wall": "brick"
+   },
+   "color": "#d8a0a8"
+  },
+  {
+   "key": "extramv4lc8mr",
+   "label": "Meru History Museum",
+   "f": [
+    172,
+    192,
+    -136,
+    -100
+   ],
+   "door": [
+    172,
+    -118
+   ],
+   "face": "W",
+   "h": 12,
+   "style": {
+    "wall": "stone"
+   },
+   "color": "#ece6d8"
+  },
+  {
+   "key": "extramv4kojov",
+   "label": "Nature Office",
+   "f": [
+    172,
+    186,
+    62,
+    80
+   ],
+   "door": [
+    172,
+    71
+   ],
+   "face": "W",
+   "h": 6,
+   "style": {
+    "wall": "stone"
+   },
+   "color": "#7a6a4f"
+  },
+  {
+   "key": "extramv4lce16",
+   "label": "Meru Country Club",
+   "f": [
+    288,
+    326,
+    62,
+    82
+   ],
+   "door": [
+    307,
+    62
+   ],
+   "face": "N",
+   "h": 9,
+   "style": {
+    "wall": "stone"
+   },
+   "color": "#f3f2f2"
+  },
+  {
+   "key": "extramv4lzy2z",
+   "label": "Minigolf",
+   "f": [
+    332,
+    344,
+    62,
+    72
+   ],
+   "door": [
+    338,
+    62
+   ],
+   "face": "N",
+   "h": 5,
+   "style": {
+    "wall": "panel"
+   },
+   "color": "#3f9a5e"
+  },
+  {
+   "key": "extramv4m49pk",
+   "label": "Gas Station",
+   "f": [
+    378,
+    392,
+    68,
+    80
+   ],
+   "door": [
+    378,
+    74
+   ],
+   "face": "W",
+   "h": 5,
+   "style": {
+    "wall": "glass"
+   },
+   "color": "#56636e"
+  },
+  {
+   "key": "extramv4m7nsl",
+   "label": "Barracks Minimart",
+   "f": [
+    30,
+    48,
+    -303,
+    -279
+   ],
+   "door": [
+    48,
+    -291
+   ],
+   "face": "E",
+   "h": 7,
+   "style": {
+    "wall": "panel"
+   },
+   "color": "#4f5d2f"
+  },
+  {
+   "key": "extramv4m5l8c",
+   "label": "Barracks Gas",
+   "f": [
+    78,
+    92,
+    -292,
+    -280
+   ],
+   "door": [
+    78,
+    -286
+   ],
+   "face": "W",
+   "h": 5,
+   "style": {
+    "wall": "glass"
+   },
+   "color": "#56636e"
+  },
+  {
+   "key": "extramv4m7583",
+   "label": "Meru Post Office",
+   "f": [
+    52,
+    76,
+    -344,
+    -322
+   ],
+   "door": [
+    64,
+    -322
+   ],
+   "face": "S",
+   "h": 8,
+   "style": {
+    "wall": "brick"
+   },
+   "color": "#9b4b37"
+  },
+  {
+   "key": "extramv4m90mv",
+   "label": "Meru Outlets 1 (closed)",
+   "f": [
+    172,
+    194,
+    -294,
+    -272
+   ],
+   "door": [
+    183,
+    -294
+   ],
+   "face": "N",
+   "h": 7,
+   "style": {
+    "wall": "panel"
+   },
+   "color": "#8a8178"
+  },
+  {
+   "key": "extramv4m8ssh",
+   "label": "Meru Outlets 2 (closed)",
+   "f": [
+    196,
+    218,
+    -348,
+    -326
+   ],
+   "door": [
+    207,
+    -326
+   ],
+   "face": "S",
+   "h": 7,
+   "style": {
+    "wall": "panel"
+   },
+   "color": "#7a7068"
+  },
+  {
+   "key": "extramv4m7g3b",
+   "label": "Meru Outlets 3 (closed)",
+   "f": [
+    220,
+    242,
+    -294,
+    -272
+   ],
+   "door": [
+    231,
+    -294
+   ],
+   "face": "N",
+   "h": 7,
+   "style": {
+    "wall": "panel"
+   },
+   "color": "#8f877c"
+  },
+  {
+   "key": "extramv4m9n2p",
+   "label": "Meru Outlets 4 (closed)",
+   "f": [
+    244,
+    266,
+    -348,
+    -326
+   ],
+   "door": [
+    255,
+    -326
+   ],
+   "face": "S",
+   "h": 7,
+   "style": {
+    "wall": "panel"
+   },
+   "color": "#7a7068"
+  },
+  {
+   "key": "extramv4m9870",
+   "label": "Meru Outlets 5 (closed)",
+   "f": [
+    268,
+    290,
+    -294,
+    -272
+   ],
+   "door": [
+    279,
+    -294
+   ],
+   "face": "N",
+   "h": 7,
+   "style": {
+    "wall": "panel"
+   },
+   "color": "#8a8178"
+  }
+ ],
+ "spots": [
+  {
+   "key": "monk",
+   "at": [
+    0,
+    22
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "deliveryBun",
+   "at": [
+    60,
+    70
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "darterFlick",
+   "at": [
+    -60,
+    25
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "aptDoorCrest",
+   "at": [
+    -56,
+    96
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "aptDoorLake",
+   "at": [
+    96,
+    126
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "ulric",
+   "at": [
+    -110,
+    -20
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "grand",
+   "at": [
+    -70,
+    -28
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "castleGuard1",
+   "at": [
+    -251.5,
+    -433.5
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "castleGuard2",
+   "at": [
+    -219.5,
+    -434.5
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "zadie",
+   "at": [
+    -14,
+    -230
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "nash",
+   "at": [
+    14,
+    -180
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "defGuard1",
+   "at": [
+    218,
+    -425
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "defGuard2",
+   "at": [
+    218,
+    -441
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "james",
+   "at": [
+    170,
+    -10
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "lucius",
+   "at": [
+    190,
+    12
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "arenaStall2",
+   "at": [
+    270,
+    12
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "arenaStall3",
+   "at": [
+    318,
+    -10
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "arenaGate",
+   "at": [
+    354,
+    12
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "torv",
+   "at": [
+    210,
+    -10
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "odo",
+   "at": [
+    290,
+    -10
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "tam",
+   "at": [
+    230,
+    12
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "rosk",
+   "at": [
+    310,
+    12
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "marla",
+   "at": [
+    180,
+    -24
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "pell",
+   "at": [
+    220,
+    -24
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "sela",
+   "at": [
+    240,
+    -24
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "wren",
+   "at": [
+    300,
+    -24
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "ivy",
+   "at": [
+    200,
+    26
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "hetty",
+   "at": [
+    240,
+    26
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "arenaGuard2",
+   "at": [
+    280,
+    26
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "arenaRoadGuard1",
+   "at": [
+    340,
+    -24
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "arenaRoadGuard2",
+   "at": [
+    340,
+    26
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "arenaGuard1",
+   "at": [
+    356,
+    -12
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "vance",
+   "at": [
+    372,
+    0
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "spade",
+   "at": [
+    -255,
+    -18
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "ruinsGuard",
+   "at": [
+    -320,
+    6
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "sage",
+   "at": [
+    -380,
+    -36
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "tony",
+   "at": [
+    -229.4,
+    -63
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "fisherwoman",
+   "at": [
+    -20,
+    236
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "fisherman",
+   "at": [
+    96,
+    232
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "ferryCaptain",
+   "at": [
+    160,
+    230
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "pearlLocal1",
+   "at": [
+    -82.7,
+    333.6
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "pearlLocal2",
+   "at": [
+    37.8,
+    309.8
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "pearlDiver",
+   "at": [
+    47.4,
+    372
+   ],
+   "kind": "npc",
+   "from2d": true
+  },
+  {
+   "key": "rangeGuard",
+   "at": [
+    182,
+    -399
+   ],
+   "kind": "npc",
+   "from2d": true
+  }
+ ],
+ "gates": [
+  {
+   "key": "meruArena",
+   "at": [
+    380,
+    0
+   ],
+   "r": 6,
+   "kind": "battle"
+  }
+ ],
+ "wild": [
+  {
+   "key": "ruinsWild",
+   "r": [
+    -405,
+    -245,
+    -175,
+    175
+   ],
+   "for": "meruArena",
+   "kinds": [
+    "rat",
+    "bat"
+   ]
+  }
+ ],
+ "props": []
+}

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Water Race · Portrait</title>
+<script src="./support.js"></script>
+<script src="blob/e08026062c0b1e654c875b04ef5f18a6.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&display=swap">
+<style>:root{--font-heading:"Archivo",system-ui,sans-serif;--font-body:"Archivo",system-ui,sans-serif;--color-accent:#ec3013}html,body{margin:0;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:390px;height:844px;overflow:hidden;background:#1a1426;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Carnival Water Race">
+  <div ref="{{ stageRef }}" style="position:absolute;inset:0;overflow:hidden"></div>
+
+  <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:flex-start;padding:24px;box-sizing:border-box;pointer-events:none"><div style="background:#000;border:2px solid #ffd23a;padding:12px 16px;display:flex;flex-direction:column;gap:4px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">CARNIVAL</span><span style="font:900 22px var(--font-heading)">{{ loadTxt }}</span></div></div>
+  </sc-if>
+
+  <div data-safe="{{ topSafe }}" style="position:absolute;left:max(12px, env(safe-area-inset-left));top:max(12px, env(safe-area-inset-top));width:{{ boardW }};display:flex;flex-direction:column;gap:8px;pointer-events:none;z-index:3">
+    <sc-if value="{{ embed }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ goBack }}" aria-label="Back to the world" style="pointer-events:auto;align-self:flex-start;min-width:88px;min-height:44px;padding:0 14px;border:2px solid #ffd23a;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">‹ BACK</button>
+    </sc-if>
+    <sc-if value="{{ raceOn }}" hint-placeholder-val="{{ true }}">
+      <div style="background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:5px 10px;border-bottom:2px solid #3a3836">
+          <span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ boardLbl }}</span>
+          <span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap">{{ h.time }}</span>
+        </div>
+        <sc-for list="{{ laneRows }}" as="r" hint-placeholder-count="4">
+          <div style="display:grid;grid-template-columns:26px minmax(0,1fr) 38px;align-items:stretch;border-bottom:1px solid #2a2826;background:{{ r.bg }}">
+            <span style="display:flex;align-items:center;justify-content:center;background:{{ r.col }};color:#201e1d;font:900 14px var(--font-heading)">{{ r.num }}</span>
+            <span style="display:flex;flex-direction:column;justify-content:center;gap:3px;padding:4px 8px;min-width:0">
+              <span style="display:flex;align-items:center;gap:6px;min-width:0"><span style="font:900 12px var(--font-heading);letter-spacing:0.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ r.fg }}">{{ r.name }}</span><span style="flex:none;width:8px;height:8px;background:{{ r.dot }};display:block"></span></span>
+              <span style="position:relative;height:6px;background:#3a3836;display:block"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ r.w }};background:{{ r.col }};display:block"></span><span style="position:absolute;right:0;top:-2px;bottom:-2px;width:3px;background:#ffffff;display:block"></span></span>
+            </span>
+            <span style="display:flex;align-items:center;justify-content:flex-start;padding-left:4px;font:900 12px var(--font-heading);color:{{ r.placeC }}">{{ r.place }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{ btnsOn }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;right:max(12px, env(safe-area-inset-right));top:max(12px, env(safe-area-inset-top));display:flex;flex-direction:column;pointer-events:auto;z-index:4">
+      <button onClick="{{ soundTog }}" aria-label="Sound on or off" aria-pressed="{{ soundPressed }}" style="width:64px;height:48px;padding:0;border:2px solid #ffd23a;border-radius:0;background:#000;color:#fff;font:900 11px var(--font-heading);letter-spacing:0.08em;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer" style-hover="background:#2a2826">SOUND<span style="font:800 9px var(--font-heading);color:{{ soundC }}">{{ soundTxt }}</span></button>
+      <button onClick="{{ viewTog }}" aria-label="Change the view" style="width:64px;height:48px;padding:0;border:2px solid #ffd23a;border-top:0;border-radius:0;background:#ffd23a;color:#000;font:900 11px var(--font-heading);letter-spacing:0.06em;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer" style-hover="background:#ffe27a">VIEW<span style="font:800 9px var(--font-heading)">{{ viewTxt }}</span></button>
+    </div>
+  </sc-if>
+
+  <div data-safe="{{ botSafe }}" style="position:absolute;left:{{ botL }};right:{{ botR }};bottom:calc(12px + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:{{ botAlign }};gap:8px;pointer-events:none;z-index:3">
+    <sc-if value="{{ barkOn }}" hint-placeholder-val="{{ true }}">
+      <div style="width:min(420px, 100%);background:rgba(0,0,0,0.9);border:2px solid #ffd23a;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;gap:8px;padding:4px 12px;border-bottom:2px solid #3a3836"><span style="width:8px;height:8px;background:#ec3013;display:block"></span><span style="font:900 10px var(--font-heading);letter-spacing:0.16em;color:#ffd23a">{{ barkName }}</span></div>
+        <span style="padding:7px 12px 9px;font:700 clamp(14px,3.8vw,16px) var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">{{ barkTxt }}</span>
+      </div>
+    </sc-if>
+    <sc-if value="{{ hintOn }}" hint-placeholder-val="{{ true }}">
+      <div style="width:min(420px, 100%);background:#000;border:2px solid {{ hintBd }};display:flex;align-items:stretch">
+        <span style="flex:none;width:30px;background:{{ hintBd }};display:flex;align-items:center;justify-content:center"><span style="width:10px;height:10px;background:#000;display:block"></span></span>
+        <span style="flex:1;min-width:0;padding:8px 12px;font:900 clamp(13px,3.6vw,15px) var(--font-heading);letter-spacing:0.05em;line-height:1.2;color:#fff">{{ hintTxt }}</span>
+      </div>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;right:max(12px, env(safe-area-inset-right));top:{{ demoTop }};z-index:4;pointer-events:none;width:64px;box-sizing:border-box;background:#ec3013;color:#fff;border:2px solid #ffd23a;border-top:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px 7px;text-align:center">
+      <span style="font:900 15px var(--font-heading);letter-spacing:0.08em">DEMO</span>
+      <span style="font:800 9px var(--font-heading);letter-spacing:0.06em;line-height:1.15">TAP TO<br>PLAY</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ countOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);z-index:5;pointer-events:none;width:120px;height:120px;background:#000;border:3px solid #ffd23a;display:flex;align-items:center;justify-content:center;font:900 76px var(--font-heading);color:#ffd23a;font-variant-numeric:tabular-nums">{{ h.count }}</div>
+  </sc-if>
+  <sc-if value="{{ flashOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ flashTop }};transform:translateX(-50%);z-index:5;pointer-events:none;max-width:calc(100% - 24px);background:rgba(0,0,0,0.92);border:2px solid {{ flashCol }};display:flex;align-items:stretch">
+      <span style="flex:none;width:12px;background:{{ flashCol }};display:block"></span>
+      <span style="padding:8px 18px;font:900 clamp(20px,6vw,34px) var(--font-heading);letter-spacing:0.05em;line-height:1.1;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ flashTxt }}</span>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ lobbyOn }}" hint-placeholder-val="{{ true }}">
+    <div data-safe="{{ cardSafe }}" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:10;width:{{ cardW }};max-height:{{ cardMaxH }};overflow-y:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column;box-sizing:border-box;pointer-events:auto">
+      <div style="padding:10px 14px 8px;display:flex;flex-direction:column;gap:3px;border-bottom:2px solid #3a3836">
+        <span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">CARNIVAL · STEP RIGHT UP</span>
+        <span style="font:900 clamp(22px,6vw,28px) var(--font-heading);line-height:1">Water-Gun Horse Race</span>
+        <span style="font:700 14px var(--font-body);line-height:1.35;color:#e8e4de;text-wrap:pretty">{{ lobbyLine }}</span>
+      </div>
+      <span style="padding:6px 14px 4px;font:800 10px var(--font-heading);letter-spacing:0.12em;color:#8a847e">MODE</span>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+        <sc-for list="{{ modeBtns }}" as="r" hint-placeholder-count="2">
+          <button onClick="{{ r.go }}" aria-pressed="{{ r.pressed }}" style="min-height:48px;padding:6px 12px 6px 14px;border:0;border-top:2px solid #2a2826;border-radius:0;background:{{ r.bg }};color:{{ r.fg }};cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px;box-shadow:inset 6px 0 0 {{ r.bar }}" style-hover="filter:brightness(1.15)"><span style="font:900 13px var(--font-heading);letter-spacing:0.05em;white-space:nowrap">{{ r.name }}</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;opacity:0.75;white-space:nowrap">{{ r.sub }}</span></button>
+        </sc-for>
+      </div>
+      <span style="padding:6px 14px 4px;font:800 10px var(--font-heading);letter-spacing:0.12em;color:#8a847e;border-top:2px solid #2a2826">{{ rivalsLbl }}</span>
+      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr))">
+        <sc-for list="{{ rivalBtns }}" as="r" hint-placeholder-count="4">
+          <button onClick="{{ r.go }}" aria-pressed="{{ r.pressed }}" aria-label="{{ r.aria }}" style="min-height:48px;padding:0;border:0;border-top:2px solid #2a2826;border-left:{{ r.bl }};border-radius:0;background:{{ r.bg }};color:{{ r.fg }};cursor:pointer;font:900 14px var(--font-heading);letter-spacing:0.04em" style-hover="filter:brightness(1.15)">{{ r.name }}</button>
+        </sc-for>
+      </div>
+      <button onClick="{{ playGo }}" style="min-height:56px;padding:4px 14px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:1px" style-hover="background:#c82a10" style-active="background:#a8230d"><span style="font:900 17px var(--font-heading);letter-spacing:0.08em">{{ playTxt }}</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;opacity:0.9;white-space:nowrap">{{ playSub }}</span></button>
+      <button onClick="{{ onlineGo }}" style="min-height:48px;padding:4px 14px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#7dd3fc;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:1px" style-hover="background:#2a2826"><span style="font:900 14px var(--font-heading);letter-spacing:0.08em">PLAY ONLINE</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;color:#cfcac4;white-space:nowrap">UP TO 4 PLAYERS · ROOM CODE · NO SERVER</span></button>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:2px solid #3a3836">
+        <button onClick="{{ howTog }}" aria-expanded="{{ howPressed }}" style="min-height:44px;padding:0 14px;border:0;border-radius:0;background:#000;color:#ffd23a;cursor:pointer;text-align:left;font:900 12px var(--font-heading);letter-spacing:0.1em" style-hover="background:#2a2826">{{ howLbl }}</button>
+        <button onClick="{{ demoGo }}" style="min-height:44px;padding:0 14px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#ffffff;cursor:pointer;text-align:left;font:900 12px var(--font-heading);letter-spacing:0.1em" style-hover="background:#2a2826">WATCH DEMO ▸</button>
+      </div>
+      <sc-if value="{{ howOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;border-top:2px solid #2a2826">
+          <sc-for list="{{ howRows }}" as="r" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px;padding:6px 14px;font:700 13px var(--font-body);line-height:1.35;color:#e8e4de"><span style="font:900 13px var(--font-heading);color:#ffd23a">{{ r.n }}</span><span style="text-wrap:pretty">{{ r.t }}</span></div></sc-for>
+        </div>
+      </sc-if>
+      <div style="display:flex;flex-wrap:wrap;gap:4px 14px;padding:8px 14px;border-top:2px solid #3a3836;font:800 10px var(--font-heading);letter-spacing:0.08em;color:#cfcac4"><span>{{ winsTxt }}</span><span style="color:#ffd23a">{{ prizeTxt }}</span><span>{{ bestTxt }}</span></div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:11;background:rgba(0,0,0,0.78);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto;pointer-events:auto">
+      <div style="background:#000;border:2px solid #3a3836;width:min(460px,100%);display:flex;flex-direction:column;margin:auto 0">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+          <div style="padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ d.kicker }}</span><span style="font:900 26px var(--font-heading);line-height:1.05">{{ d.title }}</span></div>
+          <div style="width:88px;display:flex;align-items:center;justify-content:center;background:{{ gradeBg }};color:{{ gradeFg }};font:900 {{ gradeFs }} var(--font-heading)">{{ d.big }}</div>
+        </div>
+        <sc-if value="{{ prizeOn }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 16px;background:#ffd23a;color:#000;border-bottom:2px solid #000"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="square"><path d="M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3M12 14v4M8 21h8M9 18h6"></path></svg><span style="font:900 14px var(--font-heading);letter-spacing:0.06em">PRIZE · {{ d.prize }} · SAVED TO YOUR BAG</span></div>
+        </sc-if>
+        <sc-if value="{{ standOn }}" hint-placeholder-val="{{ false }}">
+          <sc-for list="{{ standRows }}" as="r" hint-placeholder-count="4">
+            <div style="display:grid;grid-template-columns:30px 12px minmax(0,1fr) auto;gap:8px;align-items:center;padding:6px 16px;border-bottom:2px solid #2a2826;background:{{ r.bg }}"><span style="font:900 13px var(--font-heading);color:#ffd23a">{{ r.place }}</span><span style="width:12px;height:12px;background:{{ r.col }};display:block"></span><span style="font:900 14px var(--font-heading);letter-spacing:0.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.name }}</span><span style="font:800 13px var(--font-heading);font-variant-numeric:tabular-nums">{{ r.v }}</span></div>
+          </sc-for>
+        </sc-if>
+        <sc-for list="{{ doneRows }}" as="r" hint-placeholder-count="4">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:8px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;font-variant-numeric:tabular-nums">{{ r.v }}</span></div>
+        </sc-for>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+          <button onClick="{{ againGo }}" style="min-height:52px;padding:0 18px;border-radius:0;border:0;border-right:2px solid #3a3836;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">{{ againLbl }}</button>
+          <button onClick="{{ lobbyGo }}" style="min-height:52px;padding:0 18px;border-radius:0;border:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">{{ lobbyLbl }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ netOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="{{ cardSafe }}" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:10;width:{{ cardW }};max-height:{{ cardMaxH }};overflow-y:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column;box-sizing:border-box;pointer-events:auto">
+      <div style="padding:10px 14px 8px;display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-bottom:2px solid #3a3836"><span style="display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">WATER RACE</span><span style="font:900 24px var(--font-heading);line-height:1;white-space:nowrap">Online</span></span><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:{{ netStatC }};white-space:nowrap">{{ netStat }}</span></div>
+      <sc-if value="{{ netCodeOn }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:10px 14px;border-bottom:2px solid #3a3836;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:12px"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#8a847e">ROOM</span><span style="font:900 44px var(--font-heading);line-height:1;letter-spacing:0.12em;color:#ffd23a">{{ netCode }}</span></div><button onClick="{{ netShare }}" style="min-height:44px;padding:0 14px;border:2px solid #ffd23a;border-radius:0;background:#000;color:#ffd23a;font:900 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;white-space:nowrap" style-hover="background:#2a2826">{{ netShareTxt }}</button></div>
+      </sc-if>
+      <span style="padding:8px 14px;border-bottom:2px solid #3a3836;font:700 14px var(--font-body);line-height:1.4;color:#e8e4de;text-wrap:pretty">{{ netMsg }}</span>
+      <sc-if value="{{ netRowsOn }}" hint-placeholder-val="{{ false }}">
+        <sc-for list="{{ netRows }}" as="r" hint-placeholder-count="2">
+          <div style="min-height:44px;padding:4px 14px;border-bottom:2px solid #2a2826;display:grid;grid-template-columns:12px minmax(0,1fr) auto;align-items:center;gap:10px"><span style="width:12px;height:12px;background:{{ r.col }};display:block"></span><span style="display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font:900 14px var(--font-heading);letter-spacing:0.05em;white-space:nowrap">{{ r.name }}</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;color:#8a847e;white-space:nowrap">{{ r.sub }}</span></span><span style="font:900 10px var(--font-heading);letter-spacing:0.1em;color:{{ r.tagC }}">{{ r.tag }}</span></div>
+        </sc-for>
+      </sc-if>
+      <sc-if value="{{ netOptsOn }}" hint-placeholder-val="{{ true }}">
+        <span style="padding:6px 14px 4px;font:800 10px var(--font-heading);letter-spacing:0.12em;color:#8a847e">MODE</span>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+          <sc-for list="{{ netModes }}" as="r" hint-placeholder-count="2">
+            <button onClick="{{ r.go }}" aria-pressed="{{ r.pressed }}" style="min-height:48px;padding:6px 12px 6px 14px;border:0;border-top:2px solid #2a2826;border-radius:0;background:{{ r.bg }};color:{{ r.fg }};cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px;box-shadow:inset 6px 0 0 {{ r.bar }}" style-hover="filter:brightness(1.15)"><span style="font:900 13px var(--font-heading);letter-spacing:0.05em;white-space:nowrap">{{ r.name }}</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;opacity:0.75;white-space:nowrap">{{ r.sub }}</span></button>
+          </sc-for>
+        </div>
+        <button onClick="{{ netBotsGo }}" aria-pressed="{{ netBotsPressed }}" style="min-height:48px;padding:6px 14px;border:0;border-top:2px solid #2a2826;border-radius:0;background:#000;color:#fff;cursor:pointer;text-align:left;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px" style-hover="background:#2a2826"><span style="display:flex;flex-direction:column;gap:2px"><span style="font:900 13px var(--font-heading);letter-spacing:0.05em">BOTS IN EMPTY LANES</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;color:#8a847e">HOPE, NOBLE, TIBBS FILL THE BOOTH</span></span><span style="min-width:44px;padding:4px 8px;background:{{ netBotsBg }};color:#000;font:900 11px var(--font-heading);letter-spacing:0.08em;text-align:center">{{ netBotsTxt }}</span></button>
+      </sc-if>
+      <sc-if value="{{ netJoinOn }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ netCreate }}" style="min-height:52px;padding:4px 14px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:1px" style-hover="background:#c82a10" style-active="background:#a8230d"><span style="font:900 16px var(--font-heading);letter-spacing:0.08em">CREATE ROOM</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;opacity:0.9;white-space:nowrap">GET A CODE TO SHARE · UP TO 4</span></button>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;border-top:2px solid #3a3836">
+          <input value="{{ netCodeIn }}" onChange="{{ netCodeType }}" onKeyDown="{{ netCodeKey }}" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Room code" placeholder="CODE" style="min-width:0;min-height:52px;padding:0 14px;border:0;border-radius:0;background:#1a1918;color:#ffd23a;font:900 24px var(--font-heading);letter-spacing:0.2em;text-transform:uppercase;outline:none;box-sizing:border-box" style-focus="background:#2a2826"></input>
+          <button onClick="{{ netJoinGo }}" style="min-height:52px;padding:0 18px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">JOIN</button>
+        </div>
+      </sc-if>
+      <div style="flex:none;display:grid;grid-template-columns:{{ netBtnCols }};border-top:2px solid #3a3836">
+        <sc-if value="{{ netReadyOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ netReady }}" style="min-height:52px;padding:4px 14px;border:0;border-right:2px solid #3a3836;border-radius:0;background:{{ netReadyBg }};color:{{ netReadyFg }};cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:1px" style-hover="filter:brightness(1.1)"><span style="font:900 16px var(--font-heading);letter-spacing:0.08em">{{ netReadyTxt }}</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;opacity:0.9;white-space:nowrap">{{ netReadySub }}</span></button></sc-if>
+        <button onClick="{{ netBack }}" style="min-height:52px;padding:0 14px;border:0;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">{{ netBackTxt }}</button>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"demo":{"editor":"boolean","default":true},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  state = { vw: 1200, vh: 800, h: null, net: null, mode: 'classic', rivals: 3, how: false, err: '' };
+  stageRef = React.createRef(); lastSeen = {};
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs();
+    try { this.ro = new ResizeObserver(this.onRs); this.stageRef.current && this.ro.observe(this.stageRef.current.parentElement); } catch (e) {}
+    try {
+      const m = window.WaterRace || await new Promise((ok, no) => { const t0 = Date.now(), iv = setInterval(() => { if (window.WaterRace) { clearInterval(iv); ok(window.WaterRace); } else if (Date.now() - t0 > 20000) { clearInterval(iv); no(new Error('game bundle did not load')); } }, 100); }); this.mod = m;
+      this.g = await m.createWaterRace({ container: this.stageRef.current, onState: h => this.setState({ h }) }); window.__waterRace = this.g;
+      const rm = /[?&]room=([A-Za-z0-9]{4})/.exec(location.search); if (rm) { this.netOpen(); this.netJoin(rm[1]); } else if (this.props.demo ?? true) this.g.startDemo();
+    } catch (e) { console.warn('water race failed: ' + (e && e.stack || String(e))); this.setState({ err: 'The booth could not load.' }); }
+  }
+  componentWillUnmount() { this.netLeave(); this.g && this.g.destroy(); removeEventListener('resize', this.onRs); this.ro && this.ro.disconnect(); }
+  componentDidUpdate() { const root = this.stageRef.current && this.stageRef.current.parentElement; if (!root || !this.g) return; const rb = root.getBoundingClientRect(); let top = 0, bot = 0, left = 0;
+    root.querySelectorAll('[data-safe]').forEach(el => { const r = el.getBoundingClientRect(), k = el.getAttribute('data-safe'); if (!r.height || !k || k === 'none') return; if (k === 'top') top = Math.max(top, r.bottom - rb.top + 8); else if (k === 'left') left = Math.max(left, r.right - rb.left + 8); else if (k === 'bottom') bot = Math.max(bot, rb.bottom - r.top + 8); });
+    this.g.setSafe(Math.round(top), Math.round(bot), Math.round(left)); this.g.setDemoOk(!this.state.net); }
+  onRs = () => { const el = this.stageRef.current, r = el && el.parentElement ? el.parentElement.getBoundingClientRect() : null; this.setState({ vw: r && r.width ? r.width : innerWidth, vh: r && r.height ? r.height : innerHeight }); };
+  onKey = e => { const h = this.state.h, t = e.target; if (!h || this.state.net || (t && t.tagName === 'INPUT')) return;
+    if ((e.code === 'Enter') && (h.phase === 'lobby' || h.phase === 'done')) { e.preventDefault(); this.play(); }
+    else if (e.code === 'Escape' && h.phase === 'done') this.g.toLobby();
+    else if (e.code === 'KeyV' && this.g) this.g.toggleView(); };
+  play() { if (!this.g) return; this.g.start({ mode: this.state.mode, rivals: this.state.rivals }); }
+  goBack() { try { if (window.parent && window.parent !== window) { window.parent.postMessage({ type: '8gates:minigame', game: 'waterRace', action: 'back' }, '*'); return; } } catch (e) {} history.back(); }
+
+  // ---------- ONLINE (up to 4, engine/duel-net.js game 'waterRace'). Room = the 4 earliest joiners; host = lowest id; the race runs in water-race.js ----------
+  netSet = p => this.setState(s => ({ net: s.net ? { ...s.net, ...p } : s.net }));
+  peerSet = (id, p) => this.setState(s => s.net ? { net: { ...s.net, peers: { ...s.net.peers, [id]: { ...(s.net.peers[id] || {}), ...p } } } } : null);
+  netOpen = () => this.setState({ net: { st: 'menu', code: '', codeIn: '', mode: this.state.mode, bots: true, optSet: false, peers: {}, ready: false, j: 0, status: '', msg: '', copied: false, ping: null } });
+  members() { const n = this.state.net; if (!n || !this.net) return []; const all = [{ id: this.net.id, j: n.j, ready: n.ready, playing: n.st === 'play', me: true }, ...Object.entries(n.peers).map(([id, p]) => ({ id, ...p, me: false }))]; all.sort((a, b) => a.j - b.j || (a.id < b.id ? -1 : 1)); return all.slice(0, this.maxP()); }
+  maxP() { return (this.mod && this.mod.N_LANES) || 4; }
+  inRoom() { return this.members().some(m => m.me); }
+  hostId = (match = true) => { let m = this.members(); if (match && this.matchIds) m = m.filter(x => this.matchIds.includes(x.id)); return m.length ? m.reduce((a, b) => a.id < b.id ? a : b).id : (this.net ? this.net.id : null); };
+  playerList(ids) { const s = ids.slice().sort(), L = (this.mod && this.mod.LANES) || [['RED', '#ec3013'], ['BLUE', '#38bdf8'], ['GOLD', '#ffd23a'], ['GREEN', '#22c55e']], order = [2, 1, 3, 0]; return s.map((id, slot) => { const lane = order[slot]; return { id, slot, lane, col: L[lane][1], name: L[lane][0] }; }); }
+  async netJoin(code) { code = String(code || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4); if (code.length < 4) { this.netSet({ msg: 'Type the 4-letter room code from your friend.' }); return; }
+    this.netLeave(); if (!this.state.net) this.netOpen(); this.lastSeen = {}; this.netSet({ st: 'room', code, status: 'connecting', peers: {}, ready: false, j: Date.now(), msg: '', copied: false, ping: null });
+    if (!this.mod) { this.netSet({ status: 'offline', msg: 'The booth is still loading. Try again in a moment.' }); return; }
+    const tok = this.netTok = (this.netTok || 0) + 1; let N;
+    try { N = await this.mod.connectNet({ code, onJoin: id => this.nHello(id), onLeave: id => this.nGone(id), onMsg: (t, d, id) => this.nMsg(t, d, id), onStatus: s => this.netSet({ status: s }) }); } catch (e) { this.netSet({ status: 'offline', msg: 'Online play could not load. Check your connection.' }); return; }
+    if (tok !== this.netTok) { N.leave(); return; } this.net = N; this.nHello(); this.forceUpdate();
+    try { const u = new URL(location.href); u.searchParams.set('room', code); history.replaceState(null, '', u.href); } catch (e) {}
+    clearInterval(this.nTimer); this.nTimer = setInterval(this.nTick, 1000); }
+  netLeave() { this.netTok = (this.netTok || 0) + 1; clearInterval(this.nTimer); if (this.net) { this.net.send('ev', { k: 'bye' }); this.net.leave(); } this.net = null; this.matchIds = null; this.lastSeen = {}; if (this.g && this.g.netOn()) this.g.netEnd(); try { const u = new URL(location.href); if (u.searchParams.has('room')) { u.searchParams.delete('room'); history.replaceState(null, '', u.href); } } catch (e) {} }
+  nHello(to) { const n = this.state.net; if (!this.net || !n) return; this.net.send('hi', { v: 1, j: n.j, ready: n.ready, mode: n.mode, bots: n.bots, playing: n.st === 'play' }, to); }
+  nMsg(t, d, id) { const n = this.state.net; if (!n || !this.net || !d) return; const now = performance.now(), known = !!this.lastSeen[id];
+    if (t === 'hi') { this.lastSeen[id] = now; this.peerSet(id, { j: +d.j || Date.now(), ready: !!d.ready, playing: !!d.playing }); if (!n.optSet && +d.j < n.j) this.netSet({ mode: d.mode === 'wild' ? 'wild' : 'classic', bots: d.bots !== false }); if (!known) setTimeout(() => this.nHello(id), 0); setTimeout(this.nMaybeStart, 0); return; }
+    if (!known) return; this.lastSeen[id] = now; const inMatch = !!(this.matchIds && this.matchIds.includes(id));
+    if (t === 'sn') { if (inMatch && this.g) this.g.netRecv('sn', d, id); return; }
+    if (t === 'pg') { if (d.t != null) this.net.send('pg', { e: d.t }, id); else if (d.e != null) this.netSet({ ping: Math.max(1, Math.round(now - d.e)) }); return; }
+    if (t !== 'ev') return;
+    if (d.k === 'ready') { this.peerSet(id, { ready: !!d.on }); setTimeout(this.nMaybeStart, 0); }
+    else if (d.k === 'opts') this.setState(s => s.net ? { net: { ...s.net, mode: d.m === 'wild' ? 'wild' : 'classic', bots: d.b !== false, optSet: true, ready: false, peers: Object.fromEntries(Object.entries(s.net.peers).map(([k, p]) => [k, { ...p, ready: false }])) } } : null);
+    else if (d.k === 'start') this.nStart(d);
+    else if (d.k === 'playing') this.peerSet(id, { playing: !!d.on });
+    else if (d.k === 'bye') this.nGone(id);
+    else if (inMatch && this.g) this.g.netRecv('ev', d, id); }
+  nGone(id) { if (!this.lastSeen[id]) return; delete this.lastSeen[id]; this.setState(s => { if (!s.net) return null; const peers = { ...s.net.peers }; delete peers[id]; return { net: { ...s.net, peers } }; }); if (this.matchIds && this.matchIds.includes(id) && this.g) this.g.netDrop(id); }
+  nTick = () => { if (!this.net) return; this.net.send('pg', { t: performance.now() }); const now = performance.now(); for (const id of Object.keys(this.lastSeen)) if (now - this.lastSeen[id] > 25000) this.nGone(id); };
+  nMaybeStart = () => { const n = this.state.net; if (!n || !this.net || n.st !== 'room' || !this.inRoom() || this.hostId(false) !== this.net.id) return; const m = this.members(); if (m.length < 2 || !m.every(x => x.ready && !x.playing)) return;
+    this.mid = (this.mid || 0) + 1; const d = { k: 'start', t0: Date.now() + 3600, mode: n.mode, bots: n.bots, ids: m.map(x => x.id), mid: this.mid }; this.net.send('ev', d); this.nStart(d); };
+  nStart(d) { const n = this.state.net; if (!n || !this.net || !this.g || !Array.isArray(d.ids)) return; if (!d.ids.includes(this.net.id)) { this.netSet({ msg: 'A race started without you. You join the next one.' }); return; }
+    this.matchIds = d.ids.slice(); let t0 = +d.t0; const w = t0 - Date.now(); if (!(w >= 0 && w <= 6000)) t0 = Date.now() + 3000;
+    this.setState(s => s.net ? { net: { ...s.net, st: 'play', mode: d.mode === 'wild' ? 'wild' : 'classic', ready: false, msg: '', peers: Object.fromEntries(Object.entries(s.net.peers).map(([k, p]) => [k, { ...p, ready: false, playing: d.ids.includes(k) }])) } } : null);
+    this.g.netBegin({ mode: d.mode, bots: d.bots !== false, t0, me: this.net.id, players: this.playerList(d.ids), send: (t, x, to) => this.net && this.net.send(t, x, to), hostId: () => this.hostId(true), onEnd: () => { this.netSet({ st: 'room', ready: false }); if (this.net) this.net.send('ev', { k: 'playing', on: false }); } }); }
+  netReadyToggle = () => { const n = this.state.net; if (!n || !this.net) return; const on = !n.ready; this.netSet({ ready: on }); this.net.send('ev', { k: 'ready', on }); setTimeout(this.nMaybeStart, 0); };
+  netOpts = (m, b) => { const n = this.state.net; if (!n) return; this.setState(s => s.net ? { net: { ...s.net, mode: m, bots: b, optSet: true, ready: false, peers: Object.fromEntries(Object.entries(s.net.peers).map(([k, p]) => [k, { ...p, ready: false }])) } } : null); if (this.net) this.net.send('ev', { k: 'opts', m, b }); };
+
+  netVals(phone, blur, h) {
+    const S = this.state, N = S.net, m = N ? this.members() : [], full = !!N && N.st !== 'menu' && !!this.net && m.length === this.maxP() && !m.some(x => x.me), pl = this.playerList(m.map(x => x.id)), host = this.hostId(false);
+    const racing = !!N && N.st !== 'play' && m.some(x => !x.me && x.playing), allReady = m.length >= 2 && m.every(x => x.ready), rc = m.filter(x => x.ready).length, mode = N ? N.mode : 'classic';
+    const inRace = !!h && (h.phase === 'count' || h.phase === 'race' || h.phase === 'end' || h.phase === 'done') && h.online;
+    return {
+      netOn: !!N && N.st !== 'play' && !(h && h.phase === 'done'),
+      netStat: !N ? '' : full ? 'ROOM FULL' : N.status === 'local' ? 'TEST · TABS' : N.status === 'offline' ? 'OFFLINE' : N.status === 'off' ? 'NETWORK OFF' : N.status === 'online' ? (m.length > 1 ? m.length + ' AT THE BOOTH' + (N.ping ? ' · ' + N.ping + ' MS' : '') : 'ONLINE') : N.st === 'menu' ? 'NO SERVER NEEDED' : 'CONNECTING…', netStatC: N && (N.status === 'offline' || full) ? '#ec3013' : '#ffd23a',
+      netCodeOn: !!N && !!N.code && N.st !== 'menu', netCode: N ? N.code : '',
+      netShare: async e => { blur(e); if (!N) return; let u; try { u = new URL(location.href); u.searchParams.set('room', N.code); u.searchParams.delete('embed'); } catch (er) { return; } try { if (navigator.share && phone) await navigator.share({ title: '8 GATES · Water Race', text: 'Race me at the water-gun horse race in 8 GATES. Room ' + N.code, url: u.href }); else { await navigator.clipboard.writeText(u.href); this.netSet({ copied: true }); setTimeout(() => this.netSet({ copied: false }), 2000); } } catch (er) {} }, netShareTxt: N && N.copied ? 'LINK COPIED' : 'SHARE LINK',
+      netMsg: !N ? '' : N.msg ? N.msg : N.st === 'menu' ? 'Up to 4 players at one booth. Make a room and send the link, or type a friend’s code.' : full ? 'Four racers are already in room ' + N.code + '. Try another code.' : N.status === 'offline' ? 'Could not reach the network. Some school or work Wi-Fi blocks this.' : racing ? 'A race is on. You join the next one.' : m.length < 2 ? 'Waiting for friends… Send them the link, or tell them the code.' : allReady ? 'Everyone is ready. Guns up…' : 'Everyone taps READY. The race starts when all are ready.',
+      netRowsOn: !!N && N.st !== 'menu' && !full && m.length > 0, netRows: m.map(x => { const p = pl.find(q => q.id === x.id) || {}; return { col: p.col || '#fff', name: (p.name || '') + ' · LANE ' + ((p.lane || 0) + 1) + (x.me ? ' · YOU' : ''), sub: x.id === host ? 'HOST' : 'RACER', tag: x.playing && !x.me ? 'RACING' : x.ready ? 'READY' : '', tagC: x.ready ? '#22c55e' : '#8a847e' }; }),
+      netOptsOn: !!N && !full, netModes: [['classic', 'CLASSIC', 'STILL TARGET'], ['wild', 'WILD', 'TARGET SLIDES']].map(([id, name, sub]) => { const sel = mode === id; return { name, sub, pressed: sel ? 'true' : 'false', bg: sel ? '#f3f2f2' : '#000000', fg: sel ? '#201e1d' : '#ffffff', bar: sel ? '#ec3013' : 'transparent', go: e => { blur(e); if (N.mode !== id) this.netOpts(id, N.bots); } }; }),
+      netBotsGo: e => { blur(e); this.netOpts(mode, !(N && N.bots)); }, netBotsPressed: N && N.bots ? 'true' : 'false', netBotsTxt: N && N.bots ? 'ON' : 'OFF', netBotsBg: N && N.bots ? '#22c55e' : '#8a847e',
+      netJoinOn: !!N && N.st === 'menu', netCodeIn: N ? N.codeIn : '', netCodeType: e => this.netSet({ codeIn: String(e.target.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4), msg: '' }), netCodeKey: e => { if (e.key === 'Enter') { e.preventDefault(); this.netJoin(this.state.net && this.state.net.codeIn); } e.stopPropagation(); },
+      netJoinGo: e => { blur(e); this.netJoin(N && N.codeIn); }, netCreate: e => { blur(e); const A = 'ABCDEFGHJKMNPQRSTUVWXYZ'; let k = ''; for (let i = 0; i < 4; i++) k += A[Math.floor(Math.random() * A.length)]; this.netJoin(k); },
+      netReadyOn: !!N && N.st === 'room' && !full && m.length >= 2, netReady: e => { blur(e); this.netReadyToggle(); }, netReadyTxt: N && N.ready ? 'READY ✓' : 'READY', netReadySub: N && N.ready ? (allReady ? 'STARTING…' : 'WAITING · ' + rc + '/' + m.length + ' READY') : (mode === 'wild' ? 'WILD' : 'CLASSIC') + ' · ' + m.length + ' RACERS',
+      netReadyBg: N && N.ready ? '#22c55e' : '#ec3013', netReadyFg: N && N.ready ? '#000000' : '#ffffff',
+      netBtnCols: N && N.st === 'room' && !full && m.length >= 2 ? 'minmax(0,2fr) minmax(0,1fr)' : 'minmax(0,1fr)', netBackTxt: !N ? '' : N.st === 'menu' ? 'BACK' : full ? 'TRY ANOTHER CODE' : 'LEAVE',
+      netBack: e => { blur(e); const n = this.state.net; if (!n) return; if (n.st === 'menu') { this.setState({ net: null }); return; } if (full) { this.netLeave(); this.netSet({ st: 'menu', code: '', peers: {}, msg: '' }); return; } this.netLeave(); this.setState({ net: null }); },
+      inRace,
+    };
+  }
+
+  renderVals() {
+    const S = this.state, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur(), g = this.g;
+    const h = S.h || { phase: 'loading', lanes: [], time: '0.0 S', sound: true, view: 'wide', wins: 0, gold: 0, canPay: true, entry: 2, best: '', nextPrize: { at: 1, name: 'PLUSH FOX' }, barker: null, flash: null, done: null };
+    const { vw, vh } = S, phone = Math.min(vw, vh) < 520, land = vw > vh * 1.15, port = !land, embed = /[?&]embed=1/.test(location.search);
+    const ph = h.phase, racing = ph === 'count' || ph === 'race' || ph === 'end', N = S.net, nv = this.netVals(phone, blur, h);
+    const lobbyOn = !!g && ph === 'lobby' && !N, doneOn = ph === 'done' && !!h.done;
+    const cardW = land ? 'min(380px, calc(48% - 12px))' : 'calc(100% - 24px)', boardW = land ? 'min(300px, 40%)' : 'calc(100% - 24px - 72px)';
+    const rows = (h.lanes || []).slice().sort((a, b) => a.i - b.i).map(r => ({ num: r.num, col: r.col, name: r.name, w: Math.round(r.p * 1000) / 10 + '%', place: ph === 'count' ? '' : (r.win ? 'WIN' : r.place + (r.place === 1 ? 'ST' : r.place === 2 ? 'ND' : r.place === 3 ? 'RD' : 'TH')), placeC: r.win || r.place === 1 ? '#ffd23a' : '#cfcac4', bg: r.me ? '#2a2826' : '#000000', fg: r.left ? '#8a847e' : r.me ? '#ffd23a' : '#ffffff', dot: r.hit ? '#22c55e' : 'transparent' }));
+    const touch = phone || (typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches);
+    const howTxt = touch ? 'HOLD ANYWHERE + DRAG TO AIM THE WATER' : 'HOLD THE MOUSE (OR SPACE) · DRAG OR ARROWS TO AIM';
+    const hintTxt = h.demo ? (h.onTarget ? 'DEMO · ON THE BULLSEYE' : h.firing ? 'DEMO · OFF TARGET' : 'DEMO · WATCH THE WATER') : land ? (ph === 'count' ? 'AIM NOW · WATER AT GO' : !h.firing ? (touch ? 'HOLD + DRAG TO AIM' : 'HOLD TO SPRAY') : h.onTarget ? 'ON THE BULLSEYE!' : 'OFF TARGET')   // one line: fits under the lane board in landscape
+      : ph === 'count' ? 'AIM NOW · WATER ON AT GO' : !h.firing ? howTxt : h.onTarget ? 'ON THE BULLSEYE · KEEP IT THERE' : 'OFF TARGET · FIND THE CENTRE';
+    const d = h.done || { kicker: '', title: '', big: '', rows: [], standings: [] }, sound = h.sound !== false;
+    const barkOn = !!h.barker && !lobbyOn && !doneOn && !(N && N.st !== 'play') && !(ph === 'race' && vh < 520 && land === false && false);
+    const R = S.rivals, M = S.mode, nextP = h.nextPrize;
+    return {
+      stageRef: this.stageRef, h, d, embed, goBack: e => { blur(e); this.goBack(); },
+      loading: !g || ph === 'loading', loadTxt: S.err || 'Setting up the booth…',
+      topSafe: land ? 'left' : 'top', boardW, raceOn: racing && rows.length > 0, boardLbl: (h.demo ? 'DEMO · ' : '') + (h.modeName || 'CLASSIC') + (h.online ? ' · ONLINE' : '') + ' · BULLSEYE ' + (h.acc || 0) + '%', laneRows: rows,
+      btnsOn: !!g && ph !== 'loading', soundTog: e => { blur(e); g && g.toggleSound(); }, soundTxt: sound ? 'ON' : 'OFF', soundC: sound ? '#22c55e' : '#8a847e', soundPressed: sound ? 'true' : 'false',
+      viewTog: e => { blur(e); g && g.toggleView(); }, viewTxt: h.view === 'close' ? 'CLOSE' : 'BOOTH',
+      // landscape race: barker + hint stack in the left column under the lane board (already kept clear), so they never cover a target
+      botL: 'max(12px, env(safe-area-inset-left))', botR: land && racing ? 'calc(100% - ' + boardW + ' - max(12px, env(safe-area-inset-left)))' : land ? 'max(84px, env(safe-area-inset-right))' : 'max(12px, env(safe-area-inset-right))', botAlign: land && !racing ? 'flex-end' : 'flex-start', botSafe: land && racing ? 'left' : 'bottom',
+      barkOn, barkName: h.barker ? h.barker.name + ' · BOOTH BARKER' : '', barkTxt: h.barker ? h.barker.text : '',
+      hintOn: racing && ph !== 'end', hintTxt, hintBd: h.onTarget ? '#22c55e' : '#ffd23a',
+      countOn: ph === 'count' && h.count != null, flashOn: !!h.flash, flashTxt: h.flash ? h.flash.txt : '', flashCol: h.flash ? h.flash.col : '#ffd23a', flashTop: port ? '38%' : '30%',
+      demoOn: !!h.demo, demoTop: 'calc(max(12px, env(safe-area-inset-top)) + 96px)', demoGo: e => { blur(e); g && g.startDemo(); },
+      lobbyOn, cardW, cardMaxH: 'calc(100% - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom))', cardSafe: land ? 'left' : 'bottom',
+      lobbyLine: h.barker ? '“' + h.barker.text + '” — RINGO' : 'Keep your water in the bullseye and your horse runs. First to the flag wins.',
+      modeBtns: [['classic', 'CLASSIC', 'STILL TARGET'], ['wild', 'WILD', 'TARGET SLIDES']].map(([id, name, sub]) => { const sel = M === id; return { name, sub, pressed: sel ? 'true' : 'false', bg: sel ? '#f3f2f2' : '#000000', fg: sel ? '#201e1d' : '#ffffff', bar: sel ? '#ec3013' : 'transparent', go: e => { blur(e); this.setState({ mode: id }); g && g.setMode(id); } }; }),
+      rivalsLbl: R === 0 ? 'RIVALS · SOLO TIME TRIAL' : 'RIVALS · ' + ['HOPE', 'NOBLE', 'TIBBS'].slice(0, R).join(', '),
+      rivalBtns: [0, 1, 2, 3].map(n => { const sel = R === n; return { name: n === 0 ? 'SOLO' : String(n), aria: n === 0 ? 'Solo time trial' : n + ' rivals', pressed: sel ? 'true' : 'false', bg: sel ? '#ffd23a' : '#000000', fg: sel ? '#000000' : '#ffffff', bl: n ? '2px solid #2a2826' : '0', go: e => { blur(e); this.setState({ rivals: n }); g && g.setLineup(n); } }; }),
+      playGo: e => { blur(e); this.play(); }, playTxt: 'RACE', playSub: (h.canPay ? h.entry + ' GOLD A RACE · YOU HAVE ' + h.gold : 'ON THE HOUSE · YOU HAVE ' + h.gold + ' GOLD') + (phone ? '' : ' · ENTER'),
+      onlineGo: e => { blur(e); this.netOpen(); },
+      howOn: S.how, howTog: e => { blur(e); this.setState({ how: !S.how }); }, howPressed: S.how ? 'true' : 'false', howLbl: S.how ? 'HOW TO PLAY ▴' : 'HOW TO PLAY ▾',
+      howRows: [{ n: '1', t: touch ? 'Hold your thumb anywhere on the booth to spray. Drag to move the water.' : 'Hold the mouse button (or SPACE) to spray. Move the mouse or use the arrows to aim.' }, { n: '2', t: 'Keep the water in the bullseye. Your horse only runs while you hit it, and runs fastest dead centre.' }, { n: '3', t: 'The gun kicks while it sprays, so keep correcting. WILD mode slides the target too.' }, { n: '4', t: 'With sound on, a beep pans toward your water and rises when it is too high. A rising plink means you are on target.' }],
+      winsTxt: 'WINS ' + (h.wins || 0), prizeTxt: nextP ? 'NEXT PRIZE AT ' + nextP.at + ' · ' + nextP.name : 'EVERY PRIZE WON', bestTxt: h.best ? 'SOLO BEST ' + h.best : '',
+      doneOn, prizeOn: !!d.prize, standOn: (d.standings || []).length > 1 && vh >= 560, standRows: (d.standings || []).map(r => ({ place: r.place + (r.place === 1 ? 'ST' : r.place === 2 ? 'ND' : r.place === 3 ? 'RD' : 'TH'), col: r.col, name: r.name, v: r.v, bg: r.me ? '#2a2826' : '#000000' })),
+      doneRows: (d.rows || []).filter(([k]) => !(k === 'PRIZE' && d.prize) && !(k === 'PLACE' && (d.standings || []).length > 1 && vh >= 560)).map(([k, v]) => ({ k, v })), gradeBg: d.won ? '#22c55e' : d.solo ? '#ffd23a' : '#3a3836', gradeFg: d.won || d.solo ? '#000000' : '#ffffff', gradeFs: String(d.big || '').length > 3 ? '24px' : '34px',
+      againLbl: d.online ? (() => { const m = this.members(), n = S.net; if (m.length < 2) return 'WAITING'; const rc = m.filter(x => x.ready).length; return n && n.ready ? 'READY ✓ ' + rc + '/' + m.length : 'REMATCH' + (rc ? ' · ' + rc + '/' + m.length : ''); })() : 'RACE AGAIN',
+      againGo: e => { blur(e); if (d.online) { if (this.members().length >= 2) this.netReadyToggle(); return; } this.play(); },
+      lobbyLbl: d.online ? 'ROOM' : 'BOOTH', lobbyGo: e => { blur(e); if (d.online) { if (g) g.netEnd(); this.forceUpdate(); return; } g && g.toLobby(); },
+      ...nv,
+    };
+  }
+}
+</script>
+</body>
+</html>

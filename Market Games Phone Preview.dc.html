@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>html,body{margin:0;background:#f3f2f2}a{color:#201e1d}a:hover{color:#ec3013}</style></helmet>
+<div style="padding:20px;display:flex;flex-direction:column;gap:16px;font-family:Archivo, sans-serif;color:#201e1d" data-screen-label="Market Games Phone Preview">
+  <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-bottom:2px solid #201e1d;padding-bottom:12px">
+    <div style="font:800 13px Archivo, sans-serif;letter-spacing:0.12em;margin-right:8px">MERU MARKET GAMES · PHONE CHECK</div>
+    <sc-for list="{{ games }}" as="g" hint-placeholder-count="10">
+      <button onClick="{{ g.pick }}" style="font:800 12px Archivo, sans-serif;letter-spacing:0.08em;padding:10px 12px;border:2px solid #201e1d;background:{{ g.bg }};color:{{ g.fg }};cursor:pointer;border-radius:0">{{ g.label }}</button>
+    </sc-for>
+    <button onClick="{{ pressE }}" style="font:800 12px Archivo, sans-serif;letter-spacing:0.08em;padding:10px 14px;border:2px solid #ec3013;background:#ec3013;color:#fff;cursor:pointer;border-radius:0;margin-left:auto">E · PLAY BOTH</button>
+  </div>
+  <div style="font:500 13px Archivo, sans-serif;max-width:900px;text-wrap:pretty">Each frame spawns you at the stall. Tap TALK / PLAY inside a frame (or E · PLAY BOTH) to start the game in world; BACK leaves it.</div>
+  <div style="zoom:0.75;display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start">
+    <sc-if value="{{ showP }}" hint-placeholder-val="{{ true }}"><div style="display:flex;flex-direction:column;gap:8px">
+      <div style="font:800 12px Archivo, sans-serif;letter-spacing:0.12em">IPHONE PORTRAIT · 390 × 844</div>
+      <iframe id="mgP" src="{{ srcP }}" allow="autoplay; fullscreen" style="width:390px;height:844px;border:2px solid #201e1d;display:block;background:#000"></iframe>
+    </div></sc-if>
+    <sc-if value="{{ showL }}" hint-placeholder-val="{{ true }}"><div style="display:flex;flex-direction:column;gap:8px">
+      <div style="font:800 12px Archivo, sans-serif;letter-spacing:0.12em">IPHONE LANDSCAPE · 844 × 390</div>
+      <iframe id="mgL" src="{{ srcL }}" allow="autoplay; fullscreen" style="width:844px;height:390px;border:2px solid #201e1d;display:block;background:#000"></iframe>
+      <div id="mgProbe" style="font:600 12px ui-monospace, monospace;white-space:pre-wrap;max-width:844px"></div>
+    </div></sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { g: (new URLSearchParams(location.search).get('game')) || 'coconut', only: (new URLSearchParams(location.search).get('frame')) || '' };
+  static GAMES = [['coconut','COCONUT SHY'],['whack','WHACK-A-MOLE'],['shutbox','SHUT THE BOX'],['liars',"LIAR'S DICE"],['dominoes','DOMINOES'],['pachinko','PACHINKO'],['domplaza','FOUNTAIN DOMINOES'],['tether','TETHERBALL'],['fish','CAPSULE FISH'],['cheese','CAPSULE CHEESE']];
+  pressE = () => {
+    for (const id of ['mgP', 'mgL']) {
+      const f = document.getElementById(id); const w = f && f.contentWindow; if (!w) continue;
+      for (const t of ['keydown', 'keyup']) try { w.document.dispatchEvent(new w.KeyboardEvent(t, { code: 'KeyE', key: 'e', bubbles: true })); } catch (e) {}
+    }
+  };
+  renderVals() {
+    const g = this.state.g, base = 'FOXGATE8-PLAYABLE.dc.html?start=' + g;
+    return {
+      games: Component.GAMES.map(([k, label]) => ({ label, bg: k === g ? '#201e1d' : '#fff', fg: k === g ? '#fff' : '#201e1d', pick: () => this.setState({ g: k }) })),
+      srcP: base + '&phone=1', srcL: base + '&phone=2', pressE: this.pressE,
+      showP: this.state.only !== 'L', showL: this.state.only !== 'P'
+    };
+  }
+}
+</script>
+</body>
+</html>

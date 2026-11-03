@@ -1,0 +1,1793 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="2f86d096-a984-4ff7-9aef-54c9f9f8d9c3"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+
+<style>/* Modernist — design-system tokens and component classes. This file is the source of truth for the system's look; retune it here and see readme.md. */
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("7d764f02-884c-4f6c-8968-7ecebed1404f") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("d70e82da-2831-490c-8a6d-c7c2d195c796") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("8215dba6-4d88-4ea6-9f53-697bfbf20e78") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("7d764f02-884c-4f6c-8968-7ecebed1404f") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("d70e82da-2831-490c-8a6d-c7c2d195c796") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("8215dba6-4d88-4ea6-9f53-697bfbf20e78") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("7d764f02-884c-4f6c-8968-7ecebed1404f") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("d70e82da-2831-490c-8a6d-c7c2d195c796") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("8215dba6-4d88-4ea6-9f53-697bfbf20e78") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+
+:root {
+  --color-bg: #f3f2f2;
+  --color-surface: #eae9e9;
+  --color-text: #201e1d;
+  --color-accent: #ec3013;
+  --color-accent-2: #e15b47;
+  --color-divider: color-mix(in srgb, #201e1d 40%, transparent);
+
+  /* Tonal ramps — generated in OKLCH on one shared lightness scale, so the
+     same step of any role matches the others in visual value. */
+  --color-neutral-100: #f8f4f4;
+  --color-neutral-200: #eae7e7;
+  --color-neutral-300: #d7d3d3;
+  --color-neutral-400: #bab6b6;
+  --color-neutral-500: #9b9797;
+  --color-neutral-600: #7d7979;
+  --color-neutral-700: #605d5d;
+  --color-neutral-800: #444141;
+  --color-neutral-900: #2d2b2b;
+
+  --color-accent-100: #fff2ef;
+  --color-accent-200: #ffe0d9;
+  --color-accent-300: #ffc4b8;
+  --color-accent-400: #ff9783;
+  --color-accent-500: #ff563c;
+  --color-accent-600: #dd2b0f;
+  --color-accent-700: #ae1800;
+  --color-accent-800: #7c1405;
+  --color-accent-900: #4d170e;
+
+  --color-accent-2-100: #fff2ef;
+  --color-accent-2-200: #ffe0da;
+  --color-accent-2-300: #ffc4b9;
+  --color-accent-2-400: #ff9784;
+  --color-accent-2-500: #ef6853;
+  --color-accent-2-600: #c94b39;
+  --color-accent-2-700: #9e3526;
+  --color-accent-2-800: #71261b;
+  --color-accent-2-900: #471d16;
+
+  --font-heading: "Archivo", system-ui, sans-serif;
+  --font-heading-weight: 800;
+  --font-body: "Archivo", system-ui, sans-serif;
+
+  --space-1: 4.0px;
+  --space-2: 8.0px;
+  --space-3: 12.0px;
+  --space-4: 16.0px;
+  --space-6: 24.0px;
+  --space-8: 32.0px;
+
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+
+  /* Elevation — derived from the ground: soft ink-tinted shadows on a
+     light theme, a hairline edge + ambient darkness on a dark one. */
+  --shadow-sm: 0 1px 2px color-mix(in srgb, #2d2b2b 14%, transparent);
+  --shadow-md: 0 3px 10px color-mix(in srgb, #2d2b2b 16%, transparent);
+  --shadow-lg: 0 12px 32px color-mix(in srgb, #2d2b2b 22%, transparent);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: var(--font-heading-weight); }
+
+.grayscale{filter:grayscale(1) contrast(1.08)}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Components — built with the tokens above. Plain CSS
+   on plain HTML: no JavaScript, no build step. Each class is documented in
+   readme.md and demonstrated in foundations/ and components/.
+   ══════════════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-size: 15px; line-height: 1.55; font-weight: 400; }
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 var(--space-2);
+}
+h1 { font-size: 42px; }
+h2 { font-size: 32px; }
+h3 { font-size: 25px; }
+h4 { font-size: 20px; }
+h5 { font-size: 16px; }
+h6 { font-size: 13px; }
+h6 { letter-spacing: 0.08em; text-transform: uppercase; }
+p { margin: 0 0 var(--space-3); }
+a { color: var(--color-accent); text-underline-offset: 3px; }
+img { display: block; max-width: 100%; }
+figure { margin: 0; }
+figcaption {
+  font-size: 11px; margin-top: var(--space-1);
+  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+}
+.text-muted { color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
+
+/* — rules — */
+.hr {
+  height: 2px; border: 0; margin: var(--space-4) 0;
+  background: var(--color-divider);
+}
+
+/* — buttons — */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  cursor: pointer; text-decoration: none;
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 14px; line-height: 1.2; color: var(--color-text); /* matches the .input's 14px —
+     the pair sits side by side in sign-up rows */
+  background: transparent; border: 1px solid transparent;
+  padding: var(--space-2) calc(var(--space-3) * 1.2);
+  border-radius: var(--radius-md);
+}
+.btn svg { display: block; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-primary { background: var(--color-accent); color: var(--color-bg); }
+.btn-primary:hover { background: var(--color-accent-600); }
+.btn-primary:active { background: var(--color-accent-700); }
+.btn-secondary { border-color: var(--color-divider); }
+.btn-secondary:hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.btn-secondary:active { background: color-mix(in srgb, var(--color-text) 14%, transparent); }
+.btn-ghost { color: var(--color-accent); padding-inline: var(--space-1); }
+.btn-ghost:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+.btn-ghost:active { background: color-mix(in srgb, var(--color-accent) 18%, transparent); }
+.btn-icon { width: 36px; height: 36px; padding: 0; }
+.btn-block { width: 100%; margin-top: var(--space-2); justify-content: flex-start; text-align: left; }
+
+/* — forms — */
+.field > label {
+  display: block; font-size: 12px; margin-bottom: 5px;
+  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+}
+.input {
+  width: 100%; min-height: 36px; padding: 6px 10px; font: inherit;
+  font-size: 14px; color: var(--color-text); caret-color: var(--color-accent);
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+}
+.input:hover { border-color: color-mix(in srgb, var(--color-text) 45%, transparent); }
+.input:focus-visible { border-color: var(--color-accent); outline-offset: 0; }
+textarea.input { min-height: 90px; resize: vertical; }
+.radio { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
+.radio input, .seg-opt input {
+  position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;
+}
+.radio .dot {
+  width: 16px; height: 16px; flex: none; border-radius: 50%;
+  border: 1.5px solid var(--color-divider);
+}
+.radio:hover .dot { border-color: var(--color-accent); }
+.radio input:checked + .dot {
+  border-color: var(--color-accent); background: var(--color-accent);
+  box-shadow: inset 0 0 0 4px var(--color-bg);
+}
+.radio input:focus-visible + .dot { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.seg {
+  display: inline-flex; overflow: hidden;
+  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+}
+.seg-opt {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 12px; font-size: 13px; cursor: pointer;
+}
+.seg-opt + .seg-opt { border-left: 1px solid var(--color-divider); }
+.seg-opt:has(input:checked) { background: var(--color-accent); color: var(--color-bg); }
+.seg-opt:not(:has(input:checked)):hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.seg-opt:has(input:focus-visible) { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+
+/* — cards — */
+.card {
+  display: flex; flex-direction: column; gap: var(--space-2);
+  padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-surface);
+}
+.card-kicker { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent); }
+.card-title {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 17px; line-height: 1.2;
+}
+.card-body { margin: 0; font-size: 13px; opacity: 0.8; flex: 1; }
+.card-meta {
+  display: flex; align-items: center; gap: 6px; font-size: 11px;
+  color: color-mix(in srgb, var(--color-text) 50%, transparent);
+}
+.elev-sm { box-shadow: var(--shadow-sm); }
+.elev-md { box-shadow: var(--shadow-md); }
+.elev-lg { box-shadow: var(--shadow-lg); }
+
+/* — tags — */
+.tag {
+  display: inline-flex; align-items: center; font-size: 11px;
+  letter-spacing: 0.02em; padding: 3px 10px;
+  border-radius: calc(var(--radius-md) * 0.75);
+}
+.tag-accent { background: var(--color-accent-100); color: var(--color-accent-800); }
+.tag-accent-2 { background: var(--color-accent-2-100); color: var(--color-accent-2-800); }
+.tag-neutral { background: var(--color-neutral-100); color: var(--color-neutral-800); }
+.tag-outline { border: 1px solid var(--color-accent); color: var(--color-accent); }
+
+/* — navigation — */
+.nav {
+  display: flex; align-items: center; gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 2px solid var(--color-divider);
+}
+.nav-brand {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 18px; margin-right: auto;
+}
+.nav a { color: inherit; text-decoration: none; font-size: 14px; }
+.nav a:hover, .nav a[aria-current='page'] { color: var(--color-accent); }
+
+/* — tables — */
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table th {
+  text-align: left; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  padding: var(--space-2); border-bottom: 2px solid var(--color-divider);
+}
+.table td {
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--color-divider);
+}
+.table tbody tr:hover { background: color-mix(in srgb, var(--color-text) 4%, transparent); }
+
+/* — dialog — */
+.dialog-backdrop {
+  position: fixed; inset: 0; display: grid; place-items: center;
+  padding: var(--space-4);
+  background: color-mix(in srgb, var(--color-neutral-900) 50%, transparent);
+}
+.dialog {
+  width: min(440px, 100%); display: flex; flex-direction: column; gap: var(--space-3);
+  padding: var(--space-4); border-radius: var(--radius-lg);
+  background: var(--color-surface); box-shadow: var(--shadow-lg);
+}
+.dialog-title {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 20px;
+}
+.dialog-body { font-size: 14px; opacity: 0.85; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-2); }
+
+</style>
+<script src="fe698276-98cd-4d29-bada-14990a79d685"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("7d764f02-884c-4f6c-8968-7ecebed1404f") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("d70e82da-2831-490c-8a6d-c7c2d195c796") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("8215dba6-4d88-4ea6-9f53-697bfbf20e78") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("7d764f02-884c-4f6c-8968-7ecebed1404f") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("d70e82da-2831-490c-8a6d-c7c2d195c796") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("8215dba6-4d88-4ea6-9f53-697bfbf20e78") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("7d764f02-884c-4f6c-8968-7ecebed1404f") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("d70e82da-2831-490c-8a6d-c7c2d195c796") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("8215dba6-4d88-4ea6-9f53-697bfbf20e78") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("7d764f02-884c-4f6c-8968-7ecebed1404f") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("d70e82da-2831-490c-8a6d-c7c2d195c796") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("8215dba6-4d88-4ea6-9f53-697bfbf20e78") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+<style>
+  html, body { margin: 0; height: 100%; background: #2a2230; overflow: hidden; }
+  * { box-sizing: border-box; }
+  a { color: #ec3013; }
+  a:hover { color: #b8250e; }
+  @keyframes tlIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes tlTitle { 0% { opacity: 0; transform: scale(.94); } 14% { opacity: 1; transform: scale(1); } 76% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes tlPulse { 0%, 100% { transform: scale(1); opacity: .95; } 50% { transform: scale(1.14); opacity: .6; } }
+  @keyframes tlSteam { 0% { opacity: 0; transform: translateY(3px) scale(.6); } 35% { opacity: .55; } 100% { opacity: 0; transform: translateY(-22px) scale(1.5); } }
+  @keyframes tlUrgent { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+</style>
+</helmet>
+
+<div style="position:absolute; inset:0; display:flex; flex-direction:column; background:#2a2230; font-family:var(--font-body), Archivo, sans-serif; color:#201e1d; user-select:none; -webkit-user-select:none">
+
+  <div style="display:flex; align-items:stretch; background:#f3f2f2; border-bottom:2px solid #201e1d; flex:0 0 auto; z-index:4">
+    <div style="padding:9px 14px; display:flex; flex-direction:column; gap:1px; flex:0 0 auto">
+      <span style="font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:#ec3013; font-weight:700; white-space:nowrap">{{ hudKicker }}</span>
+      <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:15px; font-weight:800; letter-spacing:-.01em; text-transform:uppercase; line-height:1.1; white-space:nowrap; width:max-content">Foxy Tailors</span>
+    </div>
+    <div style="border-left:2px solid #201e1d; padding:9px 14px; display:flex; flex-direction:column; gap:1px; justify-content:center; flex:1 1 auto; min-width:0">
+      <span style="font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:#6b6864; font-weight:700">Ticket</span>
+      <span style="font-size:10px; font-weight:700; line-height:1.3; overflow-wrap:break-word">{{ hudOrder }}</span>
+    </div>
+    <sc-if value="{{ showTimer }}" hint-placeholder-val="{{ false }}">
+      <div style="border-left:2px solid #201e1d; padding:9px 14px; display:flex; align-items:center; gap:9px; flex:0 0 auto">
+        <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:22px; font-weight:800; line-height:1; color:{{ timerColor }}; font-variant-numeric:tabular-nums">{{ timerText }}</span>
+        <div style="width:48px; height:6px; background:#dedcd6; border:1px solid #201e1d">
+          <div style="height:100%; width:{{ timerPct }}%; background:{{ timerColor }}"></div>
+        </div>
+      </div>
+    </sc-if>
+    <div style="margin-left:auto; display:flex; align-items:stretch; flex:0 0 auto">
+      <sc-if value="{{ showReadout }}" hint-placeholder-val="{{ false }}">
+        <div style="border-left:2px solid #201e1d; padding:9px 14px; display:flex; flex-direction:column; gap:1px; justify-content:center">
+          <span style="font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:#6b6864; font-weight:700">{{ readoutLabel }}</span>
+          <span style="font-size:11px; font-weight:700; font-variant-numeric:tabular-nums; color:{{ readoutColor }}; white-space:nowrap">{{ readoutText }}</span>
+        </div>
+      </sc-if>
+      <button sc-camel-on-click="{{ toggleMusic }}" style="padding:0 12px; border:0; border-left:2px solid #201e1d; background:#f3f2f2; color:{{ musicColor }}; font-family:var(--font-body), Archivo, sans-serif; font-size:9px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; white-space:nowrap" style-hover="background:#e6e4dd">{{ musicLabel }}</button>
+      <button sc-camel-on-click="{{ toggleSound }}" style="padding:0 12px; border:0; border-left:2px solid #201e1d; background:#f3f2f2; color:{{ soundColor }}; font-family:var(--font-body), Archivo, sans-serif; font-size:9px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; white-space:nowrap" style-hover="background:#e6e4dd">{{ soundLabel }}</button>
+    </div>
+  </div>
+
+  <div data-screen-label="{{ stageLabel }}" style="position:relative; flex:1 1 auto; min-height:0; overflow:hidden; background:#2a2230; touch-action:none; cursor:crosshair" sc-camel-on-pointer-down="{{ onDown }}" sc-camel-on-pointer-move="{{ onMove }}" sc-camel-on-pointer-up="{{ onUp }}" sc-camel-on-pointer-leave="{{ onUp }}" sc-camel-on-pointer-cancel="{{ onUp }}">
+
+    <svg sc-camel-view-box="0 0 200 140" sc-camel-preserve-aspect-ratio="xMidYMid slice" style="position:absolute; inset:0; width:100%; height:100%; display:block">
+      <rect x="0" y="0" width="200" height="140" fill="#3a2f42"></rect>
+      <rect x="0" y="0" width="200" height="74" fill="#4a4055"></rect>
+      <g stroke="#413848" stroke-width="0.8" fill="none" opacity="0.7">
+        <path d="M 0 18 L 200 18"></path><path d="M 0 40 L 200 40"></path><path d="M 0 62 L 200 62"></path>
+      </g>
+      <g>
+        <rect x="10" y="8" width="58" height="2.4" fill="#7a6248"></rect>
+        <rect x="14" y="-6" width="9" height="14" fill="#6e8fb8" stroke="#3f5d80" stroke-width="0.8"></rect>
+        <rect x="25" y="-9" width="9" height="17" fill="#6f7a45" stroke="#4a5228" stroke-width="0.8"></rect>
+        <rect x="36" y="-4" width="9" height="12" fill="#b8566b" stroke="#7d2f42" stroke-width="0.8"></rect>
+        <rect x="47" y="-8" width="9" height="16" fill="#b98a4e" stroke="#7d5828" stroke-width="0.8"></rect>
+        <rect x="132" y="10" width="56" height="2.4" fill="#7a6248"></rect>
+        <g>
+          <circle cx="142" cy="4" r="5" fill="#e8e3d5" stroke="#a8a196" stroke-width="0.8"></circle>
+          <circle cx="156" cy="4" r="5" fill="#ec3013" stroke="#8f2b1e" stroke-width="0.8"></circle>
+          <circle cx="170" cy="4" r="5" fill="#3f5d80" stroke="#26384d" stroke-width="0.8"></circle>
+        </g>
+        <rect x="86" y="14" width="30" height="38" fill="#2f2838" stroke="#1d1826" stroke-width="1.4"></rect>
+        <path d="M 90 48 L 101 22 L 112 48 Z" fill="#5a4f68"></path>
+        <circle cx="101" cy="20" r="5" fill="#5a4f68"></circle>
+      </g>
+      <rect x="0" y="72" width="200" height="4" fill="#251d2e"></rect>
+      <rect x="0" y="76" width="200" height="64" fill="#7a5540"></rect>
+      <g stroke="#674531" stroke-width="0.9" fill="none" opacity="0.8">
+        <path d="M 0 92 L 200 92"></path><path d="M 0 108 L 200 108"></path><path d="M 0 124 L 200 124"></path>
+      </g>
+      <rect x="0" y="76" width="200" height="3" fill="#a3785a" opacity="0.5"></rect>
+      <rect x="0" y="0" width="200" height="140" fill="#150f1c" opacity="0.18"></rect>
+    </svg>
+
+    <svg ref="{{ svgRef }}" sc-camel-view-box="0 0 200 140" sc-camel-preserve-aspect-ratio="xMidYMid meet" style="position:absolute; inset:0; width:100%; height:100%; display:block; z-index:1">
+
+      <sc-if value="{{ isCut }}" hint-placeholder-val="{{ true }}">
+        <g>
+          <rect x="6" y="50" width="188" height="80" fill="#d9c3a0" stroke="#a88c62" stroke-width="2"></rect>
+          <rect x="6" y="50" width="188" height="3" fill="#e8d7bb"></rect>
+          <g stroke="#c2a87f" stroke-width="0.5" fill="none" opacity="0.85">
+            <path d="M 6 70 L 194 70"></path><path d="M 6 90 L 194 90"></path><path d="M 6 110 L 194 110"></path>
+            <path d="M 46 50 L 46 130"></path><path d="M 86 50 L 86 130"></path><path d="M 126 50 L 126 130"></path><path d="M 166 50 L 166 130"></path>
+          </g>
+          <sc-for list="{{ pieces }}" as="p" hint-placeholder-count="3">
+            <g>
+              <path d="{{ p.offD }}" transform="{{ p.offT }}" fill="{{ p.fill }}" stroke="{{ p.stroke }}" stroke-width="1" opacity="{{ p.offO }}"></path>
+              <path d="{{ p.keepD }}" fill="{{ p.fill }}" stroke="{{ p.stroke }}" stroke-width="1.4"></path>
+              <path d="{{ p.chalkD }}" fill="none" stroke="#2f2a33" stroke-width="2.6" opacity="0.2"></path>
+              <path d="{{ p.chalkD }}" fill="none" stroke="#f6f4ef" stroke-width="1.2" stroke-dasharray="3 2.4"></path>
+              <sc-if value="{{ p.hasTrail }}" hint-placeholder-val="{{ false }}">
+                <g>
+                  <path d="{{ p.trailD }}" fill="none" stroke="#241d2c" stroke-width="2.8" stroke-linecap="round"></path>
+                  <path d="{{ p.trailD }}" fill="none" stroke="#ec3013" stroke-width="1" stroke-linecap="round"></path>
+                </g>
+              </sc-if>
+              <sc-if value="{{ p.isNext }}" hint-placeholder-val="{{ false }}">
+                <g style="transform-box:fill-box; transform-origin:center">
+                  <circle cx="{{ p.sx }}" cy="{{ p.sy }}" r="5.4" fill="none" stroke="#f3f2f2" stroke-width="4.2" opacity="0.95"></circle>
+                  <circle cx="{{ p.sx }}" cy="{{ p.sy }}" r="5.4" fill="none" stroke="#ec3013" stroke-width="2"></circle>
+                  <circle cx="{{ p.sx }}" cy="{{ p.sy }}" r="9" fill="none" stroke="#ec3013" stroke-width="1.2" style="transform-box:fill-box; transform-origin:center; animation:tlPulse 1.5s ease-in-out infinite"></circle>
+                </g>
+              </sc-if>
+              <foreignObject x="{{ p.lx }}" y="{{ p.ly }}" width="48" height="12" style="overflow:visible">
+                <div xmlns="http://www.w3.org/1999/xhtml" style="width:48px; display:flex; justify-content:center">
+                  <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:5.2px; font-weight:800; letter-spacing:.07em; color:{{ p.labelColor }}; white-space:nowrap">{{ p.label }}</span>
+                </div>
+              </foreignObject>
+            </g>
+          </sc-for>
+          <sc-if value="{{ showShears }}" hint-placeholder-val="{{ false }}">
+            <g transform="{{ shearT }}">
+              <path d="M -1.6 -12 L 1.6 -12 L 2.6 2 L -2.6 2 Z" fill="#cdd2d5" stroke="#7f868b" stroke-width="0.9"></path>
+              <path d="M -4.4 -11 L -1.4 -11.6 L -1 2 L -4 2 Z" fill="#e2e6e8" stroke="#7f868b" stroke-width="0.9"></path>
+              <circle cx="0" cy="4" r="1.6" fill="#8f959a" stroke="#5c6367" stroke-width="0.7"></circle>
+              <path d="M -2.6 6 q -6 3 -4 8 q 3 3 5 -2" fill="none" stroke="#ec3013" stroke-width="1.6"></path>
+              <path d="M 2.6 6 q 6 3 4 8 q -3 3 -5 -2" fill="none" stroke="#ec3013" stroke-width="1.6"></path>
+            </g>
+          </sc-if>
+        </g>
+      </sc-if>
+
+      <sc-if value="{{ isSew }}" hint-placeholder-val="{{ false }}">
+        <g>
+          <rect x="6" y="46" width="188" height="84" fill="#6b5a48" stroke="#4a3d30" stroke-width="2"></rect>
+          <rect x="6" y="46" width="188" height="3" fill="#8a7460"></rect>
+          <g>
+            <rect x="8" y="50" width="46" height="7" fill="#2f3437" stroke="#1d2022" stroke-width="1.2"></rect>
+            <rect x="10" y="30" width="32" height="20" rx="2" fill="#3d4348" stroke="#232729" stroke-width="1.4"></rect>
+            <rect x="14" y="34" width="15" height="7" fill="#ec3013"></rect>
+            <rect x="36" y="40" width="8" height="12" fill="#3d4348" stroke="#232729" stroke-width="1.2"></rect>
+            <circle cx="25" cy="50" r="4.4" fill="#5f676d" stroke="#232729" stroke-width="1"></circle>
+            <circle cx="25" cy="50" r="1.6" fill="#c9ccd0"></circle>
+          </g>
+          <path d="{{ silD }}" fill="{{ fabricFill }}" stroke="{{ fabricStroke }}" stroke-width="1.6"></path>
+          <path d="{{ silShade }}" fill="#1d1826" opacity="0.1"></path>
+          <path d="{{ seamD }}" fill="none" stroke="#1d1826" stroke-width="2.6" opacity="0.18"></path>
+          <path d="{{ seamD }}" fill="none" stroke="#f6f4ef" stroke-width="1.1" stroke-dasharray="2.6 2.4"></path>
+          <sc-for list="{{ corners }}" as="cn" hint-placeholder-count="0">
+            <g>
+              <circle cx="{{ cn.x }}" cy="{{ cn.y }}" r="{{ cn.r }}" fill="none" stroke="{{ cn.stroke }}" stroke-width="{{ cn.w }}"></circle>
+              <sc-if value="{{ cn.live }}" hint-placeholder-val="{{ false }}">
+                <circle cx="{{ cn.x }}" cy="{{ cn.y }}" r="8.4" fill="none" stroke="#ec3013" stroke-width="1.2" style="transform-box:fill-box; transform-origin:center; animation:tlPulse 1.1s ease-in-out infinite"></circle>
+              </sc-if>
+            </g>
+          </sc-for>
+          <sc-for list="{{ stitchLines }}" as="sl" hint-placeholder-count="0">
+            <path d="{{ sl.d }}" fill="none" stroke="{{ sl.stroke }}" stroke-width="1.5" stroke-dasharray="2.2 1.5" stroke-linecap="round"></path>
+          </sc-for>
+          <g transform="{{ footT }}">
+            <rect x="-3.4" y="-14" width="6.8" height="12" fill="#5f676d" stroke="#2f3437" stroke-width="0.9"></rect>
+            <path d="M -3.4 -2 L 3.4 -2 L 3.4 1.6 L 1.2 1.6 L 1.2 0 L -1.2 0 L -1.2 1.6 L -3.4 1.6 Z" fill="#c9ccd0" stroke="#5c6367" stroke-width="0.8"></path>
+            <rect x="-0.5" y="-13" width="1" height="13" fill="#eef1f2"></rect>
+          </g>
+          <sc-if value="{{ showHoldBadge }}" hint-placeholder-val="{{ false }}">
+            <foreignObject x="118" y="30" width="76" height="16" style="overflow:visible">
+              <div xmlns="http://www.w3.org/1999/xhtml" style="width:76px; display:flex; justify-content:flex-end">
+                <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:5.2px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:#f3f2f2; background:{{ badgeBg }}; padding:2px 4px; white-space:nowrap">{{ badgeText }}</span>
+              </div>
+            </foreignObject>
+          </sc-if>
+        </g>
+      </sc-if>
+
+      <sc-if value="{{ isPress }}" hint-placeholder-val="{{ false }}">
+        <g>
+          <rect x="14" y="48" width="172" height="82" rx="10" fill="#e0d6c4" stroke="#b0a48e" stroke-width="2"></rect>
+          <rect x="14" y="48" width="172" height="3" rx="1.5" fill="#efe7da"></rect>
+          <path d="{{ silD }}" fill="{{ fabricFill }}" stroke="{{ fabricStroke }}" stroke-width="1.6"></path>
+          <path d="{{ silShade }}" fill="#1d1826" opacity="0.1"></path>
+          <path d="{{ seamD }}" fill="none" stroke="#f6f4ef" stroke-width="1" stroke-dasharray="2.2 2" opacity="0.7"></path>
+          <sc-for list="{{ zones }}" as="z" hint-placeholder-count="0">
+            <g>
+              <circle cx="{{ z.x }}" cy="{{ z.y }}" r="{{ z.r }}" fill="{{ z.fill }}" opacity="{{ z.o }}"></circle>
+              <sc-if value="{{ z.rough }}" hint-placeholder-val="{{ true }}">
+                <path d="{{ z.wrinkle }}" fill="none" stroke="#1d1826" stroke-width="0.8" opacity="0.35"></path>
+              </sc-if>
+              <sc-if value="{{ z.gloss }}" hint-placeholder-val="{{ false }}">
+                <path d="{{ z.sheen }}" fill="none" stroke="#ffffff" stroke-width="1.6" opacity="0.65" stroke-linecap="round"></path>
+              </sc-if>
+              <g transform="{{ z.dialT }}">
+                <circle cx="{{ z.x }}" cy="{{ z.y }}" r="{{ z.rr }}" fill="none" stroke="#241d2c" stroke-width="3.4" opacity="0.5"></circle>
+                <circle cx="{{ z.x }}" cy="{{ z.y }}" r="{{ z.rr }}" fill="none" stroke="#f6f4ef" stroke-width="1.6" opacity="0.45"></circle>
+                <circle cx="{{ z.x }}" cy="{{ z.y }}" r="{{ z.rr }}" fill="none" stroke="#2f7d3a" stroke-width="3.2" stroke-dasharray="{{ z.tDash }}" stroke-dashoffset="{{ z.tOff }}"></circle>
+                <circle cx="{{ z.x }}" cy="{{ z.y }}" r="{{ z.rr }}" fill="none" stroke="{{ z.fillStroke }}" stroke-width="2.6" stroke-dasharray="{{ z.fDash }}" stroke-linecap="butt"></circle>
+              </g>
+              <foreignObject x="{{ z.lx }}" y="{{ z.ly }}" width="40" height="10" style="overflow:visible">
+                <div xmlns="http://www.w3.org/1999/xhtml" style="width:40px; display:flex; justify-content:center">
+                  <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:4.6px; font-weight:800; letter-spacing:.06em; color:{{ z.ring }}; background:#241d2c; padding:0.6px 2px; white-space:nowrap">{{ z.label }}</span>
+                </div>
+              </foreignObject>
+            </g>
+          </sc-for>
+          <sc-for list="{{ steam }}" as="sm" hint-placeholder-count="0">
+            <ellipse cx="{{ sm.x }}" cy="{{ sm.y }}" rx="{{ sm.rx }}" ry="{{ sm.ry }}" fill="#f6f4ef" opacity="{{ sm.o }}" style="{{ sm.style }}"></ellipse>
+          </sc-for>
+          <sc-if value="{{ showIron }}" hint-placeholder-val="{{ false }}">
+            <g transform="{{ ironT }}">
+              <path d="M -11 4 L 9 4 Q 12 4 12 1 L -8 1 Q -11 1 -11 4 Z" fill="#c9ccd0" stroke="#5c6367" stroke-width="1"></path>
+              <path d="M -9 1 L 11 1 Q 12 -6 4 -8 L -6 -8 Q -10 -6 -9 1 Z" fill="#8f959a" stroke="#5c6367" stroke-width="1"></path>
+              <path d="M -5 -8 q 1 -7 7 -7 q 6 0 6 7" fill="none" stroke="#241d2c" stroke-width="2.4"></path>
+              <rect x="-2" y="-4" width="7" height="2.4" fill="#ec3013"></rect>
+            </g>
+          </sc-if>
+        </g>
+      </sc-if>
+
+      <sc-if value="{{ isServe }}" hint-placeholder-val="{{ false }}">
+        <g>
+          <g transform="translate(62 56)">
+            <path d="M 0 -18 q 0 -6 5 -6 q 5 0 5 5" fill="none" stroke="#c9ccd0" stroke-width="1.4"></path>
+            <path d="M -26 -6 L 0 -18 L 26 -6" fill="none" stroke="#c9ccd0" stroke-width="2.2"></path>
+            <path d="M -26 -6 L 26 -6" fill="none" stroke="#c9ccd0" stroke-width="1.6"></path>
+          </g>
+          <g transform="{{ hangT }}">
+            <path d="{{ silD }}" fill="{{ fabricFill }}" stroke="{{ fabricStroke }}" stroke-width="1.6"></path>
+            <path d="{{ silShade }}" fill="#1d1826" opacity="0.1"></path>
+            <path d="{{ seamD }}" fill="none" stroke="#f6f4ef" stroke-width="1" stroke-dasharray="2.2 2" opacity="0.8"></path>
+          </g>
+          <g transform="{{ custT }}">
+            <path d="{{ earL }}" fill="{{ custFur }}" stroke="{{ custDark }}" stroke-width="1.2"></path>
+            <path d="{{ earR }}" fill="{{ custFur }}" stroke="{{ custDark }}" stroke-width="1.2"></path>
+            <path d="{{ earLi }}" fill="{{ custInner }}"></path>
+            <path d="{{ earRi }}" fill="{{ custInner }}"></path>
+            <rect x="-4.4" y="9" width="8.8" height="6" fill="{{ custFur }}" stroke="{{ custDark }}" stroke-width="1"></rect>
+            <path d="M -13 13 L 13 13 L 20 40 L -20 40 Z" fill="{{ custCloth }}" stroke="{{ custClothDark }}" stroke-width="1.2"></path>
+            <ellipse cx="0" cy="2" rx="13" ry="12" fill="{{ custFur }}" stroke="{{ custDark }}" stroke-width="1.2"></ellipse>
+            <ellipse cx="0" cy="7" rx="7" ry="6" fill="{{ custInner }}"></ellipse>
+            <circle cx="-5" cy="0" r="1.6" fill="#241d2c"></circle>
+            <circle cx="5" cy="0" r="1.6" fill="#241d2c"></circle>
+            <path d="M -2.2 5.4 L 2.2 5.4 L 0 7.6 Z" fill="#241d2c"></path>
+            <path d="{{ mouthD }}" fill="none" stroke="#241d2c" stroke-width="1"></path>
+          </g>
+          <rect x="0" y="104" width="200" height="36" fill="#8a6a4e" stroke="#5c4531" stroke-width="1.6"></rect>
+          <rect x="0" y="104" width="200" height="3" fill="#a88566"></rect>
+          <foreignObject x="118" y="112" width="76" height="14" style="overflow:visible">
+            <div xmlns="http://www.w3.org/1999/xhtml" style="width:76px; display:flex; justify-content:center">
+              <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:6.4px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:#f3f2f2; white-space:nowrap">{{ custName }}</span>
+            </div>
+          </foreignObject>
+        </g>
+      </sc-if>
+    </svg>
+
+    <sc-if value="{{ showPanel }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute; left:14px; top:14px; z-index:3; pointer-events:none; background:#f3f2f2; border:2px solid #201e1d; padding:7px 9px; display:flex; flex-direction:column; gap:5px; max-width:150px">
+        <div style="font-size:8px; letter-spacing:.14em; text-transform:uppercase; color:#6b6864; font-weight:700">{{ panelLabel }}</div>
+        <div style="display:flex; gap:4px">
+          <sc-for list="{{ panelChips }}" as="ch" hint-placeholder-count="3">
+            <div style="width:17px; display:flex; flex-direction:column; align-items:center; gap:2px">
+              <div style="width:17px; height:17px; border:1.4px solid #201e1d; background:{{ ch.fill }}"></div>
+              <span style="font-size:7px; font-weight:800; font-variant-numeric:tabular-nums; color:{{ ch.color }}">{{ ch.tag }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ hasPanelNote }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:8.5px; font-weight:700; line-height:1.3; color:{{ panelNoteColor }}">{{ panelNote }}</div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showBigBtn }}" hint-placeholder-val="{{ false }}">
+      <button sc-camel-on-click="{{ doBig }}" style="position:absolute; left:14px; bottom:52px; z-index:3; padding:15px 22px; border:2px solid #201e1d; background:#ec3013; color:#f3f2f2; font-family:var(--font-heading), Archivo, sans-serif; font-size:17px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; text-align:left; cursor:pointer; white-space:nowrap; box-shadow:0 5px 0 #5c0f08; animation:tlUrgent 1.4s ease-in-out infinite" style-hover="filter:brightness(.9)">{{ bigLabel }}</button>
+    </sc-if>
+
+    <sc-if value="{{ showHint }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute; left:0; right:0; bottom:0; z-index:2; background:#201e1d; padding:9px 14px; display:flex; align-items:center; gap:9px">
+        <span style="flex:0 0 auto; width:2px; align-self:stretch; background:#ec3013"></span>
+        <span style="flex:1 1 auto; min-width:0; font-size:12px; font-weight:700; color:#f3f2f2; line-height:1.35; overflow-wrap:break-word">{{ hintText }}</span>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showTitleCard }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute; inset:0; z-index:5; display:flex; flex-direction:column; align-items:center; justify-content:center; pointer-events:none; animation:tlTitle 1.6s ease-out forwards">
+        <div style="background:#f3f2f2; border:2px solid #201e1d; padding:16px 26px; max-width:78%">
+          <div style="font-family:var(--font-heading), Archivo, sans-serif; font-size:clamp(24px, 6vw, 44px); font-weight:800; line-height:.98; letter-spacing:-.02em; text-transform:uppercase">{{ cardTitle }}</div>
+          <div style="height:2px; background:#ec3013; width:56px; margin:9px 0"></div>
+          <div style="font-size:13px; color:#201e1d; line-height:1.4">{{ cardHint }}</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showIntro }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute; inset:0; z-index:6; background:rgba(26,20,32,.88); display:flex; flex-direction:column; padding:22px; overflow:auto">
+       <div style="margin:auto 0; flex:0 0 auto; display:flex; flex-wrap:wrap-reverse; align-items:center; gap:26px">
+          <svg sc-camel-view-box="0 0 220 200" sc-camel-preserve-aspect-ratio="xMidYMid meet" style="flex:0 1 min(44%, 420px); min-width:0; aspect-ratio:220 / 200; max-height:min(420px, 68vh); order:2; pointer-events:none">
+            <defs>
+              <radialGradient id="tlLamp" cx="50%" cy="40%" r="58%">
+                <stop offset="0%" stop-color="#f0c040" stop-opacity="0.3"></stop>
+                <stop offset="100%" stop-color="#f0c040" stop-opacity="0"></stop>
+              </radialGradient>
+            </defs>
+            <ellipse cx="116" cy="92" rx="98" ry="86" fill="url(#tlLamp)"></ellipse>
+
+            <g>
+              <rect x="18" y="120" width="58" height="15" fill="#6f7a45" stroke="#4a5228" stroke-width="2"></rect>
+              <ellipse cx="76" cy="127.5" rx="4" ry="7.5" fill="#8a9459" stroke="#4a5228" stroke-width="2"></ellipse>
+              <rect x="18" y="137" width="58" height="15" fill="#b8566b" stroke="#7d2f42" stroke-width="2"></rect>
+              <ellipse cx="76" cy="144.5" rx="4" ry="7.5" fill="#cf7385" stroke="#7d2f42" stroke-width="2"></ellipse>
+              <rect x="18" y="154" width="58" height="15" fill="#b98a4e" stroke="#7d5828" stroke-width="2"></rect>
+              <ellipse cx="76" cy="161.5" rx="4" ry="7.5" fill="#d3a469" stroke="#7d5828" stroke-width="2"></ellipse>
+            </g>
+
+            <g>
+              <rect x="106" y="46" width="9" height="12" fill="#8a7460" stroke="#4a3b30" stroke-width="2"></rect>
+              <path d="M 96 76 q 0 -18 14.5 -18 q 14.5 0 14.5 18 l 6 30 q 1 11 -9 13 l -23 0 q -10 -2 -9 -13 Z" fill="#d9c9b4" stroke="#9c8a70" stroke-width="2.4"></path>
+              <path d="M 110.5 58 q 14.5 0 14.5 18 l 6 30 q 1 11 -9 13 l -11.5 0 Z" fill="#1d1826" opacity="0.08"></path>
+              <rect x="107" y="119" width="7" height="40" fill="#8a7460" stroke="#4a3b30" stroke-width="2"></rect>
+              <g stroke="#4a3b30" stroke-width="3.4" stroke-linecap="round">
+                <path d="M 110.5 160 L 92 178"></path>
+                <path d="M 110.5 160 L 110.5 182"></path>
+                <path d="M 110.5 160 L 129 178"></path>
+              </g>
+            </g>
+
+            <g>
+              <path d="M 92 70 L 118 64 L 123 114 L 96 119 Z" fill="#6e8fb8" stroke="#3f5d80" stroke-width="2.4"></path>
+              <path d="M 92 70 L 118 64 L 119 76 L 93 82 Z" fill="#ffffff" opacity="0.12"></path>
+              <path d="M 96 86 q 13 -4 24 -2" fill="none" stroke="#f6f4ef" stroke-width="2" stroke-dasharray="5 4"></path>
+              <g fill="#ec3013">
+                <circle cx="96" cy="74" r="2.6"></circle>
+                <circle cx="116" cy="68" r="2.6"></circle>
+                <circle cx="120" cy="108" r="2.6"></circle>
+              </g>
+            </g>
+
+            <g stroke="#f3f2f2" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.92">
+              <path d="M 98 62 q -14 30 -7 54"></path>
+              <path d="M 124 62 q 14 26 9 46"></path>
+            </g>
+            <g stroke="#9c8a70" stroke-width="1.4">
+              <path d="M 93 78 L 97 77 M 92 90 L 96 89 M 92 102 L 96 101"></path>
+            </g>
+
+            <g transform="translate(52 84) rotate(-16)">
+              <path d="M -2 0 L -6 -42 L 1 -44 L 4 -2 Z" fill="#cdd2d5" stroke="#7f868b" stroke-width="2"></path>
+              <path d="M 2 0 L 10 -40 L 17 -37 L 8 -1 Z" fill="#e2e6e8" stroke="#7f868b" stroke-width="2"></path>
+              <circle cx="2" cy="2" r="4" fill="#8f959a" stroke="#5c6367" stroke-width="1.6"></circle>
+              <path d="M -3 8 q -13 6 -9 18 q 7 7 12 -5" fill="none" stroke="#ec3013" stroke-width="4"></path>
+              <path d="M 7 8 q 13 6 9 18 q -7 7 -12 -5" fill="none" stroke="#ec3013" stroke-width="4"></path>
+            </g>
+
+            <g>
+              <path d="M 176 132 q -18 -26 -46 -32" fill="none" stroke="#ec3013" stroke-width="2.2"></path>
+              <rect x="168" y="132" width="16" height="22" fill="#f0c040" stroke="#8f6b28" stroke-width="2"></rect>
+              <rect x="164" y="129" width="24" height="5" fill="#d9a84e" stroke="#8f6b28" stroke-width="2"></rect>
+              <rect x="164" y="152" width="24" height="5" fill="#d9a84e" stroke="#8f6b28" stroke-width="2"></rect>
+            </g>
+          </svg>
+        <div style="flex:1 1 320px; min-width:0; order:1; display:flex; flex-direction:column; gap:12px; max-width:560px">
+          <div style="display:flex; flex-direction:column">
+            <span style="font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#f0c040; font-weight:700">Back-lane tailor · four orders</span>
+            <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:clamp(32px, 7.6vw, 58px); font-weight:800; line-height:.92; letter-spacing:-.03em; text-transform:uppercase; color:#f3f2f2">Foxy Tailors</span>
+          </div>
+          <div style="height:2px; background:#ec3013; width:116px"></div>
+          <p style="margin:0; font-size:14px; line-height:1.5; color:#f3f2f2">A shirt, a pair of pants, a dress and a coat. Every order runs the same four steps.</p>
+          <div style="display:grid; grid-template-columns:max-content 1fr; column-gap:10px; row-gap:6px; align-items:start">
+            <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:12px; font-weight:800; line-height:1.45; color:#f2643f; white-space:nowrap">1 CUT</span>
+            <span style="font-size:12.5px; line-height:1.45; color:#f3f2f2">Drag the shears down each chalk line.</span>
+            <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:12px; font-weight:800; line-height:1.45; color:#f2643f; white-space:nowrap">2 SEW</span>
+            <span style="font-size:12.5px; line-height:1.45; color:#f3f2f2">Hold to run the machine. Steer against the pull, release at each corner.</span>
+            <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:12px; font-weight:800; line-height:1.45; color:#f2643f; white-space:nowrap">3 PRESS</span>
+            <span style="font-size:12.5px; line-height:1.45; color:#f3f2f2">Fill each dial into the green band, then lift the iron.</span>
+            <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:12px; font-weight:800; line-height:1.45; color:#f2643f; white-space:nowrap">4 HAND&nbsp;OVER</span>
+            <span style="font-size:12.5px; line-height:1.45; color:#f3f2f2">See how it scored.</span>
+          </div>
+          <button sc-camel-on-click="{{ begin }}" style="align-self:flex-start; margin-top:4px; padding:16px 26px; border:0; background:#ec3013; color:#f3f2f2; font-family:var(--font-heading), Archivo, sans-serif; font-size:18px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; text-align:left; cursor:pointer" style-hover="background:#b8250e">Open the shop</button>
+        </div>
+       </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showCard }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute; inset:0; z-index:6; background:rgba(20,14,24,.78); display:flex; align-items:center; justify-content:center; padding:18px">
+        <div style="width:100%; max-width:400px; max-height:100%; min-height:0; display:flex; flex-direction:column; background:#f3f2f2; border:2px solid #201e1d; padding:20px; animation:tlIn .18s ease-out">
+          <div style="flex:0 0 auto">
+            <div style="font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:#ec3013; font-weight:700">{{ cardKicker }}</div>
+            <div style="font-family:var(--font-heading), Archivo, sans-serif; font-size:30px; font-weight:800; line-height:1; letter-spacing:-.02em; margin:7px 0 4px">{{ cardScore }}</div>
+            <div style="font-size:12px; margin-bottom:14px">{{ cardMood }}</div>
+            <div style="height:2px; background:#201e1d; margin-bottom:13px"></div>
+          </div>
+          <div style="flex:1 1 auto; min-height:0; overflow:auto">
+            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:17px">
+              <sc-for list="{{ cardRows }}" as="r" hint-placeholder-count="0">
+                <div style="display:flex; align-items:center; gap:9px">
+                  <span style="flex:0 0 92px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em">{{ r.name }}</span>
+                  <div style="flex:1 1 auto; height:8px; background:#dedcd6; border:1px solid #201e1d">
+                    <div style="height:100%; width:{{ r.pct }}%; background:{{ r.color }}"></div>
+                  </div>
+                  <span style="flex:0 0 30px; text-align:right; font-size:12px; font-weight:700; font-variant-numeric:tabular-nums">{{ r.val }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ hasNotes }}" hint-placeholder-val="{{ false }}">
+              <div style="border-top:2px solid #201e1d; padding-top:12px; margin-bottom:16px; display:flex; flex-direction:column; gap:6px">
+                <sc-for list="{{ cardNotes }}" as="nt" hint-placeholder-count="0">
+                  <div style="display:flex; gap:8px; font-size:11px; line-height:1.35">
+                    <span style="color:#ec3013; font-weight:800">—</span>
+                    <span>{{ nt.text }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+          <button sc-camel-on-click="{{ cardAction }}" style="flex:0 0 auto; width:100%; padding:14px 16px; border:0; background:#ec3013; color:#f3f2f2; font-family:var(--font-heading), Archivo, sans-serif; font-size:15px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; text-align:left; cursor:pointer" style-hover="background:#b8250e">{{ cardCta }}</button>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;forgiveness&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:1,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0.5,&quot;max&quot;:2,&quot;step&quot;:0.1,&quot;section&quot;:&quot;Difficulty&quot;},&quot;guides&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Difficulty&quot;},&quot;sound&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Audio&quot;},&quot;music&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Audio&quot;}}">
+const n = v => Math.round(v * 1000) / 1000;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const D = pts => "M " + pts.map(p => n(p[0]) + " " + n(p[1])).join(" L ");
+const poly = pts => D(pts) + " Z";
+
+function polyInfo(pts) {
+  const segs = [];
+  let total = 0;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const a = pts[i], b = pts[i + 1];
+    const dx = b[0] - a[0], dy = b[1] - a[1], len = Math.hypot(dx, dy) || 0.001;
+    segs.push({ a, b, dx, dy, len, at: total, ang: Math.atan2(dy, dx) * 180 / Math.PI });
+    total += len;
+  }
+  return { pts, segs, total };
+}
+
+// closest point on the polyline: how far along (0..1) and how far off
+function projOn(info, x, y) {
+  let best = { dist: 1e9, t: 0, ang: 0 };
+  info.segs.forEach(s => {
+    const u = clamp(((x - s.a[0]) * s.dx + (y - s.a[1]) * s.dy) / (s.len * s.len), 0, 1);
+    const px = s.a[0] + s.dx * u, py = s.a[1] + s.dy * u;
+    const d = Math.hypot(x - px, y - py);
+    if (d < best.dist) best = { dist: d, t: (s.at + u * s.len) / info.total, ang: s.ang };
+  });
+  return best;
+}
+
+function ptAt(info, t) {
+  const L = clamp(t, 0, 1) * info.total;
+  const segs = info.segs;
+  for (let i = 0; i < segs.length; i++) {
+    const s = segs[i];
+    if (L <= s.at + s.len || i === segs.length - 1) {
+      const u = clamp((L - s.at) / s.len, 0, 1);
+      return { x: s.a[0] + s.dx * u, y: s.a[1] + s.dy * u, ang: s.ang };
+    }
+  }
+  return { x: 0, y: 0, ang: 0 };
+}
+
+function upTo(info, t) {
+  const L = clamp(t, 0, 1) * info.total;
+  const out = [info.segs[0].a];
+  for (const s of info.segs) {
+    if (s.at + s.len <= L) out.push(s.b);
+    else {
+      const u = clamp((L - s.at) / s.len, 0, 1);
+      if (u > 0.001) out.push([s.a[0] + s.dx * u, s.a[1] + s.dy * u]);
+      break;
+    }
+  }
+  return out;
+}
+
+// a pattern blank is a rectangle of cloth with one chalked cut edge running across it;
+// the keep side becomes the pattern piece, the other side falls away as scrap
+function blank(label, box, cut, keepSide) {
+  const x0 = box[0], y0 = box[1], x1 = box[2], y1 = box[3];
+  const rev = cut.slice().reverse();
+  let keep, off, away;
+  if (keepSide === "h-below") { keep = cut.concat([[x1, y1], [x0, y1]]); off = rev.concat([[x0, y0], [x1, y0]]); away = [0, -11]; }
+  else if (keepSide === "h-above") { keep = cut.concat([[x1, y0], [x0, y0]]); off = rev.concat([[x0, y1], [x1, y1]]); away = [0, 11]; }
+  else if (keepSide === "v-left") { keep = cut.concat([[x0, y1], [x0, y0]]); off = rev.concat([[x1, y0], [x1, y1]]); away = [12, 0]; }
+  else { keep = cut.concat([[x1, y1], [x1, y0]]); off = rev.concat([[x0, y0], [x0, y1]]); away = [-12, 0]; }
+  return { label, box, cut, keep, off, away, info: polyInfo(cut) };
+}
+
+const GARMENTS = {
+  shirt: {
+    name: "Shirt", ticket: "One shirt — three pieces, three seams, pressed crisp",
+    fill: "#6e8fb8", stroke: "#3f5d80",
+    pieces: [
+      blank("FRONT", [16, 58, 62, 120], [[44, 58], [48, 88], [40, 120]], "v-left"),
+      blank("SLEEVE", [72, 58, 128, 120], [[72, 86], [100, 78], [128, 92]], "h-below"),
+      blank("COLLAR", [138, 58, 184, 120], [[138, 76], [160, 70], [184, 74]], "h-above")
+    ],
+    sil: [[74, 64], [92, 64], [100, 70], [108, 64], [126, 64], [146, 84], [132, 96], [126, 88], [126, 120], [74, 120], [74, 88], [68, 96], [54, 84]],
+    shade: [[100, 70], [108, 64], [126, 64], [146, 84], [132, 96], [126, 88], [126, 120], [100, 120]],
+    seam: [[80, 72], [120, 72], [122, 114], [80, 114]],
+    zones: [[100, 74, 8, "YOKE"], [80, 102, 8, "FRONT"], [120, 108, 8, "HEM"]]
+  },
+  pants: {
+    name: "Pants", ticket: "One pair of pants — three pieces, three seams, pressed crisp",
+    fill: "#6f7a45", stroke: "#4a5228",
+    pieces: [
+      blank("LEG A", [16, 58, 62, 120], [[36, 58], [30, 88], [44, 120]], "v-right"),
+      blank("LEG B", [72, 58, 128, 120], [[106, 58], [112, 86], [98, 120]], "v-left"),
+      blank("WAISTBAND", [138, 58, 184, 120], [[138, 80], [160, 74], [184, 80]], "h-above")
+    ],
+    sil: [[76, 62], [124, 62], [128, 76], [120, 120], [106, 120], [100, 92], [94, 120], [80, 120], [72, 76]],
+    shade: [[100, 62], [124, 62], [128, 76], [120, 120], [106, 120], [100, 92]],
+    seam: [[82, 74], [100, 92], [118, 74], [120, 112]],
+    zones: [[100, 70, 8, "WAIST"], [84, 100, 8, "LEG A"], [116, 100, 8, "LEG B"]]
+  },
+  dress: {
+    name: "Dress", ticket: "One dress — three pieces, three seams, pressed crisp",
+    fill: "#b8566b", stroke: "#7d2f42",
+    pieces: [
+      blank("BODICE", [16, 58, 62, 120], [[16, 96], [40, 102], [62, 90]], "h-above"),
+      blank("SKIRT", [72, 58, 128, 120], [[86, 58], [98, 90], [120, 120]], "v-right"),
+      blank("STRAP", [138, 58, 184, 120], [[138, 72], [160, 66], [184, 76]], "h-above")
+    ],
+    sil: [[80, 62], [92, 62], [100, 68], [108, 62], [120, 62], [124, 84], [142, 120], [58, 120], [76, 84]],
+    shade: [[100, 68], [108, 62], [120, 62], [124, 84], [142, 120], [100, 120]],
+    seam: [[86, 76], [114, 76], [130, 114], [70, 114]],
+    zones: [[100, 72, 8, "BODICE"], [80, 108, 8, "SKIRT L"], [120, 108, 8, "SKIRT R"]]
+  },
+  coat: {
+    name: "Coat", ticket: "One coat — four pieces, four seams, pressed crisp",
+    fill: "#b98a4e", stroke: "#7d5828",
+    pieces: [
+      blank("BODY", [12, 58, 52, 120], [[34, 58], [38, 88], [28, 120]], "v-left"),
+      blank("LAPEL", [56, 58, 96, 120], [[74, 58], [70, 86], [84, 120]], "v-right"),
+      blank("SLEEVE", [100, 58, 140, 120], [[100, 90], [120, 96], [140, 82]], "h-below"),
+      blank("POCKET", [144, 58, 184, 120], [[144, 78], [164, 72], [184, 78]], "h-above")
+    ],
+    sil: [[72, 62], [92, 62], [100, 68], [108, 62], [128, 62], [148, 82], [138, 94], [130, 88], [130, 122], [70, 122], [70, 88], [62, 94], [52, 82]],
+    shade: [[100, 68], [108, 62], [128, 62], [148, 82], [138, 94], [130, 88], [130, 122], [100, 122]],
+    seam: [[76, 70], [124, 70], [126, 98], [126, 118], [76, 118]],
+    zones: [[100, 74, 8, "COLLAR"], [80, 102, 8, "PANEL"], [118, 110, 8, "HEM"]]
+  }
+};
+
+const ORDER = ["shirt", "pants", "dress", "coat"];
+
+Object.keys(GARMENTS).forEach(k => {
+  const g = GARMENTS[k];
+  g.silTop = Math.min.apply(null, g.sil.map(p => p[1]));
+  g.silD = poly(g.sil);
+  g.shadeD = poly(g.shade);
+  g.seamD = D(g.seam);
+  g.seamInfo = polyInfo(g.seam);
+  g.legs = g.seamInfo.segs.map((s, i) => ({
+    a: s.a, len: s.len, ang: s.ang,
+    dx: s.dx / s.len, dy: s.dy / s.len,
+    px: -s.dy / s.len, py: s.dx / s.len,
+    pull: (2.1 + (i % 3) * 0.85) * (i % 2 ? -1 : 1)
+  }));
+});
+
+const CUSTOMERS = [
+  { name: "Yuzu", fur: "#ee7d24", furDark: "#b8531a", inner: "#f9ecd9", cloth: "#1f3350", clothDark: "#16263c", ear: "fox" },
+  { name: "Mochi", fur: "#dedcd6", furDark: "#a8a6a0", inner: "#f6f4ef", cloth: "#4a3a5c", clothDark: "#332745", ear: "cat" },
+  { name: "Kuma", fur: "#9a6f4a", furDark: "#6b4a2c", inner: "#d9bb96", cloth: "#3f5d47", clothDark: "#2b4232", ear: "bear" },
+  { name: "Hana", fur: "#f0e6da", furDark: "#bfae99", inner: "#f8f2ea", cloth: "#8f2b1e", clothDark: "#661a10", ear: "rabbit" }
+];
+
+const EARS = {
+  fox: { l: "M -9 -8 L -15 -25 L -3 -13 Z", r: "M 9 -8 L 15 -25 L 3 -13 Z", li: "M -9 -9 L -13 -21 L -5 -13 Z", ri: "M 9 -9 L 13 -21 L 5 -13 Z" },
+  cat: { l: "M -9 -8 L -13 -20 L -2 -12 Z", r: "M 9 -8 L 13 -20 L 2 -12 Z", li: "M -9 -9 L -11.4 -17 L -4 -12 Z", ri: "M 9 -9 L 11.4 -17 L 4 -12 Z" },
+  bear: { l: "M -11 -9 a 5.4 5.4 0 1 1 5 -3", r: "M 11 -9 a 5.4 5.4 0 1 0 -5 -3", li: "M -10.4 -9.4 a 3 3 0 1 1 3.4 -2", ri: "M 10.4 -9.4 a 3 3 0 1 0 -3.4 -2" },
+  rabbit: { l: "M -7 -9 q -7 -16 -2 -22 q 6 3 5 21 Z", r: "M 7 -9 q 7 -16 2 -22 q -6 3 -5 21 Z", li: "M -7 -10 q -5 -13 -2.4 -17 q 3.4 3 3 16 Z", ri: "M 7 -10 q 5 -13 2.4 -17 q -3.4 3 -3 16 Z" }
+};
+
+const SECONDS = { cut: 20, sew: 26, press: 17, serve: 0 };
+const TITLES = {
+  cut: ["Cut the pieces", "Press on the red ring, then drag the shears down the chalk line to its end."],
+  sew: ["Sew the seams", "Hold to run the machine. Steer against the pull, and release at each corner."],
+  press: ["Press the garment", "Fill each patch's dial into the green band, then lift the iron off."],
+  serve: ["Hand it over", "The customer is waiting."]
+};
+const HINTS = {
+  cut: "Press on the red ring at the start of a chalk line, then drag the shears along the line to its end. Wander off the chalk and the cloth tears.",
+  sew: "Hold anywhere to run the machine. The feed pulls sideways — move your pointer to the opposite side to keep the stitch straight. Release at the ringed corner.",
+  press: "Hold the iron on a patch to fill its dial. Lift off while the marker is inside the green band — run past the band and the cloth scorches.",
+  serve: "Hand the finished garment across the counter."
+};
+
+const BAND = [{ lo: 56, hi: 98 }, { lo: 58, hi: 94 }, { lo: 60, hi: 92 }, { lo: 62, hi: 90 }];
+const TOL = [6.6, 6, 5.4, 4.8];
+const SEW_SPEED = [30, 34, 38, 42];
+const SCORCH = 114;
+
+// a clipped, ticking little workroom loop
+const MUSIC = (() => {
+  const scale = [57, 60, 62, 64, 67, 69, 72, 74, 76, 79];
+  const phrase = [
+    [0, 2], [0.5, 4], [1, 5], [2, 4], [3, 6], [4, 5], [5, 3], [6, 4], [7, 2],
+    [8, 3], [8.5, 5], [9, 6], [10, 5], [11, 7], [12, 6], [13, 4], [14, 5], [15, 3],
+    [16, 5], [16.5, 7], [17, 8], [18, 6], [19, 5], [20, 7], [21, 5], [22, 4], [23, 2],
+    [24, 4], [24.5, 3], [25, 5], [26, 3], [27, 2], [28, 3], [29, 1], [30, 2], [31, 0]
+  ];
+  const notes = [];
+  phrase.forEach(p => notes.push({ b: p[0], m: scale[p[1]], d: 0.5, v: "pluck" }));
+  [0, 4, 8, 12, 16, 20, 24, 28].forEach(b => {
+    notes.push({ b, m: 33, d: 0.46, v: "bass" });
+    notes.push({ b: b + 2.5, m: 40, d: 0.3, v: "bass" });
+  });
+  for (let b = 0; b < 32; b += 0.5) notes.push({ b, m: b % 4 === 0 ? 88 : 94, d: 0.05, v: "tick" });
+  return { notes, beats: 32, spb: 0.32 };
+})();
+const midiHz = m => 440 * Math.pow(2, (m - 69) / 12);
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.svgRef = React.createRef();
+    this.state = Object.assign({ overlay: "intro", muted: false, musicOff: false, totals: [] }, this.freshRound(0));
+  }
+
+  freshRound(round) {
+    const r = round % 4;
+    const key = ORDER[r];
+    const g = GARMENTS[key];
+    const spec = {
+      key, tol: TOL[r], speed: SEW_SPEED[r], band: BAND[r],
+      forgive: this.props.forgiveness ?? 1
+    };
+    return {
+      round, stages: ["cut", "sew", "press", "serve"], stageIndex: 0,
+      scores: {}, notes: [], timeLeft: SECONDS.cut, titleCard: TITLES.cut, cardAt: Date.now(),
+      cust: CUSTOMERS[round % CUSTOMERS.length], spec,
+      prog: g.pieces.map(() => 0), cutDone: g.pieces.map(() => false),
+      cutDevs: [], tears: 0, activeCut: null, shear: null,
+      legIndex: 0, legT: 0, lat: 0, holding: false, stitchLegs: [[]],
+      latDevs: [], cornerErrs: [], overshoots: 0, sewDone: false, ptr: null,
+      zoneHeat: g.zones.map(() => 0), scorched: g.zones.map(() => false),
+      iron: null, ironing: false, handed: false
+    };
+  }
+
+  componentDidMount() {
+    window.__tailorTarget = this;
+    this.started = false;
+    this.killMusic();
+    this.stopHold();
+    setTimeout(() => this.loop(), 0);
+  }
+
+  componentWillUnmount() {
+    if (this.raf) cancelAnimationFrame(this.raf);
+    this.raf = null;
+    this.killMusic();
+    this.stopHold();
+  }
+
+  garment() { return GARMENTS[this.state.spec.key]; }
+  stage() { return this.state.stages[this.state.stageIndex]; }
+
+  muted() { return this.state.muted || (this.props.sound ?? true) === false; }
+  musicOn() { return !this.muted() && (this.props.music ?? true) !== false && !this.state.musicOff; }
+
+  audio() {
+    if (this.muted() || !this.started) return null;
+    if (!window.__tailorAC) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      window.__tailorAC = new AC();
+      const b = window.__tailorAC.createBuffer(1, window.__tailorAC.sampleRate * 1.4, window.__tailorAC.sampleRate);
+      const d = b.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      window.__tailorNoise = b;
+      window.addEventListener("pagehide", () => { try { window.__tailorAC.close(); } catch (e) {} });
+    }
+    this.actx = window.__tailorAC;
+    this.noise = window.__tailorNoise;
+    if (this.actx.state === "suspended") this.actx.resume();
+    return this.actx;
+  }
+
+  tone(freq, dur, gain, type, to) {
+    const ac = this.audio();
+    if (!ac) return;
+    const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime;
+    o.type = type || "sine";
+    o.frequency.setValueAtTime(freq, t);
+    if (to) o.frequency.exponentialRampToValueAtTime(Math.max(20, to), t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(gain, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(ac.destination);
+    o.start(t); o.stop(t + dur + 0.02);
+  }
+
+  burst(o) {
+    const ac = this.audio();
+    if (!ac) return;
+    const src = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain(), t = ac.currentTime;
+    src.buffer = this.noise;
+    src.loop = true;
+    f.type = o.type || "bandpass";
+    f.Q.value = o.q == null ? 1 : o.q;
+    f.frequency.setValueAtTime(o.f0, t);
+    f.frequency.exponentialRampToValueAtTime(Math.max(60, o.f1), t + o.dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(o.gain, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + o.dur);
+    src.connect(f); f.connect(g); g.connect(ac.destination);
+    src.start(t); src.stop(t + o.dur + 0.05);
+  }
+
+  sfx(kind) {
+    if (!this.audio()) return;
+    if (kind === "snip") {
+      this.burst({ f0: 3400, f1: 900, dur: 0.07, gain: 0.07, type: "bandpass", q: 2.4 });
+      this.tone(1400, 0.05, 0.03, "triangle", 900);
+    } else if (kind === "tear") {
+      this.burst({ f0: 900, f1: 260, dur: 0.2, gain: 0.075, type: "bandpass", q: 0.7 });
+    } else if (kind === "corner") {
+      this.tone(880, 0.08, 0.045, "triangle", 620);
+    } else if (kind === "hiss") {
+      this.burst({ f0: 5200, f1: 2400, dur: 0.26, gain: 0.045, type: "highpass", q: 0.6 });
+    } else if (kind === "good") {
+      [0, 4, 7].forEach((s, i) => setTimeout(() => this.tone(midiHz(72 + s), 0.16, 0.055, "triangle"), i * 62));
+    } else if (kind === "bad") {
+      this.tone(170, 0.24, 0.075, "square", 105);
+    } else if (kind === "stage") {
+      [0, 7].forEach((s, i) => setTimeout(() => this.tone(midiHz(69 + s), 0.2, 0.05, "triangle"), i * 80));
+    } else if (kind === "serve") {
+      [0, 4, 7, 12].forEach((s, i) => setTimeout(() => this.tone(midiHz(72 + s), 0.24, 0.06, "triangle"), i * 95));
+    }
+  }
+
+  startHold(kind) {
+    const ac = this.audio();
+    if (!ac || this.holdNodes) return;
+    const src = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain();
+    src.buffer = this.noise; src.loop = true;
+    if (kind === "machine") {
+      f.type = "bandpass"; f.frequency.value = 260; f.Q.value = 3.2; g.gain.value = 0.05;
+      const lfo = ac.createOscillator(), lg = ac.createGain();
+      lfo.frequency.value = 17; lg.gain.value = 0.04;
+      lfo.connect(lg); lg.connect(g.gain); lfo.start();
+      this.holdExtra = lfo;
+    } else {
+      f.type = "highpass"; f.frequency.value = 2600; g.gain.value = 0.028;
+    }
+    src.connect(f); f.connect(g); g.connect(ac.destination);
+    src.start();
+    this.holdNodes = { src, g };
+    window.__tailorHold = this.holdNodes;
+  }
+
+  stopHold() {
+    const h = this.holdNodes || window.__tailorHold;
+    if (!h) return;
+    try { h.g.gain.value = 0; h.src.stop(); h.src.disconnect(); h.g.disconnect(); } catch (e) {}
+    try { if (this.holdExtra) this.holdExtra.stop(); } catch (e) {}
+    this.holdExtra = null;
+    this.holdNodes = null;
+    window.__tailorHold = null;
+  }
+
+  voice(v, freq, at, dur) {
+    const ac = this.actx, g = ac.createGain(), o = ac.createOscillator();
+    let peak = 0.028;
+    if (v === "pluck") { o.type = "triangle"; peak = 0.03; }
+    else if (v === "bass") { o.type = "sine"; peak = 0.045; }
+    else { o.type = "square"; peak = 0.012; }
+    o.frequency.setValueAtTime(freq, at);
+    g.gain.setValueAtTime(0.0001, at);
+    g.gain.exponentialRampToValueAtTime(peak, at + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+    o.connect(g); g.connect(window.__tailorMusicBus);
+    o.start(at); o.stop(at + dur + 0.02);
+  }
+
+  scheduleMusic() {
+    const ac = this.actx;
+    if (!ac || !this.musicOn()) return;
+    if (!window.__tailorMusicBus) {
+      const bus = ac.createGain();
+      bus.gain.value = 0.5;
+      bus.connect(ac.destination);
+      window.__tailorMusicBus = bus;
+      this.musicStart = ac.currentTime + 0.1;
+      this.musicBar = 0;
+    }
+    const barLen = MUSIC.beats * MUSIC.spb;
+    while (this.musicStart + this.musicBar * barLen < ac.currentTime + 0.7) {
+      const base = this.musicStart + this.musicBar * barLen;
+      MUSIC.notes.forEach(nt => {
+        const at = base + nt.b * MUSIC.spb;
+        if (at > ac.currentTime - 0.05) this.voice(nt.v, midiHz(nt.m), at, nt.d * MUSIC.spb);
+      });
+      this.musicBar++;
+    }
+  }
+
+  killMusic() {
+    const bus = window.__tailorMusicBus;
+    if (bus) { try { bus.gain.value = 0; bus.disconnect(); } catch (e) {} }
+    window.__tailorMusicBus = null;
+    this.musicBar = 0;
+  }
+
+  loop = () => {
+    this.raf = requestAnimationFrame(this.loop);
+    const now = Date.now();
+    const dt = Math.min(0.05, (now - (this.last || now)) / 1000);
+    this.last = now;
+    const s = this.state;
+    if (this.started && window.__tailorTarget === this && window.__tailorAC) {
+      if (this.musicOn()) this.scheduleMusic();
+      else if (window.__tailorMusicBus) this.killMusic();
+    }
+    if (s.overlay) return;
+    const st = this.stage();
+    const patch = {};
+    let dirty = false;
+
+    if (s.titleCard && now - s.cardAt > 1600) { patch.titleCard = null; dirty = true; }
+
+    if (st === "sew" && s.holding && !s.sewDone) {
+      const g = this.garment();
+      const leg = g.legs[s.legIndex];
+      if (leg) {
+        const sp = s.spec.speed;
+        let legT = s.legT + (sp / leg.len) * dt;
+        // the feed dog drags the cloth sideways; the pointer's offset is the counter-steer
+        const perp = s.ptr ? (s.ptr.x - leg.a[0]) * leg.px + (s.ptr.y - leg.a[1]) * leg.py : 0;
+        const wob = Math.sin(now / 520 + s.legIndex) * 1.1;
+        let lat = s.lat + (leg.pull + wob + clamp(perp, -6, 6) * 1.7 / s.spec.forgive) * dt;
+        lat = clamp(lat, -9, 9);
+        this.latAcc = (this.latAcc || 0) + dt;
+        const legs = s.stitchLegs.slice();
+        const cur = (legs[s.legIndex] || []).slice();
+        if (this.latAcc > 0.045) {
+          this.latAcc = 0;
+          const t = clamp(legT, 0, 1);
+          cur.push([leg.a[0] + leg.dx * t * leg.len + leg.px * lat, leg.a[1] + leg.dy * t * leg.len + leg.py * lat]);
+          legs[s.legIndex] = cur;
+          patch.stitchLegs = legs;
+          patch.latDevs = s.latDevs.concat([Math.abs(lat)]);
+        }
+        if (legT >= 1) {
+          // ran past the corner with the needle still down
+          this.sfx("tear");
+          this.note("The needle ran past a corner — the stitch line overshot.");
+          patch.overshoots = s.overshoots + 1;
+          patch.cornerErrs = s.cornerErrs.concat([0.4]);
+          this.stopHold();
+          Object.assign(patch, this.pivot(s, legs, lat, false));
+        } else {
+          patch.legT = legT;
+          patch.lat = lat;
+        }
+        dirty = true;
+      }
+    }
+
+    if (st === "press" && s.ironing && s.iron) {
+      const g = this.garment();
+      const heat = s.zoneHeat.slice(), sc = s.scorched.slice();
+      g.zones.forEach((z, i) => {
+        if (Math.hypot(s.iron.x - z[0], s.iron.y - z[1]) < z[2] + 3) {
+          heat[i] = Math.min(150, heat[i] + dt * 26);
+          if (heat[i] > SCORCH && !sc[i]) {
+            sc[i] = true;
+            this.sfx("tear");
+            this.note("Scorch mark on the " + z[3].toLowerCase() + " — the iron sat too long.");
+          }
+        }
+      });
+      patch.zoneHeat = heat; patch.scorched = sc; dirty = true;
+    }
+
+    const total = SECONDS[st];
+    if (total > 0) {
+      const left = s.timeLeft - dt;
+      if (left <= 0) {
+        this.setState(Object.assign(patch, { timeLeft: 0 }), () => this.timeUp());
+        return;
+      }
+      patch.timeLeft = left; dirty = true;
+    }
+    if (dirty) this.setState(patch);
+  };
+
+  // move to the next seam leg; clean === released at the corner
+  pivot(s, legs, lat, clean) {
+    const g = this.garment();
+    const idx = s.legIndex + 1;
+    const out = { legIndex: idx, legT: 0, lat: lat * 0.25, holding: false, stitchLegs: legs.concat([[]]) };
+    if (idx >= g.legs.length) {
+      out.sewDone = true;
+      setTimeout(() => this.commit("Sewing", this.sewScore()), 60);
+    } else if (clean) this.sfx("corner");
+    return out;
+  }
+
+  note(text) { this.pendingNotes = (this.pendingNotes || []).concat([{ text }]); }
+
+  commit(name, score) {
+    if (this.committedAt === this.state.stageIndex) return;
+    this.committedAt = this.state.stageIndex;
+    const sc = Math.round(clamp(score, 0, 100));
+    this.sfx(sc >= 75 ? "good" : sc >= 45 ? "stage" : "bad");
+    const seen = {};
+    const notes = this.state.notes.concat(this.pendingNotes || []).filter(x => {
+      if (seen[x.text]) return false;
+      seen[x.text] = 1;
+      return true;
+    });
+    this.pendingNotes = [];
+    this.stopHold();
+    this.setState(s => {
+      const idx = s.stageIndex + 1;
+      const next = s.stages[idx];
+      const scores = Object.assign({}, s.scores);
+      scores[name] = sc;
+      return { scores, notes, stageIndex: idx,
+        timeLeft: next ? SECONDS[next] : 0,
+        titleCard: next ? (TITLES[next] || null) : null, cardAt: Date.now(),
+        activeCut: null, holding: false, ironing: false };
+    }, () => { if (this.stage() === "serve") this.sfx("serve"); });
+  }
+
+  timeUp() {
+    const st = this.stage();
+    if (st === "cut") this.commit("Cutting", this.cutScore());
+    else if (st === "sew") this.commit("Sewing", this.sewScore());
+    else if (st === "press") this.commit("Pressing", this.pressScore());
+  }
+
+  cutScore() {
+    const s = this.state, g = this.garment();
+    const done = s.cutDone.filter(Boolean).length;
+    const need = g.pieces.length;
+    if (!done && !s.cutDevs.length) { this.note("No cloth got cut."); return 0; }
+    if (done < need) this.note((need - done) + " piece" + (need - done > 1 ? "s" : "") + " never came free of the blank.");
+    const dev = s.cutDevs.length ? s.cutDevs.reduce((a, b) => a + b, 0) / s.cutDevs.length : 4;
+    const accuracy = clamp(100 - dev * 19 / s.spec.forgive, 0, 100);
+    if (dev > 2.2) this.note("The shears wandered off the chalk — edges came out ragged.");
+    if (s.tears) this.note(s.tears + " tear" + (s.tears > 1 ? "s" : "") + " in the cloth.");
+    return (done / need) * 100 * 0.58 + accuracy * 0.42 - s.tears * 5;
+  }
+
+  sewScore() {
+    const s = this.state, g = this.garment();
+    const legs = g.legs.length;
+    const doneLegs = clamp(s.legIndex, 0, legs);
+    if (!doneLegs && !s.latDevs.length) { this.note("Not a stitch went in."); return 0; }
+    if (doneLegs < legs) this.note("Only " + doneLegs + " of " + legs + " seams got sewn.");
+    const dev = s.latDevs.length ? s.latDevs.reduce((a, b) => a + b, 0) / s.latDevs.length : 5;
+    const straight = clamp(100 - dev * 15 / s.spec.forgive, 0, 100);
+    if (dev > 2.4) this.note("The stitch line wandered off the seam — that will show.");
+    const cerr = s.cornerErrs.length ? s.cornerErrs.reduce((a, b) => a + b, 0) / s.cornerErrs.length : 0.3;
+    const corners = clamp(100 - cerr * 220, 0, 100);
+    if (cerr > 0.14) this.note("Corners turned early or late — the seams do not meet square.");
+    return (doneLegs / legs) * 100 * 0.42 + straight * 0.36 + corners * 0.22 - s.overshoots * 4;
+  }
+
+  pressScore() {
+    const s = this.state, g = this.garment(), b = s.spec.band;
+    const lo = b.lo / s.spec.forgive, hi = b.hi * s.spec.forgive;
+    let sum = 0, cold = 0;
+    g.zones.forEach((z, i) => {
+      const v = s.zoneHeat[i];
+      if (s.scorched[i]) { sum += 22; return; }
+      if (v >= lo && v <= hi) sum += 100;
+      else if (v < lo) { sum += (v / lo) * 74; if (v < lo * 0.5) cold++; }
+      else sum += clamp(100 - (v - hi) * 1.8, 30, 100);
+    });
+    if (cold) this.note(cold + " patch" + (cold > 1 ? "es" : "") + " left creased.");
+    const scorches = s.scorched.filter(Boolean).length;
+    if (scorches) this.note(scorches + " scorch" + (scorches > 1 ? "es" : "") + " on the finished garment.");
+    return sum / g.zones.length;
+  }
+
+  local(e) {
+    const svg = this.svgRef.current;
+    if (!svg) return { x: 0, y: 0 };
+    const r = svg.getBoundingClientRect();
+    const scale = Math.min(r.width / 200, r.height / 140);
+    const ox = (r.width - 200 * scale) / 2, oy = (r.height - 140 * scale) / 2;
+    return { x: (e.clientX - r.left - ox) / scale, y: (e.clientY - r.top - oy) / scale };
+  }
+
+  onDown = e => {
+    if (this.state.overlay) return;
+    this.audio();
+    const s = this.state, st = this.stage(), p = this.local(e);
+    if (st === "cut") {
+      const g = this.garment();
+      let pick = null, bestD = 9.5;
+      g.pieces.forEach((pc, i) => {
+        if (s.cutDone[i]) return;
+        const pr = projOn(pc.info, p.x, p.y);
+        if (pr.dist < bestD && pr.t <= s.prog[i] + 0.2) { bestD = pr.dist; pick = i; }
+      });
+      this.setState({ activeCut: pick, shear: p });
+    } else if (st === "sew" && !s.sewDone) {
+      this.startHold("machine");
+      this.setState({ holding: true, ptr: p });
+    } else if (st === "press") {
+      this.startHold("steam");
+      this.sfx("hiss");
+      this.setState({ ironing: true, iron: p });
+    }
+  };
+
+  onMove = e => {
+    const s = this.state;
+    if (s.overlay) return;
+    const st = this.stage(), p = this.local(e);
+    if (st === "cut") {
+      const patch = { shear: p };
+      const i = s.activeCut;
+      if (i != null && !s.cutDone[i]) {
+        const pc = this.garment().pieces[i];
+        const pr = projOn(pc.info, p.x, p.y);
+        const tol = s.spec.tol * s.spec.forgive;
+        if (pr.t > s.prog[i]) {
+          const prog = s.prog[i];
+          const nd = s.cutDevs.concat([Math.min(pr.dist, 12)]);
+          patch.cutDevs = nd;
+          const np = s.prog.slice();
+          np[i] = pr.t;
+          patch.prog = np;
+          if (pr.dist > tol) {
+            patch.tears = s.tears + 1;
+            this.sfx("tear");
+          } else if (Math.floor(pr.t * 6) > Math.floor(prog * 6)) this.sfx("snip");
+          if (pr.t > 0.94) {
+            const dn = s.cutDone.slice();
+            dn[i] = true;
+            np[i] = 1;
+            patch.cutDone = dn;
+            patch.activeCut = null;
+            this.sfx("snip");
+            if (dn.filter(Boolean).length === this.garment().pieces.length) {
+              setTimeout(() => this.commit("Cutting", this.cutScore()), 120);
+            }
+          }
+        }
+      }
+      this.setState(patch);
+    } else if (st === "sew") {
+      this.setState({ ptr: p });
+    } else if (st === "press") {
+      this.setState({ iron: p });
+    }
+  };
+
+  onUp = () => {
+    const s = this.state;
+    if (s.overlay) return;
+    const st = this.stage();
+    if (st === "cut") this.setState({ activeCut: null });
+    else if (st === "sew") {
+      this.stopHold();
+      if (!s.holding || s.sewDone) { this.setState({ holding: false }); return; }
+      if (s.legT >= 0.76) {
+        const err = Math.abs(1 - s.legT);
+        this.setState(Object.assign({ cornerErrs: s.cornerErrs.concat([err]) },
+          this.pivot(s, s.stitchLegs.slice(), s.lat, err < 0.12)));
+      } else this.setState({ holding: false });
+    } else if (st === "press") {
+      this.stopHold();
+      this.setState({ ironing: false });
+    }
+  };
+
+  doBig = () => {
+    if (this.stage() !== "serve" || this.state.handed) return;
+    this.setState({ handed: true });
+    const vals = Object.values(this.state.scores);
+    const avg = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+    this.sfx(avg >= 70 ? "good" : "stage");
+    this.setState(s => ({ overlay: "card", totals: s.totals.concat([Math.round(avg)]) }));
+  };
+
+  begin = () => { this.started = true; this.audio(); this.setState({ overlay: null }); };
+
+  cardAction = () => {
+    this.committedAt = null;
+    this.setState(s => Object.assign(this.freshRound(s.round + 1),
+      { overlay: null, totals: s.round + 1 >= 4 ? [] : s.totals, muted: s.muted, musicOff: s.musicOff }));
+  };
+
+  toggleSound = () => {
+    if (!this.state.muted) { this.stopHold(); this.killMusic(); }
+    this.setState(s => ({ muted: !s.muted }));
+  };
+
+  toggleMusic = () => {
+    this.audio();
+    if (this.musicOn()) this.killMusic();
+    this.setState(s => ({ musicOff: !s.musicOff }));
+  };
+
+  renderVals() {
+    const s = this.state, g = this.garment(), st = this.stage(), c = s.spec;
+    const guides = this.props.guides ?? true;
+    const vals = Object.values(s.scores);
+    const avgNow = vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : 0;
+    const mood = avgNow >= 90 ? "Delighted" : avgNow >= 80 ? "Happy" : avgNow >= 70 ? "Satisfied"
+      : avgNow >= 60 ? "Unconvinced" : avgNow >= 50 ? "Disappointed" : "Asking for a refund";
+    const moodColor = avgNow >= 80 ? "#2f7d3a" : avgNow >= 70 ? "#b07d00" : avgNow >= 60 ? "#c2560f" : "#c2210f";
+
+    // ---- cutting table
+    const nextPiece = s.cutDone.findIndex(v => !v);
+    const pieces = g.pieces.map((pc, i) => {
+      const done = s.cutDone[i];
+      const pr = s.prog[i];
+      const start = pc.cut[0];
+      return {
+        label: pc.label,
+        labelColor: done ? "#2f7d3a" : "#4a3c26",
+        lx: n((pc.box[0] + pc.box[2]) / 2 - 24), ly: n(pc.box[3] + 1),
+        keepD: poly(pc.keep), offD: poly(pc.off),
+        offT: done ? "translate(" + n(pc.away[0]) + " " + n(pc.away[1]) + ")" : "translate(0 0)",
+        offO: done ? 0.55 : 1,
+        chalkD: D(pc.cut),
+        hasTrail: pr > 0.01,
+        trailD: D(upTo(pc.info, pr)),
+        isNext: guides && !done && (i === nextPiece || s.activeCut === i),
+        sx: n(start[0]), sy: n(start[1]),
+        fill: g.fill, stroke: g.stroke
+      };
+    });
+    const shear = s.shear || { x: 100, y: 90 };
+    const shearAng = s.activeCut != null ? projOn(g.pieces[s.activeCut].info, shear.x, shear.y).ang - 90 : 0;
+
+    // ---- sewing
+    const leg = g.legs[Math.min(s.legIndex, g.legs.length - 1)];
+    const footPt = s.sewDone ? ptAt(g.seamInfo, 1) : (() => {
+      const t = clamp(s.legT, 0, 1);
+      return { x: leg.a[0] + leg.dx * t * leg.len + leg.px * s.lat, y: leg.a[1] + leg.dy * t * leg.len + leg.py * s.lat, ang: leg.ang };
+    })();
+    const stitchLines = s.stitchLegs.map((pts, i) => ({
+      d: pts.length > 1 ? D(pts) : "",
+      stroke: "#f0c040"
+    })).filter(x => x.d);
+    const corners = g.seam.map((p, i) => {
+      const isEnd = i === g.seam.length - 1;
+      const reached = i <= s.legIndex;
+      const live = guides && !s.sewDone && i === s.legIndex + 1;
+      return {
+        x: n(p[0]), y: n(p[1]),
+        r: i === 0 ? 3 : 4.2,
+        stroke: live ? "#ec3013" : reached ? "#2f7d3a" : "#f6f4ef",
+        w: live ? 2 : 1.2,
+        live: live && !isEnd ? true : live
+      };
+    });
+    const latOff = Math.abs(s.lat);
+    const badgeText = s.sewDone ? "SEAM DONE" : s.holding
+      ? (s.legT >= 0.76 ? "RELEASE NOW" : latOff > 3.4 ? "STEER BACK" : "RUNNING")
+      : (s.legIndex > 0 ? "HOLD TO CONTINUE" : "HOLD TO SEW");
+
+    // ---- pressing
+    const band = c.band;
+    const zones = g.zones.map((z, i) => {
+      const v = s.zoneHeat[i];
+      const sc = s.scorched[i];
+      const inBand = v >= band.lo && v <= band.hi;
+      const over = !sc && v > band.hi;
+      // the dial makes the whole thing visible: grey track, green target band, filling marker
+      const rr = z[2] + 3.4, circ = 2 * Math.PI * rr;
+      const frac = v => clamp(v / SCORCH, 0, 1);
+      return {
+        x: n(z[0]), y: n(z[1]), r: n(z[2]),
+        rr: n(rr), circ: n(circ),
+        dialT: "rotate(-90 " + n(z[0]) + " " + n(z[1]) + ")",
+        tDash: n((frac(band.hi) - frac(band.lo)) * circ) + " " + n(circ),
+        tOff: n(-frac(band.lo) * circ),
+        fDash: n(frac(v) * circ) + " " + n(circ),
+        fillStroke: sc ? "#c2210f" : inBand ? "#f6f4ef" : over ? "#ec3013" : "#f0c040",
+        label: z[3],
+        lx: n(z[0] - 20), ly: n(z[1] + z[2] + 8),
+        fill: sc ? "#6b4a2c" : over ? "#c98a3a" : "#1d1826",
+        o: sc ? 0.75 : over ? n(0.2 + (v - band.hi) / 100) : n(clamp(0.3 - v / 420, 0.02, 0.3)),
+        rough: v < band.lo * 0.8,
+        gloss: inBand,
+        ring: sc ? "#c2210f" : inBand ? "#2f7d3a" : over ? "#c2560f" : "#f6f4ef",
+        dash: inBand || sc ? "0" : "2.4 2.2",
+        wrinkle: "M " + n(z[0] - z[2] * 0.6) + " " + n(z[1] - 2) + " q " + n(z[2] * 0.3) + " 3 " + n(z[2] * 0.6) + " 0 q " + n(z[2] * 0.3) + " -3 " + n(z[2] * 0.6) + " 0"
+          + " M " + n(z[0] - z[2] * 0.6) + " " + n(z[1] + 3) + " q " + n(z[2] * 0.3) + " 3 " + n(z[2] * 0.6) + " 0 q " + n(z[2] * 0.3) + " -3 " + n(z[2] * 0.6) + " 0",
+        sheen: "M " + n(z[0] - z[2] * 0.5) + " " + n(z[1] + z[2] * 0.3) + " q " + n(z[2] * 0.5) + " " + n(-z[2] * 0.9) + " " + n(z[2]) + " " + n(-z[2] * 0.5)
+      };
+    });
+    const steam = [];
+    if (st === "press" && s.ironing && s.iron) {
+      for (let i = 0; i < 4; i++) {
+        steam.push({
+          x: n(s.iron.x - 6 + i * 4), y: n(s.iron.y - 8),
+          rx: n(2 + (i % 2) * 0.8), ry: n(3 + (i % 3)), o: 0.4,
+          style: "transform-box:fill-box; transform-origin:center; animation:tlSteam " + (1.6 + (i % 3) * 0.4) + "s ease-out " + (i * 0.25) + "s infinite"
+        });
+      }
+    }
+
+    // ---- panel
+    let panelLabel = "", panelChips = [], panelNote = "", panelNoteColor = "#6b6864";
+    if (st === "cut") {
+      panelLabel = "Pieces";
+      panelChips = g.pieces.map((pc, i) => ({
+        fill: s.cutDone[i] ? g.fill : "#dedcd6",
+        color: s.cutDone[i] ? "#2f7d3a" : "#6b6864",
+        tag: s.cutDone[i] ? "OK" : Math.round(s.prog[i] * 100) + ""
+      }));
+      panelNote = s.tears ? s.tears + " tear" + (s.tears > 1 ? "s" : "") : "Stay on the chalk";
+      panelNoteColor = s.tears ? "#c2210f" : "#6b6864";
+    } else if (st === "sew") {
+      panelLabel = "Seams";
+      panelChips = g.legs.map((lg, i) => ({
+        fill: i < s.legIndex ? "#2f7d3a" : i === s.legIndex ? "#f0c040" : "#dedcd6",
+        color: i < s.legIndex ? "#2f7d3a" : "#6b6864",
+        tag: i < s.legIndex ? "OK" : i === s.legIndex ? Math.round(s.legT * 100) + "" : "—"
+      }));
+      panelNote = latOff > 3.4 ? "Stitch drifting " + (s.lat > 0 ? "right" : "left") : "Drift " + latOff.toFixed(1);
+      panelNoteColor = latOff > 3.4 ? "#c2210f" : latOff > 1.8 ? "#c2560f" : "#2f7d3a";
+    } else if (st === "press") {
+      panelLabel = "Patches";
+      panelChips = g.zones.map((z, i) => {
+        const v = s.zoneHeat[i];
+        const ok = !s.scorched[i] && v >= band.lo && v <= band.hi;
+        return {
+          fill: s.scorched[i] ? "#6b4a2c" : ok ? "#2f7d3a" : v > band.hi ? "#c98a3a" : "#dedcd6",
+          color: s.scorched[i] ? "#c2210f" : ok ? "#2f7d3a" : "#6b6864",
+          tag: Math.round(v) + ""
+        };
+      });
+      panelNote = "Lift inside the green band";
+    }
+
+    const ears = EARS[s.cust.ear];
+    const cardRows = Object.keys(s.scores).map(k => ({
+      name: k, val: s.scores[k], pct: s.scores[k],
+      color: s.scores[k] >= 75 ? "#2f7d3a" : s.scores[k] >= 45 ? "#b07d00" : "#c2210f"
+    }));
+
+    return {
+      svgRef: this.svgRef,
+      hudKicker: "Order " + (s.round + 1) + " of 4",
+      hudOrder: g.ticket + " · for " + s.cust.name,
+      stageLabel: st === "cut" ? "Cut" : st === "sew" ? "Sew" : st === "press" ? "Press" : "Hand over",
+      showTimer: SECONDS[st] > 0 && !s.overlay,
+      timerText: Math.ceil(s.timeLeft) + "s",
+      timerPct: n(clamp(s.timeLeft / (SECONDS[st] || 1), 0, 1) * 100),
+      timerColor: s.timeLeft < 4 ? "#c2210f" : s.timeLeft < 8 ? "#c2560f" : "#201e1d",
+      showReadout: vals.length > 0,
+      readoutLabel: "So far", readoutText: avgNow + " · " + mood, readoutColor: moodColor,
+      musicLabel: this.musicOn() ? "Music on" : "Music off",
+      musicColor: this.musicOn() ? "#201e1d" : "#a8a6a0",
+      soundLabel: this.muted() ? "Sound off" : "Sound on",
+      soundColor: this.muted() ? "#a8a6a0" : "#201e1d",
+      toggleMusic: this.toggleMusic, toggleSound: this.toggleSound,
+      onDown: this.onDown, onMove: this.onMove, onUp: this.onUp,
+
+      isCut: st === "cut", isSew: st === "sew", isPress: st === "press", isServe: st === "serve",
+      pieces,
+      showShears: st === "cut" && !!s.shear,
+      shearT: "translate(" + n(shear.x) + " " + n(shear.y) + ") rotate(" + n(shearAng) + ")",
+
+      fabricFill: g.fill, fabricStroke: g.stroke,
+      silD: g.silD, silShade: g.shadeD, seamD: g.seamD,
+      corners, stitchLines,
+      footT: "translate(" + n(footPt.x) + " " + n(footPt.y) + ") rotate(" + n(footPt.ang + 90) + ")",
+      showHoldBadge: st === "sew",
+      badgeText,
+      badgeBg: s.sewDone ? "#2f7d3a" : !s.holding ? "#201e1d" : (s.legT >= 0.76 || latOff > 3.4) ? "#ec3013" : "#2f7d3a",
+
+      zones, steam,
+      showIron: st === "press" && !!s.iron,
+      ironT: s.iron ? "translate(" + n(s.iron.x) + " " + n(s.iron.y - 6) + ")" : "translate(100 84)",
+
+      // collar pinned to the hanger bar (viewBox y = 50) whatever the garment's own top edge is
+      hangT: "translate(62 50) scale(0.82) translate(-100 " + n(-g.silTop) + ")",
+      custT: "translate(156 60) scale(1.24)",
+      custName: s.cust.name, custFur: s.cust.fur, custDark: s.cust.furDark,
+      custInner: s.cust.inner, custCloth: s.cust.cloth, custClothDark: s.cust.clothDark,
+      earL: ears.l, earR: ears.r, earLi: ears.li, earRi: ears.ri,
+      mouthD: avgNow >= 70 ? "M -4 9.6 q 4 3 8 0" : "M -4 10.6 q 4 -2.4 8 0",
+
+      showPanel: !s.overlay && st !== "serve",
+      panelLabel, panelChips, panelNote, panelNoteColor,
+      hasPanelNote: !!panelNote,
+
+      showBigBtn: st === "serve" && !s.overlay && !s.handed,
+      bigLabel: "Hand it over",
+      doBig: this.doBig,
+
+      showHint: !s.overlay && !s.titleCard,
+      hintText: HINTS[st],
+
+      showTitleCard: !!s.titleCard && !s.overlay,
+      cardTitle: s.titleCard ? s.titleCard[0] : "",
+      cardHint: s.titleCard ? s.titleCard[1] : "",
+
+      showIntro: s.overlay === "intro",
+      begin: this.begin,
+
+      showCard: s.overlay === "card",
+      cardKicker: s.round + 1 >= 4 ? "Shop closed · " + g.name : g.name + " for " + s.cust.name,
+      cardScore: avgNow + " / 100",
+      cardMood: s.cust.name + " is " + mood.toLowerCase() + ".",
+      cardRows, cardNotes: s.notes, hasNotes: s.notes.length > 0,
+      cardCta: s.round + 1 >= 4 ? "Open again tomorrow" : "Next customer",
+      cardAction: this.cardAction
+    };
+  }
+}
+</script>
+
+
+</body></html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800&display=swap">
+  <style>html,body{margin:0;height:100%;background:#201e1d;overflow:hidden} a{color:#f3f2f2} a:hover{color:#ec3013}</style>
+</helmet>
+<div style="position:fixed;inset:0;background:#b9d4e8">
+  <div ref="{{ host }}" style="position:absolute;inset:0"></div>
+  <sc-if value="{{ standing }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;top:calc(10px + env(safe-area-inset-top));left:10px;right:10px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;z-index:5">
+      <div style="background:#201e1d;color:#f3f2f2;font:800 13px Archivo,sans-serif;letter-spacing:.08em;padding:10px 12px;border:2px solid #f3f2f2">FOX CHESS · TEST (no gallery model)</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button onClick="{{ sitW }}" style="min-height:48px;padding:0 12px;border:2px solid #f3f2f2;background:#ec3013;color:#f3f2f2;font:800 13px Archivo,sans-serif;letter-spacing:.06em;text-align:left;cursor:pointer">PLAY CHESS · TABLE 1</button>
+        <button onClick="{{ sitB }}" style="min-height:48px;padding:0 12px;border:2px solid #f3f2f2;background:#201e1d;color:#f3f2f2;font:800 13px Archivo,sans-serif;letter-spacing:.06em;text-align:left;cursor:pointer">TABLE 2 · BLACK</button>
+        <button onClick="{{ toggleFriend }}" style="min-height:48px;padding:0 12px;border:2px solid #f3f2f2;background:#201e1d;color:#f3f2f2;font:800 13px Archivo,sans-serif;letter-spacing:.06em;text-align:left;cursor:pointer">{{ friendLabel }}</button>
+      </div>
+      <div aria-live="polite" style="max-width:300px;background:rgba(32,30,29,.85);color:#f3f2f2;font:600 12px/1.3 Archivo,sans-serif;padding:6px 8px">{{ live }}</div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { live: 'Loading…', standing: true, friend: false };
+  host = React.createRef();
+  async componentDidMount() {
+    const base = './uploads/gallery-design-kit/code/';
+    const THREE = await import(base + 'vendor/three/three.module.js');
+    const { buildFunProps } = await import(base + 'engine/gallery-fun-props.js');
+    const { setupChess } = await import(base + 'engine/gallery-chess.js');
+    const el = this.host.current, R = new THREE.WebGLRenderer({ antialias: true });
+    R.setPixelRatio(Math.min(devicePixelRatio, 2)); el.appendChild(R.domElement);
+    const scene = new THREE.Scene(); scene.background = new THREE.Color(0xb9d4e8);
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x6a7a5a, 2.0)); const dl = new THREE.DirectionalLight(0xffffff, 1.6); dl.position.set(4, 8, -6); scene.add(dl);
+    const lawn = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.MeshLambertMaterial({ color: 0x6f9a4e })); lawn.rotation.x = -Math.PI / 2; lawn.position.set(67, 0, 34); scene.add(lawn);
+    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.5, 4, 10), new THREE.MeshLambertMaterial({ color: 0x5a4030 })); trunk.position.set(67.3, 2, 36.2); scene.add(trunk);
+    const crown = new THREE.Mesh(new THREE.SphereGeometry(4.5, 14, 10), new THREE.MeshLambertMaterial({ color: 0xf4b6cf })); crown.position.set(67.3, 6.5, 36.2); scene.add(crown);
+    const f = buildFunProps({ floorAt: () => 0, CAMPUS: {} }); scene.add(f.group, f.moving);
+    const cam = new THREE.PerspectiveCamera(60, 1, 0.05, 300);
+    const foxMat = new THREE.MeshLambertMaterial({ color: 0xe8742a });
+    const fox = new THREE.Mesh(new THREE.CapsuleGeometry(0.2, 0.75, 4, 10), foxMat); scene.add(fox);
+    const friend = new THREE.Mesh(new THREE.CapsuleGeometry(0.2, 0.75, 4, 10), new THREE.MeshLambertMaterial({ color: 0x3d4046 })); friend.position.set(66.8, 0.6, 31.8); friend.visible = false; scene.add(friend);
+    const Pl = { x: 64.4, y: 0, z: 29.5 }; fox.position.set(Pl.x, 0.6, Pl.z);
+    // the follow camera behind the fox, plus the game's eased camera shot
+    const S = { pos: null, at: null, k: 1, out: false, fP: new THREE.Vector3(), fA: new THREE.Vector3(), look: new THREE.Vector3(), tP: new THREE.Vector3(), tA: new THREE.Vector3(), d: new THREE.Vector3() };
+    const from = () => { S.fP.copy(cam.position); cam.getWorldDirection(S.d); S.fA.copy(cam.position).addScaledVector(S.d, 3); S.k = 0; };
+    let sitting = null, walk = null;
+    const G = {
+      chess: f.chess, sitting: () => !!sitting,
+      sit: b => { if (!b || b.up) { if (sitting) { Pl.x = sitting.x; Pl.z = sitting.z + (sitting.side === 'w' ? -0.9 : 0.9); } sitting = null; this.setState({ standing: true }); return; }
+        sitting = b; Pl.x = b.x; Pl.z = b.z; this.setState({ standing: false }); },
+      camShot: (p, a) => { from(); S.pos = new THREE.Vector3(...p); S.at = new THREE.Vector3(...a); S.out = false; },
+      camRelease: () => { if (!S.pos) return; from(); S.pos = null; S.out = true; },
+      walkToPoint: (x, z, cb) => { walk = { x, z, cb }; },
+      remote: { list: () => this.state.friend ? [{ id: 'friend', name: 'Jane', placed: true, x: friend.position.x, z: friend.position.z }] : [] },
+      world: { THREE, camera: cam, canvas: R.domElement, pos: () => [Pl.x, Pl.y, Pl.z], addNear: () => {} },
+    };
+    const net = { id: 'me', event: (d, to) => { if (d.a === 'inv' && to === 'friend') setTimeout(() => window.CHESS.onEvent('friend', { k: 'chs', a: 'sit', tb: d.tb, s: d.side === 'w' ? 'b' : 'w' }), 300); if (d.a === 'inv' && to === 'friend') setTimeout(() => { friend.position.set(d.tb ? 70.2 : 64.4, 0.6, 35 + (d.side === 'w' ? 0.8 : -0.8)); window.CHESS.onEvent('friend', { k: 'chs', a: 'acc', tb: d.tb }); }, 900); } };
+    window.CHESS = setupChess({ G, net, announce: t => this.setState({ live: t }), nameOf: id => (id === 'friend' ? 'Jane' : 'A visitor') });
+    this.friendMesh = friend;
+    this.setState({ live: 'Ready. Tap PLAY CHESS: the fox walks to the stool, sits, and the camera glides onto the board.' });
+    const size = () => { const w = el.clientWidth, h = el.clientHeight; R.setSize(w, h); cam.aspect = w / h; cam.fov = cam.aspect < 1 ? 70 : 60; cam.updateProjectionMatrix(); };
+    addEventListener('resize', size); size();
+    let last = performance.now();
+    const loop = now => { this.raf = requestAnimationFrame(loop); const dt = Math.min(0.05, (now - last) / 1000); last = now;
+      if (walk) { const dx = walk.x - Pl.x, dz = walk.z - Pl.z, d = Math.hypot(dx, dz); if (d < 0.05) { const cb = walk.cb; walk = null; cb('arrived'); } else { const s = Math.min(d, 2.4 * dt); Pl.x += dx / d * s; Pl.z += dz / d * s; } }
+      fox.position.set(Pl.x, sitting ? 0.82 : 0.6, Pl.z);
+      cam.position.set(Pl.x, 2.6, Pl.z - 4.2); cam.lookAt(Pl.x, 1.0, Pl.z + 1);
+      if (S.pos || S.out) { S.k = Math.min(1, S.k + dt / 0.9); const k = S.k, e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+        if (S.out) { S.tP.copy(cam.position); cam.getWorldDirection(S.d); S.tA.copy(cam.position).addScaledVector(S.d, 3); if (k >= 1) S.out = false; } else { S.tP.copy(S.pos); S.tA.copy(S.at); }
+        if (S.pos || S.out) { cam.position.lerpVectors(S.fP, S.tP, e); S.look.lerpVectors(S.fA, S.tA, e); cam.lookAt(S.look); } }
+      R.render(scene, cam); };
+    this.raf = requestAnimationFrame(loop);
+  }
+  componentWillUnmount() { cancelAnimationFrame(this.raf); }
+  renderVals() {
+    return {
+      host: this.host, live: this.state.live, standing: this.state.standing,
+      friendLabel: this.state.friend ? 'JANE IS NEARBY ✓' : 'BRING JANE NEARBY',
+      toggleFriend: () => { const v = !this.state.friend; this.setState({ friend: v }); if (this.friendMesh) this.friendMesh.visible = v; },
+      sitW: () => window.CHESS && window.CHESS.open({ tb: 0, side: 'w' }),
+      sitB: () => window.CHESS && window.CHESS.open({ tb: 1, side: 'b' }),
+    };
+  }
+}
+</script>
+</body>
+</html>

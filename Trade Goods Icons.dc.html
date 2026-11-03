@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;background:#201e1d}a{color:#ffd23a}a:hover{color:#f3f2f2}</style>
+</helmet>
+<div style="min-height:100vh;background:#201e1d;color:#f3f2f2;font-family:var(--font-body);padding:clamp(16px,4vw,40px);box-sizing:border-box;display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;flex-direction:column;gap:8px;border-bottom:2px solid #f3f2f2;padding-bottom:16px">
+    <span style="font-size:12px;font-weight:800;letter-spacing:0.14em">8 GATES · SPACE TRADE</span>
+    <h1 style="font:800 clamp(32px,6vw,48px) var(--font-heading);letter-spacing:-0.03em;margin:0;line-height:1">Trade goods</h1>
+    <span style="font-size:16px;color:#d6d3d1">{{ count }} goods. Icon colour = category.</span>
+  </div>
+  <sc-for list="{{ groups }}" as="g" hint-placeholder-count="0">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;gap:10px;border-bottom:2px solid #f3f2f2;padding-bottom:8px"><div style="width:14px;height:14px;background:{{ g.c }}"></div><span style="font:800 18px var(--font-heading);letter-spacing:0.06em">{{ g.n }}</span><span style="font-size:13px;font-weight:700;color:#a8a29e">{{ g.k }}</span></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px">
+        <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="0">
+          <div style="display:flex;flex-direction:column;gap:12px;padding:14px;border:2px solid #3a3836;background:#161514">
+            <div style="width:64px;height:64px;border:2px solid {{ g.c }};display:flex;align-items:center;justify-content:center"><div role="img" aria-label="{{ it.n }}" style="width:42px;height:42px;background-image:{{ it.bg }};background-size:contain;background-repeat:no-repeat;background-position:center"></div></div>
+            <div style="display:flex;flex-direction:column;gap:3px"><span style="font:800 14px var(--font-heading);line-height:1.15">{{ it.n }}</span><span style="font-size:11px;font-weight:700;letter-spacing:0.12em;color:#a8a29e">{{ it.home }}</span></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-for>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { M: null }; blobs = {};
+  componentDidMount() { import(new URL('worlds/trade-icons.js?v=s599c', document.baseURI).href).then(M => this.setState({ M })); }
+  renderVals() {
+    const M = this.state.M; if (!M) return { groups: [], count: '…' };
+    const all = Object.entries(M.TRADE_ICONS).filter(([k]) => !M.isAlias(k));
+    const groups = Object.entries(M.CATS).map(([k, [n, c]]) => { const items = all.filter(([, d]) => d[2] === k).map(([key, d]) => ({ n: d[0], home: d[1], bg: 'url(' + (this.blobs[key] || (this.blobs[key] = URL.createObjectURL(new Blob([M.iconSVG(key)], { type: 'image/svg+xml' })))) + ')' })); return { n, c, k: items.length + '', items }; });
+    return { groups, count: String(all.length) };
+  }
+}
+</script>
+</body>
+</html>

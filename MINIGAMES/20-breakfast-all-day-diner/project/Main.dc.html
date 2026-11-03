@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Breakfast All Day Diner</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="../../../_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+
+
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Breakfast All Day Diner">
+  <div ref="{{ stageRef }}" style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0"></div>
+  <sc-if value="{{ errOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:12px;right:12px;top:12px;z-index:20;background:#000;border:2px solid #ec3013;padding:10px 12px;font:700 13px var(--font-body);color:#fff">The 3D diner could not load: {{ errTxt }}</div></sc-if>
+  <div data-hud-host="1" style="position:absolute;inset:0;pointer-events:none;display:{{ hudDisp }}"><dc-import name="GameHUD" game="{{ engine }}" hud="{{ stdHud }}" started="{{ walkOn }}" busy="{{ hudBusy }}" on-hud="{{ onHud }}" world="Earth" keys="{{ keysList }}" skip-keys="{{ skipKeys }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  <sc-if value="{{ workOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="top" style="position:absolute;left:0;right:0;top:0;z-index:3;pointer-events:none;display:flex;flex-direction:column">
+      <div style="background:#000;border-bottom:2px solid #ffd23a;display:flex;align-items:stretch;padding-top:env(safe-area-inset-top)">
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap">ALL DAY · DAY {{ h.day }}</span><span style="font:900 22px var(--font-heading);font-variant-numeric:tabular-nums;color:{{ clockCol }}">{{ clock }}</span></div>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">EARNED</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;color:#e6b45a">{{ earnedTxt }}</span></div>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;min-width:0;flex:1"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">SERVED · STARS</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap">{{ servedTxt }}</span></div>
+        <button onClick="{{ soundCycle }}" aria-label="{{ soundAria }}" style="pointer-events:auto;flex:none;width:52px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:{{ soundCol }};cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#2a2826"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"></path><sc-if value="{{ sndWaves }}" hint-placeholder-val="{{ true }}"><path d="M16.5 8.5a5 5 0 0 1 0 7"></path><path d="M19 6a8.5 8.5 0 0 1 0 12"></path></sc-if><sc-if value="{{ sndMuted }}" hint-placeholder-val="{{ false }}"><path d="M16 9l5 6M21 9l-5 6"></path></sc-if></svg></button>
+        <button onClick="{{ helpToggle }}" aria-label="How to work the flat-top" style="pointer-events:auto;flex:none;width:52px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 20px var(--font-heading);cursor:pointer" style-hover="background:#2a2826">?</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:6px;align-items:start">
+        <sc-for list="{{ tickets }}" as="o" hint-placeholder-count="3">
+          <div style="background:{{ o.bg }};color:#201e1d;border:2px solid {{ o.bd }};display:flex;flex-direction:column;min-width:0;opacity:{{ o.op }}">
+            <div style="background:{{ o.headBg }};color:#fff;padding:3px 6px;font:900 11px var(--font-heading);letter-spacing:0.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.head }}</div>
+            <sc-if value="{{ o.live }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;height:5px;background:#e8e4da"><div style="height:100%;width:{{ o.patW }};background:{{ o.patCol }}"></div></div>
+              <div style="display:flex;height:4px;background:#e8e4da;border-top:1px solid #fff"><div style="height:100%;width:{{ o.heatW }};background:{{ o.heatCol }}"></div></div>
+              <sc-if value="{{ fullTix }}" hint-placeholder-val="{{ true }}"><sc-for list="{{ o.lines }}" as="l" hint-placeholder-count="2"><div style="padding:2px 6px;font:{{ tixFont }};color:{{ l.col }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-top:1px solid #e8e4da;text-decoration:{{ l.dec }}">{{ l.t }}</div></sc-for>
+              <div style="padding:2px 6px;font:800 10px var(--font-heading);color:{{ o.footCol }};border-top:1px solid #e8e4da;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.foot }}</div></sc-if>
+              <sc-if value="{{ compactTix }}" hint-placeholder-val="{{ false }}"><div style="padding:2px 6px;font:800 10px var(--font-heading);color:#201e1d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.short }}</div></sc-if>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <sc-if value="{{ barOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="bottom" style="position:absolute;left:0;right:0;bottom:0;z-index:4;background:#000;border-top:2px solid #ffd23a;padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:grid;grid-template-columns:repeat(7,minmax(0,1fr));pointer-events:{{ barPE }}">
+      <sc-for list="{{ stations }}" as="st" hint-placeholder-count="7">
+        <button onClick="{{ st.go }}" aria-label="{{ st.aria }}" style="min-height:58px;padding:{{ stPad }};border:0;border-right:2px solid #2a2826;border-radius:0;background:{{ st.bg }};color:{{ st.fg }};cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:3px;min-width:0;opacity:{{ st.op }}" style-hover="filter:brightness(1.2)">
+          <span style="font:900 {{ stFs }} var(--font-heading);letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ st.label }}</span>
+          <span style="font:800 9px var(--font-heading);letter-spacing:0.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ st.bc }}">{{ st.badge }}</span>
+        </button>
+      </sc-for>
+    </div>
+    </sc-if>
+    <div style="position:absolute;right:max(10px, env(safe-area-inset-right));bottom:{{ trayBottom }};z-index:3;pointer-events:none;max-width:min(260px, 62%);background:#000;border:2px solid #ffd23a;display:{{ trayDisp }};flex-direction:column">
+      <div style="padding:5px 10px;font:800 11px var(--font-heading);letter-spacing:0.08em;line-height:1.3;color:#ffd23a;text-wrap:pretty">{{ trayHead }}</div>
+    </div>
+    <sc-if value="{{ sayOn }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:max(10px, env(safe-area-inset-left));bottom:{{ trayBottom }};z-index:3;pointer-events:none;max-width:min(320px, 36%);background:rgba(0,0,0,0.88);border:2px solid #3a3836;padding:8px 10px;font:700 13px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">{{ h.say }}</div>
+    </sc-if>
+  </sc-if>
+  <sc-if value="{{ gaugeOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;bottom:{{ gaugeBottom }};transform:translateX(-50%);z-index:5;pointer-events:none;width:min(420px, calc(100% - 24px));background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:6px 12px"><span style="font:900 clamp(18px,5vw,24px) var(--font-heading);color:{{ gaugeCol }}">{{ gaugeTag }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em;color:#ffd23a;white-space:nowrap">{{ gaugeTitle }}</span></div>
+      <div style="position:relative;height:22px;margin:0 12px 10px;display:flex;gap:2px">
+        <sc-for list="{{ gaugeZones }}" as="z" hint-placeholder-count="3"><span style="flex:{{ z.w }};background:{{ z.col }};display:block"></span></sc-for>
+        <span style="position:absolute;top:-6px;bottom:-6px;left:{{ gaugeX }};width:4px;margin-left:-2px;background:#ffffff;display:block"></span>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(10px, env(safe-area-inset-left));bottom:{{ trayBottom }};z-index:7;pointer-events:none;width:min(460px, calc(100% - 108px));background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 12px;border-bottom:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;background:#ec3013;display:block"></span>DEMO · NOTHING IS SAVED</span><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">{{ demoN }}</span></div>
+      <div style="display:flex;align-items:stretch"><sc-if value="{{ demoKeyOn }}" hint-placeholder-val="{{ false }}"><div style="flex:none;min-width:64px;display:flex;align-items:center;justify-content:center;padding:0 10px;background:#ec3013;color:#fff;font:900 15px var(--font-heading);border-right:2px solid #3a3836">{{ h.demo.key }}</div></sc-if><div style="padding:9px 12px;font:900 clamp(14px,3.8vw,19px) var(--font-heading);letter-spacing:0.03em;line-height:1.2;color:#fff;text-wrap:pretty">{{ h.demo.cap }}</div></div>
+    </div>
+    <button onClick="{{ demoExit }}" aria-label="Exit the demo" style="position:absolute;right:max(10px, env(safe-area-inset-right));bottom:{{ trayBottom }};z-index:7;min-width:84px;min-height:48px;padding:0 14px;border:2px solid #ec3013;border-radius:0;background:#ec3013;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">EXIT DEMO</button>
+  </sc-if>
+  <sc-if value="{{ reactOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ reactTop }};transform:translateX(-50%);z-index:6;pointer-events:none;width:min(420px, calc(100% - 24px));background:#000;border:3px solid {{ h.react.col }};display:flex;flex-direction:column">
+      <div style="display:flex;align-items:stretch"><div style="flex:1;padding:10px 14px;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">{{ h.react.who }}</span><span style="font:900 clamp(30px,9vw,44px) var(--font-heading);line-height:1;color:{{ h.react.col }}">{{ h.react.word }}</span></div><div style="flex:none;min-width:84px;padding:0 12px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;background:{{ h.react.col }};color:#000"><span style="font:900 20px var(--font-heading);letter-spacing:0.04em">{{ reactStars }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.08em">{{ reactTip }}</span></div></div>
+      <div style="padding:8px 14px 10px;border-top:2px solid #2a2826;font:700 15px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">“{{ h.react.line }}”</div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ flashOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ flashTop }};transform:translateX(-50%);z-index:5;pointer-events:none;max-width:calc(100% - 24px);background:rgba(0,0,0,0.9);border:2px solid {{ flashCol }};display:flex;align-items:stretch">
+      <span style="flex:none;width:10px;background:{{ flashCol }};display:block"></span>
+      <span style="padding:8px 14px;font:900 clamp(14px,3.8vw,22px) var(--font-heading);letter-spacing:0.04em;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ flashTxt }}</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ payOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="bottom" style="position:absolute;left:0;right:0;bottom:0;z-index:6;background:#000;border-top:2px solid #ffd23a;padding:10px max(12px, env(safe-area-inset-left)) calc(10px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">GIVE THE CHANGE</span><span style="font:700 14px var(--font-body);color:#cfcac2">{{ payLine }}</span></div>
+      <div style="display:flex;align-items:stretch;gap:8px;flex-wrap:wrap">
+        <div style="min-width:110px;padding:6px 12px;border:2px solid #3a3836;display:flex;flex-direction:column;justify-content:center"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">GIVEN / OWED</span><span style="font:900 24px var(--font-heading);font-variant-numeric:tabular-nums">{{ payGiven }}</span></div>
+        <sc-for list="{{ coins }}" as="cn" hint-placeholder-count="4"><button onClick="{{ cn.give }}" style="min-width:64px;min-height:56px;padding:0 14px;border:2px solid #e6b45a;border-radius:0;background:#1a1612;color:#e6b45a;font:900 20px var(--font-heading);cursor:pointer;text-align:left" style-hover="background:#2a2420" style-active="background:#3a3020">{{ cn.label }}</button></sc-for>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ introOn }}" hint-placeholder-val="{{ true }}">
+    <div data-safe="intro" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:6;width:min(420px, calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column">
+      <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">EARTH · BREAKFAST ALL DAY · DAY {{ h.day }}</span><span style="font:900 26px var(--font-heading);line-height:1.05">Work a shift</span><sc-if value="{{ introFull }}" hint-placeholder-val="{{ true }}"><span style="font:700 13px var(--font-body);color:#cfcac2;text-wrap:pretty">Three minutes on Sunny's flat-top. Pour, flip, crack and pour the coffee, then flick the plate down the counter while it is hot. Pay is a wage plus prices plus tips, in gold.</span></sc-if></div>
+      <sc-for list="{{ introRows }}" as="r" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:76px minmax(0,1fr);gap:12px;padding:6px 16px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;color:#e6b45a">{{ r.v }}</span></div></sc-for>
+      <button onClick="{{ demoGo }}" style="min-height:48px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WATCH THE DEMO</button>
+      <button onClick="{{ walkGo }}" style="min-height:48px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WALK AROUND THE DINER</button>
+      <button onClick="{{ goWork }}" style="min-height:56px;padding:0 18px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">PUT ME TO WORK</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ helpOn }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ helpToggle }}" style="position:absolute;inset:0;z-index:9;background:rgba(0,0,0,0.82);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #ffd23a;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="padding:10px 14px;border-bottom:2px solid #3a3836;font:900 16px var(--font-heading);letter-spacing:0.06em;color:#ffd23a">HOW THE FLAT-TOP WORKS</div>
+        <sc-for list="{{ helpRows }}" as="r" hint-placeholder-count="7"><div style="display:grid;grid-template-columns:84px minmax(0,1fr);gap:10px;padding:7px 14px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body);line-height:1.35"><span style="font:900 11px var(--font-heading);letter-spacing:0.08em;color:#e6b45a">{{ r.k }}</span><span style="text-wrap:pretty">{{ r.v }}</span></div></sc-for>
+        <div style="padding:10px 14px;font:700 12px var(--font-body);color:#cfcac2">Tap anywhere to close</div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:8;background:rgba(0,0,0,0.72);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #3a3836;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+          <div style="padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ doneKicker }}</span><span style="font:900 24px var(--font-heading);line-height:1.05">Shift over</span><span style="font:700 12px var(--font-body);color:#cfcac2">{{ doneSub }}</span></div>
+          <div style="width:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#ec3013"><span style="font:900 30px var(--font-heading)">{{ d.total }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em">GOLD</span></div>
+        </div>
+        <sc-if value="{{ eodOn }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:10px;padding:10px 16px;background:#ffd23a;color:#000;border-bottom:2px solid #000;font:900 14px var(--font-heading);letter-spacing:0.06em"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18.5 21 12 16.8 5.5 21l2-7.5L2 9h7z" fill="#000"></path></svg>EMPLOYEE OF THE DAY</div></sc-if>
+        <sc-for list="{{ doneRows }}" as="r" hint-placeholder-count="6"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:7px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;font-variant-numeric:tabular-nums">{{ r.v }}</span></div></sc-for>
+        <sc-for list="{{ unlocks }}" as="u" hint-placeholder-count="1"><div style="padding:7px 16px;border-bottom:2px solid #2a2826;font:800 13px var(--font-heading);letter-spacing:0.04em;color:#22c55e">UNLOCKED · {{ u.t }}</div></sc-for>
+        <div style="padding:8px 16px 4px;font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">FIX UP THE DINER · YOU HAVE {{ goldTxt }}</div>
+        <sc-for list="{{ shop }}" as="s" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 16px;border-top:2px solid #2a2826">
+            <div style="display:flex;flex-direction:column;min-width:0"><span style="font:900 13px var(--font-heading);letter-spacing:0.04em">{{ s.name }}</span><span style="font:600 12px var(--font-body);color:#cfcac2">{{ s.line }}</span></div>
+            <button onClick="{{ s.buy }}" disabled="{{ s.off }}" style="min-width:84px;min-height:44px;padding:0 12px;border:2px solid {{ s.bd }};border-radius:0;background:{{ s.bg }};color:{{ s.fg }};font:900 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;opacity:{{ s.op }}" style-hover="filter:brightness(1.15)">{{ s.btn }}</button>
+          </div>
+        </sc-for>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:8px">
+          <button onClick="{{ goWork }}" style="min-height:52px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">NEXT SHIFT</button>
+          <button onClick="{{ breakGo }}" style="min-height:52px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">TAKE A BREAK</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":844,"height":390}}'>
+class Component extends DCLogic {
+  state = { h: null, help: false, vw: 1200, vh: 800, hi: { pad: false, menu: false, split: false, bar: 0 } };
+  stageRef = React.createRef();
+  onHud = hi => { const o = this.state.hi; if (!o || o.bar !== hi.bar || o.pad !== hi.pad || o.menu !== hi.menu || o.split !== hi.split) this.setState({ hi }); };
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs(); try { this.ro = new ResizeObserver(this.onRs); this.stageRef.current && this.ro.observe(this.stageRef.current.parentElement); } catch (e) {}
+    try { const m = window.DinerBundle || await import(new URL('minigames/earth/breakfast-shift.js', document.baseURI).href); this.g = await m.createBreakfastShift({ container: this.stageRef.current, onState: h => this.setState({ h }) }); window.__diner = this.g; this.forceUpdate(); if (/[?&]demo=1/.test(location.search)) setTimeout(() => this.g.demoStart(), 400); if (/[?&]walk=1/.test(location.search)) setTimeout(() => this.g.walk(), 400); }
+    catch (e) { console.warn('diner failed: ' + (e && e.stack || String(e))); this.setState({ err: String(e && e.message || e) }); }
+  }
+  componentDidUpdate() { const root = this.stageRef.current && this.stageRef.current.parentElement; if (!root || !this.g || !this.g.setSafe) return; const rb = root.getBoundingClientRect(); let top = 0, bot = 0, left = 0; root.querySelectorAll('[data-safe]').forEach(el => { const r = el.getBoundingClientRect(); if (!r.height) return; if (el.dataset.safe === 'top') top = Math.max(top, r.bottom - rb.top); else if (el.dataset.safe === 'intro' && rb.width > rb.height) left = Math.max(left, r.right - rb.left); else bot = Math.max(bot, rb.bottom - r.top); }); const H = rb.height, mode = this.g.hud().mode; this.g.setSafe(Math.round(Math.min(top, H * 0.4)), Math.round(Math.min(bot, H * (mode === 'intro' ? 0.62 : 0.3))), Math.round(Math.min(left, rb.width * 0.6))); }
+  componentWillUnmount() { removeEventListener('resize', this.onRs); this.g && this.g.destroy(); }
+  onRs = () => { const el = this.stageRef.current, r = el && el.parentElement ? el.parentElement.getBoundingClientRect() : null; this.setState({ vw: r && r.width ? r.width : innerWidth, vh: r && r.height ? r.height : innerHeight }); };
+  renderVals() {
+    const S = this.state, g = this.g, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const h = S.h || { mode: 'intro', day: 1, left: 180, earned: 0, tips: 0, served: 0, lost: 0, stars: 0, tickets: [], focus: 'all', badges: {}, flash: null, say: '', gauge: null, done: null, gold: 0, uniform: false, hint: null, pay: null, react: null, upgrades: [], menu: ['PANCAKES', 'COFFEE'], next: [], locked: {}, demo: null, walk: null };
+    const mode = h.mode, work = mode === 'shift' || mode === 'glide', walk = mode === 'walk', d = h.done || { total: 0 }, m = Math.floor(h.left / 60), s = Math.floor(h.left % 60), port = S.vh > S.vw, phone = Math.min(S.vw, S.vh) < 520, shortL = !port && S.vh < 520, bar = walk ? (S.hi.bar || 0) : 0;
+    const W = h.walk || {};
+    let sv = null; try { sv = JSON.parse(localStorage.getItem('8gates.save.v1') || 'null'); } catch (e) {}
+    const stdHud = { hp: 100, hpMax: 100, en: 100, gold: h.gold, hour: 21, day: sv && sv.stats ? sv.stats.worldDay || 1 : 1, items: sv ? Object.entries(sv.items || {}).filter(([, n]) => n > 0).map(([id, n]) => ({ id, n, label: id })) : [], place: W.place || 'Earth · Breakfast All Day', quest: { text: W.quest || 'Breakfast All Day' }, prompt: W.prompt || null, toast: W.toast || null, muted: false, weather: 'Clear', boat: false, inCave: false, weapons: [], dialog: W.dialog || null, vehicles: [], vehAmmo: [] };
+    const STN = [['all', 'ALL'], ['cakes', 'CAKES'], ['eggs', 'EGGS'], ['bacon', 'BACON'], ['hash', 'HASH'], ['coffee', 'COFFEE'], ['pass', 'PASS']];
+    const G = h.gauge, gz = G ? G.zones : [], gtot = gz.reduce((a, z) => a + z[1], 0) || 1, trayB = h.pay ? 'calc(150px + env(safe-area-inset-bottom))' : 'calc(70px + env(safe-area-inset-bottom))';
+    return {
+      stageRef: this.stageRef, h, d, errOn: !!S.err, errTxt: S.err || '', engine: g || null, stdHud, walkOn: !!g && walk, hudBusy: !walk, onHud: this.onHud, hudDisp: walk ? 'block' : 'none', stageTop: bar + 'px',
+      keysList: [['WASD', 'walk'], ['E', 'talk · use'], ['Space', 'hop'], ['1', 'wave'], ['M', 'map'], ['I', 'menu']], skipKeys: ['KeyT', 'KeyN', 'KeyO', 'KeyH', 'KeyJ'],
+      workOn: work && !h.done, introOn: mode === 'intro' && !h.demo, doneOn: !!h.done && mode === 'done', helpOn: S.help && work,
+      clock: m + ':' + String(s).padStart(2, '0'), clockCol: h.left < 20 ? '#ff9a8a' : '#ffffff', earnedTxt: (h.earned + h.tips) + 'g', servedTxt: h.served + (h.lost ? ' · ' + h.lost + ' LEFT' : '') + ' · ★ ' + (h.stars || '–') + (h.streak >= 2 ? ' · STREAK ×' + h.streak : ''),
+      fullTix: !shortL, compactTix: shortL, tixFont: phone ? '800 9px var(--font-heading)' : '800 11px var(--font-heading)',
+      tickets: (h.tickets.length ? h.tickets : [0, 1, 2].map(i => ({ seat: i, empty: true }))).map(t => t.empty ? { head: 'SEAT ' + (t.seat + 1) + ' · FREE', live: false, bg: 'rgba(0,0,0,0.35)', bd: '#3a3836', headBg: '#2a2826', op: 0.75, lines: [] } : {
+        head: (t.ready ? 'ORDER UP · ' : t.arriving ? 'COMING IN · ' : '') + t.name, live: true, bg: '#fbfbf7', bd: t.ready ? '#22c55e' : '#201e1d', headBg: t.ready ? '#1f8a4c' : t.full ? '#7a1d6b' : '#c42d3c', op: 1,
+        patW: Math.round(t.pat * 100) + '%', patCol: t.pat < 0.3 ? '#ec3013' : t.pat < 0.6 ? '#ffd23a' : '#22c55e', heatW: t.hot ? Math.round(t.heat * 100) + '%' : '0%', heatCol: t.heat < 0.25 ? '#5fa8e8' : '#ff8a3a',
+        lines: t.lines.map(l => ({ t: (l.done ? '✓ ' : '') + l.t, col: l.done ? '#1f8a4c' : '#201e1d', dec: 'none' })), foot: t.hot ? (t.heat < 0.25 ? 'PLATE IS COLD!' : 'PLATE HOT · ' + t.total + 'g') : (t.full ? 'FULL BREAKFAST · ' : '') + t.total + 'g', footCol: t.hot && t.heat < 0.25 ? '#2a6ab8' : '#7a746d',
+        short: t.lines.filter(l => !l.done).map(l => l.t.split(' · ')[0]).join(' + ') || 'ORDER UP' }),
+      barOn: work && !h.done && !h.pay && !h.react, barPE: h.demo ? 'none' : 'auto', stPad: S.vw < 480 ? '6px 1px 6px 3px' : '6px 4px 6px 8px', stFs: S.vw < 480 ? '10px' : '13px',
+      stations: STN.map(([id, label]) => { const on = (h.focus || 'all') === id, nx = !!(h.hint && h.hint.station === id && !on), lk = h.locked && h.locked[id], b = lk ? 'DAY ' + lk : nx ? 'NEXT ▸' : (h.badges || {})[id] || '', hot = /READY|FLIP|ORDER|BURN|NEXT/.test(b);
+        return { label, aria: 'Look at ' + label, badge: b || (on ? 'VIEWING' : ' '), bg: on ? '#ffd23a' : nx ? '#1f3a24' : '#000000', fg: on ? '#000000' : '#ffffff', op: lk ? 0.5 : 1, bc: on ? '#000000' : hot ? (/BURN/.test(b) ? '#ff9a8a' : /NEXT|FLIP/.test(b) ? '#ffd23a' : '#22c55e') : '#8a847e', go: e => { blur(e); g && g.setFocus(id); } }; }),
+      trayHead: h.hint ? 'NEXT · ' + h.hint.text : 'WATCH THE TICKETS', trayDisp: h.demo || h.react || h.pay || h.gauge ? 'none' : 'flex', trayBottom: trayB,
+      sayOn: !!h.say && !port && !h.demo && !h.react, flashOn: !!h.flash && !walk, flashTxt: h.flash ? h.flash.txt : '', flashCol: h.flash ? h.flash.col : '#ffd23a', flashTop: port ? '52%' : (shortL ? '116px' : '40%'),
+      gaugeOn: !!G && work, gaugeTitle: G ? G.title : '', gaugeTag: G ? G.tag : '', gaugeCol: G ? ((gz.find(z => z[0] === G.tag) || [0, 0, '#fff'])[2] === '#9ca3af' ? '#ffffff' : (gz.find(z => z[0] === G.tag) || [0, 0, '#fff'])[2]) : '#fff', gaugeX: G ? Math.min(100, G.v / gtot * 100).toFixed(1) + '%' : '0%', gaugeZones: gz.map(z => ({ w: Math.round(z[1] * 1000), col: z[2] })), gaugeBottom: 'calc(76px + env(safe-area-inset-bottom))',
+      payOn: !!h.pay, payLine: h.pay ? 'Bill ' + h.pay.total + 'g · they paid ' + h.pay.paid + 'g · tap coins to make ' + h.pay.owed + 'g' : '', payGiven: h.pay ? h.pay.given + ' / ' + h.pay.owed + 'g' : '',
+      coins: [1, 2, 5, 10].map(v => ({ label: v + 'g', give: e => { blur(e); g && g.giveCoin(v); } })),
+      introFull: !shortL, introRows: [['Gold', h.gold + 'g'], ['Menu', h.menu.join(', ')], ...(shortL ? [] : [['Next', h.next.length ? h.next.slice(0, 2).join(', ') : 'The whole menu is yours'], ['Uniform', h.uniform ? 'Yours · paper hat, towel + egg tee' : 'Serve 2 to keep it']])].map(([k, v]) => ({ k, v })),
+      goWork: e => { blur(e); g && g.startShift(); }, walkGo: e => { blur(e); g && g.walk(); }, breakGo: e => { blur(e); g && g.breakTime(); },
+      reactOn: !!h.react, reactTop: port ? 'calc(64px + env(safe-area-inset-top))' : '58px', reactStars: h.react ? (h.react.stars ? '★'.repeat(h.react.stars) + '☆'.repeat(3 - h.react.stars) : '✕') : '', reactTip: h.react ? (h.react.stars ? (h.react.tip ? 'TIP +' + h.react.tip + 'g' : 'NO TIP') : 'REMAKE IT') : '',
+      demoGo: e => { blur(e); g && g.demoStart(); }, demoExit: e => { blur(e); g && g.demoStop(); }, demoOn: !!h.demo, demoKeyOn: !!(h.demo && h.demo.key), demoN: h.demo ? 'SERVED ' + h.demo.n + ' / ' + h.demo.of : '', helpToggle: e => { blur(e); this.setState({ help: !S.help }); },
+      soundCycle: e => { blur(e); if (!g) return; const so = g.soundOn(), mo = g.musicOn(); if (so && mo) g.toggleMusic(); else if (so && !mo) g.toggleSound(); else { g.toggleSound(); if (!g.musicOn()) g.toggleMusic(); } this.forceUpdate(); }, sndMuted: !!g && !g.soundOn(), sndWaves: !g || (g.soundOn() && g.musicOn()), soundCol: !g || (g.soundOn() && g.musicOn()) ? '#ffd23a' : g.soundOn() ? '#cfcac4' : '#ec3013', soundAria: !g ? 'Sound' : g.soundOn() && g.musicOn() ? 'Sound and music on. Tap to turn the music off' : g.soundOn() ? 'Music off. Tap to mute everything' : 'Muted. Tap to turn sound back on',
+      helpRows: [['PANCAKES', 'HOLD on a dashed ring to pour batter. Let go when it fills the ring. When it bubbles all over, FLICK it up to flip (a tap works too). Golden underneath? Tap it: it goes on the plate.'], ['EGGS', 'TAP the griddle to crack an egg. Leave it = SUNNY SIDE UP. FLICK it up = OVER (easy, medium, hard by the yolk meter). STIR in circles with your finger = SCRAMBLED. Tap to plate both.'], ['BACON', 'DRAG along a dashed lane, end to end, to lay a strip. Tap it when the meter says CRISP.'], ['HASH', 'SCRIBBLE inside the ring until the shreds fill it, let go and it cooks. FLICK it to flip, then tap it at the shade on the ticket.'], ['COFFEE', 'HOLD the pot and let go at the yellow line. HOLD the creamer for a splash or extra. TAP the sugar bowl once per sugar. Tap the mug to send it.'], ['PASS', 'Each seat has a plate under the heat lamps. When the bell rings, FLICK the plate up the screen and it slides down the counter. A cold plate is a plate that comes back.'], ['DRAG', 'Want a different plate? Drag a cooked pancake, hash or the mug onto that plate.'], ['PAY', 'Tap coins to give the exact change. Hot + right = tips.']].map(([k, v]) => ({ k, v })),
+      doneKicker: h.done ? 'DAY ' + d.day + ' · BREAKFAST ALL DAY' : '', doneSub: h.done ? (d.newDay ? 'Day ' + (d.day + 1) + ' tomorrow' : 'Serve ' + (2 + d.day) + ' to move up a day') + ' · ★ ' + d.stars + ' employee stars' : '', eodOn: !!(h.done && d.eod),
+      doneRows: h.done ? [['Served', String(d.served)], ['Walked out', String(d.lost)], ['Average stars', String(d.avg)], ['Wage', d.wage + 'g'], ['Prices', d.earned + 'g'], ['Tips', d.tips + 'g']].map(([k, v]) => ({ k, v })) : [], unlocks: h.done ? d.unlock.map(t => ({ t })) : [], goldTxt: h.gold + 'g',
+      shop: h.upgrades.map(u => { const afford = h.gold >= u.cost; return { name: u.name, line: u.line, btn: u.owned ? 'OWNED' : u.cost + 'g', off: u.owned || !afford, bg: u.owned ? '#22c55e' : afford ? '#ffd23a' : '#000000', fg: u.owned || afford ? '#000000' : '#8a847e', bd: u.owned ? '#22c55e' : afford ? '#ffd23a' : '#3a3836', op: u.owned || afford ? 1 : 0.6, buy: e => { blur(e); g && g.buyUpgrade(u.id); } }; }),
+    };
+  }
+}
+</script>
+</body>
+</html>

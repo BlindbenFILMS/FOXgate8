@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/modernist/styles.css">
+<script src="ds/modernist/ds_bundle.js"></script>
+<script type="module" src="minigames/zion/gold-pan-boot.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}@keyframes gpSpin{to{transform:rotate(360deg)}}@keyframes gpPulse{0%,100%{opacity:.55}50%{opacity:1}}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Zion Gold Rush">
+  <div ref="{{ stageRef }}" style="position:absolute;inset:0" role="img" aria-label="The Panning Hall, 3D view"></div>
+  <div aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">{{ liveTxt }}</div>
+  <sc-if value="{{ errOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:12px;right:12px;top:12px;z-index:10;background:#000;border:2px solid #ec3013;padding:10px 14px;font:700 13px var(--font-body);color:#fff">The 3D hall could not load: {{ errTxt }}</div></sc-if>
+  <div data-hud-host="1" style="position:absolute;inset:0;pointer-events:none"><dc-import name="Game_HUD" game="{{ engine }}" hud="{{ stdHud }}" started="{{ started }}" busy="{{ busy }}" on-hud="{{ onHud }}" world="Zion" vehicle="{{ vehKey }}" stick-zone="{{ stickZone }}" keys="{{ keysList }}" skip-keys="{{ skipKeys }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+
+  <sc-if value="{{ ringOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:{{ ringL }};top:{{ ringT }};width:{{ ringD }};height:{{ ringD }};z-index:2;pointer-events:none">
+      <div style="position:absolute;inset:0;border:3px dashed #ffd23a;border-radius:50%;animation:gpSpin 4s linear infinite"></div>
+      <div style="position:absolute;left:50%;top:-14px;transform:translateX(-50%);background:#ffd23a;color:#000;padding:4px 10px;font:900 13px var(--font-heading);letter-spacing:0.08em;white-space:nowrap;animation:gpPulse 1.2s ease-in-out infinite">CIRCLE HERE · SWIRL</div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ handOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:{{ handX }};top:{{ handY }};width:34px;height:34px;margin:-17px 0 0 -17px;z-index:7;pointer-events:none;border-radius:50%;border:3px solid #fff;background:{{ handBg }};box-shadow:0 0 0 3px rgba(0,0,0,0.6)"></div>
+  </sc-if>
+
+  <sc-if value="{{ panOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="{{ panSafeKey }}" style="position:absolute;left:max(12px, env(safe-area-inset-left));top:{{ cardTop }};width:{{ panW }};z-index:3;background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column;pointer-events:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 10px;border-bottom:2px solid #3a3836">
+        <span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ panKick }}</span>
+        <span style="display:flex;gap:4px;flex:none"><sc-for list="{{ pips }}" as="pp" hint-placeholder-count="3"><span style="width:10px;height:10px;background:{{ pp.c }};outline:{{ pp.o }};display:block"></span></sc-for></span>
+      </div>
+      <div style="display:{{ statsDisp }};grid-template-columns:repeat(3,minmax(0,1fr))">
+        <sc-for list="{{ panStats }}" as="st" hint-placeholder-count="3"><div style="padding:4px 10px;border-right:2px solid #2a2826;display:flex;flex-direction:column;min-width:0"><span style="font:800 9px var(--font-heading);letter-spacing:0.1em;color:#cfcac4;white-space:nowrap">{{ st.k }}</span><span style="font:900 17px var(--font-heading);font-variant-numeric:tabular-nums;color:{{ st.c }};white-space:nowrap">{{ st.v }}</span></div></sc-for>
+      </div>
+      <sc-for list="{{ meters }}" as="mt" hint-placeholder-count="2">
+        <div style="padding:4px 10px 6px;border-top:2px solid #2a2826;display:flex;flex-direction:column;gap:3px">
+          <div style="display:flex;justify-content:space-between;gap:8px"><span style="font:800 9px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">{{ mt.k }}</span><span style="font:900 10px var(--font-heading);letter-spacing:0.04em;color:{{ mt.c }};white-space:nowrap">{{ mt.v }}</span></div>
+          <div style="height:8px;background:#2a2826"><div style="height:100%;width:{{ mt.w }};background:{{ mt.c }}"></div></div>
+        </div>
+      </sc-for>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border-top:2px solid #3a3836;pointer-events:auto">
+        <button onClick="{{ helpToggle }}" style="min-height:40px;padding:0 10px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 11px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">HOW TO PAN</button>
+        <button onClick="{{ leave }}" style="min-height:40px;padding:0 10px;border:0;border-radius:0;background:#000;color:#fff;font:900 11px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">LEAVE THE BAR</button>
+      </div>
+    </div>
+    <div data-safe="right" style="position:absolute;right:{{ gaugeR }};top:{{ gaugeTop }};bottom:{{ gaugeBot }};width:46px;z-index:3;pointer-events:none;display:flex;flex-direction:column;align-items:stretch;gap:4px">
+      <span style="font:900 10px var(--font-heading);letter-spacing:0.08em;color:{{ gaugeLabCol }};text-align:left;background:#000;padding:3px 4px;border:2px solid #3a3836">{{ gaugeLab }}</span>
+      <div style="position:relative;flex:1;background:#000;border:2px solid #3a3836;overflow:visible">
+        <div style="position:absolute;left:0;right:0;top:0;height:{{ gRed }};background:rgba(150,44,32,0.55)"></div>
+        <div style="position:absolute;left:0;right:0;bottom:0;height:{{ gGreen }};background:rgba(96,168,104,0.35)"></div>
+        <div style="position:absolute;left:0;right:0;bottom:0;height:{{ gBlack }};background:#3d3a33"></div>
+        <div style="position:absolute;left:9px;right:9px;bottom:0;height:{{ gFill }};background:{{ gFillCol }}"></div>
+        <div style="position:absolute;left:-6px;right:-6px;bottom:{{ gSafe }};height:4px;margin-bottom:-2px;background:#ffd23a"></div>
+        <sc-if value="{{ gBlackOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:-6px;right:-6px;bottom:{{ gBlack }};height:0;border-top:3px dashed #e6e6d6"></div></sc-if>
+      </div>
+      <span style="font:900 9px var(--font-heading);letter-spacing:0.06em;color:#ffd23a;background:#000;padding:3px 4px;border:2px solid #3a3836;line-height:1.2">GOLD LINE</span>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ flashOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ flashTop }};transform:translateX(-50%);z-index:5;pointer-events:none;max-width:calc(100% - 24px);background:rgba(0,0,0,0.9);border:2px solid {{ flashCol }};display:flex;align-items:stretch">
+      <span style="flex:none;width:10px;background:{{ flashCol }};display:block"></span>
+      <span style="padding:6px 12px;font:900 clamp(13px,3.8vw,20px) var(--font-heading);letter-spacing:0.04em;color:#fff;text-wrap:pretty">{{ flashTxt }}</span>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:{{ demoTop }};z-index:7;pointer-events:none;width:{{ demoW }};background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="padding:5px 12px;border-bottom:2px solid #3a3836;font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;background:#ec3013;display:block"></span>DEMO · NOTHING IS SAVED</div>
+      <div style="display:flex;align-items:stretch"><div style="flex:none;min-width:64px;display:flex;align-items:center;justify-content:center;padding:0 8px;background:#ec3013;color:#fff;font:900 13px var(--font-heading);border-right:2px solid #3a3836;text-align:center">{{ demoKey }}</div><div style="padding:8px 12px;font:900 clamp(13px,3.6vw,16px) var(--font-heading);letter-spacing:0.02em;line-height:1.25;color:#fff;text-wrap:pretty">{{ demoCap }}</div></div>
+    </div>
+    <button onClick="{{ demoExit }}" aria-label="Exit the demo" style="position:absolute;right:max(12px, env(safe-area-inset-right));top:{{ demoTop }};z-index:7;min-width:92px;min-height:48px;padding:0 14px;border:2px solid #ec3013;border-radius:0;background:#ec3013;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">EXIT DEMO</button>
+  </sc-if>
+
+  <sc-if value="{{ introOn }}" hint-placeholder-val="{{ true }}">
+    <div data-safe="intro" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:6;width:min(420px, calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column">
+      <div style="position:relative;padding:12px 104px 12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:3px">
+        <div style="position:absolute;right:0;top:0;display:flex">
+          <button onClick="{{ musicTog }}" aria-label="{{ musicTxt }}" aria-pressed="{{ musicOnA }}" style="width:48px;height:48px;padding:0;border:0;border-left:2px solid #3a3836;border-bottom:2px solid #3a3836;border-radius:0;background:#000;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#2a2826"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{{ musicCol }}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="17" cy="16" r="3"></circle><path d="{{ musicSlash }}"></path></svg></button>
+          <button onClick="{{ soundTog }}" aria-label="{{ soundTxt }}" aria-pressed="{{ soundOnA }}" style="width:48px;height:48px;padding:0;border:0;border-left:2px solid #3a3836;border-bottom:2px solid #3a3836;border-radius:0;background:#000;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#2a2826"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{{ soundCol }}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"></path><path d="{{ soundWaves }}"></path></svg></button>
+        </div>
+        <span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">ZION · THE PANNING HALL · zionPanHall</span><span style="font:900 28px var(--font-heading);line-height:1">Gold Rush</span><sc-if value="{{ introBody }}" hint-placeholder-val="{{ true }}"><span style="font:700 13px var(--font-body);line-height:1.4;color:#cfcac2;text-wrap:pretty">Three pans a session. Circle the pan to wash the gravel over the lip. Swirl too hard and the gold goes with it.</span></sc-if></div>
+      <sc-if value="{{ introBody }}" hint-placeholder-val="{{ true }}"><div style="padding:6px 16px 4px;font:800 10px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">PICK A BAR</div></sc-if>
+      <sc-for list="{{ barRows }}" as="b" hint-placeholder-count="3">
+        <button onClick="{{ b.pick }}" aria-label="{{ b.aria }}" style="display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;align-items:center;min-height:{{ rowH }};padding:4px 16px;border:0;border-top:2px solid #2a2826;border-radius:0;background:{{ b.bg }};color:{{ b.fg }};cursor:pointer;text-align:left" style-hover="filter:brightness(1.15)">
+          <span style="width:16px;height:16px;border:2px solid {{ b.fg }};display:flex;align-items:center;justify-content:center"><span style="width:8px;height:8px;background:{{ b.dot }};display:block"></span></span>
+          <span style="display:flex;flex-direction:column;min-width:0"><span style="font:900 14px var(--font-heading);letter-spacing:0.03em">{{ b.name }}</span><span style="font:700 11px var(--font-body);color:{{ b.sub }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ b.line }}</span></span>
+          <span style="display:flex;flex-direction:column;align-items:flex-end"><span style="font:900 11px var(--font-heading);letter-spacing:0.06em;color:{{ b.rc }}">{{ b.rich }}</span><span style="font:800 11px var(--font-heading);font-variant-numeric:tabular-nums;color:{{ b.sub }}">{{ b.best }}</span></span>
+        </button>
+      </sc-for>
+      <sc-for list="{{ introRows }}" as="r" hint-placeholder-count="2"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:6px 16px;border-top:2px solid #2a2826;font:700 13px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;color:{{ r.c }}">{{ r.v }}</span></div></sc-for>
+      <div style="display:grid;grid-template-columns:repeat({{ introCols }},minmax(0,1fr));border-top:2px solid #3a3836">
+        <button onClick="{{ demoGo }}" style="min-height:48px;padding:0 14px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WATCH THE DEMO</button>
+        <button onClick="{{ walkGo }}" style="min-height:48px;padding:0 14px;border:0;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">LOOK AROUND</button>
+        <sc-if value="{{ embedOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ exitGo }}" style="min-height:48px;padding:0 14px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">{{ exitShort }}</button></sc-if>
+      </div>
+      <button onClick="{{ panGo }}" style="min-height:56px;padding:0 18px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">{{ panBtn }}</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ helpOn }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ helpToggle }}" style="position:absolute;inset:0;z-index:9;background:rgba(0,0,0,0.82);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #ffd23a;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="padding:10px 14px;border-bottom:2px solid #3a3836;font:900 16px var(--font-heading);letter-spacing:0.06em;color:#ffd23a">HOW TO PAN</div>
+        <sc-for list="{{ helpRows }}" as="r" hint-placeholder-count="7"><div style="display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px;padding:7px 14px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body);line-height:1.35"><span style="font:900 11px var(--font-heading);letter-spacing:0.08em;color:#e6b45a">{{ r.k }}</span><span style="text-wrap:pretty">{{ r.v }}</span></div></sc-for>
+        <div style="padding:10px 14px;font:700 12px var(--font-body);color:#cfcac2">Tap anywhere to close</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="intro" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:8;width:min(420px, calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+        <div style="padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ doneKicker }}</span><span style="font:900 26px var(--font-heading);line-height:1.05">{{ doneTitle }}</span><sc-if value="{{ introBody }}" hint-placeholder-val="{{ true }}"><span style="font:700 12px var(--font-body);color:#cfcac2;text-wrap:pretty">{{ doneSub }}</span></sc-if></div>
+        <div style="min-width:88px;padding:0 12px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;background:#ffd23a;color:#000"><span style="font:900 30px var(--font-heading);line-height:1">{{ d.score }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em">GOLD</span></div>
+      </div>
+      <sc-if value="{{ bestOn }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:10px;padding:9px 16px;background:#ec3013;color:#fff;border-bottom:2px solid #000;font:900 14px var(--font-heading);letter-spacing:0.06em"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18.5 21 12 16.8 5.5 21l2-7.5L2 9h7z" fill="#fff"></path></svg>{{ bestTxt }}</div></sc-if>
+      <sc-for list="{{ doneRows }}" as="r" hint-placeholder-count="6"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:7px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;font-variant-numeric:tabular-nums;color:{{ r.c }}">{{ r.v }}</span></div></sc-for>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+        <button onClick="{{ againGo }}" style="min-height:54px;padding:0 16px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10">PAN AGAIN</button>
+        <button onClick="{{ walkGo }}" style="min-height:54px;padding:0 16px;border:0;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">LOOK AROUND</button>
+      </div>
+      <sc-if value="{{ embedOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ exitGo }}" style="min-height:48px;padding:0 16px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">{{ exitTxt }}</button></sc-if>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { h: null, help: false, vw: 1200, vh: 800, hi: { pad: false, menu: false, split: false, bar: 0 } };
+  stageRef = React.createRef();
+  onHud = hi => this.setState({ hi });
+  exitEmbed() { const h = this.state.h || {}; try { window.parent && window.parent !== window && window.parent.postMessage({ type: '8gates:goldpan:exit', gold: h.gold, done: h.done || null }, '*'); } catch (e) {} if (this.back) location.href = this.back; }
+  async componentDidMount() {
+    const q = new URLSearchParams(location.search); this.embed = q.get('embed') === '1'; this.from = q.get('from') || 'Zion'; this.back = q.get('back') || ''; const bar = q.get('bar'), start = q.get('start');
+    addEventListener('resize', this.onRs); this.onRs();
+    const getCreate = async () => { for (let i = 0; i < 80 && !window.__GoldPanCreate; i++) await new Promise(r => setTimeout(r, 100)); if (window.__GoldPanCreate) return window.__GoldPanCreate;
+      for (const u of [new URL('minigames/zion/gold-pan.js', document.baseURI).href, '/appifact/minigames/zion/gold-pan.js']) { try { const m = await import(u); if (m.createGoldPan) return m.createGoldPan; } catch (e) {} } throw new Error('gold pan engine did not load'); };
+    try { const create = await getCreate(); this.g = await create({ onExit: this.embed ? () => this.exitEmbed() : null, container: this.stageRef.current, onState: h => this.setState({ h }) }); window.__goldpan = this.g; if (bar != null) this.g.select(+bar); if (start === 'walk') this.g.lookAround(); else if (start === 'pan') this.g.startPan(bar != null ? +bar : 0); this.forceUpdate(); if (/[?&]demo=1/.test(location.search)) setTimeout(() => this.g.demoStart(), 400); }
+    catch (e) { console.warn('gold pan failed: ' + (e && e.stack || String(e))); this.setState({ err: String(e && e.message || e) }); }
+  }
+  componentDidUpdate() { const root = this.stageRef.current && this.stageRef.current.parentElement; if (!root || !this.g || !this.g.setSafe) return; const rb = root.getBoundingClientRect(), S = this.state, h = S.h || {}, port = rb.height > rb.width, pad = !!S.hi.pad, bar = S.hi.bar || 0, busy = h.mode === 'intro' || h.mode === 'done';
+    let top = busy ? 0 : bar, bot = busy ? 0 : pad ? (port ? 236 : 52) : 64, left = 0, right = 0; if (!busy && pad && !port) { left = 168; right = 176; }
+    root.querySelectorAll('[data-safe]').forEach(el => { const r = el.getBoundingClientRect(); if (!r.height) return; const k = el.dataset.safe; if (k === 'top') top = Math.max(top, r.bottom - rb.top); else if (k === 'left') left = Math.max(left, r.right - rb.left); else if (k === 'right') right = Math.max(right, rb.right - r.left + 6); else if (k === 'intro') { if (port) bot = Math.max(bot, rb.bottom - r.top); else left = Math.max(left, r.right - rb.left); } });
+    const H = rb.height; this.g.setSafe(Math.round(Math.min(top, H * 0.5)), Math.round(Math.min(bot, H * 0.62)), Math.round(Math.min(left, rb.width * 0.6)), Math.round(Math.min(right, rb.width * 0.4))); }
+  componentWillUnmount() { removeEventListener('resize', this.onRs); this.g && this.g.destroy(); }
+  onRs = () => { const el = this.stageRef.current, r = el && el.parentElement ? el.parentElement.getBoundingClientRect() : null; this.setState({ vw: r && r.width ? r.width : innerWidth, vh: r && r.height ? r.height : innerHeight }); };
+  renderVals() {
+    const S = this.state, g = this.g, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const h = S.h || { mode: 'intro', sel: 0, bars: [{ id: 'pan-north', name: 'THE NORTH BAR', short: 'NORTH BAR', rich: 90, nugget: 0.15, best: 0, yieldPct: 100, oil: 0 }, { id: 'pan-mid', name: 'THE MIDDLE REACH', short: 'MIDDLE REACH', rich: 150, nugget: 0.28, best: 0, yieldPct: 100, oil: 0.33 }, { id: 'pan-south', name: 'THE DEEP BEND', short: 'DEEP BEND', rich: 230, nugget: 0.45, best: 0, yieldPct: 100, oil: 1 }], pan: null, gold: 50, con: 0, conPay: 0, flash: null, toast: null, prompt: null, done: null, demo: null, hand: null, ring: null, quest: 'GOLD RUSH', dialog: null };
+    const { vw, vh } = S, port = vh > vw, phone = Math.min(vw, vh) < 520, short = vh < 560, bar = S.hi.bar || 0, pad = !!S.hi.pad, P = h.pan, d = h.done || { score: 0 }, sel = h.bars[h.sel] || h.bars[0];
+    const play = h.mode === 'pan' || h.mode === 'glide', walk = h.mode === 'walk';
+    let sv = null; try { sv = JSON.parse(localStorage.getItem('8gates.save.v1') || 'null'); } catch (e) {}
+    const stdHud = { hp: 100, hpMax: 100, en: 100, gold: h.gold, hour: 14, day: sv && sv.stats ? sv.stats.worldDay || 1 : 1, items: sv ? Object.entries(sv.items || {}).filter(([, n]) => n > 0).map(([id, n]) => ({ id, n, label: id })) : [], place: 'Zion · Panning Hall', quest: { text: h.quest }, prompt: h.prompt, toast: h.toast, muted: false, weather: 'Clear', boat: false, inCave: false, weapons: [], dialog: h.dialog, vehicles: [], vehAmmo: P ? [null, P.dips, null] : [] };
+    const cardTop = (bar + 8) + 'px', panW = port ? 'calc(100% - 24px - 58px)' : '228px', richTxt = b => ['★', '★★', '★★★'][h.bars.indexOf(b)] || '★';
+    const pips = P ? Array.from({ length: P.pans }, (_, i) => ({ c: i < P.panNo - 1 ? '#5b5753' : i === P.panNo - 1 ? '#ffd23a' : '#2a2826', o: i === P.panNo - 1 ? '2px solid #fff' : 'none' })) : [];
+    const cl = P && P.phase === 'cleanup', safe = P ? P.safe : 0.5, blk = P && P.black != null ? P.black : 0;
+    const pct = v => (Math.max(0, Math.min(1, v)) * 100).toFixed(1) + '%';
+    const helpRows = [['SWIRL', 'Circle your finger round the pan. Faster circles wash harder. Or hold button 1 (Space), or circle the stick.'], ['GOLD LINE', 'The yellow line on the gauge. Wash above it and the colour rides up the wall with the gravel. It drops as the gravel thins, so the last of the gravel needs a short push over it.'], ['THE LIP', 'The dashed orange ring is the point of no return: past it, a grain is going over.'], ['WATER', 'The river runs past you whether you work it or not. Run dry with gravel still in it and the pan is spoiled.'], ['DIP', 'Swipe DOWN (or 2) to dunk the pan for fresh water. Two dips a pan.'], ['CLEAN-UP', 'Gravel gone: TAP the gold to pick it into the vial, then sweep the black sand between the two lines for a bonus.'], ['BANK', 'Swipe UP (or 3) to bank the pan. Black sand you leave in it goes home with you for the CAMP SLUICE.'], ['CLAIMS', 'Wick at the SURVAY OFFICE files a claim on one bar: a third more to the pan. A bar you work every day thins out; let it rest.']].map(([k, v]) => ({ k, v }));
+    return {
+      stageRef: this.stageRef, errOn: !!S.err, errTxt: S.err || '', engine: g, stdHud, started: !!g && (play || walk), busy: h.mode === 'intro' || h.mode === 'done' || S.help, onHud: this.onHud, h, d, vehKey: play ? 'pan' : '', stickZone: play ? 'pad' : '',
+      keysList: play ? [['Hold Space / 1', 'wash'], ['Mouse circles', 'swirl'], ['2', 'dip'], ['3 / B', 'bank'], ['Click gold', 'pick'], ['Esc', 'leave']] : [['WASD', 'walk'], ['Click floor', 'walk there'], ['E', 'talk · pan'], ['Space', 'hop'], ['M', 'map'], ['I', 'menu']],
+      skipKeys: ['KeyJ', 'KeyT', 'KeyN', 'KeyV', 'KeyC', 'KeyO', 'KeyH', 'KeyL', 'KeyK', 'KeyB'],
+      // pan HUD
+      panOn: play && !!P && !S.hi.menu, panSafeKey: port ? 'top' : 'left', cardTop, panW, panKick: P ? P.name + (P.claim ? ' · YOUR CLAIM' : '') + (P.oil > 0.5 ? ' · OILED WATER' : P.oil > 0.05 ? ' · A FILM ON IT' : '') : '', pips,
+      panStats: P ? [['THIS SESSION', P.score + 'g', '#ffd23a'], ['BEST HERE', P.best ? P.best + 'g' : '—', '#fff'], ['DIPS', '●'.repeat(P.dips) + '○'.repeat(P.dipsMax - P.dips), P.dips ? '#7cc8e0' : '#5b5753']].map(([k, v, c]) => ({ k, v, c })) : [],
+      meters: P ? [{ k: 'WATER', v: Math.round(P.water * 100) + '%', w: pct(P.water), c: P.water < 0.25 ? '#ec3013' : '#5aa8c8' }, cl ? { k: 'BLACK SAND', v: '+' + P.bonusIf + 'g IF SWEPT', w: pct(P.blackLeft), c: '#a8a08a' } : { k: 'GRAVEL', v: Math.round(P.waste * 100) + '%', w: pct(P.waste), c: '#b8a682' }] : [],
+      gaugeR: port ? 'max(12px, env(safe-area-inset-right))' : (pad ? '176px' : '16px'), gaugeTop: port ? (bar + 8) + 'px' : (bar + 8) + 'px', gaugeBot: port ? (pad ? '250px' : '80px') : (pad ? '60px' : '70px'),
+      gaugeLab: cl ? 'SWEEP' : 'WASH', gaugeLabCol: cl ? '#ffd23a' : '#fff', gRed: pct(1 - safe), gGreen: pct(safe), gBlack: pct(cl ? blk : 0), gBlackOn: !!cl, gSafe: pct(safe), gFill: pct(P ? P.tilt : 0), gFillCol: P && P.hot ? '#ec3013' : '#7ee07a',
+      ringOn: !!h.ring && !S.help, ringL: h.ring ? (h.ring.x - h.ring.r * 1.08) + 'px' : '0', ringT: h.ring ? (h.ring.y - h.ring.r * 1.08) + 'px' : '0', ringD: h.ring ? (h.ring.r * 2.16) + 'px' : '0',
+      handOn: !!h.hand, handX: h.hand ? h.hand.x + 'px' : '0', handY: h.hand ? h.hand.y + 'px' : '0', handBg: h.hand && h.hand.down ? 'rgba(255,210,58,0.85)' : 'rgba(255,255,255,0.35)',
+      leave: e => { blur(e); g && g.leavePan(); }, helpOn: S.help, helpToggle: e => { blur(e); this.setState({ help: !S.help }); }, helpRows,
+      flashOn: !!h.flash && !S.help && h.mode !== 'intro', flashTxt: h.flash ? h.flash.txt : '', flashCol: h.flash ? h.flash.col : '#ffd23a', flashTop: play && port ? (bar + 204) + 'px' : (bar + 10) + 'px',
+      // demo
+      demoOn: !!h.demo, demoKey: h.demo ? h.demo.key : '', demoCap: h.demo ? h.demo.cap : '', demoTop: (bar + 8) + 'px', demoW: port ? 'calc(100% - 24px - 104px)' : 'min(360px, calc(100% - 140px))', demoExit: e => { blur(e); g && g.demoStop(); },
+      // welcome card (the Meru Burgers card)
+      introOn: h.mode === 'intro', introBody: !short, rowH: short ? '40px' : '46px', statsDisp: port ? 'grid' : 'none',
+      barRows: h.bars.map((b, i) => { const on = i === h.sel, tags = [b.claim ? 'YOUR CLAIM +35%' : '', b.oil > 0.5 ? 'OILED WATER' : b.oil > 0.05 ? 'A FILM ON IT' : '', b.yieldPct < 90 && !b.claim ? 'WORKED OVER' : ''].filter(Boolean);
+        return { name: b.name, line: tags.length ? tags.join(' · ') : 'Nuggets ' + Math.round(b.nugget * 100) + '% · ' + (i === 0 ? 'learn here' : i === 1 ? 'finer sand' : 'least forgiving'), rich: richTxt(b), best: b.best ? 'BEST ' + b.best + 'g' : 'NO WASH YET', aria: 'Pick ' + b.name,
+          bg: on ? '#ffd23a' : '#000', fg: on ? '#000' : '#fff', sub: on ? '#3a2c0c' : '#cfcac2', rc: on ? '#000' : '#e6b45a', dot: on ? '#000' : 'transparent', pick: e => { blur(e); g && g.select(i); } }; }),
+      introRows: [['Gold', h.gold + 'g', '#e6b45a'], ...(h.con ? [['Black sand carried', h.con + ' pans · ~' + h.conPay + 'g', '#ffd23a']] : [])].map(([k, v, c]) => ({ k, v, c })),
+      panBtn: 'PAN ' + sel.short, panGo: e => { blur(e); g && g.startPan(h.sel); }, demoGo: e => { blur(e); g && g.demoStart(); }, walkGo: e => { blur(e); g && g.lookAround(); },
+      // done card
+      doneOn: h.mode === 'done' && !!h.done, doneKicker: h.done ? d.bar + ' · ' + d.takes.length + ' PANS' : '', doneTitle: d.score > 0 ? 'Washed out' : 'Nothing in it', doneSub: h.done ? (d.score > 0 ? 'Paid in gold. ' : 'Ease off the swirl and watch the gold line. ') + (d.con > 0.05 ? 'Black sand goes home with you: run it at the CAMP SLUICE.' : 'Wick has written it in the register.') : '',
+      bestOn: !!(h.done && d.beat), bestTxt: h.done ? 'NEW BEST AT ' + d.short + (d.old ? ' · WAS ' + d.old + 'g' : '') : '',
+      doneRows: h.done ? [...(d.lost ? [['Colour lost over the lip', d.lost + (d.lost === 1 ? ' grain' : ' grains'), '#ff9a8a']] : []), ['Pans', d.takes.map(t => t ? t + 'g' : 'DRY').join(' · '), d.score ? '#ffd23a' : '#ec3013'], ...(d.nuggets ? [['Nuggets', String(d.nuggets), '#ffd23a']] : []), ['Clean-up bonus', d.bonus + 'g', '#fff'], ['Black sand carried', d.conTotal + ' pans', '#cfcac2'], ['Experience', '+' + d.xp + ' XP', '#7cc8e0'], ...(d.relic ? [['Relic', 'LUCKY NUGGET', '#ffd23a']] : []), ...(d.yieldPct !== 100 ? [['Bar yield', d.yieldPct + '%', d.yieldPct > 100 ? '#22c55e' : '#e6b45a']] : [])].map(([k, v, c]) => ({ k, v, c })) : [],
+      againGo: e => { blur(e); g && g.startPan(h.sel); },
+      ...(() => { const snd = g && g.sound ? g.sound() : { muted: false, music: true }; return { musicTxt: 'MUSIC · ' + (snd.music ? 'ON' : 'OFF'), musicCol: snd.music ? '#ffd23a' : '#8a847e', musicOnA: snd.music ? 'true' : 'false', musicSlash: snd.music ? 'M0 0' : 'M3 3l18 18', soundWaves: snd.muted ? 'M16 9l5 6M21 9l-5 6' : 'M16 8.5a5 5 0 0 1 0 7M19 5.5a9 9 0 0 1 0 13', soundTxt: 'SOUND · ' + (snd.muted ? 'OFF' : 'ON'), soundCol: snd.muted ? '#8a847e' : '#ffd23a', soundOnA: snd.muted ? 'false' : 'true',
+        musicTog: e => { blur(e); g && g.toggleMusic(); this.forceUpdate(); }, soundTog: e => { blur(e); g && g.toggleMute(); this.forceUpdate(); } }; })(),
+      embedOn: this.embed, introCols: this.embed ? 3 : 2, exitShort: 'BACK', exitTxt: 'BACK TO ' + (this.from || 'ZION').toUpperCase(), exitGo: e => { blur(e); this.exitEmbed(); },
+      liveTxt: h.demo ? h.demo.cap : h.flash ? h.flash.txt : h.dialog && h.dialog.done ? h.dialog.name + ': ' + h.dialog.text : h.prompt || '',
+    };
+  }
+}
+</script>
+</body>
+</html>

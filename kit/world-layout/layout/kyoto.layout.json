@@ -1,0 +1,2330 @@
+{
+ "meta": {
+  "world": "kyoto",
+  "version": 2,
+  "date": "2026-10-22",
+  "from": "uploads/KYOTO_BRIEF.md (the Kyoto quarter of the Gaya section of 8GATES_DESIGN_BRIEF_ALL.md) + uploads/surface_gaya.html (Kyoto rooms are in the Gaya file: add it)",
+  "notes": "DRAFT by Claude (s348) for Ben. KYOTO = an OLD SAMURAI-AGE JAPANESE TOWN in CHERRY BLOSSOM season (Ben s348). Old-style Japanese buildings only: wooden machiya townhouses with lattice fronts, temples with sweeping tiled roofs + upturned eaves, a white 5-roof castle keep, thatched farmhouses, red torii gates, stone lanterns, paper lanterns, noren curtains. A red-lacquer TOWN SQUARE (stage, notice board, go board, tea mat) on the crossing of LANTERN STREET (E-W) + SHRINE STREET (N-S). N: the Temple + Onsen above the square; the CASTLE APPROACH (a tunnel of red torii) to Kyoto Castle + the Samurai Barracks (kendo yard). E: the cherry-pink MOUNTAIN ROAD (archery range, shrines, the Sage's Hut) to UNDER THE MOUNTAIN + THE HIDEOUT cave. W: the SUMO APPROACH to the Dohyo. S: houses, rice terraces, THE KITSUNE WOOD (moonlit kitsune clearing: fire, stone, wedding table, chest) → KITSUNE BEACH (sea, dock with 2 boats), the Kyoto Space Dock. CHERRY TREES (terrain.forests mix \"cherry\") line the roads + hills. SAMURAI + SUMO AVATARS come later at the merge (main project): keep stand-ins. EVERY BUILDING IS UNIQUE (\"outside\" note), roof sign + eye-level door sign.",
+  "rooms": {
+   "kyotoTownSquare": "zone",
+   "kyotoMountainPath": "zone",
+   "kyotoMountainBase": "zone",
+   "kyotoCastlePath": "zone",
+   "kyotoSumoPath": "zone",
+   "kyotoTemple": "building",
+   "kyotoOnsen": "building",
+   "kyotoTeahouse": "building",
+   "kyotoArmourer": "building",
+   "kyotoMerchant": "building (sushi)",
+   "kyotoLibrary": "building",
+   "kyotoTheatre": "building",
+   "kyotoApartment": "building",
+   "kyotoHut": "building",
+   "kyotoCave": "gate (cave: THE HIDEOUT)",
+   "kyotoCastle": "building (castle)",
+   "kyotoBarracks": "building",
+   "kyotoSumo": "building (sport)",
+   "kyotoItemShop": "building (new)",
+   "kyotoKitsuneWood": "zone (2D earthKitsune: A WOOD, the kitsune clearing + beach + dock)"
+  }
+ },
+ "map": {
+  "half": 440,
+  "spawn": [
+   0,
+   16
+  ],
+  "spawnFace": "N"
+ },
+ "palette": {
+  "path": "#b8a48a",
+  "wall": "#7a5a3a",
+  "roof": "#3a3a42",
+  "trim": "#c8302a",
+  "notes": "Dark timber + white plaster walls, grey-black tile roofs with upturned eaves, RED LACQUER trim (torii, pillars, lanterns), gold castle fish, cherry pink."
+ },
+ "zones": [
+  {
+   "key": "kyotoTown",
+   "label": "Kyoto",
+   "r": [
+    -130,
+    130,
+    -120,
+    150
+   ],
+   "music": "town",
+   "depth": 270,
+   "new": true
+  },
+  {
+   "key": "kyotoTownSquare",
+   "label": "Kyoto Town Square",
+   "r": [
+    -36,
+    36,
+    -48,
+    48
+   ],
+   "music": "town",
+   "depth": 72
+  },
+  {
+   "key": "kyotoCastlePath",
+   "label": "Castle Approach",
+   "r": [
+    -60,
+    120,
+    -280,
+    -120
+   ],
+   "music": "castlepath",
+   "depth": 160
+  },
+  {
+   "key": "kyotoCastleGrounds",
+   "label": "Kyoto Castle",
+   "r": [
+    -120,
+    120,
+    -370,
+    -280
+   ],
+   "music": "castle",
+   "depth": 90,
+   "new": true
+  },
+  {
+   "key": "kyotoSumoPath",
+   "label": "Sumo Approach",
+   "r": [
+    -260,
+    -130,
+    -60,
+    60
+   ],
+   "music": "sumo",
+   "depth": 120
+  },
+  {
+   "key": "kyotoSumoGrounds",
+   "label": "The Dohyo",
+   "r": [
+    -350,
+    -260,
+    -70,
+    60
+   ],
+   "music": "sumo",
+   "depth": 90,
+   "new": true
+  },
+  {
+   "key": "kyotoMountainPath",
+   "label": "Mountain Road",
+   "r": [
+    130,
+    330,
+    -140,
+    60
+   ],
+   "music": "mountainroad",
+   "depth": 200
+  },
+  {
+   "key": "kyotoMountainBase",
+   "label": "Under the Mountain",
+   "r": [
+    330,
+    438,
+    -140,
+    160
+   ],
+   "music": "valley",
+   "depth": 300
+  },
+  {
+   "key": "kyotoKitsuneWood",
+   "label": "The Kitsune Wood",
+   "r": [
+    -180,
+    130,
+    200,
+    370
+   ],
+   "music": "wood",
+   "depth": 170,
+   "new": true,
+   "room2d": "earthKitsune",
+   "note": "A WOOD (earthKitsune in the 2D Gaya file): the moonlit KITSUNE clearing \"a long way before Gaya\" — always night-lit here, fox-fire wisps between the trees."
+  },
+  {
+   "key": "kyotoDockYard",
+   "label": "Kyoto Space Dock",
+   "r": [
+    120,
+    200,
+    240,
+    320
+   ],
+   "music": "dock",
+   "depth": 80,
+   "new": true
+  },
+  {
+   "key": "kyotoBeach",
+   "label": "Kitsune Beach",
+   "r": [
+    -200,
+    140,
+    370,
+    438
+   ],
+   "music": "beach",
+   "depth": 68,
+   "new": true
+  }
+ ],
+ "surfaces": [
+  {
+   "s": "stone",
+   "r": [
+    -30,
+    30,
+    -40,
+    40
+   ]
+  },
+  {
+   "s": "wood",
+   "r": [
+    -26,
+    -14,
+    18,
+    30
+   ],
+   "note": "STAGE"
+  },
+  {
+   "s": "tile",
+   "r": [
+    -6,
+    6,
+    -6,
+    6
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -40,
+    40,
+    -120,
+    -112
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -40,
+    40,
+    -286,
+    -280
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -112,
+    -46,
+    -326,
+    -294
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    -102,
+    -90,
+    -316,
+    -304
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    -66,
+    -58,
+    -314,
+    -306
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    62,
+    74,
+    -202,
+    -190
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    -246,
+    -234,
+    -62,
+    -50
+   ]
+  },
+  {
+   "s": "dirt",
+   "r": [
+    190,
+    210,
+    30,
+    80
+   ],
+   "note": "archery range"
+  },
+  {
+   "s": "grass",
+   "r": [
+    80,
+    140,
+    140,
+    200
+   ],
+   "note": "rice paddies (flooded)"
+  },
+  {
+   "s": "sand",
+   "r": [
+    -200,
+    140,
+    372,
+    392
+   ],
+   "note": "KITSUNE BEACH: pale sand, driftwood, lanterns"
+  },
+  {
+   "s": "wood",
+   "r": [
+    -64,
+    -56,
+    392,
+    420
+   ],
+   "note": "the DOCK out into the sea (2 boats)"
+  }
+ ],
+ "water": [
+  {
+   "r": [
+    388,
+    412,
+    -140,
+    160
+   ],
+   "note": "the river in the valley Under the Mountain (BRIDGE where the road crosses)"
+  },
+  {
+   "r": [
+    -140,
+    -20,
+    180,
+    196
+   ],
+   "note": "canal with a red arched bridge"
+  },
+  {
+   "r": [
+    -260,
+    200,
+    392,
+    438
+   ],
+   "note": "the SEA off Kitsune Beach (calm, moonlit)"
+  }
+ ],
+ "roads": [],
+ "paths": [
+  {
+   "key": "kyotoCrossEW",
+   "label": "Lantern Street",
+   "w": 10,
+   "p": [
+    [
+     -130,
+     0
+    ],
+    [
+     130,
+     0
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 16
+  },
+  {
+   "key": "kyotoCrossNS",
+   "label": "Shrine Street",
+   "w": 10,
+   "p": [
+    [
+     0,
+     -62
+    ],
+    [
+     0,
+     200
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 16
+  },
+  {
+   "key": "kyotoCastleRoad",
+   "label": "Castle Approach",
+   "w": 10,
+   "p": [
+    [
+     0,
+     -62
+    ],
+    [
+     0,
+     -280
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 18,
+   "note": "RED TORII GATES every 20 m along the approach"
+  },
+  {
+   "key": "kyotoBarracksWalk",
+   "label": "Barracks walk",
+   "w": 6,
+   "p": [
+    [
+     0,
+     -246
+    ],
+    [
+     60,
+     -246
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 14
+  },
+  {
+   "key": "kyotoRoyalWalk",
+   "label": "Royal Walk",
+   "w": 6,
+   "p": [
+    [
+     0,
+     -266
+    ],
+    [
+     -80,
+     -266
+    ],
+    [
+     -80,
+     -296
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 14
+  },
+  {
+   "key": "kyotoMedevacWalk",
+   "label": "Medevac walk",
+   "w": 6,
+   "p": [
+    [
+     46,
+     -196
+    ],
+    [
+     62,
+     -196
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 10
+  },
+  {
+   "key": "kyotoSumoRoad",
+   "label": "Sumo Approach",
+   "w": 10,
+   "p": [
+    [
+     -130,
+     0
+    ],
+    [
+     -260,
+     0
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 16,
+   "note": "fan-crowded: stalls, scoreboards"
+  },
+  {
+   "key": "kyotoMountainRoad",
+   "label": "Mountain Road",
+   "w": 8,
+   "p": [
+    [
+     130,
+     0
+    ],
+    [
+     200,
+     -30
+    ],
+    [
+     260,
+     -70
+    ],
+    [
+     311,
+     -102
+    ]
+   ],
+   "lining": "trees",
+   "every": 12,
+   "note": "CHERRY-PINK ROAD: cherry trees both sides"
+  },
+  {
+   "key": "kyotoArcheryWalk",
+   "label": "Archery range",
+   "w": 6,
+   "p": [
+    [
+     200,
+     -30
+    ],
+    [
+     200,
+     30
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 14
+  },
+  {
+   "key": "kyotoUnderMountain",
+   "label": "Under the Mountain",
+   "w": 8,
+   "p": [
+    [
+     311,
+     -102
+    ],
+    [
+     360,
+     -60
+    ],
+    [
+     400,
+     30
+    ],
+    [
+     400,
+     110
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 18,
+   "note": "river valley, BRIDGE"
+  },
+  {
+   "key": "kyotoWoodTrail",
+   "label": "Kitsune Lantern Path",
+   "w": 6,
+   "p": [
+    [
+     0,
+     200
+    ],
+    [
+     0,
+     240
+    ],
+    [
+     -60,
+     290
+    ],
+    [
+     -60,
+     372
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 12,
+   "note": "the LANTERN-LINED PATH through the kitsune wood to the beach"
+  },
+  {
+   "key": "kyotoDockRoad",
+   "label": "Dock road",
+   "w": 8,
+   "p": [
+    [
+     0,
+     240
+    ],
+    [
+     120,
+     240
+    ],
+    [
+     150,
+     270
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20
+  },
+  {
+   "key": "kyotoRickshawRow",
+   "label": "Rickshaw row",
+   "w": 6,
+   "p": [
+    [
+     -183,
+     0
+    ],
+    [
+     -183,
+     10
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 10
+  },
+  {
+   "key": "kyotoTempleRow",
+   "label": "Temple Row",
+   "w": 8,
+   "p": [
+    [
+     -150,
+     -62
+    ],
+    [
+     130,
+     -62
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 16,
+   "note": "temple, onsen, bank, store, post, capsule corner"
+  },
+  {
+   "key": "kyotoSouthRow",
+   "label": "Garden Row",
+   "w": 8,
+   "p": [
+    [
+     -80,
+     62
+    ],
+    [
+     60,
+     62
+    ]
+   ],
+   "lining": "trees",
+   "every": 12,
+   "note": "cherry trees"
+  },
+  {
+   "key": "kyotoFarmLane",
+   "label": "Farm lane",
+   "w": 6,
+   "p": [
+    [
+     0,
+     170
+    ],
+    [
+     30,
+     170
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 10
+  },
+  {
+   "key": "kyotoBeachWalk",
+   "label": "Beach walk",
+   "w": 6,
+   "p": [
+    [
+     -180,
+     380
+    ],
+    [
+     120,
+     380
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 18
+  },
+  {
+   "key": "kyotoDockWalk",
+   "label": "Dock",
+   "w": 4,
+   "p": [
+    [
+     -60,
+     380
+    ],
+    [
+     -60,
+     418
+    ]
+   ],
+   "lining": "lamps",
+   "every": 10
+  }
+ ],
+ "buildings": [
+  {
+   "key": "kyotoTemple",
+   "label": "Temple",
+   "role": "other",
+   "f": [
+    -100,
+    -46,
+    -108,
+    -70
+   ],
+   "door": [
+    -73,
+    -70
+   ],
+   "face": "S",
+   "h": 18,
+   "color": "#b8302a",
+   "interior": true,
+   "note": "Incense hall: altar in an apse, pulpit, candles, braziers. The abbot (keeps the door to the hot spring), 6 monks, 2 acolytes.",
+   "outside": "A two-storey Buddhist temple hall: deep sweeping double roof with upturned eaves in grey tile, red lacquer pillars, a big bronze bell in a little bell tower beside it, stone lanterns lining the steps.",
+   "sign": {
+    "roof": "TEMPLE",
+    "door": "TEMPLE · THE ABBOT"
+   }
+  },
+  {
+   "key": "kyotoOnsen",
+   "label": "Onsen",
+   "role": "other",
+   "f": [
+    -146,
+    -108,
+    -100,
+    -70
+   ],
+   "door": [
+    -127,
+    -70
+   ],
+   "face": "S",
+   "h": 9,
+   "color": "#6a5a4a",
+   "interior": true,
+   "note": "Reception, towels, lockers, GREAT POOL, plunge, steam room.",
+   "outside": "Low dark-timber bathhouse with steam rising from a garden courtyard, a hanging blue noren curtain with the ♨ hot-spring sign, a bamboo fence and stone path.",
+   "sign": {
+    "roof": "ONSEN",
+    "door": "ONSEN · HOT SPRING"
+   }
+  },
+  {
+   "key": "kyotoTeahouse",
+   "label": "Teahouse",
+   "role": "tavern",
+   "f": [
+    -74,
+    -40,
+    -28,
+    -8
+   ],
+   "door": [
+    -57,
+    -8
+   ],
+   "face": "S",
+   "h": 9,
+   "color": "#8a3a2a",
+   "interior": true,
+   "note": "Bar counter, TEA minigame (tea master), GEISHA DANCE (Suzu), GO (old master), jukebox, ping-pong, darts. UNIQUE TAVERN GAME: LIAR'S DICE in the sake house.",
+   "games": [
+    "3D-GAMES/g/liars-dice/liars-dice.dc.html"
+   ],
+   "outside": "Two-storey machiya teahouse: wooden lattice front, red paper lanterns along the eaves, an upper balcony with sliding paper screens, a sake barrel stack by the door.",
+   "sign": {
+    "roof": "TEAHOUSE",
+    "door": "TEAHOUSE · LIAR'S DICE"
+   }
+  },
+  {
+   "key": "kyotoArmourer",
+   "label": "Armourer",
+   "role": "armory",
+   "f": [
+    40,
+    70,
+    -28,
+    -8
+   ],
+   "door": [
+    55,
+    -8
+   ],
+   "face": "S",
+   "h": 9,
+   "color": "#3a2e2a",
+   "interior": true,
+   "note": "Counter, forge, anvil, quench, shield wall, armour stands, dummies.",
+   "outside": "Samurai smithy: black-timber walls, a smoking forge chimney, a suit of red samurai armour on a stand by the door, crossed katanas on the roof board.",
+   "sign": {
+    "roof": "ARMOURER",
+    "door": "ARMOURER · SAMURAI SMITH"
+   }
+  },
+  {
+   "key": "kyotoMerchant",
+   "label": "Foxy Maki",
+   "role": "restaurant",
+   "f": [
+    -74,
+    -44,
+    8,
+    30
+   ],
+   "door": [
+    -59,
+    8
+   ],
+   "face": "N",
+   "h": 8,
+   "color": "#c8402a",
+   "interior": true,
+   "note": "Ring-shaped SUSHI BAR under four lanterns, NOW HIRING (shift job). Sushi chef + 5 diners.",
+   "games": [
+    "3D-GAMES/g/foxy-maki/Main.dc.html"
+   ],
+   "outside": "UNIQUE RESTAURANT: sushi house with a blue noren curtain, a giant wooden fish sign (a carp) on the roof, four red lanterns over the door, a sake-barrel bench.",
+   "sign": {
+    "roof": "FOXY MAKI",
+    "door": "SUSHI · NOW HIRING"
+   }
+  },
+  {
+   "key": "kyotoGyoza",
+   "label": "Foxy Gyoza",
+   "role": "shop",
+   "f": [
+    -110,
+    -82,
+    8,
+    28
+   ],
+   "door": [
+    -96,
+    8
+   ],
+   "face": "N",
+   "h": 7,
+   "color": "#d8a050",
+   "interior": true,
+   "games": [
+    "3D-GAMES/g/foxy-gyoza/Foxy Gyoza.dc.html"
+   ],
+   "new": true,
+   "outside": "Little street dumpling stand-house: a yellow cloth awning, bamboo steamer baskets stacked steaming in the window, a giant gyoza dumpling sign.",
+   "sign": {
+    "roof": "FOXY GYOZA",
+    "door": "FOXY GYOZA · DUMPLINGS"
+   }
+  },
+  {
+   "key": "kyotoLibrary",
+   "label": "Library",
+   "role": "other",
+   "f": [
+    40,
+    74,
+    8,
+    30
+   ],
+   "door": [
+    57,
+    8
+   ],
+   "face": "N",
+   "h": 12,
+   "color": "#5a4a3a",
+   "interior": true,
+   "note": "Six SCROLL ROWS (kitsune legends), catalogue, lectern, globes.",
+   "outside": "Tall storehouse library (kura style): white plaster walls, black tiled roof, small barred windows, scroll racks visible through a round moon window.",
+   "sign": {
+    "roof": "LIBRARY",
+    "door": "LIBRARY · SCROLLS"
+   }
+  },
+  {
+   "key": "kyotoTheatre",
+   "label": "Theatre",
+   "role": "other",
+   "f": [
+    80,
+    118,
+    -28,
+    -8
+   ],
+   "door": [
+    99,
+    -8
+   ],
+   "face": "S",
+   "h": 12,
+   "color": "#a8302a",
+   "interior": true,
+   "note": "Rows of seats, curtain, lanterns; NOH minigame THE FOX WIFE (wife, farmer, fox masks). The old actor + 5 audience. NOH STAGE (NOT BUILT YET).",
+   "games": [
+    "3D-GAMES/Kyoto Theatre.dc.html"
+   ],
+   "outside": "Kabuki-style theatre: a tall curved gable roof, a row of red + white banners on poles out front, painted fox-mask posters, a drum tower.",
+   "sign": {
+    "roof": "THEATRE",
+    "door": "THEATRE · THE FOX WIFE"
+   }
+  },
+  {
+   "key": "kyotoApartment",
+   "label": "Lantern Row Lodgings",
+   "role": "home",
+   "f": [
+    80,
+    112,
+    8,
+    30
+   ],
+   "door": [
+    96,
+    8
+   ],
+   "face": "N",
+   "h": 10,
+   "color": "#7a5a3a",
+   "interior": true,
+   "note": "One rentable room: futon bed + chest. The landlady, Hiro (the boy, grown).",
+   "outside": "Wooden row lodging house: two storeys of sliding doors, a long veranda with hanging lanterns, a little stone garden at the door. The player's rentable room is upstairs.",
+   "sign": {
+    "roof": "LODGINGS",
+    "door": "LODGINGS · YOUR ROOM"
+   }
+  },
+  {
+   "key": "kyotoTeaCeremony",
+   "label": "Tea Ceremony House",
+   "role": "specialty",
+   "f": [
+    -44,
+    -16,
+    36,
+    54
+   ],
+   "door": [
+    -30,
+    54
+   ],
+   "face": "S",
+   "h": 7,
+   "color": "#6a7a4a",
+   "interior": true,
+   "note": "Tea ceremony (NOT BUILT YET).",
+   "new": true,
+   "outside": "UNIQUE SPECIALTY SHOP: a tiny thatched tea hut in a moss garden, a low crawl-in door, stepping stones, a stone water basin with a bamboo ladle.",
+   "sign": {
+    "roof": "TEA CEREMONY",
+    "door": "TEA CEREMONY HOUSE"
+   }
+  },
+  {
+   "key": "kyotoGoClub",
+   "label": "Go Club",
+   "role": "shop",
+   "f": [
+    16,
+    44,
+    36,
+    54
+   ],
+   "door": [
+    30,
+    54
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#4a4a42",
+   "interior": true,
+   "games": [
+    "3D-GAMES/g/go-club/go-club.dc.html"
+   ],
+   "new": true,
+   "outside": "Quiet club house with a giant Go board carved on its front wall (black + white stones), sliding shoji doors, a pine bonsai on the step.",
+   "sign": {
+    "roof": "GO CLUB",
+    "door": "GO CLUB"
+   }
+  },
+  {
+   "key": "kyotoPachinko",
+   "label": "Fox Gate Pachinko",
+   "role": "shop",
+   "f": [
+    -120,
+    -90,
+    -30,
+    -8
+   ],
+   "door": [
+    -105,
+    -8
+   ],
+   "face": "S",
+   "h": 9,
+   "color": "#e04a6a",
+   "interior": true,
+   "games": [
+    "3D-GAMES/g/fox-gate-pachinko/Main.dc.html"
+   ],
+   "new": true,
+   "outside": "The one loud building: a pachinko parlour behind an old wooden front, glowing paper lanterns in pink + gold, a giant silver ball rolling round a fox-gate sign on the roof.",
+   "sign": {
+    "roof": "PACHINKO",
+    "door": "FOX GATE PACHINKO"
+   }
+  },
+  {
+   "key": "kyotoCapsule",
+   "label": "Capsule Corner",
+   "role": "shop",
+   "f": [
+    90,
+    112,
+    -54,
+    -38
+   ],
+   "door": [
+    101,
+    -54
+   ],
+   "face": "N",
+   "h": 6,
+   "color": "#e8d8b8",
+   "interior": true,
+   "games": [
+    "3D-GAMES/Capsule Corner.dc.html"
+   ],
+   "new": true,
+   "outside": "Tiny corner shop with a wall of gachapon capsule machines out front, a giant capsule on the roof, paper streamers.",
+   "sign": {
+    "roof": "CAPSULE CORNER",
+    "door": "CAPSULE CORNER"
+   }
+  },
+  {
+   "key": "kyotoBank",
+   "label": "Rice Exchange",
+   "role": "bank",
+   "f": [
+    -74,
+    -40,
+    -54,
+    -36
+   ],
+   "door": [
+    -57,
+    -54
+   ],
+   "face": "N",
+   "h": 11,
+   "color": "#8a6a3a",
+   "interior": true,
+   "new": true,
+   "outside": "Rice-merchant counting house: a heavy fire-proof white kura with black corners, an iron-studded door, straw rice bales stacked outside, a big abacus sign.",
+   "sign": {
+    "roof": "RICE EXCHANGE",
+    "door": "RICE EXCHANGE · BANK"
+   }
+  },
+  {
+   "key": "kyotoPost",
+   "label": "Galactic Post Office (Meru Embassy)",
+   "role": "post",
+   "f": [
+    50,
+    84,
+    -100,
+    -70
+   ],
+   "door": [
+    67,
+    -70
+   ],
+   "face": "S",
+   "h": 10,
+   "color": "#9a7a5a",
+   "interior": true,
+   "new": true,
+   "outside": "Old relay station: stable stalls for runners, a wooden bell tower + the Meru flag, the Galactic Post dish hidden in a pine tree on the roof.",
+   "sign": {
+    "roof": "POST OFFICE",
+    "door": "GALACTIC POST · MERU EMBASSY"
+   }
+  },
+  {
+   "key": "kyotoWatch",
+   "label": "Magistrate's Watch",
+   "role": "police",
+   "f": [
+    -36,
+    -8,
+    -162,
+    -138
+   ],
+   "door": [
+    -8,
+    -150
+   ],
+   "face": "E",
+   "h": 9,
+   "color": "#3a3a3a",
+   "interior": true,
+   "new": true,
+   "outside": "Magistrate's office: a black wooden gate with iron studs, a tall watch-fire lookout, wanted scrolls on a board by the gate.",
+   "sign": {
+    "roof": "MAGISTRATE",
+    "door": "MAGISTRATE'S WATCH · POLICE"
+   }
+  },
+  {
+   "key": "kyotoFireWatch",
+   "label": "Fire Watch",
+   "role": "fire",
+   "f": [
+    12,
+    40,
+    -162,
+    -138
+   ],
+   "door": [
+    12,
+    -150
+   ],
+   "face": "W",
+   "h": 10,
+   "color": "#b8302a",
+   "interior": true,
+   "new": true,
+   "outside": "Fire brigade hall with a tall wooden fire-watch tower (hanging alarm bell + ladder), red hikeshi banners, water buckets stacked in pyramids.",
+   "sign": {
+    "roof": "FIRE WATCH",
+    "door": "FIRE WATCH · HIKESHI"
+   }
+  },
+  {
+   "key": "kyotoCrier",
+   "label": "The Kawaraban",
+   "role": "news",
+   "f": [
+    -36,
+    -8,
+    -206,
+    -180
+   ],
+   "door": [
+    -8,
+    -193
+   ],
+   "face": "E",
+   "h": 10,
+   "color": "#c8b08a",
+   "interior": true,
+   "new": true,
+   "outside": "News print shop: woodblock print boards hung outside to dry, a crier's platform with a drum, paper streamers.",
+   "sign": {
+    "roof": "KAWARABAN",
+    "door": "THE KAWARABAN · NEWS"
+   }
+  },
+  {
+   "key": "kyotoHospital",
+   "label": "Herb Infirmary",
+   "role": "hospital",
+   "f": [
+    12,
+    46,
+    -212,
+    -180
+   ],
+   "door": [
+    12,
+    -196
+   ],
+   "face": "W",
+   "h": 12,
+   "color": "#ece4d4",
+   "interior": true,
+   "new": true,
+   "outside": "Herb doctor's house: white walls, a medicinal herb garden, drying herb bundles under the eaves, a red cross lantern, the medevac helipad beside it.",
+   "sign": {
+    "roof": "INFIRMARY",
+    "door": "HERB INFIRMARY · HOSPITAL"
+   }
+  },
+  {
+   "key": "kyotoCastle",
+   "label": "Kyoto Castle",
+   "role": "castle",
+   "f": [
+    -50,
+    50,
+    -350,
+    -280
+   ],
+   "door": [
+    0,
+    -280
+   ],
+   "face": "S",
+   "h": 34,
+   "color": "#f0ece4",
+   "interior": true,
+   "note": "Tatami throne room: throne on a dais, red answer line, advisors, court benches. Emperor, general in red, new empress, girl with a tray, guards.",
+   "outside": "The grandest building: a tall white JAPANESE CASTLE KEEP of 5 stacked roofs with upturned eaves and gold shachi fish on the ridge, on a sloping stone base, a red gate in front.",
+   "sign": {
+    "roof": "KYOTO CASTLE",
+    "door": "THRONE ROOM · THE EMPEROR"
+   }
+  },
+  {
+   "key": "kyotoBarracks",
+   "label": "Samurai Barracks",
+   "role": "barracks",
+   "f": [
+    60,
+    108,
+    -262,
+    -230
+   ],
+   "door": [
+    60,
+    -246
+   ],
+   "face": "W",
+   "h": 10,
+   "color": "#4a3a32",
+   "interior": true,
+   "note": "Armour racks, desk, dorm with beds, YARD with KENDO duel ring (vs the general's second).",
+   "games": [
+    "3D-GAMES/Kyoto Sword Duel.dc.html"
+   ],
+   "outside": "Long samurai house with a black-tile roof, a yard with a KENDO ring + wooden practice posts, banners with the house crest.",
+   "sign": {
+    "roof": "SAMURAI BARRACKS",
+    "door": "BARRACKS · KENDO"
+   }
+  },
+  {
+   "key": "kyotoSumo",
+   "label": "The Dohyo",
+   "role": "sport",
+   "f": [
+    -340,
+    -260,
+    -40,
+    40
+   ],
+   "door": [
+    -260,
+    0
+   ],
+   "face": "E",
+   "h": 14,
+   "color": "#d8b080",
+   "interior": true,
+   "note": "Raked-sand clay circle with a rope ring; 6-bout SUMO ladder (Jonokuchi to Ozeki). Stablemaster, the champion (Yugga).",
+   "games": [
+    "3D-GAMES/Kyoto Sumo Hall.dc.html"
+   ],
+   "outside": "UNIQUE SPORT: the sumo hall: a big wooden hall with a hanging shrine-style roof inside the tall entrance, purple banners with wrestlers' names on tall poles, drum tower.",
+   "sign": {
+    "roof": "THE DOHYO",
+    "door": "SUMO STREAK"
+   }
+  },
+  {
+   "key": "kyotoWeapons",
+   "label": "Bow & Blade",
+   "role": "weapons",
+   "f": [
+    -196,
+    -170,
+    -34,
+    -10
+   ],
+   "door": [
+    -183,
+    -10
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#2a2a2a",
+   "interior": true,
+   "note": "SPECIAL WEAPONS: the 8 extra ranged + melee",
+   "new": true,
+   "outside": "Dark lacquer shop with bows + naginata racked under the eaves, a giant arrow through the roof board.",
+   "sign": {
+    "roof": "BOW & BLADE",
+    "door": "SPECIAL WEAPONS"
+   }
+  },
+  {
+   "key": "kyotoRelicShop",
+   "label": "The Fox Shrine Shop",
+   "role": "relicShop",
+   "f": [
+    -226,
+    -204,
+    -30,
+    -10
+   ],
+   "door": [
+    -215,
+    -10
+   ],
+   "face": "S",
+   "h": 7,
+   "color": "#c8302a",
+   "interior": true,
+   "note": "The famous Kyoto relic to BUY (DRAFT: Ben picks)",
+   "new": true,
+   "outside": "A tiny shop under its own small red torii gate, white fox statues either side of the door, ema prayer plaques hanging outside.",
+   "sign": {
+    "roof": "FOX SHRINE SHOP",
+    "door": "RELICS"
+   }
+  },
+  {
+   "key": "kyotoRickshaw",
+   "label": "Rickshaw Stand",
+   "role": "carRental",
+   "f": [
+    -196,
+    -170,
+    10,
+    30
+   ],
+   "door": [
+    -183,
+    10
+   ],
+   "face": "N",
+   "h": 6,
+   "color": "#8a5a2a",
+   "interior": true,
+   "note": "Car rental Kyoto style: rickshaws (DRAFT)",
+   "new": true,
+   "outside": "Open wooden shed with rickshaws + a palanquin lined up, a paper-lantern sign, a stable for the DRAGON HATCHLING round the back.",
+   "sign": {
+    "roof": "RICKSHAWS",
+    "door": "RICKSHAW STAND · RENTAL"
+   }
+  },
+  {
+   "key": "kyotoHouse1",
+   "label": "Machiya House",
+   "role": "housing",
+   "f": [
+    -40,
+    -24,
+    70,
+    86
+   ],
+   "door": [
+    -32,
+    70
+   ],
+   "face": "N",
+   "h": 8,
+   "color": "#6a4a32",
+   "interior": true,
+   "new": true,
+   "outside": "Narrow townhouse with wooden lattice + a tiny red lantern.",
+   "sign": {
+    "roof": "HOUSE",
+    "door": "HOUSE"
+   }
+  },
+  {
+   "key": "kyotoHouse2",
+   "label": "Thatched Farmhouse",
+   "role": "housing",
+   "f": [
+    -70,
+    -50,
+    70,
+    90
+   ],
+   "door": [
+    -60,
+    70
+   ],
+   "face": "N",
+   "h": 9,
+   "color": "#8a7a4a",
+   "interior": true,
+   "new": true,
+   "outside": "Thick-thatched minka farmhouse with a smoke hole, a persimmon tree.",
+   "sign": {
+    "roof": "HOUSE",
+    "door": "HOUSE"
+   }
+  },
+  {
+   "key": "kyotoHouse3",
+   "label": "Garden House",
+   "role": "housing",
+   "f": [
+    24,
+    40,
+    70,
+    86
+   ],
+   "door": [
+    32,
+    70
+   ],
+   "face": "N",
+   "h": 8,
+   "color": "#5a4a3a",
+   "interior": true,
+   "new": true,
+   "outside": "House with a raked-stone garden + a koi pond out front.",
+   "sign": {
+    "roof": "HOUSE",
+    "door": "HOUSE"
+   }
+  },
+  {
+   "key": "kyotoFarm",
+   "label": "Rice Terraces",
+   "role": "farm",
+   "f": [
+    30,
+    80,
+    150,
+    190
+   ],
+   "door": [
+    30,
+    170
+   ],
+   "face": "W",
+   "h": 8,
+   "color": "#7a6a3a",
+   "interior": true,
+   "games": [
+    "3D-GAMES/g/fox-farm/Main.dc.html"
+   ],
+   "new": true,
+   "outside": "A big thatched farmhouse at the foot of stepped RICE PADDY terraces, a water wheel, scarecrows in straw hats.",
+   "sign": {
+    "roof": "RICE TERRACES",
+    "door": "RICE FARM · NOW HIRING"
+   }
+  },
+  {
+   "key": "kyotoHut",
+   "label": "The Sage's Hut",
+   "role": "other",
+   "f": [
+    300,
+    322,
+    -120,
+    -102
+   ],
+   "door": [
+    311,
+    -102
+   ],
+   "face": "S",
+   "h": 6,
+   "color": "#6a5a42",
+   "interior": true,
+   "note": "Hearth, kettle, table, bunks, chest, woodpile. The sage of the mountain.",
+   "outside": "One-room mountain hut of rough timber + bark roof weighed with stones, smoke from a single hearth hole.",
+   "sign": {
+    "roof": "SAGE'S HUT",
+    "door": "THE SAGE'S HUT"
+   }
+  },
+  {
+   "key": "kyotoItemShop",
+   "label": "General Store",
+   "role": "itemshop",
+   "f": [
+    40,
+    68,
+    -54,
+    -36
+   ],
+   "door": [
+    54,
+    -54
+   ],
+   "face": "N",
+   "h": 8,
+   "color": "#8a6a4a",
+   "interior": true,
+   "new": true,
+   "outside": "Old dry-goods merchant house: indigo noren curtains, sake barrels + straw bundles stacked outside, a hanging wooden sign shaped like a rice bowl.",
+   "sign": {
+    "roof": "GENERAL STORE",
+    "door": "ITEM SHOP"
+   },
+   "note": "Heal Beam Battery, Energy Cell, rice balls, tea (DRAFT keeper)."
+  }
+ ],
+ "spots": [
+  {
+   "key": "kyotoStage",
+   "at": [
+    -20,
+    24
+   ],
+   "kind": "game",
+   "note": "STAGE in the square (GEISHA DANCE, Suzu)"
+  },
+  {
+   "key": "kyotoNotice",
+   "at": [
+    20,
+    24
+   ],
+   "kind": "npc",
+   "note": "NOTICE BOARD + fox-mask barker",
+   "draft": true
+  },
+  {
+   "key": "kyotoGoBoard",
+   "at": [
+    22,
+    -24
+   ],
+   "kind": "game",
+   "note": "GO BOARD in the square (go master)"
+  },
+  {
+   "key": "kyotoTeaMat",
+   "at": [
+    -22,
+    -24
+   ],
+   "kind": "npc",
+   "note": "tea mat (tea master)",
+   "draft": true
+  },
+  {
+   "key": "kyotoGuards",
+   "at": [
+    10,
+    -58
+   ],
+   "kind": "npc",
+   "note": "6 samurai gate guards (avatars at merge)",
+   "draft": true
+  },
+  {
+   "key": "kyotoMonk",
+   "at": [
+    -73,
+    -64
+   ],
+   "kind": "npc",
+   "note": "monk at the temple step",
+   "draft": true
+  },
+  {
+   "key": "kyotoTownsfolk",
+   "at": [
+    -24,
+    10
+   ],
+   "kind": "crowd",
+   "note": "~12 townsfolk"
+  },
+  {
+   "key": "kyotoChampion",
+   "at": [
+    -250,
+    10
+   ],
+   "kind": "npc",
+   "note": "SUMO APPROACH: the champion signing at his gate, gateman, boy with a paper, woman + two children, tout, rikishi's apprentice (avatars at merge)",
+   "draft": true
+  },
+  {
+   "key": "kyotoArchery",
+   "at": [
+    200,
+    34
+   ],
+   "kind": "game",
+   "note": "ARCHERY RANGE on the Mountain Road: LINE + BUTTS (3D-GAMES/g/8-gates-archery/Archery.dc.html); master of the butts + 3 archers"
+  },
+  {
+   "key": "kyotoPilgrim",
+   "at": [
+    260,
+    -60
+   ],
+   "kind": "npc",
+   "note": "a pilgrim on the Mountain Road",
+   "draft": true
+  },
+  {
+   "key": "kyotoNohStage",
+   "at": [
+    100,
+    -34
+   ],
+   "kind": "game",
+   "note": "NOH STAGE beside the Theatre (NOT BUILT YET)"
+  },
+  {
+   "key": "kyotoHiring",
+   "at": [
+    24,
+    12
+   ],
+   "kind": "hiring",
+   "note": "NOW HIRING board in the square"
+  },
+  {
+   "key": "kyotoDragon",
+   "at": [
+    -183,
+    40
+   ],
+   "kind": "vehicle",
+   "note": "DRAGON HATCHLING (Vehicle Workshop ?v=dragon) behind the Rickshaw Stand: fly / glide over the town + the cherry hills"
+  },
+  {
+   "key": "kyotoRelicFind",
+   "at": [
+    260,
+    -120
+   ],
+   "kind": "relicFind",
+   "note": "DRAFT: the legendary + historical relic to find on the PLATFORM at the top of the shrine stair on the Mountain Road (Ben picks)"
+  },
+  {
+   "key": "kyotoRoyalHelipad",
+   "at": [
+    -96,
+    -310
+   ],
+   "kind": "helipad",
+   "note": "ROYAL HELIPAD west of the castle (Meru 2 worlds/meru2-royalpad.js): the royal 8 helicopter; the emperor's guard fly you to the other pads."
+  },
+  {
+   "key": "kyotoRoyalTelepad",
+   "at": [
+    -62,
+    -310
+   ],
+   "kind": "telepad",
+   "note": "ROYAL TELEPORT PAD west of the castle (ringed by little torii): E / TALK → beam out → the Kyoto Space Dock; arriving by telepad beams you in here."
+  },
+  {
+   "key": "kyotoInfirmaryHelipad",
+   "at": [
+    68,
+    -196
+   ],
+   "kind": "helipad",
+   "note": "INFIRMARY HELIPAD (medevac)"
+  },
+  {
+   "key": "kyotoSumoHelipad",
+   "at": [
+    -240,
+    -56
+   ],
+   "kind": "helipad",
+   "note": "SUMO HALL HELIPAD: tournament-day arrivals"
+  },
+  {
+   "key": "kyotoKitsune",
+   "at": [
+    -56,
+    306
+   ],
+   "kind": "game",
+   "note": "THE KITSUNE WEDDING clearing (earthKitsune): fire, stone, wedding table, chest; story scene in the main project"
+  }
+ ],
+ "dock": {
+  "key": "kyotoSpacedock",
+  "pad": [
+   160,
+   280
+  ],
+  "r": 14,
+  "face": "N"
+ },
+ "gates": [
+  {
+   "key": "kyotoMountainRoadPack",
+   "at": [
+    250,
+    -20
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "MOUNTAIN ROAD: 4 men in black, 3 dogs, 3 burning things"
+  },
+  {
+   "key": "kyotoValleyPack",
+   "at": [
+    360,
+    90
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "UNDER THE MOUNTAIN: 3 men in black, 2 dogs, 2 burning things"
+  },
+  {
+   "key": "kyotoNorthernGuards",
+   "at": [
+    150,
+    -320
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "DRAFT: the 4 NORTHERN GUARDS + the general in red (the castle plot)"
+  },
+  {
+   "key": "kyotoClockworkRonin",
+   "at": [
+    -300,
+    -240
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "DRAFT: CLOCKWORK RONIN: old Machine Fleet guard robots dressed as samurai, HACKED (glitching masks, voices not their own): free them"
+  },
+  {
+   "key": "kyotoCave",
+   "at": [
+    420,
+    150
+   ],
+   "r": 8,
+   "kind": "cave",
+   "note": "THE HIDEOUT [kyotoCave] in the cave mouth Under the Mountain: dark cave camp, training ring, river + lake with bridges, glowing CRYSTAL. 4 men in black, 2 dogs, boss NINJA + big dog; the new empress, captive."
+  }
+ ],
+ "wild": [
+  {
+   "key": "kyotoRoadWild",
+   "r": [
+    220,
+    320,
+    10,
+    60
+   ],
+   "for": "kyotoMountainRoadPack",
+   "creatures": [
+    "monsters",
+    "creatures"
+   ],
+   "note": "men in black + dogs + burning things"
+  },
+  {
+   "key": "kyotoValleyWild",
+   "r": [
+    340,
+    386,
+    40,
+    150
+   ],
+   "for": "kyotoValleyPack",
+   "creatures": [
+    "monsters",
+    "creatures"
+   ]
+  },
+  {
+   "key": "kyotoNorthWild",
+   "r": [
+    130,
+    250,
+    -370,
+    -290
+   ],
+   "for": "kyotoNorthernGuards",
+   "creatures": [
+    "monsters"
+   ]
+  },
+  {
+   "key": "kyotoRoninWild",
+   "r": [
+    -380,
+    -240,
+    -300,
+    -200
+   ],
+   "for": "kyotoClockworkRonin",
+   "creatures": [
+    "robots"
+   ]
+  }
+ ],
+ "props": [
+  {
+   "k": "statue",
+   "at": [
+    0,
+    0
+   ],
+   "note": "TRANSPORT PAD with the crest"
+  },
+  {
+   "k": "lamp",
+   "at": [
+    -30,
+    -44
+   ],
+   "note": "stone lantern"
+  },
+  {
+   "k": "lamp",
+   "at": [
+    30,
+    -44
+   ],
+   "note": "stone lantern"
+  },
+  {
+   "k": "lamp",
+   "at": [
+    -30,
+    44
+   ],
+   "note": "stone lantern"
+  },
+  {
+   "k": "lamp",
+   "at": [
+    30,
+    44
+   ],
+   "note": "stone lantern"
+  },
+  {
+   "k": "statue",
+   "at": [
+    0,
+    -110
+   ],
+   "note": "BIG RED TORII at the start of the Castle Approach"
+  },
+  {
+   "k": "fountain",
+   "at": [
+    -24,
+    -220
+   ],
+   "note": "FOUNTAIN on the Castle Approach"
+  },
+  {
+   "k": "statue",
+   "at": [
+    18,
+    -220
+   ],
+   "note": "SHRINE + crest medallion"
+  },
+  {
+   "k": "stall",
+   "at": [
+    -160,
+    -14
+   ],
+   "note": "sumo fan stall"
+  },
+  {
+   "k": "stall",
+   "at": [
+    -200,
+    14
+   ],
+   "note": "sumo fan stall"
+  },
+  {
+   "k": "sign",
+   "at": [
+    -240,
+    -14
+   ],
+   "note": "SCOREBOARD"
+  },
+  {
+   "k": "statue",
+   "at": [
+    -246,
+    -14
+   ],
+   "note": "sumo GATE with the name BOARD"
+  },
+  {
+   "k": "statue",
+   "at": [
+    230,
+    -56
+   ],
+   "note": "roadside SHRINE"
+  },
+  {
+   "k": "rock",
+   "at": [
+    170,
+    -10
+   ],
+   "note": "CAIRN"
+  },
+  {
+   "k": "rock",
+   "at": [
+    290,
+    -90
+   ],
+   "note": "CAIRN"
+  },
+  {
+   "k": "statue",
+   "at": [
+    260,
+    -120
+   ],
+   "note": "stair to the PLATFORM"
+  },
+  {
+   "k": "fence",
+   "at": [
+    200,
+    74
+   ],
+   "note": "archery BUTTS"
+  },
+  {
+   "k": "sign",
+   "at": [
+    200,
+    40
+   ],
+   "note": "archery LINE"
+  },
+  {
+   "k": "statue",
+   "at": [
+    400,
+    0
+   ],
+   "note": "BRIDGE over the valley river"
+  },
+  {
+   "k": "statue",
+   "at": [
+    380,
+    60
+   ],
+   "note": "valley SHRINE"
+  },
+  {
+   "k": "sign",
+   "at": [
+    392,
+    100
+   ],
+   "note": "SIGN at the cave mouth"
+  },
+  {
+   "k": "statue",
+   "at": [
+    -80,
+    188
+   ],
+   "note": "red ARCHED BRIDGE over the canal"
+  },
+  {
+   "k": "statue",
+   "at": [
+    0,
+    -125
+   ],
+   "note": "RED TORII gate over the Castle Approach"
+  },
+  {
+   "k": "statue",
+   "at": [
+    0,
+    -170
+   ],
+   "note": "RED TORII gate over the Castle Approach"
+  },
+  {
+   "k": "statue",
+   "at": [
+    0,
+    -215
+   ],
+   "note": "RED TORII gate over the Castle Approach"
+  },
+  {
+   "k": "statue",
+   "at": [
+    0,
+    -235
+   ],
+   "note": "RED TORII gate over the Castle Approach"
+  },
+  {
+   "k": "statue",
+   "at": [
+    0,
+    -258
+   ],
+   "note": "RED TORII gate over the Castle Approach"
+  },
+  {
+   "k": "lamp",
+   "at": [
+    -48,
+    300
+   ],
+   "note": "kitsune central FIRE"
+  },
+  {
+   "k": "rock",
+   "at": [
+    -74,
+    292
+   ],
+   "note": "the STONE"
+  },
+  {
+   "k": "bench",
+   "at": [
+    -44,
+    316
+   ],
+   "note": "the WEDDING TABLE"
+  },
+  {
+   "k": "crate",
+   "at": [
+    -78,
+    312
+   ],
+   "note": "the CHEST (robe, stone, fan)"
+  },
+  {
+   "k": "crate",
+   "at": [
+    -50,
+    410
+   ],
+   "note": "BOAT 1 at the dock"
+  },
+  {
+   "k": "crate",
+   "at": [
+    -70,
+    410
+   ],
+   "note": "BOAT 2 at the dock"
+  },
+  {
+   "k": "rock",
+   "at": [
+    60,
+    384
+   ],
+   "note": "driftwood"
+  },
+  {
+   "k": "statue",
+   "at": [
+    -120,
+    382
+   ],
+   "note": "small red torii standing in the shallows"
+  }
+ ],
+ "look": {
+  "sky": [
+   "#7ab0e0",
+   "#fbe4ec"
+  ],
+  "fog": "#f6dce6",
+  "sun": "#fff4e6",
+  "light": "#fff8f4",
+  "grass": "#9abf6a",
+  "ground": "#b8a48a",
+  "water": "#6aa8c8",
+  "lamps": "#ff9a5a",
+  "blossom": "#f6b8cc",
+  "blossom2": "#fbd8e4",
+  "banners": [
+   "#c8302a",
+   "#f0ece4"
+  ],
+  "trees": [
+   "#3a5a32",
+   "#4a6a3a",
+   "#5a7a42"
+  ],
+  "notes": "CHERRY BLOSSOM SPRING in OLD SAMURAI-AGE JAPAN (Ben s348): soft blue sky to a pink-blush horizon, pink petals drifting on the wind, cherry trees everywhere (pink + pale pink), a few dark pines. Old-style Japanese buildings: dark timber, white plaster, grey-black tile roofs with upturned eaves, red lacquer torii + pillars, stone + paper lanterns (warm orange at night). Mount behind the town with a snowy cap. THE KITSUNE WOOD (south) stays MOONLIT even by day: deep blue shade, glowing fox-fire wisps, lanterns along the path, then KITSUNE BEACH: pale sand, a calm moonlit sea, the dock with 2 boats, a red torii in the shallows."
+ },
+ "terrain": {
+  "notes": "KYOTO = a valley town at the foot of a holy MOUNTAIN (east). The town, the streets and the castle approach stay flat. Gentle cherry hills ring the town; the mountain rises past the Mountain Road with the shrine stair + platform; the river valley Under the Mountain runs north-south at its foot.",
+  "hills": [
+   {
+    "key": "kyotoHolyMountain",
+    "c": [
+     300,
+     -300
+    ],
+    "r": 130,
+    "h": 120
+   },
+   {
+    "key": "kyotoShrineHill",
+    "c": [
+     250,
+     -150
+    ],
+    "r": 36,
+    "h": 16
+   },
+   {
+    "key": "kyotoCastleHill",
+    "c": [
+     -200,
+     -380
+    ],
+    "r": 70,
+    "h": 24
+   },
+   {
+    "key": "kyotoWestHill",
+    "c": [
+     -380,
+     140
+    ],
+    "r": 60,
+    "h": 20
+   },
+   {
+    "key": "kyotoSouthHill",
+    "c": [
+     -280,
+     260
+    ],
+    "r": 60,
+    "h": 18
+   },
+   {
+    "key": "kyotoEastHill",
+    "c": [
+     260,
+     180
+    ],
+    "r": 40,
+    "h": 12
+   },
+   {
+    "key": "kyotoNorthWestHill",
+    "c": [
+     -400,
+     -120
+    ],
+    "r": 40,
+    "h": 14
+   }
+  ],
+  "cuts": [
+   {
+    "key": "kyotoValley",
+    "r": [
+     380,
+     420,
+     -140,
+     160
+    ],
+    "depth": 8
+   }
+  ],
+  "forests": [
+   {
+    "key": "kyotoMountainRoadCherries",
+    "r": [
+     140,
+     320,
+     -130,
+     -20
+    ],
+    "every": 8,
+    "mix": "cherry",
+    "giants": 0.03
+   },
+   {
+    "key": "kyotoTownCherriesN",
+    "r": [
+     -130,
+     130,
+     -130,
+     -114
+    ],
+    "every": 8,
+    "mix": "cherry",
+    "giants": 0
+   },
+   {
+    "key": "kyotoCastleCherries",
+    "r": [
+     -120,
+     0,
+     -276,
+     -170
+    ],
+    "every": 9,
+    "mix": "cherry",
+    "giants": 0.04
+   },
+   {
+    "key": "kyotoCastleCherriesE",
+    "r": [
+     110,
+     200,
+     -280,
+     -140
+    ],
+    "every": 10,
+    "mix": "cherry",
+    "giants": 0.02
+   },
+   {
+    "key": "kyotoSumoCherries",
+    "r": [
+     -250,
+     -140,
+     -60,
+     -20
+    ],
+    "every": 9,
+    "mix": "cherry",
+    "giants": 0
+   },
+   {
+    "key": "kyotoKitsuneForest",
+    "r": [
+     -180,
+     130,
+     200,
+     364
+    ],
+    "every": 7,
+    "mix": "cherry",
+    "giants": 0.08
+   },
+   {
+    "key": "kyotoWestHillCherries",
+    "r": [
+     -438,
+     -300,
+     60,
+     240
+    ],
+    "every": 10,
+    "mix": "cherry",
+    "giants": 0.02
+   },
+   {
+    "key": "kyotoMountainPines",
+    "r": [
+     200,
+     400,
+     -420,
+     -200
+    ],
+    "every": 12,
+    "mix": "pine",
+    "giants": 0.02
+   }
+  ],
+  "clearings": [
+   {
+    "key": "kyotoRoyalCourt",
+    "r": [
+     -114,
+     -44,
+     -328,
+     -292
+    ]
+   },
+   {
+    "key": "kyotoArcheryField",
+    "r": [
+     186,
+     214,
+     26,
+     84
+    ]
+   },
+   {
+    "key": "kyotoKitsuneClearing",
+    "r": [
+     -96,
+     -16,
+     276,
+     336
+    ]
+   },
+   {
+    "key": "kyotoBeachClear",
+    "r": [
+     -200,
+     140,
+     364,
+     392
+    ]
+   }
+  ]
+ }
+}

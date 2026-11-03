@@ -21,7 +21,6 @@ const ellipse = (rx, rz, n = 64) => { const p = []; for (let i = 0; i < n; i++) 
 export function buildZen({ scene }) {
   const g = new THREE.Group(); g.name = 'zen'; scene.add(g);
   const col = [], benches = [], tickers = [];
-  const dyn = o => { o.traverse(m => { m.userData.dyn = true; }); return o; };   // (29 Oct) moves in a ticker: kept out of the static merge (gallery-game.js merges the rest of the garden into a few draws)
   const M = {
     ink: new THREE.MeshLambertMaterial({ color: 0x1d1c1b }),
     oak: new THREE.MeshLambertMaterial({ color: 0xb08356 }),
@@ -85,7 +84,7 @@ export function buildZen({ scene }) {
     const padM = new THREE.MeshLambertMaterial({ color: 0x4f7a3a, side: THREE.DoubleSide }), lotusM = new THREE.MeshLambertMaterial({ color: 0xf3d6dc }), lotusC = new THREE.MeshLambertMaterial({ color: 0xe8c04a });
     const pads = [];
     for (const [x, z, r] of [[-0.9, -2.4, 0.42], [0.7, -1.6, 0.34], [-1.1, 1.2, 0.38], [1.0, 2.2, 0.3], [0.2, -3.2, 0.28], [-0.4, 2.9, 0.33]]) {
-      const pd = new THREE.Mesh(new THREE.CircleGeometry(r, 18, 0.3, Math.PI * 2 - 0.5), padM); pd.rotation.x = -Math.PI / 2; pd.rotation.z = rnd() * 6; pd.position.set(x, WY + 0.006, z); pg.add(pd); pads.push(dyn(pd)); }
+      const pd = new THREE.Mesh(new THREE.CircleGeometry(r, 18, 0.3, Math.PI * 2 - 0.5), padM); pd.rotation.x = -Math.PI / 2; pd.rotation.z = rnd() * 6; pd.position.set(x, WY + 0.006, z); pg.add(pd); pads.push(pd); }
     for (const [x, z] of [[-0.9, -2.4], [-1.1, 1.2]]) {
       const fl = new THREE.Group(); fl.position.set(x + 0.05, WY + 0.02, z + 0.05); pg.add(fl);
       for (let i = 0; i < 8; i++) { const pt = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 6), lotusM); pt.scale.set(0.55, 0.5, 1.4); const a = i / 8 * Math.PI * 2; pt.position.set(Math.cos(a) * 0.07, 0.05, Math.sin(a) * 0.07); pt.rotation.y = -a + Math.PI / 2; pt.rotation.x = -0.6; fl.add(pt); }
@@ -93,12 +92,11 @@ export function buildZen({ scene }) {
     tickers.push((dt, t) => { pads.forEach((p, i) => { p.rotation.z += Math.sin(t * 0.13 + i) * dt * 0.02; }); });
     // koi: three, under the surface, circling at their own pace
     const koiM = [new THREE.MeshLambertMaterial({ color: 0xe8622c }), new THREE.MeshLambertMaterial({ color: 0xf2ede4 }), new THREE.MeshLambertMaterial({ color: 0xd9a032 })];
-    const koi = [0, 1, 2].map(i => { const k = dyn(new THREE.Group()); pg.add(k);
+    const koi = [0, 1, 2].map(i => { const k = new THREE.Group(); pg.add(k);
       const body = new THREE.Mesh(new THREE.SphereGeometry(0.1, 10, 8), koiM[i]); body.scale.set(0.9, 0.55, 2.6); k.add(body);
       const tail = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.22, 6), koiM[i]); tail.rotation.x = -Math.PI / 2; tail.scale.set(1, 1, 0.25); tail.position.z = -0.3; k.add(tail);
       if (i === 1) { const spot = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 6), koiM[0]); spot.position.set(0, 0.05, 0.1); spot.scale.set(1, 0.4, 1.4); k.add(spot); }
       return { k, tail, r: 0.45 + i * 0.17, sp: 0.16 + i * 0.05, ph: i * 2.1, dir: i === 1 ? -1 : 1 }; });
-    koi.forEach(f => dyn(f.k));
     tickers.push((dt, t) => { for (const f of koi) { const a = f.ph + t * f.sp * f.dir, wob = 1 + 0.12 * Math.sin(t * 0.37 + f.ph);
       const x = Math.cos(a) * P.rx * f.r * wob, z = Math.sin(a) * P.rz * f.r * wob, ax = -Math.sin(a) * P.rx * f.dir, az = Math.cos(a) * P.rz * f.dir;
       f.k.position.set(x, WY - 0.06, z); f.k.rotation.y = Math.atan2(ax, az); f.tail.rotation.y = Math.sin(t * 6 + f.ph) * 0.4; } });
@@ -111,7 +109,6 @@ export function buildZen({ scene }) {
     const tube = cyl(0.06, 0.06, 1.0, M.bamboo, 0, 0, 0, 10, pivot); tube.rotation.x = Math.PI / 2; tube.position.z = -0.15;
     const knock = cyl(0.16, 0.2, 0.18, M.stoneD, 0, 0.09, 0.4, 10, so);
     const stream = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 1, 6, 1, true), new THREE.MeshBasicMaterial({ color: 0xdff1f4, transparent: true, opacity: 0.55, depthWrite: false })); so.add(stream);
-    dyn(pivot); dyn(stream);
     const st = { fill: 0, tip: 0, phase: 'fill' }, REST = 0.28, DOWN = -0.55;
     tickers.push((dt, t) => {
       if (st.phase === 'fill') { st.fill += dt / 7; if (st.fill >= 1) { st.phase = 'tip'; } }
@@ -128,7 +125,7 @@ export function buildZen({ scene }) {
       for (const [a, s, h, m] of [[0.35, 0.34, 0.6, 1], [0.5, 0.22, 0.7, 0], [2.6, 0.4, 0.55, 1], [2.8, 0.2, 0.8, 0], [4.1, 0.3, 0.6, 1], [5.4, 0.26, 0.65, 0], [5.55, 0.16, 0.8, 0]]) {
         const x = Math.cos(a) * (P.rx + CO * 0.6), zz = Math.sin(a) * (P.rz + CO * 0.6), r = new THREE.Mesh(rk, a % 2 > 1 ? M.stoneD : M.stone); r.scale.set(s * 1.3, s * h, s); r.rotation.y = a * 3; r.position.set(x, FY + 0.3 + s * h * 0.35, zz); pg.add(r);
         if (m) { const mo = new THREE.Mesh(rk, moss); mo.scale.set(s * 0.9, s * h * 0.35, s * 0.7); mo.position.set(x, FY + 0.3 + s * h * 0.95, zz); pg.add(mo); } } }
-    const spl = new THREE.Mesh(new THREE.RingGeometry(0.05, 0.12, 20), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, depthWrite: false })); spl.rotation.x = -Math.PI / 2; spl.position.set(0.3, WY + 0.01, P.rz - 0.15); pg.add(spl); dyn(spl);
+    const spl = new THREE.Mesh(new THREE.RingGeometry(0.05, 0.12, 20), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, depthWrite: false })); spl.rotation.x = -Math.PI / 2; spl.position.set(0.3, WY + 0.01, P.rz - 0.15); pg.add(spl);
     tickers.push(() => { spl.material.opacity = pulse * 0.5; spl.scale.setScalar(1 + (1 - pulse) * 4); });
     // you can't walk into the pond (coping and all)
     const pc = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1.2, 24)); pc.scale.set(P.rx + CO + 0.05, 1, P.rz + CO + 0.05); pc.position.set(P.x, FY + 0.6, P.z); pc.updateMatrixWorld(true); col.push(pc);
@@ -173,11 +170,11 @@ export function buildZen({ scene }) {
       cyl(0.008, 0.008, 3.0, M.ink, 0, 1.9, 0, 4, l);
       const halo = new THREE.Mesh(new THREE.PlaneGeometry(1.9, 1.9), haloM); halo.renderOrder = 6; l.add(halo); halos.push(halo);
       const gp = new THREE.Mesh(new THREE.CircleGeometry(2.4, 24), glowM); gp.rotation.x = -Math.PI / 2; gp.position.set(x, FY + 0.03, z); gp.renderOrder = 3; g.add(gp);
-      lan.push({ l: dyn(l), ph: i * 1.7 }); });
+      lan.push({ l, ph: i * 1.7 }); });
     tickers.push((dt, t, cam) => { for (const L of lan) L.l.rotation.z = Math.sin(t * 0.5 + L.ph) * 0.025; for (const h of halos) h.quaternion.copy(cam.q); });
     // (pass 2) BREATHE: a soft warm ring round the mat that swells in (4 s) and fades out (6 s), a pace to breathe along with
     const brM = new THREE.MeshBasicMaterial({ color: 0xffc98a, transparent: true, opacity: 0.2, depthWrite: false, blending: THREE.AdditiveBlending });
-    const br = new THREE.Mesh(new THREE.RingGeometry(3.72, 3.98, 64), brM); br.rotation.x = -Math.PI / 2; br.position.set(mx, FY + 0.02, mz); br.renderOrder = 3; g.add(br); dyn(br);
+    const br = new THREE.Mesh(new THREE.RingGeometry(3.72, 3.98, 64), brM); br.rotation.x = -Math.PI / 2; br.position.set(mx, FY + 0.02, mz); br.renderOrder = 3; g.add(br);
     tickers.push((dt, t) => { const c = t % 10, k = c < 4 ? 0.5 - 0.5 * Math.cos(c / 4 * Math.PI) : 0.5 + 0.5 * Math.cos((c - 4) / 6 * Math.PI); brM.opacity = 0.08 + 0.34 * k; br.scale.setScalar(0.985 + 0.03 * k); });
   }
   // a stone bench at the pond's south end, looking over the water

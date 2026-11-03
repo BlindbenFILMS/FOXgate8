@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;background:#201e1d;color:#f3f2f2;font-family:Archivo,sans-serif}a{color:#f3f2f2}a:hover{color:#ec3013}input[type=range]{accent-color:#ec3013;width:100%;height:32px}select{font-family:Archivo,sans-serif}</style>
+</helmet>
+<div style="display:flex;flex-direction:{{ dir }};height:100vh;width:100%;background:#201e1d;color:#f3f2f2;font-family:Archivo,sans-serif;overflow:hidden">
+  <div style="position:relative;flex:{{ frameFlex }};min-width:0;min-height:0;background:#000;border-right:2px solid #f3f2f2;border-bottom:2px solid #f3f2f2">
+    <iframe ref="{{ frameRef }}" src="{{ src }}" title="Meru" style="position:absolute;inset:0;width:100%;height:100%;border:0;display:block"></iframe>
+    <sc-if value="{{ notReady }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute;left:0;top:0;padding:12px 16px;background:#201e1d;border-right:2px solid #f3f2f2;border-bottom:2px solid #f3f2f2;font-weight:800;font-size:16px;letter-spacing:0.04em">LOADING MERU…</div>
+    </sc-if>
+  </div>
+  <div style="flex:{{ panelFlex }};min-width:0;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column">
+    <div style="padding:16px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:4px">
+      <div style="font-size:13px;font-weight:700;letter-spacing:0.08em;color:#ec3013">MERU · WORKSHOP</div>
+      <div style="font-size:28px;font-weight:900;line-height:1;letter-spacing:-0.01em">LIGHTING</div>
+    </div>
+    <div style="padding:16px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:10px">
+      <div style="font-size:13px;font-weight:700;letter-spacing:0.08em">ROOM</div>
+      <div style="display:flex;gap:8px">
+        <select value="{{ room }}" onChange="{{ pickRoom }}" style="flex:1;min-width:0;height:48px;padding:0 12px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:17px;font-weight:700">
+          <sc-for list="{{ rooms }}" as="r" hint-placeholder-count="1"><option value="{{ r.key }}">{{ r.label }}</option></sc-for>
+        </select>
+        <button onClick="{{ goRoom }}" style="height:48px;padding:0 16px;background:#ec3013;color:#f3f2f2;border:0;border-radius:0;font:800 16px Archivo,sans-serif;text-align:left;cursor:pointer" style-hover="background:#c42810">GO IN</button>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onClick="{{ prevRoom }}" style="flex:1;height:44px;padding:0 12px;background:transparent;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font:800 15px Archivo,sans-serif;text-align:left;cursor:pointer" style-hover="background:#4a1a10">← PREV</button>
+        <button onClick="{{ nextRoom }}" style="flex:1;height:44px;padding:0 12px;background:transparent;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font:800 15px Archivo,sans-serif;text-align:left;cursor:pointer" style-hover="background:#4a1a10">NEXT →</button>
+      </div>
+      <div style="font-size:16px;font-weight:700;line-height:1.3">{{ status }}</div>
+      <div style="display:flex;gap:0;border:2px solid #f3f2f2">
+        <sc-for list="{{ hours }}" as="h" hint-placeholder-count="3">
+          <button onClick="{{ h.go }}" style="flex:1;height:44px;padding:0 10px;background:{{ h.bg }};color:#f3f2f2;border:0;border-right:2px solid #f3f2f2;border-radius:0;font:800 15px Archivo,sans-serif;text-align:left;cursor:pointer">{{ h.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <sc-if value="{{ canEdit }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:16px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:14px">
+        <div style="font-size:13px;font-weight:700;letter-spacing:0.08em">HOUSE LIGHT · {{ roomLabel }}</div>
+        <sc-for list="{{ sliders }}" as="s" hint-placeholder-count="3">
+          <label style="display:flex;flex-direction:column;gap:2px">
+            <span style="display:flex;justify-content:space-between;font-size:16px;font-weight:700"><span>{{ s.label }}</span><span>{{ s.txt }}</span></span>
+            <input type="range" min="{{ s.min }}" max="{{ s.max }}" step="{{ s.step }}" value="{{ s.v }}" onChange="{{ s.on }}"></input>
+          </label>
+        </sc-for>
+        <sc-for list="{{ colRows }}" as="cr" hint-placeholder-count="2">
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="font-size:16px;font-weight:700">{{ cr.label }}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <sc-for list="{{ cr.sw }}" as="w" hint-placeholder-count="6">
+                <button onClick="{{ w.on }}" title="{{ w.name }}" style="width:44px;height:44px;padding:0;background:{{ w.c }};border:{{ w.bd }};border-radius:0;cursor:pointer;font:800 11px Archivo,sans-serif;color:#201e1d">{{ w.t }}</button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+        <button onClick="{{ toggleEven }}" style="height:44px;padding:0 12px;background:{{ evenBg }};color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font:800 15px Archivo,sans-serif;text-align:left;cursor:pointer">{{ evenTxt }}</button>
+      </div>
+      <div style="padding:16px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+          <div style="font-size:13px;font-weight:700;letter-spacing:0.08em">SPOTLIGHTS · {{ spotCount }} OF 4</div>
+          <sc-if value="{{ canAdd }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ addSpot }}" style="height:44px;padding:0 12px;background:#ec3013;color:#f3f2f2;border:0;border-radius:0;font:800 14px Archivo,sans-serif;text-align:left;cursor:pointer" style-hover="background:#c42810">+ SPOT ON ME</button>
+          </sc-if>
+        </div>
+        <sc-if value="{{ noSpots }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:16px;line-height:1.35">No spotlights in this room. Stand where the light should land and press + SPOT ON ME.</div>
+        </sc-if>
+        <sc-for list="{{ spots }}" as="p" hint-placeholder-count="0">
+          <div style="border:2px solid {{ p.bd }};display:flex;flex-direction:column">
+            <button onClick="{{ p.pick }}" style="height:44px;padding:0 12px;background:{{ p.head }};color:#f3f2f2;border:0;border-radius:0;font:800 16px Archivo,sans-serif;text-align:left;cursor:pointer;display:flex;align-items:center;gap:10px">
+              <span style="width:18px;height:18px;background:{{ p.hex }};border:2px solid #f3f2f2"></span><span>{{ p.title }}</span>
+            </button>
+            <sc-if value="{{ p.open }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:12px;display:flex;flex-direction:column;gap:12px;border-top:2px solid #f3f2f2">
+                <sc-for list="{{ p.sliders }}" as="s" hint-placeholder-count="3">
+                  <label style="display:flex;flex-direction:column;gap:2px">
+                    <span style="display:flex;justify-content:space-between;font-size:16px;font-weight:700"><span>{{ s.label }}</span><span>{{ s.txt }}</span></span>
+                    <input type="range" min="{{ s.min }}" max="{{ s.max }}" step="{{ s.step }}" value="{{ s.v }}" onChange="{{ s.on }}"></input>
+                  </label>
+                </sc-for>
+                <div style="display:flex;flex-wrap:wrap;gap:6px">
+                  <sc-for list="{{ p.sw }}" as="w" hint-placeholder-count="6">
+                    <button onClick="{{ w.on }}" title="{{ w.name }}" style="width:44px;height:44px;padding:0;background:{{ w.c }};border:{{ w.bd }};border-radius:0;cursor:pointer"></button>
+                  </sc-for>
+                </div>
+                <div style="font-size:13px;font-weight:700;letter-spacing:0.08em">MOVE (AS THE CAMERA SEES IT)</div>
+                <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px">
+                  <sc-for list="{{ p.moves }}" as="m" hint-placeholder-count="4">
+                    <button onClick="{{ m.on }}" style="height:48px;padding:0 10px;background:transparent;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font:800 15px Archivo,sans-serif;text-align:left;cursor:pointer" style-hover="background:#4a1a10" style-active="background:#7a2a18">{{ m.t }}</button>
+                  </sc-for>
+                </div>
+                <div style="display:flex;gap:6px">
+                  <button onClick="{{ p.toMe }}" style="flex:1;height:44px;padding:0 12px;background:#f3f2f2;color:#201e1d;border:0;border-radius:0;font:800 14px Archivo,sans-serif;text-align:left;cursor:pointer">AIM AT ME</button>
+                  <button onClick="{{ p.del }}" style="flex:1;height:44px;padding:0 12px;background:transparent;color:#f3f2f2;border:2px solid #ec3013;border-radius:0;font:800 14px Archivo,sans-serif;text-align:left;cursor:pointer" style-hover="background:#4a1a10">REMOVE</button>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+      <div style="padding:16px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:16px;line-height:1.35">{{ saveTxt }}</div>
+        <div style="display:flex;gap:8px">
+          <button onClick="{{ resetRoom }}" style="flex:1;height:44px;padding:0 12px;background:transparent;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font:800 14px Archivo,sans-serif;text-align:left;cursor:pointer" style-hover="background:#4a1a10">RESET THIS ROOM</button>
+          <button onClick="{{ copyAll }}" style="flex:1;height:44px;padding:0 12px;background:transparent;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font:800 14px Archivo,sans-serif;text-align:left;cursor:pointer" style-hover="background:#4a1a10">{{ copyTxt }}</button>
+        </div>
+      </div>
+    </sc-if>
+    <div style="padding:16px;display:flex;flex-direction:column;gap:14px">
+      <div style="font-size:13px;font-weight:700;letter-spacing:0.08em">ALL ROOMS (EVERY INTERIOR)</div>
+      <sc-for list="{{ house }}" as="s" hint-placeholder-count="4">
+        <label style="display:flex;flex-direction:column;gap:2px">
+          <span style="display:flex;justify-content:space-between;font-size:16px;font-weight:700"><span>{{ s.label }}</span><span>{{ s.txt }}</span></span>
+          <input type="range" min="{{ s.min }}" max="{{ s.max }}" step="{{ s.step }}" value="{{ s.v }}" onChange="{{ s.on }}"></input>
+        </label>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { room: (() => { try { return localStorage.getItem('lightWs.room') || 'tavern'; } catch (e) { return 'tavern'; } })(), ready: false, inside: null, plan: null, sel: 0, hour: 12, rooms: null, port: false, copied: false, cfg: null };
+  frameRef = React.createRef();
+  src = 'FOXGATE8-PLAYABLE.dc.html?start=in:' + this.state.room + '&lw=1';
+  componentDidMount() {
+    this.onRs = () => this.setState({ port: innerHeight > innerWidth }); this.onRs(); addEventListener('resize', this.onRs);
+    this.iv = setInterval(() => this.poll(), 500);
+  }
+  componentWillUnmount() { clearInterval(this.iv); removeEventListener('resize', this.onRs); }
+  W() { try { return this.frameRef.current && this.frameRef.current.contentWindow; } catch (e) { return null; } }
+  M() { const w = this.W(); return w && w.__meru2 && w.__meru2.light ? w.__meru2 : null; }
+  poll() { const M = this.M(); if (!M) return; const s = {}; if (!this.state.ready) { s.ready = true; s.cfg = { ...M.indoor.cfg };
+      const L = M.K.L; s.rooms = L.BUILDINGS.filter(b => b.door && b.key !== 'aviary').map(b => ({ key: b.key, label: String(b.label || b.key).toUpperCase() })).sort((a, b) => a.label.localeCompare(b.label)); }
+    const ins = M.light.key; if (ins !== this.state.inside || !this.state.plan || (ins === this.state.room && this.state.plan.spots.length === 0 && !this.state.planFresh)) { s.inside = ins; s.plan = M.light.plan(this.state.room); s.planFresh = ins === this.state.room; }
+    if (Object.keys(s).length) this.setState(s); }
+  refresh() { const M = this.M(); if (M) this.setState({ plan: M.light.plan(this.state.room), copied: false }); }
+  set(patch) { const M = this.M(); if (!M || this.state.inside !== this.state.room) return; M.light.set(this.state.room, patch); this.refresh(); }
+  go(key) { const w = this.W(), M = this.M(); try { localStorage.setItem('lightWs.room', key); } catch (e) {}
+    this.setState({ room: key, sel: 0, plan: M ? M.light.plan(key) : null, planFresh: false });
+    try { const P = w.__m2page, Wk = P && P.walker, bd = M.K.L.BUILDINGS.find(b => b.key === key); if (!Wk || !bd || !bd.door) return; const F = { N: [0, -1], S: [0, 1], E: [1, 0], W: [-1, 0] }[bd.face] || [0, 1];
+      Wk.tp(bd.door[0] - F[0] * 3, bd.door[1] - F[1] * 3, 0, Math.atan2(-F[0], -F[1])); } catch (e) {} }
+  me() { const w = this.W(), M = this.M(); try { const Wk = w.__m2page.walker, d = Wk.mapData && Wk.mapData(); if (d && d.p) return { x: d.p[0], z: d.p[1] }; } catch (e) {}
+    const c = M.K.camera.position; return { x: c.x, z: c.z }; }
+  camAxes() { const M = this.M(), THREE = M.K.THREE, v = new THREE.Vector3(); M.K.camera.getWorldDirection(v); v.y = 0; if (v.lengthSq() < 1e-6) v.set(0, 0, -1); v.normalize(); return { fx: v.x, fz: v.z, rx: -v.z, rz: v.x }; }
+  spotsEdit(fn) { const sp = (this.state.plan.spots || []).map(s => ({ ...s })); fn(sp); this.set({ spots: sp }); }
+  renderVals() {
+    const S = this.state, P = S.plan, inRoom = S.ready && S.inside === S.room, port = S.port;
+    const rooms = S.rooms || [{ key: S.room, label: S.room.toUpperCase() }], idx = rooms.findIndex(r => r.key === S.room), lbl = (rooms[idx] || {}).label || S.room.toUpperCase();
+    const insideLbl = S.inside ? ((rooms.find(r => r.key === S.inside) || {}).label || S.inside.toUpperCase()) : null;
+    const hex = n => n == null ? null : '#' + (n >>> 0).toString(16).padStart(6, '0'), num = h => parseInt(h.slice(1), 16);
+    const sl = (label, v, min, max, step, on, fmt) => ({ label, v, min, max, step, txt: fmt ? fmt(v) : '×' + (+v).toFixed(2), on: e => on(+e.target.value) });
+    const LAMP_SW = [['WARM', '#ffd6a0'], ['CANDLE', '#ffc878'], ['GOLD', '#ffd890'], ['WHITE', '#fff6ea'], ['DAYLIGHT', '#f4f8ff'], ['STEEL', '#dfe8f2'], ['PURPLE', '#c4b5fd'], ['TORCH', '#ff9a50']];
+    const FILL_SW = [['SKY', '#cfe2ff'], ['WARM', '#ffd8a8'], ['STEEL', '#b8c8dc'], ['BLUE', '#9fc0ff'], ['VIOLET', '#7c3aed'], ['EMBER', '#ff8a3a']];
+    const SPOT_SW = [['WHITE', '#ffffff'], ['SOFT', '#fff0d0'], ['GOLD', '#ffd890'], ['AMBER', '#ffc878'], ['ICE', '#e6f0ff'], ['RED', '#ff4a3a'], ['VIOLET', '#d8ccff'], ['GREEN', '#9cffb0']];
+    const swRow = (list, cur, on, dflt) => [...(dflt ? [{ name: 'DEFAULT', c: '#201e1d', t: 'DEF', bd: cur == null ? '3px solid #ec3013' : '2px solid #f3f2f2', on: () => on(null) }] : []),
+      ...list.map(([name, c]) => ({ name, c, t: '', bd: cur && cur.toLowerCase() === c ? '3px solid #ec3013' : '2px solid #f3f2f2', on: () => on(num(c)) }))];
+    let status = !S.ready ? 'Loading Meru in the frame. The first load can take a while.' : inRoom ? 'You are in ' + lbl + '. Walk around; changes show live and save on their own.' : insideLbl ? 'You are in ' + insideLbl + '. Press GO IN to stand inside ' + lbl + '.' : 'You are outside. Press GO IN to stand inside ' + lbl + '.';
+    const H = [[12, 'DAY'], [19, 'DUSK'], [22, 'NIGHT']].map(([h, label]) => ({ label, bg: S.hour === h ? '#ec3013' : 'transparent', go: () => { const M = this.M(); if (M) M.setHour(h, true); this.setState({ hour: h }); } }));
+    const out = { dir: port ? 'column' : 'row', frameFlex: port ? '0 0 52vh' : '1 1 0', panelFlex: port ? '1 1 0' : '0 0 360px',
+      frameRef: this.frameRef, src: this.src, notReady: !S.ready, room: S.room, rooms, status, hours: H, roomLabel: lbl, canEdit: !!(inRoom && P),
+      pickRoom: e => this.go(e.target.value), goRoom: () => this.go(S.room),
+      prevRoom: () => this.go(rooms[(idx - 1 + rooms.length) % rooms.length].key), nextRoom: () => this.go(rooms[(idx + 1) % rooms.length].key) };
+    const cfg = S.cfg || {}, setC = (k, v) => { const M = this.M(); if (!M) return; M.indoor.set({ [k]: v }); this.setState({ cfg: { ...M.indoor.cfg } }); };
+    out.house = S.cfg ? [sl('SKY LIGHT · DAY', cfg.sky, 0, 2, 0.05, v => setC('sky', v), v => (+v).toFixed(2)), sl('SKY LIGHT · NIGHT', cfg.skyNight, 0, 2, 0.05, v => setC('skyNight', v), v => (+v).toFixed(2)),
+      sl('LAMPS · DAY', cfg.lamp, 0, 6, 0.1, v => setC('lamp', v), v => (+v).toFixed(1)), sl('LAMPS · NIGHT', cfg.lampNight, 0, 8, 0.1, v => setC('lampNight', v), v => (+v).toFixed(1)),
+      sl('FILL', cfg.fill, 0, 2, 0.05, v => setC('fill', v), v => (+v).toFixed(2)), sl('WINDOW SUN', cfg.sunIn, 0, 1, 0.02, v => setC('sunIn', v), v => (+v).toFixed(2))] : [];
+    if (!out.canEdit) return { ...out, sliders: [], colRows: [], spots: [], spotCount: 0, canAdd: false, noSpots: false, evenBg: 'transparent', evenTxt: '', saveTxt: '', copyTxt: 'COPY ALL' };
+    out.sliders = [sl('ROOM BRIGHTNESS', P.lit, 0.2, 2.5, 0.05, v => this.set({ lit: v })), sl('HOUSE LAMPS', P.lampX, 0, 2.5, 0.05, v => this.set({ lampX: v })), sl('LOW FILL', P.fillX, 0, 2.5, 0.05, v => this.set({ fillX: v }))];
+    out.colRows = [{ label: 'LAMP COLOUR', sw: swRow(LAMP_SW, hex(P.col), v => this.set({ col: v == null ? undefined : v }), 1) }, { label: 'FILL COLOUR', sw: swRow(FILL_SW, hex(P.fillCol), v => this.set({ fillCol: v == null ? undefined : v }), 1) }];
+    out.evenBg = P.even ? '#ec3013' : 'transparent'; out.evenTxt = P.even ? 'EVEN LIGHT: ON (3 LAMPS SPREAD OUT)' : 'EVEN LIGHT: OFF (ONE LAMP IN THE MIDDLE)';
+    out.toggleEven = () => this.set({ even: P.even ? 0 : 1 });
+    const sp = P.spots || [];
+    out.spots = sp.map((s, i) => { const open = S.sel === i, ed = fn => this.spotsEdit(a => fn(a[i]));
+      const mv = (dr, df) => ed(o => { const A = this.camAxes(), dx = A.rx * dr + A.fx * df, dz = A.rz * dr + A.fz * df; o.x += dx; o.tx += dx; o.z += dz; o.tz += dz; });
+      return { open, title: 'SPOT ' + (i + 1) + ' · ' + (+s.i).toFixed(1), hex: hex(s.c || 0xffffff), head: open ? '#ec3013' : 'transparent', bd: open ? '#ec3013' : '#f3f2f2', pick: () => this.setState({ sel: open ? -1 : i }),
+        sliders: [sl('BRIGHTNESS', s.i, 0, 12, 0.1, v => ed(o => { o.i = v; }), v => (+v).toFixed(1)), sl('SIZE (CONE)', s.a || 0.45, 0.15, 0.9, 0.01, v => ed(o => { o.a = v; }), v => Math.round(v * 57.3) + '°'),
+          sl('LAMP HEIGHT', s.y, 2, 9, 0.1, v => ed(o => { o.y = v; }), v => (+v).toFixed(1) + ' m'), sl('LANDS AT HEIGHT', s.ty, 0, 4, 0.1, v => ed(o => { o.ty = v; }), v => (+v).toFixed(1) + ' m' + (v > 1.4 ? ' · WALL' : ' · FLOOR'))],
+        sw: swRow(SPOT_SW, hex(s.c || 0xffffff), v => ed(o => { o.c = v; }), 0),
+        moves: [{ t: '← LEFT', on: () => mv(-0.3, 0) }, { t: 'RIGHT →', on: () => mv(0.3, 0) }, { t: '↑ AWAY', on: () => mv(0, 0.3) }, { t: '↓ NEAR', on: () => mv(0, -0.3) }],
+        toMe: () => { const p = this.me(); ed(o => { const dx = p.x - o.tx, dz = p.z - o.tz; o.x += dx; o.tx += dx; o.z += dz; o.tz += dz; }); },
+        del: () => { this.spotsEdit(a => a.splice(i, 1)); this.setState({ sel: -1 }); } }; });
+    out.spotCount = sp.length; out.canAdd = sp.length < 4; out.noSpots = !sp.length;
+    out.addSpot = () => { const p = this.me(), q = this.M().light.box(), y = Math.min(((q && q.h) || 7) - 0.6, 6.2); this.spotsEdit(a => a.push({ x: p.x, y, z: p.z + 0.01, tx: p.x, ty: 0, tz: p.z, c: 0xfff0d0, i: 5, a: 0.45 })); this.setState({ sel: sp.length }); };
+    out.saveTxt = P.tuned ? lbl + ' has your changes (saved on this device). Press COPY ALL and paste it to Claude to build them into the game.' : lbl + ' is on the game defaults.';
+    out.resetRoom = () => { const M = this.M(); if (!M) return; M.light.reset(S.room); this.refresh(); };
+    out.copyAll = () => { const M = this.M(); if (!M) return; const txt = JSON.stringify({ lightTune: M.light.all(), indoor: M.indoor.cfg }); try { navigator.clipboard.writeText(txt); } catch (e) {} this.setState({ copied: true }); };
+    out.copyTxt = S.copied ? 'COPIED' : 'COPY ALL';
+    return out;
+  }
+}
+</script>
+</body>
+</html>

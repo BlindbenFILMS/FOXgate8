@@ -1,0 +1,2479 @@
+{
+ "meta": {
+  "world": "zion",
+  "version": 1,
+  "date": "2026-10-22",
+  "from": "uploads/ZION_BRIEF.md (Zion section of 8GATES_DESIGN_BRIEF_ALL.md) + uploads/surface_zion.html (add it)",
+  "notes": "DRAFT by Claude (s348) for Ben to move in the Map Workshop. ZION = a wild-west GOLD TOWN in red-rock mesa country. Unlike the other worlds the town is ONE LONG MAIN STREET (east-west) of false-front buildings with boardwalks, crossed by CREST STREET at the round CREST PAD + fountain (the square). WEST: Main Street becomes the HILL PATH (parked monster trucks, Hilltop Overlook) → the switchback HILL RUN → HILL RUN, UPPER → the truck gang base. EAST: the cobblestone TRUCK ROAD (Truck Shop, Bull Barn, staging yard) → CREST RISE north to the MONSTER ARENA. NORTH: Castle Path over the DRY MOAT to Zada's castle + Barracks. SOUTH: the winding GOLD RIVER (2 bridges, 3 panning spots, Survay Office, oil derrick in the SW corner) and the Zion Space Dock. Red mesas out in the open (off-path freedom). EVERY BUILDING IS UNIQUE: see each building's \"outside\" note. Every building has a roof sign + eye-level door sign. NPC keys are draft until surface_zion.html comes in.",
+  "rooms": {
+   "zionTownSquare": "zone",
+   "zionCastlePath": "zone",
+   "zionGoldRiver": "zone",
+   "zionHillPath": "zone",
+   "zionHillRun1": "zone",
+   "zionHillRun2": "zone",
+   "zionMonsterTruckPath": "zone",
+   "zionMonsterArena": "building (sport, quick fade into the arena bowl)",
+   "zionBlackout": "gate (battle map)",
+   "zionTavern": "building",
+   "zionBakery": "building",
+   "zionArmory": "building",
+   "zionShop": "building",
+   "zionPinball": "building",
+   "zionTruckshop": "building",
+   "zionThroneRoom": "building (castle)",
+   "zionBarracks": "building",
+   "zionHideout": "building (gang garage on the summit)"
+  }
+ },
+ "map": {
+  "half": 440,
+  "spawn": [
+   0,
+   18
+  ],
+  "spawnFace": "N"
+ },
+ "palette": {
+  "path": "#b98a5a",
+  "wall": "#c99a5e",
+  "roof": "#7a4a2a",
+  "trim": "#e0b030"
+ },
+ "zones": [
+  {
+   "key": "zionTown",
+   "label": "Zion",
+   "r": [
+    -132,
+    132,
+    -96,
+    100
+   ],
+   "music": "town",
+   "depth": 196,
+   "new": true
+  },
+  {
+   "key": "zionTownSquare",
+   "label": "Zion Town Square",
+   "r": [
+    -36,
+    36,
+    -36,
+    36
+   ],
+   "music": "town",
+   "depth": 72
+  },
+  {
+   "key": "zionCastlePath",
+   "label": "Castle Path",
+   "r": [
+    -60,
+    110,
+    -252,
+    -96
+   ],
+   "music": "castlepath",
+   "depth": 156
+  },
+  {
+   "key": "zionCastleGrounds",
+   "label": "Zion Castle",
+   "r": [
+    -120,
+    110,
+    -350,
+    -252
+   ],
+   "music": "castle",
+   "depth": 98,
+   "new": true
+  },
+  {
+   "key": "zionHillPath",
+   "label": "Hill Path",
+   "r": [
+    -300,
+    -132,
+    -110,
+    60
+   ],
+   "music": "hills",
+   "depth": 170
+  },
+  {
+   "key": "zionHillRun1",
+   "label": "Hill Run",
+   "r": [
+    -438,
+    -300,
+    -210,
+    40
+   ],
+   "music": "hillrun",
+   "depth": 250
+  },
+  {
+   "key": "zionHillRun2",
+   "label": "Hill Run, Upper",
+   "r": [
+    -438,
+    -280,
+    -438,
+    -210
+   ],
+   "music": "hillrun2",
+   "depth": 228
+  },
+  {
+   "key": "zionMonsterTruckPath",
+   "label": "Truck Road",
+   "r": [
+    132,
+    345,
+    -128,
+    60
+   ],
+   "music": "truckroad",
+   "depth": 188
+  },
+  {
+   "key": "zionArenaGrounds",
+   "label": "Monster Arena",
+   "r": [
+    170,
+    310,
+    -262,
+    -128
+   ],
+   "music": "arena",
+   "depth": 134,
+   "new": true
+  },
+  {
+   "key": "zionGoldRiver",
+   "label": "Gold River",
+   "r": [
+    -320,
+    320,
+    100,
+    340
+   ],
+   "music": "river",
+   "depth": 240
+  },
+  {
+   "key": "zionDockYard",
+   "label": "Zion Space Dock",
+   "r": [
+    90,
+    180,
+    250,
+    338
+   ],
+   "music": "dock",
+   "depth": 88,
+   "new": true
+  }
+ ],
+ "surfaces": [
+  {
+   "s": "stone",
+   "r": [
+    -30,
+    30,
+    -30,
+    30
+   ]
+  },
+  {
+   "s": "tile",
+   "r": [
+    -10,
+    10,
+    -10,
+    10
+   ]
+  },
+  {
+   "s": "wood",
+   "r": [
+    -130,
+    -36,
+    -10,
+    -7
+   ]
+  },
+  {
+   "s": "wood",
+   "r": [
+    36,
+    130,
+    -10,
+    -7
+   ]
+  },
+  {
+   "s": "wood",
+   "r": [
+    -130,
+    -36,
+    7,
+    10
+   ]
+  },
+  {
+   "s": "wood",
+   "r": [
+    36,
+    130,
+    7,
+    10
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -40,
+    40,
+    -286,
+    -274
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -112,
+    -46,
+    -318,
+    -284
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    -102,
+    -90,
+    -308,
+    -296
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    -66,
+    -58,
+    -306,
+    -298
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    50,
+    62,
+    -80,
+    -68
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    194,
+    206,
+    -116,
+    -104
+   ]
+  },
+  {
+   "s": "dirt",
+   "r": [
+    290,
+    340,
+    -24,
+    24
+   ]
+  },
+  {
+   "s": "dirt",
+   "r": [
+    -400,
+    -310,
+    -436,
+    -396
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -320,
+    -300,
+    -14,
+    14
+   ]
+  },
+  {
+   "s": "grass",
+   "r": [
+    120,
+    190,
+    128,
+    170
+   ]
+  },
+  {
+   "s": "dirt",
+   "r": [
+    -270,
+    -200,
+    276,
+    320
+   ]
+  }
+ ],
+ "water": [
+  {
+   "r": [
+    -300,
+    -130,
+    176,
+    198
+   ]
+  },
+  {
+   "r": [
+    -140,
+    -60,
+    186,
+    212
+   ]
+  },
+  {
+   "r": [
+    -70,
+    60,
+    198,
+    222
+   ]
+  },
+  {
+   "r": [
+    50,
+    140,
+    188,
+    214
+   ]
+  },
+  {
+   "r": [
+    130,
+    300,
+    172,
+    196
+   ]
+  }
+ ],
+ "roads": [
+  {
+   "w": 10,
+   "p": [
+    [
+     -300,
+     0
+    ],
+    [
+     -430,
+     -60
+    ],
+    [
+     -430,
+     -380
+    ],
+    [
+     -400,
+     -416
+    ]
+   ],
+   "note": "TRUCK-ONLY LEGS of the Hill Run (monster truck), up to the gang yard"
+  }
+ ],
+ "paths": [
+  {
+   "key": "zionMainStreet",
+   "label": "Main Street",
+   "w": 12,
+   "p": [
+    [
+     -130,
+     0
+    ],
+    [
+     130,
+     0
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20,
+   "note": "boardwalks both sides"
+  },
+  {
+   "key": "zionCrestStreet",
+   "label": "Crest Street",
+   "w": 10,
+   "p": [
+    [
+     0,
+     -96
+    ],
+    [
+     0,
+     100
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "zionCrestRing",
+   "label": "Crest Ring",
+   "w": 6,
+   "p": [
+    [
+     -32,
+     -32
+    ],
+    [
+     32,
+     -32
+    ],
+    [
+     32,
+     32
+    ],
+    [
+     -32,
+     32
+    ],
+    [
+     -32,
+     -32
+    ]
+   ],
+   "lining": "trees",
+   "every": 14
+  },
+  {
+   "key": "zionCastleRoad",
+   "label": "Castle Path",
+   "w": 10,
+   "p": [
+    [
+     0,
+     -96
+    ],
+    [
+     0,
+     -280
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20,
+   "note": "stone bridge over the DRY MOAT"
+  },
+  {
+   "key": "zionBarracksWalk",
+   "label": "Barracks walk",
+   "w": 6,
+   "p": [
+    [
+     0,
+     -240
+    ],
+    [
+     60,
+     -240
+    ]
+   ],
+   "lining": "lamps",
+   "every": 16
+  },
+  {
+   "key": "zionRoyalWalk",
+   "label": "Royal Walk",
+   "w": 6,
+   "p": [
+    [
+     0,
+     -262
+    ],
+    [
+     -80,
+     -262
+    ],
+    [
+     -80,
+     -290
+    ]
+   ],
+   "lining": "lamps",
+   "every": 16
+  },
+  {
+   "key": "zionMedevacWalk",
+   "label": "Medevac walk",
+   "w": 6,
+   "p": [
+    [
+     5,
+     -94
+    ],
+    [
+     56,
+     -94
+    ],
+    [
+     56,
+     -82
+    ]
+   ],
+   "lining": "lamps",
+   "every": 16
+  },
+  {
+   "key": "zionHillRoad",
+   "label": "Hill Path",
+   "w": 10,
+   "p": [
+    [
+     -130,
+     0
+    ],
+    [
+     -300,
+     0
+    ]
+   ],
+   "lining": "trees",
+   "every": 16
+  },
+  {
+   "key": "zionOverlookSpur",
+   "label": "Hilltop Overlook",
+   "w": 6,
+   "p": [
+    [
+     -220,
+     0
+    ],
+    [
+     -220,
+     -90
+    ]
+   ],
+   "lining": "trees",
+   "every": 16,
+   "note": "dead end overlook"
+  },
+  {
+   "key": "zionHillRunTrail",
+   "label": "Hill Run",
+   "w": 8,
+   "p": [
+    [
+     -300,
+     0
+    ],
+    [
+     -340,
+     -40
+    ],
+    [
+     -390,
+     -80
+    ],
+    [
+     -330,
+     -120
+    ],
+    [
+     -390,
+     -170
+    ],
+    [
+     -345,
+     -210
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20,
+   "note": "BOULDER FIELD, MUD WALLOW, ROCK STAIR, RAVINE CROSSING, TIRE BERM"
+  },
+  {
+   "key": "zionHillRunUpper",
+   "label": "Hill Run, Upper",
+   "w": 8,
+   "p": [
+    [
+     -345,
+     -210
+    ],
+    [
+     -395,
+     -260
+    ],
+    [
+     -330,
+     -300
+    ],
+    [
+     -390,
+     -350
+    ],
+    [
+     -355,
+     -390
+    ],
+    [
+     -355,
+     -414
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20,
+   "note": "LOG PILE, BOULDER CHOKE, MUD HOLE, ROCK SHELF, TIRE GAUNTLET"
+  },
+  {
+   "key": "zionTruckRoad",
+   "label": "Truck Road",
+   "w": 12,
+   "p": [
+    [
+     130,
+     0
+    ],
+    [
+     330,
+     0
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20,
+   "note": "cobblestone"
+  },
+  {
+   "key": "zionArenaRise",
+   "label": "Crest Rise",
+   "w": 10,
+   "p": [
+    [
+     240,
+     0
+    ],
+    [
+     240,
+     -130
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "zionArenaPadWalk",
+   "label": "Arena helipad walk",
+   "w": 6,
+   "p": [
+    [
+     240,
+     -110
+    ],
+    [
+     208,
+     -110
+    ]
+   ],
+   "lining": "lamps",
+   "every": 16
+  },
+  {
+   "key": "zionRiverWalk",
+   "label": "Gold River Trail",
+   "w": 8,
+   "p": [
+    [
+     0,
+     100
+    ],
+    [
+     0,
+     120
+    ],
+    [
+     -220,
+     120
+    ],
+    [
+     0,
+     120
+    ],
+    [
+     220,
+     120
+    ]
+   ],
+   "lining": "trees",
+   "every": 14
+  },
+  {
+   "key": "zionRiverBridge",
+   "label": "River bridge",
+   "w": 8,
+   "p": [
+    [
+     0,
+     120
+    ],
+    [
+     0,
+     262
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20,
+   "note": "first bridge"
+  },
+  {
+   "key": "zionOilBridge",
+   "label": "Oil Drill bridge",
+   "w": 6,
+   "p": [
+    [
+     -180,
+     120
+    ],
+    [
+     -180,
+     262
+    ],
+    [
+     -230,
+     290
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20,
+   "note": "second bridge, to the OIL DRILL"
+  },
+  {
+   "key": "zionDockWalk",
+   "label": "Dock Walk",
+   "w": 8,
+   "p": [
+    [
+     0,
+     262
+    ],
+    [
+     120,
+     262
+    ],
+    [
+     130,
+     276
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "zionBlackoutTrail",
+   "label": "Blackout Trail",
+   "w": 6,
+   "p": [
+    [
+     330,
+     0
+    ],
+    [
+     380,
+     100
+    ],
+    [
+     380,
+     190
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20
+  },
+  {
+   "key": "zionMineTrail",
+   "label": "Mine Trail",
+   "w": 6,
+   "p": [
+    [
+     330,
+     0
+    ],
+    [
+     330,
+     -280
+    ],
+    [
+     340,
+     -318
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20,
+   "note": "DRAFT trail to the cave"
+  }
+ ],
+ "buildings": [
+  {
+   "key": "zionShop",
+   "label": "Item Shop",
+   "role": "itemshop",
+   "f": [
+    -128,
+    -100,
+    -34,
+    -10
+   ],
+   "door": [
+    -114,
+    -10
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#c9a26a",
+   "interior": true,
+   "note": "Trader Maren: Heal Beam Battery, Energy Cell, Tin of Peaches. Verna, Pip, Ordell.",
+   "outside": "False-front plank store with a tall square facade, a covered boardwalk porch on 4 posts, crates + kegs stacked by the door, a hanging tin-can sign.",
+   "sign": {
+    "roof": "ITEM SHOP",
+    "door": "ITEM SHOP · MAREN"
+   }
+  },
+  {
+   "key": "zionBakery",
+   "label": "Bakery",
+   "role": "restaurant",
+   "f": [
+    -94,
+    -72,
+    -28,
+    -10
+   ],
+   "door": [
+    -83,
+    -10
+   ],
+   "face": "S",
+   "h": 7,
+   "color": "#e8c98a",
+   "interior": true,
+   "note": "Flour-dusted shop: ovens, cooling rack, pastry case, dough tubs, NOW HIRING sign. Baker Odette. RESTAURANT JOB: NOT BUILT YET.",
+   "outside": "UNIQUE RESTAURANT: whitewashed brick with a round stone bread-oven dome bulging out the side, a smoking brick chimney, flour sacks on the porch, the NEON BAKING-BREAD sign on the roof.",
+   "sign": {
+    "roof": "BAKERY",
+    "door": "ZION BAKERY · NOW HIRING"
+   }
+  },
+  {
+   "key": "zionTavern",
+   "label": "Saloon",
+   "role": "tavern",
+   "f": [
+    -66,
+    -36,
+    -34,
+    -10
+   ],
+   "door": [
+    -51,
+    -10
+   ],
+   "face": "S",
+   "h": 10,
+   "color": "#a8703a",
+   "interior": true,
+   "note": "Lantern-lit hall, crest runner carpet, BAR (4 stools), jukebox, darts, FOX HOOPS cage, 2 booths. UNIQUE TAVERN GAME: the DUSTY GULCH shooting cabinet. Barkeep Odessa; Zoran (Hero of Zion), Hoyt, Sable, Nel, Ida, Pross.",
+   "games": [
+    "3D-GAMES/g/dusty-gulch/index.html",
+    "3D-GAMES/g/fox-hoops-a28312/index.html"
+   ],
+   "outside": "Two-storey saloon: swinging bat-wing doors, a wraparound balcony on the upper floor, a hitching rail out front, a giant gold Z over the false front.",
+   "sign": {
+    "roof": "SALOON",
+    "door": "TAVERN · DUSTY GULCH · FOX HOOPS"
+   }
+  },
+  {
+   "key": "zionArmory",
+   "label": "Armory",
+   "role": "armory",
+   "f": [
+    36,
+    60,
+    -30,
+    -10
+   ],
+   "door": [
+    48,
+    -10
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#7a5a3a",
+   "interior": true,
+   "note": "Hot cellar smithy. Armorer Dorkin: Long Wrench, Plated Coveralls. Sten, Marrow, Corle.",
+   "outside": "Squat stone smithy half sunk into the ground (cellar steps down to the door), a glowing forge vent, an anvil on the porch, a shield wall on the facade.",
+   "sign": {
+    "roof": "ARMORY",
+    "door": "ARMORY · DORKIN"
+   }
+  },
+  {
+   "key": "zionPinball",
+   "label": "Pinball Parlour",
+   "role": "shop",
+   "f": [
+    66,
+    92,
+    -32,
+    -10
+   ],
+   "door": [
+    79,
+    -10
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#3a2a4a",
+   "interior": true,
+   "note": "7 pinball tables (GOLD RIVER, THE CRUSHER, HILL RUN, BLACKOUT, TRUCK ROAD, THE ASSAY, ZION), change counter, prize shelf. Ripley; Kell, Jonty, Ruse, Tolliver.",
+   "outside": "The only neon building on Main Street: dark plank front, a huge flashing PINBALL sign with a spinning steel ball, light-up flipper shapes either side of the door.",
+   "sign": {
+    "roof": "PINBALL",
+    "door": "PINBALL PARLOUR · RIPLEY"
+   }
+  },
+  {
+   "key": "zionGoldsmith",
+   "label": "Goldsmith of Zion",
+   "role": "specialty",
+   "f": [
+    98,
+    116,
+    -26,
+    -10
+   ],
+   "door": [
+    107,
+    -10
+   ],
+   "face": "S",
+   "h": 7,
+   "color": "#d9a930",
+   "interior": true,
+   "new": true,
+   "outside": "UNIQUE SPECIALTY SHOP: a small gold-leaf front with a bay window of rings + nuggets, a giant gold ring turning on the roof, brass bars on the windows.",
+   "sign": {
+    "roof": "GOLDSMITH",
+    "door": "GOLDSMITH OF ZION"
+   }
+  },
+  {
+   "key": "zionSheriff",
+   "label": "Sheriff's Office",
+   "role": "police",
+   "f": [
+    -130,
+    -104,
+    10,
+    34
+   ],
+   "door": [
+    -117,
+    10
+   ],
+   "face": "N",
+   "h": 9,
+   "color": "#8a6a4a",
+   "interior": true,
+   "new": true,
+   "outside": "Heavy stone jailhouse: barred cell windows down the side, a gold star badge on the facade, a WANTED poster board by the door, a bell on a post.",
+   "sign": {
+    "roof": "SHERIFF",
+    "door": "SHERIFF'S OFFICE · POLICE"
+   }
+  },
+  {
+   "key": "zionPost",
+   "label": "Galactic Post Office (Meru Embassy)",
+   "role": "post",
+   "f": [
+    -98,
+    -72,
+    10,
+    30
+   ],
+   "door": [
+    -85,
+    10
+   ],
+   "face": "N",
+   "h": 10,
+   "color": "#d8c08a",
+   "interior": true,
+   "note": "STAGECOACH / MAIL RUN starts here (NOT BUILT YET)",
+   "new": true,
+   "outside": "Brick post house with a small clock tower + Meru flag, a stagecoach hitching yard on the side, the Galactic Post dish on the roof, a red mail box at the door.",
+   "sign": {
+    "roof": "POST OFFICE",
+    "door": "GALACTIC POST · MERU EMBASSY"
+   }
+  },
+  {
+   "key": "zionBank",
+   "label": "Gold Bank of Zion",
+   "role": "bank",
+   "f": [
+    -66,
+    -36,
+    10,
+    34
+   ],
+   "door": [
+    -51,
+    10
+   ],
+   "face": "N",
+   "h": 11,
+   "color": "#cdb48a",
+   "interior": true,
+   "new": true,
+   "outside": "Stone columns + a stepped pediment, a huge round vault door painted on the facade, gold bars carved in the frieze, the only stone steps on Main Street.",
+   "sign": {
+    "roof": "GOLD BANK",
+    "door": "GOLD BANK OF ZION"
+   }
+  },
+  {
+   "key": "zionGazette",
+   "label": "The Zion Gazette",
+   "role": "news",
+   "f": [
+    36,
+    62,
+    10,
+    30
+   ],
+   "door": [
+    49,
+    10
+   ],
+   "face": "N",
+   "h": 10,
+   "color": "#b89a6a",
+   "interior": true,
+   "new": true,
+   "outside": "Tall narrow print shop: a printing press visible through the big front window, a telegraph mast + wires on the roof, newspaper bundles on the porch.",
+   "sign": {
+    "roof": "ZION GAZETTE",
+    "door": "THE ZION GAZETTE · NEWS"
+   }
+  },
+  {
+   "key": "zionFireHall",
+   "label": "Zion Fire Hall",
+   "role": "fire",
+   "f": [
+    68,
+    96,
+    10,
+    30
+   ],
+   "door": [
+    82,
+    10
+   ],
+   "face": "N",
+   "h": 9,
+   "color": "#b8402a",
+   "interior": true,
+   "new": true,
+   "outside": "Red plank firehouse: a wide double barn-door bay, a water wagon with a hand pump parked out front, a lookout bell tower with a siren.",
+   "sign": {
+    "roof": "FIRE HALL",
+    "door": "ZION FIRE HALL"
+   }
+  },
+  {
+   "key": "zionWeapons",
+   "label": "Six & Saber",
+   "role": "weapons",
+   "f": [
+    -34,
+    -12,
+    -84,
+    -64
+   ],
+   "door": [
+    -12,
+    -74
+   ],
+   "face": "E",
+   "h": 8,
+   "color": "#5a4a3a",
+   "interior": true,
+   "note": "SPECIAL WEAPONS: the 8 extra ranged + melee",
+   "new": true,
+   "outside": "Dark iron-clad front with a crossed laser + saber sign, weapon-rack shutters that fold open by day, a target board on the side wall.",
+   "sign": {
+    "roof": "SIX & SABER",
+    "door": "SPECIAL WEAPONS"
+   }
+  },
+  {
+   "key": "zionRelicShop",
+   "label": "The Mother Lode",
+   "role": "relicShop",
+   "f": [
+    -32,
+    -12,
+    -56,
+    -40
+   ],
+   "door": [
+    -12,
+    -48
+   ],
+   "face": "E",
+   "h": 7,
+   "color": "#b8893a",
+   "interior": true,
+   "note": "The famous Zion relic to BUY (DRAFT: Ben picks)",
+   "new": true,
+   "outside": "Old miner's shack with a rusty corrugated roof, an ore cart full of glowing gold on the porch, a pick + pan crossed over the door.",
+   "sign": {
+    "roof": "MOTHER LODE",
+    "door": "THE MOTHER LODE · RELICS"
+   }
+  },
+  {
+   "key": "zionHospital",
+   "label": "Zion Infirmary",
+   "role": "hospital",
+   "f": [
+    10,
+    44,
+    -88,
+    -60
+   ],
+   "door": [
+    10,
+    -74
+   ],
+   "face": "W",
+   "h": 12,
+   "color": "#eee4d0",
+   "interior": true,
+   "new": true,
+   "outside": "White clapboard with green shutters, a long shaded veranda with rocking chairs, a red cross on the roof, the medevac helipad out the back.",
+   "sign": {
+    "roof": "INFIRMARY",
+    "door": "ZION INFIRMARY · HOSPITAL"
+   }
+  },
+  {
+   "key": "zionWagonHire",
+   "label": "Dusty Wheels",
+   "role": "carRental",
+   "f": [
+    10,
+    36,
+    -56,
+    -38
+   ],
+   "door": [
+    10,
+    -47
+   ],
+   "face": "W",
+   "h": 6,
+   "color": "#c98a4a",
+   "interior": true,
+   "note": "Car rental Zion style: buggies, pickup, a stagecoach (DRAFT)",
+   "new": true,
+   "outside": "Open timber barn with a sloped tin roof, a stagecoach, dune buggies + a pickup lined up out front, a giant wagon wheel as the sign.",
+   "sign": {
+    "roof": "DUSTY WHEELS",
+    "door": "DUSTY WHEELS · CAR RENTAL"
+   }
+  },
+  {
+   "key": "zionHome",
+   "label": "Homestead",
+   "role": "home",
+   "f": [
+    -26,
+    -10,
+    42,
+    56
+   ],
+   "door": [
+    -10,
+    49
+   ],
+   "face": "E",
+   "h": 8,
+   "color": "#c9a26a",
+   "interior": true,
+   "note": "the player rents / buys it",
+   "new": true,
+   "outside": "Log homestead with a stone chimney, a porch swing, a little vegetable patch + picket fence, a gold Z weather vane.",
+   "sign": {
+    "roof": "HOMESTEAD",
+    "door": "YOUR HOMESTEAD"
+   }
+  },
+  {
+   "key": "zionHouse1",
+   "label": "House",
+   "role": "housing",
+   "f": [
+    -26,
+    -10,
+    62,
+    76
+   ],
+   "door": [
+    -10,
+    69
+   ],
+   "face": "E",
+   "h": 8,
+   "color": "#d8b88a",
+   "interior": true,
+   "new": true,
+   "outside": "Clapboard cottage, red door, a water tower on stilts behind it.",
+   "sign": {
+    "roof": "HOUSE",
+    "door": "HOUSE"
+   }
+  },
+  {
+   "key": "zionHouse2",
+   "label": "House",
+   "role": "housing",
+   "f": [
+    -26,
+    -10,
+    82,
+    96
+   ],
+   "door": [
+    -10,
+    89
+   ],
+   "face": "E",
+   "h": 8,
+   "color": "#b8885a",
+   "interior": true,
+   "new": true,
+   "outside": "Adobe house with round roof beams poking out, blue door, chilli strings on the porch.",
+   "sign": {
+    "roof": "HOUSE",
+    "door": "HOUSE"
+   }
+  },
+  {
+   "key": "zionHouse3",
+   "label": "House",
+   "role": "housing",
+   "f": [
+    10,
+    26,
+    42,
+    56
+   ],
+   "door": [
+    10,
+    49
+   ],
+   "face": "W",
+   "h": 9,
+   "color": "#e0c890",
+   "interior": true,
+   "new": true,
+   "outside": "Two-storey with a gabled roof + a little balcony, green door.",
+   "sign": {
+    "roof": "HOUSE",
+    "door": "HOUSE"
+   }
+  },
+  {
+   "key": "zionHouse4",
+   "label": "House",
+   "role": "housing",
+   "f": [
+    10,
+    26,
+    62,
+    76
+   ],
+   "door": [
+    10,
+    69
+   ],
+   "face": "W",
+   "h": 8,
+   "color": "#a8805a",
+   "interior": true,
+   "new": true,
+   "outside": "Dugout house: half buried in a grass mound, round door, a windmill pump beside it.",
+   "sign": {
+    "roof": "HOUSE",
+    "door": "HOUSE"
+   }
+  },
+  {
+   "key": "zionTruckshop",
+   "label": "Bex's Truck Shop",
+   "role": "shop",
+   "f": [
+    148,
+    178,
+    -34,
+    -10
+   ],
+   "door": [
+    163,
+    -10
+   ],
+   "face": "S",
+   "h": 9,
+   "color": "#6a5a4a",
+   "interior": true,
+   "note": "Pit garage: truck in repair, a truck on a LIFT, engine hoist, workbench, tyre rack, parts shelf. Bex: Shop Medkit, Pit Crew Vest. Gus, Tam, Halder. PIT CREW job: NOT BUILT YET.",
+   "games": [
+    "3D-GAMES/g/bex-truck-shop/Main.dc.html"
+   ],
+   "outside": "Pit garage: two roll-up bays (one open with a truck on the lift), a huge monster-truck tyre on the roof, an oil-stained apron, a tyre stack by the door.",
+   "sign": {
+    "roof": "TRUCK SHOP",
+    "door": "BEX'S TRUCK SHOP · PIT CREW"
+   }
+  },
+  {
+   "key": "zionBullBarn",
+   "label": "The Bull Barn",
+   "role": "sport",
+   "f": [
+    150,
+    176,
+    10,
+    30
+   ],
+   "door": [
+    163,
+    10
+   ],
+   "face": "N",
+   "h": 9,
+   "color": "#9a5a2a",
+   "interior": true,
+   "note": "The MECHANICAL BULL (the second Zion sport).",
+   "games": [
+    "3D-GAMES/g/zion-mechanical-bull/Main.dc.html"
+   ],
+   "new": true,
+   "outside": "Red rodeo barn with a hay loft door, a big set of horns over the entrance, a rail corral on the side.",
+   "sign": {
+    "roof": "BULL BARN",
+    "door": "MECHANICAL BULL"
+   }
+  },
+  {
+   "key": "zionMonsterArena",
+   "label": "Monster Arena",
+   "role": "sport",
+   "f": [
+    180,
+    300,
+    -250,
+    -130
+   ],
+   "door": [
+    240,
+    -130
+   ],
+   "face": "S",
+   "h": 16,
+   "color": "#d9a930",
+   "interior": true,
+   "note": "Dirt bowl, concourse stands, floodlights, crushed cars, jump ramps, crest mound, pit with 2 trucks. FOXTRUCK CRUSH. Ringmaster Vance. The Crusher (boss), 2 Rust Hulk.",
+   "games": [
+    "3D-GAMES/Zion Monster Arena.dc.html"
+   ],
+   "outside": "UNIQUE SPORT: a big dirt bowl with steel stands, 4 floodlight towers, a giant crushed car on a pole over the gate, flags round the rim.",
+   "sign": {
+    "roof": "MONSTER ARENA",
+    "door": "FOXTRUCK CRUSH"
+   }
+  },
+  {
+   "key": "zionSurvay",
+   "label": "Survay Office",
+   "role": "other",
+   "f": [
+    -60,
+    -34,
+    128,
+    150
+   ],
+   "door": [
+    -47,
+    128
+   ],
+   "face": "N",
+   "h": 8,
+   "color": "#b89a6a",
+   "interior": true,
+   "note": "Clerk Wick + the register. ZION GOLD RUSH starts here.",
+   "games": [
+    "3D-GAMES/g/gold-rush/Main.dc.html"
+   ],
+   "outside": "Clapboard claims office on short stilts above the riverbank, a big map of the claims painted on the side, a gold scale sign, the register in the window.",
+   "sign": {
+    "roof": "SURVAY OFFICE",
+    "door": "SURVAY OFFICE · CLAIMS"
+   }
+  },
+  {
+   "key": "zionFoxFarm",
+   "label": "Fox Ranch",
+   "role": "farm",
+   "f": [
+    120,
+    160,
+    128,
+    156
+   ],
+   "door": [
+    140,
+    128
+   ],
+   "face": "N",
+   "h": 8,
+   "color": "#9a6a3a",
+   "interior": true,
+   "note": "The ranch by the river (farm role).",
+   "games": [
+    "3D-GAMES/g/fox-farm/Main.dc.html"
+   ],
+   "new": true,
+   "outside": "Ranch house with a long porch, a windmill water pump, a rail corral + a horseshoe pit, hay bales.",
+   "sign": {
+    "roof": "FOX RANCH",
+    "door": "FOX RANCH · NOW HIRING"
+   }
+  },
+  {
+   "key": "zionThroneRoom",
+   "label": "Throne Room",
+   "role": "castle",
+   "f": [
+    -40,
+    40,
+    -336,
+    -280
+   ],
+   "door": [
+    0,
+    -280
+   ],
+   "face": "S",
+   "h": 20,
+   "color": "#e0b030",
+   "interior": true,
+   "note": "Long nave, 5 pairs of pillars, 3-step dais, throne with a spiked back wall, guard alcoves, TREASURY (river quest). Zada; Clerk Pell, Herald Ame, Guards Ansel + Rook.",
+   "outside": "The grandest building: yellow stone fort-castle, two square watchtowers with gold Z banners, a spiked iron gate, the crest medallion over the arch.",
+   "sign": {
+    "roof": "ZION CASTLE",
+    "door": "THRONE ROOM · ZADA"
+   }
+  },
+  {
+   "key": "zionBarracks",
+   "label": "Barracks",
+   "role": "barracks",
+   "f": [
+    60,
+    104,
+    -254,
+    -226
+   ],
+   "door": [
+    60,
+    -240
+   ],
+   "face": "W",
+   "h": 10,
+   "color": "#c9a040",
+   "interior": true,
+   "note": "Mess, bunk wing (6), training hall + SPARRING CAGE (Fox Fighter), war table, vault. Captain Boone, Sgt Ovie, Trooper Bram, QM Fenn, Trooper Kiln.",
+   "outside": "Yellow stone keep built in a zigzag, a sparring cage on the roof terrace, arrow slits, the Zion banner on a pole.",
+   "sign": {
+    "roof": "BARRACKS",
+    "door": "BARRACKS · CAPTAIN BOONE"
+   }
+  },
+  {
+   "key": "zionHideout",
+   "label": "Gang Hideout",
+   "role": "other",
+   "f": [
+    -380,
+    -330,
+    -436,
+    -414
+   ],
+   "door": [
+    -355,
+    -414
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#5a4a3a",
+   "interior": true,
+   "note": "Plank lair inside: THRONE OF TYRES on a dais, fire barrels, long table. Ratchet (boss), Wrench, Sparks. Truck access to the yard.",
+   "outside": "Gang GARAGE on the summit pad: two roll-up bays, a TIRE WALL, fuel drums, a flag mast with a skull-tyre flag.",
+   "sign": {
+    "roof": "GANG GARAGE",
+    "door": "KEEP OUT"
+   }
+  }
+ ],
+ "spots": [
+  {
+   "key": "zionHalden",
+   "at": [
+    -12,
+    -26
+   ],
+   "kind": "npc",
+   "note": "Guard Halden (square)",
+   "draft": true
+  },
+  {
+   "key": "zionVess",
+   "at": [
+    12,
+    -26
+   ],
+   "kind": "npc",
+   "note": "Guard Vess (square)",
+   "draft": true
+  },
+  {
+   "key": "zionCorbin",
+   "at": [
+    -26,
+    12
+   ],
+   "kind": "npc",
+   "note": "Guard Corbin",
+   "draft": true
+  },
+  {
+   "key": "zionRyn",
+   "at": [
+    26,
+    12
+   ],
+   "kind": "npc",
+   "note": "Guard Ryn",
+   "draft": true
+  },
+  {
+   "key": "zionStroller1",
+   "at": [
+    -20,
+    20
+   ],
+   "kind": "crowd",
+   "note": "townsfolk: Cass, Juno, Rell, Mika, Tobe, Wynn"
+  },
+  {
+   "key": "zionStroller2",
+   "at": [
+    20,
+    -20
+   ],
+   "kind": "crowd",
+   "note": "townsfolk: Solen, Bram, Ivet, Dala, Kesh, Oro"
+  },
+  {
+   "key": "zionNesk",
+   "at": [
+    -10,
+    -270
+   ],
+   "kind": "npc",
+   "note": "Guard Nesk (castle gate)",
+   "draft": true
+  },
+  {
+   "key": "zionDorrin",
+   "at": [
+    10,
+    -270
+   ],
+   "kind": "npc",
+   "note": "Guard Dorrin (castle gate)",
+   "draft": true
+  },
+  {
+   "key": "zionZell",
+   "at": [
+    200,
+    8
+   ],
+   "kind": "npc",
+   "note": "Zell the arena driver; Marn, Pell, Tarn",
+   "draft": true
+  },
+  {
+   "key": "zionBrac",
+   "at": [
+    230,
+    -124
+   ],
+   "kind": "npc",
+   "note": "Guard Brac (arena gate)",
+   "draft": true
+  },
+  {
+   "key": "zionToft",
+   "at": [
+    250,
+    -124
+   ],
+   "kind": "npc",
+   "note": "Guard Toft (arena gate)",
+   "draft": true
+  },
+  {
+   "key": "zionPitCrew",
+   "at": [
+    180,
+    -6
+   ],
+   "kind": "hiring",
+   "note": "MONSTER TRUCK PIT CREW board (NOT BUILT YET)"
+  },
+  {
+   "key": "zionMailRun",
+   "at": [
+    -104,
+    6
+   ],
+   "kind": "hiring",
+   "note": "STAGECOACH / MAIL RUN board by the post (NOT BUILT YET)"
+  },
+  {
+   "key": "zionHiring",
+   "at": [
+    24,
+    24
+   ],
+   "kind": "hiring",
+   "note": "NOW HIRING board in the square"
+  },
+  {
+   "key": "zionNorthBar",
+   "at": [
+    -110,
+    172
+   ],
+   "kind": "game",
+   "note": "PANNING SPOT 1: THE NORTH BAR (gold panning: other repo FOXgate8 3D/minigames3d/gold.html)"
+  },
+  {
+   "key": "zionMiddleReach",
+   "at": [
+    30,
+    194
+   ],
+   "kind": "game",
+   "note": "PANNING SPOT 2: THE MIDDLE REACH"
+  },
+  {
+   "key": "zionDeepBend",
+   "at": [
+    200,
+    168
+   ],
+   "kind": "game",
+   "note": "PANNING SPOT 3: THE DEEP BEND (Clerk Pell sends you here: the oiled pan)"
+  },
+  {
+   "key": "zionCampSluice",
+   "at": [
+    -90,
+    150
+   ],
+   "kind": "game",
+   "note": "CAMP SLUICE + ore cart + fire pit"
+  },
+  {
+   "key": "zionHorseshoes",
+   "at": [
+    172,
+    140
+   ],
+   "kind": "game",
+   "note": "HORSESHOES pit at the ranch (NOT BUILT YET)"
+  },
+  {
+   "key": "zionMonsterTruck",
+   "at": [
+    310,
+    12
+   ],
+   "kind": "vehicle",
+   "note": "MONSTER TRUCK (Vehicle Workshop ?v=truck) in the TRUCK STAGING YARD: drive it on the roads, the hills + the Hill Run truck legs"
+  },
+  {
+   "key": "zionRelicFind",
+   "at": [
+    -220,
+    -100
+   ],
+   "kind": "relicFind",
+   "note": "DRAFT: the legendary + historical relic to find at the HILLTOP OVERLOOK (Ben picks)"
+  },
+  {
+   "key": "zionRoyalHelipad",
+   "at": [
+    -96,
+    -302
+   ],
+   "kind": "helipad",
+   "note": "ROYAL HELIPAD west of the castle (like Meru 2 worlds/meru2-royalpad.js): the royal 8 helicopter; Zada's guards fly you to the other pads."
+  },
+  {
+   "key": "zionRoyalTelepad",
+   "at": [
+    -62,
+    -302
+   ],
+   "kind": "telepad",
+   "note": "ROYAL TELEPORT PAD west of the castle: E / TALK → beam out → the Zion Space Dock; arriving by telepad beams you in here."
+  },
+  {
+   "key": "zionInfirmaryHelipad",
+   "at": [
+    56,
+    -74
+   ],
+   "kind": "helipad",
+   "note": "INFIRMARY HELIPAD (medevac, red cross on the H)"
+  },
+  {
+   "key": "zionArenaHelipad",
+   "at": [
+    200,
+    -110
+   ],
+   "kind": "helipad",
+   "note": "ARENA HELIPAD: cup-night arrivals for Foxtruck Crush"
+  }
+ ],
+ "dock": {
+  "key": "zionSpacedock",
+  "pad": [
+   130,
+   292
+  ],
+  "r": 14,
+  "face": "N"
+ },
+ "gates": [
+  {
+   "key": "zionBlackout",
+   "at": [
+    380,
+    204
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "BLACKOUT [zionBlackout] battle map: pitch dark, defend the TRANSPORT PAD + CORE 30 s. 8 pylons, turret, bike, walker, tank. 8 Blackout Wardens, 4 Sentries, 4 Chargers (HACKED Machine Fleet: glitching visors, voices not their own; free them)."
+  },
+  {
+   "key": "zionOilDrill",
+   "at": [
+    -240,
+    300
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "THE OIL DRILL in the river's SW corner: derrick, 2 tanks, pipe rack. 3 Scrappers + 2 Rust Hulks (hacked salvage machines). The river quest: Zada caps the derrick."
+  },
+  {
+   "key": "zionScrapRun",
+   "at": [
+    -412,
+    -130
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "HILL RUN machines: 3 Scrappers, 2 Rust Hulks, 1 Bolt Thrower (hacked: flickers of the real robot)."
+  },
+  {
+   "key": "zionGangYard",
+   "at": [
+    -300,
+    -400
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "GANG YARD SHOOTOUT on the summit pad (minigame), then the Gang Hideout: Ratchet (boss), Wrench, Sparks."
+  },
+  {
+   "key": "zionGloryMine",
+   "at": [
+    340,
+    -330
+   ],
+   "r": 8,
+   "kind": "cave",
+   "note": "DRAFT: THE OLD GLORY MINE, a played-out gold mine in the red mesa north-east; boss for Ben to pick"
+  }
+ ],
+ "wild": [
+  {
+   "key": "zionBlackoutWild",
+   "r": [
+    396,
+    438,
+    120,
+    300
+   ],
+   "for": "zionBlackout",
+   "creatures": [
+    "robots"
+   ]
+  },
+  {
+   "key": "zionOilWild",
+   "r": [
+    -320,
+    -260,
+    250,
+    336
+   ],
+   "for": "zionOilDrill",
+   "creatures": [
+    "robots"
+   ],
+   "note": "Scrappers + Rust Hulks round the derrick"
+  },
+  {
+   "key": "zionScrapWild",
+   "r": [
+    -438,
+    -416,
+    -200,
+    -40
+   ],
+   "for": "zionScrapRun",
+   "creatures": [
+    "robots"
+   ],
+   "note": "off the Hill Run switchbacks"
+  },
+  {
+   "key": "zionGangWild",
+   "r": [
+    -300,
+    -250,
+    -436,
+    -330
+   ],
+   "for": "zionGangYard",
+   "creatures": [
+    "monsters"
+   ],
+   "note": "the gang's tyre brutes (DRAFT)"
+  },
+  {
+   "key": "zionMineWild",
+   "r": [
+    350,
+    438,
+    -300,
+    -180
+   ],
+   "for": "zionGloryMine",
+   "creatures": [
+    "creatures",
+    "monsters"
+   ],
+   "note": "rattlers, mine bats (DRAFT)"
+  },
+  {
+   "key": "zionBadlandsWild",
+   "r": [
+    200,
+    320,
+    40,
+    110
+   ],
+   "for": "zionMonsterTruckPath",
+   "creatures": [
+    "creatures"
+   ],
+   "note": "coyotes + rattlers in the scrub south of the Truck Road"
+  }
+ ],
+ "props": [
+  {
+   "k": "fountain",
+   "at": [
+    0,
+    0
+   ],
+   "note": "round CREST PAD with the Z crest + FOUNTAIN + TRANSPORT PAD"
+  },
+  {
+   "k": "lamp",
+   "at": [
+    -14,
+    -14
+   ],
+   "note": "rim lamp"
+  },
+  {
+   "k": "lamp",
+   "at": [
+    14,
+    -14
+   ],
+   "note": "rim lamp"
+  },
+  {
+   "k": "lamp",
+   "at": [
+    -14,
+    14
+   ],
+   "note": "rim lamp"
+  },
+  {
+   "k": "lamp",
+   "at": [
+    14,
+    14
+   ],
+   "note": "rim lamp"
+  },
+  {
+   "k": "planter",
+   "at": [
+    -24,
+    24
+   ]
+  },
+  {
+   "k": "planter",
+   "at": [
+    24,
+    -24
+   ]
+  },
+  {
+   "k": "bench",
+   "at": [
+    -24,
+    -12
+   ]
+  },
+  {
+   "k": "bench",
+   "at": [
+    24,
+    12
+   ]
+  },
+  {
+   "k": "sign",
+   "at": [
+    8,
+    -100
+   ],
+   "note": "CASTLE PATH signpost"
+  },
+  {
+   "k": "sign",
+   "at": [
+    8,
+    104
+   ],
+   "note": "GOLD RIVER signpost"
+  },
+  {
+   "k": "sign",
+   "at": [
+    134,
+    8
+   ],
+   "note": "TRUCK ROAD signpost"
+  },
+  {
+   "k": "sign",
+   "at": [
+    -134,
+    8
+   ],
+   "note": "HILL PATH signpost"
+  },
+  {
+   "k": "statue",
+   "at": [
+    -20,
+    -226
+   ],
+   "note": "crest PLINTH"
+  },
+  {
+   "k": "statue",
+   "at": [
+    20,
+    -226
+   ],
+   "note": "crest PLINTH"
+  },
+  {
+   "k": "crate",
+   "at": [
+    -160,
+    14
+   ],
+   "note": "parked MONSTER TRUCK"
+  },
+  {
+   "k": "crate",
+   "at": [
+    -180,
+    14
+   ],
+   "note": "parked MONSTER TRUCK"
+  },
+  {
+   "k": "crate",
+   "at": [
+    -200,
+    14
+   ],
+   "note": "parked MONSTER TRUCK"
+  },
+  {
+   "k": "crate",
+   "at": [
+    -160,
+    -14
+   ],
+   "note": "parked MONSTER TRUCK"
+  },
+  {
+   "k": "crate",
+   "at": [
+    -180,
+    -14
+   ],
+   "note": "parked MONSTER TRUCK"
+  },
+  {
+   "k": "crate",
+   "at": [
+    -200,
+    -14
+   ],
+   "note": "parked MONSTER TRUCK"
+  },
+  {
+   "k": "rock",
+   "at": [
+    -372,
+    -56
+   ],
+   "note": "BOULDER FIELD"
+  },
+  {
+   "k": "rock",
+   "at": [
+    -356,
+    -128
+   ],
+   "note": "RAVINE CROSSING"
+  },
+  {
+   "k": "crate",
+   "at": [
+    -376,
+    -176
+   ],
+   "note": "TIRE BERM"
+  },
+  {
+   "k": "crate",
+   "at": [
+    -372,
+    -266
+   ],
+   "note": "LOG PILE"
+  },
+  {
+   "k": "rock",
+   "at": [
+    -352,
+    -306
+   ],
+   "note": "BOULDER CHOKE"
+  },
+  {
+   "k": "crate",
+   "at": [
+    -378,
+    -356
+   ],
+   "note": "TIRE GAUNTLET"
+  },
+  {
+   "k": "barrel",
+   "at": [
+    -320,
+    -420
+   ],
+   "note": "FUEL DRUMS"
+  },
+  {
+   "k": "fence",
+   "at": [
+    -392,
+    -404
+   ],
+   "note": "TIRE WALL"
+  },
+  {
+   "k": "sign",
+   "at": [
+    -340,
+    -430
+   ],
+   "note": "FLAG MAST"
+  },
+  {
+   "k": "crate",
+   "at": [
+    200,
+    -14
+   ],
+   "note": "TIRE STACKS"
+  },
+  {
+   "k": "rock",
+   "at": [
+    270,
+    14
+   ],
+   "note": "WRECK"
+  },
+  {
+   "k": "barrel",
+   "at": [
+    286,
+    -14
+   ],
+   "note": "OIL DRUMS"
+  },
+  {
+   "k": "statue",
+   "at": [
+    -250,
+    304
+   ],
+   "note": "OIL DERRICK + 2 tanks + pipe rack"
+  },
+  {
+   "k": "crate",
+   "at": [
+    -80,
+    156
+   ],
+   "note": "ORE CART"
+  },
+  {
+   "k": "lamp",
+   "at": [
+    -100,
+    158
+   ],
+   "note": "FIRE PIT"
+  },
+  {
+   "k": "fence",
+   "at": [
+    140,
+    164
+   ],
+   "note": "ranch corral"
+  },
+  {
+   "k": "statue",
+   "at": [
+    -220,
+    -108
+   ],
+   "note": "OVERLOOK lookout post"
+  }
+ ],
+ "look": {
+  "sky": [
+   "#c4532e",
+   "#f4c56a"
+  ],
+  "fog": "#ecb27a",
+  "sun": "#ffd27a",
+  "light": "#fff0d6",
+  "grass": "#cfae4a",
+  "ground": "#b5643a",
+  "water": "#5f8fa6",
+  "lamps": "#ffc94a",
+  "banners": [
+   "#f2c230",
+   "#7a4a1e"
+  ],
+  "trees": [
+   "#6b7a2e",
+   "#8a8f3a",
+   "#a59a3a"
+  ],
+  "notes": "Dusty sunset over red rock mesas: burnt red sky to a golden horizon, warm brass light. Yellow + gold Z crest everywhere: golden banners, brass, plank walls, cobblestone, red dirt, rolling yellow-grass hills. Silty blue-green river with cottonwoods. Bright dusty daylight; warm lanterns at night."
+ },
+ "terrain": {
+  "notes": "ZION = red mesa country. The town, Main Street, the Truck Road and the river trail stay flat; rolling yellow hills on the Hill Path + Hill Run, tall flat-topped red MESAS (cliff hills) out in the open. The DRY MOAT crosses the Castle Path (stone bridge).",
+  "hills": [
+   {
+    "key": "zionMineMesa",
+    "c": [
+     400,
+     -390
+    ],
+    "r": 60,
+    "h": 34,
+    "cliff": true
+   },
+   {
+    "key": "zionArenaMesa",
+    "c": [
+     250,
+     -390
+    ],
+    "r": 50,
+    "h": 28,
+    "cliff": true
+   },
+   {
+    "key": "zionCastleMesa",
+    "c": [
+     -210,
+     -310
+    ],
+    "r": 60,
+    "h": 30,
+    "cliff": true
+   },
+   {
+    "key": "zionSouthMesa",
+    "c": [
+     -100,
+     410
+    ],
+    "r": 70,
+    "h": 26,
+    "cliff": true
+   },
+   {
+    "key": "zionSouthEastMesa",
+    "c": [
+     300,
+     420
+    ],
+    "r": 50,
+    "h": 22,
+    "cliff": true
+   },
+   {
+    "key": "zionSouthWestMesa",
+    "c": [
+     -400,
+     390
+    ],
+    "r": 50,
+    "h": 20,
+    "cliff": true
+   },
+   {
+    "key": "zionHillPathHill1",
+    "c": [
+     -200,
+     70
+    ],
+    "r": 34,
+    "h": 8
+   },
+   {
+    "key": "zionHillPathHill2",
+    "c": [
+     -280,
+     -70
+    ],
+    "r": 30,
+    "h": 9
+   },
+   {
+    "key": "zionHillRunHill1",
+    "c": [
+     -250,
+     -160
+    ],
+    "r": 40,
+    "h": 14
+   },
+   {
+    "key": "zionHillRunHill2",
+    "c": [
+     -250,
+     -260
+    ],
+    "r": 30,
+    "h": 12
+   },
+   {
+    "key": "zionScrubHill",
+    "c": [
+     260,
+     60
+    ],
+    "r": 28,
+    "h": 6
+   },
+   {
+    "key": "zionEastHill",
+    "c": [
+     410,
+     40
+    ],
+    "r": 30,
+    "h": 8
+   }
+  ],
+  "cuts": [
+   {
+    "key": "zionDryMoat",
+    "r": [
+     -90,
+     90,
+     -214,
+     -202
+    ],
+    "depth": 5
+   }
+  ],
+  "forests": [
+   {
+    "key": "zionCottonwoodsNorth",
+    "r": [
+     -300,
+     300,
+     150,
+     176
+    ],
+    "every": 12,
+    "mix": "broad",
+    "giants": 0.04
+   },
+   {
+    "key": "zionCottonwoodsSouth",
+    "r": [
+     -300,
+     300,
+     222,
+     250
+    ],
+    "every": 12,
+    "mix": "broad",
+    "giants": 0.04
+   },
+   {
+    "key": "zionRanchTrees",
+    "r": [
+     166,
+     200,
+     124,
+     160
+    ],
+    "every": 10,
+    "mix": "broad",
+    "giants": 0
+   },
+   {
+    "key": "zionCastleTrees",
+    "r": [
+     -60,
+     60,
+     -250,
+     -216
+    ],
+    "every": 14,
+    "mix": "broad",
+    "giants": 0
+   }
+  ],
+  "clearings": [
+   {
+    "key": "zionRoyalCourt",
+    "r": [
+     -114,
+     -44,
+     -320,
+     -282
+    ]
+   },
+   {
+    "key": "zionSluice",
+    "r": [
+     -110,
+     -70,
+     140,
+     176
+    ]
+   },
+   {
+    "key": "zionMedevacPad",
+    "r": [
+     46,
+     66,
+     -84,
+     -64
+    ]
+   }
+  ]
+ }
+}

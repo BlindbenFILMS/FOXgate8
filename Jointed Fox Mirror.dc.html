@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;background:#201e1d;overflow:hidden}a{color:#f3f2f2}a:hover{color:#ec3013}</style>
+</helmet>
+<div style="position:fixed;inset:0;background:#201e1d;color:#f3f2f2;font-family:var(--font-body);user-select:none;-webkit-user-select:none">
+  <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+  <div style="position:absolute;left:14px;top:12px;right:14px;display:flex;flex-wrap:wrap;gap:8px 24px;pointer-events:none">
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="font-size:20px;font-weight:900;letter-spacing:0.02em">OLD FOX</div>
+      <div style="font-size:13px;font-weight:700">no joints (before)</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:2px;border-left:2px solid #ec3013;padding-left:10px">
+      <div style="font-size:20px;font-weight:900;letter-spacing:0.02em">OUR FOX NOW</div>
+      <div style="font-size:13px;font-weight:700">elbows + knees · same gear, armour, moves</div>
+    </div>
+  </div>
+  <div style="position:absolute;left:14px;top:84px;right:150px;display:flex;flex-direction:column;gap:8px"><div style="display:flex;flex-wrap:wrap;gap:6px">
+    <sc-for list="{{ moves }}" as="m" hint-placeholder-count="9">
+      <button onClick="{{ m.pick }}" style="min-height:44px;padding:0 12px;background:{{ m.bg }};color:#f3f2f2;border:2px solid {{ m.bd }};border-radius:0;font-size:13px;font-weight:900;text-align:left;cursor:pointer" style-hover="background:#4a1a10" style-active="background:#7a2410">{{ m.label }}</button>
+    </sc-for>
+  </div>
+  <div style="font-size:14px;font-weight:700;max-width:520px;text-wrap:pretty">{{ note }}</div></div>
+  <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;left:14px;top:190px;font-size:16px;font-weight:900">LOADING…</div>
+  </sc-if>
+  <div style="position:absolute;left:14px;bottom:14px;font-size:12px;font-weight:700;max-width:46%;display:{{ keysDisp }}">WASD / ARROWS move · 1 tap = strike, hold = draw / sheath sword · 2 laser · SPACE jump · drag to turn the camera</div>
+  <div onPointerDown="{{ stickDown }}" onPointerMove="{{ stickMove }}" onPointerUp="{{ stickUp }}" onPointerCancel="{{ stickUp }}" style="position:absolute;left:20px;bottom:44px;width:140px;height:140px;border:2px solid #f3f2f2;border-radius:50%;touch-action:none;display:{{ padDisp }}">
+    <div style="position:absolute;left:50%;top:50%;width:56px;height:56px;margin:-28px 0 0 -28px;background:#f3f2f2;border-radius:50%;transform:{{ knob }}"></div>
+  </div>
+  <div style="position:absolute;right:14px;bottom:44px;display:flex;flex-direction:column;gap:8px;width:120px">
+    <button onPointerDown="{{ mDown }}" onPointerUp="{{ mUp }}" onPointerLeave="{{ mUp }}" style="min-height:56px;padding:0 12px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:15px;font-weight:900;text-align:left;cursor:pointer;touch-action:none" style-hover="background:#4a1a10" style-active="background:#7a2410">1 MELEE</button>
+    <button onPointerDown="{{ shoot }}" style="min-height:56px;padding:0 12px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:15px;font-weight:900;text-align:left;cursor:pointer;touch-action:none" style-hover="background:#4a1a10" style-active="background:#7a2410">2 RANGE</button>
+    <button onPointerDown="{{ jump }}" style="min-height:56px;padding:0 12px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:15px;font-weight:900;text-align:left;cursor:pointer;touch-action:none" style-hover="background:#4a1a10" style-active="background:#7a2410">3 JUMP</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { loading: true, kx: 0, ky: 0, mode: 'mirror' };
+  stageRef = React.createRef();
+  async componentDidMount() {
+    try { const m = await import('./engine/jointed-mirror.js'); this.st = await m.startMirror(this.stageRef.current); window.__mirror = this.st; } catch (e) { console.error(e); }
+    this.setState({ loading: false });
+  }
+  componentWillUnmount() { this.st && this.st.destroy(); }
+  stick(e) { const r = this.pad.getBoundingClientRect(), R = r.width / 2; let x = (e.clientX - r.left - R) / R, y = (e.clientY - r.top - R) / R; const l = Math.hypot(x, y); if (l > 1) { x /= l; y /= l; }
+    this.setState({ kx: x * 42, ky: y * 42 }); this.st && this.st.stick(x, y); }
+  renderVals() {
+    const touch = typeof matchMedia !== 'undefined' && matchMedia('(pointer:coarse)').matches;
+    const MV = [['mirror', 'YOU DRIVE', 'Move, strike, draw the sword, fire the laser: both foxes do it. The right one bends at the elbows and knees.'], ['walk', 'WALK', 'Knees lift on each forward swing, elbows soften as the arms swing.'], ['guard', 'GUARD', 'Fists up by the chin, elbows tucked, knees bent.'], ['punch', 'JAB + CROSS', 'The elbow opens as the fist flies out.'], ['wave', 'WAVE', 'Arm out, forearm up, waving from the elbow.'], ['point', 'POINT', 'Arm straight out ahead.'], ['hips', 'HANDS ON HIPS', 'Elbows out, paws back on the hips.'], ['kneel', 'KNEEL', 'Down on one knee, head bowed.'], ['bow', 'BOW', 'A bow from the waist, paws together in front.'], ['shrug', 'SHRUG', 'Forearms up and out.'], ['cheer', 'CHEER', 'Both arms up.'], ['think', 'THINK', 'Paw to the chin, other arm across.']];
+    const cur = MV.find(m => m[0] === this.state.mode) || MV[0];
+    return {
+      moves: MV.map(([k, l]) => ({ label: l, bg: k === this.state.mode ? '#ec3013' : '#201e1d', bd: k === this.state.mode ? '#ec3013' : '#f3f2f2', pick: () => { this.setState({ mode: k }); this.st && this.st.play(k); } })), note: cur[2],
+      stageRef: this.stageRef, loading: this.state.loading, keysDisp: touch ? 'none' : 'block', padDisp: 'block',
+      knob: `translate(${this.state.kx}px,${this.state.ky}px)`,
+      stickDown: e => { this.pad = e.currentTarget; e.currentTarget.setPointerCapture(e.pointerId); this.stick(e); },
+      stickMove: e => { if (this.pad) this.stick(e); },
+      stickUp: () => { this.pad = null; this.setState({ kx: 0, ky: 0 }); this.st && this.st.stick(0, 0); },
+      mDown: e => { e.preventDefault(); this.st && this.st.meleeDown(); },
+      mUp: () => { this.st && this.st.meleeUp(); },
+      shoot: e => { e.preventDefault(); this.st && this.st.shoot(); },
+      jump: e => { e.preventDefault(); this.st && this.st.jump(); },
+    };
+  }
+}
+</script>
+</body>
+</html>

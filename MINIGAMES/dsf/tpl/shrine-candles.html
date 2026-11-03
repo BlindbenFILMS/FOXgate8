@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="8235717f-d7f4-4867-9028-92dacfb2791e"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+
+<style>/* Modernist — design-system tokens and component classes. This file is the source of truth for the system's look; retune it here and see readme.md. */
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("a9cff648-fe05-427d-a9f1-9ee6d407465d") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("5928a59b-7035-4c48-8f9d-43b310462b03") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("ca71fab3-5e85-4dbe-a282-2c3051525c58") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("a9cff648-fe05-427d-a9f1-9ee6d407465d") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("5928a59b-7035-4c48-8f9d-43b310462b03") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("ca71fab3-5e85-4dbe-a282-2c3051525c58") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("a9cff648-fe05-427d-a9f1-9ee6d407465d") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("5928a59b-7035-4c48-8f9d-43b310462b03") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("ca71fab3-5e85-4dbe-a282-2c3051525c58") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+
+:root {
+  --color-bg: #f3f2f2;
+  --color-surface: #eae9e9;
+  --color-text: #201e1d;
+  --color-accent: #ec3013;
+  --color-accent-2: #e15b47;
+  --color-divider: color-mix(in srgb, #201e1d 40%, transparent);
+
+  /* Tonal ramps — generated in OKLCH on one shared lightness scale, so the
+     same step of any role matches the others in visual value. */
+  --color-neutral-100: #f8f4f4;
+  --color-neutral-200: #eae7e7;
+  --color-neutral-300: #d7d3d3;
+  --color-neutral-400: #bab6b6;
+  --color-neutral-500: #9b9797;
+  --color-neutral-600: #7d7979;
+  --color-neutral-700: #605d5d;
+  --color-neutral-800: #444141;
+  --color-neutral-900: #2d2b2b;
+
+  --color-accent-100: #fff2ef;
+  --color-accent-200: #ffe0d9;
+  --color-accent-300: #ffc4b8;
+  --color-accent-400: #ff9783;
+  --color-accent-500: #ff563c;
+  --color-accent-600: #dd2b0f;
+  --color-accent-700: #ae1800;
+  --color-accent-800: #7c1405;
+  --color-accent-900: #4d170e;
+
+  --color-accent-2-100: #fff2ef;
+  --color-accent-2-200: #ffe0da;
+  --color-accent-2-300: #ffc4b9;
+  --color-accent-2-400: #ff9784;
+  --color-accent-2-500: #ef6853;
+  --color-accent-2-600: #c94b39;
+  --color-accent-2-700: #9e3526;
+  --color-accent-2-800: #71261b;
+  --color-accent-2-900: #471d16;
+
+  --font-heading: "Archivo", system-ui, sans-serif;
+  --font-heading-weight: 800;
+  --font-body: "Archivo", system-ui, sans-serif;
+
+  --space-1: 4.0px;
+  --space-2: 8.0px;
+  --space-3: 12.0px;
+  --space-4: 16.0px;
+  --space-6: 24.0px;
+  --space-8: 32.0px;
+
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+
+  /* Elevation — derived from the ground: soft ink-tinted shadows on a
+     light theme, a hairline edge + ambient darkness on a dark one. */
+  --shadow-sm: 0 1px 2px color-mix(in srgb, #2d2b2b 14%, transparent);
+  --shadow-md: 0 3px 10px color-mix(in srgb, #2d2b2b 16%, transparent);
+  --shadow-lg: 0 12px 32px color-mix(in srgb, #2d2b2b 22%, transparent);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: var(--font-heading-weight); }
+
+.grayscale{filter:grayscale(1) contrast(1.08)}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Components — built with the tokens above. Plain CSS
+   on plain HTML: no JavaScript, no build step. Each class is documented in
+   readme.md and demonstrated in foundations/ and components/.
+   ══════════════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-size: 15px; line-height: 1.55; font-weight: 400; }
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 var(--space-2);
+}
+h1 { font-size: 42px; }
+h2 { font-size: 32px; }
+h3 { font-size: 25px; }
+h4 { font-size: 20px; }
+h5 { font-size: 16px; }
+h6 { font-size: 13px; }
+h6 { letter-spacing: 0.08em; text-transform: uppercase; }
+p { margin: 0 0 var(--space-3); }
+a { color: var(--color-accent); text-underline-offset: 3px; }
+img { display: block; max-width: 100%; }
+figure { margin: 0; }
+figcaption {
+  font-size: 11px; margin-top: var(--space-1);
+  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+}
+.text-muted { color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
+
+/* — rules — */
+.hr {
+  height: 2px; border: 0; margin: var(--space-4) 0;
+  background: var(--color-divider);
+}
+
+/* — buttons — */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  cursor: pointer; text-decoration: none;
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 14px; line-height: 1.2; color: var(--color-text); /* matches the .input's 14px —
+     the pair sits side by side in sign-up rows */
+  background: transparent; border: 1px solid transparent;
+  padding: var(--space-2) calc(var(--space-3) * 1.2);
+  border-radius: var(--radius-md);
+}
+.btn svg { display: block; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-primary { background: var(--color-accent); color: var(--color-bg); }
+.btn-primary:hover { background: var(--color-accent-600); }
+.btn-primary:active { background: var(--color-accent-700); }
+.btn-secondary { border-color: var(--color-divider); }
+.btn-secondary:hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.btn-secondary:active { background: color-mix(in srgb, var(--color-text) 14%, transparent); }
+.btn-ghost { color: var(--color-accent); padding-inline: var(--space-1); }
+.btn-ghost:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+.btn-ghost:active { background: color-mix(in srgb, var(--color-accent) 18%, transparent); }
+.btn-icon { width: 36px; height: 36px; padding: 0; }
+.btn-block { width: 100%; margin-top: var(--space-2); justify-content: flex-start; text-align: left; }
+
+/* — forms — */
+.field > label {
+  display: block; font-size: 12px; margin-bottom: 5px;
+  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+}
+.input {
+  width: 100%; min-height: 36px; padding: 6px 10px; font: inherit;
+  font-size: 14px; color: var(--color-text); caret-color: var(--color-accent);
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+}
+.input:hover { border-color: color-mix(in srgb, var(--color-text) 45%, transparent); }
+.input:focus-visible { border-color: var(--color-accent); outline-offset: 0; }
+textarea.input { min-height: 90px; resize: vertical; }
+.radio { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
+.radio input, .seg-opt input {
+  position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;
+}
+.radio .dot {
+  width: 16px; height: 16px; flex: none; border-radius: 50%;
+  border: 1.5px solid var(--color-divider);
+}
+.radio:hover .dot { border-color: var(--color-accent); }
+.radio input:checked + .dot {
+  border-color: var(--color-accent); background: var(--color-accent);
+  box-shadow: inset 0 0 0 4px var(--color-bg);
+}
+.radio input:focus-visible + .dot { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.seg {
+  display: inline-flex; overflow: hidden;
+  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+}
+.seg-opt {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 12px; font-size: 13px; cursor: pointer;
+}
+.seg-opt + .seg-opt { border-left: 1px solid var(--color-divider); }
+.seg-opt:has(input:checked) { background: var(--color-accent); color: var(--color-bg); }
+.seg-opt:not(:has(input:checked)):hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.seg-opt:has(input:focus-visible) { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+
+/* — cards — */
+.card {
+  display: flex; flex-direction: column; gap: var(--space-2);
+  padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-surface);
+}
+.card-kicker { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent); }
+.card-title {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 17px; line-height: 1.2;
+}
+.card-body { margin: 0; font-size: 13px; opacity: 0.8; flex: 1; }
+.card-meta {
+  display: flex; align-items: center; gap: 6px; font-size: 11px;
+  color: color-mix(in srgb, var(--color-text) 50%, transparent);
+}
+.elev-sm { box-shadow: var(--shadow-sm); }
+.elev-md { box-shadow: var(--shadow-md); }
+.elev-lg { box-shadow: var(--shadow-lg); }
+
+/* — tags — */
+.tag {
+  display: inline-flex; align-items: center; font-size: 11px;
+  letter-spacing: 0.02em; padding: 3px 10px;
+  border-radius: calc(var(--radius-md) * 0.75);
+}
+.tag-accent { background: var(--color-accent-100); color: var(--color-accent-800); }
+.tag-accent-2 { background: var(--color-accent-2-100); color: var(--color-accent-2-800); }
+.tag-neutral { background: var(--color-neutral-100); color: var(--color-neutral-800); }
+.tag-outline { border: 1px solid var(--color-accent); color: var(--color-accent); }
+
+/* — navigation — */
+.nav {
+  display: flex; align-items: center; gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 2px solid var(--color-divider);
+}
+.nav-brand {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 18px; margin-right: auto;
+}
+.nav a { color: inherit; text-decoration: none; font-size: 14px; }
+.nav a:hover, .nav a[aria-current='page'] { color: var(--color-accent); }
+
+/* — tables — */
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table th {
+  text-align: left; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  padding: var(--space-2); border-bottom: 2px solid var(--color-divider);
+}
+.table td {
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--color-divider);
+}
+.table tbody tr:hover { background: color-mix(in srgb, var(--color-text) 4%, transparent); }
+
+/* — dialog — */
+.dialog-backdrop {
+  position: fixed; inset: 0; display: grid; place-items: center;
+  padding: var(--space-4);
+  background: color-mix(in srgb, var(--color-neutral-900) 50%, transparent);
+}
+.dialog {
+  width: min(440px, 100%); display: flex; flex-direction: column; gap: var(--space-3);
+  padding: var(--space-4); border-radius: var(--radius-lg);
+  background: var(--color-surface); box-shadow: var(--shadow-lg);
+}
+.dialog-title {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 20px;
+}
+.dialog-body { font-size: 14px; opacity: 0.85; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-2); }
+
+</style>
+<script src="61ff27e9-92e2-4164-a49b-ee7ccf9f66fe"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("a9cff648-fe05-427d-a9f1-9ee6d407465d") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("5928a59b-7035-4c48-8f9d-43b310462b03") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("ca71fab3-5e85-4dbe-a282-2c3051525c58") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("a9cff648-fe05-427d-a9f1-9ee6d407465d") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("5928a59b-7035-4c48-8f9d-43b310462b03") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("ca71fab3-5e85-4dbe-a282-2c3051525c58") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("a9cff648-fe05-427d-a9f1-9ee6d407465d") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("5928a59b-7035-4c48-8f9d-43b310462b03") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("ca71fab3-5e85-4dbe-a282-2c3051525c58") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("a9cff648-fe05-427d-a9f1-9ee6d407465d") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("5928a59b-7035-4c48-8f9d-43b310462b03") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("ca71fab3-5e85-4dbe-a282-2c3051525c58") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+<style>
+  html, body { margin: 0; height: 100%; background: #221a17; overflow: hidden; }
+  * { box-sizing: border-box; }
+  a { color: #ec3013; }
+  a:hover { color: #b8250e; }
+  @keyframes shIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes shTitle { 0% { opacity: 0; transform: scale(.94); } 16% { opacity: 1; transform: scale(1); } 78% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes shFlicker { 0%, 100% { transform: scaleY(1) scaleX(1); opacity: .95; } 40% { transform: scaleY(1.14) scaleX(.92); opacity: 1; } 70% { transform: scaleY(.94) scaleX(1.06); opacity: .88; } }
+  @keyframes shGlowPulse { 0%, 100% { opacity: .17; } 50% { opacity: .26; } }
+  @keyframes shStar { 0%, 100% { opacity: .3; } 50% { opacity: 1; } }
+  @keyframes shGust { 0% { opacity: .2; transform: translateX(0); } 55% { opacity: .85; } 100% { opacity: .2; transform: translateX(7px); } }
+  @keyframes shPop { 0% { transform: scale(.5); opacity: 0; } 60% { transform: scale(1.12); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes shSmoke { 0% { opacity: .5; transform: translateY(0) scale(.7); } 100% { opacity: 0; transform: translateY(-16px) scale(1.6); } }
+</style>
+</helmet>
+
+<div style="position:absolute; inset:0; display:flex; flex-direction:column; background:#221a17; font-family:var(--font-body), Archivo, sans-serif; color:#201e1d; user-select:none; -webkit-user-select:none">
+
+  <div style="display:flex; flex-wrap:wrap; align-items:stretch; background:#f3f2f2; border-bottom:2px solid #201e1d; flex:0 0 auto; z-index:4">
+    <div style="padding:9px 14px; display:flex; flex-direction:column; gap:1px; flex:0 0 auto">
+      <span style="font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:#ec3013; font-weight:700; white-space:nowrap">{{ hudKicker }}</span>
+      <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:15px; font-weight:800; letter-spacing:-.01em; text-transform:uppercase; line-height:1.1; white-space:nowrap; width:max-content">Shrine Candles</span>
+    </div>
+    <div style="border-left:2px solid #201e1d; padding:9px 14px; display:flex; flex-direction:column; gap:1px; justify-content:center; flex:1 1 auto; min-width:0">
+      <span style="font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:#6b6864; font-weight:700">Observance</span>
+      <span style="font-size:10px; font-weight:700; line-height:1.3; overflow-wrap:break-word">{{ riteText }}</span>
+    </div>
+    <div style="border-left:2px solid #201e1d; padding:9px 13px; display:flex; align-items:center; gap:10px; flex:0 0 auto">
+      <div style="display:flex; flex-direction:column; gap:1px">
+        <span style="font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:#6b6864; font-weight:700">Lit</span>
+        <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:16px; font-weight:800; line-height:1; color:{{ litColor }}; font-variant-numeric:tabular-nums">{{ litText }}</span>
+      </div>
+    </div>
+    <div style="display:flex; align-items:stretch; flex:0 0 auto">
+      <button sc-camel-on-click="{{ toggleMusic }}" style="padding:0 12px; border:0; border-left:2px solid #201e1d; background:#f3f2f2; color:{{ musicColor }}; font-family:var(--font-body), Archivo, sans-serif; font-size:9px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; white-space:nowrap" style-hover="background:#e6e4dd">{{ musicLabel }}</button>
+      <button sc-camel-on-click="{{ toggleSound }}" style="padding:0 12px; border:0; border-left:2px solid #201e1d; background:#f3f2f2; color:{{ soundColor }}; font-family:var(--font-body), Archivo, sans-serif; font-size:9px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; white-space:nowrap" style-hover="background:#e6e4dd">{{ soundLabel }}</button>
+    </div>
+  </div>
+
+  <div data-screen-label="{{ stageLabel }}" style="position:relative; flex:1 1 auto; min-height:0; overflow:hidden; background:#221a17; touch-action:none; cursor:crosshair" sc-camel-on-pointer-down="{{ onDown }}" sc-camel-on-pointer-move="{{ onMove }}" sc-camel-on-pointer-up="{{ onUp }}" sc-camel-on-pointer-leave="{{ onUp }}" sc-camel-on-pointer-cancel="{{ onUp }}">
+
+    <svg sc-camel-view-box="0 0 200 140" sc-camel-preserve-aspect-ratio="xMidYMid slice" style="position:absolute; inset:0; width:100%; height:100%; display:block">
+      <rect x="0" y="0" width="200" height="140" fill="#241c18"></rect>
+      <path d="M 0 60 q 100 -76 200 0 L 200 140 L 0 140 Z" fill="#2e241f"></path>
+      <g stroke="#3d302a" stroke-width="1.2" fill="none">
+        <path d="M 100 4 L 100 140"></path>
+        <path d="M 100 4 q -56 12 -86 56 L 8 140"></path>
+        <path d="M 100 4 q 56 12 86 56 L 192 140"></path>
+        <path d="M 100 4 q -30 6 -46 30 L 44 140"></path>
+        <path d="M 100 4 q 30 6 46 30 L 156 140"></path>
+      </g>
+      <path d="M 0 62 q 100 -74 200 0" fill="none" stroke="#4a3b32" stroke-width="2"></path>
+      <rect x="0" y="126" width="200" height="14" fill="#3a2e27"></rect>
+      <rect x="0" y="126" width="200" height="2" fill="#54433a"></rect>
+    </svg>
+
+    <svg ref="{{ svgRef }}" sc-camel-view-box="0 0 200 140" sc-camel-preserve-aspect-ratio="xMidYMid meet" style="position:absolute; inset:0; width:100%; height:100%; display:block; z-index:1">
+      <defs>
+        <radialGradient id="shGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#f6c85a" stop-opacity="0.62"></stop>
+          <stop offset="55%" stop-color="#e89a2c" stop-opacity="0.2"></stop>
+          <stop offset="100%" stop-color="#e8801c" stop-opacity="0"></stop>
+        </radialGradient>
+      </defs>
+
+      <g>
+        <path d="M 64 40 q 36 -30 72 0 L 136 14 q -36 -14 -72 0 Z" fill="#0a1018" stroke="#4a3b32" stroke-width="2"></path>
+        <g fill="#f6f4ef">
+          <circle cx="80" cy="24" r="0.8" style="animation:shStar 3.2s ease-in-out infinite"></circle>
+          <circle cx="98" cy="18" r="0.7" style="animation:shStar 2.6s ease-in-out .5s infinite"></circle>
+          <circle cx="116" cy="26" r="0.8" style="animation:shStar 3.6s ease-in-out 1.1s infinite"></circle>
+          <circle cx="90" cy="31" r="0.6" style="animation:shStar 2.9s ease-in-out .8s infinite"></circle>
+          <circle cx="124" cy="19" r="0.6" style="animation:shStar 3.4s ease-in-out .3s infinite"></circle>
+        </g>
+        <path d="M 64 40 q 36 -30 72 0" fill="none" stroke="#4a3b32" stroke-width="1.4"></path>
+      </g>
+
+      <sc-for list="{{ vents }}" as="vt" hint-placeholder-count="1">
+        <g style="pointer-events:none">
+          <rect x="{{ vt.zx }}" y="{{ vt.zy }}" width="{{ vt.zw }}" height="{{ vt.zh }}" fill="#6e8fb8" opacity="{{ vt.zoneFill }}"></rect>
+          <rect x="{{ vt.zx }}" y="{{ vt.zy }}" width="{{ vt.zw }}" height="{{ vt.zh }}" fill="none" stroke="#6e8fb8" stroke-width="0.8" stroke-dasharray="2.4 2.4" opacity="{{ vt.zoneStroke }}"></rect>
+          <rect x="{{ vt.gx }}" y="{{ vt.gy }}" width="{{ vt.gw }}" height="{{ vt.gh }}" fill="#1d2b33" stroke="#4a5f6b" stroke-width="1.2"></rect>
+          <g stroke="#8fb8d6" stroke-width="1" fill="none" opacity="0.8">
+            <path d="{{ vt.slats }}"></path>
+          </g>
+          <sc-if value="{{ vt.blowing }}" hint-placeholder-val="{{ false }}">
+            <g>
+              <sc-for list="{{ vt.puffs }}" as="pf" hint-placeholder-count="0">
+                <path d="{{ pf.d }}" fill="none" stroke="#8fb8d6" stroke-width="1.1" stroke-linecap="round" style="{{ pf.style }}"></path>
+              </sc-for>
+            </g>
+          </sc-if>
+        </g>
+      </sc-for>
+
+      <g>
+        <rect x="76" y="48" width="48" height="7" fill="#7a6450" stroke="#4a3b30" stroke-width="1.4"></rect>
+        <rect x="82" y="55" width="36" height="12" fill="#6b5a48" stroke="#42342a" stroke-width="1.2"></rect>
+        <rect x="76" y="48" width="48" height="2" fill="#98806a"></rect>
+        <circle cx="100" cy="44" r="16" fill="url(#shGlow)" style="transform-box:fill-box; transform-origin:center; animation:shGlowPulse 3.4s ease-in-out infinite"></circle>
+        <path d="M 94 48 L 106 48 L 104 42 L 96 42 Z" fill="#8a6a3a" stroke="#5c4522" stroke-width="1"></path>
+        <g style="transform-box:fill-box; transform-origin:bottom center; animation:shFlicker 1.5s ease-in-out infinite">
+          <path d="M 100 30 q 6.5 8.5 0 12 q -6.5 -3.5 0 -12 Z" fill="#f0c040"></path>
+          <path d="M 100 35 q 3 4.6 0 7 q -3 -2.4 0 -7 Z" fill="#ec3013"></path>
+        </g>
+      </g>
+
+      <g style="pointer-events:none">
+        <path d="{{ railD }}" fill="none" stroke="#4a3b30" stroke-width="2.6" stroke-linecap="round"></path>
+        <path d="{{ railD }}" fill="none" stroke="#6b5647" stroke-width="1" stroke-linecap="round"></path>
+        <sc-if value="{{ hasOuterRail }}" hint-placeholder-val="{{ false }}">
+          <g>
+            <path d="{{ railOuterD }}" fill="none" stroke="#4a3b30" stroke-width="2.6" stroke-linecap="round"></path>
+            <path d="{{ railOuterD }}" fill="none" stroke="#6b5647" stroke-width="1" stroke-linecap="round"></path>
+          </g>
+        </sc-if>
+      </g>
+
+      <sc-for list="{{ puffs }}" as="pu" hint-placeholder-count="0">
+        <g transform="{{ pu.t }}" style="pointer-events:none">
+          <ellipse cx="0" cy="-8" rx="1.8" ry="2.6" fill="#c9c0b4" style="transform-box:fill-box; transform-origin:center; animation:shSmoke 1.3s ease-out forwards"></ellipse>
+          <ellipse cx="1.6" cy="-10" rx="1.3" ry="2" fill="#c9c0b4" style="transform-box:fill-box; transform-origin:center; animation:shSmoke 1.4s ease-out .18s forwards"></ellipse>
+        </g>
+      </sc-for>
+
+      <sc-for list="{{ candles }}" as="cd" hint-placeholder-count="5">
+        <g transform="{{ cd.t }}">
+          <sc-if value="{{ cd.lit }}" hint-placeholder-val="{{ false }}">
+            <circle cx="0" cy="-8" r="{{ cd.glow }}" fill="url(#shGlow)"></circle>
+          </sc-if>
+          <rect x="-3" y="-4" width="6" height="13" fill="{{ cd.wax }}" stroke="#a8906c" stroke-width="0.9"></rect>
+          <rect x="-3" y="-4" width="6" height="1.6" fill="#f6ecd6"></rect>
+          <path d="M 0 -4 L 0 -6.4" stroke="#4a3b2a" stroke-width="0.9"></path>
+          <sc-if value="{{ cd.lit }}" hint-placeholder-val="{{ false }}">
+            <g style="transform-box:fill-box; transform-origin:bottom center; animation:shFlicker {{ cd.flick }} ease-in-out infinite">
+              <path d="{{ cd.flameD }}" fill="#f0c040"></path>
+              <path d="{{ cd.coreD }}" fill="#ec3013"></path>
+            </g>
+          </sc-if>
+          <sc-if value="{{ cd.waning }}" hint-placeholder-val="{{ false }}">
+            <circle cx="0" cy="-7" r="7.6" fill="none" stroke="#c2560f" stroke-width="0.8" stroke-dasharray="1.6 2.2" opacity="0.75"></circle>
+          </sc-if>
+        </g>
+      </sc-for>
+
+      <sc-if value="{{ showTaper }}" hint-placeholder-val="{{ false }}">
+        <g transform="{{ taperT }}">
+          <g transform="rotate(16)">
+            <sc-if value="{{ taperLit }}" hint-placeholder-val="{{ false }}">
+              <circle cx="0" cy="{{ taperTipY }}" r="{{ taperGlow }}" fill="url(#shGlow)"></circle>
+            </sc-if>
+            <rect x="-1.5" y="{{ taperTop }}" width="3" height="{{ taperLen }}" fill="#d9c9a8" stroke="#9c8560" stroke-width="0.9"></rect>
+            <ellipse cx="0" cy="4" rx="3.6" ry="1.3" fill="#b8a07c" stroke="#8a7454" stroke-width="0.8"></ellipse>
+            <path d="{{ taperWickD }}" stroke="#4a3b2a" stroke-width="0.9"></path>
+            <sc-if value="{{ taperLit }}" hint-placeholder-val="{{ false }}">
+              <g style="transform-box:fill-box; transform-origin:bottom center; animation:shFlicker 1.1s ease-in-out infinite">
+                <path d="{{ taperFlameD }}" fill="#f0c040"></path>
+                <path d="{{ taperCoreD }}" fill="#ec3013"></path>
+              </g>
+            </sc-if>
+            <sc-if value="{{ showSmoke }}" hint-placeholder-val="{{ false }}">
+              <g style="pointer-events:none">
+                <ellipse cx="0" cy="{{ taperTipY }}" rx="1.6" ry="2.4" fill="#c9c0b4" style="transform-box:fill-box; transform-origin:center; animation:shSmoke 1.2s ease-out forwards"></ellipse>
+                <ellipse cx="1.4" cy="{{ taperTipY }}" rx="1.2" ry="1.8" fill="#c9c0b4" style="transform-box:fill-box; transform-origin:center; animation:shSmoke 1.4s ease-out .2s forwards"></ellipse>
+              </g>
+            </sc-if>
+          </g>
+        </g>
+      </sc-if>
+
+      <sc-if value="{{ needsRelight }}" hint-placeholder-val="{{ false }}">
+        <g style="pointer-events:none">
+          <path d="{{ relightD }}" fill="none" stroke="#f0c040" stroke-width="1" stroke-dasharray="2.4 3" opacity="0.55"></path>
+          <foreignObject x="{{ relightLx }}" y="{{ relightLy }}" width="92" height="8" style="overflow:hidden">
+            <div xmlns="http://www.w3.org/1999/xhtml" style="width:92px; display:flex; justify-content:center">
+              <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:4.6px; font-weight:800; letter-spacing:.1em; color:#f0c040; background:#241c18; padding:0.4px 2px; white-space:nowrap">{{ relightWord }}</span>
+            </div>
+          </foreignObject>
+        </g>
+      </sc-if>
+
+      <sc-if value="{{ allLit }}" hint-placeholder-val="{{ false }}">
+        <g style="pointer-events:none; transform-box:fill-box; transform-origin:center; animation:shPop .3s ease-out">
+          <rect x="56" y="82" width="88" height="21" fill="#f3f2f2" stroke="#201e1d" stroke-width="2"></rect>
+          <foreignObject x="56" y="87" width="88" height="13" style="overflow:hidden">
+            <div xmlns="http://www.w3.org/1999/xhtml" style="width:88px; display:flex; justify-content:center">
+              <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:7.6px; font-weight:800; letter-spacing:.07em; text-transform:uppercase; color:#201e1d; white-space:nowrap">All lit</span>
+            </div>
+          </foreignObject>
+        </g>
+      </sc-if>
+    </svg>
+
+    <sc-if value="{{ showPanel }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute; left:14px; top:14px; z-index:3; pointer-events:none; background:#f3f2f2; border:2px solid #201e1d; padding:7px 9px; display:flex; flex-direction:column; gap:5px; width:134px">
+        <div style="display:flex; justify-content:space-between; align-items:baseline">
+          <span style="font-size:8px; letter-spacing:.14em; text-transform:uppercase; color:#6b6864; font-weight:700">Taper</span>
+          <span style="font-size:8px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:{{ flameColor }}">{{ flameWord }}</span>
+        </div>
+        <div style="height:8px; background:#dedcd6; border:1px solid #201e1d">
+          <div style="height:100%; width:{{ flamePct }}%; background:{{ flameColor }}"></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:1px">
+          <span style="font-size:8px; letter-spacing:.14em; text-transform:uppercase; color:#6b6864; font-weight:700">Wax</span>
+          <span style="font-size:8px; font-weight:800; font-variant-numeric:tabular-nums; color:{{ waxColor }}">{{ waxPct }}</span>
+        </div>
+        <div style="height:8px; background:#dedcd6; border:1px solid #201e1d">
+          <div style="height:100%; width:{{ waxPct }}%; background:{{ waxColor }}"></div>
+        </div>
+        <div style="display:flex; align-items:center; gap:5px; border-top:2px solid #201e1d; padding-top:5px; margin-top:1px">
+          <div style="display:flex; gap:2px; flex:0 0 auto">
+            <sc-for list="{{ tollPips }}" as="tp" hint-placeholder-count="4">
+              <div style="width:8px; height:8px; border:1.2px solid #201e1d; background:{{ tp.fill }}"></div>
+            </sc-for>
+          </div>
+          <span style="font-size:7.5px; font-weight:700; letter-spacing:.01em; color:#6b6864; line-height:1.15; white-space:nowrap">{{ tollNote }}</span>
+        </div>
+        <div style="font-size:8.5px; font-weight:700; line-height:1.3; color:#6b6864">{{ panelNote }}</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showPanel }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute; right:14px; top:14px; z-index:3; pointer-events:none; background:#f3f2f2; border:2px solid #201e1d; padding:6px 10px; display:flex; flex-direction:column; gap:3px; align-items:flex-start; min-width:74px">
+        <span style="font-size:8px; letter-spacing:.16em; text-transform:uppercase; color:#6b6864; font-weight:700">Time</span>
+        <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:30px; font-weight:800; line-height:.92; letter-spacing:-.02em; color:{{ clockColor }}; font-variant-numeric:tabular-nums">{{ clockText }}</span>
+        <div style="width:100%; height:6px; background:#dedcd6; border:1px solid #201e1d">
+          <div style="height:100%; width:{{ clockPct }}%; background:{{ clockColor }}"></div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showHint }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute; left:0; right:0; bottom:0; z-index:2; background:#201e1d; padding:9px 14px; display:flex; align-items:center; gap:9px">
+        <span style="flex:0 0 auto; width:2px; align-self:stretch; background:#ec3013"></span>
+        <span style="flex:1 1 auto; min-width:0; font-size:12px; font-weight:700; color:#f3f2f2; line-height:1.35; overflow-wrap:break-word">{{ hintText }}</span>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showTitleCard }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute; inset:0; z-index:5; display:flex; align-items:center; justify-content:center; pointer-events:none; animation:shTitle 1.7s ease-out forwards">
+        <div style="background:#f3f2f2; border:2px solid #201e1d; padding:16px 26px; max-width:78%">
+          <div style="font-family:var(--font-heading), Archivo, sans-serif; font-size:clamp(24px, 6vw, 42px); font-weight:800; line-height:.98; letter-spacing:-.02em; text-transform:uppercase">{{ cardTitle }}</div>
+          <div style="height:2px; background:#ec3013; width:56px; margin:9px 0"></div>
+          <div style="font-size:13px; color:#201e1d; line-height:1.4">{{ cardHint }}</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showIntro }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute; inset:0; z-index:6; background:rgba(26,19,15,.9); display:flex; flex-direction:column; padding:22px; overflow:auto">
+        <div style="margin:auto 0; display:flex; flex-wrap:wrap-reverse; align-items:center; gap:26px">
+          <svg sc-camel-view-box="0 0 220 200" sc-camel-preserve-aspect-ratio="xMidYMid meet" style="flex:0 1 min(46%, 460px); min-width:0; aspect-ratio:220 / 200; max-height:min(440px, 72vh); order:2; pointer-events:none">
+            <defs>
+              <radialGradient id="shGlowArt" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#f6c85a" stop-opacity="0.6"></stop>
+                <stop offset="55%" stop-color="#e89a2c" stop-opacity="0.2"></stop>
+                <stop offset="100%" stop-color="#e8801c" stop-opacity="0"></stop>
+              </radialGradient>
+            </defs>
+            <path d="M 8 78 q 102 -76 204 0 L 212 190 L 8 190 Z" fill="#2e241f" stroke="#4a3b32" stroke-width="3"></path>
+            <path d="M 70 64 q 40 -32 80 0 L 150 36 q -40 -16 -80 0 Z" fill="#0a1018" stroke="#4a3b32" stroke-width="2.6"></path>
+            <g fill="#f6f4ef">
+              <circle cx="90" cy="48" r="1.4"></circle><circle cx="112" cy="42" r="1.2"></circle><circle cx="132" cy="50" r="1.3"></circle>
+            </g>
+            <g>
+              <circle cx="110" cy="80" r="26" fill="url(#shGlowArt)"></circle>
+              <rect x="84" y="88" width="52" height="9" fill="#7a6450" stroke="#4a3b30" stroke-width="2"></rect>
+              <path d="M 103 88 L 117 88 L 115 80 L 105 80 Z" fill="#8a6a3a" stroke="#5c4522" stroke-width="1.6"></path>
+              <path d="M 110 58 q 9 12 0 17 q -9 -5 0 -17 Z" fill="#f0c040"></path>
+              <path d="M 110 65 q 4 6 0 9.4 q -4 -3.4 0 -9.4 Z" fill="#ec3013"></path>
+            </g>
+            <g>
+              <circle cx="62" cy="130" r="17" fill="url(#shGlowArt)"></circle>
+              <rect x="57" y="134" width="10" height="22" fill="#e8d9bc" stroke="#a8906c" stroke-width="1.6"></rect>
+              <path d="M 62 126 q 5 6.6 0 9.6 q -5 -3 0 -9.6 Z" fill="#f0c040"></path>
+              <rect x="99" y="134" width="10" height="22" fill="#cdbfa4" stroke="#a8906c" stroke-width="1.6"></rect>
+              <path d="M 104 132 L 104 128" stroke="#4a3b2a" stroke-width="1.6"></path>
+              <rect x="141" y="134" width="10" height="22" fill="#cdbfa4" stroke="#a8906c" stroke-width="1.6"></rect>
+              <path d="M 146 132 L 146 128" stroke="#4a3b2a" stroke-width="1.6"></path>
+            </g>
+            <g>
+              <circle cx="150" cy="108" r="16" fill="url(#shGlowArt)"></circle>
+              <rect x="147" y="106" width="6" height="30" fill="#d9c9a8" stroke="#9c8560" stroke-width="1.6" transform="rotate(18 150 121)"></rect>
+              <path d="M 154 100 q 5 6.6 0 9.6 q -5 -3 0 -9.6 Z" fill="#f0c040"></path>
+            </g>
+            <path d="M 112 92 q 24 4 36 12" fill="none" stroke="#f0c040" stroke-width="2.2" stroke-dasharray="5 4"></path>
+            <g stroke="#8fb8d6" stroke-width="2.2" fill="none" opacity="0.75">
+              <rect x="182" y="104" width="14" height="22" fill="#1d2b33" stroke="#4a5f6b"></rect>
+              <path d="M 178 110 L 168 112 M 178 118 L 168 116"></path>
+            </g>
+          </svg>
+          <div style="flex:1 1 320px; min-width:0; order:1; display:flex; flex-direction:column; gap:14px; max-width:560px">
+            <div style="display:flex; flex-direction:column">
+              <span style="font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#f0c040; font-weight:700">Station shrine · four observances</span>
+              <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:clamp(32px, 7.8vw, 58px); font-weight:800; line-height:.92; letter-spacing:-.03em; text-transform:uppercase; color:#f3f2f2">Shrine Candles</span>
+            </div>
+            <div style="height:2px; background:#ec3013; width:116px"></div>
+            <p style="margin:0; font-size:19px; font-weight:700; line-height:1.35; color:#f3f2f2; text-wrap:pretty">Carry the flame to every candle. Every fourth one lit puts another out.</p>
+            <button sc-camel-on-click="{{ begin }}" style="align-self:flex-start; padding:16px 26px; border:0; background:#ec3013; color:#f3f2f2; font-family:var(--font-heading), Archivo, sans-serif; font-size:18px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; text-align:left; cursor:pointer" style-hover="background:#b8250e">Enter the shrine</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showTimeUp }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute; inset:0; z-index:7; background:rgba(26,19,15,.92); display:flex; align-items:center; justify-content:center; padding:20px">
+        <div style="width:100%; max-width:420px; background:#ec3013; border:2px solid #201e1d; padding:24px; display:flex; flex-direction:column; animation:shIn .2s ease-out">
+          <span style="font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#2a1109; font-weight:700">{{ stageLabel }}</span>
+          <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:clamp(40px, 11vw, 74px); font-weight:800; line-height:.9; letter-spacing:-.03em; text-transform:uppercase; color:#f3f2f2; margin-top:4px">Time's up</span>
+          <div style="height:2px; background:#201e1d; margin:16px 0"></div>
+          <span style="font-size:15px; font-weight:700; color:#f3f2f2; line-height:1.4">{{ timeUpTally }}</span>
+          <sc-if value="{{ hasTimeUpBest }}" hint-placeholder-val="{{ false }}">
+            <span style="font-size:13px; font-weight:700; color:#2a1109; line-height:1.4; margin-top:3px">{{ timeUpBest }}</span>
+          </sc-if>
+          <button sc-camel-on-click="{{ cardAction }}" style="margin-top:20px; align-self:stretch; padding:16px 20px; border:2px solid #201e1d; background:#f3f2f2; color:#201e1d; font-family:var(--font-heading), Archivo, sans-serif; font-size:19px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; text-align:left; cursor:pointer" style-hover="background:#e6e4dd">Try again</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showCard }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute; inset:0; z-index:6; background:rgba(20,14,11,.84); display:flex; align-items:center; justify-content:center; padding:18px">
+        <div style="width:100%; max-width:380px; max-height:100%; min-height:0; display:flex; flex-direction:column; background:#f3f2f2; border:2px solid #201e1d; padding:20px; animation:shIn .18s ease-out">
+          <div style="flex:0 0 auto">
+            <div style="font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:#ec3013; font-weight:700">{{ cardKicker }}</div>
+            <div style="font-family:var(--font-heading), Archivo, sans-serif; font-size:30px; font-weight:800; line-height:1; letter-spacing:-.02em; margin:7px 0 4px">{{ cardScore }}</div>
+            <div style="font-size:12px; margin-bottom:14px">{{ cardMood }}</div>
+            <div style="height:2px; background:#201e1d; margin-bottom:13px"></div>
+          </div>
+          <div style="flex:1 1 auto; min-height:0; overflow:auto">
+            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px">
+              <sc-for list="{{ cardRows }}" as="r" hint-placeholder-count="0">
+                <div style="display:flex; align-items:center; gap:9px">
+                  <span style="flex:0 0 92px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em">{{ r.name }}</span>
+                  <div style="flex:1 1 auto; height:8px; background:#dedcd6; border:1px solid #201e1d">
+                    <div style="height:100%; width:{{ r.pct }}%; background:{{ r.color }}"></div>
+                  </div>
+                  <span style="flex:0 0 34px; text-align:right; font-size:12px; font-weight:700; font-variant-numeric:tabular-nums">{{ r.val }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ hasNotes }}" hint-placeholder-val="{{ false }}">
+              <div style="border-top:2px solid #201e1d; padding-top:12px; margin-bottom:16px; display:flex; flex-direction:column; gap:6px">
+                <sc-for list="{{ cardNotes }}" as="nt" hint-placeholder-count="0">
+                  <div style="display:flex; gap:8px; font-size:11px; line-height:1.35">
+                    <span style="color:#ec3013; font-weight:800">—</span>
+                    <span>{{ nt.text }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+          <button sc-camel-on-click="{{ cardAction }}" style="flex:0 0 auto; width:100%; padding:14px 16px; border:0; background:#ec3013; color:#f3f2f2; font-family:var(--font-heading), Archivo, sans-serif; font-size:15px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; text-align:left; cursor:pointer" style-hover="background:#b8250e">{{ cardCta }}</button>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;sound&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Audio&quot;},&quot;music&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Audio&quot;}}">
+const n = v => Math.round(v * 1000) / 1000;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+const ALTAR = { x: 100, y: 36 };
+const PLOT = { x0: 8, y0: 12, x1: 192, y1: 122 };
+const LIGHT_R = 9;
+const RELIGHT_R = 15;
+
+// air vents: a grille on the wall and the draught zone in front of it
+const VENTS = {
+  left: { gx: 8, gy: 62, gw: 6, gh: 18, zx: 14, zy: 52, zw: 28, zh: 34, dir: 1 },
+  right: { gx: 186, gy: 62, gw: 6, gh: 18, zx: 158, zy: 52, zw: 28, zh: 34, dir: -1 },
+  lowLeft: { gx: 8, gy: 96, gw: 6, gh: 16, zx: 14, zy: 88, zw: 26, zh: 26, dir: 1 },
+  lowRight: { gx: 186, gy: 96, gw: 6, gh: 16, zx: 160, zy: 88, zw: 26, zh: 26, dir: -1 },
+  mid: { gx: 97, gy: 117, gw: 16, gh: 5, zx: 87, zy: 104, zw: 26, zh: 14, dir: 0 }
+};
+
+const RITES = [
+  { name: "Evening lamps", candles: 5, vents: ["left"], limit: 78, drain: 46, wax: 5.2, wane: 0, sway: 0.22 },
+  { name: "First watch", candles: 7, vents: ["left", "right"], limit: 70, drain: 54, wax: 6, wane: 0.8, sway: 0.26 },
+  { name: "The long night", candles: 9, vents: ["left", "right", "lowLeft"], limit: 62, drain: 62, wax: 6.6, wane: 1.1, sway: 0.3 },
+  { name: "Founding day", candles: 11, vents: ["left", "right", "lowLeft", "lowRight"], limit: 56, drain: 70, wax: 7.2, wane: 1.3, sway: 0.38 }
+];
+// vents breathe rather than blow constantly
+const VENT_PERIOD = 5.6, VENT_ON = 3;
+
+// candles sit on arcs below the altar, stored as angle + radius so the
+// whole fan can sway on its mount and carry them through the draughts
+function layout(count) {
+  const out = [];
+  const inner = Math.min(count, 6);
+  const outer = count - inner;
+  const ang = (i, total) => (total === 1 ? 90 : 36 + (i / (total - 1)) * 108) * Math.PI / 180;
+  for (let i = 0; i < inner; i++) out.push({ ang: ang(i, inner), r: 50, lit: false, life: 0 });
+  for (let i = 0; i < outer; i++) out.push({ ang: ang(i, outer), r: 68, lit: false, life: 0 });
+  return out;
+}
+const candlePos = (c, spin) => ({
+  x: ALTAR.x + Math.cos(c.ang + spin) * c.r,
+  y: ALTAR.y + Math.sin(c.ang + spin) * c.r
+});
+const SWAY_RATE = (2 * Math.PI) / 16;
+const TOLL_EVERY = 4;
+const SEC_PER_CANDLE = 3;
+const CANDLE_SNUFF = 58;
+
+const MUSIC = (() => {
+  const notes = [];
+  // a slow warm hymn: low drone, gentle bell arpeggio above it
+  const chords = [[41, 48, 53], [43, 50, 55], [38, 45, 50], [36, 43, 48]];
+  chords.forEach((ch, s) => {
+    const at = s * 8;
+    notes.push({ b: at, m: ch[0] - 12, d: 7.6, v: "drone" });
+    ch.forEach((m, i) => notes.push({ b: at + i * 0.4, m, d: 6.4, v: "pad" }));
+    [0, 2.5, 4, 6].forEach((off, i) => notes.push({ b: at + off, m: ch[(i + 1) % 3] + 24, d: 1.8, v: "bell" }));
+  });
+  [3.5, 11.5, 19.5, 27.5].forEach(b => notes.push({ b, m: 84, d: 2.2, v: "bell" }));
+  return { notes, beats: 32, spb: 0.56 };
+})();
+const midiHz = m => 440 * Math.pow(2, (m - 69) / 12);
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.svgRef = React.createRef();
+    this.state = Object.assign({ overlay: "intro", muted: false, musicOff: false }, this.freshRite(0));
+  }
+
+  freshRite(round) {
+    const r = RITES[round % RITES.length];
+    return {
+      round, rite: r,
+      candles: layout(r.candles),
+      vents: r.vents.map(k => VENTS[k]),
+      taper: { x: 100, y: 84 }, held: false,
+      lit: false, flame: 0, wax: 100, guttered: 0, spent: 0, blown: 0, tolled: 0, everLit: false,
+      lightings: 0, puffs: [],
+      t: 0, peak: 0,
+      timeLeft: r.candles * SEC_PER_CANDLE, total: r.candles * SEC_PER_CANDLE,
+      smokeAt: 0, done: false, outcome: null,
+      titleCard: [r.name, r.candles + " candles · " + r.candles * SEC_PER_CANDLE + " seconds"],
+      cardAt: Date.now()
+    };
+  }
+
+  componentDidMount() {
+    window.__shrineTarget = this;
+    this.started = false;
+    this.killMusic();
+    setTimeout(() => this.loop(), 0);
+  }
+
+  componentWillUnmount() {
+    if (this.raf) cancelAnimationFrame(this.raf);
+    this.raf = null;
+    this.killMusic();
+  }
+
+  muted() { return this.state.muted || (this.props.sound ?? true) === false; }
+  musicOn() { return !this.muted() && (this.props.music ?? true) !== false && !this.state.musicOff; }
+
+  audio() {
+    if (this.muted() || !this.started) return null;
+    if (!window.__shrineAC) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      window.__shrineAC = new AC();
+      const b = window.__shrineAC.createBuffer(1, window.__shrineAC.sampleRate * 1.2, window.__shrineAC.sampleRate);
+      const d = b.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      window.__shrineNoise = b;
+      window.addEventListener("pagehide", () => { try { window.__shrineAC.close(); } catch (e) {} });
+    }
+    this.actx = window.__shrineAC;
+    this.noise = window.__shrineNoise;
+    if (this.actx.state === "suspended") this.actx.resume();
+    return this.actx;
+  }
+
+  tone(freq, dur, gain, type, to) {
+    const ac = this.audio();
+    if (!ac) return;
+    const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime;
+    o.type = type || "sine";
+    o.frequency.setValueAtTime(freq, t);
+    if (to) o.frequency.exponentialRampToValueAtTime(Math.max(20, to), t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(gain, t + 0.014);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(ac.destination);
+    o.start(t); o.stop(t + dur + 0.03);
+  }
+
+  burst(o) {
+    const ac = this.audio();
+    if (!ac) return;
+    const src = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain(), t = ac.currentTime;
+    src.buffer = this.noise; src.loop = true;
+    f.type = o.type || "bandpass";
+    f.Q.value = o.q == null ? 1 : o.q;
+    f.frequency.setValueAtTime(o.f0, t);
+    f.frequency.exponentialRampToValueAtTime(Math.max(60, o.f1), t + o.dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(o.gain, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + o.dur);
+    src.connect(f); f.connect(g); g.connect(ac.destination);
+    src.start(t); src.stop(t + o.dur + 0.05);
+  }
+
+  sfx(kind) {
+    if (!this.audio()) return;
+    if (kind === "take") this.tone(660, 0.06, 0.03, "triangle", 880);
+    else if (kind === "kindle") {
+      this.burst({ f0: 1800, f1: 700, dur: 0.14, gain: 0.05, type: "bandpass", q: 1.2 });
+      [0, 7].forEach((s, i) => setTimeout(() => this.tone(midiHz(81 + s), 0.2, 0.04, "sine"), i * 70));
+    } else if (kind === "light") {
+      this.burst({ f0: 2400, f1: 900, dur: 0.1, gain: 0.04, type: "bandpass", q: 1.4 });
+      this.tone(midiHz(88), 0.22, 0.035, "sine");
+    } else if (kind === "out") {
+      this.burst({ f0: 700, f1: 180, dur: 0.26, gain: 0.05, type: "lowpass", q: 0.7 });
+      this.tone(200, 0.2, 0.035, "sine", 130);
+    } else if (kind === "all") {
+      [0, 4, 7, 12, 16].forEach((s, i) => setTimeout(() => this.tone(midiHz(76 + s), 0.34, 0.045, "sine"), i * 130));
+    } else if (kind === "time") this.tone(190, 0.3, 0.05, "triangle", 120);
+  }
+
+  voice(nt, at) {
+    const ac = this.actx, g = ac.createGain(), o = ac.createOscillator();
+    const dur = nt.d * MUSIC.spb;
+    let peak = 0.02;
+    if (nt.v === "drone") { o.type = "sine"; peak = 0.042; }
+    else if (nt.v === "pad") { o.type = "triangle"; peak = 0.016; }
+    else { o.type = "sine"; peak = 0.03; }
+    o.frequency.setValueAtTime(midiHz(nt.m), at);
+    g.gain.setValueAtTime(0.0001, at);
+    g.gain.exponentialRampToValueAtTime(peak, at + (nt.v === "bell" ? 0.02 : 0.5));
+    g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+    o.connect(g); g.connect(window.__shrineMusicBus);
+    o.start(at); o.stop(at + dur + 0.04);
+  }
+
+  scheduleMusic() {
+    const ac = this.actx;
+    if (!ac || !this.musicOn()) return;
+    if (!window.__shrineMusicBus) {
+      const bus = ac.createGain();
+      bus.gain.value = 0.5;
+      bus.connect(ac.destination);
+      window.__shrineMusicBus = bus;
+      this.musicStart = ac.currentTime + 0.12;
+      this.musicBar = 0;
+    }
+    const barLen = MUSIC.beats * MUSIC.spb;
+    while (this.musicStart + this.musicBar * barLen < ac.currentTime + 1) {
+      const base = this.musicStart + this.musicBar * barLen;
+      MUSIC.notes.forEach(nt => {
+        const at = base + nt.b * MUSIC.spb;
+        if (at > ac.currentTime - 0.05) this.voice(nt, at);
+      });
+      this.musicBar++;
+    }
+  }
+
+  killMusic() {
+    const bus = window.__shrineMusicBus;
+    if (bus) { try { bus.gain.value = 0; bus.disconnect(); } catch (e) {} }
+    window.__shrineMusicBus = null;
+    this.musicBar = 0;
+  }
+
+  spin() {
+    return (this.state.rite.sway || 0) * Math.sin(this.state.t * SWAY_RATE);
+  }
+
+  ventOn(i) {
+    const ph = (this.state.t + i * 1.8) % VENT_PERIOD;
+    return ph < VENT_ON;
+  }
+
+  inVent(x, y) {
+    return this.state.vents.some((v, i) => this.ventOn(i)
+      && x > v.zx && x < v.zx + v.zw && y > v.zy && y < v.zy + v.zh);
+  }
+
+  loop = () => {
+    this.raf = requestAnimationFrame(this.loop);
+    const now = Date.now();
+    const dt = Math.min(0.045, (now - (this.last || now)) / 1000);
+    this.last = now;
+    const s = this.state;
+    if (this.started && window.__shrineTarget === this && window.__shrineAC) {
+      if (this.musicOn()) this.scheduleMusic();
+      else if (window.__shrineMusicBus) this.killMusic();
+    }
+    if (s.overlay || s.done) return;
+
+    const patch = {};
+    if (s.titleCard && now - s.cardAt > 1700) patch.titleCard = null;
+    if (s.titleCard) { this.setState(patch); return; }
+
+    this.speed = (this.speed || 0) * Math.pow(0.1, dt);
+    patch.t = s.t + dt;
+
+    const r = s.rite;
+
+    // the taper's flame answers to how fast you move and to the draught,
+    // and burning it spends wax that only the altar can replace
+    if (s.lit) {
+      let flame = s.flame;
+      const wax = s.wax - r.wax * dt;
+      patch.wax = Math.max(0, wax);
+      const draught = this.inVent(s.taper.x, s.taper.y);
+      if (draught) flame -= r.drain * dt;
+      else if (this.speed > r.limit) flame -= (this.speed - r.limit) * 0.5 * dt;
+      else if (this.speed < r.limit * 0.45) flame = Math.min(100, flame + 16 * dt);
+      if (wax <= 0) {
+        this.sfx("out");
+        patch.lit = false; patch.flame = 0; patch.wax = 0;
+        patch.spent = s.spent + 1;
+        patch.smokeAt = now;
+      } else if (flame <= 0) {
+        this.sfx("out");
+        patch.lit = false; patch.flame = 0;
+        patch.guttered = s.guttered + 1;
+        patch.smokeAt = now;
+      } else patch.flame = clamp(flame, 0, 100);
+    }
+
+    // a lit candle slowly wanes and needs coming back to
+    const spin = this.spin();
+    let blownOut = 0, changed = false;
+    const candles = s.candles.map(c => {
+      if (!c.lit) return c;
+      const p = candlePos(c, spin);
+      const draught = this.inVent(p.x, p.y);
+      let life = c.life - r.wane * dt - (draught ? CANDLE_SNUFF * dt : 0);
+      changed = true;
+      if (life <= 0) {
+        if (draught) blownOut++;
+        return Object.assign({}, c, { lit: false, life: 0 });
+      }
+      return Object.assign({}, c, { life });
+    });
+    if (changed) patch.candles = candles;
+    if (blownOut) {
+      this.sfx("out");
+      patch.blown = s.blown + blownOut;
+    }
+    const litNow = (patch.candles || s.candles).filter(c => c.lit).length;
+    if (litNow > s.peak) patch.peak = litNow;
+
+    const left = s.timeLeft - dt;
+    if (left <= 0) {
+      this.sfx("time");
+      this.setState(Object.assign(patch, { timeLeft: 0, done: true, outcome: "time" }), () => this.finish());
+      return;
+    }
+    patch.timeLeft = left;
+    this.setState(patch);
+  };
+
+  finish() {
+    setTimeout(() => this.setState(s => ({ overlay: s.outcome === "time" ? "timeup" : "card" })), 900);
+  }
+
+  local(e) {
+    const svg = this.svgRef.current;
+    if (!svg || !Number.isFinite(e.clientX)) return null;
+    const r = svg.getBoundingClientRect();
+    const scale = Math.min(r.width / 200, r.height / 140);
+    const ox = (r.width - 200 * scale) / 2, oy = (r.height - 140 * scale) / 2;
+    return { x: (e.clientX - r.left - ox) / scale, y: (e.clientY - r.top - oy) / scale };
+  }
+
+  // moving the taper: pick up the flame, or pass it on
+  place(p) {
+    const s = this.state;
+    if (!p || !Number.isFinite(p.x) || !Number.isFinite(p.y)) return;
+    const patch = { taper: { x: clamp(p.x, PLOT.x0, PLOT.x1), y: clamp(p.y, PLOT.y0, PLOT.y1) } };
+    if (Math.hypot(p.x - ALTAR.x, p.y - ALTAR.y) < RELIGHT_R) {
+      if (!s.lit || s.flame < 99 || s.wax < 99) {
+        if (!s.lit) this.sfx("kindle");
+        patch.lit = true;
+        patch.flame = 100;
+        patch.wax = 100;
+        patch.everLit = true;
+      }
+    } else if (s.lit) {
+      let hit = -1;
+      const spin = this.spin();
+      s.candles.forEach((c, i) => {
+        if (c.lit) return;
+        const q = candlePos(c, spin);
+        if (Math.hypot(p.x - q.x, p.y - (q.y - 4)) < LIGHT_R) hit = i;
+      });
+      if (hit >= 0) {
+        const candles = s.candles.slice();
+        candles[hit] = Object.assign({}, candles[hit], { lit: true, life: 100 });
+        const count = s.lightings + 1;
+        patch.lightings = count;
+        this.sfx("light");
+        if (count % TOLL_EVERY === 0) {
+          // the shrine takes one back: whichever flame was closest to going
+          let victim = -1, low = 1e9;
+          candles.forEach((c, i) => {
+            if (i === hit || !c.lit) return;
+            if (c.life < low) { low = c.life; victim = i; }
+          });
+          if (victim >= 0) {
+            const spin = this.spin();
+            const vp = candlePos(candles[victim], spin);
+            candles[victim] = Object.assign({}, candles[victim], { lit: false, life: 0 });
+            patch.tolled = s.tolled + 1;
+            patch.puffs = s.puffs.filter(p => Date.now() - p.at < 1400)
+              .concat([{ x: vp.x, y: vp.y, at: Date.now() }]);
+            setTimeout(() => this.sfx("out"), 180);
+          }
+        }
+        patch.candles = candles;
+        if (candles.every(c => c.lit)) {
+          this.sfx("all");
+          patch.done = true;
+          patch.outcome = "all";
+          setTimeout(() => this.finish(), 400);
+        }
+      }
+    }
+    this.setState(patch);
+  }
+
+  onDown = e => {
+    const s = this.state;
+    if (s.overlay || s.done || s.titleCard) return;
+    this.audio();
+    this.sfx("take");
+    this.lastPt = null;
+    const p = this.local(e);
+    this.setState({ held: true });
+    if (p) this.place(p);
+  };
+
+  onMove = e => {
+    const s = this.state;
+    if (s.overlay || s.done || !s.held) return;
+    const p = this.local(e);
+    if (!p) return;
+    const now = performance.now();
+    if (this.lastPt) {
+      const dt = Math.max(0.008, (now - this.lastPt.t) / 1000);
+      const v = Math.hypot(p.x - this.lastPt.x, p.y - this.lastPt.y) / dt;
+      this.speed = Math.max(this.speed || 0, v);
+    }
+    this.lastPt = { x: p.x, y: p.y, t: now };
+    this.place(p);
+  };
+
+  onUp = () => {
+    if (this.state.overlay) return;
+    this.lastPt = null;
+    this.setState({ held: false });
+  };
+
+  begin = () => { this.started = true; this.audio(); this.setState({ overlay: null }); };
+
+  cardAction = () => {
+    this.setState(s => Object.assign(
+      this.freshRite(s.outcome === "time" ? s.round : s.round + 1),
+      { overlay: null, muted: s.muted, musicOff: s.musicOff }));
+  };
+
+  toggleSound = () => {
+    if (!this.state.muted) this.killMusic();
+    this.setState(s => ({ muted: !s.muted }));
+  };
+
+  toggleMusic = () => {
+    this.audio();
+    if (this.musicOn()) this.killMusic();
+    this.setState(s => ({ musicOff: !s.musicOff }));
+  };
+
+  renderVals() {
+    const s = this.state, r = s.rite;
+    const total = s.candles.length;
+    const lit = s.candles.filter(c => c.lit).length;
+    const all = lit === total;
+
+    const best = Math.max(lit, s.peak);
+    const completion = Math.round((best / total) * 100);
+    const care = clamp(100 - s.guttered * 11 - s.spent * 5 - s.blown * 4, 0, 100);
+    const score = Math.round(completion * 0.66 + care * 0.34);
+
+    const now = Date.now();
+    const spin = this.spin();
+    const candles = s.candles.map((c, i) => {
+      const L = clamp(c.life / 100, 0, 1);
+      const fh = 2.8 + L * 4, fw = 1.5 + L * 1.9, top = -6.4;
+      const p = candlePos(c, spin);
+      const draught = c.lit && this.inVent(p.x, p.y);
+      return {
+        t: "translate(" + n(p.x) + " " + n(p.y) + ")",
+        draught,
+        lit: c.lit,
+        wax: c.lit ? "#e8d9bc" : "#cdbfa4",
+        glow: n(5.5 + L * 6),
+        flameD: "M 0 " + n(top - fh) + " q " + n(fw) + " " + n(fh * 0.66) + " 0 " + n(fh)
+          + " q " + n(-fw) + " " + n(-fh * 0.34) + " 0 " + n(-fh) + " Z",
+        coreD: "M 0 " + n(top - fh * 0.56) + " q " + n(fw * 0.5) + " " + n(fh * 0.36) + " 0 " + n(fh * 0.58)
+          + " q " + n(-fw * 0.5) + " " + n(-fh * 0.22) + " 0 " + n(-fh * 0.58) + " Z",
+        waning: c.lit && (L < 0.34 || draught),
+        flick: (1 + (i % 5) * 0.18).toFixed(2) + "s"
+      };
+    });
+
+    const vents = s.vents.map((v, i) => {
+      const slats = [0, 1, 2, 3].map(k => {
+        const y = v.gy + 3 + k * ((v.gh - 6) / 3);
+        return "M " + (v.gx + 1) + " " + n(y) + " L " + (v.gx + v.gw - 1) + " " + n(y);
+      }).join(" ");
+      const puffs = [0, 1, 2].map(k => {
+        const bx = v.dir === 0 ? v.zx + 5 + k * 7 : (v.dir > 0 ? v.zx + 2 + k * 6 : v.zx + v.zw - 2 - k * 6);
+        const by = v.dir === 0 ? v.zy + v.zh - 3 - k * 2 : v.zy + 5 + k * 6;
+        const dx = v.dir === 0 ? 0 : v.dir * 7;
+        const dy = v.dir === 0 ? -7 : 0;
+        return {
+          d: "M " + n(bx) + " " + n(by) + " q " + n(dx / 2 + dy / 3) + " " + n(dy / 2 - dx / 3) + " " + n(dx) + " " + n(dy),
+          style: "animation:shGust " + (0.9 + k * 0.16) + "s ease-in-out " + (k * 0.2) + "s infinite"
+        };
+      });
+      return {
+        gx: v.gx, gy: v.gy, gw: v.gw, gh: v.gh,
+        zx: v.zx, zy: v.zy, zw: v.zw, zh: v.zh,
+        slats, puffs,
+        blowing: this.ventOn(i),
+        zoneFill: this.ventOn(i) ? 0.16 : 0.04,
+        zoneStroke: this.ventOn(i) ? 0.7 : 0.22
+      };
+    });
+
+    const fl = s.flame / 100;
+    const fh = 3.4 + fl * 7;
+    const fw = 1.6 + fl * 2.4;
+    const tlen = 7 + (s.wax / 100) * 14;
+    const ttop = 12 - tlen;
+    const tbase = ttop - 2;
+
+    return {
+      hudKicker: "Rite " + ((s.round % 4) + 1) + " of 4",
+      stageLabel: r.name,
+      riteText: r.name + " · " + total + " candles",
+      litText: lit + "/" + total,
+      litColor: all ? "#2f7d3a" : "#6b6864",
+      timerText: Math.ceil(s.timeLeft) + "s",
+      timerPct: n(clamp(s.timeLeft / s.total, 0, 1) * 100),
+      timerColor: s.timeLeft < s.total * 0.15 ? "#c2210f"
+        : s.timeLeft < s.total * 0.33 ? "#c2560f" : "#201e1d",
+      musicLabel: this.musicOn() ? "Music on" : "Music off",
+      musicColor: this.musicOn() ? "#201e1d" : "#a8a6a0",
+      soundLabel: this.muted() ? "Sound off" : "Sound on",
+      soundColor: this.muted() ? "#a8a6a0" : "#201e1d",
+      toggleMusic: this.toggleMusic, toggleSound: this.toggleSound,
+      onDown: this.onDown, onMove: this.onMove, onUp: this.onUp,
+
+      svgRef: this.svgRef,
+      railD: (() => {
+        const pts = [];
+        for (let i = 0; i <= 24; i++) {
+          const a = (36 + (i / 24) * 108) * Math.PI / 180 + spin;
+          pts.push(n(ALTAR.x + Math.cos(a) * 50) + " " + n(ALTAR.y + Math.sin(a) * 50));
+        }
+        return "M " + pts.join(" L ");
+      })(),
+      railOuterD: (() => {
+        const pts = [];
+        for (let i = 0; i <= 24; i++) {
+          const a = (36 + (i / 24) * 108) * Math.PI / 180 + spin;
+          pts.push(n(ALTAR.x + Math.cos(a) * 68) + " " + n(ALTAR.y + Math.sin(a) * 68));
+        }
+        return "M " + pts.join(" L ");
+      })(),
+      hasOuterRail: s.candles.some(c => c.r === 68),
+      candles, vents,
+      clockText: s.timeLeft < 6 ? s.timeLeft.toFixed(1) : Math.ceil(s.timeLeft) + "",
+      clockPct: n(clamp(s.timeLeft / s.total, 0, 1) * 100),
+      clockColor: s.timeLeft < s.total * 0.15 ? "#c2210f"
+        : s.timeLeft < s.total * 0.33 ? "#c2560f" : "#201e1d",
+      clockUrgent: s.timeLeft < s.total * 0.15,
+      tollPips: [0, 1, 2, 3].map(i => ({
+        fill: i < s.lightings % TOLL_EVERY ? "#c2560f" : "#dedcd6"
+      })),
+      tollNote: (TOLL_EVERY - (s.lightings % TOLL_EVERY)) + " more takes one",
+      puffs: (s.puffs || []).filter(p => Date.now() - p.at < 1400)
+        .map(p => ({ t: "translate(" + n(p.x) + " " + n(p.y) + ")" })),
+      showTaper: true,
+      taperT: "translate(" + n(s.taper.x) + " " + n(s.taper.y) + ")",
+      taperLit: s.lit,
+      taperGlow: n(5 + fl * 9),
+      taperTop: n(ttop), taperLen: n(tlen),
+      taperWickD: "M 0 " + n(ttop) + " L 0 " + n(tbase),
+      taperTipY: n(tbase),
+      taperFlameD: "M 0 " + n(tbase - fh) + " q " + n(fw) + " " + n(fh * 0.66) + " 0 " + n(fh)
+        + " q " + n(-fw) + " " + n(-fh * 0.34) + " 0 " + n(-fh) + " Z",
+      taperCoreD: "M 0 " + n(tbase - fh * 0.55) + " q " + n(fw * 0.5) + " " + n(fh * 0.36) + " 0 " + n(fh * 0.58)
+        + " q " + n(-fw * 0.5) + " " + n(-fh * 0.22) + " 0 " + n(-fh * 0.58) + " Z",
+      waxPct: Math.round(s.wax),
+      waxColor: s.wax > 60 ? "#2f7d3a" : s.wax > 28 ? "#c2560f" : "#c2210f",
+      showSmoke: !s.lit && s.smokeAt > 0 && now - s.smokeAt < 1500,
+
+      needsRelight: !s.lit && s.everLit && !all && !s.done,
+      relightWord: s.wax <= 0 ? "FRESH TAPER AT THE ALTAR" : "BACK TO THE FLAME",
+      relightD: "M " + n(s.taper.x) + " " + n(s.taper.y - 8) + " Q "
+        + n((s.taper.x + ALTAR.x) / 2) + " " + n(Math.min(s.taper.y, ALTAR.y) - 14) + " "
+        + ALTAR.x + " " + n(ALTAR.y + 4),
+      relightLx: n(clamp((s.taper.x + ALTAR.x) / 2 - 46, 8, 108)),
+      relightLy: n(clamp(Math.min(s.taper.y, ALTAR.y) - 20, 14, 110)),
+
+      allLit: all,
+
+      showPanel: !s.overlay && !s.titleCard,
+      flamePct: n(s.lit ? s.flame : 0),
+      flameWord: !s.lit ? "Out" : s.flame > 66 ? "Steady" : s.flame > 33 ? "Low" : "Guttering",
+      flameColor: !s.lit ? "#a8a6a0" : s.flame > 66 ? "#2f7d3a" : s.flame > 33 ? "#c2560f" : "#c2210f",
+      panelNote: s.wax <= 0 ? "Wax spent — back to the altar"
+        : !s.lit ? (s.everLit ? "Touch the eternal flame" : "Start at the eternal flame")
+        : this.inVent(s.taper.x, s.taper.y) ? "In the draught"
+        : s.wax < 30 ? "Running short on wax" : "Move gently",
+
+      showHint: !s.overlay && !s.titleCard,
+      hintText: all ? "Every candle lit. The rite is kept."
+        : "Touch the eternal flame, then each candle. Every fourth one lit puts another out.",
+
+      showTitleCard: !!s.titleCard && !s.overlay,
+      cardTitle: s.titleCard ? s.titleCard[0] : "",
+      cardHint: s.titleCard ? s.titleCard[1] : "",
+
+      showIntro: s.overlay === "intro",
+      begin: this.begin,
+
+      showTimeUp: s.overlay === "timeup",
+      timeUpTally: lit + " of " + total + " candles lit",
+      timeUpBest: best < total ? "Most alight at once: " + best : "",
+      hasTimeUpBest: best > 0 && best < total,
+      showCard: s.overlay === "card",
+      cardKicker: s.outcome === "time" ? r.name + " · time ran out"
+        : s.round + 1 >= 4 ? "Observances kept · " + r.name : r.name + " · kept",
+      cardScore: score + " / 100",
+      cardMood: s.outcome === "time"
+        ? "The hour passed with the shrine unfinished. Begin again."
+        : score >= 92 ? "Not a candle missed, not a flame lost."
+        : score >= 78 ? "A well-kept rite." : score >= 60 ? "The shrine is lit, mostly."
+        : "Rather a lot of relighting.",
+      cardRows: [
+        { name: "Candles", val: completion, pct: completion, color: completion >= 75 ? "#2f7d3a" : completion >= 45 ? "#b07d00" : "#c2210f" },
+        { name: "Flame kept", val: care, pct: care, color: care >= 75 ? "#2f7d3a" : care >= 45 ? "#b07d00" : "#c2210f" }
+      ],
+      cardNotes: (() => {
+        const out = [];
+        if (best < total) out.push({ text: "Most alight at once: " + best + " of " + total + "." });
+        if (s.guttered) out.push({ text: "The taper blew out " + s.guttered + (s.guttered > 1 ? " times." : " time.") });
+        if (s.spent) out.push({ text: s.spent + " taper" + (s.spent > 1 ? "s" : "") + " burned down to nothing." });
+        if (s.blown) out.push({ text: s.blown + " candle" + (s.blown > 1 ? "s" : "") + " blown out by the vents." });
+        if (s.tolled) out.push({ text: "The shrine took " + s.tolled + " back — one for every four lit." });
+        if (r.wane > 0 && best === total) out.push({ text: "Held the whole shrine alight at once." });
+        if (all && !s.guttered && !s.spent) out.push({ text: "Not a flame lost on the way." });
+        return out;
+      })(),
+      hasNotes: true,
+      cardCta: s.outcome === "time" ? "Light them again"
+        : s.round + 1 >= 4 ? "Keep the rites again" : "Next observance",
+      cardAction: this.cardAction
+    };
+  }
+}
+</script>
+
+
+</body></html>

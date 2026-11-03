@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#201e1d}a{color:#f3f2f2}a:hover{color:#ec3013}button:focus-visible{outline:2px solid #ec3013;outline-offset:2px}</style>
+</helmet>
+<div style="position:fixed;inset:0;display:flex;flex-direction:column;font-family:var(--font-body);color:#f3f2f2;background:#201e1d" data-screen-label="Leg Lab">
+  <div style="display:flex;flex-wrap:wrap;align-items:baseline;column-gap:12px;row-gap:2px;padding:10px 14px;border-bottom:2px solid #f3f2f2">
+    <div style="font-family:var(--font-heading);font-weight:800;font-size:18px;letter-spacing:0.02em">LEG LAB</div>
+    <div style="font-size:13px;color:#b8b5b3">{{ status }}</div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:2px solid #f3f2f2">
+    <sc-for list="{{ whos }}" as="w" hint-placeholder-count="2">
+      <button onClick="{{ w.pick }}" style="min-height:48px;padding:0 14px;text-align:left;font:800 15px var(--font-heading);background:{{ w.bg }};color:{{ w.fg }};border:0;border-right:2px solid #f3f2f2;cursor:pointer" style-hover="background:#3a0f08">{{ w.name }}</button>
+    </sc-for>
+  </div>
+  <div style="flex:1;min-height:0;position:relative">
+    <div ref="{{ stage }}" style="position:absolute;inset:0;touch-action:none"></div>
+    <sc-if value="{{ isNoble }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;right:12px;top:12px;display:flex;flex-direction:column;gap:8px">
+        <button onClick="{{ throwR }}" style="min-height:52px;min-width:170px;padding:0 16px;text-align:left;font:800 15px var(--font-heading);background:#ec3013;color:#f3f2f2;border:2px solid #f3f2f2;cursor:pointer" style-hover="background:#b8240e">THROW RIGHT SHOE</button>
+        <button onClick="{{ throwL }}" style="min-height:52px;min-width:170px;padding:0 16px;text-align:left;font:800 15px var(--font-heading);background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;cursor:pointer" style-hover="background:#3a0f08">THROW LEFT SHOE</button>
+      </div>
+    </sc-if>
+  </div>
+  <div style="border-top:2px solid #f3f2f2;display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr))">
+    <sc-for list="{{ modes }}" as="m" hint-placeholder-count="9">
+      <button onClick="{{ m.pick }}" style="min-height:52px;padding:0 12px;text-align:left;font:800 14px var(--font-heading);background:{{ m.bg }};color:{{ m.fg }};border:0;border-right:2px solid #f3f2f2;border-bottom:2px solid #f3f2f2;margin:0 -2px -2px 0;cursor:pointer" style-hover="background:#3a0f08">{{ m.name }}</button>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { ready: false, mode: 'idle' };
+  stage = React.createRef();
+  modes = [['idle', 'IDLE'], ['walk', 'WALK'], ['run', 'RUN'], ['stairs', 'STAIRS'], ['stance', 'STANCE'], ['jump', 'JUMP'], ['crouch', 'CROUCH'], ['kneel', 'KNEEL'], ['sit', 'SIT']];
+  async componentDidMount() { const m = await import('./engine/leg-lab.js?v=s667l'); this.lab = await m.startLegLab(this.stage.current); window.__legLab = this.lab; this.setState({ ready: true }); }
+  componentWillUnmount() { this.lab && this.lab.destroy(); }
+  renderVals() {
+    const s = this.state;
+    return {
+      stage: this.stage, isNoble: s.who === 'noble', throwR: () => { if (this.lab) { this.lab.throwShoe(0); this.lab.zoom(1.6); } }, throwL: () => { if (this.lab) { this.lab.throwShoe(1); this.lab.zoom(1.6); } },
+      status: !s.ready ? 'Loading the tall fox…' : (s.who === 'hope' ? 'Hope + her cane' : s.who === 'noble' ? 'Noble in his chair' : 'The tall player') + ' · drag to turn · scroll / pinch to zoom',
+      whos: [['player', 'PLAYER'], ['hope', 'HOPE'], ['noble', 'NOBLE']].map(([k, name]) => ({ name, bg: (s.who || 'player') === k ? '#f3f2f2' : 'transparent', fg: (s.who || 'player') === k ? '#201e1d' : '#f3f2f2', pick: () => { if (!this.lab) return; this.lab.setWho(k); this.setState({ who: k }); } })),
+      modes: this.modes.map(([k, name]) => ({ name, bg: s.mode === k ? '#f3f2f2' : 'transparent', fg: s.mode === k ? '#201e1d' : '#f3f2f2', pick: () => { if (!this.lab) return; this.lab.set(k); this.setState({ mode: k }); } })),
+    };
+  }
+}
+</script>
+</body>
+</html>

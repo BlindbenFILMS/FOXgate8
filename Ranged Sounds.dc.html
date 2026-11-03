@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+  <script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+  <style>body{margin:0;background:var(--color-text);} a{color:var(--color-accent-300);}</style>
+</helmet>
+<div style="max-width:1100px;padding:20px 16px 60px;font-family:var(--font-body);color:var(--color-bg);background:var(--color-text);display:flex;flex-direction:column;gap:20px;">
+  <div style="display:flex;flex-direction:column;gap:6px;border-bottom:2px solid var(--color-bg);padding-bottom:14px;">
+    <div style="font-family:var(--font-heading);font-weight:900;font-size:28px;letter-spacing:-0.01em;">RANGED SOUNDS</div>
+    <div style="font-size:15px;line-height:1.45;text-wrap:pretty;">Tap a sound to hear it. Sounds marked ? came in with cut-off names: pick what each one REALLY is in the box under it, then say SAVE STAFF. Greyed slots have no clip yet. Laser hits = your ORIGINAL recordings (kept).</div>
+  </div>
+  <sc-for list="{{ rows }}" as="w" hint-placeholder-count="9">
+    <div style="display:flex;flex-direction:column;gap:10px;border-bottom:2px solid var(--color-bg);padding-bottom:18px;">
+      <div style="display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;">
+        <div style="font-family:var(--font-heading);font-weight:800;font-size:20px;">{{ w.name }}</div>
+        <div style="font-size:13px;font-weight:700;color:var(--color-neutral-300);">{{ w.count }}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;">
+        <sc-for list="{{ w.cells }}" as="c" hint-placeholder-count="9">
+          <div style="display:flex;flex-direction:column;border:2px solid var(--color-bg);opacity:{{ c.op }};">
+            <button onClick="{{ c.play }}" style="min-height:52px;padding:8px 10px;text-align:left;font-family:var(--font-body);font-weight:800;font-size:14px;background:var(--color-text);color:var(--color-bg);border:0;cursor:pointer;" style-hover="background:var(--color-accent-900);" style-active="background:var(--color-accent-700);">{{ c.label }}</button>
+            <sc-if value="{{ c.guess }}" hint-placeholder-val="{{ false }}">
+              <select value="{{ c.fix }}" onChange="{{ c.onFix }}" style="min-height:44px;border:0;border-top:2px solid var(--color-bg);background:var(--color-text);color:var(--color-bg);font-family:var(--font-body);font-size:13px;font-weight:700;padding:0 8px;">
+                <sc-for list="{{ opts }}" as="o" hint-placeholder-count="4"><option value="{{ o.k }}">{{ o.t }}</option></sc-for>
+              </select>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-for>
+  <div style="display:flex;flex-direction:column;gap:8px;">
+    <div style="font-family:var(--font-heading);font-weight:800;font-size:18px;">MY PICKS (copy + paste into chat if Claude can't read them)</div>
+    <textarea readonly="readonly" value="{{ picksText }}" style="min-height:90px;background:var(--color-text);color:var(--color-bg);border:2px solid var(--color-bg);font-family:monospace;font-size:13px;padding:10px;"></textarea>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const BASE = [['fire', 'FIRE'], ['hit-cloth', 'CLOTH'], ['hit-wood', 'WOOD'], ['hit-stone', 'STONE'], ['hit-metalthick', 'THICK METAL'], ['hit-metalthin', 'THIN METAL'], ['hit-flesh', 'FLESH'], ['draw', 'DRAW'], ['holster', 'PUT AWAY']];
+const THROW = [['loop', 'HOLD LOOP'], ['stop', 'STOP']];
+const LASER_HITS = { 'hit-cloth': 'audio/laser/hit-cloth.mp3', 'hit-wood': 'audio/laser/hit-wood.mp3', 'hit-stone': 'audio/laser/hit-stone.mp3', 'hit-metalthick': 'audio/laser/hit-metal-thick.mp3', 'hit-metalthin': 'audio/laser/hit-metal-thin.mp3', 'hit-flesh': 'audio/laser/hit-flesh.mp3' };
+const HAVE = { laser: ['fire', 'draw', 'holster', 'hit-cloth', 'hit-wood', 'hit-stone', 'hit-metalthick', 'hit-metalthin', 'hit-flesh'], staff: ['hit-cloth', 'hit-wood', 'hit-stone', 'hit-metalthick', 'hit-metalthin', 'hit-flesh', 'fire', 'draw', 'holster'],
+  scatter: BASE.map(b => b[0]), rocket: BASE.map(b => b[0]), crossbow: BASE.map(b => b[0]), rifle: BASE.map(b => b[0]), flame: BASE.concat(THROW).map(b => b[0]), freeze: BASE.concat(THROW).map(b => b[0]), fog: BASE.concat(THROW).map(b => b[0]) };
+const TAKE2 = {};   // s339: Ben picked the takes (flame + freeze = take 2, flame take 1 → rocket; old rocket → audio/ranged/robot/, freeze take 1 → audio/ranged/spare/)
+const STAFF_GUESS = {};   // s339: staff sorted by Ben
+const WEAPONS = [['laser', 'LASER'], ['staff', 'STAFF'], ['scatter', 'SCATTER GUN'], ['rocket', 'ROCKET LAUNCHER'], ['crossbow', 'CROSSBOW'], ['rifle', 'LASER RIFLE'], ['flame', 'FLAMETHROWER', 1], ['freeze', 'FREEZE THROWER', 1], ['fog', 'FOG THROWER', 1]];
+const KEY = 'ranged.sounds.fix';
+class Component extends DCLogic {
+  state = { fix: (() => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } })() };
+  play(src) { try { if (this.a) this.a.pause(); this.a = new Audio(src + '?v=' + Date.now()); this.a.play(); } catch (e) {} }
+  setFix(id, v) { const fix = { ...this.state.fix, [id]: v }; if (!v) delete fix[id]; this.setState({ fix }); try { localStorage.setItem(KEY, JSON.stringify(fix)); } catch (e) {} }
+  renderVals() {
+    const F = this.state.fix;
+    return { opts: [{ k: '', t: 'IS IT? (pick)' }, { k: 'fire', t: 'REALLY FIRE' }, { k: 'draw', t: 'REALLY DRAW' }, { k: 'holster', t: 'REALLY PUT AWAY' }],
+      picksText: Object.entries(F).map(([a, b]) => a + ' = ' + b).join('\n'),
+      rows: WEAPONS.map(([k, name, thr]) => { const list = thr ? BASE.concat(THROW) : BASE, have = HAVE[k]; let n = 0;
+        const cells = list.map(([s, l]) => { const ok = have.includes(s), guess = k === 'staff' && !!STAFF_GUESS[s], id = k + '/' + s; if (ok) n++;
+          const src = k === 'laser' && LASER_HITS[s] ? LASER_HITS[s] : guess ? 'audio/ranged/' + STAFF_GUESS[s] + '.mp3' : 'audio/ranged/' + k + '-' + s + '.mp3';
+          return { label: ok ? '▶ ' + l + (guess ? ' ?' : '') : l + ' · NONE YET', op: ok ? 1 : 0.4, guess, fix: F[id] || '', onFix: e => this.setFix(id, e.target.value), play: () => ok && this.play(src) }; });
+        for (const s2 of TAKE2[k] || []) { const l = list.find(x => x[0] === s2)[1]; cells.push({ label: '▶ ' + l + ' · TAKE 2', op: 1, guess: false, fix: '', onFix: () => {}, play: () => this.play('audio/ranged/' + k + '-' + s2 + '-2.mp3') }); }
+        return { name, count: n + ' / ' + list.length + (TAKE2[k] ? ' · + ' + TAKE2[k].length + ' second takes' : ''), cells }; }) };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<style>html,body{margin:0;height:100%;background:#f3f2f2}a{color:var(--color-accent-700)}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="display:flex;flex-wrap:wrap;min-height:100vh;font-family:var(--font-body);color:var(--color-text);background:var(--color-bg)">
+  <div style="flex:1 1 560px;min-width:0;position:relative;border-right:2px solid var(--color-text)">
+    <canvas ref="{{ cvRef }}" style="display:block;width:100%;height:calc(100vh - 0px);min-height:420px;touch-action:none;cursor:crosshair;background:#14110f"></canvas>
+    <div style="position:absolute;left:12px;top:12px;background:#201e1d;color:#14110f;background:#ffd23a;padding:6px 10px;font:800 12px var(--font-heading);letter-spacing:.08em">MERU 2 · BATTLE GATES · drag a gate · drag a box corner</div>
+  </div>
+  <div style="flex:0 1 320px;min-width:260px;display:flex;flex-direction:column">
+    <div style="padding:16px;border-bottom:2px solid var(--color-text)">
+      <div style="font:800 28px var(--font-heading);letter-spacing:-.02em;line-height:1">Gate Workshop</div>
+      <div style="font-size:13px;margin-top:6px">Gates spawn creatures, bandits or robots. They roam only inside their box. Saved to this browser; Meru 2 picks it up on the next load.</div>
+    </div>
+    <div style="padding:12px 16px;display:flex;flex-direction:column;gap:8px;border-bottom:2px solid var(--color-text)">
+      <div style="font:800 12px var(--font-heading);letter-spacing:.1em">SELECTED · {{ selName }}</div>
+      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px">
+        <sc-for list="{{ kinds }}" as="k" hint-placeholder-count="4"><button onClick="{{ k.pick }}" style="min-height:40px;border:2px solid var(--color-text);background:{{ k.bg }};color:{{ k.fg }};font:800 11px var(--font-body);cursor:pointer;padding:4px">{{ k.label }}</button></sc-for>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;font-size:13px"><span style="flex:1">Area</span>
+        <sc-for list="{{ areas }}" as="a" hint-placeholder-count="2"><button onClick="{{ a.pick }}" style="min-height:36px;border:2px solid var(--color-text);background:{{ a.bg }};color:{{ a.fg }};font:800 11px var(--font-body);cursor:pointer;padding:4px 8px">{{ a.label }}</button></sc-for>
+      </div>
+      <div style="font-size:13px">{{ selInfo }}</div>
+    </div>
+    <div style="padding:12px 16px;display:flex;flex-direction:column;gap:8px;border-bottom:2px solid var(--color-text)">
+      <div style="font:800 12px var(--font-heading);letter-spacing:.1em">MOST ALIVE PER AREA</div>
+      <sc-for list="{{ caps }}" as="c" hint-placeholder-count="2">
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px"><span style="flex:1">{{ c.label }}</span><button onClick="{{ c.dn }}" style="width:40px;height:36px;border:2px solid var(--color-text);background:var(--color-bg);font:800 16px var(--font-body);cursor:pointer">−</button><span style="width:28px;text-align:center;font:800 16px var(--font-heading)">{{ c.n }}</span><button onClick="{{ c.up }}" style="width:40px;height:36px;border:2px solid var(--color-text);background:var(--color-bg);font:800 16px var(--font-body);cursor:pointer">+</button></div>
+      </sc-for>
+    </div>
+    <div style="padding:12px 16px;display:flex;flex-direction:column;gap:6px">
+      <button onClick="{{ addGate }}" style="min-height:44px;border:2px solid var(--color-text);background:var(--color-bg);font:800 13px var(--font-body);text-align:left;padding:0 12px;cursor:pointer">ADD A GATE (map centre view)</button>
+      <button onClick="{{ delGate }}" style="min-height:44px;border:2px solid var(--color-text);background:var(--color-bg);font:800 13px var(--font-body);text-align:left;padding:0 12px;cursor:pointer">REMOVE SELECTED</button>
+      <button onClick="{{ saveAll }}" style="min-height:48px;border:2px solid var(--color-text);background:var(--color-accent);color:#fff;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer">SAVE · USE IN MERU 2</button>
+      <button onClick="{{ resetAll }}" style="min-height:40px;border:2px solid var(--color-text);background:var(--color-bg);font:800 12px var(--font-body);text-align:left;padding:0 12px;cursor:pointer">RESET TO DEFAULT</button>
+      <div style="font-size:12px;min-height:16px">{{ msg }}</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { sel: 0, tick: 0, msg: '' };
+  cvRef = React.createRef();
+  async componentDidMount() {
+    const [Lm, Gm] = await Promise.all([import('./worlds/meru2-layout.js'), import('./worlds/meru2-gates.js?v=g4')]); this.L = Lm; this.Gm = Gm; this.farms = [{ name: 'RUSSET ORCHARD', lot: [-82, -12, -262, -196] }, { name: 'COBB FARM', lot: [12, 51.4, -272, -204] }, { name: 'WOOLLY ACRES', lot: [-76, -12, -330, -268] }]; /* s172: copies of FARM_A / FARM_C / FARM_W .lot */ const d = Gm.loadGates(); this.gates = d.gates; this.areas = d.areas;
+    this.view = { cx: -40, cz: -60, s: 0.62 }; const cv = this.cvRef.current; this.cv = cv;
+    const ev = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left - r.width / 2) / this.view.s + this.view.cx, (e.clientY - r.top - r.height / 2) / this.view.s + this.view.cz]; };
+    cv.addEventListener('pointerdown', e => { const [x, z] = ev(e); const tol = 8 / this.view.s; let hit = null;
+      this.gates.forEach((g, i) => { for (const [sx, sz] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) if (Math.hypot(x - (g.x + sx * g.w / 2), z - (g.z + sz * g.d / 2)) < tol * 1.4) hit = { i, mode: 'corner', sx, sz }; });
+      if (!hit) this.gates.forEach((g, i) => { if (Math.hypot(x - g.x, z - g.z) < tol * 2) hit = { i, mode: 'move' }; });
+      if (hit) { this.drag = hit; this.setState({ sel: hit.i }); } else this.drag = { mode: 'pan', x0: e.clientX, z0: e.clientY, cx: this.view.cx, cz: this.view.cz }; cv.setPointerCapture(e.pointerId); });
+    cv.addEventListener('pointermove', e => { const D = this.drag; if (!D) return; const [x, z] = ev(e);
+      if (D.mode === 'pan') { this.view.cx = D.cx - (e.clientX - D.x0) / this.view.s; this.view.cz = D.cz - (e.clientY - D.z0) / this.view.s; }
+      else { const g = this.gates[D.i]; if (D.mode === 'move') { g.x = Math.round(x); g.z = Math.round(z); } else { g.w = Math.max(10, Math.round(Math.abs(x - g.x) * 2)); g.d = Math.max(10, Math.round(Math.abs(z - g.z) * 2)); } }
+      this.draw(); });
+    cv.addEventListener('pointerup', () => { this.drag = null; this.setState({ tick: this.state.tick + 1 }); });
+    cv.addEventListener('wheel', e => { e.preventDefault(); this.view.s = Math.max(0.25, Math.min(6, this.view.s * (e.deltaY < 0 ? 1.15 : 0.87))); this.draw(); }, { passive: false });
+    this.onR = () => this.draw(); addEventListener('resize', this.onR); this.draw(); this.setState({ tick: 1 });
+  }
+  componentWillUnmount() { removeEventListener('resize', this.onR); }
+  draw() { const cv = this.cv, L = this.L; if (!cv || !L) return; const dpr = Math.min(2, devicePixelRatio || 1), W = cv.clientWidth, H = cv.clientHeight; cv.width = W * dpr; cv.height = H * dpr; const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const V = this.view, X = x => (x - V.cx) * V.s + W / 2, Z = z => (z - V.cz) * V.s + H / 2; g.fillStyle = '#14110f'; g.fillRect(0, 0, W, H);
+    g.font = '700 11px Archivo, sans-serif'; for (const zn of L.ZONES || []) { if (!zn.r) continue; const [x0, x1, z0, z1] = zn.r; g.fillStyle = 'rgba(243,242,242,0.04)'; g.fillRect(X(x0), Z(z0), (x1 - x0) * V.s, (z1 - z0) * V.s); g.strokeStyle = 'rgba(243,242,242,0.28)'; g.strokeRect(X(x0), Z(z0), (x1 - x0) * V.s, (z1 - z0) * V.s); g.fillStyle = 'rgba(243,242,242,0.7)'; g.fillText(zn.label || zn.key, X(x0) + 4, Z(z0) + 12); }
+    g.lineCap = 'round'; for (const p of [...(L.ROADS || []), ...(L.PATHS || [])]) { const pts = p.p || p.pts; if (!pts) continue; g.strokeStyle = p.road ? '#8a857d' : '#e6b45a'; g.lineWidth = Math.max(2, (p.w || 4) * V.s); g.beginPath(); pts.forEach(([x, z], i) => i ? g.lineTo(X(x), Z(z)) : g.moveTo(X(x), Z(z))); g.stroke(); }
+    for (const F of this.farms || []) { const [x0, x1, z0, z1] = F.lot; g.fillStyle = 'rgba(122,154,74,0.22)'; g.fillRect(X(x0), Z(z0), (x1 - x0) * V.s, (z1 - z0) * V.s); g.strokeStyle = '#a8c47a'; g.lineWidth = 1.5; g.setLineDash([5, 4]); g.strokeRect(X(x0), Z(z0), (x1 - x0) * V.s, (z1 - z0) * V.s); g.setLineDash([]); g.fillStyle = '#c9dca8'; g.font = '800 11px Archivo, sans-serif'; g.fillText(F.name, X(x0) + 4, Z(z1) - 5); } /* s172: the 3 Castle Path farm lots (fences) so gates go outside them; label at the lot's south edge */
+    for (const b of L.BUILDINGS || []) { if (!b.f) continue; const [x0, x1, z0, z1] = b.f; g.fillStyle = '#4a4540'; g.fillRect(X(x0), Z(z0), (x1 - x0) * V.s, (z1 - z0) * V.s); }
+    { const S = L.SKATEW; if (S && S.park) { const [x0, x1, z0, z1] = S.park; g.strokeStyle = '#ec3013'; g.lineWidth = 2; g.strokeRect(X(x0), Z(z0), (x1 - x0) * V.s, (z1 - z0) * V.s); if (S.open) { g.strokeStyle = '#14110f'; g.lineWidth = 4; g.beginPath(); g.moveTo(X(S.open[0]), Z(z1)); g.lineTo(X(S.open[1]), Z(z1)); g.stroke(); } g.fillStyle = '#ec3013'; g.fillText("TONY'S PARK", X(x0) + 4, Z(z0) + 14); } }   // s151: the park walls + the south gap
+    const KC = { creature: '#4ade80', bandit: '#fb7185', robot: '#38bdf8', mix: '#c4b5fd' };
+    this.gates.forEach((gt, i) => { const c = KC[gt.kind] || '#8b5cf6', sel = i === this.state.sel; g.fillStyle = c + '33'; g.fillRect(X(gt.x - gt.w / 2), Z(gt.z - gt.d / 2), gt.w * V.s, gt.d * V.s); g.strokeStyle = c; g.lineWidth = sel ? 3 : 2; g.setLineDash([6, 4]); g.strokeRect(X(gt.x - gt.w / 2), Z(gt.z - gt.d / 2), gt.w * V.s, gt.d * V.s); g.setLineDash([]);
+      for (const [sx, sz] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) { g.fillStyle = sel ? '#ec3013' : c; g.fillRect(X(gt.x + sx * gt.w / 2) - 5, Z(gt.z + sz * gt.d / 2) - 5, 10, 10); }
+      g.beginPath(); g.arc(X(gt.x), Z(gt.z), sel ? 9 : 7, 0, 7); g.fillStyle = sel ? '#ec3013' : c; g.fill(); g.strokeStyle = '#14110f'; g.lineWidth = 2; g.stroke(); g.fillStyle = '#f3f2f2'; g.font = '800 12px Archivo, sans-serif'; g.fillText(gt.id + ' · ' + gt.kind.toUpperCase(), X(gt.x) + 12, Z(gt.z) + 4); }); }
+  renderVals() { const G = this.gates || [], s = G[this.state.sel], set = fn => () => { if (!s) return; fn(s); this.draw(); this.setState({ tick: this.state.tick + 1 }); }, A = this.areas || {};
+    if (this.cv) requestAnimationFrame(() => this.draw());
+    return { cvRef: this.cvRef, selName: s ? s.id : 'none (tap a gate)', selInfo: s ? 'At ' + s.x + ', ' + s.z + ' · box ' + s.w + ' × ' + s.d + ' m' : '', msg: this.state.msg,
+      kinds: ['creature', 'bandit', 'robot', 'mix'].map(k => ({ label: k === 'mix' ? 'MIX' : k.toUpperCase(), pick: set(g => { g.kind = k; }), bg: s && s.kind === k ? 'var(--color-text)' : 'var(--color-bg)', fg: s && s.kind === k ? '#fff' : 'var(--color-text)' })),
+      areas: Object.keys(A).map(k => ({ label: (A[k].label || k).split(' ')[0], pick: set(g => { g.area = k; }), bg: s && s.area === k ? 'var(--color-text)' : 'var(--color-bg)', fg: s && s.area === k ? '#fff' : 'var(--color-text)' })),
+      caps: Object.keys(A).map(k => ({ label: A[k].label || k, n: A[k].cap || 4, dn: () => { A[k].cap = Math.max(1, (A[k].cap || 4) - 1); this.setState({ tick: this.state.tick + 1 }); }, up: () => { A[k].cap = Math.min(10, (A[k].cap || 4) + 1); this.setState({ tick: this.state.tick + 1 }); } })),
+      addGate: () => { const v = this.view || { cx: 0, cz: 0 }; G.push({ id: 'gate' + (G.length + 1), area: (s && s.area) || Object.keys(A)[0], kind: 'creature', x: Math.round(v.cx), z: Math.round(v.cz), w: 30, d: 30 }); this.setState({ sel: G.length - 1 }); this.draw(); },
+      delGate: () => { if (!s) return; G.splice(this.state.sel, 1); this.setState({ sel: 0 }); this.draw(); },
+      saveAll: () => { try { localStorage.setItem(this.Gm.GATES_KEY, JSON.stringify({ gates: G, areas: A })); this.setState({ msg: 'SAVED · reload Meru 2 to see it' }); } catch (e) { this.setState({ msg: 'Could not save' }); } },
+      resetAll: () => { try { localStorage.removeItem(this.Gm.GATES_KEY); } catch (e) {} const d = this.Gm.loadGates(); this.gates = d.gates; this.areas = d.areas; this.setState({ sel: 0, msg: 'Back to the default gates' }); this.draw(); } }; }
+}
+</script>
+</body>
+</html>

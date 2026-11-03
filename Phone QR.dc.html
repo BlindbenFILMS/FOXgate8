@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<style>html,body{margin:0;background:#f3f2f2}a{color:#201e1d}a:hover{color:#ec3013}</style>
+</helmet>
+<div style="min-height:100vh;box-sizing:border-box;padding:24px;display:flex;flex-direction:column;gap:16px;max-width:520px;font-family:var(--font-body);color:#201e1d">
+  <span style="font:800 11px var(--font-heading);letter-spacing:0.14em;color:#ec3013">8 GATES · PHONE TEST</span>
+  <span style="font:900 28px var(--font-heading);line-height:1.05">Scan to open Meru 2.0 on your phone</span>
+  <div style="border:2px solid #201e1d;background:#fff;padding:16px;align-self:flex-start;width:min(100%, 320px);box-sizing:border-box">
+    <div ref="{{ qrRef }}" style="width:100%;aspect-ratio:1 / 1"></div>
+  </div>
+  <label style="display:flex;flex-direction:column;gap:6px"><span style="font:900 12px var(--font-heading);letter-spacing:0.08em">LINK IN THE CODE</span><input value="{{ url }}" onChange="{{ setUrl }}" style="min-height:44px;padding:0 10px;border:2px solid #201e1d;border-radius:0;font:600 13px var(--font-body);background:#fff;color:#201e1d"></label>
+  <span style="font:600 13px var(--font-body);color:#5c5a58;text-wrap:pretty">This link works once the step 9 files are committed to BlindbenFILMS/3D-foxgate8 and GitHub Pages is on for the main branch (Settings → Pages). Paste any other link above to change the code.</span>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { url: 'https://blindbenfilms.github.io/3D-foxgate8/Meru%202%20Blockout.dc.html' };
+  qrRef = React.createRef();
+  draw() { const el = this.qrRef.current; if (!el) return; if (!window.qrcode) { setTimeout(() => this.draw(), 200); return; } const q = qrcode(0, 'M'); q.addData(this.state.url); q.make(); el.innerHTML = q.createSvgTag({ cellSize: 8, margin: 0, scalable: true }); const s = el.querySelector('svg'); if (s) { s.style.width = '100%'; s.style.height = '100%'; } }
+  componentDidMount() { this.draw(); }
+  componentDidUpdate() { this.draw(); }
+  renderVals() { return { url: this.state.url, qrRef: this.qrRef, setUrl: e => this.setState({ url: e.target.value }) }; }
+}
+</script>
+</body>
+</html>

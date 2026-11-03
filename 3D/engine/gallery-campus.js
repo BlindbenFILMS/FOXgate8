@@ -24,9 +24,7 @@ const DECO = '"Limelight", "Poiret One", Archivo, Arimo, Helvetica, Arial, sans-
 // what's on at BLIND CAN CINEMA: one film, shown at fixed SHOWTIMES so everyone watches together. A show starts every `every`
 // minutes on the clock (:00, :15, :30, :45 — the same moment for every visitor, wherever they are); between shows the screen and
 // the marquee count down to the next one. Everyone in the cinema sees the same frame (the film is locked to the clock).
-// (Ben, 29 Oct) Screen 1 (the left theatre as you face the doors, under the SURFING poster): SURFING FOR VISION, about 30 min,
-// a show every 45 minutes so there's a break between (the festival film it replaced is gone from the cinema)
-export const CINEMA_SHOW = { file: 'surfing_for_vision', hls: true, title: 'Surfing For Vision', kicker: 'A film by Ben Fox', len: 1814.2, every: 45 };   // (29 Oct) kept as 10-second pieces in gallery/video/surfing_for_vision/ (one 62 MB file was too big to copy across)
+export const CINEMA_SHOW = { file: 'blindcan_festival', title: 'This Weekend Is Blind CAN Film Festival', kicker: 'Blind CAN Film Festival', len: 603.5, every: 15 };
 // Screen 2 (22 Oct): its own film on its own showtimes: Blind CAN's White Cane commercial (one minute, every two minutes)
 // (Ben, 27 Oct) WHAT IS GOALBALL? replaces the White Cane commercial (len is corrected from the video once it loads)
 export const CINEMA_SHOW2 = { file: 'goalball', title: 'What Is Goalball?', kicker: 'A Ben Fox film', len: 300, every: 8 };
@@ -465,7 +463,7 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
       const get = () => { if (window.HUSH) return null; if (!ac) { const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null; ac = new AC(); outG = ac.createGain(); outG.gain.value = 0.8; outG.connect(ac.destination);
           nb = ac.createBuffer(1, Math.floor(ac.sampleRate * 0.04), ac.sampleRate); const d = nb.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3); }
         if (ac.state === 'suspended') ac.resume(); return ac.state === 'running' ? ac : null; };
-      for (const e of ['pointerdown', 'pointerup', 'touchend', 'click', 'keydown']) addEventListener(e, () => { if (ac && ac.state !== 'running') ac.resume().catch(() => {}); }, { passive: true, capture: true });   /* (29 Oct) caught on the way down */
+      for (const e of ['pointerdown', 'keydown', 'touchend']) addEventListener(e, () => { if (ac && ac.state === 'suspended') ac.resume(); });
       const pop = v => { const a = get(); if (!a) return; const s = a.createBufferSource(); s.buffer = nb; s.playbackRate.value = 0.8 + Math.random() * 0.5; const f = a.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 1200 + Math.random() * 1800; f.Q.value = 1.4; const g = a.createGain(); g.gain.value = v; s.connect(f); f.connect(g); g.connect(outG); s.start(); };
       const chime = () => { const a = get(); if (!a) return; const t0 = a.currentTime; [[1318.5, 0], [1046.5, 0.34]].forEach(([fq, dt]) => { for (const [type, mul, vol] of [['sine', 1, 0.11], ['triangle', 2, 0.025]]) { const o = a.createOscillator(), g = a.createGain(); o.type = type; o.frequency.value = fq * mul; g.gain.setValueAtTime(0, t0 + dt); g.gain.linearRampToValueAtTime(vol, t0 + dt + 0.01); g.gain.exponentialRampToValueAtTime(0.0005, t0 + dt + 1.5); o.connect(g); g.connect(outG); o.start(t0 + dt); o.stop(t0 + dt + 1.6); } }); };
       out2.player = (x, y, z, dt) => { const inB = x > FX + T && x < C.x1 && z > C.z0 && z < C.z1 && y < 6;
@@ -596,7 +594,7 @@ export function buildCampus({ scene, wood, woodify, vids = [], resolveImg = u =>
     // the shows (22 Oct: one per screen): each screen's film at fixed showtimes, locked to the clock so everyone in that theatre
     // sees the same frame; between shows a countdown. The left poster case is Screen 1's film, the right Screen 2's.
     const shows = theatres.map((th, i) => {
-      const F = CINEMA_PROGRAM[i] || CINEMA_SHOW, film = { ...F, u: 'cinema' + th.n + ':' + F.file, local: F.hls ? 'gallery/video/' + F.file + '/index.m3u8' : (window.GMEDIA || (u => u))('gallery/video/' + F.file + '.mp4'), im: null };   /* (29 Oct) hls: the film as streaming pieces */
+      const F = CINEMA_PROGRAM[i] || CINEMA_SHOW, film = { ...F, u: 'cinema' + th.n + ':' + F.file, local: (window.GMEDIA || (u => u))('gallery/video/' + F.file + '.mp4'), im: null };
       const screen = { u: film.u, local: film.local, box: th.scr, faces: [1], posterMat: th.posterMat, vol: 0.9, dist: 20, reach: 30, minVol: 0.05, p: [th.SX, th.SY, th.c], zone: th.zone, cinema: true, F, show: () => showtime(Date.now(), F) };
       screens.push(screen);
       const sh = { F, film, screen, th };

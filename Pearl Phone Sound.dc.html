@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>html,body{margin:0;background:#f3f2f2}a{color:#201e1d}a:hover{color:#ec3013}button:focus-visible{outline:2px solid #ec3013;outline-offset:2px}</style></helmet>
+<div style="padding:20px 24px;display:flex;flex-direction:column;gap:16px;font-family:Archivo, sans-serif;color:#201e1d">
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0;border:2px solid #201e1d;align-self:flex-start">
+    <div style="padding:0 14px;font:800 13px Archivo, sans-serif;letter-spacing:0.1em">SOUND ON</div>
+    <sc-for list="{{ opts }}" as="o" hint-placeholder-count="2">
+      <button onClick="{{ o.pick }}" style="min-height:48px;padding:0 16px;text-align:left;font:800 14px Archivo, sans-serif;border:0;border-left:2px solid #201e1d;background:{{ o.bg }};color:{{ o.fg }};cursor:pointer" style-hover="background:#ec3013;color:#f3f2f2">{{ o.label }}</button>
+    </sc-for>
+  </div>
+  <div style="font:500 14px Archivo, sans-serif;color:#5a5653">Tap inside the phone once to start the sound (browsers need a tap). One phone plays sound at a time so they don't double up.</div>
+  <div style="zoom:0.75;display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="font:800 12px Archivo, sans-serif;letter-spacing:0.12em">IPHONE PORTRAIT · 390 × 844 · {{ pTag }}</div>
+      <iframe src="{{ pSrc }}" allow="autoplay" style="width:390px;height:844px;border:2px solid #201e1d;display:block;background:#000"></iframe>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="font:800 12px Archivo, sans-serif;letter-spacing:0.12em">IPHONE LANDSCAPE · 844 × 390 · {{ lTag }}</div>
+      <iframe src="{{ lSrc }}" allow="autoplay" style="width:844px;height:390px;border:2px solid #201e1d;display:block;background:#000"></iframe>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { snd: 'p' };
+  renderVals() {
+    const s = this.state.snd, base = 'Pearl Sail 3D Floor ATTACK ON.dc.html?phone=';
+    return {
+      opts: [['p', 'PORTRAIT'], ['l', 'LANDSCAPE']].map(([k, label]) => ({ label, bg: s === k ? '#201e1d' : 'transparent', fg: s === k ? '#f3f2f2' : '#201e1d', pick: () => this.setState({ snd: k }) })),
+      pSrc: base + '1' + (s === 'p' ? '&sound=1' : ''), lSrc: base + '2' + (s === 'l' ? '&sound=1' : ''),
+      pTag: s === 'p' ? 'SOUND ON' : 'MUTED', lTag: s === 'l' ? 'SOUND ON' : 'MUTED',
+    };
+  }
+}
+</script>
+</body>
+</html>

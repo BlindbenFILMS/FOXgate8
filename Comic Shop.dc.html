@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Bramble's Comics">
+  <div ref="{{ stageRef }}" style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0;overflow:hidden"></div>
+  <sc-if value="{{ hudOn }}" hint-placeholder-val="{{ false }}">
+    <div data-hud-host="1" style="position:absolute;inset:0;pointer-events:none"><dc-import name="Game HUD" game="{{ engine }}" hud="{{ stdHud }}" started="{{ started }}" busy="{{ hudBusy }}" on-hud="{{ onHud }}" world="Home" vehicle="shop" keys="{{ keysList }}" skip-keys="{{ skipKeys }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  </sc-if>
+  <sc-if value="{{ topOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="top" style="position:absolute;left:0;right:0;top:0;z-index:3;pointer-events:none;display:flex;flex-direction:column">
+      <div style="background:rgba(0,0,0,0.98);border-bottom:2px solid #ffd23a;display:flex;align-items:stretch;padding-top:env(safe-area-inset-top)">
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836;min-width:0"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ topKicker }}</span><span style="font:900 20px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap">{{ comicTxt }}</span></div>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">EARNED</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;color:#e6b45a">{{ earnedTxt }}</span></div>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;min-width:0;flex:1"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">STARS</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap">{{ starsTxt }}</span></div>
+        <button onClick="{{ accessToggle }}" aria-label="Access options" style="pointer-events:auto;flex:none;width:46px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 16px var(--font-heading);cursor:pointer" style-hover="background:#2a2826">Aa</button>
+        <button onClick="{{ helpToggle }}" aria-label="How the jobs work" style="pointer-events:auto;flex:none;width:46px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 20px var(--font-heading);cursor:pointer" style-hover="background:#2a2826">?</button>
+      </div>
+    </div>
+  </sc-if>
+    <sc-if value="{{ cardOn }}" hint-placeholder-val="{{ false }}">
+      <div data-safe="card" style="position:absolute;left:max(6px, env(safe-area-inset-left));top:{{ cardTop }};z-index:3;pointer-events:none;display:flex;align-items:flex-start;gap:6px;max-width:{{ cardW }}">
+        <div style="flex:0 1 auto;min-width:0;line-height:1.25;background:rgba(251,251,247,0.98);color:#201e1d;border:2px solid #201e1d;display:flex;flex-direction:column">
+          <div style="background:#c42d3c;color:#fff;padding:4px 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><span style="font:900 12px var(--font-heading);letter-spacing:0.06em;white-space:nowrap">COMMISSION · {{ h.job.owner }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.04em;color:#ffd23a;white-space:nowrap">{{ h.job.series }} · {{ h.job.book }} · NO. {{ h.job.issue }}</span></div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;padding:5px 6px">
+            <sc-for list="{{ chips }}" as="c" hint-placeholder-count="4"><span style="display:flex;gap:5px;align-items:center;padding:2px 6px;border:2px solid {{ c.bd }};background:{{ c.bg }};font:900 11px var(--font-heading);letter-spacing:0.04em;color:{{ c.fg }};white-space:nowrap">{{ c.t }}</span></sc-for>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px 12px;padding:0 8px 5px;font:800 11px var(--font-heading);letter-spacing:0.04em;color:#5a544e"><sc-for list="{{ notes }}" as="n" hint-placeholder-count="2"><span style="display:flex;gap:5px;align-items:center;white-space:nowrap">{{ n.k }}<span style="padding:1px 5px;background:{{ n.bg }};color:{{ n.fg }}">{{ n.v }}</span></span></sc-for></div>
+        </div>
+        <sc-if value="{{ fitOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ fitGo }}" aria-label="Fit the whole page" style="pointer-events:auto;flex:none;min-width:56px;min-height:44px;padding:0 10px;border:2px solid #ffd23a;border-radius:0;background:#000;color:#ffd23a;font:900 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">FIT</button></sc-if>
+      </div>
+    </sc-if>
+  <sc-if value="{{ barOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="bottom" style="position:absolute;left:0;right:0;bottom:0;z-index:4;display:flex;flex-direction:column;pointer-events:{{ barPE }}">
+      <sc-if value="{{ swatchOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));background:rgba(0,0,0,0.98);border-top:2px solid #3a3836">
+          <sc-for list="{{ swatches }}" as="s" hint-placeholder-count="6"><button onClick="{{ s.go }}" aria-label="{{ s.aria }}" style="min-height:52px;border:0;border-right:2px solid #2a2826;border-radius:0;background:{{ s.bg }};cursor:pointer;display:flex;align-items:center;justify-content:flex-start;gap:6px;padding:0 6px;color:#fff;min-width:0" style-hover="filter:brightness(1.25)"><span style="flex:none;width:30px;height:30px;border:2px solid {{ s.ring }};background-color:{{ s.col }};background-image:{{ s.bgi }};display:flex;align-items:center;justify-content:center;font:900 15px var(--font-heading);color:{{ s.numCol }}">{{ s.n }}</span><span style="font:900 10px var(--font-heading);letter-spacing:0.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:{{ s.nameD }}">{{ s.name }}</span></button></sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ linesOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;background:rgba(0,0,0,0.98);border-top:2px solid #3a3836">
+          <div style="padding:4px 10px;font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">PICK THE {{ moodTxt }} LINE</div>
+          <sc-for list="{{ lines }}" as="l" hint-placeholder-count="3"><button onClick="{{ l.go }}" style="min-height:44px;padding:6px 12px;border:0;border-top:2px solid #2a2826;border-radius:0;background:{{ l.bg }};color:{{ l.fg }};cursor:pointer;text-align:left;font:900 13px var(--font-heading);letter-spacing:0.02em;line-height:1.25;text-wrap:pretty" style-hover="filter:brightness(1.2)">“{{ l.t }}”</button></sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ faceOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;background:rgba(0,0,0,0.98);border-top:2px solid #3a3836">
+          <div style="padding:4px 10px;font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">THE CARD WANTS {{ faceWant }}</div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr))"><sc-for list="{{ faces }}" as="f" hint-placeholder-count="3"><button onClick="{{ f.go }}" style="min-height:52px;border:0;border-right:2px solid #2a2826;border-top:2px solid #2a2826;border-radius:0;background:{{ f.bg }};color:{{ f.fg }};cursor:pointer;font:900 15px var(--font-heading);letter-spacing:0.06em;text-align:left;padding:0 12px" style-hover="filter:brightness(1.2)">{{ f.f }}</button></sc-for></div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ sfxOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));background:#000;border-top:2px solid #3a3836">
+          <sc-for list="{{ sfxWords }}" as="w" hint-placeholder-count="3"><button onClick="{{ w.go }}" style="min-height:52px;border:0;border-right:2px solid #2a2826;border-radius:0;background:{{ w.bg }};color:{{ w.fg }};cursor:pointer;font:italic 900 18px var(--font-heading);letter-spacing:0.02em;text-align:left;padding:0 12px" style-hover="filter:brightness(1.2)">{{ w.w }}</button></sc-for>
+        </div>
+      </sc-if>
+      <div style="background:rgba(0,0,0,0.98);border-top:2px solid #ffd23a;padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:grid;grid-template-columns:repeat({{ toolCols }},minmax(0,1fr))">
+        <sc-for list="{{ tools }}" as="t" hint-placeholder-count="5">
+          <button onClick="{{ t.go }}" aria-label="{{ t.aria }}" style="min-height:58px;padding:6px 4px 6px 8px;border:0;border-right:2px solid #2a2826;border-top:{{ t.bt }};border-radius:0;background:{{ t.bg }};color:{{ t.fg }};cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:3px;min-width:0" style-hover="filter:brightness(1.2)">
+            <span style="font:900 13px var(--font-heading);letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.label }}</span>
+            <span style="font:800 9px var(--font-heading);letter-spacing:0.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ t.bc }}">{{ t.badge }}</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ streakOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;right:max(10px, env(safe-area-inset-right));top:{{ streakTop }};z-index:5;pointer-events:none;background:#ffd23a;color:#000;border:2px solid #000;padding:4px 10px;display:flex;flex-direction:column;align-items:flex-start"><span style="font:900 18px var(--font-heading);letter-spacing:0.04em">STREAK ×{{ h.streak }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.1em">+1g TIP EACH</span></div>
+  </sc-if>
+  <sc-if value="{{ sketchOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="top" style="position:absolute;left:0;right:0;top:0;z-index:4;display:flex;align-items:stretch;background:rgba(0,0,0,0.98);border-bottom:2px solid #ffd23a;padding-top:env(safe-area-inset-top)">
+      <div style="flex:1;min-width:0;padding:6px 12px;display:flex;flex-direction:column;justify-content:center"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">BRAMBLE'S COMICS</span><span style="font:900 20px var(--font-heading);white-space:nowrap">SKETCHBOOK</span></div>
+      <button onClick="{{ skUndo }}" style="pointer-events:auto;min-height:48px;padding:0 14px;border:0;border-radius:0;cursor:pointer;text-align:left;font:900 13px var(--font-heading);letter-spacing:0.08em;border-left:2px solid #3a3836;background:#000;color:#fff">UNDO</button>
+      <button onClick="{{ skClear }}" style="pointer-events:auto;min-height:48px;padding:0 14px;border:0;border-radius:0;cursor:pointer;text-align:left;font:900 13px var(--font-heading);letter-spacing:0.08em;border-left:2px solid #3a3836;background:#000;color:#fff">CLEAR</button>
+      <button onClick="{{ skExit }}" aria-label="Close the sketchbook" style="pointer-events:auto;min-height:48px;padding:0 14px;border:0;border-radius:0;cursor:pointer;text-align:left;font:900 13px var(--font-heading);letter-spacing:0.08em;border-left:2px solid #3a3836;background:#000;color:#ffd23a">DONE</button>
+    </div>
+    <div data-safe="bottom" style="position:absolute;left:0;right:0;bottom:0;z-index:4;display:flex;flex-direction:column;background:rgba(0,0,0,0.98);border-top:2px solid #ffd23a;padding-bottom:env(safe-area-inset-bottom)">
+      <div style="display:grid;grid-template-columns:repeat({{ skGridCols }},minmax(0,1fr))"><sc-for list="{{ skCols }}" as="k" hint-placeholder-count="8"><button onClick="{{ k.go }}" aria-label="{{ k.aria }}" style="min-height:48px;border:0;border-right:2px solid #2a2826;border-radius:0;background:{{ k.bg }};cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0" style-hover="filter:brightness(1.25)"><span style="width:28px;height:28px;border:2px solid {{ k.ring }};background:{{ k.col }};display:flex;align-items:center;justify-content:center;font:900 10px var(--font-heading);color:#201e1d">{{ k.t }}</span></button></sc-for><sc-for list="{{ skSizes }}" as="z" hint-placeholder-count="3"><button onClick="{{ z.go }}" aria-label="{{ z.aria }}" style="grid-column:span 1;min-height:52px;border:0;border-right:2px solid #2a2826;border-top:2px solid #2a2826;border-radius:0;background:{{ z.bg }};cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="filter:brightness(1.25)"><span style="width:{{ z.d }};height:{{ z.d }};border-radius:50%;background:{{ z.col }};display:block"></span></button></sc-for>
+        <button onClick="{{ skSave }}" style="grid-column:span {{ skSaveSpan }};min-height:52px;border:0;border-right:2px solid #2a2826;border-top:2px solid #2a2826;border-radius:0;background:#000;color:#fff;cursor:pointer;font:900 12px var(--font-heading);letter-spacing:0.06em;text-align:left;padding:0 10px">SAVE</button>
+        <button onClick="{{ skHang }}" style="grid-column:span {{ skHangSpan }};min-height:52px;border:0;border-top:2px solid #2a2826;border-radius:0;background:#ec3013;color:#fff;cursor:pointer;font:900 12px var(--font-heading);letter-spacing:0.06em;text-align:left;padding:0 10px">HANG IT UP</button></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ accessOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:10;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #ffd23a;width:min(440px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836"><span style="flex:1;padding:10px 14px;font:900 16px var(--font-heading);letter-spacing:0.06em;color:#ffd23a">ACCESS + SOUND</span><button onClick="{{ accessToggle }}" aria-label="Close access options" style="width:52px;min-height:48px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 18px var(--font-heading);cursor:pointer">✕</button></div>
+        <sc-for list="{{ accessRows }}" as="a" hint-placeholder-count="3"><button onClick="{{ a.go }}" aria-pressed="{{ a.on }}" style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;min-height:64px;padding:8px 14px;border:0;border-bottom:2px solid #2a2826;border-radius:0;background:#000;color:#fff;cursor:pointer;text-align:left" style-hover="background:#1a1816"><span style="display:flex;flex-direction:column;gap:2px"><span style="font:900 15px var(--font-heading);letter-spacing:0.04em">{{ a.t }}</span><span style="font:600 12px var(--font-body);color:#cfcac2;text-wrap:pretty">{{ a.d }}</span></span><span style="min-width:56px;padding:6px 10px;background:{{ a.bg }};color:{{ a.fg }};font:900 13px var(--font-heading);letter-spacing:0.08em">{{ a.v }}</span></button></sc-for>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ hintOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;right:max(10px, env(safe-area-inset-right));bottom:{{ trayBottom }};z-index:3;pointer-events:none;max-width:min(280px, 70%);background:#000;border:2px solid #ffd23a;display:flex;align-items:stretch">
+      <sc-if value="{{ hintKeyOn }}" hint-placeholder-val="{{ false }}"><span style="flex:none;display:flex;align-items:center;padding:0 7px;background:#ec3013;font:900 10px var(--font-heading);letter-spacing:0.08em;color:#fff">{{ h.hint.key }}</span></sc-if>
+      <span style="padding:5px 10px;font:800 11px var(--font-heading);letter-spacing:0.08em;line-height:1.35;color:#ffd23a;text-wrap:pretty">{{ hintTxt }}</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ sayOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(10px, env(safe-area-inset-left));bottom:{{ sayBottom }};z-index:3;pointer-events:none;max-width:min(340px, calc(100% - 20px));background:rgba(0,0,0,0.88);border:2px solid #3a3836;padding:8px 10px;font:700 13px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">{{ h.say }}</div>
+  </sc-if>
+  <sc-if value="{{ pressOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;bottom:{{ pressBottom }};transform:translateX(-50%);z-index:5;pointer-events:none;width:min(420px, calc(100% - 24px));background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:6px 12px"><span style="font:900 clamp(18px,5vw,24px) var(--font-heading);color:{{ h.press.col }};white-space:nowrap">{{ h.press.zone }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#ffd23a;text-align:right">{{ h.press.kind }}</span></div>
+      <div style="position:relative;height:22px;margin:0 12px 10px;display:flex;gap:2px">
+        <sc-for list="{{ bands }}" as="b" hint-placeholder-count="4"><span style="flex:{{ b.f }};background:{{ b.c }};outline:{{ b.ol }};display:block"></span></sc-for>
+        <span style="position:absolute;top:-6px;bottom:-6px;left:{{ pressX }};width:4px;margin-left:-2px;background:#ffffff;display:block"></span>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ flashOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ flashTop }};transform:translateX(-50%);z-index:5;pointer-events:none;max-width:calc(100% - 24px);background:rgba(0,0,0,0.9);border:2px solid {{ flashCol }};display:flex;align-items:stretch">
+      <span style="flex:none;width:10px;background:{{ flashCol }};display:block"></span>
+      <span style="padding:8px 14px;font:900 clamp(15px,4vw,22px) var(--font-heading);letter-spacing:0.04em;color:#fff;text-wrap:pretty">{{ flashTxt }}</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ reactOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ reactTop }};transform:translateX(-50%);z-index:6;pointer-events:none;width:min(420px, calc(100% - 24px));background:#000;border:3px solid {{ h.react.col }};display:flex;flex-direction:column">
+      <div style="display:flex;align-items:stretch"><div style="flex:1;padding:10px 14px;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">{{ h.react.who }}</span><span style="font:900 clamp(30px,9vw,44px) var(--font-heading);line-height:1;color:{{ h.react.col }}">{{ h.react.word }}</span></div><div style="flex:none;min-width:96px;padding:0 12px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;background:{{ h.react.col }};color:#000"><span style="font:900 20px var(--font-heading);letter-spacing:0.04em">{{ reactStars }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.08em">{{ reactPay }}</span></div></div>
+      <div style="padding:8px 14px 10px;border-top:2px solid #2a2826;font:700 15px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">“{{ h.react.line }}”</div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(10px, env(safe-area-inset-left));bottom:{{ trayBottom }};z-index:7;pointer-events:none;width:min(460px, calc(100% - 112px));background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="padding:5px 12px;border-bottom:2px solid #3a3836;font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;background:#ec3013;display:block"></span>DEMO · NOTHING IS SAVED</div>
+      <div style="display:flex;align-items:stretch"><sc-if value="{{ demoKeyOn }}" hint-placeholder-val="{{ false }}"><div style="flex:none;min-width:64px;display:flex;align-items:center;justify-content:center;padding:0 10px;background:#ec3013;color:#fff;font:900 13px var(--font-heading);border-right:2px solid #3a3836">{{ h.demo.key }}</div></sc-if><div style="padding:9px 12px;font:900 clamp(14px,3.8vw,18px) var(--font-heading);letter-spacing:0.03em;line-height:1.2;color:#fff;text-wrap:pretty">{{ h.demo.cap }}</div></div>
+    </div>
+    <button onClick="{{ demoExit }}" aria-label="Exit the demo" style="position:absolute;right:max(10px, env(safe-area-inset-right));bottom:{{ trayBottom }};z-index:7;min-width:88px;min-height:48px;padding:0 14px;border:2px solid #ec3013;border-radius:0;background:#ec3013;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">EXIT DEMO</button>
+  </sc-if>
+  <sc-if value="{{ introOn }}" hint-placeholder-val="{{ true }}">
+    <div data-safe="intro" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:6;width:min(420px, calc(100% - 24px));max-height:{{ introMaxH }};overflow:auto;background:rgba(0,0,0,0.98);border:2px solid #3a3836;display:flex;flex-direction:column">
+      <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ introKicker }}</span><span style="font:900 26px var(--font-heading);line-height:1.05">Make some comics</span><span style="font:700 13px var(--font-body);color:#cfcac2;text-wrap:pretty">Foxes from town come in with a commission. Make the page at the art desk at your own pace, then hand it in. They pay for the page and tip for good work.</span></div>
+      <sc-for list="{{ introRows }}" as="r" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:86px minmax(0,1fr);gap:12px;padding:6px 16px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;color:#e6b45a">{{ r.v }}</span></div></sc-for>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+        <button onClick="{{ demoGo }}" style="min-height:48px;padding:0 16px;border:0;border-bottom:2px solid #3a3836;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WATCH THE DEMO</button>
+        <button onClick="{{ walkGo }}" style="min-height:48px;padding:0 16px;border:0;border-bottom:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">{{ walkLabel }}</button>
+        <button onClick="{{ sketchGo }}" style="min-height:48px;padding:0 16px;border:0;border-bottom:2px solid #3a3836;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">SKETCHBOOK</button>
+        <button onClick="{{ accessToggle }}" style="min-height:48px;padding:0 16px;border:0;border-bottom:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">Aa ACCESS</button>
+      </div>
+      <button onClick="{{ goWork }}" style="min-height:56px;padding:0 18px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">PUT ME TO WORK</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ helpOn }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ helpToggle }}" style="position:absolute;inset:0;z-index:9;background:rgba(0,0,0,0.82);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #ffd23a;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="padding:10px 14px;border-bottom:2px solid #3a3836;font:900 16px var(--font-heading);letter-spacing:0.06em;color:#ffd23a">HOW THE PAGE GETS MADE</div>
+        <sc-for list="{{ helpRows }}" as="r" hint-placeholder-count="8"><div style="display:grid;grid-template-columns:88px minmax(0,1fr);gap:10px;padding:7px 14px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body);line-height:1.35"><span style="font:900 11px var(--font-heading);letter-spacing:0.08em;color:#e6b45a">{{ r.k }}</span><span style="text-wrap:pretty">{{ r.v }}</span></div></sc-for>
+        <div style="padding:10px 14px;font:700 12px var(--font-body);color:#cfcac2">Tap anywhere to close</div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:8;background:rgba(0,0,0,0.78);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #3a3836;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+          <div style="padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ doneKicker }}</span><span style="font:900 24px var(--font-heading);line-height:1.05">Day's comics done</span><span style="font:700 12px var(--font-body);color:#cfcac2">{{ doneSub }}</span></div>
+          <div style="width:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#ec3013"><span style="font:900 30px var(--font-heading)">{{ d.total }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em">GOLD</span></div>
+        </div>
+        <sc-if value="{{ eodOn }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:10px;padding:10px 16px;background:#ffd23a;color:#000;border-bottom:2px solid #000;font:900 14px var(--font-heading);letter-spacing:0.06em"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18.5 21 12 16.8 5.5 21l2-7.5L2 9h7z" fill="#000"></path></svg>EMPLOYEE OF THE DAY</div></sc-if>
+        <sc-for list="{{ doneRows }}" as="r" hint-placeholder-count="5"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:7px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;font-variant-numeric:tabular-nums">{{ r.v }}</span></div></sc-for>
+        <sc-for list="{{ unlocks }}" as="u" hint-placeholder-count="1"><div style="padding:7px 16px;border-bottom:2px solid #2a2826;font:800 13px var(--font-heading);letter-spacing:0.04em;color:#22c55e">UNLOCKED · {{ u.t }}</div></sc-for>
+        <div style="padding:8px 16px 4px;font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">UPGRADE THE DESK · YOU HAVE {{ goldTxt }}</div>
+        <sc-for list="{{ shop }}" as="s" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 16px;border-top:2px solid #2a2826">
+            <div style="display:flex;flex-direction:column;min-width:0"><span style="font:900 13px var(--font-heading);letter-spacing:0.04em">{{ s.name }}</span><span style="font:600 12px var(--font-body);color:#cfcac2">{{ s.line }}</span></div>
+            <button onClick="{{ s.buy }}" disabled="{{ s.off }}" style="min-width:84px;min-height:44px;padding:0 12px;border:2px solid {{ s.bd }};border-radius:0;background:{{ s.bg }};color:{{ s.fg }};font:900 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;opacity:{{ s.op }}" style-hover="filter:brightness(1.15)">{{ s.btn }}</button>
+          </div>
+        </sc-for>
+        <sc-if value="{{ saveOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ savePage }}" style="min-height:48px;margin-top:8px;padding:0 16px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">SAVE TODAY'S BEST PAGE</button></sc-if>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:8px">
+          <button onClick="{{ goWork }}" style="min-height:52px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">NEXT DAY</button>
+          <button onClick="{{ walkGo }}" style="min-height:52px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">TAKE A BREAK</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { h: null, help: false, access: false, vw: 1200, vh: 800, hi: { pad: false, menu: false, split: false, bar: 0 } };
+  stageRef = React.createRef();
+  onHud = hi => { this.setState({ hi }); this.g && this.g.setHudPad && this.g.setHudPad(!!hi.pad); };
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs(); try { this.ro = new ResizeObserver(this.onRs); this.stageRef.current && this.ro.observe(this.stageRef.current.parentElement); } catch (e) {}
+    try { const m = await import(new URL('minigames/home/comic-shop.js', document.baseURI).href); const embed = /[?&]embed=1/.test(location.search); this.embed = embed; this.g = await m.createComicShop({ container: this.stageRef.current, embed, onState: h => this.setState({ h }), onExit: embed ? (info => { try { window.parent.postMessage({ type: '8gates:comic-shop', action: 'exit', ...info }, '*'); } catch (e) {} }) : null }); window.__comics = this.g; this.forceUpdate(); if (/[?&]demo=1/.test(location.search)) setTimeout(() => this.g.demoStart(), 400); }
+    catch (e) { console.warn('comic shop failed: ' + (e && e.stack || String(e))); }
+  }
+  componentDidUpdate() { const root = this.stageRef.current && this.stageRef.current.parentElement; if (!root || !this.g || !this.g.setSafe) return; const rb = this.stageRef.current.getBoundingClientRect(); let top = 0, bot = 0, left = 0; root.querySelectorAll('[data-safe]').forEach(el => { const r = el.getBoundingClientRect(); if (!r.height) return; if (el.dataset.safe === 'top') top = Math.max(top, r.bottom - rb.top); else if ((el.dataset.safe === 'intro' || el.dataset.safe === 'card') && rb.width > rb.height) left = Math.max(left, r.right - rb.left); else if (el.dataset.safe === 'card') top = Math.max(top, r.bottom - rb.top); else bot = Math.max(bot, rb.bottom - r.top); }); const H = rb.height, ph = this.g.hud().phase; this.g.setSafe(Math.round(Math.min(top, H * 0.4)), Math.round(Math.min(bot, H * (ph === 'intro' ? 0.62 : 0.42))), Math.round(Math.min(left, rb.width * 0.6))); }
+  saveImg = async () => { const r = this.g && this.g.savePage(); if (!r) return; try { const b = await (await fetch(r.url)).blob(), f = new File([b], r.name, { type: 'image/png' }); if (navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], title: r.title }); return; } } catch (e) {} try { const a = document.createElement('a'); a.href = r.url; a.download = r.name; document.body.appendChild(a); a.click(); a.remove(); } catch (e) {} };
+  componentWillUnmount() { removeEventListener('resize', this.onRs); this.ro && this.ro.disconnect(); this.g && this.g.destroy(); }
+  onRs = () => { const el = this.stageRef.current, r = el && el.parentElement ? el.parentElement.getBoundingClientRect() : null; this.setState({ vw: r && r.width ? r.width : innerWidth, vh: r && r.height ? r.height : innerHeight }); };
+  renderVals() {
+    const S = this.state, g = this.g, blur = e => { if (e && e.currentTarget && e.currentTarget.blur) e.currentTarget.blur(); g && g.uiClick && g.uiClick(); };
+    const h = S.h || { phase: 'intro', day: 1, n: 0, perDay: 3, earned: 0, tips: 0, stars: 0, job: null, tool: null, brush: null, inks: [], lines: null, sfxPick: null, press: null, flash: null, say: '', react: null, done: null, gold: 0, upgrades: [], hint: null, demo: null, uniform: false, walk: { prompt: null, toast: null, quest: '', place: 'Home · Comics', dialog: null } };
+    const busy = ['arrive', 'work', 'react', 'leave', 'sketch'].includes(h.phase), sketch = h.phase === 'sketch', work = h.phase === 'work', J = h.job, d = h.done || { total: 0 }, port = S.vh > S.vw, phone = Math.min(S.vw, S.vh) < 520;
+    const hudOn = !busy && !this.embed, bar = hudOn ? (S.hi.bar || 0) : 0;
+    const swatchOn = work && h.tool === 'colour', linesOn = work && !!h.lines, sfxOn = work && !!h.sfxPick;
+    const tools = !J ? [] : [...J.tasks.map(t => { const on = h.tool === t.id, nx = h.hint && h.hint.tool === t.id && !on; return { label: t.label, aria: t.name, badge: nx ? 'NEXT ▸' : t.done ? 'DONE ✓' : t.txt, bg: on ? '#ffd23a' : nx ? '#1f3a24' : '#000000', fg: on ? '#000000' : t.done ? '#8a847e' : '#ffffff', bc: on ? '#000000' : t.done ? '#22c55e' : nx ? '#ffd23a' : '#8a847e', bt: 'none', go: e => { blur(e); g && g.setTool(t.id); } }; }),
+      { label: 'HAND IN', aria: 'Hand the page in', badge: h.allDone ? 'READY' : h.confirm ? 'TAP AGAIN' : 'NOT DONE', bg: h.allDone ? '#ec3013' : '#000000', fg: '#ffffff', bc: h.allDone ? '#ffffff' : '#8a847e', bt: 'none', go: e => { blur(e); g && g.handIn(); } }];
+    const split = port && tools.length > 5, toolCols = split ? Math.ceil(tools.length / 2) : tools.length || 1; if (split) tools.forEach((t, i) => { if (i >= toolCols) t.bt = '2px solid #2a2826'; });
+    const faceOn = work && !!h.facePick, extra = (swatchOn ? 54 : 0) + (linesOn ? 24 + 46 * 3 : 0) + (sfxOn ? 54 : 0) + (faceOn ? 78 : 0), base = split ? 128 : 70;
+    const trayBottom = 'calc(' + (base + extra) + 'px + env(safe-area-inset-bottom))';
+    let sv = null; try { sv = JSON.parse(localStorage.getItem('8gates.save.v1') || 'null'); } catch (e) {}
+    const Wk = h.walk || {};
+    const stdHud = { hp: 100, hpMax: 100, en: 100, gold: h.gold, hour: 14, day: sv && sv.stats ? sv.stats.worldDay || 1 : 1, items: sv ? Object.entries(sv.items || {}).filter(([, n]) => n > 0).map(([id, n]) => ({ id, n, label: id })) : [], place: Wk.place || 'Home · Comics', quest: { text: Wk.quest || '' }, prompt: Wk.prompt || null, toast: Wk.toast || null, muted: !!h.muted, weather: 'Clear', boat: false, inCave: false, weapons: [], dialog: Wk.dialog || null, vehicles: [], vehAmmo: [] };
+    const moodCol = { FUNNY: '#f2c94c', HEROIC: '#3b7fe0', SPOOKY: '#7c4dbe' };
+    return {
+      stageRef: this.stageRef, h, d, engine: g, stdHud, started: !!g && h.phase === 'walk', hudBusy: h.phase !== 'walk', onHud: this.onHud, hudOn, stageTop: bar + 'px',
+      keysList: [['WASD', 'walk'], ['E', 'talk / use'], ['1', 'wave'], ['2', 'look'], ['Space', 'jump'], ['Tap', 'walk there'], ['Drag', 'turn camera'], ['M', 'map']], skipKeys: ['KeyJ', 'KeyT', 'KeyN', 'KeyV', 'KeyC', 'KeyO', 'KeyH'],
+      topOn: busy && !sketch && !h.done, cardOn: !!J && busy && !sketch && !h.react, barOn: work, introOn: h.phase === 'intro' && !h.demo, doneOn: !!h.done, helpOn: S.help && busy, introMaxH: port ? '70%' : 'calc(100% - 24px)',
+      comicTxt: 'COMIC ' + Math.max(1, Math.min(h.n, h.perDay)) + ' / ' + h.perDay, earnedTxt: (h.earned + h.tips) + 'g', starsTxt: h.stars ? '★ ' + h.stars : '★ –',
+      chips: J ? J.tasks.map(t => ({ t: (t.done ? '✓ ' : '') + t.label + (t.done ? '' : ' · ' + t.txt), bg: t.done ? '#e6f6ea' : h.tool === t.id ? '#ffd23a' : '#fbfbf7', bd: t.done ? '#22c55e' : '#201e1d', fg: t.done ? '#1f6a3a' : '#201e1d' })) : [],
+      notes: J ? [{ k: 'MOOD', v: J.mood, bg: moodCol[J.mood] || '#ffd23a', fg: J.mood === 'FUNNY' ? '#201e1d' : '#ffffff' }, ...(J.face ? [{ k: 'FACE', v: J.face, bg: '#201e1d', fg: '#ffffff' }] : []), ...(J.sfx ? [{ k: 'SFX', v: J.sfx, bg: '#ec3013', fg: '#ffffff' }] : []), ...(J.star ? [{ k: 'STARRING', v: J.star, bg: '#1f3a5f', fg: '#ffffff' }] : []), ...(J.sign ? [{ k: 'SIGN', v: 'YES', bg: '#22c55e', fg: '#000000' }] : [])] : [],
+      fitOn: work && h.zoomed, cardTop: 'calc(' + (port ? 58 : 54) + 'px + env(safe-area-inset-top))', cardW: port ? 'calc(100% - 12px)' : 'min(300px, 36%)', fitGo: e => { blur(e); g && g.fitPage(); },
+      toolCols, tools, swatchOn, linesOn, sfxOn, moodTxt: J ? J.mood : '',
+      faceOn, faceWant: J && J.face ? J.face : '', faces: (h.facePick || []).map(f => ({ f: f.f, bg: f.on ? '#ffd23a' : '#000000', fg: f.on ? '#000000' : '#ffffff', go: e => { blur(e); g && g.pickFace(f.f); } })),
+      topKicker: h.event === 'rush' ? 'DAY ' + h.day + ' · COMIC DAY' : h.event === 'sign' ? 'DAY ' + h.day + ' · SIGNING DAY' : 'COMICS · DAY ' + h.day, introKicker: "HOME · BRAMBLE'S COMICS · DAY " + h.day + (h.event === 'rush' ? ' · COMIC DAY RUSH' : h.event === 'sign' ? ' · SIGNING DAY' : ''),
+      streakOn: work && h.streak >= 3, streakTop: port ? '34%' : '30%',
+      walkLabel: this.embed ? 'BACK TO THE SHOP' : 'LOOK AROUND', sketchOn: sketch, skGridCols: port ? 8 : 13, skSaveSpan: port ? 2 : 1, skHangSpan: port ? 3 : 1, skCols: h.sketch ? h.sketch.cols.map(k => ({ col: k.col, t: k.k === 'white' ? 'RUB' : '', aria: k.k === 'white' ? 'Eraser' : 'Draw in ' + k.k, bg: h.sketch.col === k.k ? '#2a2826' : '#000000', ring: h.sketch.col === k.k ? '#ffd23a' : '#5a544e', go: e => { blur(e); g && g.sketchColor(k.k); } })) : [],
+      skSizes: h.sketch ? [[5, 8, 'Thin'], [12, 16, 'Medium'], [28, 26, 'Thick']].map(([n, d, a]) => ({ d: d + 'px', aria: a + ' pen', col: h.sketch.col === 'white' ? '#fbf8ec' : '#ffffff', bg: h.sketch.size === n ? '#2a2826' : '#000000', go: e => { blur(e); g && g.sketchSize(n); } })) : [],
+      skUndo: e => { blur(e); g && g.sketchUndo(); }, skClear: e => { blur(e); g && g.sketchClear(); }, skExit: e => { blur(e); g && g.sketchExit(); }, skHang: e => { blur(e); g && g.sketchHang(); }, skSave: e => { blur(e); this.saveImg(); }, sketchGo: e => { blur(e); g && g.startSketch(); },
+      accessOn: S.access, accessToggle: e => { blur(e); this.setState({ access: !S.access }); },
+      accessRows: [['voice', 'VOICE', 'Reads colours, finished jobs, balloons and reactions out loud. Pencil dots hum louder as your finger gets close.'], ['hc', 'HIGH CONTRAST', 'Thicker lines, bigger dots and numbers, and every colour gets its own pattern so you never need colour alone.'], ['easy', 'EASY TIMING', 'Ink flows slower, the green zones are wider, pencil dots catch from further away.'], ['music', 'MUSIC', 'The shop band: a little jazz trio that changes with what you are doing.'], ['sfx', 'SOUND EFFECTS', 'Pencil scratches, ink, paint splashes, KA-POWs, the door bell, the till.'], ['haptics', 'VIBRATION', 'Phone buzzes on stamps, clean lines and big moments (phones that support it).']].map(([k, t, dd]) => { const on = !!(h.opts && h.opts[k]); return { t, d: dd, on: on ? 'true' : 'false', v: on ? 'ON' : 'OFF', bg: on ? '#22c55e' : '#3a3836', fg: on ? '#000000' : '#ffffff', go: e => { blur(e); g && g.setOpt(k, !on); } }; }),
+      saveOn: !!h.done && h.pagesN > 0, savePage: e => { blur(e); this.saveImg(); },
+      swatches: (h.inks || []).map(k => ({ bgi: k.pat ? 'url(' + k.pat + ')' : 'none', n: k.n, name: k.name, col: k.col, aria: 'Pick colour ' + k.n + ' ' + k.name, bg: h.brush === k.k ? '#2a2826' : '#000000', ring: h.brush === k.k ? '#ffd23a' : '#fbfbf7', numCol: k.k === 'gold' || k.k === 'steel' || k.k === 'orange' ? '#201e1d' : '#ffffff', nameD: phone && port ? 'none' : 'block', go: e => { blur(e); g && g.setBrush(k.k); } })),
+      lines: (h.lines || []).map(l => ({ t: l.t, bg: l.on ? '#ffd23a' : '#000000', fg: l.on ? '#000000' : '#ffffff', go: e => { blur(e); g && g.pickLine(l.i); } })),
+      sfxWords: (h.sfxPick || []).map(w => ({ w: w.w, bg: w.on ? '#ffd23a' : '#000000', fg: w.on ? '#000000' : '#ec3013', go: e => { blur(e); g && g.pickSfx(w.w); } })),
+      barPE: h.demo ? 'none' : 'auto', demoOn: !!h.demo, demoKeyOn: !!(h.demo && h.demo.key), demoGo: e => { blur(e); g && g.demoStart(); }, demoExit: e => { blur(e); g && g.demoStop(); },
+      hintOn: !h.demo && work && !!h.hint && !h.press && !h.flash && !linesOn, hintKeyOn: !!(h.hint && h.hint.key), hintTxt: h.hint ? h.hint.text : '', trayBottom,
+      sayOn: !h.demo && !!h.say && busy && !h.react && !(work && h.hint && port), pressBottom: h.demo ? 'calc(' + (base + extra + (port ? 120 : 96)) + 'px + env(safe-area-inset-bottom))' : trayBottom, sayBottom: sketch ? 'calc(' + (port ? 118 : 66) + 'px + env(safe-area-inset-bottom))' : work ? 'calc(' + (base + extra + 46) + 'px + env(safe-area-inset-bottom))' : 'calc(12px + env(safe-area-inset-bottom))',
+      pressOn: !!h.press, pressX: h.press ? (h.press.v * 100).toFixed(1) + '%' : '0%', bands: h.press ? h.press.bands.map(([f, c]) => ({ f: f.toFixed(2), c, ol: c === '#22c55e' ? '3px solid #ffd23a' : 'none' })) : [],
+      flashOn: !!h.flash, flashTxt: h.flash ? h.flash.txt : '', flashCol: h.flash ? h.flash.col : '#ffd23a', flashTop: port ? '44%' : '50%',
+      reactOn: !!h.react, reactTop: port ? 'calc(64px + env(safe-area-inset-top))' : '58px', reactStars: h.react ? '★'.repeat(h.react.stars) + '☆'.repeat(3 - h.react.stars) : '', reactPay: h.react ? '+' + h.react.pay + 'g' + (h.react.tip ? ' · TIP ' + h.react.tip : '') + (h.react.streak ? ' · STREAK +' + h.react.streak : '') : '',
+      introRows: [['Gold', h.gold + 'g'], ['Today', h.event === 'rush' ? '4 commissions · tips ×1.5 · COMIC DAY' : h.event === 'sign' ? h.perDay + ' commissions · sign every page' : h.perDay + ' commissions, no clock'], ...(h.galleryN ? [['Local art', h.galleryN + ' of yours by the door']] : []), ['Uniform', h.uniform ? 'Yours · beret + 8 COMICS apron' : 'Finish a day to keep it']].map(([k, v]) => ({ k, v })),
+      goWork: e => { blur(e); g && g.startDay(); }, walkGo: e => { blur(e); g && g.toWalk(); }, helpToggle: e => { blur(e); this.setState({ help: !S.help }); },
+      helpRows: [['COMMISSION', 'A fox from town brings a card: the hero, the kind of page and the mood. Tap a job button at the bottom and the camera moves in on the page.'], ['PANELS', 'Swipe all the way along each blue dashed line to cut the panel borders. Straighter is better.'], ['PENCIL', 'Drag your finger over the blue dots. Stay on the dots: stray marks cost quality.'], ['INK', 'Hold on a drawing. The ink runs round its outline. Let go when it closes, in the green. Too long and it blots.'], ['COLOUR', 'Pick a colour at the bottom, then tap every shape with that number. Colour by number.'], ['SFX', 'Pick the word on the card, then tap the burst to pump it up.'], ['LETTER', 'Pick the line that fits the mood on the card, then drag the balloon onto the dashed spot.'], ['TITLE', 'Covers only. Hold on the title band and let go in the green to stamp the logo.'], ['FACE', 'Some customers want the hero to look HAPPY, ANGRY or SCARED. Pick it from the row.'], ['SIGN', 'On signing days, scribble your signature in the dashed box in the corner.'], ['STREAK', 'Three clean moves in a row starts a streak. Every move after that adds 1 gold to the tip.'], ['ZOOM', 'Pinch the page to zoom in, slide two fingers to move round. FIT shows the whole page again.'], ['SKETCHBOOK', 'Draw anything on a blank page. HANG IT UP puts it on the LOCAL ART board by the door.'], ['Aa', 'Access options: voice, high contrast patterns and easy timing.'], ['HAND IN', 'When every job is done, hand the page in. Clean work earns stars and tips.']].map(([k, v]) => ({ k, v })),
+      doneKicker: h.done ? 'DAY ' + d.day + " · BRAMBLE'S COMICS" : '', doneSub: h.done ? (d.newDay ? 'Day ' + (d.day + 1) + ' tomorrow: harder pages' : 'Average 2 stars to move up a day') + ' · ★ ' + d.stars + ' employee stars' : '', eodOn: !!(h.done && d.eod),
+      doneRows: h.done ? [['Comics made', String(d.made)], ['Average stars', String(d.avg)], ['Wage', d.wage + 'g'], ['Pages', d.earned + 'g'], ['Tips', d.tips + 'g']].map(([k, v]) => ({ k, v })) : [], unlocks: h.done ? d.unlock.map(t => ({ t })) : [], goldTxt: h.gold + 'g',
+      shop: (h.upgrades || []).map(u => { const afford = h.gold >= u.cost; return { name: u.name, line: u.line, btn: u.owned ? 'OWNED' : u.cost + 'g', off: u.owned || !afford, bg: u.owned ? '#22c55e' : afford ? '#ffd23a' : '#000000', fg: u.owned || afford ? '#000000' : '#8a847e', bd: u.owned ? '#22c55e' : afford ? '#ffd23a' : '#3a3836', op: u.owned || afford ? 1 : 0.6, buy: e => { blur(e); g && g.buyUpgrade(u.id); } }; }),
+    };
+  }
+}
+</script>
+</body>
+</html>

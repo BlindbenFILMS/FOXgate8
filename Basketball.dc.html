@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Basketball</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121110}
+a{color:#ffd23a}a:hover{color:#ffffff}
+.bb-root{position:relative;width:100%;height:100vh;overflow:hidden;background:#121110;color:#fff;font-family:Archivo,"Arial Narrow",system-ui,sans-serif;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.bb-root.ov{position:absolute;inset:0;height:auto;background:transparent;pointer-events:none}
+.bb-root *{box-sizing:border-box}
+.bb-root button{font-family:inherit;border-radius:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent;cursor:pointer}
+.bb-btn{min-height:44px;padding:0 14px;display:flex;align-items:center;justify-content:flex-start;text-align:left;background:#000;color:#fff;border:0;border-left:2px solid #3a3836;font-size:13px;font-weight:800;letter-spacing:.06em}
+.bb-btn:hover{background:#1c1b1a}
+.bb-btn.red{background:#ec3013;color:#fff;border-left:0}
+.bb-btn.red:hover{background:#ff4a2c}
+.opt{min-height:44px;padding:6px 10px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;text-align:left;background:#000;color:#fff;border:2px solid #3a3836;font-size:13px;font-weight:800;letter-spacing:.05em}
+.opt.sel{border-color:#ffd23a;color:#ffd23a}
+.opt:hover{border-color:#ffffff}
+.card-btn{min-height:48px;padding:0 16px;display:flex;align-items:center;justify-content:flex-start;text-align:left;border:2px solid #3a3836;background:#000;color:#fff;font-size:14px;font-weight:900;letter-spacing:.06em;width:100%}
+.card-btn.primary{background:#ffd23a;border-color:#ffd23a;color:#000}
+.card-btn.red{background:#ec3013;border-color:#ec3013;color:#fff}
+.pad-btn{position:relative;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;padding:8px 10px;text-align:left;border:2px solid #3a3836;background:rgba(0,0,0,.72);color:#fff;font-size:13px;font-weight:900;letter-spacing:.06em;touch-action:none;-webkit-user-select:none;user-select:none}
+.pad-btn.shoot{background:#ec3013;border-color:#ec3013;font-size:16px}
+.pad-btn.off{opacity:.35}
+.pad-btn:active{background:#ffd23a;border-color:#ffd23a;color:#000}
+.shot{font-size:13px;font-weight:900;padding:2px 6px;background:#1c1b1a;color:#fff;min-width:30px;text-align:left}
+.shot.low{background:#ec3013}
+.poss{width:8px;height:8px;background:transparent}
+.poss.on{background:#ffd23a}
+.star{width:16px;height:16px;border:2px solid #ffd23a;background:transparent}
+.star.on{background:#ffd23a}
+.hand{position:absolute;right:-14px;bottom:-18px;width:44px;height:44px;pointer-events:none;animation:bbtap 0.9s ease-in-out infinite}
+@keyframes bbtap{0%,100%{transform:translate(0,0)}50%{transform:translate(-6px,-8px)}}
+@keyframes bbpop{0%{transform:scale(.6);opacity:0}25%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}
+.msg{animation:bbpop .35s ease-out}
+</style>
+</helmet>
+<div ref="{{setRoot}}" class="{{rootCls}}">
+  <sc-if value="{{standalone}}" hint-placeholder-val="{{ true }}">
+    <div ref="{{setStage}}" style="position: absolute; inset: 0; background: #121110"></div>
+  </sc-if>
+
+  <sc-if value="{{showGame}}" hint-placeholder-val="{{ true }}">
+  <!-- top bar: score + MENU / INVITE FRIEND / BACK -->
+  <div data-safe="top" style="position: absolute; top: 0; left: 0; right: 0; display: flex; flex-wrap: wrap; align-items: stretch; background: #000000; border-bottom: 2px solid #3a3836; pointer-events: auto">
+    <div style="flex: 1 1 300px; min-width: 0; display: flex; align-items: stretch; min-height: 54px">
+      <div style="flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 6px 12px">
+        <div style="width: 6px; align-self: stretch; background: {{color0}}"></div>
+        <div style="display: flex; flex-direction: column; min-width: 0">
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; letter-spacing: .08em; white-space: nowrap; overflow: hidden">{{name0}}<span class="{{poss0}}"></span></div>
+          <div style="font-size: 30px; font-weight: 900; line-height: 1">{{score0}}</div>
+        </div>
+      </div>
+      <div style="flex: 0 0 auto; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 3px; padding: 6px 12px; border-left: 2px solid #3a3836; border-right: 2px solid #3a3836">
+        <div style="font-size: 22px; font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums">{{clock}}</div>
+        <div class="{{shotCls}}">{{shotClock}}</div>
+      </div>
+      <div style="flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 6px 12px">
+        <div style="width: 6px; align-self: stretch; background: {{color1}}"></div>
+        <div style="display: flex; flex-direction: column; min-width: 0">
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; letter-spacing: .08em; white-space: nowrap; overflow: hidden">{{name1}}<span class="{{poss1}}"></span></div>
+          <div style="font-size: 30px; font-weight: 900; line-height: 1">{{score1}}</div>
+        </div>
+      </div>
+    </div>
+    <div style="flex: 1 0 auto; display: flex; align-items: stretch; border-left: 2px solid #3a3836">
+      <button class="bb-btn" style="flex: 1 1 auto; border-left: 0" onClick="{{openMenu}}">MENU</button>
+      <button class="bb-btn" style="flex: 1 1 auto" onClick="{{openInvite}}">INVITE FRIEND</button>
+      <button class="bb-btn red" style="flex: 1 1 auto" onClick="{{goBack}}">BACK</button>
+    </div>
+  </div>
+
+  <!-- big call -->
+  <sc-if value="{{showMsg}}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; left: 0; right: 0; top: 30%; display: flex; justify-content: center; pointer-events: none">
+      <div class="msg" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; background: #000000; padding: 10px 18px 12px; border: 2px solid #3a3836">
+        <div style="font-size: 40px; font-weight: 900; line-height: 1; letter-spacing: .02em">{{msgText}}</div>
+        <sc-if value="{{msgSub}}" hint-placeholder-val="{{ false }}"><div style="font-size: 13px; font-weight: 800; letter-spacing: .1em; color: #ffd23a">{{msgSub}}</div></sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+    <sc-if value="{{showCaptionTop}}" hint-placeholder-val="{{ false }}">
+      <div style="position: absolute; top: 66px; left: 50%; transform: translateX(-50%); width: max-content; pointer-events: none; max-width: min(440px, calc(100% - 24px)); background: #000000; border: 2px solid #3a3836; padding: 10px 14px; display: flex; gap: 10px; align-items: flex-start">
+        <div style="flex: 0 0 auto; font-size: 12px; font-weight: 900; letter-spacing: .1em; color: #000; background: #ffd23a; padding: 2px 6px">{{captionTag}}</div>
+        <div style="font-size: 15px; font-weight: 600; line-height: 1.35">{{captionText}}</div>
+      </div>
+    </sc-if>
+
+  <!-- bottom stack: caption / hint, then controls -->
+  <div style="position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; gap: 8px; pointer-events: none">
+    <sc-if value="{{showCaptionLow}}" hint-placeholder-val="{{ false }}">
+      <div style="align-self: center; max-width: min(440px, calc(100% - 24px)); background: #000000; border: 2px solid #3a3836; padding: 10px 14px; display: flex; gap: 10px; align-items: flex-start">
+        <div style="flex: 0 0 auto; font-size: 12px; font-weight: 900; letter-spacing: .1em; color: #000; background: #ffd23a; padding: 2px 6px">{{captionTag}}</div>
+        <div style="font-size: 15px; font-weight: 600; line-height: 1.35">{{captionText}}</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{showPads}}" hint-placeholder-val="{{ true }}">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 8px; padding: {{padPad}}">
+        <sc-for list="{{pads}}" as="p" hint-placeholder-count="1">
+          <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: {{p.gap}}; flex: {{p.flex}}; flex-direction: {{p.dir}}">
+            <div data-safe="{{p.safeJoy}}" style="position: relative; pointer-events: auto">
+              <div data-joy="{{p.who}}" onPointerDown="{{p.joyDown}}" onPointerMove="{{p.joyMove}}" onPointerUp="{{p.joyUp}}" onPointerCancel="{{p.joyUp}}" style="position: relative; width: {{p.joySize}}; height: {{p.joySize}}; border: 2px solid #3a3836; background: rgba(0,0,0,.55); touch-action: none; display: flex; align-items: center; justify-content: center">
+                <div style="position: absolute; left: 0; top: 0; height: 4px; width: {{p.stam}}; background: #ffd23a"></div>
+                <div data-knob="1" style="width: 52px; height: 52px; background: #ffffff; border: 2px solid #000000; pointer-events: none"></div>
+              </div>
+              <sc-if value="{{p.hintStick}}" hint-placeholder-val="{{ false }}">
+                <svg class="hand" viewBox="0 0 24 24" fill="#ffd23a" stroke="#000" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M9 11V4.5a1.5 1.5 0 0 1 3 0V10l1-.2a1.5 1.5 0 0 1 3 .3V11l.6-.1a1.5 1.5 0 0 1 2.4 1.2V15c0 3.3-2.5 6-5.8 6H11c-1.6 0-3-.8-3.9-2.1L4.4 15a1.5 1.5 0 0 1 2.3-1.9L9 15z"/></svg>
+              </sc-if>
+            </div>
+            <div data-safe="{{p.safeBtns}}" style="display: grid; grid-template-columns: {{p.cols}}; grid-template-rows: {{p.rows}}; gap: 6px; pointer-events: auto">
+              <sc-if value="{{p.full}}" hint-placeholder-val="{{ true }}">
+                <button class="{{p.dCls}}" style="grid-column: 1; grid-row: 1" onPointerDown="{{p.dDown}}" onPointerUp="{{p.dUp}}" onPointerCancel="{{p.dUp}}" onContextMenu="{{noMenu}}" aria-label="Switch player">{{p.d}}</button>
+              </sc-if>
+              <button class="pad-btn" style="grid-column: 1; grid-row: {{p.bRow}}" onPointerDown="{{p.bDown}}" onPointerUp="{{p.bUp}}" onPointerCancel="{{p.bUp}}" onContextMenu="{{noMenu}}">{{p.b}}<sc-if value="{{p.hintB}}" hint-placeholder-val="{{ false }}"><svg class="hand" viewBox="0 0 24 24" fill="#ffd23a" stroke="#000" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M9 11V4.5a1.5 1.5 0 0 1 3 0V10l1-.2a1.5 1.5 0 0 1 3 .3V11l.6-.1a1.5 1.5 0 0 1 2.4 1.2V15c0 3.3-2.5 6-5.8 6H11c-1.6 0-3-.8-3.9-2.1L4.4 15a1.5 1.5 0 0 1 2.3-1.9L9 15z"/></svg></sc-if></button>
+              <button class="pad-btn shoot" style="grid-column: {{p.aCol}}; grid-row: {{p.aRow}}" onPointerDown="{{p.aDown}}" onPointerUp="{{p.aUp}}" onPointerCancel="{{p.aUp}}" onPointerLeave="{{p.aUp}}" onContextMenu="{{noMenu}}">{{p.a}}<sc-if value="{{p.hintA}}" hint-placeholder-val="{{ false }}"><svg class="hand" viewBox="0 0 24 24" fill="#ffd23a" stroke="#000" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M9 11V4.5a1.5 1.5 0 0 1 3 0V10l1-.2a1.5 1.5 0 0 1 3 .3V11l.6-.1a1.5 1.5 0 0 1 2.4 1.2V15c0 3.3-2.5 6-5.8 6H11c-1.6 0-3-.8-3.9-2.1L4.4 15a1.5 1.5 0 0 1 2.3-1.9L9 15z"/></svg></sc-if></button>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{showLegend}}" hint-placeholder-val="{{ false }}">
+      <div data-safe="bottom" style="display: flex; flex-wrap: wrap; gap: 4px 18px; padding: 8px 14px; background: #000000; border-top: 2px solid #3a3836; font-size: 12px; font-weight: 600; letter-spacing: .04em; color: #d8d4cc; pointer-events: auto">
+        <sc-for list="{{legend}}" as="l" hint-placeholder-count="5">
+          <div style="display: flex; gap: 6px; align-items: center"><span style="font-weight: 900; color: #ffd23a">{{l.k}}</span><span>{{l.v}}</span></div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isDemo}}" hint-placeholder-val="{{ false }}">
+      <div data-safe="bottom" style="display: flex; align-items: stretch; background: #000000; border-top: 2px solid #3a3836; pointer-events: auto">
+        <div style="flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; padding: 8px 14px">
+          <div style="font-size: 12px; font-weight: 900; letter-spacing: .12em; color: #ffd23a">DEMO</div>
+          <div style="font-size: 13px; font-weight: 600">Two AI teams play. Watch the tips.</div>
+        </div>
+        <button class="bb-btn red" style="min-height: 56px" onClick="{{playCpu}}">PLAY VS CPU</button>
+      </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- cards -->
+  <sc-if value="{{showCard}}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0; background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; padding: 16px; pointer-events: auto; overflow-y: auto">
+      <div style="width: 100%; max-width: 380px; max-height: 100%; overflow-y: auto; background: #000000; border: 2px solid #3a3836; display: flex; flex-direction: column">
+
+        <sc-if value="{{cardMenu}}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; gap: 14px; padding: 16px">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+              <div style="font-size: 24px; font-weight: 900; letter-spacing: .04em">MENU</div>
+              <div style="font-size: 12px; font-weight: 800; letter-spacing: .1em; color: #ffd23a">BEST {{best}}</div>
+            </div>
+            <button class="card-btn primary" onClick="{{closeCard}}">RESUME</button>
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <div style="font-size: 12px; font-weight: 800; letter-spacing: .12em; color: #a8a49c">MODE</div>
+              <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+                <sc-for list="{{modes}}" as="o" hint-placeholder-count="3"><button class="{{o.cls}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <div style="font-size: 12px; font-weight: 800; letter-spacing: .12em; color: #a8a49c">OPPONENT</div>
+              <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+                <sc-for list="{{opps}}" as="o" hint-placeholder-count="3">
+                  <button class="{{o.cls}}" onClick="{{o.pick}}">
+                    <span>{{o.label}}</span>
+                    <span style="font-size: 12px; font-weight: 600; letter-spacing: .04em; color: #d8d4cc">{{o.sub}}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <div style="font-size: 12px; font-weight: 800; letter-spacing: .12em; color: #a8a49c">GAME LENGTH</div>
+              <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+                <sc-for list="{{lens}}" as="o" hint-placeholder-count="3"><button class="{{o.cls}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for>
+              </div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px">
+              <button class="opt" onClick="{{toggleSound}}">{{soundLabel}}</button>
+              <button class="opt" onClick="{{toggleMusic}}">{{musicLabel}}</button>
+            </div>
+            <button class="opt" onClick="{{toggleRules}}">{{rulesLabel}}</button>
+            <sc-if value="{{showRules}}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; line-height: 1.4; color: #e8e4dc; border-top: 2px solid #3a3836; padding-top: 12px">
+                <div>2 on 2, full court. You shoot at the far hoop.</div>
+                <div>Inside the arc scores 2. Outside the arc scores 3.</div>
+                <div>Hold SHOOT, let go on the yellow band. Close to the rim it lays up.</div>
+                <div>Push the stick all the way to sprint. Sprint and SHOOT at the rim to dunk.</div>
+                <div>On defence: STEAL near the dribbler, BLOCK as they rise, SWITCH to your teammate.</div>
+                <div>14 second shot clock. Most points at the buzzer wins. A tie means next basket wins.</div>
+              </div>
+            </sc-if>
+            <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px">
+              <button class="card-btn" onClick="{{restart}}">RESTART</button>
+              <button class="card-btn red" onClick="{{goBack}}">LEAVE</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{cardInvite}}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; gap: 14px; padding: 16px">
+            <div style="font-size: 24px; font-weight: 900; letter-spacing: .04em">INVITE FRIEND</div>
+            <div style="font-size: 12px; font-weight: 900; letter-spacing: .12em; color: #000; background: #ffd23a; padding: 3px 8px; align-self: flex-start">COMING SOON</div>
+            <div style="font-size: 15px; line-height: 1.4">Online rooms are coming soon. Play 2 PLAYERS on one device today.</div>
+            <button class="card-btn primary" onClick="{{playLocal}}">PLAY 2 PLAYERS</button>
+            <button class="card-btn" onClick="{{closeCard}}">CLOSE</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{cardResult}}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; gap: 14px; padding: 16px">
+            <div style="font-size: 30px; font-weight: 900; letter-spacing: .02em; color: {{resColor}}">{{resTitle}}</div>
+            <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border: 2px solid #3a3836">
+              <div style="padding: 10px 12px; border-right: 2px solid #3a3836">
+                <div style="font-size: 12px; font-weight: 800; letter-spacing: .1em; color: #a8a49c">{{name0}}</div>
+                <div style="font-size: 36px; font-weight: 900">{{resScore0}}</div>
+              </div>
+              <div style="padding: 10px 12px">
+                <div style="font-size: 12px; font-weight: 800; letter-spacing: .1em; color: #a8a49c">{{name1}}</div>
+                <div style="font-size: 36px; font-weight: 900">{{resScore1}}</div>
+              </div>
+            </div>
+            <sc-if value="{{resCpu}}" hint-placeholder-val="{{ true }}">
+              <div style="display: flex; flex-direction: column; gap: 10px">
+                <div style="display: flex; gap: 6px; align-items: center">
+                  <sc-for list="{{resStars}}" as="s" hint-placeholder-count="3"><div class="{{s.cls}}"></div></sc-for>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+                  <div style="border: 2px solid #3a3836; padding: 8px 10px"><div style="font-size: 12px; font-weight: 800; letter-spacing: .1em; color: #a8a49c">GOLD</div><div style="font-size: 20px; font-weight: 900; color: #ffd23a">+{{resGold}}</div></div>
+                  <div style="border: 2px solid #3a3836; padding: 8px 10px"><div style="font-size: 12px; font-weight: 800; letter-spacing: .1em; color: #a8a49c">XP</div><div style="font-size: 20px; font-weight: 900">+{{resXp}}</div></div>
+                  <div style="border: 2px solid #3a3836; padding: 8px 10px"><div style="font-size: 12px; font-weight: 800; letter-spacing: .1em; color: #a8a49c">{{bestLabel}}</div><div style="font-size: 20px; font-weight: 900">{{resBest}}</div></div>
+                </div>
+              </div>
+            </sc-if>
+            <button class="card-btn primary" onClick="{{restart}}">PLAY AGAIN</button>
+            <button class="card-btn red" onClick="{{goBack}}">BACK</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{cardLeft}}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; gap: 14px; padding: 16px">
+            <div style="font-size: 24px; font-weight: 900; letter-spacing: .04em">YOU LEFT THE COURT</div>
+            <div style="font-size: 15px; line-height: 1.4">In the 8 GATES town this takes you back to the street.</div>
+            <button class="card-btn primary" onClick="{{backOnCourt}}">BACK ON COURT</button>
+            <button class="card-btn" onClick="{{restart}}">NEW GAME</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{cardPaused}}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; gap: 14px; padding: 16px">
+            <div style="font-size: 24px; font-weight: 900; letter-spacing: .04em">PAUSED</div>
+            <button class="card-btn primary" onClick="{{resume}}">RESUME</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{cardError}}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 16px">
+            <div style="font-size: 20px; font-weight: 900">COURT DID NOT LOAD</div>
+            <div style="font-size: 13px; line-height: 1.4; color: #d8d4cc; word-break: break-word">{{err}}</div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"world":{"editor":null,"default":null},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  state = { hud: null, card: null, rules: false, portrait: false, touch: false, err: null };
+
+  componentDidMount() {
+    this.dead = false;
+    this.joy = {};
+    this.sprintOn = {};
+    this.onResize = () => {
+      const portrait = window.innerWidth < window.innerHeight;
+      if (portrait !== this.state.portrait) this.setState({ portrait });
+      this.measureSafe();
+    };
+    window.addEventListener('resize', this.onResize);
+    const touch = (window.matchMedia && matchMedia('(pointer: coarse)').matches) || 'ontouchstart' in window;
+    this.setState({ portrait: window.innerWidth < window.innerHeight, touch });
+    const w = this.props.world;
+    if (w) {
+      this.overlay = true;
+      this.onEvt = (e) => {
+        const h = e.detail;
+        if (!h) { this.api = null; this.setState({ hud: null, card: null }); return; }
+        if (!this.api) this.grabApi();
+        this.setState({ hud: h });
+      };
+      window.addEventListener('8g:basketballCourt', this.onEvt);
+      this.grabApi();
+      if (this.api) this.setState({ hud: this.api.hud() });
+    } else this.boot(0);
+  }
+  grabApi() {
+    try { const w = this.props.world; this.api = (w && w._basketballCourt && w._basketballCourt.g) ? w._basketballCourt.g() : null; } catch (e) { this.api = null; }
+  }
+  async boot(n) {
+    if (this.dead) return;
+    if (!this.stage) { if (n < 120) requestAnimationFrame(() => this.boot(n + 1)); return; }
+    try {
+      const url = new URL('minigames/basketball/basketball.js', document.baseURI).href;
+      const mod = await import(url);
+      if (this.dead) return;
+      this.api = await mod.createBasketball({ container: this.stage, onState: (h) => { if (!this.dead) this.setState({ hud: h }); } });
+      if (this.dead) { this.api.destroy(); this.api = null; }
+    } catch (e) {
+      console.error(e);
+      this.setState({ err: String((e && e.message) || e) });
+    }
+  }
+  componentWillUnmount() {
+    this.dead = true;
+    window.removeEventListener('resize', this.onResize);
+    if (this.onEvt) window.removeEventListener('8g:basketballCourt', this.onEvt);
+    if (this.api && !this.overlay) this.api.destroy();
+    this.api = null;
+  }
+  componentDidUpdate() { this.measureSafe(); }
+  measureSafe() {
+    if (!this.root || !this.api) return;
+    const r = this.root.getBoundingClientRect();
+    let top = 0, bottom = 0, left = 0, right = 0;
+    this.root.querySelectorAll('[data-safe]').forEach((el) => {
+      const b = el.getBoundingClientRect();
+      if (!b.width || !b.height) return;
+      const k = el.getAttribute('data-safe');
+      if (k === 'top') top = Math.max(top, b.bottom - r.top);
+      else if (k === 'bottom') bottom = Math.max(bottom, r.bottom - b.top);
+      else if (k === 'left') left = Math.max(left, b.right - r.left);
+      else if (k === 'right') right = Math.max(right, r.right - b.left);
+    });
+    const key = [top, bottom, left, right].map(Math.round).join(',');
+    if (key !== this.safeKey) { this.safeKey = key; this.api.setSafe({ top, bottom, left, right }); }
+  }
+
+  /* ---- joystick */
+  joyDown(who, e) {
+    if (!this.api) return;
+    if (e.preventDefault) e.preventDefault();
+    const el = e.currentTarget;
+    try { el.setPointerCapture(e.pointerId); } catch (x) { /* */ }
+    this.joy[who] = { el, id: e.pointerId, knob: el.querySelector('[data-knob]') };
+    if (this.api.unlockAudio) this.api.unlockAudio();
+    this.joyMove(who, e);
+  }
+  joyMove(who, e) {
+    const j = this.joy[who];
+    if (!j || j.id !== e.pointerId || !this.api) return;
+    const r = j.el.getBoundingClientRect();
+    const R = r.width / 2;
+    let x = (e.clientX - (r.left + R)) / (R * 0.7), y = (e.clientY - (r.top + R)) / (R * 0.7);
+    const L = Math.hypot(x, y);
+    if (L > 1) { x /= L; y /= L; }
+    if (j.knob) j.knob.style.transform = 'translate(' + (x * R * 0.6) + 'px,' + (y * R * 0.6) + 'px)';
+    this.api.stick(who, x, -y);
+    const sprint = L > 0.96;
+    if (sprint !== !!this.sprintOn[who]) { this.sprintOn[who] = sprint; this.api.btn(who, 'c', sprint); }
+  }
+  joyUp(who, e) {
+    const j = this.joy[who];
+    if (!j || j.id !== e.pointerId) return;
+    if (j.knob) j.knob.style.transform = '';
+    this.joy[who] = null;
+    if (this.api) { this.api.stick(who, 0, 0); if (this.sprintOn[who]) { this.sprintOn[who] = false; this.api.btn(who, 'c', false); } }
+  }
+  press(who, name, down, e) {
+    if (e && e.preventDefault && down) e.preventDefault();
+    if (this.api) this.api.btn(who, name, down);
+  }
+
+  /* ---- cards */
+  openCard(card) {
+    if (this.api && !this.overlay) this.api.pause(true);
+    else if (this.api) this.api.pause(true);
+    this.setState({ card });
+  }
+  closeCard() { this.setState({ card: null }); if (this.api) this.api.pause(false); }
+  back() {
+    const w = this.props.world;
+    if (w && w._basketballCourt && w._basketballCourt.end) { this.setState({ card: null }); w._basketballCourt.end(); return; }
+    if (this.api) this.api.leave();
+    this.setState({ card: null });
+  }
+
+  renderVals() {
+    const h = this.state.hud;
+    const api = this.api;
+    const world = this.props.world;
+    const overlay = !!world;
+    const card = this.state.card;
+    const touch = this.state.touch;
+    const portrait = this.state.portrait;
+    const res = h && h.result;
+    const phase = h ? h.phase : 'none';
+    const mode = h ? h.mode : 'cpu';
+    const blur = (e) => { if (e && e.currentTarget && e.currentTarget.blur) e.currentTarget.blur(); };
+    const click = (fn) => (e) => { blur(e); fn(); };
+
+    /* touch pads */
+    const humans = (h && h.humans) || [];
+    const local = mode === 'local';
+    const pads = (touch && h && mode !== 'demo' && phase !== 'over' && !h.left)
+      ? humans.map((u, i) => {
+        const full = !local;
+        const second = local && i === 1;
+        const hint = u.hint;
+        return {
+          who: u.who,
+          dir: second ? 'row-reverse' : 'row',
+          flex: local ? '0 1 auto' : '1 1 auto',
+          joySize: local ? (portrait ? '96px' : '112px') : '136px',
+          gap: local ? '8px' : '12px',
+          safeJoy: portrait || local ? 'bottom' : second ? 'right' : 'left',
+          safeBtns: portrait || local ? 'bottom' : second ? 'left' : 'right',
+          full,
+          cols: full ? '76px 104px' : (portrait ? '72px' : '84px'),
+          rows: full ? '44px 64px' : '64px 48px',
+          aCol: full ? '2' : '1', aRow: full ? '1 / span 2' : '1',
+          bRow: full ? '2' : '2',
+          a: u.a, b: u.b, d: u.d || 'SWITCH',
+          dCls: 'pad-btn' + (u.d ? '' : ' off'),
+          stam: Math.round((u.stam ?? 1) * 100) + '%',
+          hintA: !!(hint && hint.target === 'a'), hintB: !!(hint && hint.target === 'b'), hintStick: !!(hint && hint.target === 'stick'),
+          joyDown: (e) => this.joyDown(u.who, e), joyMove: (e) => this.joyMove(u.who, e), joyUp: (e) => this.joyUp(u.who, e),
+          aDown: (e) => this.press(u.who, 'a', true, e), aUp: (e) => this.press(u.who, 'a', false, e),
+          bDown: (e) => this.press(u.who, 'b', true, e), bUp: (e) => this.press(u.who, 'b', false, e),
+          dDown: (e) => this.press(u.who, 'd', true, e), dUp: (e) => this.press(u.who, 'd', false, e),
+        };
+      })
+      : [];
+
+    const legend = local
+      ? [{ k: 'P1', v: 'WASD move' }, { k: 'F', v: 'shoot (hold)' }, { k: 'G', v: 'pass / steal' }, { k: 'L-SHIFT', v: 'sprint' }, { k: 'P2', v: 'ARROWS move' }, { k: 'K', v: 'shoot (hold)' }, { k: 'L', v: 'pass / steal' }, { k: 'R-SHIFT', v: 'sprint' }]
+      : [{ k: 'WASD', v: 'move' }, { k: 'SPACE / J', v: 'shoot (hold, release)' }, { k: 'K', v: 'pass / steal' }, { k: 'SHIFT', v: 'sprint' }, { k: 'Q', v: 'switch' }, { k: 'P', v: 'pause' }];
+
+    const hintText = humans.map((u) => u.hint && u.hint.text).filter(Boolean)[0] || null;
+    const captionText = (h && h.caption) || hintText;
+
+    const opt = (sel) => 'opt' + (sel ? ' sel' : '');
+    const stars = (h && h.stars) || {};
+    const starTxt = (n) => (n ? n + ' STAR' + (n > 1 ? 'S' : '') : 'NEW');
+    const modes = [['cpu', 'VS CPU'], ['local', '2 PLAYERS'], ['demo', 'DEMO']].map(([k, label]) => ({ label, cls: opt(mode === k), pick: (e) => { blur(e); if (api) { api.start(k); api.pause(false); } this.setState({ card: null }); } }));
+    const opps = [['easy', 'PIP', 'ROOKIE'], ['medium', 'HOPE', 'CLUB'], ['hard', 'NOBLE', 'MASTER']].map(([k, label, t]) => ({ label, sub: t + ' / ' + starTxt(stars[k] || 0), cls: opt(h && h.diff === k), pick: (e) => { blur(e); if (api) { if (mode !== 'cpu') api.start('cpu'); api.setDiff(k); api.pause(false); } this.setState({ card: null }); } }));
+    const lens = [2, 3, 5].map((m) => ({ label: m + ' MIN', cls: opt(h && h.len === m), pick: (e) => { blur(e); if (api) { api.setLength(m); api.pause(false); } this.setState({ card: null }); } }));
+
+    const showCard = !!(card || (res && mode !== 'demo' && phase === 'over') || (h && h.left) || (h && h.paused && !card) || this.state.err);
+    const which = this.state.err ? 'error' : card ? card : h && h.left ? 'left' : res && phase === 'over' && mode !== 'demo' ? 'result' : h && h.paused ? 'paused' : null;
+    const won = res && (res.mode === 'cpu' ? res.won : true);
+
+    return {
+      setRoot: (el) => { this.root = el; },
+      setStage: (el) => { this.stage = el; },
+      rootCls: 'bb-root' + (overlay ? ' ov' : ''),
+      standalone: !overlay,
+      showGame: !!h,
+      name0: h ? h.teams[0].name : 'FOXES', name1: h ? h.teams[1].name : 'PIP',
+      color0: h ? h.teams[0].color : '#ec3013', color1: h ? h.teams[1].color : '#ffd23a',
+      score0: h ? h.score[0] : 0, score1: h ? h.score[1] : 0,
+      poss0: 'poss' + (h && h.poss === 0 ? ' on' : ''), poss1: 'poss' + (h && h.poss === 1 ? ' on' : ''),
+      clock: h ? h.clock : '3:00',
+      shotClock: h ? (h.ot ? 'NEXT SCORE WINS' : 'SHOT ' + h.shotClock) : 'SHOT 14',
+      shotCls: 'shot' + (h && h.shotLow ? ' low' : ''),
+      showMsg: !!(h && h.msg),
+      msgText: h && h.msg ? h.msg.text : '',
+      msgSub: h && h.msg ? h.msg.sub : '',
+      showCaptionLow: !!captionText && !showCard && !(touch && !portrait),
+      showCaptionTop: !!captionText && !showCard && touch && !portrait,
+      captionText: captionText || '',
+      captionTag: h && h.caption ? (mode === 'demo' ? 'HOW TO' : 'TIP') : 'TRY',
+      showPads: pads.length > 0 && !showCard,
+      padPad: local && portrait ? '0 10px 14px' : '0 14px 14px',
+      pads,
+      noMenu: (e) => { if (e && e.preventDefault) e.preventDefault(); },
+      showLegend: !touch && h && mode !== 'demo' && !showCard,
+      legend,
+      isDemo: !!(h && mode === 'demo') && !showCard,
+      playCpu: click(() => { if (api) api.start('cpu'); }),
+      openMenu: click(() => this.openCard('menu')),
+      openInvite: click(() => this.openCard('invite')),
+      goBack: click(() => this.back()),
+      closeCard: click(() => this.closeCard()),
+      restart: click(() => { this.setState({ card: null }); if (api) { if (h && h.left) api.back(); api.restart(); api.pause(false); } }),
+      resume: click(() => { if (api) api.pause(false); }),
+      backOnCourt: click(() => { if (api) api.back(); }),
+      playLocal: click(() => { if (api) { api.start('local'); api.pause(false); } this.setState({ card: null }); }),
+      toggleSound: click(() => { if (api) api.setSound(!(h && h.sound)); }),
+      toggleMusic: click(() => { if (api) api.setMusic(!(h && h.music)); }),
+      toggleRules: click(() => this.setState({ rules: !this.state.rules })),
+      soundLabel: 'SOUND ' + (h && h.sound ? 'ON' : 'OFF'),
+      musicLabel: 'MUSIC ' + (h && h.music ? 'ON' : 'OFF'),
+      rulesLabel: this.state.rules ? 'HIDE RULES' : 'RULES',
+      showRules: this.state.rules,
+      best: h ? h.best : 0,
+      modes, opps, lens,
+      showCard,
+      cardMenu: which === 'menu', cardInvite: which === 'invite', cardResult: which === 'result', cardLeft: which === 'left', cardPaused: which === 'paused', cardError: which === 'error',
+      err: this.state.err || '',
+      resTitle: res ? res.title : '',
+      resColor: won ? '#ffd23a' : '#ec3013',
+      resScore0: res ? res.score[0] : 0, resScore1: res ? res.score[1] : 0,
+      resCpu: !!(res && res.mode === 'cpu'),
+      resStars: [0, 1, 2].map((i) => ({ cls: 'star' + (res && res.stars > i ? ' on' : '') })),
+      resGold: res ? res.gold : 0, resXp: res ? res.xp : 0,
+      resBest: res ? res.best : 0,
+      bestLabel: res && res.newBest ? 'NEW BEST' : 'BEST',
+    };
+  }
+}
+</script>
+</body>
+</html>

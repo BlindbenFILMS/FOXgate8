@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#03040a}a{color:var(--color-accent-700)}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#03040a;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Deep Space Fox">
+  <div ref="{{ stageRef }}" style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0;overflow:hidden"></div>
+  <div data-hud-host="1" style="position:absolute;inset:0;pointer-events:none;display:{{ hudDisp }}"><dc-import name="Game HUD" game="{{ engine }}" hud="{{ stdHud }}" started="{{ started }}" busy="{{ hudBusy }}" on-hud="{{ onHud }}" world="Deep Space Fox" orbit-url="Space Map.dc.html?from=dsf" keys="{{ keysList }}" skip-keys="{{ skipKeys }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  <sc-if value="{{ showNote }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:12px;right:12px;top:{{ noteTop }};display:flex;justify-content:flex-start;pointer-events:none;z-index:2">
+      <div style="background:#201e1d;border:2px solid #f3f2f2;padding:10px 14px;display:flex;flex-direction:column;gap:4px;max-width:min(440px,100%)"><span style="font-size:12px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#ec3013">{{ hud.note.title }}</span><span style="font-size:16px;line-height:1.35;color:#f3f2f2;text-wrap:pretty">{{ hud.note.sub }}</span></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ showPrompt }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;display:flex;align-items:{{ prAlign }};justify-content:flex-start;padding:{{ prPad }};box-sizing:border-box;overflow:auto;background:rgba(3,4,10,0.5);z-index:9">
+      <div style="width:{{ prW }};max-height:100%;overflow:auto;box-sizing:border-box;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;padding:{{ prInner }};display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase">Space Station 8</div>
+        <h2 style="font-family:var(--font-heading);font-weight:800;font-size:{{ prTitle }};line-height:0.95;letter-spacing:-0.03em;margin:0;color:#f3f2f2;text-wrap:balance">{{ hud.prompt.title }}</h2>
+        <div style="display:grid;grid-template-columns:{{ prCols }};gap:8px;border-top:2px solid #f3f2f2;padding-top:12px">
+          <sc-for list="{{ promptButtons }}" as="b" hint-placeholder-count="3">
+            <button onClick="{{ b.pick }}" disabled="{{ b.off }}" style="display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;min-height:52px;padding:12px 18px;background:{{ b.bg }};color:{{ b.fg }};border:2px solid {{ b.bd }};border-radius:0;font:800 16px var(--font-heading);text-align:left;cursor:{{ b.cur }}" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)"><span>{{ b.label }}</span><span>{{ b.arrow }}</span></button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ showGame }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:0;right:0;top:0;min-height:{{ gBarH }};display:flex;align-items:center;gap:12px;padding:0 max(10px, env(safe-area-inset-right)) 0 max(10px, env(safe-area-inset-left));box-sizing:border-box;background:#201e1d;color:#f3f2f2;border-bottom:2px solid #f3f2f2;z-index:8">
+      <button onClick="{{ gameLeave }}" style="display:flex;align-items:center;gap:10px;min-height:44px;min-width:44px;padding:0 16px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font:800 15px var(--font-heading);letter-spacing:0.06em;cursor:pointer;flex:0 0 auto" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)"><span>←</span><span>LEAVE</span></button>
+      <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 auto">
+        <span style="font:800 {{ gTitleSize }} var(--font-heading);letter-spacing:-0.01em;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ hud.game.title }}</span>
+        <span style="display:{{ gWhereDisp }};font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#ec3013;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ hud.game.where }}</span>
+      </div>
+      <sc-if value="{{ gShowStats }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:0;flex:0 0 auto;border-left:2px solid #f3f2f2">
+          <sc-for list="{{ gStats }}" as="st" hint-placeholder-count="3">
+            <div style="display:flex;flex-direction:column;gap:2px;padding:{{ gStatPad }};border-right:2px solid #3a3836"><span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#a8a49e">{{ st.k }}</span><span style="font:800 18px var(--font-heading);color:{{ st.col }}">{{ st.v }}</span></div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+    <sc-if value="{{ gHintStrip }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:0;right:0;top:{{ gBarH }};padding:8px 12px;box-sizing:border-box;background:#201e1d;color:#f3f2f2;border-bottom:2px solid #f3f2f2;font:800 14px var(--font-heading);letter-spacing:0.06em;line-height:1.3;text-transform:uppercase;text-wrap:pretty;pointer-events:none;z-index:8"><span style="color:#ec3013">{{ hud.game.title }} · </span>{{ hud.game.where }}</div>
+    </sc-if>
+  </sc-if>
+  <sc-if value="{{ padOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(10px, env(safe-area-inset-left));bottom:max(12px, env(safe-area-inset-bottom));display:flex;gap:8px;z-index:9;touch-action:none">
+      <sc-for list="{{ padSticks }}" as="b" hint-placeholder-count="3">
+        <button aria-label="{{ b.aria }}" onPointerDown="{{ b.down }}" onPointerUp="{{ b.up }}" onPointerLeave="{{ b.up }}" onPointerCancel="{{ b.up }}" onContextMenu="{{ noMenu }}" style="width:{{ padSz }};height:{{ padSz }};display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;gap:2px;padding:8px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font:900 22px var(--font-heading);cursor:pointer;touch-action:none;user-select:none" style-active="background:var(--color-accent-700)"><span>{{ b.icon }}</span><span style="font-size:11px;letter-spacing:0.1em">{{ b.label }}</span></button>
+      </sc-for>
+    </div>
+    <div style="position:absolute;right:max(10px, env(safe-area-inset-right));bottom:max(12px, env(safe-area-inset-bottom));display:flex;flex-direction:{{ padDir }};gap:8px;z-index:9;touch-action:none">
+      <sc-for list="{{ padBtns }}" as="b" hint-placeholder-count="3">
+        <button aria-label="{{ b.aria }}" onPointerDown="{{ b.down }}" onPointerUp="{{ b.up }}" onPointerLeave="{{ b.up }}" onPointerCancel="{{ b.up }}" onContextMenu="{{ noMenu }}" style="width:{{ padBig }};height:{{ padBig }};display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;padding:8px 10px;background:{{ b.bg }};color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;cursor:pointer;touch-action:none;user-select:none;text-align:left" style-active="background:var(--color-accent-700)"><span style="font:900 28px var(--font-heading);line-height:1">{{ b.k }}</span><span style="display:flex;flex-direction:column;gap:1px"><span style="font:900 16px var(--font-heading);letter-spacing:0.04em">{{ b.label }}</span><span style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#d8d4ce">{{ b.sub }}</span></span></button>
+      </sc-for>
+    </div>
+  </sc-if>
+  <sc-if value="{{ showGameCard }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:0;right:0;bottom:0;top:{{ gCardTop }};display:flex;align-items:{{ prAlign }};justify-content:flex-start;padding:{{ gCardPad }};box-sizing:border-box;overflow:auto;background:{{ gCardBg }};pointer-events:{{ gCardPE }};z-index:9">
+      <div style="width:{{ gCardW }};max-height:100%;overflow:auto;pointer-events:auto;box-sizing:border-box;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;padding:{{ gInner }};display:flex;flex-direction:column;gap:{{ gGap }}">
+        <div style="font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#ec3013">{{ gCard.kicker }}</div>
+        <h2 style="font-family:var(--font-heading);font-weight:800;font-size:{{ prTitle }};line-height:0.95;letter-spacing:-0.03em;margin:0;color:#f3f2f2;text-wrap:balance">{{ gCard.title }}</h2>
+        <sc-if value="{{ gHasBody }}" hint-placeholder-val="{{ false }}"><p style="margin:0;font-size:{{ gBodySize }};line-height:{{ gLine }};text-wrap:pretty">{{ gCard.body }}</p></sc-if>
+        <sc-if value="{{ gHasResult }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap"><span style="font:800 30px var(--font-heading);letter-spacing:0.08em;color:#ffd23a">{{ gStars }}</span><span style="font-size:17px;font-weight:700;line-height:1.3;flex:1 1 180px;min-width:0;text-wrap:pretty">{{ gCard.mood }}</span></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap"><span style="padding:4px 10px;border:2px solid #f3f2f2;font:800 13px var(--font-heading);letter-spacing:0.08em">{{ gCard.best }}</span><sc-if value="{{ gHasGold }}" hint-placeholder-val="{{ false }}"><span style="padding:4px 10px;background:#ffd23a;color:#201e1d;border:2px solid #ffd23a;font:800 13px var(--font-heading);letter-spacing:0.08em">{{ gCard.gold }}</span></sc-if></div>
+            <div style="display:flex;flex-direction:column;gap:8px;border-top:2px solid #f3f2f2;padding-top:12px">
+              <sc-for list="{{ gRows }}" as="r" hint-placeholder-count="2">
+                <div style="display:grid;grid-template-columns:110px minmax(0,1fr) 40px;align-items:center;gap:10px"><span style="font-size:14px;font-weight:700">{{ r.name }}</span><div style="height:12px;background:#3a3836"><div style="height:12px;width:{{ r.pct }};background:{{ r.color }}"></div></div><span style="font:800 15px var(--font-heading);text-align:right">{{ r.val }}</span></div>
+              </sc-for>
+            </div>
+            <sc-for list="{{ gNotes }}" as="nt" hint-placeholder-count="1"><div style="font-size:15px;line-height:1.4;color:#d8d4ce">{{ nt }}</div></sc-for>
+          </div>
+        </sc-if>
+        <div style="display:grid;grid-template-columns:{{ gBtnCols }};gap:8px;border-top:2px solid #f3f2f2;padding-top:{{ gGap }}">
+          <sc-for list="{{ gButtons }}" as="b" hint-placeholder-count="2">
+            <button onClick="{{ b.pick }}" style="display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;min-height:{{ gBtnH }};padding:{{ gBtnPad }};background:{{ b.bg }};color:#f3f2f2;border:2px solid {{ b.bd }};border-radius:0;font:800 16px var(--font-heading);text-align:left;cursor:pointer" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)"><span>{{ b.label }}</span><span>→</span></button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ showStart }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;top:0;left:0;bottom:0;width:min(520px,100%);overflow:auto;background:var(--color-accent);color:var(--color-bg);display:flex;flex-direction:column;justify-content:space-between;gap:20px;padding:clamp(20px, 5vh, 40px) clamp(20px, 5vw, 40px);box-sizing:border-box;border-right:2px solid var(--color-text);z-index:10">
+      <div style="font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase">8 Gates · Space Station 8</div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <h1 style="font-family:var(--font-heading);font-weight:800;font-size:clamp(44px, min(12vw, 13vh), 108px);line-height:0.88;letter-spacing:-0.04em;margin:0;color:var(--color-bg);text-wrap:balance">Deep Space Fox</h1>
+        <p style="font-size:17px;line-height:1.5;margin:0;max-width:380px;text-wrap:pretty">The main station of the eight worlds, in orbit above Meru. Beam aboard onto the hub, walk the Main Ring and drop in at Quirk's.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <button onClick="{{ start }}" disabled="{{ notReady }}" style="display:flex;justify-content:space-between;align-items:center;width:100%;min-height:56px;padding:16px 20px;background:var(--color-bg);color:var(--color-text);border:2px solid var(--color-text);border-radius:0;font:800 18px var(--font-heading);text-align:left;cursor:pointer" style-hover="background:var(--color-neutral-200)"><span>{{ startLabel }}</span><span>→</span></button>
+        <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:13px;background:var(--color-text);color:var(--color-bg);padding:8px 10px">{{ error }}</div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;followCam&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Camera&quot;},&quot;outlines&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;quality&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;high&quot;,&quot;options&quot;:[&quot;high&quot;,&quot;low&quot;],&quot;tsType&quot;:&quot;'high'|'low'&quot;,&quot;section&quot;:&quot;Look&quot;}}">
+class Component extends DCLogic {
+  state = { ready: false, error: null, vw: 1200, vh: 800, hud: null, hi: { pad: false, menu: false, split: false, bar: 0 } };
+  stageRef = React.createRef();
+  coarse() { return !!(window.matchMedia && matchMedia('(pointer: coarse)').matches); }
+  opts() { return { outlines: this.props.outlines ?? true, followCam: this.props.followCam ?? true, quality: this.props.quality ?? (this.coarse() ? 'low' : 'high') }; }
+  onResize = () => this.setState({ vw: window.innerWidth, vh: window.innerHeight });
+  onHud = hi => this.setState({ hi });
+  async componentDidMount() {
+    window.addEventListener('resize', this.onResize); this.onResize();
+    import(new URL('engine/save.js', document.baseURI).href).then(m => { this.save = m.save; this.forceUpdate(); }).catch(() => {});
+    try {
+      const mod = await import(new URL('worlds/dsf-station.js?v=s496', document.baseURI).href);
+      if (this.unmounted) return;
+      this.game = await mod.createStation({ container: this.stageRef.current, options: this.opts(), onState: hud => this.setState({ hud }), onNavigate: url => { window.location.href = encodeURI(url); } });
+      window.__dsf = this.game; this.setState({ ready: true });
+    } catch (e) { console.error(e); this.setState({ error: 'Could not start 3D: ' + (e && e.message || e) }); }
+  }
+  componentDidUpdate() { if (this.game) this.game.setOptions(this.opts()); }
+  componentWillUnmount() { window.removeEventListener('resize', this.onResize); this.unmounted = true; if (this.game) this.game.destroy(); }
+  renderVals() {
+    const S = this.state, { hud, vw, vh, error, ready } = S, g = this.game;
+    const h = hud || { quest: {}, items: [] };
+    const blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const phone = Math.min(vw, vh) < 520, land = phone && vw > vh, bar = S.hi.bar || 0, sv = this.save && this.save.data;
+    const pr = h.prompt, free = h.phase === 'free', gm = h.game, gc = gm && gm.ready ? gm.card : null;
+    const stdHud = { hp: 100, hpMax: 100, en: 100, gold: sv ? sv.gold : 0, hour: 12, day: sv && sv.stats ? sv.stats.worldDay || 1 : 1, items: h.items || [], place: h.place || 'Deep Space Fox', quest: { text: (h.quest && h.quest.title ? h.quest.title + ' · ' : '') + (h.quest && h.quest.text || '') }, prompt: free && h.talk && !h.dialog && !pr ? 'Talk to ' + h.talk : null, toast: h.toast, muted: !!h.muted, weather: 'Clear', boat: false, inCave: true, weapons: [], dialog: h.dialog };
+    return {
+      stageRef: this.stageRef, engine: g, stdHud, hud: h,
+      started: !!hud && h.phase !== 'start', hudBusy: !!pr || !free || !!gm, onHud: this.onHud,
+      hudDisp: gm ? 'none' : 'block', showGame: !!gm,
+      padOn: !!(gm && gm.ready && gm.pad && !gc), padSz: phone ? '60px' : '68px', padBig: gm && gm.pad && gm.pad.length === 1 ? (phone ? (land ? '120px' : '150px') : '170px') : phone ? (land ? '74px' : '84px') : '92px', padDir: phone && !land ? 'column' : 'row', noMenu: e => e.preventDefault(),
+      padBtns: gm && gm.pad ? gm.pad.map(p => ({ k: String(p.k), label: p.label, sub: p.sub || '', aria: p.label + ' (' + p.k + ')', bg: p.k === 3 ? '#1a3fb8' : '#ec3013', down: e => { e.preventDefault(); g && g.padPress(p.k, true); }, up: e => { g && g.padPress(p.k, false); } })) : [],
+      padSticks: gm && gm.noSticks ? [] : (gm && gm.sticks ? gm.sticks : [['\u25c0', 'LEAN', -1, 0], ['\u25bc', 'DUCK', 0, -1], ['\u25b6', 'LEAN', 1, 0]]).map(([icon, label, x, y]) => ({ icon, label, aria: label + (x < 0 ? ' left' : x > 0 ? ' right' : ''), down: e => { e.preventDefault(); g && g.padStick(x, y); }, up: e => { g && g.padStick(0, 0); } })), gBarH: (phone ? 52 : 60) + 'px', gTitleSize: phone ? '18px' : '22px', gameLeave: e => { blur(e); g && g.gameLeave(); },
+      gShowStats: !!(gm && gm.showStats && gm.stats && gm.stats.length), gHintStrip: !!(gm && phone && !land && !gc && gm.showStats && gm.stats && gm.stats.length && gm.where), gWhereDisp: gm && phone && !land && !gc && gm.showStats && gm.stats && gm.stats.length ? 'none' : 'block', gStatPad: phone ? '0 8px' : '0 14px', gStats: gm && gm.stats ? gm.stats.map(([k, v, c]) => ({ k, v, col: c || (k === 'Alerts' && v !== '0' ? '#ec3013' : '#f3f2f2') })) : [],
+      showGameCard: !!gc, gCard: gc || {}, gHasBody: !!(gc && gc.body), gHasResult: !!(gc && gc.rows), gHasGold: !!(gc && gc.gold), gStars: gc && gc.rows ? '\u2605'.repeat(gc.stars || 0) + '\u2606'.repeat(3 - (gc.stars || 0)) : '',
+      gRows: gc && gc.rows ? gc.rows : [], gNotes: gc && gc.notes ? gc.notes : [], gCardPad: phone ? '12px' : '32px', gCardW: 'min(480px,100%)', gCardTop: (phone ? 52 : 60) + 'px', gInner: land ? '14px' : phone ? '18px' : '28px', gGap: land ? '10px' : '14px', gLine: land ? '1.35' : '1.45', gBtnH: land ? '46px' : '52px', gBtnPad: land ? '8px 14px' : '12px 18px', gCardBg: gc && gc.side ? 'transparent' : 'rgba(3,4,10,0.35)', gCardPE: gc && gc.side ? 'none' : 'auto', gBodySize: gc && gc.side && phone ? '15px' : '17px', gBtnCols: gc && (gc.side || land) && phone && gc.buttons && gc.buttons.length > 1 ? 'minmax(0,1fr) minmax(0,1fr)' : 'minmax(0,1fr)',
+      gButtons: gc && gc.buttons ? gc.buttons.map((label, i) => { const last = i === gc.buttons.length - 1; return { label, bg: last ? '#201e1d' : '#ec3013', bd: last ? '#f3f2f2' : '#ec3013', pick: e => { blur(e); g && g.gamePick(i); } }; }) : [],
+      stageTop: gm ? '0px' : S.hi.split ? 'calc(' + bar + 'px + (100% - ' + bar + 'px) / 2)' : bar + 'px',
+      keysList: [['WASD', 'move'], ['Drag', 'look'], ['E', 'talk'], ['Space', 'jump'], ['M', 'map'], ['I', 'menu'], ['Wheel', 'zoom']],
+      skipKeys: ['KeyT', 'KeyO', 'KeyH', 'KeyV'],
+      showNote: !!h.note && !pr && !S.hi.menu && !h.dialog && !gm, noteTop: phone ? (land ? '56px' : '30%') : '104px',
+      showPrompt: !!pr, prAlign: phone && !land ? 'flex-end' : 'center', prPad: phone ? '12px' : '32px', prInner: phone ? '18px' : '28px', prTitle: land ? '28px' : phone ? '34px' : '44px', prCols: land && pr && pr.buttons.length > 3 ? 'minmax(0,1fr) minmax(0,1fr)' : 'minmax(0,1fr)', prW: land && pr && pr.buttons.length > 3 ? 'min(720px,100%)' : 'min(480px,100%)',
+      promptButtons: pr ? pr.buttons.map((label, i) => { const off = !!(pr.off && pr.off[i]), last = i === pr.buttons.length - 1; return { label, off, arrow: off ? '' : '→', bg: off ? '#201e1d' : last ? '#201e1d' : '#ec3013', fg: off ? '#8a847e' : '#f3f2f2', bd: off ? '#4a4644' : last ? '#f3f2f2' : '#ec3013', cur: off ? 'default' : 'pointer', pick: e => { blur(e); g && g.promptPick(i); } }; }) : [],
+      showStart: !hud || h.phase === 'start' || !!error,
+      startLabel: !ready ? 'Loading…' : 'Beam aboard', notReady: !ready,
+      start: e => { blur(e); g && g.start(); },
+      hasError: !!error, error,
+    };
+  }
+}
+</script>
+</body>
+</html>

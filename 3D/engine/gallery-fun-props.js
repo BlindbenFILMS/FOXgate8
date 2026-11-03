@@ -181,13 +181,5 @@ function buildChessCorner({ put, M, moving, floorAt }) {
   }
   const START = [...'rnbqkbnrpppppppp', ...Array(32).fill(''), ...'PPPPPPPPRNBQKBNR'];
   for (const t of tables) { t.setBoard(START); t.mark(); }
-  // (29 Oct, phones) the pieces were drawn from everywhere (no culling: 9 instanced draws even from inside the museum). They now
-  // carry one bounding sphere round both tables, so they are only skipped when the tables are off screen: nothing seen changes.
-  { const c = new THREE.Vector3(); for (const t of tables) c.add(new THREE.Vector3(t.x, t.y, t.z)); c.divideScalar(Math.max(1, NT));
-    let r = 0; for (const t of tables) r = Math.max(r, c.distanceTo(new THREE.Vector3(t.x, t.y, t.z)));
-    const bs = new THREE.Sphere(c, r + 1.5);
-    moving.updateMatrixWorld(true); const inv = new THREE.Matrix4().copy(moving.matrixWorld).invert();
-    for (const im of [...Object.values(inst), marks, dotsT]) { im.boundingSphere = bs.clone().applyMatrix4(inv); im.frustumCulled = true; }
-    moving.children.forEach(im => { if (im.isInstancedMesh && !im.frustumCulled && im.geometry && im.geometry.parameters && im.geometry.parameters.radius === 0.0055) { im.boundingSphere = bs.clone().applyMatrix4(inv); im.frustumCulled = true; } }); }   // the braille dots
   return { tables };
 }

@@ -1,0 +1,2272 @@
+{
+ "meta": {
+  "world": "earth",
+  "version": 2,
+  "date": "2026-10-22",
+  "from": "uploads/EARTH_BRIEF.md (Earth section of 8GATES_DESIGN_BRIEF_ALL.md) + uploads/surface_earth.html (add it)",
+  "notes": "DRAFT by Claude (s348) for Ben. EARTH = MODERN-DAY EARTH (Ben s348): a Nevada city of lights after dark. THE STRIP is the main north-south neon boulevard (14 m) with the town square, transport pad, fountain, big wheel + WELCOME sign at its crossing with FLAMINGO ROAD (palms). Huge modern casino resorts line it (Big Win tower, The Pyramid with its light beam, the chapel, the Showroom, the bar, Fox Cinema). N: FREMONT STREET downtown (roof-screen, buskers, the Boneyard of dead neon, The Loan Window, the police station, condo + apartments) → CITY HALL (Earth's \"castle\", Mayor Mr. Win) with its helipad + teleport pad. S: THE MOJAVE highway (diner, gas station, car wash, airport, date farm) → THE HIGHWAY → the GROOM ROAD east → THE SOUTH WIRE (fence, chained gate, the hole) → AREA 51 (the 2D Compound: hangars incl. HANGAR 18, tanker bay, radar, dry-lakebed runway, the ramp) → THE RING. W: Speedway Road to the figure-of-eight EIGHT MILE SPEEDWAY + FOX FIELD ballpark + the film lot. E: Starlite Road to THE STARLITE drive-in + THE BOARDWALK on Lake Mead (arcade, bumper cars, funhouse). NO SPACE DOCK on Earth (its own transport). Every building UNIQUE with a roof sign + eye-level door sign.",
+  "rooms": {
+   "earthStrip": "zone",
+   "earthFremont": "zone",
+   "earthMojave": "zone",
+   "earthCrucible": "gate (battle map)",
+   "earthRaceway": "building (sport)",
+   "earthStarlite": "zone",
+   "earthHighway": "zone",
+   "earthWire": "zone + gate",
+   "earthCompound": "zone: AREA 51",
+   "earthGate": "gate (cave: THE RING → The Hall → Containment → The Cave)",
+   "earthHall": "interior under the compound",
+   "earthCave": "interior (the Cave, Ilsa)",
+   "earthCasino": "building",
+   "earthChapel": "building",
+   "earthShow": "building",
+   "earthPyramid": "building",
+   "earthFloor1": "interior (Pyramid)",
+   "earthFloor2": "interior (Pyramid)",
+   "earthFloor3": "interior (Pyramid)",
+   "earthWinFloor1": "interior (Big Win)",
+   "earthWinFloor2": "interior (Big Win)",
+   "earthWinFloor3": "interior (Big Win)",
+   "earthWinRoom": "interior (Big Win)",
+   "earthPawn": "building",
+   "earthBack": "interior (Loan Window)",
+   "earthPolice": "building",
+   "earthCaptain": "interior (police)",
+   "earthBooth": "building",
+   "earthLab": "interior (Containment)"
+  }
+ },
+ "map": {
+  "half": 440,
+  "spawn": [
+   0,
+   22
+  ],
+  "spawnFace": "N"
+ },
+ "palette": {
+  "path": "#3a3a42",
+  "wall": "#2a2a32",
+  "roof": "#1a1a22",
+  "trim": "#ff4aa0",
+  "notes": "Modern city at night: dark glass + concrete, NEON trim (pink, gold, cyan, red), marquee bulbs, chrome."
+ },
+ "zones": [
+  {
+   "key": "earthStrip",
+   "label": "The Strip",
+   "r": [
+    -140,
+    140,
+    -130,
+    140
+   ],
+   "music": "strip",
+   "depth": 270
+  },
+  {
+   "key": "earthFremont",
+   "label": "Fremont",
+   "r": [
+    -140,
+    140,
+    -226,
+    -130
+   ],
+   "music": "fremont",
+   "depth": 96
+  },
+  {
+   "key": "earthCityHallPlaza",
+   "label": "City Hall",
+   "r": [
+    -120,
+    120,
+    -350,
+    -226
+   ],
+   "music": "cityhall",
+   "depth": 124,
+   "new": true
+  },
+  {
+   "key": "earthMojave",
+   "label": "The Mojave",
+   "r": [
+    -120,
+    140,
+    140,
+    300
+   ],
+   "music": "mojave",
+   "depth": 160
+  },
+  {
+   "key": "earthHighway",
+   "label": "The Highway",
+   "r": [
+    -160,
+    150,
+    300,
+    438
+   ],
+   "music": "highway",
+   "depth": 92
+  },
+  {
+   "key": "earthWire",
+   "label": "The South Wire",
+   "r": [
+    150,
+    250,
+    320,
+    438
+   ],
+   "music": "wire",
+   "depth": 118
+  },
+  {
+   "key": "earthSpeedwayGrounds",
+   "label": "Eight Mile Speedway",
+   "r": [
+    -438,
+    -140,
+    -120,
+    100
+   ],
+   "music": "speedway",
+   "depth": 220,
+   "new": true
+  },
+  {
+   "key": "earthBallparkGrounds",
+   "label": "Fox Field",
+   "r": [
+    -340,
+    -140,
+    100,
+    230
+   ],
+   "music": "ballpark",
+   "depth": 130,
+   "new": true
+  },
+  {
+   "key": "earthStarlite",
+   "label": "The Starlite",
+   "r": [
+    140,
+    300,
+    -160,
+    -10
+   ],
+   "music": "starlite",
+   "depth": 150
+  },
+  {
+   "key": "earthBoardwalk",
+   "label": "The Boardwalk",
+   "r": [
+    240,
+    370,
+    20,
+    170
+   ],
+   "music": "boardwalk",
+   "depth": 150,
+   "new": true
+  },
+  {
+   "key": "earthCompound",
+   "label": "AREA 51",
+   "r": [
+    250,
+    438,
+    250,
+    438
+   ],
+   "music": "area51",
+   "depth": 188,
+   "room2d": "earthCompound",
+   "note": "AREA 51 (Ben s348) = the 2D COMPOUND: the secret desert base behind the South Wire. Two HANGARS (west, east; HANGAR 18 holds the crash), a TANKER BAY, radar dishes, a dry-lakebed RUNWAY, the RAMP going down to THE RING."
+  }
+ ],
+ "surfaces": [
+  {
+   "s": "stone",
+   "r": [
+    -40,
+    40,
+    -30,
+    30
+   ],
+   "note": "the town square on the Strip: TRANSPORT PAD, FOUNTAIN, BIG WHEEL, WELCOME sign"
+  },
+  {
+   "s": "tile",
+   "r": [
+    -8,
+    8,
+    -8,
+    8
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -40,
+    40,
+    -270,
+    -258
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -112,
+    -46,
+    -316,
+    -284
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    -102,
+    -90,
+    -306,
+    -294
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    -66,
+    -58,
+    -304,
+    -296
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    -166,
+    -154,
+    -24,
+    -12
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    124,
+    136,
+    294,
+    306
+   ]
+  },
+  {
+   "s": "dirt",
+   "r": [
+    180,
+    300,
+    -150,
+    -40
+   ],
+   "note": "drive-in lot with 7 ramps of speaker posts"
+  },
+  {
+   "s": "wood",
+   "r": [
+    290,
+    312,
+    0,
+    160
+   ],
+   "note": "boardwalk planks"
+  },
+  {
+   "s": "stone",
+   "r": [
+    120,
+    200,
+    240,
+    300
+   ],
+   "note": "runway apron"
+  }
+ ],
+ "water": [
+  {
+   "r": [
+    364,
+    438,
+    -80,
+    240
+   ],
+   "note": "LAKE MEAD by the Boardwalk"
+  }
+ ],
+ "roads": [
+  {
+   "w": 16,
+   "p": [
+    [
+     120,
+     236
+    ],
+    [
+     150,
+     236
+    ]
+   ],
+   "note": "airport taxiway"
+  },
+  {
+   "w": 20,
+   "p": [
+    [
+     270,
+     300
+    ],
+    [
+     430,
+     300
+    ]
+   ],
+   "note": "AREA 51 dry-lakebed RUNWAY"
+  }
+ ],
+ "paths": [
+  {
+   "key": "earthStripBlvd",
+   "label": "The Strip",
+   "w": 14,
+   "p": [
+    [
+     0,
+     -270
+    ],
+    [
+     0,
+     140
+    ]
+   ],
+   "lining": "lamps",
+   "every": 16,
+   "note": "the neon boulevard"
+  },
+  {
+   "key": "earthFlamingo",
+   "label": "Flamingo Road",
+   "w": 12,
+   "p": [
+    [
+     -150,
+     0
+    ],
+    [
+     140,
+     0
+    ]
+   ],
+   "lining": "trees",
+   "every": 14,
+   "note": "palms"
+  },
+  {
+   "key": "earthFremontSt",
+   "label": "Fremont Street",
+   "w": 10,
+   "p": [
+    [
+     -140,
+     -170
+    ],
+    [
+     140,
+     -170
+    ]
+   ],
+   "lining": "lamps",
+   "every": 14,
+   "note": "under the roof-screen that never switches off"
+  },
+  {
+   "key": "earthBarracksWalk",
+   "label": "Guard walk",
+   "w": 6,
+   "p": [
+    [
+     0,
+     -245
+    ],
+    [
+     60,
+     -245
+    ]
+   ],
+   "lining": "lamps",
+   "every": 12
+  },
+  {
+   "key": "earthRoyalWalk",
+   "label": "City Hall plaza walk",
+   "w": 6,
+   "p": [
+    [
+     0,
+     -255
+    ],
+    [
+     -80,
+     -255
+    ],
+    [
+     -80,
+     -285
+    ]
+   ],
+   "lining": "lamps",
+   "every": 12
+  },
+  {
+   "key": "earthMojaveHwy",
+   "label": "The Mojave",
+   "w": 12,
+   "p": [
+    [
+     0,
+     140
+    ],
+    [
+     0,
+     300
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20,
+   "note": "desert highway"
+  },
+  {
+   "key": "earthHighwayRoad",
+   "label": "The Highway",
+   "w": 10,
+   "p": [
+    [
+     0,
+     300
+    ],
+    [
+     0,
+     370
+    ],
+    [
+     150,
+     370
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20,
+   "note": "cattle grid, layby, mile markers; turns east onto the GROOM ROAD to the base"
+  },
+  {
+   "key": "earthWireRoad",
+   "label": "South Wire perimeter road",
+   "w": 8,
+   "p": [
+    [
+     150,
+     326
+    ],
+    [
+     150,
+     432
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "earthSpeedwayRd",
+   "label": "Speedway Road",
+   "w": 10,
+   "p": [
+    [
+     -150,
+     0
+    ],
+    [
+     -240,
+     0
+    ]
+   ],
+   "lining": "lamps",
+   "every": 16
+  },
+  {
+   "key": "earthBallparkRd",
+   "label": "Ballpark Road",
+   "w": 8,
+   "p": [
+    [
+     -200,
+     0
+    ],
+    [
+     -200,
+     170
+    ],
+    [
+     -230,
+     170
+    ]
+   ],
+   "lining": "lamps",
+   "every": 16
+  },
+  {
+   "key": "earthStudioRd",
+   "label": "Studio Road",
+   "w": 8,
+   "p": [
+    [
+     -130,
+     -170
+    ],
+    [
+     -130,
+     -135
+    ]
+   ],
+   "lining": "lamps",
+   "every": 14
+  },
+  {
+   "key": "earthStarliteRd",
+   "label": "Starlite Road",
+   "w": 10,
+   "p": [
+    [
+     140,
+     0
+    ],
+    [
+     300,
+     0
+    ]
+   ],
+   "lining": "lamps",
+   "every": 16
+  },
+  {
+   "key": "earthBoothWalk",
+   "label": "Drive-in lane",
+   "w": 6,
+   "p": [
+    [
+     261,
+     0
+    ],
+    [
+     261,
+     -12
+    ]
+   ],
+   "lining": "lamps",
+   "every": 10
+  },
+  {
+   "key": "earthBoardwalkPier",
+   "label": "The Boardwalk",
+   "w": 10,
+   "p": [
+    [
+     300,
+     0
+    ],
+    [
+     300,
+     160
+    ]
+   ],
+   "lining": "lamps",
+   "every": 12,
+   "note": "wooden pier boardwalk along the lake"
+  },
+  {
+   "key": "earthAirportSpur",
+   "label": "spur",
+   "w": 6,
+   "p": [
+    [
+     0,
+     256
+    ],
+    [
+     12,
+     256
+    ]
+   ],
+   "lining": "lamps",
+   "every": 10
+  },
+  {
+   "key": "earthFarmSpur",
+   "label": "spur",
+   "w": 6,
+   "p": [
+    [
+     0,
+     270
+    ],
+    [
+     -32,
+     270
+    ]
+   ],
+   "lining": "lamps",
+   "every": 10
+  },
+  {
+   "key": "earthArcadeSpur",
+   "label": "spur",
+   "w": 6,
+   "p": [
+    [
+     300,
+     62
+    ],
+    [
+     308,
+     62
+    ]
+   ],
+   "lining": "lamps",
+   "every": 10
+  },
+  {
+   "key": "earthFunhouseSpur",
+   "label": "spur",
+   "w": 6,
+   "p": [
+    [
+     300,
+     119
+    ],
+    [
+     308,
+     119
+    ]
+   ],
+   "lining": "lamps",
+   "every": 10
+  },
+  {
+   "key": "earthGroomRoad",
+   "label": "Area 51 base road",
+   "w": 8,
+   "p": [
+    [
+     150,
+     370
+    ],
+    [
+     300,
+     370
+    ],
+    [
+     380,
+     404
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20,
+   "note": "through the HOLE in the wire (the gate is chained) to the hangars + the ramp"
+  }
+ ],
+ "buildings": [
+  {
+   "key": "earthCasino",
+   "label": "Big Win Casino",
+   "role": "other",
+   "f": [
+    -94,
+    -14,
+    -112,
+    -40
+   ],
+   "door": [
+    -14,
+    -76
+   ],
+   "face": "E",
+   "h": 60,
+   "color": "#d9a930",
+   "interior": true,
+   "note": "Mr Win's gold-lit floor: BLACKJACK, ROULETTE, CRAPS, POKER, slots, 2 LIFTS → Big Win Floors 1-3 [earthWinFloor1/2/3] → A Room Over the Boulevard [earthWinRoom]. Frankie, Lena, Mr Halloran, Sonny Vega + Dinah Rose. CASINO DEALER job (NOT BUILT YET).",
+   "outside": "A 20-storey gold glass hotel tower over a casino podium: a huge pink-and-gold WIN sign running up the tower, a marquee of chasing bulbs over the entrance, a gold coin the size of a car spinning on the canopy.",
+   "sign": {
+    "roof": "BIG WIN",
+    "door": "BIG WIN CASINO · HOTEL"
+   }
+  },
+  {
+   "key": "earthPyramid",
+   "label": "The Pyramid",
+   "role": "other",
+   "f": [
+    14,
+    94,
+    -112,
+    -32
+   ],
+   "door": [
+    14,
+    -72
+   ],
+   "face": "W",
+   "h": 50,
+   "color": "#1a2a3a",
+   "interior": true,
+   "note": "Four tiers of tables (craps, roulette, blackjack, poker, hold'em, slots, HIGH TABLE under the beam). 2 LIFTS → Floors 1-3 [earthFloor1/2/3]: HOUSEKEEPING SHIFT on 1 + 2, the Pharaoh's office on 3. Delacroix, Nathan, Estelle, Marisol Vance.",
+   "outside": "A black glass PYRAMID casino with cyan edge lights and a white LIGHT BEAM shooting straight up into the night from its tip, a sphinx at the door.",
+   "sign": {
+    "roof": "THE PYRAMID",
+    "door": "THE PYRAMID · CASINO · HOTEL"
+   }
+  },
+  {
+   "key": "earthChapel",
+   "label": "Wed In A Wink",
+   "role": "other",
+   "f": [
+    -60,
+    -14,
+    40,
+    72
+   ],
+   "door": [
+    -14,
+    56
+   ],
+   "face": "E",
+   "h": 10,
+   "color": "#f08ac0",
+   "interior": true,
+   "note": "Altar + aisle. MATCHMAKING minigame (+ the LOVE TESTER outside). Reverend Bo, Peggy + 9 singles.",
+   "games": [
+    "3D-GAMES/g/8-gates-love-tester/love-tester.html"
+   ],
+   "outside": "Little white wedding chapel with a pink neon steeple, a heart-shaped marquee with chasing bulbs, a pink carpet out to the boulevard.",
+   "sign": {
+    "roof": "WED IN A WINK",
+    "door": "WEDDING CHAPEL · OPEN ALL NIGHT"
+   }
+  },
+  {
+   "key": "earthShow",
+   "label": "The Showroom",
+   "role": "other",
+   "f": [
+    14,
+    70,
+    40,
+    82
+   ],
+   "door": [
+    14,
+    61
+   ],
+   "face": "W",
+   "h": 16,
+   "color": "#c04a8a",
+   "interior": true,
+   "note": "Pink-lit theatre: stage, magic trunk, hat, doves; MAGIC ACT minigame. Vito, Camille, Ryan.",
+   "outside": "Theatre with a giant rotating top hat on the roof, a marquee RYAN THE MAGNIFICENT · TONIGHT ONLY in red bulbs, dove-shaped neon.",
+   "sign": {
+    "roof": "THE SHOWROOM",
+    "door": "RYAN THE MAGNIFICENT · TONIGHT ONLY"
+   }
+  },
+  {
+   "key": "earthTavern",
+   "label": "The Lucky Puck",
+   "role": "tavern",
+   "f": [
+    -56,
+    -14,
+    90,
+    122
+   ],
+   "door": [
+    -14,
+    106
+   ],
+   "face": "E",
+   "h": 9,
+   "color": "#2a6a4a",
+   "interior": true,
+   "note": "UNIQUE TAVERN GAME: TABLE SHUFFLEBOARD.",
+   "games": [
+    "3D-GAMES/Shuffleboard.dc.html"
+   ],
+   "new": true,
+   "outside": "Old-school bar with a green neon shamrock + puck sign, brick front, a long window showing the shuffleboard table inside.",
+   "sign": {
+    "roof": "LUCKY PUCK",
+    "door": "BAR · TABLE SHUFFLEBOARD"
+   }
+  },
+  {
+   "key": "earthCinema",
+   "label": "Fox Cinema",
+   "role": "specialty",
+   "f": [
+    14,
+    64,
+    90,
+    132
+   ],
+   "door": [
+    14,
+    111
+   ],
+   "face": "W",
+   "h": 14,
+   "color": "#a8202a",
+   "interior": true,
+   "note": "Movie palace + SNACK COUNTER job.",
+   "games": [
+    "3D-GAMES/Fox Cinema.dc.html"
+   ],
+   "new": true,
+   "outside": "UNIQUE SPECIALTY SHOP: a classic 1950s movie palace: a tall vertical FOX CINEMA blade sign in red neon, a triangular marquee with black letters, a ticket booth out front.",
+   "sign": {
+    "roof": "FOX CINEMA",
+    "door": "FOX CINEMA · SNACK COUNTER HIRING"
+   }
+  },
+  {
+   "key": "earthItemShop",
+   "label": "Open 24/7",
+   "role": "itemshop",
+   "f": [
+    -126,
+    -92,
+    -30,
+    -8
+   ],
+   "door": [
+    -109,
+    -8
+   ],
+   "face": "S",
+   "h": 7,
+   "color": "#e8e8e8",
+   "interior": true,
+   "note": "Get the SHOPPING CART here.",
+   "new": true,
+   "outside": "Bright white convenience store: flat roof, glowing OPEN 24/7 sign, ice chest + shopping carts out front, a lit fuel-price board.",
+   "sign": {
+    "roof": "OPEN 24/7",
+    "door": "ITEM SHOP · OPEN 24/7"
+   }
+  },
+  {
+   "key": "earthBank",
+   "label": "First Nevada Bank",
+   "role": "bank",
+   "f": [
+    -84,
+    -50,
+    -32,
+    -8
+   ],
+   "door": [
+    -67,
+    -8
+   ],
+   "face": "S",
+   "h": 14,
+   "color": "#4a5a6a",
+   "interior": true,
+   "new": true,
+   "outside": "Mid-century bank: a blue-green glass box on stilts, a revolving clock sign on a tall pole, an ATM wall under the overhang.",
+   "sign": {
+    "roof": "FIRST NEVADA",
+    "door": "FIRST NEVADA BANK"
+   }
+  },
+  {
+   "key": "earthHospital",
+   "label": "Desert Springs Hospital",
+   "role": "hospital",
+   "f": [
+    -134,
+    -94,
+    8,
+    44
+   ],
+   "door": [
+    -114,
+    8
+   ],
+   "face": "N",
+   "h": 20,
+   "color": "#f0f4f4",
+   "interior": true,
+   "new": true,
+   "outside": "Modern white hospital block, a red cross + EMERGENCY sign glowing, an ambulance bay canopy, the medevac helipad beside it.",
+   "sign": {
+    "roof": "HOSPITAL",
+    "door": "DESERT SPRINGS HOSPITAL · EMERGENCY"
+   }
+  },
+  {
+   "key": "earthWeapons",
+   "label": "Ammo & Edge",
+   "role": "weapons",
+   "f": [
+    -84,
+    -58,
+    8,
+    30
+   ],
+   "door": [
+    -71,
+    8
+   ],
+   "face": "N",
+   "h": 8,
+   "color": "#2a2a2a",
+   "interior": true,
+   "note": "SPECIAL WEAPONS: the 8 extra ranged + melee",
+   "new": true,
+   "outside": "Concrete bunker-style shop, a red neon target over the door, a steel roll shutter, crossed laser + blade sign.",
+   "sign": {
+    "roof": "AMMO & EDGE",
+    "door": "SPECIAL WEAPONS"
+   }
+  },
+  {
+   "key": "earthPost",
+   "label": "Galactic Post Office (Meru Embassy)",
+   "role": "post",
+   "f": [
+    50,
+    80,
+    -30,
+    -8
+   ],
+   "door": [
+    65,
+    -8
+   ],
+   "face": "S",
+   "h": 10,
+   "color": "#c8b89a",
+   "interior": true,
+   "new": true,
+   "outside": "Federal-style post office in cream stone, flagpoles with the Meru flag, the Galactic Post dish lit up on the roof.",
+   "sign": {
+    "roof": "POST OFFICE",
+    "door": "GALACTIC POST · MERU EMBASSY"
+   }
+  },
+  {
+   "key": "earthNews",
+   "label": "Channel 8 News",
+   "role": "news",
+   "f": [
+    90,
+    126,
+    -32,
+    -8
+   ],
+   "door": [
+    108,
+    -8
+   ],
+   "face": "S",
+   "h": 18,
+   "color": "#2a3a6a",
+   "interior": true,
+   "new": true,
+   "outside": "TV station with a big LED news ticker wrapped round the building, a broadcast mast with red lights, satellite trucks out front.",
+   "sign": {
+    "roof": "CHANNEL 8",
+    "door": "CHANNEL 8 NEWS"
+   }
+  },
+  {
+   "key": "earthArmory",
+   "label": "Desert Outfitters",
+   "role": "armory",
+   "f": [
+    50,
+    76,
+    8,
+    30
+   ],
+   "door": [
+    63,
+    8
+   ],
+   "face": "N",
+   "h": 8,
+   "color": "#6a5a3a",
+   "interior": true,
+   "new": true,
+   "outside": "Army-surplus store: corrugated tin front, camouflage netting over the door, a jeep on the roof.",
+   "sign": {
+    "roof": "OUTFITTERS",
+    "door": "ARMORY · DESERT OUTFITTERS"
+   }
+  },
+  {
+   "key": "earthCarRental",
+   "label": "Strip Car Rental",
+   "role": "carRental",
+   "f": [
+    86,
+    126,
+    8,
+    32
+   ],
+   "door": [
+    106,
+    8
+   ],
+   "face": "N",
+   "h": 7,
+   "color": "#e0a020",
+   "interior": true,
+   "note": "Car rental + VALET PARKING job (NOT BUILT YET).",
+   "new": true,
+   "outside": "Glass showroom with a sports car on a turntable in the window, yellow + black chequered trim, a VALET stand out front.",
+   "sign": {
+    "roof": "CAR RENTAL",
+    "door": "STRIP CAR RENTAL · VALET"
+   }
+  },
+  {
+   "key": "earthPawn",
+   "label": "The Loan Window",
+   "role": "other",
+   "f": [
+    -80,
+    -40,
+    -202,
+    -178
+   ],
+   "door": [
+    -60,
+    -178
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#d8b020",
+   "interior": true,
+   "note": "Ruth Ambrose at the window; Boyd + Prosper. The Back Room [earthBack] behind (Tonya Soprani).",
+   "outside": "Narrow pawn office under a buzzing yellow-red LOANS sign, barred windows full of guitars + watches.",
+   "sign": {
+    "roof": "THE LOAN WINDOW",
+    "door": "LOANS · PAWN"
+   }
+  },
+  {
+   "key": "earthRelicShop",
+   "label": "The Boneyard",
+   "role": "relicShop",
+   "f": [
+    -130,
+    -90,
+    -206,
+    -178
+   ],
+   "door": [
+    -110,
+    -178
+   ],
+   "face": "S",
+   "h": 9,
+   "color": "#8a6a5a",
+   "interior": true,
+   "note": "Otis keeps the dead signs. The famous Earth relic to BUY (DRAFT: Ben picks).",
+   "new": true,
+   "outside": "A yard full of DEAD NEON SIGNS (a giant lamp, a cowboy, letters) behind a chain-link fence; one small office trailer sells the relics.",
+   "sign": {
+    "roof": "THE BONEYARD",
+    "door": "BONEYARD · RELICS · OTIS"
+   }
+  },
+  {
+   "key": "earthPolice",
+   "label": "Fremont Street Station",
+   "role": "police",
+   "f": [
+    40,
+    90,
+    -162,
+    -138
+   ],
+   "door": [
+    65,
+    -162
+   ],
+   "face": "N",
+   "h": 12,
+   "color": "#3a4a6a",
+   "interior": true,
+   "note": "Counter, JOBS BOARD (4 jobs), 2 cells, Detective Dick's cubicle. Sgt Pell, Det. Dick, Officers Teague + Kasprzak. The Captain's Office [earthCaptain] inside.",
+   "outside": "Brick police station with blue lamps either side of the steps, a big gold badge on the facade, squad cars parked out front.",
+   "sign": {
+    "roof": "POLICE",
+    "door": "FREMONT STREET STATION"
+   }
+  },
+  {
+   "key": "earthFire",
+   "label": "Station 8 Fire",
+   "role": "fire",
+   "f": [
+    -90,
+    -50,
+    -162,
+    -138
+   ],
+   "door": [
+    -70,
+    -162
+   ],
+   "face": "N",
+   "h": 10,
+   "color": "#c0302a",
+   "interior": true,
+   "new": true,
+   "outside": "Red-brick firehouse with 3 tall roll-up bays, a ladder truck nosing out, a hose tower.",
+   "sign": {
+    "roof": "STATION 8",
+    "door": "FIRE STATION 8"
+   }
+  },
+  {
+   "key": "earthHome",
+   "label": "Neon View Condo",
+   "role": "home",
+   "f": [
+    14,
+    34,
+    -206,
+    -178
+   ],
+   "door": [
+    24,
+    -178
+   ],
+   "face": "S",
+   "h": 30,
+   "color": "#5a5a7a",
+   "interior": true,
+   "note": "the player rents / buys a condo here",
+   "new": true,
+   "outside": "Slim glass condo tower with pink + cyan balcony lights, a rooftop pool glowing. The player's condo is on the top floor.",
+   "sign": {
+    "roof": "NEON VIEW",
+    "door": "NEON VIEW CONDOS · YOUR PLACE"
+   }
+  },
+  {
+   "key": "earthHouse1",
+   "label": "The Sands Apartments",
+   "role": "housing",
+   "f": [
+    42,
+    64,
+    -206,
+    -178
+   ],
+   "door": [
+    53,
+    -178
+   ],
+   "face": "S",
+   "h": 20,
+   "color": "#b89a7a",
+   "interior": true,
+   "new": true,
+   "outside": "Retro 60s apartment block with breeze-block walls + a kidney pool.",
+   "sign": {
+    "roof": "SANDS APTS",
+    "door": "APARTMENTS"
+   }
+  },
+  {
+   "key": "earthHouse2",
+   "label": "Starlight Motel",
+   "role": "housing",
+   "f": [
+    72,
+    96,
+    -206,
+    -178
+   ],
+   "door": [
+    84,
+    -178
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#3a8a9a",
+   "interior": true,
+   "new": true,
+   "outside": "Two-storey motel with outdoor walkways, a giant star sign + VACANCY in red.",
+   "sign": {
+    "roof": "STARLIGHT MOTEL",
+    "door": "MOTEL · VACANCY"
+   }
+  },
+  {
+   "key": "earthHouse3",
+   "label": "Desert Bungalows",
+   "role": "housing",
+   "f": [
+    104,
+    126,
+    -206,
+    -178
+   ],
+   "door": [
+    115,
+    -178
+   ],
+   "face": "S",
+   "h": 6,
+   "color": "#c8a070",
+   "interior": true,
+   "new": true,
+   "outside": "Row of flat-roof stucco bungalows with cactus gardens.",
+   "sign": {
+    "roof": "BUNGALOWS",
+    "door": "HOMES"
+   }
+  },
+  {
+   "key": "earthCityHall",
+   "label": "City Hall",
+   "role": "castle",
+   "f": [
+    -50,
+    50,
+    -332,
+    -270
+   ],
+   "door": [
+    0,
+    -270
+   ],
+   "face": "S",
+   "h": 40,
+   "color": "#e8e4dc",
+   "interior": true,
+   "note": "Earth has no king: City Hall is the \"castle\" (Mayor Mr. Win). DRAFT for Ben.",
+   "new": true,
+   "outside": "THE GRANDEST BUILDING (Earth's \"castle\"): a white modern City Hall with a tall glass tower and a gold dome, wide steps, flags, the MAYOR'S HELIPAD + TELEPORT PAD on the plaza beside it.",
+   "sign": {
+    "roof": "CITY HALL",
+    "door": "CITY HALL · MAYOR MR. WIN"
+   }
+  },
+  {
+   "key": "earthBarracks",
+   "label": "National Guard Armory",
+   "role": "barracks",
+   "f": [
+    60,
+    104,
+    -260,
+    -230
+   ],
+   "door": [
+    60,
+    -245
+   ],
+   "face": "W",
+   "h": 10,
+   "color": "#6a6a5a",
+   "interior": true,
+   "new": true,
+   "outside": "Concrete armory hall with a curved roof, a parked Humvee, a flagpole + the Guard emblem.",
+   "sign": {
+    "roof": "NATIONAL GUARD",
+    "door": "GUARD BARRACKS"
+   }
+  },
+  {
+   "key": "earthDiner",
+   "label": "Breakfast All Day Diner",
+   "role": "restaurant",
+   "f": [
+    14,
+    52,
+    168,
+    200
+   ],
+   "door": [
+    14,
+    184
+   ],
+   "face": "W",
+   "h": 7,
+   "color": "#f0e4c8",
+   "interior": true,
+   "room2d": "earthMojave",
+   "note": "Cream tile, nine strip lights, a grill. Sunny, June, Dottie, Marguerite, Chester, Ray, Bobby, Faye, Duane, Lou-Ann, The Man + The Other Man.",
+   "games": [
+    "3D-GAMES/g/breakfast-all-day-diner/Phone-Portrait.dc.html"
+   ],
+   "outside": "UNIQUE RESTAURANT: a chrome + cream-tile roadside diner with nine strip lights, a giant spinning coffee cup on the roof and BREAKFAST ALL DAY in red neon.",
+   "sign": {
+    "roof": "BREAKFAST ALL DAY",
+    "door": "DINER · NOW HIRING"
+   }
+  },
+  {
+   "key": "earthGas",
+   "label": "Gas Station",
+   "role": "shop",
+   "f": [
+    -52,
+    -14,
+    166,
+    194
+   ],
+   "door": [
+    -14,
+    180
+   ],
+   "face": "E",
+   "h": 7,
+   "color": "#e04a2a",
+   "interior": true,
+   "note": "Del; Hollis Deane at the pumps.",
+   "outside": "Retro gas station with a big flying-A-style canopy, glowing pumps, a tyre stack + the price sign on a pole.",
+   "sign": {
+    "roof": "GAS",
+    "door": "GAS · DEL"
+   }
+  },
+  {
+   "key": "earthCarWash",
+   "label": "Car Wash",
+   "role": "shop",
+   "f": [
+    -52,
+    -14,
+    206,
+    236
+   ],
+   "door": [
+    -14,
+    221
+   ],
+   "face": "E",
+   "h": 7,
+   "color": "#3aa8e0",
+   "interior": true,
+   "games": [
+    "3D-GAMES/g/car-wash/Main.dc.html"
+   ],
+   "new": true,
+   "outside": "Car wash tunnel with spinning blue brushes visible, a giant inflatable dancing fox, bubbles neon.",
+   "sign": {
+    "roof": "CAR WASH",
+    "door": "CAR WASH · NOW HIRING"
+   }
+  },
+  {
+   "key": "earthAirport",
+   "label": "Desert Air Terminal",
+   "role": "shop",
+   "f": [
+    20,
+    120,
+    220,
+    292
+   ],
+   "door": [
+    20,
+    256
+   ],
+   "face": "W",
+   "h": 14,
+   "color": "#c8d8e8",
+   "interior": true,
+   "games": [
+    "3D-GAMES/g/airport-tsa/Main.dc.html"
+   ],
+   "new": true,
+   "outside": "Small airport terminal: a long glass hall with a control tower, a runway behind with a parked jet, a TSA security sign at the door.",
+   "sign": {
+    "roof": "AIRPORT",
+    "door": "AIRPORT · TSA · NOW HIRING"
+   }
+  },
+  {
+   "key": "earthFarm",
+   "label": "Mojave Date Farm",
+   "role": "farm",
+   "f": [
+    -92,
+    -40,
+    248,
+    292
+   ],
+   "door": [
+    -40,
+    270
+   ],
+   "face": "E",
+   "h": 8,
+   "color": "#a08a5a",
+   "interior": true,
+   "games": [
+    "3D-GAMES/g/fox-farm/Main.dc.html"
+   ],
+   "new": true,
+   "outside": "Desert farm under rows of date palms, a solar-panel barn roof, a windmill pump + irrigation pivot.",
+   "sign": {
+    "roof": "DATE FARM",
+    "door": "MOJAVE DATE FARM · NOW HIRING"
+   }
+  },
+  {
+   "key": "earthRaceway",
+   "label": "Eight Mile Speedway",
+   "role": "sport",
+   "f": [
+    -390,
+    -240,
+    -90,
+    90
+   ],
+   "door": [
+    -240,
+    0
+   ],
+   "face": "E",
+   "h": 18,
+   "color": "#d0d0d0",
+   "interior": true,
+   "note": "RACE minigame (two laps, four cars, win three and the car is yours; rivals Dolly Vance, Cutter Ames, Mo Delgado). Bobbie Lomax. Racecar in the paddock.",
+   "games": [
+    "(other repo FOXgate8) 3D/minigames3d/speedway.html"
+   ],
+   "outside": "UNIQUE SPORT: a huge FIGURE-OF-EIGHT race track with a steel grandstand, a chequered-flag tower, floodlights + the paddock.",
+   "sign": {
+    "roof": "EIGHT MILE SPEEDWAY",
+    "door": "SPEEDWAY · RACE"
+   }
+  },
+  {
+   "key": "earthBallpark",
+   "label": "Fox Field",
+   "role": "sport",
+   "f": [
+    -330,
+    -230,
+    120,
+    220
+   ],
+   "door": [
+    -230,
+    170
+   ],
+   "face": "E",
+   "h": 16,
+   "color": "#2a6a3a",
+   "interior": true,
+   "games": [
+    "3D-GAMES/g/fox-baseball/Main.dc.html"
+   ],
+   "new": true,
+   "outside": "Ballpark with curved stands, light towers, a giant baseball glove scoreboard over centre field.",
+   "sign": {
+    "roof": "FOX FIELD",
+    "door": "FOX BASEBALL"
+   }
+  },
+  {
+   "key": "earthBooth",
+   "label": "Starlite Projection Booth",
+   "role": "other",
+   "f": [
+    250,
+    272,
+    -34,
+    -12
+   ],
+   "door": [
+    261,
+    -12
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#2a2a3a",
+   "interior": true,
+   "room2d": "earthBooth",
+   "note": "Film reels, a spliced print. Roy Ellinger.",
+   "outside": "Concrete projection booth + snack shack in the middle of the drive-in, a beam of light shooting out to the 60-ft screen.",
+   "sign": {
+    "roof": "STARLITE",
+    "door": "PROJECTION BOOTH"
+   }
+  },
+  {
+   "key": "earthArcade",
+   "label": "Neon Boardwalk Arcade",
+   "role": "shop",
+   "f": [
+    316,
+    360,
+    40,
+    84
+   ],
+   "door": [
+    316,
+    62
+   ],
+   "face": "W",
+   "h": 10,
+   "color": "#8a2ac0",
+   "interior": true,
+   "note": "BOARDWALK ARCADE: Fox Blaster, Skee-ball, Coin pusher, Dance machine.",
+   "games": [
+    "3D-GAMES/g/fox-blaster/Main.dc.html",
+    "3D-GAMES/g/skee-ball-phone-preview/Main.dc.html",
+    "3D-GAMES/Arcade Coin Pusher.dc.html",
+    "3D-GAMES/g/fox-arcade/index.html"
+   ],
+   "new": true,
+   "outside": "Boardwalk arcade on the pier: a scalloped neon roof edge, a giant claw-machine fox head over the door, flashing cabinets through glass.",
+   "sign": {
+    "roof": "BOARDWALK ARCADE",
+    "door": "ARCADE · FOX BLASTER · SKEE-BALL"
+   }
+  },
+  {
+   "key": "earthBumper",
+   "label": "Bumper Cars",
+   "role": "shop",
+   "f": [
+    254,
+    288,
+    92,
+    124
+   ],
+   "door": [
+    288,
+    108
+   ],
+   "face": "E",
+   "h": 8,
+   "color": "#e0402a",
+   "interior": true,
+   "games": [
+    "3D-GAMES/g/bumper-cars/BumperCars.dc.html"
+   ],
+   "new": true,
+   "outside": "Open bumper-car pavilion under a striped big-top roof, sparks from the ceiling grid, a rainbow BUMPER CARS sign.",
+   "sign": {
+    "roof": "BUMPER CARS",
+    "door": "BUMPER CARS"
+   }
+  },
+  {
+   "key": "earthFunhouse",
+   "label": "Funhouse",
+   "role": "shop",
+   "f": [
+    316,
+    352,
+    100,
+    138
+   ],
+   "door": [
+    316,
+    119
+   ],
+   "face": "W",
+   "h": 12,
+   "color": "#f0c020",
+   "interior": true,
+   "games": [
+    "3D-GAMES/g/funhouse-dash/Main.dc.html"
+   ],
+   "new": true,
+   "outside": "A crooked funhouse with a giant laughing clown-fox mouth as the door, wobbly windows, a spinning barrel at the exit.",
+   "sign": {
+    "roof": "FUNHOUSE",
+    "door": "FUNHOUSE DASH"
+   }
+  },
+  {
+   "key": "earthStudio",
+   "label": "Desert Film Lot",
+   "role": "other",
+   "f": [
+    -200,
+    -130,
+    -160,
+    -110
+   ],
+   "door": [
+    -130,
+    -135
+   ],
+   "face": "E",
+   "h": 14,
+   "color": "#8a8a8a",
+   "interior": true,
+   "note": "FILM LOT STUNT DOUBLE job (NOT BUILT YET).",
+   "new": true,
+   "outside": "Film studio lot: two big grey sound stages, a water tower with the studio logo, a gate with a striped barrier.",
+   "sign": {
+    "roof": "FILM LOT",
+    "door": "FILM LOT · STUNT DOUBLES WANTED"
+   }
+  }
+ ],
+ "spots": [
+  {
+   "key": "earthTownsfolk",
+   "at": [
+    -24,
+    -16
+   ],
+   "kind": "crowd",
+   "note": "16 townsfolk incl. Vince, Marla, Ruby, Hiro (311 years old), Mel Kranz, Ines Salazar"
+  },
+  {
+   "key": "earthWalkers",
+   "at": [
+    24,
+    16
+   ],
+   "kind": "crowd",
+   "note": "walkers Marty Kessel, Bernice Oyelaran, Curtis Rand + 5"
+  },
+  {
+   "key": "earthBuskers",
+   "at": [
+    -40,
+    -160
+   ],
+   "kind": "crowd",
+   "note": "FREMONT buskers: Cass singing, Deke, Junie, Ezra, Nadia, Whitfield, Hiro"
+  },
+  {
+   "key": "earthGasPumps",
+   "at": [
+    -8,
+    180
+   ],
+   "kind": "npc",
+   "note": "Hollis Deane at the pumps; Wade, Dr Alma Reyes, Roxy Calderon, Hector on the Mojave",
+   "draft": true
+  },
+  {
+   "key": "earthBobbie",
+   "at": [
+    -226,
+    12
+   ],
+   "kind": "npc",
+   "note": "Bobbie Lomax, clerk of the course",
+   "draft": true
+  },
+  {
+   "key": "earthCarhop",
+   "at": [
+    290,
+    -60
+   ],
+   "kind": "npc",
+   "note": "Del Marchetti carhop on skates; Wendell + Arletta Pike",
+   "draft": true
+  },
+  {
+   "key": "earthMerle",
+   "at": [
+    10,
+    350
+   ],
+   "kind": "npc",
+   "note": "Merle Tancredi on foot on The Highway",
+   "draft": true
+  },
+  {
+   "key": "earthDale",
+   "at": [
+    60,
+    408
+   ],
+   "kind": "npc",
+   "note": "Dale Prewitt (county, striping), Staff Sgt Coy Latham, An Airman At The Gate",
+   "draft": true
+  },
+  {
+   "key": "earthHiring",
+   "at": [
+    22,
+    -22
+   ],
+   "kind": "hiring",
+   "note": "NOW HIRING board on the Strip"
+  },
+  {
+   "key": "earthValet",
+   "at": [
+    -24,
+    -60
+   ],
+   "kind": "hiring",
+   "note": "VALET PARKING stand outside Big Win (NOT BUILT YET)"
+  },
+  {
+   "key": "earthDealer",
+   "at": [
+    -24,
+    -90
+   ],
+   "kind": "hiring",
+   "note": "CASINO DEALER board at Big Win (NOT BUILT YET)"
+  },
+  {
+   "key": "earthHousekeeping",
+   "at": [
+    24,
+    -70
+   ],
+   "kind": "game",
+   "note": "HOUSEKEEPING SHIFT on Pyramid Floors 1 + 2 (2D minigame)"
+  },
+  {
+   "key": "earthRacecar",
+   "at": [
+    -250,
+    30
+   ],
+   "kind": "vehicle",
+   "note": "RACECAR (Vehicle Workshop ?v=racecar) in the Speedway paddock (win three races and it's yours)"
+  },
+  {
+   "key": "earthShoppingCart",
+   "at": [
+    -110,
+    -38
+   ],
+   "kind": "vehicle",
+   "note": "SHOPPING CART (Vehicle Workshop ?v=cart) outside Open 24/7"
+  },
+  {
+   "key": "earthBumperCar",
+   "at": [
+    294,
+    108
+   ],
+   "kind": "vehicle",
+   "note": "BUMPER CAR (Vehicle Workshop ?v=bumper) at the Bumper Cars"
+  },
+  {
+   "key": "earthRelicFind",
+   "at": [
+    350,
+    326
+   ],
+   "kind": "relicFind",
+   "note": "DRAFT: the legendary + historical relic to find: a piece of the OLD CRASH hidden in HANGAR 18 at AREA 51 (Ben picks)"
+  },
+  {
+   "key": "earthRoyalHelipad",
+   "at": [
+    -96,
+    -300
+   ],
+   "kind": "helipad",
+   "note": "MAYOR'S HELIPAD on the City Hall plaza (Earth's royal helipad, Meru 2 recipe worlds/meru2-royalpad.js): the 8 helicopter flies you to the hospital, the airport + the Speedway."
+  },
+  {
+   "key": "earthRoyalTelepad",
+   "at": [
+    -62,
+    -300
+   ],
+   "kind": "telepad",
+   "note": "CITY HALL TELEPORT PAD: E / TALK → beam out to Earth's own TRANSPORT (Earth has no space dock); arriving beams you in here. DRAFT for Ben."
+  },
+  {
+   "key": "earthHospitalHelipad",
+   "at": [
+    -160,
+    -18
+   ],
+   "kind": "helipad",
+   "note": "HOSPITAL HELIPAD (medevac) by Desert Springs Hospital"
+  },
+  {
+   "key": "earthAirportHelipad",
+   "at": [
+    130,
+    300
+   ],
+   "kind": "helipad",
+   "note": "AIRPORT HELIPAD beside the runway"
+  },
+  {
+   "key": "earthAlienStop",
+   "at": [
+    12,
+    362
+   ],
+   "kind": "npc",
+   "draft": true,
+   "note": "roadside alien-souvenir stand at the Groom Road turn (little green fox heads, \"I SURVIVED AREA 51\" shirts)"
+  }
+ ],
+ "gates": [
+  {
+   "key": "earthCrucible",
+   "at": [
+    -220,
+    -300
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "THE CRUCIBLE [earthCrucible] battle map, the landing fight: hold the TRANSPORT PAD 30 s. ~12 in suits: The Doorman x3, The Floor Manager x3, A Man In A Good Suit x3, A Larger Man In The Same Suit x2, Desert Stray."
+  },
+  {
+   "key": "earthStarliteFight",
+   "at": [
+    220,
+    -120
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "THE STARLITE lot: A Man In A Suit, Another Man In The Same Suit, The One Who Carries The Cans"
+  },
+  {
+   "key": "earthHighwayFight",
+   "at": [
+    -60,
+    350
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "THE HIGHWAY layby: The One In Front, The One Who Counted, The One With The Bar, The Young One"
+  },
+  {
+   "key": "earthWireGate",
+   "at": [
+    200,
+    410
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "THE SOUTH WIRE: the shut gate, the hut, the HOLE in the wire. An Airman At The Gate (5) + the compound's SECURITY DRONES (HACKED Machine Fleet units: free them). Through the hole: AREA 51 (THE COMPOUND) (2 hangars, tanker bay, the RAMP down)."
+  },
+  {
+   "key": "earthGate",
+   "at": [
+    404,
+    414
+   ],
+   "r": 8,
+   "kind": "cave",
+   "note": "THE RING [earthGate] down the AREA 51 ramp: the sealed RING GATE + 8 lamps → THE HALL [earthHall] → CONTAINMENT [earthLab] (Ilsa, Specimen Eight) → THE CAVE [earthCave]."
+  }
+ ],
+ "wild": [
+  {
+   "key": "earthCrucibleWild",
+   "r": [
+    -300,
+    -140,
+    -340,
+    -250
+   ],
+   "for": "earthCrucible",
+   "creatures": [
+    "monsters"
+   ],
+   "note": "desert strays"
+  },
+  {
+   "key": "earthStarliteWild",
+   "r": [
+    150,
+    240,
+    -160,
+    -130
+   ],
+   "for": "earthStarliteFight",
+   "creatures": [
+    "monsters"
+   ]
+  },
+  {
+   "key": "earthHighwayWild",
+   "r": [
+    -160,
+    -20,
+    320,
+    392
+   ],
+   "for": "earthHighwayFight",
+   "creatures": [
+    "creatures",
+    "monsters"
+   ],
+   "note": "coyotes, rattlers, the gang"
+  },
+  {
+   "key": "earthWireWild",
+   "r": [
+    160,
+    240,
+    396,
+    438
+   ],
+   "for": "earthWireGate",
+   "creatures": [
+    "robots"
+   ],
+   "note": "security drones"
+  },
+  {
+   "key": "earthArea51Wild",
+   "r": [
+    260,
+    438,
+    318,
+    360
+   ],
+   "for": "earthWireGate",
+   "creatures": [
+    "robots"
+   ],
+   "note": "AREA 51 security drones + sentry walkers (HACKED Machine Fleet: free them)"
+  }
+ ],
+ "props": [
+  {
+   "k": "fountain",
+   "at": [
+    -22,
+    -14
+   ],
+   "note": "the FOUNTAIN show"
+  },
+  {
+   "k": "statue",
+   "at": [
+    0,
+    0
+   ],
+   "note": "TRANSPORT PAD"
+  },
+  {
+   "k": "statue",
+   "at": [
+    26,
+    -18
+   ],
+   "note": "the BIG WHEEL (observation wheel)"
+  },
+  {
+   "k": "sign",
+   "at": [
+    0,
+    136
+   ],
+   "note": "WELCOME TO FABULOUS EARTH sign"
+  },
+  {
+   "k": "statue",
+   "at": [
+    -60,
+    -170
+   ],
+   "note": "the neon COWBOY"
+  },
+  {
+   "k": "sign",
+   "at": [
+    0,
+    -160
+   ],
+   "note": "Fremont roof-screen"
+  },
+  {
+   "k": "sign",
+   "at": [
+    220,
+    -150
+   ],
+   "note": "the 60-ft SCREEN"
+  },
+  {
+   "k": "crate",
+   "at": [
+    200,
+    -80
+   ],
+   "note": "abandoned cars"
+  },
+  {
+   "k": "fence",
+   "at": [
+    -20,
+    330
+   ],
+   "note": "CATTLE GRID"
+  },
+  {
+   "k": "sign",
+   "at": [
+    12,
+    320
+   ],
+   "note": "mile marker"
+  },
+  {
+   "k": "rock",
+   "at": [
+    -280,
+    330
+   ],
+   "note": "cacti + wrecks in the clearing"
+  },
+  {
+   "k": "fence",
+   "at": [
+    150,
+    350
+   ],
+   "note": "the South Wire: chained GATE"
+  },
+  {
+   "k": "crate",
+   "at": [
+    162,
+    350
+   ],
+   "note": "the guard HUT"
+  },
+  {
+   "k": "fence",
+   "at": [
+    150,
+    390
+   ],
+   "note": "the HOLE cut in the wire"
+  },
+  {
+   "k": "sign",
+   "at": [
+    140,
+    362
+   ],
+   "note": "RESTRICTED AREA · USE OF DEADLY FORCE AUTHORIZED (AREA 51 warning sign)"
+  },
+  {
+   "k": "statue",
+   "at": [
+    290,
+    340
+   ],
+   "note": "HANGAR WEST"
+  },
+  {
+   "k": "statue",
+   "at": [
+    350,
+    340
+   ],
+   "note": "HANGAR EAST = HANGAR 18 (the crash)"
+  },
+  {
+   "k": "barrel",
+   "at": [
+    410,
+    340
+   ],
+   "note": "TANKER BAY"
+  },
+  {
+   "k": "statue",
+   "at": [
+    430,
+    280
+   ],
+   "note": "RADAR DISH (turning)"
+  },
+  {
+   "k": "statue",
+   "at": [
+    260,
+    280
+   ],
+   "note": "control tower"
+  },
+  {
+   "k": "sign",
+   "at": [
+    392,
+    410
+   ],
+   "note": "the RAMP going down"
+  }
+ ],
+ "look": {
+  "sky": [
+   "#07071a",
+   "#3a1846"
+  ],
+  "fog": "#1e1430",
+  "sun": "#ffd8a8",
+  "light": "#b8b0ff",
+  "grass": "#8a7a5a",
+  "ground": "#6a5a4a",
+  "water": "#1a3a5a",
+  "lamps": "#ffd06a",
+  "neon": [
+   "#ff4aa0",
+   "#ffc84a",
+   "#3ae0ff",
+   "#ff3a3a"
+  ],
+  "banners": [
+   "#ff4aa0",
+   "#3ae0ff"
+  ],
+  "trees": [
+   "#3a5a3a",
+   "#4a6a3a",
+   "#5a7a42"
+  ],
+  "notes": "MODERN-DAY EARTH AT NIGHT (Ben s348): black desert sky to a purple glow over the city, NEON + marquee bulbs everywhere (pink, gold, cyan, red), tall glass towers lit from inside, palm trees on Flamingo Road, headlights + taillights. The Mojave highway is dark with dusty desert + cacti; the compound is floodlit white. Earth is the only world always shown after dark (day: bleached desert light)."
+ },
+ "terrain": {
+  "notes": "EARTH = a flat desert valley city. The Strip, Fremont and every road stay flat. Mountains ring the valley (Spring Mountains west, red rock north-west), low desert hills south, Lake Mead east.",
+  "hills": [
+   {
+    "key": "earthSpringMountains",
+    "c": [
+     -440,
+     -330
+    ],
+    "r": 110,
+    "h": 90
+   },
+   {
+    "key": "earthRedRock",
+    "c": [
+     -430,
+     260
+    ],
+    "r": 80,
+    "h": 50,
+    "cliff": true
+   },
+   {
+    "key": "earthNorthRange",
+    "c": [
+     240,
+     -420
+    ],
+    "r": 90,
+    "h": 60
+   },
+   {
+    "key": "earthSouthHills",
+    "c": [
+     80,
+     432
+    ],
+    "r": 40,
+    "h": 24
+   },
+   {
+    "key": "earthMojaveHill",
+    "c": [
+     -250,
+     420
+    ],
+    "r": 50,
+    "h": 20
+   }
+  ],
+  "cuts": [],
+  "forests": [
+   {
+    "key": "earthFarmPalms",
+    "r": [
+     -120,
+     -96,
+     240,
+     300
+    ],
+    "every": 8,
+    "mix": "palm",
+    "giants": 0
+   },
+   {
+    "key": "earthSquarePalmsW",
+    "r": [
+     -140,
+     -100,
+     44,
+     86
+    ],
+    "every": 10,
+    "mix": "palm",
+    "giants": 0
+   },
+   {
+    "key": "earthPoolPalms",
+    "r": [
+     100,
+     134,
+     -130,
+     -112
+    ],
+    "every": 9,
+    "mix": "palm",
+    "giants": 0
+   }
+  ],
+  "clearings": [
+   {
+    "key": "earthCityHallPlaza",
+    "r": [
+     -114,
+     -44,
+     -320,
+     -280
+    ]
+   },
+   {
+    "key": "earthArea51",
+    "r": [
+     250,
+     438,
+     250,
+     438
+    ]
+   }
+  ]
+ }
+}

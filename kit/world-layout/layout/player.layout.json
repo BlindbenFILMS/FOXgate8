@@ -1,0 +1,1238 @@
+{
+ "meta": {
+  "world": "player",
+  "kind": "player",
+  "version": 2,
+  "date": "2026-10-25",
+  "from": "PLAYER_PLANET_PLAN.md (Ben s496 brief + s497 decisions)",
+  "notes": "DRAFT by Claude (s498) for Ben. THE PLAYER PLANET: a Meru-size, almost empty LUSH TROPICAL frontier the player names on first landing. TEMPLATE for all 4 player planets (P1 N of Luxor, P2 W of Gaya, P3 S of Kufa, P4 E of Zion): same layout, own seed + save. Plots: 12 open at start (glowing pads), 8 locked until the land is cleared (trees / rocks / level). Zone labels say \"YOUR PLANET\": the engine swaps in the player's planet name."
+ },
+ "rooms": {
+  "playerCommunityCenter": "building: main room (kitchen + community table, item shop counter, CITY PLANNING OFFICE at the front; cots at night)",
+  "playerApartment": "room inside the Community Center: the player's little flat",
+  "playerCityPlanning": "room: City Planning Office (build board + job board)",
+  "playerBunkhouse": "building: farmhouse / bunkhouse (farm foxes work + sleep)",
+  "playerBarn": "building: barn with animals",
+  "playerCrystalCave": "cave: the crystal mine, branches every way"
+ },
+ "map": {
+  "half": 540,
+  "spawn": [
+   0,
+   70
+  ],
+  "spawnFace": "N"
+ },
+ "palette": {
+  "path": "#b65a3a",
+  "wall": "#d8c8a8",
+  "roof": "#3a6a4a",
+  "trim": "#ec3013",
+  "notes": "Frontier tropical: sun-bleached timber + whitewash, palm-thatch and green tin roofs, red trim, terracotta brick path."
+ },
+ "zones": [
+  {
+   "key": "playerTown",
+   "label": "Your Planet · Commons",
+   "r": [
+    -150,
+    150,
+    -110,
+    40
+   ],
+   "music": "town",
+   "depth": 150,
+   "new": true
+  },
+  {
+   "key": "playerLandingPad",
+   "label": "Landing Pad",
+   "r": [
+    -50,
+    50,
+    40,
+    130
+   ],
+   "music": "dock",
+   "depth": 90,
+   "new": true
+  },
+  {
+   "key": "playerBeach",
+   "label": "South Beach",
+   "r": [
+    -540,
+    540,
+    230,
+    300
+   ],
+   "music": "beach",
+   "depth": 70,
+   "new": true
+  },
+  {
+   "key": "playerMountainPath",
+   "label": "Mountain Path",
+   "r": [
+    -340,
+    -150,
+    -130,
+    40
+   ],
+   "music": "ridge",
+   "depth": 170,
+   "new": true
+  },
+  {
+   "key": "playerRiver",
+   "label": "Crystal River",
+   "r": [
+    -370,
+    -200,
+    40,
+    230
+   ],
+   "music": "wild",
+   "depth": 170,
+   "new": true
+  },
+  {
+   "key": "playerJungle",
+   "label": "East Jungle",
+   "r": [
+    150,
+    540,
+    -200,
+    230
+   ],
+   "music": "wild",
+   "depth": 390,
+   "new": true
+  },
+  {
+   "key": "playerFarm",
+   "label": "The Farm",
+   "r": [
+    -220,
+    280,
+    -400,
+    -200
+   ],
+   "music": "farm",
+   "depth": 200,
+   "new": true
+  },
+  {
+   "key": "playerPlains",
+   "label": "Great Plains",
+   "r": [
+    -540,
+    540,
+    -540,
+    -400
+   ],
+   "music": "plains",
+   "depth": 140,
+   "new": true
+  },
+  {
+   "key": "playerIsland1Zone",
+   "label": "West Isle",
+   "r": [
+    -400,
+    -260,
+    370,
+    470
+   ],
+   "music": "island",
+   "depth": 100,
+   "sea": true,
+   "new": true
+  },
+  {
+   "key": "playerIsland2Zone",
+   "label": "South Isle",
+   "r": [
+    -70,
+    70,
+    410,
+    510
+   ],
+   "music": "island",
+   "depth": 100,
+   "sea": true,
+   "new": true
+  },
+  {
+   "key": "playerIsland3Zone",
+   "label": "East Isle",
+   "r": [
+    230,
+    390,
+    360,
+    470
+   ],
+   "music": "island",
+   "depth": 110,
+   "sea": true,
+   "new": true
+  }
+ ],
+ "surfaces": [
+  {
+   "s": "stone",
+   "r": [
+    -4,
+    4,
+    -12,
+    82
+   ],
+   "note": "BRICK PATH (terracotta) Community Center → landing pad"
+  },
+  {
+   "s": "stone",
+   "r": [
+    -54,
+    54,
+    -20,
+    -4
+   ],
+   "note": "Commons yard in front of the Community Center"
+  },
+  {
+   "s": "sand",
+   "r": [
+    -540,
+    540,
+    240,
+    300
+   ],
+   "note": "white sand beach"
+  },
+  {
+   "s": "dirt",
+   "r": [
+    -200,
+    -40,
+    -380,
+    -250
+   ],
+   "note": "FIELDS: crops in rows (corn, beans, melons)"
+  },
+  {
+   "s": "grass",
+   "r": [
+    140,
+    270,
+    -390,
+    -250
+   ],
+   "note": "PASTURE for the barn animals (fenced)"
+  },
+  {
+   "s": "dirt",
+   "r": [
+    -330,
+    -280,
+    -70,
+    -30
+   ],
+   "note": "MINE YARD at the cave mouth: ore carts, rails, crates"
+  }
+ ],
+ "water": [
+  {
+   "r": [
+    -540,
+    540,
+    300,
+    540
+   ],
+   "note": "THE OPEN OCEAN: turquoise shallows, deep blue beyond. Swimmable; fish to catch. Raft first, boat later."
+  },
+  {
+   "r": [
+    -356,
+    -340,
+    40,
+    140
+   ],
+   "canal": true,
+   "note": "CRYSTAL RIVER source: falls off the west mountain"
+  },
+  {
+   "r": [
+    -356,
+    -280,
+    128,
+    144
+   ],
+   "canal": true,
+   "note": "Crystal River"
+  },
+  {
+   "r": [
+    -296,
+    -280,
+    128,
+    220
+   ],
+   "canal": true,
+   "note": "Crystal River (WATER WHEEL plot beside it)"
+  },
+  {
+   "r": [
+    -296,
+    -220,
+    208,
+    224
+   ],
+   "canal": true,
+   "note": "Crystal River"
+  },
+  {
+   "r": [
+    -236,
+    -220,
+    208,
+    300
+   ],
+   "canal": true,
+   "note": "Crystal River mouth onto the beach"
+  }
+ ],
+ "islands": [
+  {
+   "key": "playerIsland1",
+   "r": [
+    -400,
+    -260,
+    370,
+    470
+   ],
+   "blob": true
+  },
+  {
+   "key": "playerIsland2",
+   "r": [
+    -70,
+    70,
+    410,
+    510
+   ],
+   "blob": true
+  },
+  {
+   "key": "playerIsland3",
+   "r": [
+    230,
+    390,
+    360,
+    470
+   ],
+   "blob": true
+  }
+ ],
+ "roads": [],
+ "paths": [
+  {
+   "key": "playerBrickPath",
+   "label": "Brick Path",
+   "w": 8,
+   "p": [
+    [
+     0,
+     -12
+    ],
+    [
+     0,
+     80
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 10
+  },
+  {
+   "key": "playerCommonsWalk",
+   "label": "Commons Walk",
+   "w": 8,
+   "p": [
+    [
+     -150,
+     -12
+    ],
+    [
+     150,
+     -12
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 14
+  },
+  {
+   "key": "playerBeachRoad",
+   "label": "Beach Road",
+   "w": 6,
+   "p": [
+    [
+     0,
+     40
+    ],
+    [
+     60,
+     60
+    ],
+    [
+     60,
+     262
+    ]
+   ],
+   "lining": "trees",
+   "every": 14
+  },
+  {
+   "key": "playerPromenade",
+   "label": "Beach Walk",
+   "w": 6,
+   "p": [
+    [
+     -150,
+     262
+    ],
+    [
+     220,
+     262
+    ]
+   ],
+   "lining": "trees",
+   "every": 14
+  },
+  {
+   "key": "playerMountainTrail",
+   "label": "Mountain Path",
+   "w": 6,
+   "p": [
+    [
+     -150,
+     -12
+    ],
+    [
+     -200,
+     -20
+    ],
+    [
+     -250,
+     -40
+    ],
+    [
+     -300,
+     -50
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 12
+  },
+  {
+   "key": "playerFarmRoad",
+   "label": "Farm Road",
+   "w": 8,
+   "p": [
+    [
+     60,
+     -12
+    ],
+    [
+     60,
+     -224
+    ],
+    [
+     130,
+     -224
+    ]
+   ],
+   "lining": "trees",
+   "every": 16
+  },
+  {
+   "key": "playerFarmYard",
+   "label": "Farm Yard",
+   "w": 8,
+   "p": [
+    [
+     -30,
+     -224
+    ],
+    [
+     60,
+     -224
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 12
+  },
+  {
+   "key": "playerLoggingTrail",
+   "label": "Logging Trail",
+   "w": 6,
+   "p": [
+    [
+     150,
+     -12
+    ],
+    [
+     220,
+     -12
+    ]
+   ],
+   "lining": "trees",
+   "every": 12
+  }
+ ],
+ "buildings": [
+  {
+   "key": "playerCommunityCenter",
+   "label": "Community Center",
+   "role": "community",
+   "f": [
+    -36,
+    36,
+    -64,
+    -20
+   ],
+   "door": [
+    0,
+    -20
+   ],
+   "face": "S",
+   "h": 12,
+   "interior": true,
+   "note": "MAIN ROOM: CITY PLANNING OFFICE desk + build board at the FRONT (first thing you see), kitchen + long community table, ITEM SHOP counter. Player APARTMENT (little flat) off the back. At night a few foxes set up COTS in the main room. Candles + a fire pit at night until power runs after dark.",
+   "outside": "A long low timber hall on stilts with a wide shady veranda, palm-thatch eaves over a green tin roof covered in SOLAR PANELS, red trim, a hand-painted crest board the player designs, a bell on a post by the steps.",
+   "sign": {
+    "roof": "COMMUNITY CENTER",
+    "door": "COMMUNITY CENTER · PLANNING OFFICE · SHOP"
+   }
+  },
+  {
+   "key": "playerBunkhouse",
+   "label": "Farmhouse",
+   "role": "farm",
+   "f": [
+    -20,
+    30,
+    -262,
+    -232
+   ],
+   "door": [
+    5,
+    -232
+   ],
+   "face": "S",
+   "h": 9,
+   "interior": true,
+   "note": "THE FARM (the only one; feeds the whole planet). Farmhouse kitchen + BUNKHOUSE rooms where the farm foxes sleep. Food stock board.",
+   "outside": "A two-storey whitewashed farmhouse with a deep porch, rocking chairs, a rain barrel, strings of drying peppers, a bunkhouse wing with a row of small windows.",
+   "sign": {
+    "roof": "FARMHOUSE",
+    "door": "FARMHOUSE · BUNKHOUSE"
+   }
+  },
+  {
+   "key": "playerBarn",
+   "label": "Barn",
+   "role": "other",
+   "f": [
+    70,
+    110,
+    -270,
+    -236
+   ],
+   "door": [
+    90,
+    -236
+   ],
+   "face": "S",
+   "h": 11,
+   "interior": true,
+   "note": "BARN with animals: goats, chickens, a cow, pigs. Hay loft.",
+   "outside": "A big red barn with a white X on the doors, a hay loft hatch, a weather vane fox, the pasture fence running off it.",
+   "sign": {
+    "roof": "BARN",
+    "door": "THE BARN · ANIMALS"
+   }
+  }
+ ],
+ "spots": [
+  {
+   "key": "playerSettlers",
+   "at": [
+    -24,
+    -2
+   ],
+   "kind": "crowd",
+   "note": "The few starting foxes (8 Ben picked) round the Commons by day; cots inside at night",
+   "draft": true
+  },
+  {
+   "key": "playerFarmHands",
+   "at": [
+    -80,
+    -300
+   ],
+   "kind": "crowd",
+   "note": "Farm foxes in the fields",
+   "draft": true
+  },
+  {
+   "key": "playerMiners",
+   "at": [
+    -300,
+    -60
+   ],
+   "kind": "crowd",
+   "note": "Miners at the cave mouth",
+   "draft": true
+  },
+  {
+   "key": "playerPlanner",
+   "at": [
+    0,
+    -30
+   ],
+   "kind": "npc",
+   "note": "Planning Office clerk (before you hire a City Manager)",
+   "draft": true
+  },
+  {
+   "key": "playerBackhoe",
+   "at": [
+    34,
+    6
+   ],
+   "kind": "vehicle",
+   "note": "THE BACKHOE: the planet's one heavy machine at start (ground work: clear rocks + trees, level plots)"
+  },
+  {
+   "key": "playerHelipad",
+   "at": [
+    34,
+    40
+   ],
+   "kind": "helipad",
+   "note": "COMMUNITY CENTER HELIPAD"
+  },
+  {
+   "key": "playerTelepad",
+   "at": [
+    -24,
+    34
+   ],
+   "kind": "telepad",
+   "note": "TELEPORT PAD by the Commons: E / TALK → the ship on the landing pad / orbit"
+  },
+  {
+   "key": "playerFarmHelipad",
+   "at": [
+    150,
+    -224
+   ],
+   "kind": "helipad",
+   "note": "FARM HELIPAD (bear alarms, supply drops)"
+  },
+  {
+   "key": "playerPlot1",
+   "at": [
+    -80,
+    -44
+   ],
+   "kind": "plot",
+   "size": [
+    28,
+    24
+   ],
+   "note": "Commons NW"
+  },
+  {
+   "key": "playerPlot2",
+   "at": [
+    -120,
+    -44
+   ],
+   "kind": "plot",
+   "size": [
+    28,
+    24
+   ],
+   "note": "Commons NW"
+  },
+  {
+   "key": "playerPlot3",
+   "at": [
+    80,
+    -44
+   ],
+   "kind": "plot",
+   "size": [
+    28,
+    24
+   ],
+   "note": "Commons NE"
+  },
+  {
+   "key": "playerPlot4",
+   "at": [
+    120,
+    -44
+   ],
+   "kind": "plot",
+   "size": [
+    28,
+    24
+   ],
+   "note": "Commons NE"
+  },
+  {
+   "key": "playerPlot5",
+   "at": [
+    -80,
+    22
+   ],
+   "kind": "plot",
+   "size": [
+    28,
+    24
+   ],
+   "note": "Commons SW"
+  },
+  {
+   "key": "playerPlot6",
+   "at": [
+    -120,
+    22
+   ],
+   "kind": "plot",
+   "size": [
+    28,
+    24
+   ],
+   "note": "Commons SW"
+  },
+  {
+   "key": "playerPlot7",
+   "at": [
+    96,
+    22
+   ],
+   "kind": "plot",
+   "size": [
+    28,
+    24
+   ],
+   "note": "Commons SE"
+  },
+  {
+   "key": "playerPlot8",
+   "at": [
+    130,
+    22
+   ],
+   "kind": "plot",
+   "size": [
+    28,
+    24
+   ],
+   "note": "Commons SE"
+  },
+  {
+   "key": "playerPlot9",
+   "at": [
+    -70,
+    -200
+   ],
+   "kind": "plot",
+   "size": [
+    40,
+    30
+   ],
+   "note": "FARM plot (2nd farm, silo, jerky hut)"
+  },
+  {
+   "key": "playerPlot10",
+   "at": [
+    -100,
+    226
+   ],
+   "kind": "plot",
+   "size": [
+    28,
+    20
+   ],
+   "note": "BEACH plot (fishery, salting hut, raft yard)"
+  },
+  {
+   "key": "playerPlot11",
+   "at": [
+    -320,
+    175
+   ],
+   "kind": "plot",
+   "size": [
+    24,
+    20
+   ],
+   "note": "RIVER plot (water wheel)"
+  },
+  {
+   "key": "playerPlot12",
+   "at": [
+    -230,
+    -64
+   ],
+   "kind": "plot",
+   "size": [
+    28,
+    24
+   ],
+   "note": "MINE plot (smelter / refinery)"
+  },
+  {
+   "key": "playerPlot13",
+   "at": [
+    180,
+    -50
+   ],
+   "kind": "plot",
+   "size": [
+    28,
+    24
+   ],
+   "locked": true,
+   "clear": "trees",
+   "note": "Jungle edge (sawmill)"
+  },
+  {
+   "key": "playerPlot14",
+   "at": [
+    180,
+    30
+   ],
+   "kind": "plot",
+   "size": [
+    28,
+    24
+   ],
+   "locked": true,
+   "clear": "trees",
+   "note": "Jungle edge"
+  },
+  {
+   "key": "playerPlot15",
+   "at": [
+    -170,
+    90
+   ],
+   "kind": "plot",
+   "size": [
+    28,
+    24
+   ],
+   "locked": true,
+   "clear": "rocks",
+   "note": "Boulder field"
+  },
+  {
+   "key": "playerPlot16",
+   "at": [
+    -150,
+    150
+   ],
+   "kind": "plot",
+   "size": [
+    28,
+    24
+   ],
+   "locked": true,
+   "clear": "rocks",
+   "note": "Boulder field"
+  },
+  {
+   "key": "playerPlot17",
+   "at": [
+    130,
+    150
+   ],
+   "kind": "plot",
+   "size": [
+    28,
+    24
+   ],
+   "locked": true,
+   "clear": "trees",
+   "note": "Palm grove above the beach"
+  },
+  {
+   "key": "playerPlot18",
+   "at": [
+    200,
+    -300
+   ],
+   "kind": "plot",
+   "size": [
+    40,
+    30
+   ],
+   "locked": true,
+   "clear": "level",
+   "note": "Farm hill (level it)"
+  },
+  {
+   "key": "playerPlot19",
+   "at": [
+    0,
+    -340
+   ],
+   "kind": "plot",
+   "size": [
+    40,
+    30
+   ],
+   "locked": true,
+   "clear": "level",
+   "note": "North of the fields"
+  },
+  {
+   "key": "playerPlot20",
+   "at": [
+    -330,
+    420
+   ],
+   "kind": "plot",
+   "size": [
+    28,
+    24
+   ],
+   "locked": true,
+   "clear": "raft",
+   "note": "WEST ISLE: needs a raft to reach"
+  }
+ ],
+ "dock": {
+  "key": "playerSpacedock",
+  "pad": [
+   0,
+   98
+  ],
+  "r": 14,
+  "face": "N"
+ },
+ "gates": [
+  {
+   "key": "playerCrystalCave",
+   "at": [
+    -306,
+    -52
+   ],
+   "r": 8,
+   "kind": "cave",
+   "note": "THE CRYSTAL CAVE (being mined): RAW CRYSTAL + building METALS. Branches every way: bats, crystal golems, big cave rats."
+  }
+ ],
+ "wild": [
+  {
+   "key": "playerJungleWild",
+   "r": [
+    260,
+    520,
+    -180,
+    210
+   ],
+   "for": "",
+   "creatures": [
+    "creatures"
+   ],
+   "note": "Jungle creatures (off the trails)"
+  },
+  {
+   "key": "playerPlainsWild",
+   "r": [
+    -520,
+    520,
+    -530,
+    -410
+   ],
+   "for": "",
+   "creatures": [
+    "creatures",
+    "monsters"
+   ],
+   "note": "BUFFALO herds (hunt for food) + BEARS (sometimes raid the Commons)"
+  },
+  {
+   "key": "playerCaveWild",
+   "r": [
+    -480,
+    -380,
+    -200,
+    -110
+   ],
+   "for": "playerCrystalCave",
+   "creatures": [
+    "monsters"
+   ],
+   "note": "Bats round the high cave mouths"
+  }
+ ],
+ "props": [
+  {
+   "k": "bench",
+   "at": [
+    -30,
+    -2
+   ]
+  },
+  {
+   "k": "bench",
+   "at": [
+    30,
+    -2
+   ]
+  },
+  {
+   "k": "sign",
+   "at": [
+    10,
+    -4
+   ],
+   "note": "NOTICE BOARD: jobs + news"
+  },
+  {
+   "k": "crate",
+   "at": [
+    -292,
+    -36
+   ]
+  },
+  {
+   "k": "crate",
+   "at": [
+    -296,
+    -32
+   ]
+  },
+  {
+   "k": "barrel",
+   "at": [
+    -310,
+    -36
+   ]
+  },
+  {
+   "k": "fence",
+   "at": [
+    140,
+    -320
+   ],
+   "note": "pasture fence"
+  },
+  {
+   "k": "fence",
+   "at": [
+    270,
+    -320
+   ],
+   "note": "pasture fence"
+  },
+  {
+   "k": "barrel",
+   "at": [
+    -12,
+    -232
+   ],
+   "note": "rain barrel"
+  },
+  {
+   "k": "crate",
+   "at": [
+    118,
+    -240
+   ]
+  }
+ ],
+ "look": {
+  "sky": [
+   "#4aa8e0",
+   "#e8f6fa"
+  ],
+  "fog": "#d8eef0",
+  "sun": "#fff4d8",
+  "light": "#fffaf0",
+  "grass": "#5fae4a",
+  "ground": "#c9b98a",
+  "water": "#2cc4c4",
+  "lamps": "#ffb44a",
+  "banners": [
+   "#ec3013",
+   "#f3f2f2"
+  ],
+  "trees": [
+   "#1f5a32",
+   "#2e7a3e",
+   "#4a9a48"
+  ],
+  "notes": "LUSH TROPICAL FRONTIER (Ben s497): deep blue sky to a pale horizon, bright green grass, white sand, turquoise shallows, dense dark jungle east, a misty grey-green mountain west with a waterfall. At night: NO power at first, so candles, lanterns and fire pits only (warm orange pools of light, lots of dark). Solar panels glint by day."
+ },
+ "terrain": {
+  "notes": "Flat Commons in the middle; WEST MOUNTAIN (crystal cave + river source) rises off the map edge; gentle hills north of the farm; plains flat to the north edge; beach slopes into the sea.",
+  "hills": [
+   {
+    "key": "playerWestMountain",
+    "c": [
+     -440,
+     -60
+    ],
+    "r": 150,
+    "h": 120
+   },
+   {
+    "key": "playerFarmHill",
+    "c": [
+     210,
+     -310
+    ],
+    "r": 40,
+    "h": 8
+   },
+   {
+    "key": "playerNorthRise",
+    "c": [
+     -300,
+     -460
+    ],
+    "r": 90,
+    "h": 20
+   }
+  ],
+  "cuts": [],
+  "forests": [
+   {
+    "key": "playerEastJungle",
+    "r": [
+     150,
+     530,
+     -200,
+     230
+    ],
+    "every": 6,
+    "mix": "tropical",
+    "giants": 0.06
+   },
+   {
+    "key": "playerBeachPalms",
+    "r": [
+     100,
+     230,
+     180,
+     240
+    ],
+    "every": 12,
+    "mix": "palm",
+    "giants": 0
+   },
+   {
+    "key": "playerMountainWoods",
+    "r": [
+     -520,
+     -360,
+     40,
+     220
+    ],
+    "every": 9,
+    "mix": "tropical",
+    "giants": 0.03
+   },
+   {
+    "key": "playerIslandPalms1",
+    "r": [
+     -390,
+     -270,
+     380,
+     460
+    ],
+    "every": 12,
+    "mix": "palm",
+    "giants": 0
+   },
+   {
+    "key": "playerIslandPalms2",
+    "r": [
+     -60,
+     60,
+     420,
+     500
+    ],
+    "every": 12,
+    "mix": "palm",
+    "giants": 0
+   },
+   {
+    "key": "playerIslandPalms3",
+    "r": [
+     240,
+     380,
+     370,
+     460
+    ],
+    "every": 12,
+    "mix": "palm",
+    "giants": 0
+   }
+  ],
+  "clearings": [
+   {
+    "key": "playerCommonsClear",
+    "r": [
+     -150,
+     150,
+     -110,
+     60
+    ]
+   },
+   {
+    "key": "playerLoggingClear",
+    "r": [
+     150,
+     220,
+     -20,
+     -4
+    ]
+   },
+   {
+    "key": "playerPlot13Clear",
+    "r": [
+     166,
+     194,
+     -62,
+     -38
+    ]
+   },
+   {
+    "key": "playerPlot14Clear",
+    "r": [
+     166,
+     194,
+     18,
+     42
+    ]
+   },
+   {
+    "key": "playerPlot20Clear",
+    "r": [
+     -344,
+     -316,
+     408,
+     432
+    ]
+   }
+  ]
+ }
+}

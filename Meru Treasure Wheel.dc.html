@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Meru Treasure Wheel</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&amp;display=swap">
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}:root{--font-heading:"Archivo",system-ui,sans-serif;--font-body:"Archivo",system-ui,sans-serif}a{color:#ffd23a}a:hover{color:#ec3013}button{-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}button:focus-visible,input:focus-visible{outline:2px solid #ffd23a;outline-offset:2px}button:not([disabled]):active{filter:brightness(1.18)}@keyframes twpop{0%{opacity:0;transform:translateX(-50%) scale(.6)}60%{opacity:1;transform:translateX(-50%) scale(1.08)}100%{transform:translateX(-50%) scale(1)}}.twpop{animation:twpop .38s cubic-bezier(.2,.9,.3,1.2) both}@media (prefers-reduced-motion:reduce){.twpop{animation:none}}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#120a08;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:manipulation" data-screen-label="Meru Treasure Wheel">
+  <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+  <div aria-hidden="true" style="position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at 50% 42%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.42) 100%)"></div>
+
+  <sc-if value="{{ loadOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:24px;box-sizing:border-box;gap:8px;background:#120a08">
+      <span style="font:800 11px var(--font-heading);letter-spacing:0.14em;color:#ffd23a">MERU CASINO · TREASURE WHEEL</span>
+      <span style="font:900 26px var(--font-heading);line-height:1.1">{{ loadTxt }}</span>
+      <span style="font:600 13px var(--font-body);color:#cfcac2;max-width:520px;white-space:pre-wrap;word-break:break-word">{{ loadErr }}</span>
+    </div>
+  </sc-if>
+
+  <div style="position:absolute;left:0;right:0;top:0;z-index:5;display:flex;align-items:stretch;background:#000;border-bottom:2px solid #ffd23a;padding-top:env(safe-area-inset-top);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);height:{{ topH }};box-sizing:content-box">
+    <sc-if value="{{ embed }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ goBack }}" aria-label="Back to the casino" style="flex:none;width:52px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M20 12H5M11 5l-7 7 7 7" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="square"></path></svg></button>
+    </sc-if>
+    <div style="flex:1;min-width:0;padding:4px 12px;display:flex;flex-direction:column;justify-content:center">
+      <span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ kicker }}</span>
+      <span style="font:900 16px var(--font-heading);line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ titleTxt }}</span>
+    </div>
+    <div style="flex:none;padding:4px 10px;display:flex;flex-direction:column;justify-content:center;border-left:2px solid #3a3836">
+      <span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">JACKPOT</span>
+      <span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;color:#ffd23a">{{ jackTxt }}</span>
+    </div>
+    <div style="flex:none;padding:4px 10px;display:flex;flex-direction:column;justify-content:center;border-left:2px solid #3a3836">
+      <span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">{{ goldLbl }}</span>
+      <span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums">{{ goldTxt }}</span>
+    </div>
+    <button onClick="{{ muteToggle }}" aria-label="{{ muteAria }}" style="flex:none;width:46px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"></path><sc-if value="{{ muteOff }}" hint-placeholder-val="{{ false }}"><path d="M16 9l6 6M22 9l-6 6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="square"></path></sc-if><sc-if value="{{ muteOnIcon }}" hint-placeholder-val="{{ true }}"><path d="M16 8.5c1.5 1.8 1.5 5.2 0 7M19 6c3 3.3 3 8.7 0 12" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="square"></path></sc-if></svg></button>
+    <button onClick="{{ helpToggle }}" aria-label="How to play the Treasure Wheel" style="flex:none;width:46px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 20px var(--font-heading);cursor:pointer">?</button>
+  </div>
+
+  <sc-for list="{{ tags }}" as="p" hint-placeholder-count="2">
+    <div role="group" aria-label="{{ p.aria }}" style="position:absolute;left:{{ p.x }};top:{{ p.y }};transform:translate(-50%,-50%);z-index:3;pointer-events:none;display:{{ p.disp }};flex-direction:column;align-items:stretch;min-width:58px;background:rgba(0,0,0,0.86);border:2px solid {{ p.bd }}">
+      <span style="padding:1px 6px;background:{{ p.col }};color:#000;font:900 10px var(--font-heading);letter-spacing:0.06em;white-space:nowrap;text-align:center">{{ p.name }}</span>
+      <span style="padding:1px 6px 2px;font:900 15px var(--font-heading);font-variant-numeric:tabular-nums;text-align:center">{{ p.score }}</span>
+    </div>
+  </sc-for>
+
+  <sc-if value="{{ resOn }}" hint-placeholder-val="{{ false }}">
+    <div role="status" class="twpop" style="position:absolute;left:{{ resLeft }};top:{{ resTop }};transform:translateX(-50%);z-index:6;pointer-events:none;width:min(340px, calc(100% - 24px));background:#000;border:3px solid {{ resCol }};display:flex;flex-direction:column">
+      <span style="padding:6px 12px 0;font:900 clamp(20px,6vw,30px) var(--font-heading);letter-spacing:0.04em;color:{{ resCol }};line-height:1.05">{{ resKick }}</span>
+      <span style="padding:2px 12px 8px;font:800 13px var(--font-heading);letter-spacing:0.04em;line-height:1.2">{{ resLine }}</span>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ playOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;z-index:5;left:{{ pL }};right:0;top:{{ pT }};bottom:0;width:{{ pW }};border-left:{{ pBL }};border-top:{{ pBT }};overflow:{{ pOv }};background:#000;display:flex;flex-direction:column;box-sizing:border-box;padding-bottom:env(safe-area-inset-bottom);padding-right:{{ panelPadR }}">
+      <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}">
+        <div role="status" aria-live="polite" style="display:flex;align-items:stretch;border-bottom:2px solid #ec3013;background:#000">
+          <span style="flex:none;padding:0 10px;display:flex;align-items:center;background:#ec3013;color:#fff;font:900 11px var(--font-heading);letter-spacing:0.14em">DEMO</span>
+          <span style="flex:1;min-width:0;padding:6px 10px;display:flex;align-items:center;font:700 12px var(--font-body);line-height:1.3;color:#fff;text-wrap:pretty">{{ demoCap }}</span>
+          <button onClick="{{ demoStop }}" aria-label="Stop the demo and play yourself" style="flex:none;min-width:72px;min-height:48px;padding:0 12px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#ffd23a;color:#000;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer">PLAY</button>
+        </div>
+      </sc-if>
+      <div aria-live="polite" style="padding:6px 12px;border-bottom:2px solid #2a2826;display:flex;align-items:center;gap:8px;min-height:30px;box-sizing:border-box"><span style="flex:none;width:8px;height:8px;background:{{ curCol }};display:block"></span><span style="font:800 11px var(--font-heading);letter-spacing:0.06em;color:{{ logCol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ logTxt }}</span></div>
+      <div style="display:flex;align-items:stretch;border-bottom:2px solid #2a2826">
+        <div style="flex:1;min-width:0;padding:6px 12px;display:flex;flex-direction:column;justify-content:center">
+          <span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:{{ curCol }}">{{ potLbl }}</span>
+          <span style="font:900 30px var(--font-heading);line-height:1;font-variant-numeric:tabular-nums;color:#ffd23a">{{ potTxt }}</span>
+        </div>
+        <div style="flex:none;padding:6px 12px;display:flex;flex-direction:column;justify-content:center;gap:4px;border-left:2px solid #2a2826">
+          <span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">{{ spinLbl }}</span>
+          <div style="display:flex;gap:4px"><sc-for list="{{ dots }}" as="d" hint-placeholder-count="3"><span style="width:16px;height:16px;box-sizing:border-box;border:2px solid #ffd23a;background:{{ d.bg }};display:block"></span></sc-for></div>
+        </div>
+      </div>
+      <sc-if value="{{ meterOn }}" hint-placeholder-val="{{ false }}">
+        <div aria-hidden="true" style="height:12px;background:#2a2826;position:relative"><div style="position:absolute;left:0;top:0;bottom:0;width:{{ meterW }};background:{{ meterCol }}"></div><div style="position:absolute;right:8%;top:0;bottom:0;width:2px;background:#fff"></div></div>
+      </sc-if>
+      <sc-if value="{{ readyOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:{{ actGrid }};gap:0">
+          <button onPointerDown="{{ spinDown }}" onPointerUp="{{ spinUp }}" onPointerCancel="{{ spinCancel }}" onClick="{{ spinClick }}" disabled="{{ spinOff }}" aria-label="Spin the wheel. Hold to charge, let go to spin." style="min-height:{{ actH }};padding:4px 14px;border:0;border-top:2px solid #2a2826;border-right:2px solid #2a2826;border-radius:0;background:{{ spinBg }};color:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px;touch-action:none">
+            <span style="font:900 20px var(--font-heading);letter-spacing:0.08em">{{ spinTxt }}</span>
+            <span style="font:800 9px var(--font-heading);letter-spacing:0.08em;opacity:0.9">{{ spinSub }}</span>
+          </button>
+          <button onClick="{{ bankGo }}" disabled="{{ bankOff }}" aria-label="{{ bankAria }}" style="min-height:{{ actH }};padding:4px 14px;border:0;border-top:2px solid #2a2826;border-radius:0;background:{{ bankBg }};color:{{ bankFg }};cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px">
+            <span style="font:900 20px var(--font-heading);letter-spacing:0.08em">BANK</span>
+            <span style="font:800 9px var(--font-heading);letter-spacing:0.08em;opacity:0.9">{{ bankSub }}</span>
+          </button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ pickOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column">
+          <span style="padding:6px 12px 2px;font:900 12px var(--font-heading);letter-spacing:0.1em;color:#ffd23a">SHUTTLE BONUS · PICK A FOX CARD</span>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr))">
+            <sc-for list="{{ picks }}" as="b" hint-placeholder-count="3"><button onClick="{{ b.go }}" aria-label="{{ b.aria }}" style="min-height:{{ actH }};border:0;border-top:2px solid #2a2826;border-right:2px solid #2a2826;border-radius:0;background:#13213f;color:#ffd23a;font:900 16px var(--font-heading);letter-spacing:0.06em;cursor:pointer">{{ b.t }}</button></sc-for>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:{{ actGrid }};gap:0">
+          <button onClick="{{ newTurn }}" style="min-height:{{ actH }};padding:4px 14px;border:0;border-top:2px solid #2a2826;border-right:2px solid #2a2826;border-radius:0;background:#ec3013;color:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px">
+            <span style="font:900 18px var(--font-heading);letter-spacing:0.06em">NEW TURN</span>
+            <span style="font:800 9px var(--font-heading);letter-spacing:0.08em;opacity:0.9">{{ turnSub }}</span>
+          </button>
+          <button onClick="{{ leaveGo }}" style="min-height:{{ actH }};padding:4px 14px;border:0;border-top:2px solid #2a2826;border-radius:0;background:#000;color:#cfcac4;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px">
+            <span style="font:900 18px var(--font-heading);letter-spacing:0.06em">LEAVE</span>
+            <span style="font:800 9px var(--font-heading);letter-spacing:0.08em;opacity:0.9">BACK TO THE MENU</span>
+          </button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ waitOn }}" hint-placeholder-val="{{ false }}">
+        <div style="min-height:{{ actH }};display:flex;align-items:center;gap:10px;padding:0 14px;border-top:2px solid #2a2826;font:900 14px var(--font-heading);letter-spacing:0.06em;color:#cfcac4"><span style="width:10px;height:10px;background:#ffd23a;display:block"></span>{{ waitTxt }}</div>
+      </sc-if>
+      <sc-if value="{{ quitOn }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ leaveGo }}" style="min-height:44px;padding:0 14px;border:0;border-top:2px solid #2a2826;border-radius:0;background:#000;color:#8a847e;font:800 11px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left">LEAVE THE GAME</button>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ passOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:10;background:rgba(0,0,0,0.78);display:flex;align-items:flex-end;justify-content:flex-start;padding:12px max(12px, env(safe-area-inset-left)) calc(12px + env(safe-area-inset-bottom));box-sizing:border-box">
+      <div style="width:min(420px,100%);background:#000;border:3px solid {{ curCol }};display:flex;flex-direction:column">
+        <span style="padding:12px 16px 0;font:800 11px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">ROUND {{ roundTxt }} · PASS THE PHONE TO</span>
+        <span style="padding:2px 16px 10px;font:900 40px var(--font-heading);line-height:1;color:{{ curCol }}">{{ curName }}</span>
+        <div style="display:grid;grid-template-columns:repeat({{ scoreCols }},minmax(0,1fr));border-top:2px solid #2a2826">
+          <sc-for list="{{ scoreRow }}" as="s" hint-placeholder-count="2"><div style="padding:6px 8px;border-right:2px solid #2a2826;display:flex;flex-direction:column;gap:1px"><span style="font:900 10px var(--font-heading);letter-spacing:0.06em;color:{{ s.col }}">{{ s.name }}</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums">{{ s.score }}</span></div></sc-for>
+        </div>
+        <button onClick="{{ readyGo }}" style="min-height:60px;padding:0 16px;border:0;border-top:2px solid #2a2826;border-radius:0;background:#ec3013;color:#fff;font:900 18px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left">I'M {{ curName }} · READY</button>
+        <button onClick="{{ leaveGo }}" style="min-height:44px;padding:0 16px;border:0;border-top:2px solid #2a2826;border-radius:0;background:#000;color:#8a847e;font:800 11px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left">END THE PARTY</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ overOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:10;background:rgba(0,0,0,0.7);display:flex;align-items:flex-end;justify-content:flex-start;padding:12px max(12px, env(safe-area-inset-left)) calc(12px + env(safe-area-inset-bottom));box-sizing:border-box;overflow:auto">
+      <div style="width:min(420px,100%);background:#000;border:3px solid #ffd23a;display:flex;flex-direction:column">
+        <span style="padding:12px 16px 0;font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">FINAL SCORES</span>
+        <span style="padding:2px 16px 10px;font:900 26px var(--font-heading);line-height:1.1">{{ overTxt }}</span>
+        <sc-for list="{{ stand }}" as="s" hint-placeholder-count="2"><div style="display:grid;grid-template-columns:28px 12px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 16px;border-top:2px solid #2a2826"><span style="font:900 14px var(--font-heading);color:#cfcac4">{{ s.place }}</span><span style="width:12px;height:12px;background:{{ s.col }};display:block"></span><span style="font:900 15px var(--font-heading);letter-spacing:0.04em">{{ s.name }}</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;color:{{ s.sc }}">{{ s.score }}</span></div></sc-for>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+          <button onClick="{{ againGo }}" style="min-height:56px;padding:0 16px;border:0;border-top:2px solid #2a2826;border-right:2px solid #2a2826;border-radius:0;background:#ec3013;color:#fff;font:900 15px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">{{ againTxt }}</button>
+          <button onClick="{{ leaveGo }}" style="min-height:56px;padding:0 16px;border:0;border-top:2px solid #2a2826;border-radius:0;background:#000;color:#fff;font:900 15px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">MENU</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ menuOn }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;left:0;right:0;top:{{ menuTop }};bottom:0;z-index:8;overflow:auto;display:flex;align-items:flex-end;justify-content:flex-start;padding:12px max(12px, env(safe-area-inset-left)) calc(12px + env(safe-area-inset-bottom));box-sizing:border-box;pointer-events:none">
+      <div style="pointer-events:auto;width:min(440px,100%);background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+        <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:3px">
+          <span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">MERU CASINO · TREASURE WHEEL</span>
+          <span style="font:900 26px var(--font-heading);line-height:1.05">Treasure Wheel</span>
+          <span style="font:600 13px var(--font-body);line-height:1.35;color:#cfcac2;text-wrap:pretty">Up to 3 spins a turn. Every number goes in your pot. Bank it, or spin again and risk a BUST. Land on the Shuttle for a fox-card bonus.</span>
+          <span style="font:600 12px var(--font-body);color:#e6b45a">{{ menuMsg }}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-bottom:2px solid #2a2826">
+          <sc-for list="{{ tableBtns }}" as="b" hint-placeholder-count="2"><button onClick="{{ b.go }}" aria-pressed="{{ b.on }}" style="min-height:54px;padding:4px 14px;border:0;border-right:2px solid #2a2826;border-radius:0;background:{{ b.bg }};color:{{ b.fg }};cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px"><span style="font:900 13px var(--font-heading);letter-spacing:0.06em">{{ b.t }}</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;opacity:0.85">{{ b.sub }}</span></button></sc-for>
+        </div>
+        <button onClick="{{ soloGo }}" style="min-height:56px;padding:0 18px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 17px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left">STEP UP AND SPIN</button>
+        <div style="display:grid;grid-template-columns:84px minmax(0,1fr);align-items:center;border-top:2px solid #3a3836">
+          <span style="padding:0 16px;font:800 11px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">PARTY</span>
+          <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr))">
+            <sc-for list="{{ partyBtns }}" as="b" hint-placeholder-count="4"><button onClick="{{ b.go }}" aria-pressed="{{ b.on }}" aria-label="{{ b.aria }}" style="min-height:46px;border:0;border-left:2px solid #2a2826;border-radius:0;background:{{ b.bg }};color:{{ b.fg }};font:900 15px var(--font-heading);cursor:pointer">{{ b.t }}</button></sc-for>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:84px minmax(0,1fr);align-items:center;border-top:2px solid #2a2826">
+          <span style="padding:0 16px;font:800 11px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">ROUNDS</span>
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+            <sc-for list="{{ roundBtns }}" as="b" hint-placeholder-count="2"><button onClick="{{ b.go }}" aria-pressed="{{ b.on }}" style="min-height:44px;border:0;border-left:2px solid #2a2826;border-radius:0;background:{{ b.bg }};color:{{ b.fg }};font:900 14px var(--font-heading);cursor:pointer">{{ b.t }}</button></sc-for>
+          </div>
+        </div>
+        <button onClick="{{ partyGo }}" style="min-height:50px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#1c1917;color:#ffd23a;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left">{{ partyTxt }}</button>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr))">
+          <button onClick="{{ netOpen }}" style="min-height:50px;padding:4px 12px;border:0;border-top:2px solid #3a3836;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#7dd3fc;cursor:pointer;text-align:left;font:900 12px var(--font-heading);letter-spacing:0.06em">PLAY ONLINE</button>
+          <button onClick="{{ demoGo }}" style="min-height:50px;padding:4px 12px;border:0;border-top:2px solid #3a3836;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;cursor:pointer;text-align:left;font:900 12px var(--font-heading);letter-spacing:0.06em">WATCH A DEMO</button>
+          <button onClick="{{ helpToggle }}" style="min-height:50px;padding:4px 12px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#fff;cursor:pointer;text-align:left;font:900 12px var(--font-heading);letter-spacing:0.06em">HOW TO PLAY</button>
+        </div>
+        <div style="display:flex;align-items:stretch;border-top:2px solid #3a3836"><span style="flex:1;min-width:0;padding:8px 16px;display:flex;align-items:center;font:800 10px var(--font-heading);letter-spacing:0.08em;color:#cfcac4;font-variant-numeric:tabular-nums">{{ recordTxt }}</span><button onClick="{{ musicToggle }}" aria-pressed="{{ musicOn }}" style="flex:none;min-width:104px;min-height:44px;padding:0 12px;border:0;border-left:2px solid #3a3836;border-radius:0;background:{{ musicBg }};color:{{ musicFg }};font:900 11px var(--font-heading);letter-spacing:0.08em;cursor:pointer">{{ musicTxt }}</button></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ netOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;background:rgba(0,0,0,0.8);overflow:auto;display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box">
+      <div style="width:min(440px,100%);margin:auto 0;background:#000;border:2px solid #7dd3fc;display:flex;flex-direction:column">
+        <div style="padding:10px 14px;border-bottom:2px solid #3a3836;display:flex;justify-content:space-between;align-items:center;gap:8px">
+          <div style="display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#7dd3fc">ONLINE WHEEL · UP TO 5</span><span style="font:900 20px var(--font-heading)">{{ netTitle }}</span></div>
+          <button onClick="{{ netClose }}" aria-label="Close online play" style="flex:none;width:48px;height:48px;border:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 18px var(--font-heading);cursor:pointer">✕</button>
+        </div>
+        <sc-if value="{{ netMenu }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column">
+            <button onClick="{{ netCreate }}" style="min-height:56px;padding:0 16px;border:0;border-bottom:2px solid #2a2826;border-radius:0;background:#ec3013;color:#fff;font:900 15px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">MAKE A ROOM</button>
+            <label for="twcode" style="padding:10px 16px 4px;font:800 11px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">OR JOIN WITH A 4-LETTER CODE</label>
+            <div style="display:flex;gap:0;padding:0 16px 12px">
+              <input id="twcode" value="{{ codeIn }}" onChange="{{ codeType }}" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" style="flex:1;min-width:0;height:52px;padding:0 12px;border:2px solid #3a3836;border-radius:0;background:#111;color:#fff;font:900 24px var(--font-heading);letter-spacing:0.3em;text-transform:uppercase">
+              <button onClick="{{ netJoinBtn }}" style="flex:none;min-width:88px;height:52px;border:2px solid #7dd3fc;border-left:0;border-radius:0;background:#000;color:#7dd3fc;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer">JOIN</button>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ netRoom }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column">
+            <div style="padding:10px 16px;border-bottom:2px solid #2a2826;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font:800 11px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">ROOM CODE</span><span style="font:900 32px var(--font-heading);letter-spacing:0.25em;color:#ffd23a">{{ netCode }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.08em;color:#cfcac4">{{ netStatus }}</span></div>
+            <sc-for list="{{ netList }}" as="m" hint-placeholder-count="2"><div style="display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 16px;border-bottom:2px solid #2a2826"><span style="width:12px;height:12px;background:{{ m.col }};display:block"></span><span style="font:900 14px var(--font-heading);letter-spacing:0.04em">{{ m.name }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.08em;color:{{ m.rc }}">{{ m.rd }}</span></div></sc-for>
+            <button onClick="{{ netReady }}" style="min-height:58px;padding:0 16px;border:0;border-radius:0;background:{{ readyBg }};color:{{ readyFg }};font:900 16px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left">{{ readyTxt }}</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ netMsgOn }}" hint-placeholder-val="{{ false }}"><div style="padding:10px 16px;border-top:2px solid #2a2826;font:700 13px var(--font-body);color:#fca5a5;text-wrap:pretty">{{ netMsg }}</div></sc-if>
+        <div style="padding:8px 16px 12px;font:600 12px var(--font-body);color:#cfcac2;text-wrap:pretty">2 to 5 players. Everyone taps READY. The first player in runs the wheel. Three rounds, most points wins. Online points are for fun, not gold.</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ helpOn }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ helpToggle }}" style="position:absolute;inset:0;z-index:14;background:rgba(0,0,0,0.85);overflow:auto;display:flex;align-items:flex-start;justify-content:flex-start;padding:12px;box-sizing:border-box">
+      <div style="background:#000;border:2px solid #ffd23a;width:min(480px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="padding:10px 14px;border-bottom:2px solid #3a3836;font:900 16px var(--font-heading);letter-spacing:0.06em;color:#ffd23a">TREASURE WHEEL · HOW IT WORKS</div>
+        <sc-for list="{{ helpRows }}" as="r" hint-placeholder-count="6"><div style="display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px;padding:7px 14px;border-bottom:2px solid #2a2826;font:600 13px var(--font-body);line-height:1.35"><span style="font:900 11px var(--font-heading);letter-spacing:0.08em;color:#e6b45a">{{ r.k }}</span><span style="text-wrap:pretty">{{ r.v }}</span></div></sc-for>
+        <div style="padding:10px 14px;font:700 12px var(--font-body);color:#cfcac2">Tap anywhere to close</div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  // Where the files live. Repo: project-relative paths. Design canvas copy: uploaded-file URLs (see HANDOFF).
+  URLS = { three: 'vendor/three/three.module.js', save: 'engine/save.js', game: 'minigames/meru/treasure-wheel.js', net: 'engine/duel-net.js' };   // repointed to this project's shared files
+  AUTO_DEMO = !/[?&]embed=1/.test(location.search); // plays itself as a preview; never inside the casino panel
+  state = { vw: 390, vh: 844, h: null, load: 'LOADING THE WHEEL…', err: '', practice: false, party: 2, rounds: 3, help: false, net: null, demo: false, cap: '' };
+  stageRef = React.createRef(); lastSeen = {};
+  async loadMod(u) {
+    // A canvas artboard can run in a frame with no normal address (about:srcdoc), where new URL(u, location.href) throws.
+    // So try every base that might work, then the link exactly as written.
+    const bases = [document.baseURI, location.href, (location.ancestorOrigins || [])[0], self.origin], urls = [];
+    for (const b of bases) { try { const x = new URL(u, b).href; if (/^(https?|blob):/.test(x) && !urls.includes(x)) urls.push(x); } catch (e) {} }
+    if (!urls.includes(u)) urls.push(u);
+    let err = null;
+    for (const url of urls) { try { return await import(url); } catch (e) { err = err || e; } }
+    for (const url of urls) { try { const r = await fetch(url); if (!r.ok) continue; const b = new Blob([await r.text()], { type: 'text/javascript' }), bu = URL.createObjectURL(b); return await import(bu); } catch (e) {} }
+    throw new Error('Could not load ' + u + '\n' + (err && err.message || err));
+  }
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); addEventListener('keydown', this.onKey); addEventListener('keyup', this.onKeyUp); this.onRs();
+    try {
+      const [THREE, sv, gm] = await Promise.all([this.loadMod(this.URLS.three), this.loadMod(this.URLS.save).catch(() => null), this.loadMod(this.URLS.game)]);
+      this.M = gm; this.save = sv && sv.save;
+      this.g = await gm.createTreasureWheel({ THREE, container: this.stageRef.current, save: this.save, onState: h => this.setState({ h }) });
+      window.__wheel = this.g; this.setState({ load: '' }); this.pushInsets(); if (this.AUTO_DEMO) setTimeout(this.demoStart, 700);
+    } catch (e) { console.warn('treasure wheel failed', e); this.setState({ load: 'THE WHEEL DID NOT LOAD', err: String(e && e.message || e) }); }
+  }
+  componentWillUnmount() { clearInterval(this.dT); this.netLeave(); this.g && this.g.destroy(); removeEventListener('resize', this.onRs); removeEventListener('keydown', this.onKey); removeEventListener('keyup', this.onKeyUp); }
+  componentDidUpdate() { this.pushInsets(); }
+  onRs = () => this.setState({ vw: innerWidth, vh: innerHeight });
+  land() { return this.state.vw > this.state.vh * 1.05; }
+  panelW() { return Math.min(270, this.state.vw * 0.36); }
+  pushInsets() { if (!this.g) return; const L = this.land(), h = this.state.h, menu = !h || h.mode === 'menu';
+    this.g.setInsets(menu ? { top: 60, bottom: L ? 16 : 420, left: L ? Math.min(460, this.state.vw * 0.52) : 0, right: 0 } : L ? { top: 54, bottom: 34, left: 0, right: this.panelW() + 6 } : { top: 64, bottom: this.state.demo ? 250 : 200, left: 0, right: 0 }); }
+  onKey = e => { const h = this.state.h; if (!this.g || !h || e.target && e.target.tagName === 'INPUT') return;
+    if (e.code === 'Space' || e.code === 'Enter') { e.preventDefault(); if (e.repeat) return; if (h.canSpin) this.g.chargeStart(); else if (h.phase === 'pass') this.g.ready(); else if (h.phase === 'done') this.g.newTurn(); }
+    else if (e.code === 'KeyB' && h.canBank) this.g.bank(); else if (h.canPick && /^Digit[123]$/.test(e.code)) this.g.pick(+e.code.slice(5) - 1); else if (e.code === 'Escape' && this.state.help) this.setState({ help: false }); };
+  onKeyUp = e => { if (!this.g) return; if (e.code === 'Space' || e.code === 'Enter') this.g.chargeEnd(); };
+  // SPIN button: hold to charge, let go to spin; a plain click (keyboard) spins at medium power
+  spinDown = e => { if (!this.g) return; this.held = true; this.noClick = true; try { e.currentTarget.setPointerCapture(e.pointerId); } catch (er) {} this.g.chargeStart(); };
+  spinUp = () => { if (!this.g || !this.held) return; this.held = false; this.g.chargeEnd(); clearTimeout(this.ncT); this.ncT = setTimeout(() => { this.noClick = false; }, 450); };
+  spinCancel = () => { if (!this.g) return; this.held = false; this.g.chargeEnd(); };
+  spinClick = () => { if (this.noClick || !this.g) return; this.g.spinPower(0.45 + Math.random() * 0.3); };
+  goBack = () => { if (this.state.net) this.netLeave(); try { parent.postMessage({ type: '8gates-minigame', game: 'meruWheel', action: 'back' }, '*'); } catch (e) {} };
+  leave = () => { this.demoStop(); if (this.state.net) { this.netLeave(); this.setState({ net: null }); } this.g && this.g.leave(); };
+  // ---------- DEMO: the wheel plays a practice turn for you, with a caption for each step. PLAY hands it back.
+  cap(t) { if (t && t !== this.state.cap) this.setState({ cap: t }); }
+  demoStart = () => { const g = this.g; if (!g) return; this.netLeave(); this.dn = { wait: 0, hold: 0 }; this.setState({ demo: true, help: false, net: null, practice: true, cap: 'LYRA RUNS THE TREASURE WHEEL. WATCH A FEW TURNS, THEN TAP PLAY.' });
+    const h = this.state.h; if (!h || h.mode !== 'solo') g.startSolo({ practice: true }); clearInterval(this.dT); this.dT = setInterval(this.demoTick, 600); };
+  demoStop = () => { clearInterval(this.dT); if (this.g && this.g.state.charging) this.g.chargeCancel(); this.setState({ demo: false }); };
+  demoTick = () => {
+    const g = this.g, h = this.state.h, d = this.dn; if (!g || !h || !this.state.demo || !d) return;
+    if (h.mode === 'menu') { g.startSolo({ practice: true }); return; }
+    if (d.hold) { if (--d.hold <= 0) { g.chargeEnd(); this.cap('LET GO! THE HIGHER THE METER, THE HARDER THE SPIN.'); } return; }
+    if (h.phase === 'spinning') { this.cap('THE CLAPPER TICKS ON EVERY PEG. WHERE IT STOPS IS WHAT YOU GET.'); return; }
+    if (h.phase === 'bonus') { if (++d.wait < 3) { this.cap('SHUTTLE BONUS! THREE FOX CARDS: NOBLE, HOPE AND KING MIGHT. EACH HIDES +10, +25 OR x2.'); return; } d.wait = 0; g.pick((Math.random() * 3) | 0); return; }
+    if (h.phase === 'done') { if (++d.wait < 4) return; d.wait = 0; g.newTurn(); this.cap('NEW TURN: UP TO 3 SPINS. EVERY NUMBER GOES IN THE POT.'); return; }
+    if (h.phase === 'turnEnd') { const r = h.result; if (r) this.cap(r.kind === 'bust' ? 'BUST! THE POT IS GONE. THAT IS THE RISK OF SPINNING AGAIN.' : r.kind === 'jack' ? 'JACKPOT! IT GOES STRAIGHT INTO THE BANK.' : (r.kicker + ' · ' + r.line)); return; }
+    if (h.phase === 'ready' && h.canSpin) {
+      if (++d.wait < 3) { if (h.used && h.result) this.cap(h.result.kicker + '! POT ' + h.pot + '. BANK IT, OR RISK ANOTHER SPIN?'); return; } d.wait = 0;
+      if (h.canBank && (h.pot >= 30 || (h.used >= 2 && h.pot >= 15))) { this.cap('THE DEMO BANKS ' + h.pot + '. BANKED POINTS ARE SAFE.'); g.bank(); return; }
+      g.chargeStart(); d.hold = 1 + ((Math.random() * 3) | 0); this.cap('HOLD SPIN: THE METER RISES AND FALLS…'); return; }
+    if (h.phase === 'ready' && h.canBank) { g.bank(); }
+  };
+  // ---------- ONLINE (engine/duel-net.js, game 'meruWheel'; up to 5; host = lowest id; host runs the wheel)
+  netSet = p => this.setState(s => ({ net: s.net ? { ...s.net, ...p } : s.net }));
+  peerSet = (id, p) => this.setState(s => s.net ? { net: { ...s.net, peers: { ...s.net.peers, [id]: { ...(s.net.peers[id] || {}), ...p } } } } : null);
+  netOpen = () => { this.demoStop(); this.setState({ net: { st: 'menu', code: '', codeIn: '', peers: {}, ready: false, j: 0, status: '', msg: '' } }); };
+  netClose = () => { this.netLeave(); this.setState({ net: null }); };
+  members() { const n = this.state.net; if (!n || !this.net) return []; const all = [{ id: this.net.id, j: n.j, ready: n.ready, me: true }, ...Object.entries(n.peers).map(([id, p]) => ({ id, ...p, me: false }))]; all.sort((a, b) => a.j - b.j || (a.id < b.id ? -1 : 1)); return all.slice(0, 5); }
+  hostOf(ids) { return ids.slice().sort()[0]; }
+  netCreate = () => { const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ'; let c = ''; for (let i = 0; i < 4; i++) c += A[(Math.random() * A.length) | 0]; this.netJoin(c); };
+  codeType = e => this.netSet({ codeIn: String(e.target.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4) });
+  netJoinBtn = () => this.netJoin(this.state.net && this.state.net.codeIn);
+  async netJoin(code) {
+    code = String(code || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4); if (code.length < 4) { this.netSet({ msg: 'Type the 4-letter room code from your friend.' }); return; }
+    this.netLeave(); if (!this.state.net) this.netOpen(); this.lastSeen = {};
+    this.netSet({ st: 'room', code, status: 'CONNECTING', peers: {}, ready: false, j: Date.now(), msg: '' });
+    let mod; try { mod = await this.loadMod(this.URLS.net); } catch (e) { this.netSet({ st: 'menu', status: '', msg: 'Online play could not load here. It works in the full game (engine/duel-net.js). Try PARTY to pass one phone around.' }); return; }
+    const tok = this.netTok = (this.netTok || 0) + 1;
+    try { const N = await mod.connectDuel({ game: 'meruWheel', code, onJoin: id => this.nHello(id), onLeave: id => this.nGone(id), onMsg: (t, d, id) => this.nMsg(t, d, id), onStatus: s => this.netSet({ status: String(s).toUpperCase() }) });
+      if (tok !== this.netTok) { N.leave(); return; } this.net = N; this.nHello(); this.forceUpdate(); clearInterval(this.nTimer); this.nTimer = setInterval(this.nTick, 4000); }
+    catch (e) { this.netSet({ st: 'menu', msg: 'Could not reach the room. Check your connection.' }); }
+  }
+  netLeave() { this.netTok = (this.netTok || 0) + 1; clearInterval(this.nTimer); if (this.net) { try { this.net.send('ev', { k: 'bye' }); this.net.leave(); } catch (e) {} } this.net = null; this.matchIds = null; this.lastSeen = {}; if (this.g && this.state.h && this.state.h.net) this.g.netEnd(); }
+  nHello(to) { const n = this.state.net; if (!this.net || !n) return; this.net.send('hi', { v: 1, j: n.j, ready: n.ready, playing: !!this.matchIds }, to); }
+  nTick = () => { if (!this.net) return; this.nHello(); const now = performance.now(); for (const id of Object.keys(this.lastSeen)) if (now - this.lastSeen[id] > 25000) this.nGone(id); };
+  nGone(id) { if (!this.lastSeen[id]) return; delete this.lastSeen[id]; this.setState(s => { if (!s.net) return null; const peers = { ...s.net.peers }; delete peers[id]; return { net: { ...s.net, peers } }; }); if (this.matchIds && this.matchIds.includes(id) && this.g) this.g.netDrop(id); }
+  nMsg(t, d, id) {
+    const n = this.state.net; if (!n || !this.net || !d) return; const known = !!this.lastSeen[id]; this.lastSeen[id] = performance.now();
+    if (t === 'hi') { this.peerSet(id, { j: +d.j || Date.now(), ready: !!d.ready, playing: !!d.playing }); if (!known) setTimeout(() => this.nHello(id), 0); setTimeout(this.nMaybeStart, 0); return; }
+    if (t === 'sn') { if (this.matchIds && this.g) this.g.netRecv('sn', d, id); return; }
+    if (t !== 'ev') return;
+    if (d.k === 'ready') { this.peerSet(id, { ready: !!d.on }); setTimeout(this.nMaybeStart, 0); }
+    else if (d.k === 'start') this.nStart(d);
+    else if (d.k === 'bye') this.nGone(id);
+    else if (d.k === 'act' && this.g) this.g.netRecv('ev', d, id);
+  }
+  nMaybeStart = () => { const n = this.state.net; if (!n || !this.net || n.st !== 'room' || this.matchIds) return; const m = this.members(); if (m.length < 2 || !m.every(x => x.ready) || this.hostOf(m.map(x => x.id)) !== this.net.id) return;
+    const d = { k: 'start', ids: m.map(x => x.id) }; this.net.send('ev', d); this.nStart(d); };
+  nStart(d) { if (!this.net || !Array.isArray(d.ids) || !d.ids.includes(this.net.id) || !this.g) return; this.matchIds = d.ids.slice(); const host = this.hostOf(d.ids), C = this.M.COLS;
+    this.g.netBegin({ me: this.net.id, players: d.ids.map((id, k) => ({ id, name: C[k][0], col: C[k][1] })), isHost: host === this.net.id, send: (t, x, to) => this.net && this.net.send(t, x, to), hostId: () => host });
+    this.setState(s => s.net ? { net: { ...s.net, st: 'play', ready: false } } : null); }
+  netReady = () => { const n = this.state.net; if (!n || !this.net) return; const on = !n.ready; this.netSet({ ready: on }); this.net.send('ev', { k: 'ready', on }); setTimeout(this.nMaybeStart, 0); };
+  renderVals() {
+    const S = this.state, h = S.h, L = this.land(), menu = !h || h.mode === 'menu', N = S.net, g = this.g, panelW = this.panelW();
+    const ph = h ? h.phase : 'menu', r = h && h.result, solo = h && h.mode === 'solo';
+    const kc = { bust: '#ec3013', jack: '#ffd23a', bank: '#22c55e', win: '#ffd23a', free: '#38bdf8', bonus: '#a78bfa', meh: '#cfcac4' };
+    const tags = (h && !menu && h.mode !== 'solo' ? h.players : []).map(p => ({ ...p, x: Math.max(6, Math.min(L ? 100 - panelW / S.vw * 100 - 6 : 94, p.x)) + '%', y: p.y + '%', disp: 'flex', bd: p.active ? '#ffd23a' : p.win ? '#22c55e' : '#3a3836', score: String(p.score), aria: p.name + ', ' + p.score + ' points' + (p.active ? ', spinning now' : '') }));
+    const cur = h && h.cur, curCol = cur ? cur.col : '#ffd23a';
+    const ready = !!h && !menu && (ph === 'ready' && h.mine);
+    const dots = h ? Array.from({ length: h.spinsMax }, (_, i) => ({ bg: i < h.used ? '#ffd23a' : 'transparent' })) : [];
+    const waitTxt = !h ? '' : ph === 'spinning' ? 'SPINNING…' : ph === 'turnEnd' ? (r && r.kind === 'bust' ? 'BUST · NEXT TURN' : 'NEXT TURN…') : h.wait || (ph === 'pass' ? 'PASSING THE PHONE' : '');
+    const stand = (h ? h.stand : []).map(s => ({ ...s, sc: s.win ? '#22c55e' : '#fff' }));
+    const helpRows = [
+      { k: 'A TURN', v: 'Up to 3 spins. Each number you land on goes into your POT.' },
+      { k: 'SPIN', v: 'Hold SPIN and let go. The meter rises and falls: let go near the top for a big spin. You can also swipe the wheel, or just tap for a medium spin.' },
+      { k: 'BANK', v: 'Keep your pot. A BUST empties the pot and ends your turn, so bank before your luck runs out.' },
+      { k: 'SPECIALS', v: 'x2 doubles the pot. AGAIN is a free spin. JACKPOT adds the jackpot and banks it. SHUTTLE: pick one of three fox cards (NOBLE, HOPE, KING MIGHT) for +10, +25 or x2.' },
+      { k: 'GOLD', v: 'The gold wheel costs ' + (h ? h.cost : 20) + ' gold a turn and pays your bank in gold. Every paid turn grows the jackpot. PRACTICE is free.' },
+      { k: 'PARTY', v: '2 to 5 players pass one phone. 3 or 5 rounds; most points wins. ONLINE works the same way on separate phones.' },
+      { k: 'SOUND', v: 'The speaker button mutes everything. MUSIC on the menu turns just the lounge band on or off. Music starts after your first tap.' },
+      { k: 'KEYS', v: 'Hold Space to charge, let go to spin · B bank · 1 2 3 pick a card.' },
+    ];
+    return {
+      stageRef: this.stageRef, loadOn: !!S.load, loadTxt: S.load, loadErr: S.err, embed: /[?&]embed=1/.test(location.search), goBack: this.goBack,
+      topH: L ? '44px' : '48px', kicker: h && h.mode === 'net' ? 'ONLINE WHEEL · ROUND ' + h.round + ' OF ' + h.rounds : h && h.mode === 'party' ? 'PARTY · ROUND ' + Math.min(h.round, h.rounds) + ' OF ' + h.rounds : solo ? (h.practice ? 'PRACTICE WHEEL' : 'GOLD WHEEL · ' + h.cost + ' A TURN') : 'MERU CASINO',
+      titleTxt: menu ? 'TREASURE WHEEL' : cur ? (h.mode === 'solo' ? 'TREASURE WHEEL' : cur.name + "'S TURN") : 'TREASURE WHEEL',
+      jackTxt: String(h ? h.jackpot : '—'), goldLbl: solo && h.practice ? 'POINTS' : h && (h.mode === 'party' || h.mode === 'net') ? 'ROUND' : 'GOLD',
+      goldTxt: !h ? '0' : solo && h.practice ? String(h.players[0] ? h.players[0].score : 0) : h.mode === 'party' || h.mode === 'net' ? Math.min(h.round, h.rounds) + '/' + h.rounds : String(h.gold),
+      muteToggle: () => g && g.mute(), muteAria: h && h.mute ? 'Sound off. Turn sound on' : 'Sound on. Turn sound off', muteOff: !!(h && h.mute), muteOnIcon: !(h && h.mute),
+      helpToggle: () => this.setState({ help: !S.help }), helpOn: S.help, helpRows,
+      tags,
+      resOn: !!r && !menu && ph !== 'pass' && ph !== 'over', resCol: r ? kc[r.kind] || '#ffd23a' : '#ffd23a', resKick: r ? r.kicker : '', resLine: r ? r.line : '',
+      resLeft: L ? 'calc((100% - ' + panelW + 'px) / 2)' : '50%', resTop: L ? '52px' : '60px',
+      playOn: !!h && !menu && ph !== 'over',
+      pL: L ? 'auto' : '0px', pT: L ? 'calc(46px + env(safe-area-inset-top))' : 'auto', pW: L ? panelW + 'px' : 'auto', pBL: L ? '2px solid #ffd23a' : '0px', pBT: L ? '0px' : '2px solid #ffd23a', pOv: L ? 'auto' : 'visible', panelPadR: L ? 'env(safe-area-inset-right)' : '0px',
+      demoOn: !!S.demo && !!h && !menu, demoCap: S.cap, demoStop: this.demoStop, demoGo: this.demoStart,
+      curCol, curName: cur ? cur.name : '', logTxt: h ? (h.say || h.log) : '', logCol: h && h.say ? '#ffd23a' : '#cfcac4',
+      musicToggle: () => g && g.music(), musicOn: !!(h && h.music), musicTxt: h && h.music ? 'MUSIC · ON' : 'MUSIC · OFF', musicBg: h && h.music ? '#ffd23a' : '#000', musicFg: h && h.music ? '#000' : '#cfcac4',
+      potLbl: cur && h.mode !== 'solo' ? cur.name + ' · POT' : 'YOUR POT', potTxt: String(h ? h.pot : 0), spinLbl: 'SPIN ' + Math.min(h ? h.used + 1 : 1, h ? h.spinsMax : 3) + ' OF ' + (h ? h.spinsMax : 3), dots,
+      meterOn: !!(h && h.charging), meterW: h ? Math.round(h.power * 100) + '%' : '0%', meterCol: h && h.power > 0.85 ? '#22c55e' : '#ffd23a',
+      readyOn: ready, actGrid: L ? '1fr' : 'minmax(0,1.4fr) minmax(0,1fr)', actH: L ? '56px' : '66px',
+      spinDown: this.spinDown, spinUp: this.spinUp, spinCancel: this.spinCancel, spinClick: this.spinClick, spinOff: !(h && h.canSpin), spinBg: h && h.charging ? '#b91c1c' : h && h.canSpin ? '#ec3013' : '#3a3836',
+      spinTxt: h && h.charging ? 'LET GO!' : 'SPIN', spinSub: h && h.canSpin ? 'HOLD · LET GO AT THE TOP' : 'NO SPINS LEFT',
+      bankGo: () => g && g.bank(), bankOff: !(h && h.canBank), bankBg: h && h.canBank ? '#ffd23a' : '#1c1917', bankFg: h && h.canBank ? '#000' : '#8a847e', bankSub: h && h.canBank ? 'KEEP ' + h.pot : 'SPIN FIRST', bankAria: h && h.canBank ? 'Bank your pot of ' + h.pot : 'Bank. Spin first.',
+      pickOn: !!(h && h.canPick), picks: ['LEFT', 'MIDDLE', 'RIGHT'].map((t, i) => ({ t, aria: 'Pick the ' + t.toLowerCase() + ' card', go: () => g && g.pick(i) })),
+      doneOn: !!h && solo && ph === 'done', newTurn: () => { this.demoStop(); g && g.newTurn(); }, turnSub: h && h.practice ? 'FREE · PRACTICE' : 'COSTS ' + (h ? h.cost : 20) + ' GOLD · YOU HAVE ' + (h ? h.gold : 0),
+      waitOn: !!h && !menu && !ready && !(h && h.canPick) && !(solo && ph === 'done') && ph !== 'over' && !!waitTxt, waitTxt,
+      quitOn: !!h && !menu && h.mode !== 'solo' && ph !== 'pass', leaveGo: this.leave,
+      passOn: !!h && ph === 'pass' && h.mode === 'party', readyGo: () => g && g.ready(), roundTxt: h ? Math.min(h.round, h.rounds) + ' OF ' + h.rounds : '',
+      scoreRow: (h ? h.players : []).map(p => ({ name: p.name, col: p.col, score: String(p.score) })), scoreCols: Math.max(1, h ? h.players.length : 1),
+      overOn: !!h && ph === 'over', overTxt: h && ph === 'over' ? (h.log || 'GAME OVER') : '', stand,
+      againTxt: h && h.mode === 'net' ? 'NEW ROOM' : 'PLAY AGAIN', againGo: () => { if (!g || !h) return; if (h.mode === 'net') { this.leave(); this.netOpen(); } else g.startParty({ players: h.players.length, rounds: h.rounds }); },
+      menuOn: menu && !S.load, menuTop: L ? '46px' : '50px', menuMsg: h ? h.msg : '',
+      tableBtns: [{ t: 'GOLD WHEEL', sub: (h ? h.cost : 20) + ' GOLD A TURN · YOU HAVE ' + (h ? h.gold : 0), on: !S.practice, go: () => this.setState({ practice: false }) }, { t: 'PRACTICE', sub: 'FREE · NO GOLD', on: S.practice, go: () => this.setState({ practice: true }) }].map(b => ({ ...b, bg: b.on ? '#ffd23a' : '#000', fg: b.on ? '#000' : '#fff' })),
+      soloGo: () => { this.demoStop(); g && g.startSolo({ practice: S.practice }); },
+      partyBtns: [2, 3, 4, 5].map(n => ({ t: String(n), on: S.party === n, aria: n + ' players', bg: S.party === n ? '#ffd23a' : '#000', fg: S.party === n ? '#000' : '#fff', go: () => this.setState({ party: n }) })),
+      roundBtns: [3, 5].map(n => ({ t: n + ' ROUNDS', on: S.rounds === n, bg: S.rounds === n ? '#ffd23a' : '#000', fg: S.rounds === n ? '#000' : '#fff', go: () => this.setState({ rounds: n }) })),
+      partyGo: () => { this.demoStop(); g && g.startParty({ players: S.party, rounds: S.rounds }); }, partyTxt: 'START PARTY · ' + S.party + ' PLAYERS, ONE PHONE',
+      recordTxt: h ? 'TURNS ' + h.best.turns + ' · BEST BANK ' + h.best.bank + ' · JACKPOTS ' + h.best.jackpots : '',
+      netOpen: this.netOpen, netClose: this.netClose, netOn: !!N && N.st !== 'play', netMenu: !!N && N.st === 'menu', netRoom: !!N && N.st === 'room', netTitle: N && N.st === 'room' ? 'Waiting for players' : 'Play with friends',
+      netCreate: this.netCreate, codeIn: N ? N.codeIn : '', codeType: this.codeType, netJoinBtn: this.netJoinBtn, netCode: N ? N.code : '', netStatus: N ? N.status : '',
+      netList: this.members().map((m, k) => ({ name: (this.M ? this.M.COLS[k][0] : 'PLAYER') + (m.me ? ' · YOU' : ''), col: this.M ? this.M.COLS[k][1] : '#fff', rd: m.ready ? 'READY' : 'NOT READY', rc: m.ready ? '#22c55e' : '#8a847e' })),
+      netReady: this.netReady, readyBg: N && N.ready ? '#22c55e' : '#ec3013', readyFg: N && N.ready ? '#000' : '#fff', readyTxt: N && N.ready ? 'READY · WAITING FOR THE OTHERS' : 'TAP WHEN READY', netMsgOn: !!(N && N.msg), netMsg: N ? N.msg : '',
+    };
+  }
+}
+</script>
+</body>
+</html>

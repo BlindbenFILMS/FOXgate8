@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#201e1d}a{color:var(--color-accent-300)}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#201e1d;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Player Planet">
+  <div ref="{{ stageRef }}" style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0;overflow:hidden"></div>
+  <div data-hud-host="1" style="position:absolute;inset:0;pointer-events:none;display:{{ hudDisp }}"><dc-import name="Game HUD" game="{{ engine }}" hud="{{ stdHud }}" started="{{ started }}" busy="{{ hudBusy }}" on-hud="{{ onHud }}" world="{{ worldName }}" orbit-url="Space Map.dc.html?from=p1" keys="{{ keysList }}" skip-keys="{{ skipKeys }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  <sc-if value="{{ fBalloon }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;z-index:12;pointer-events:none"><dc-import name="Carnival Balloon Pop" world="{{ engine }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div></sc-if>
+  <sc-if value="{{ fCoconut }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;z-index:12;pointer-events:none"><dc-import name="Carnival Coconut Shy" world="{{ engine }}" hint-size="100%,100%" style="position:absolute;inset:0"></dc-import></div></sc-if>
+  <sc-if value="{{ fDunk }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;z-index:12;pointer-events:none"><dc-import name="Meru Dunk Tank" world="{{ engine }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div></sc-if>
+  <sc-if value="{{ fWhack }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;z-index:12;pointer-events:none"><dc-import name="Whack-a-Mole" world="{{ engine }}" hint-size="100%,100%" style="position:absolute;inset:0"></dc-import></div></sc-if>
+  <sc-if value="{{ fPachinko }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;z-index:12;pointer-events:none"><dc-import name="Fox Gate Pachinko" world="{{ engine }}" hint-size="100%,100%" style="position:absolute;inset:0"></dc-import></div></sc-if>
+  <sc-if value="{{ clawOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none;font-family:var(--font-heading);color:#f3f2f2">
+      <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:max(12px, env(safe-area-inset-top));width:min(320px, calc(100% - 140px));display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;flex-direction:column;background:#201e1d;border:2px solid #f3f2f2">
+          <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+            <span style="width:8px;background:#ffd23a;display:block;flex:none"></span>
+            <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px;border-right:2px solid #3a3836;min-width:0"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ clawTriesLbl }}</span><span style="font:900 24px var(--font-heading);line-height:1">{{ clawTries }}</span></div>
+            <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#cfcac4">POINTS</span><span style="font:900 24px var(--font-heading);line-height:1">{{ clawScore }}</span></div>
+          </div>
+          <div style="padding:8px 12px;display:flex;flex-direction:column;gap:5px;border-bottom:2px solid #3a3836">
+            <div style="display:flex;justify-content:space-between;gap:8px"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em">{{ clawTimeLbl }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a">{{ clawLucky }}</span></div>
+            <div style="height:10px;border:2px solid #f3f2f2;background:#000"><div style="height:100%;width:{{ clawTimeW }};background:#ec3013"></div></div>
+          </div>
+          <span style="padding:7px 12px;font:800 11px var(--font-heading);letter-spacing:0.06em;color:#cfcac4;text-wrap:pretty">{{ clawHint }}</span>
+        </div>
+        <sc-if value="{{ clawFlashOn }}" hint-placeholder-val="{{ false }}"><div style="align-self:flex-start;background:#201e1d;border:2px solid {{ clawFlashCol }};padding:8px 14px;max-width:100%;box-sizing:border-box"><span style="font:900 clamp(22px, 5vw, 34px) var(--font-heading);line-height:1;color:{{ clawFlashCol }}">{{ clawFlash }}</span></div></sc-if>
+        <sc-if value="{{ clawSayOn }}" hint-placeholder-val="{{ false }}"><div style="align-self:flex-start;background:#f3f2f2;color:#201e1d;border:2px solid #201e1d;padding:6px 12px;font:800 13px var(--font-heading);letter-spacing:0.04em;max-width:100%;box-sizing:border-box">{{ clawSay }}</div></sc-if>
+      </div>
+      <button onClick="{{ clawLeave }}" style="position:absolute;right:max(12px, env(safe-area-inset-right));top:max(12px, env(safe-area-inset-top));pointer-events:auto;min-width:104px;min-height:52px;padding:0 16px;background:#ec3013;border:2px solid #201e1d;border-radius:0;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10" style-active="background:#a82410">BACK</button>
+      <sc-if value="{{ clawTurnOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ clawNext }}" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(24px + env(safe-area-inset-bottom));pointer-events:auto;min-width:240px;min-height:60px;padding:0 18px;background:#ec3013;border:2px solid #201e1d;border-radius:0;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;font-size:18px">{{ clawTurnTxt }}</button></sc-if>
+      <sc-if value="{{ clawRevealOn }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(16px + env(safe-area-inset-bottom));width:min(440px, calc(100% - 24px));background:#201e1d;border:2px solid #f3f2f2;display:flex;flex-direction:column;pointer-events:auto">
+          <div style="display:flex;gap:12px;align-items:center;padding:12px 16px;border-bottom:2px solid #3a3836">
+            <div style="width:72px;height:72px;flex:none;background-color:#f3f2f2;background-image:{{ clawRvBg }};background-size:cover;background-position:center;border:2px solid {{ clawRvCol }}"></div>
+            <div style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font:800 11px var(--font-heading);letter-spacing:0.14em;color:{{ clawRvCol }}">{{ clawRvKick }}</span><span style="font:900 28px var(--font-heading);line-height:1">{{ clawRvName }}</span><span style="font:800 12px var(--font-heading);letter-spacing:0.06em;color:#ffd23a">{{ clawRvPts }}</span></div>
+          </div>
+          <span style="padding:10px 16px;font:700 14px var(--font-body);color:#cfcac4;text-wrap:pretty;border-bottom:2px solid #3a3836">{{ clawRvLine }}</span>
+          <button onClick="{{ clawNext }}" style="min-height:56px;padding:0 16px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">NICE! · NEXT</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ clawEndOn }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;background:rgba(32,30,29,0.6);display:flex;align-items:center;justify-content:flex-start;padding:16px;pointer-events:auto">
+          <div style="width:min(440px, 100%);background:#201e1d;border:2px solid #f3f2f2;display:flex;flex-direction:column">
+            <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:4px"><span style="font:800 11px var(--font-heading);letter-spacing:0.16em;color:#ffd23a">CLAW CRANE</span><span style="font:900 34px var(--font-heading);line-height:1.05">{{ clawEndTitle }}</span><span style="font:800 13px var(--font-heading);letter-spacing:0.06em;color:#cfcac4;text-wrap:pretty">{{ clawEndSub }}</span></div>
+            <sc-for list="{{ clawRows }}" as="r" hint-placeholder-count="0"><div style="display:flex;gap:10px;align-items:center;padding:8px 16px;border-bottom:2px solid #3a3836"><span style="width:10px;height:24px;flex:none;background:{{ r.col }}"></span><span style="font:900 14px var(--font-heading);flex:1;min-width:0">{{ r.name }}</span><span style="font:900 18px var(--font-heading)">{{ r.score }}</span></div></sc-for>
+            <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr))"><button onClick="{{ clawMain }}" style="min-height:56px;padding:0 14px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">{{ clawMainTxt }}</button><button onClick="{{ clawLeave }}" style="min-height:56px;padding:0 14px;border:0;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">BACK TO THE MACHINE</button></div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{ pinOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none;font-family:var(--font-heading);color:#f3f2f2">
+      <div style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(16px + env(safe-area-inset-bottom));display:flex;align-items:stretch;background:#201e1d;border:2px solid #f3f2f2">
+        <span style="width:8px;background:#ff4fd8;display:block"></span>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ff4fd8">{{ pinWho }}</span><span style="font:900 26px var(--font-heading);line-height:1">{{ pinScore }}</span></div>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#cfcac4">BALL</span><span style="font:900 20px var(--font-heading);line-height:1.1">{{ pinBall }}</span></div>
+      </div>
+      <button onClick="{{ pinLeave }}" style="position:absolute;right:max(12px, env(safe-area-inset-right));bottom:calc(16px + env(safe-area-inset-bottom));pointer-events:auto;min-width:120px;min-height:52px;padding:0 16px;border:2px solid #201e1d;border-radius:0;background:#ec3013;color:#ffffff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10" style-active="background:#a82410">BACK</button>
+      <sc-if value="{{ pinMsgMid }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:34%;display:flex;flex-direction:column;align-items:flex-start;gap:4px;background:#201e1d;border:2px solid {{ pinMsgCol }};padding:10px 16px;max-width:calc(100% - 24px)"><span style="font:900 clamp(26px, 6vw, 46px) var(--font-heading);line-height:1;color:{{ pinMsgCol }}">{{ pinMsg }}</span><span style="font:800 13px var(--font-heading);letter-spacing:0.1em">{{ pinMsgSub }}</span></div></sc-if>
+      <sc-if value="{{ pinLaneOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:max(12px, env(safe-area-inset-top));width:min(380px, calc(100% - 24px));box-sizing:border-box;display:flex;flex-direction:column;gap:6px;background:#201e1d;border:2px solid #f3f2f2;padding:10px 14px"><span style="font:900 13px var(--font-heading);letter-spacing:0.08em">{{ pinLaneTxt }}</span><div style="height:12px;border:2px solid #f3f2f2;background:#000"><div style="height:100%;width:{{ pinPow }};background:#ec3013"></div></div></div></sc-if>
+      <sc-if value="{{ pinHelpOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;right:max(12px, env(safe-area-inset-right));top:max(12px, env(safe-area-inset-top));display:flex;flex-direction:column;gap:0;background:#201e1d;border:2px solid #f3f2f2;width:min(320px, calc(100% - 24px));box-sizing:border-box"><sc-if value="{{ pinMsgOn }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:2px;padding:8px 16px 8px 12px;border-bottom:2px solid #3a3836;background:#000"><span style="font:900 20px var(--font-heading);line-height:1.05;color:{{ pinMsgCol }};text-wrap:pretty">{{ pinMsg }}</span><span style="font:800 12px var(--font-heading);letter-spacing:0.06em;color:#f3f2f2">{{ pinMsgSub }}</span></div></sc-if><sc-for list="{{ pinHelp }}" as="k" hint-placeholder-count="3"><div style="display:flex;gap:10px;align-items:center;justify-content:space-between;padding:7px 16px 7px 12px;border-bottom:2px solid #3a3836"><span style="font:900 12px var(--font-heading);background:#ff4fd8;color:#201e1d;padding:3px 6px;white-space:nowrap">{{ k.k }}</span><span style="font:800 12px var(--font-heading);letter-spacing:0.04em;text-align:right">{{ k.t }}</span></div></sc-for></div></sc-if>
+      <sc-if value="{{ pinTiltOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:96px;background:#ec3013;color:#fff;border:2px solid #201e1d;padding:6px 12px;font:900 16px var(--font-heading);letter-spacing:0.1em">{{ pinTiltTxt }}</div></sc-if>
+      <sc-if value="{{ pinTurnOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ pinGo }}" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(96px + env(safe-area-inset-bottom));pointer-events:auto;min-width:220px;min-height:60px;padding:0 18px;border:2px solid #201e1d;border-radius:0;background:#ec3013;color:#fff;font:900 18px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">{{ pinTurnTxt }}</button></sc-if>
+      <sc-if value="{{ pinOverOn }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;background:rgba(32,30,29,0.6);display:flex;align-items:center;justify-content:flex-start;padding:16px;pointer-events:auto">
+          <div style="width:min(420px, 100%);background:#201e1d;border:2px solid #f3f2f2;display:flex;flex-direction:column">
+            <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:4px"><span style="font:800 11px var(--font-heading);letter-spacing:0.16em;color:#ff4fd8">PINBALL · GAME OVER</span><span style="font:900 40px var(--font-heading);line-height:1">{{ pinScore }}</span><span style="font:800 13px var(--font-heading);letter-spacing:0.08em;color:#ffd23a">{{ pinOverSub }}</span></div>
+            <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr))"><button onClick="{{ pinAgain }}" style="min-height:56px;padding:0 14px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">PLAY AGAIN</button><button onClick="{{ pinLeave }}" style="min-height:56px;padding:0 14px;border:0;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">BACK TO THE MACHINE</button></div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{ showNote }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:12px;right:12px;top:{{ noteTop }};display:flex;justify-content:flex-start;pointer-events:none;z-index:2">
+      <div style="background:#201e1d;border:2px solid #f3f2f2;padding:12px 16px;display:flex;flex-direction:column;gap:4px;max-width:min(460px,100%)"><span style="font-size:13px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#ec3013">{{ hud.note.title }}</span><span style="font-size:17px;line-height:1.35;color:#f3f2f2;text-wrap:pretty">{{ hud.note.sub }}</span></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ showPrompt }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;display:flex;align-items:{{ prAlign }};justify-content:flex-start;padding:{{ prPad }};box-sizing:border-box;overflow:auto;background:rgba(10,8,6,0.5);z-index:9">
+      <div style="width:{{ prW }};max-height:100%;overflow:auto;box-sizing:border-box;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;padding:{{ prInner }};display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase">{{ prKicker }}</div>
+        <h2 style="font-family:var(--font-heading);font-weight:800;font-size:{{ prTitle }};line-height:0.95;letter-spacing:-0.03em;margin:0;color:#f3f2f2;text-wrap:balance">{{ hud.prompt.title }}</h2>
+        <sc-if value="{{ prHasBody }}" hint-placeholder-val="{{ false }}"><p style="margin:0;font-size:17px;line-height:1.4;color:#f3f2f2;text-wrap:pretty">{{ hud.prompt.body }}</p></sc-if>
+        <div style="display:grid;grid-template-columns:{{ prCols }};gap:8px;border-top:2px solid #f3f2f2;padding-top:12px">
+          <sc-for list="{{ promptButtons }}" as="b" hint-placeholder-count="3">
+            <button onClick="{{ b.pick }}" disabled="{{ b.off }}" style="display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;min-height:{{ prBtnH }};padding:{{ prBtnPad }};background:{{ b.bg }};color:{{ b.fg }};border:2px solid {{ b.bd }};border-radius:0;font:800 {{ prBtnFont }} var(--font-heading);line-height:1.15;text-align:left;cursor:{{ b.cur }}" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)"><span>{{ b.label }}</span><span>{{ b.arrow }}</span></button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ showStart }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;top:0;left:0;bottom:0;width:min(520px,100%);overflow:auto;background:#201e1d;color:#f3f2f2;display:flex;flex-direction:column;justify-content:space-between;gap:20px;padding:clamp(20px, 5vh, 40px) clamp(20px, 5vw, 40px);box-sizing:border-box;border-right:2px solid #f3f2f2;z-index:10">
+      <div style="font-size:13px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#ec3013">8 Gates · Player Planet</div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <h1 style="font-family:var(--font-heading);font-weight:800;font-size:clamp(44px, min(12vw, 13vh), 104px);line-height:0.88;letter-spacing:-0.04em;margin:0;color:#f3f2f2;text-wrap:balance">{{ startTitle }}</h1>
+        <p style="font-size:18px;line-height:1.5;margin:0;max-width:400px;text-wrap:pretty">A tropical frontier with almost nothing on it yet. Land at the pad, walk the brick path to the Community Center and meet the City Planning Office.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <button onClick="{{ start }}" disabled="{{ notReady }}" style="display:flex;justify-content:space-between;align-items:center;width:100%;min-height:56px;padding:16px 20px;background:#ec3013;color:#f3f2f2;border:2px solid #ec3013;border-radius:0;font:800 18px var(--font-heading);text-align:left;cursor:pointer" style-hover="background:var(--color-accent-700)" style-active="background:var(--color-accent-900)"><span>{{ startLabel }}</span><span>→</span></button>
+        <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:14px;background:#f3f2f2;color:#201e1d;padding:8px 10px">{{ error }}</div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;followCam&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Camera&quot;},&quot;outlines&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;quality&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;high&quot;,&quot;options&quot;:[&quot;high&quot;,&quot;low&quot;],&quot;tsType&quot;:&quot;'high'|'low'&quot;,&quot;section&quot;:&quot;Look&quot;}}">
+class Component extends DCLogic {
+  state = { ready: false, error: null, vw: 1200, vh: 800, hud: null, hi: { pad: false, menu: false, split: false, bar: 0 } };
+  stageRef = React.createRef();
+  coarse() { return !!(window.matchMedia && matchMedia('(pointer: coarse)').matches); }
+  opts() { return { outlines: this.props.outlines ?? true, followCam: this.props.followCam ?? true, quality: this.props.quality ?? (this.coarse() ? 'low' : 'high') }; }
+  onResize = () => this.setState({ vw: window.innerWidth, vh: window.innerHeight });
+  onHud = hi => this.setState({ hi });
+  onFest = e => this.setState({ fest: e.detail ? e.detail.game : null });
+  onClaw = e => this.setState({ claw: e.detail || null });
+  onPin = e => this.setState({ pin: e.detail || null });
+  async componentDidMount() {
+    window.addEventListener('resize', this.onResize); this.onResize(); window.addEventListener('8g:fest', this.onFest); window.addEventListener('8g:claw', this.onClaw); window.addEventListener('8g:pin', this.onPin);
+    import(new URL('engine/save.js', document.baseURI).href).then(m => { this.save = m.save; this.forceUpdate(); }).catch(() => {});
+    try {
+      const mod = await import(new URL('worlds/player-planet.js?v=s730c', document.baseURI).href);
+      if (this.unmounted) return;
+      this.game = await mod.createPlanet({ container: this.stageRef.current, options: this.opts(), onState: hud => this.setState({ hud }), onNavigate: url => { window.location.href = encodeURI(url); } });
+      window.__pp = this.game; this.setState({ ready: true });
+    } catch (e) { console.error(e); this.setState({ error: 'Could not start 3D: ' + (e && e.message || e) }); }
+  }
+  componentDidUpdate() { if (this.game) this.game.setOptions(this.opts()); }
+  componentWillUnmount() { window.removeEventListener('8g:fest', this.onFest); window.removeEventListener('8g:claw', this.onClaw); window.removeEventListener('8g:pin', this.onPin); window.removeEventListener('resize', this.onResize); this.unmounted = true; if (this.game) this.game.destroy(); }
+  renderVals() {
+    const S = this.state, { hud, vw, vh, error, ready } = S, g = this.game;
+    const h = hud || { quest: {}, items: [] };
+    const blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const phone = Math.min(vw, vh) < 520, land = phone && vw > vh, bar = S.hi.bar || 0, sv = this.save && this.save.data;
+    const pr = h.prompt, free = h.phase === 'free';
+    const name = h.planet || 'Your Planet';
+    const stdHud = { hp: h.hp ?? 100, hpMax: 100, en: 100, gold: sv ? sv.gold : 0, hour: h.hour ?? 9, day: h.day || 1, items: h.items || [], place: h.place || name, quest: { text: (h.quest && h.quest.title ? h.quest.title + ' · ' : '') + (h.quest && h.quest.text || '') }, prompt: free && h.act && !h.dialog && !pr && !h.turret ? h.act : null,   /* s562: no centred prompt in the Gunner turret (it covered the crosshair); SWITCH FOXES / TALK / Esc climb down */ toast: h.toast, muted: !!h.muted, weather: (h.weather === 'Rain' ? 'Rain' : 'Clear') + (h.power === 'OUT' ? ' · power out' : ''), boat: false, inCave: false, weapons: [], dialog: h.dialog };
+    return {
+      stageRef: this.stageRef, engine: g, stdHud, hud: h, worldName: name, hudDisp: (S.fest && !S.claw) || S.pin || h.launch ? 'none' : 'block', fBalloon: S.fest === 'balloon', fCoconut: S.fest === 'coconut', fDunk: S.fest === 'dunk', fWhack: S.fest === 'whack', fPachinko: S.fest === 'pachinko',
+      started: !!hud && h.phase !== 'start', hudBusy: !!pr || !free || (!!S.fest && !S.claw), onHud: this.onHud,
+      stageTop: S.hi.split ? 'calc(' + bar + 'px + (100% - ' + bar + 'px) / 2)' : bar + 'px',
+      keysList: [['WASD', 'move'], ['Shift', 'run'], ['Drag', 'look'], ['E', 'talk / use'], ['Space', 'jump'], ['T', '+1 hour'], ['M', 'map'], ['I', 'menu']],
+      skipKeys: ['KeyO', 'KeyH', 'KeyV'],
+      showNote: !!h.note && !pr && !S.hi.menu && !h.dialog && !S.fest && !(h.launch && false), noteTop: phone ? (land ? '56px' : '30%') : '104px',
+      showPrompt: !!pr, prKicker: name, prHasBody: !!(pr && pr.body), prAlign: phone && !land ? 'flex-end' : 'center', prPad: land ? '8px' : phone ? '12px' : '32px', prInner: land ? '12px 16px' : phone ? '18px' : '28px', prTitle: land ? '28px' : phone ? '34px' : '44px', prCols: pr && land && pr.buttons.length > 8 ? 'repeat(3,minmax(0,1fr))' : pr && (land && pr.buttons.length > 3 || pr.buttons.length > 6) ? 'minmax(0,1fr) minmax(0,1fr)' : 'minmax(0,1fr)', prW: land && pr && pr.buttons.length > 3 ? 'min(780px,100%)' : 'min(480px,100%)', prBtnH: pr && pr.buttons.length > 6 ? '46px' : '52px', prBtnPad: pr && pr.buttons.length > 6 ? '8px 12px' : '12px 18px', prBtnFont: pr && pr.buttons.length > 6 ? '14px' : '16px',
+      promptButtons: pr ? pr.buttons.map((label, i) => { const off = !!(pr.off && pr.off[i]), last = i === pr.buttons.length - 1; return { label, off, arrow: off ? '' : '→', bg: off ? '#201e1d' : last ? '#201e1d' : '#ec3013', fg: off ? '#8a847e' : '#f3f2f2', bd: off ? '#4a4644' : last ? '#f3f2f2' : '#ec3013', cur: off ? 'default' : 'pointer', pick: e => { blur(e); g && g.promptPick(i); } }; }) : [],
+      showStart: !hud || h.phase === 'start' || !!error, startTitle: h.planet || 'Your Planet',
+      startLabel: !ready ? 'Loading…' : 'Land', notReady: !ready,
+      start: e => { blur(e); g && g.start(); },
+      hasError: !!error, error,
+      ...(() => { const h = S.pin, P = this.game && this.game._pin; if (!h) return { pinOn: false }; const c = h.cur || {}, m = h.msg;
+        return { pinOn: true, pinWho: (c.name || 'YOU') + (c.mult > 1 ? ' · ×' + c.mult : ''), pinScore: c.score || '0', pinBall: (c.ball || 1) + ' / ' + (c.balls || 3) + (h.multi ? ' · MULTI' : ''),
+          pinMsgOn: !!m, pinMsgMid: !!m && !(h.phase === 'play' || h.phase === 'turn'), pinMsg: m ? m.t : '', pinMsgSub: m ? m.sub || '' : '', pinMsgCol: m ? m.col || '#ffd23a' : '#ffd23a',
+          pinLaneOn: !!h.lane, pinLaneTxt: h.touch ? 'HOLD THE RIGHT SIDE · LET GO TO LAUNCH' : 'HOLD SPACE · LET GO TO LAUNCH', pinPow: Math.round((h.pow || 0) * 100) + '%',
+          pinHelpOn: h.phase === 'play' || h.phase === 'turn', pinHelp: h.touch ? [{ k: 'LEFT SIDE', t: 'LEFT FLIPPER' }, { k: 'RIGHT SIDE', t: 'RIGHT FLIPPER' }, { k: 'HOLD RIGHT', t: 'PULL + LAUNCH' }] : [{ k: 'Z / \u2190', t: 'LEFT FLIPPER' }, { k: 'M / \u2192', t: 'RIGHT FLIPPER' }, { k: 'SPACE', t: 'HOLD + LET GO TO LAUNCH' }, { k: '\u2191', t: 'NUDGE' }],
+          pinTiltOn: !!(h.tilt || h.tilted), pinTiltTxt: h.tilted ? 'TILT' : 'TILT WARNING', pinTurnOn: h.phase === 'turn', pinTurnTxt: 'PLAY BALL ' + (c.ball || 1) + (h.mode === 'local' ? ' · ' + (c.name || '') : ''),
+          pinOverOn: h.phase === 'over', pinOverSub: (h.newBest ? 'NEW BEST · ' : 'BEST ' + (h.best || 0) + ' · ') + '+' + (h.gold || 0) + ' GOLD',
+          pinLeave: e => { e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur(); P && P.end(); }, pinAgain: () => P && P.again(), pinGo: () => P && P.go() }; })(),
+      ...(() => { const h = S.claw, C = this.game && this.game._claw; if (!h) return { clawOn: false }; const touch = matchMedia('(pointer: coarse)').matches, rv = h.reveal, dn = h.done, pt = h.party, nm = id => ((h.shelf || []).find(s => s.id === id) || {}).name || id;
+        const out = h.phase === 'out', fin = h.phase === 'done' && !!dn, wins = dn && dn.wins && dn.wins.length ? dn.wins.map(nm).join(', ') : '';
+        return { clawOn: true, clawTriesLbl: h.mode === 'play' ? 'TRIES' : pt ? pt.name + ' · TRIES' : h.mode === 'demo' ? 'DEMO' : 'PRACTICE', clawTries: h.mode === 'play' ? String(h.credits) : pt ? String(pt.left) : '\u221e', clawScore: String(h.score || 0),
+          clawTimeLbl: h.phase === 'aim' ? 'TIME ' + h.aimLeft : h.power ? 'POWER CLAW' : 'CLAW', clawTimeW: h.phase === 'aim' ? Math.round((h.aimFrac || 0) * 100) + '%' : '0%', clawLucky: 'LUCKY ' + Math.round((h.lucky || 0) * 100) + '%',
+          clawHint: touch ? 'STICK = MOVE · 1 = DROP' : 'WASD / ARROWS = MOVE · SPACE = DROP · V = VIEW', clawFlashOn: !!h.flash, clawFlash: h.flash ? h.flash.txt : '', clawFlashCol: h.flash ? h.flash.col : '#ffd23a', clawSayOn: !!h.say, clawSay: h.say || '',
+          clawTurnOn: h.phase === 'turn', clawTurnTxt: (pt ? pt.name + ' · ' : '') + 'YOUR TURN · GO',
+          clawRevealOn: h.phase === 'reveal' && !!rv, clawRvKick: rv ? rv.kind + ' · ' + rv.rarity : '', clawRvName: rv ? rv.name : '', clawRvLine: rv ? rv.line : '', clawRvCol: rv ? rv.col : '#ffd23a', clawRvPts: rv ? '+' + rv.pts + ' POINTS' + (rv.isNew ? ' · NEW!' : rv.keep ? ' · \u00d7' + rv.count + ' ON YOUR SHELF' : '') : '', clawRvBg: rv && rv.thumb ? 'url(' + rv.thumb + ')' : 'none',
+          clawEndOn: out || fin, clawEndTitle: out ? (dn ? dn.title : 'OUT OF TRIES') : dn ? dn.title : '', clawEndSub: out ? (wins ? 'YOU WON ' + wins + ' · ' : '') + 'YOU HAVE ' + h.gold + ' GOLD' : fin && wins ? 'YOU WON ' + wins : '',
+          clawRows: fin ? (dn.rows || []).map(r => ({ name: r.name, col: r.col, score: String(r.score) })) : [], clawMainTxt: out ? 'BUY ' + h.packTries + ' TRIES · ' + h.packCost + ' GOLD' : 'PLAY AGAIN',
+          clawLeave: e => { e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur(); C && C.end(); }, clawNext: () => C && C.act(), clawMain: () => C && (out ? C.buy() : C.again()) }; })(),
+    };
+  }
+}
+</script>
+</body>
+</html>

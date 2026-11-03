@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nebo Lumber Mill</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Cedar's Lumber Mill">
+  <div ref="{{ stageRef }}" onPointerDown="{{ unlock }}" style="position:absolute;inset:0"></div>
+  <div style="position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 58%, rgba(0,0,0,0.3) 100%)"></div>
+  <div data-hud-host="1" style="position:absolute;inset:0;pointer-events:none;z-index:2"><dc-import name="Game-HUD" game="{{ g }}" hud="{{ stdHud }}" started="{{ walkOn }}" busy="{{ hudBusy }}" on-hud="{{ onHud }}" world="Nebo" vehicle="mill" keys="{{ keysList }}" skip-keys="{{ skipKeys }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  <sc-if value="{{ topOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="top" style="position:absolute;left:0;right:0;top:0;z-index:3;pointer-events:none;display:flex;flex-direction:column">
+      <div style="background:#000;border-bottom:2px solid #ffd23a;display:flex;align-items:stretch;padding-top:env(safe-area-inset-top)">
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">CEDAR'S MILL · DAY {{ h.day }}</span><span style="font:900 20px var(--font-heading);font-variant-numeric:tabular-nums">{{ orderTxt }}</span></div>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">EARNED</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;color:#e6b45a">{{ earnedTxt }}</span></div>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;min-width:0;flex:1"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">STARS</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap">{{ starsTxt }}</span></div>
+        <button onClick="{{ soundToggle }}" aria-label="{{ soundAria }}" style="pointer-events:auto;flex:none;width:48px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#2a2826"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"></path><sc-if value="{{ soundOn }}" hint-placeholder-val="{{ true }}"><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"></path></sc-if><sc-if value="{{ soundOff }}" hint-placeholder-val="{{ false }}"><path d="M17 9l5 6M22 9l-5 6"></path></sc-if></svg></button>
+        <button onClick="{{ helpToggle }}" aria-label="How the mill works" style="pointer-events:auto;flex:none;width:52px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 20px var(--font-heading);cursor:pointer" style-hover="background:#2a2826">?</button>
+      </div>
+      <sc-if value="{{ cardOn }}" hint-placeholder-val="{{ false }}">
+        <div style="margin:6px;align-self:flex-start;max-width:calc(100% - 12px);line-height:1.25;background:#fbfbf7;color:#201e1d;border:2px solid #201e1d;display:flex;flex-direction:column">
+          <div style="background:#1f4a2f;color:#fff;padding:4px 8px;display:flex;gap:4px 10px;align-items:center;flex-wrap:wrap"><span style="font:900 12px var(--font-heading);letter-spacing:0.06em;white-space:nowrap">ORDER · {{ h.job.who }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.04em;color:#f2c94c;white-space:nowrap">{{ h.job.item }} · {{ h.job.wood }}</span><sc-for list="{{ notes }}" as="n" hint-placeholder-count="2"><span style="display:flex;gap:5px;align-items:center;white-space:nowrap;font:800 11px var(--font-heading);letter-spacing:0.04em;color:#ffffff"><span style="width:11px;height:11px;border:2px solid #fbfbf7;background:{{ n.sw }};display:{{ n.swD }}"></span>{{ n.t }}</span></sc-for></div>
+          <sc-if value="{{ chipsOn }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-wrap:wrap;gap:4px;padding:5px 6px">
+            <sc-for list="{{ chips }}" as="c" hint-placeholder-count="4"><span style="display:flex;gap:5px;align-items:center;padding:2px 6px;border:2px solid {{ c.bd }};background:{{ c.bg }};font:900 11px var(--font-heading);letter-spacing:0.04em;color:{{ c.fg }};white-space:nowrap">{{ c.t }}</span></sc-for>
+          </div></sc-if>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{ barOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="bottom" style="position:absolute;left:0;right:0;bottom:0;z-index:4;display:flex;flex-direction:column;pointer-events:{{ barPE }}">
+      <sc-if value="{{ swatchOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:#000;border-top:2px solid #3a3836">
+          <sc-for list="{{ swatches }}" as="s" hint-placeholder-count="4"><button onClick="{{ s.go }}" aria-label="{{ s.aria }}" style="min-height:48px;border:0;border-right:2px solid #2a2826;border-radius:0;background:#000;cursor:pointer;display:flex;align-items:center;gap:6px;padding:0 8px;color:#fff;font:900 11px var(--font-heading);letter-spacing:0.02em;outline:{{ s.ol }};outline-offset:-4px" style-hover="background:#1a1816"><span style="flex:none;width:18px;height:18px;border:2px solid #fbfbf7;background:{{ s.col }}"></span><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.name }}</span></button></sc-for>
+        </div>
+      </sc-if>
+      <div style="background:#000;border-top:2px solid #ffd23a;padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:grid;grid-template-columns:repeat({{ toolCols }},minmax(0,1fr))">
+        <sc-for list="{{ tools }}" as="t" hint-placeholder-count="4">
+          <button onClick="{{ t.go }}" aria-label="{{ t.aria }}" style="min-height:58px;padding:6px 4px 6px 8px;border:0;border-right:2px solid #2a2826;border-radius:0;background:{{ t.bg }};color:{{ t.fg }};cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:3px;min-width:0" style-hover="filter:brightness(1.2)">
+            <span style="font:900 13px var(--font-heading);letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.label }}</span>
+            <span style="font:800 9px var(--font-heading);letter-spacing:0.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ t.bc }}">{{ t.badge }}</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ hintOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;right:max(10px, env(safe-area-inset-right));bottom:{{ trayBottom }};z-index:3;pointer-events:none;max-width:min(260px, 64%);background:#000;border:2px solid #ffd23a;padding:5px 10px;font:800 11px var(--font-heading);letter-spacing:0.08em;line-height:1.35;color:#ffd23a;text-wrap:pretty">{{ hintTxt }}</div>
+  </sc-if>
+  <sc-if value="{{ sayOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(10px, env(safe-area-inset-left));bottom:{{ sayBottom }};z-index:3;pointer-events:none;max-width:min(340px, calc(100% - 20px));background:rgba(0,0,0,0.88);border:2px solid #3a3836;padding:8px 10px;font:700 13px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">{{ h.say }}</div>
+  </sc-if>
+  <sc-if value="{{ buckOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="bottom" style="position:absolute;left:50%;bottom:{{ meterBottom }};transform:translateX(-50%);z-index:5;pointer-events:none;width:min(360px, calc(100% - 24px));background:#000;border:2px solid {{ buckCol }};display:flex;align-items:stretch">
+      <div style="flex:1;padding:6px 12px;display:flex;flex-direction:column;gap:1px"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">LENGTH</span><span style="font:900 clamp(24px,7vw,32px) var(--font-heading);line-height:1;font-variant-numeric:tabular-nums;color:{{ buckCol }}">{{ buckLen }}</span></div>
+      <div style="flex:none;padding:6px 12px;display:flex;flex-direction:column;justify-content:center;gap:2px;border-left:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">FLAG {{ buckWant }}</span><span style="font:900 13px var(--font-heading);letter-spacing:0.06em;color:{{ buckCol }}">{{ buckZone }}</span></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ ripOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="bottom" style="position:absolute;left:50%;bottom:{{ meterBottom }};transform:translateX(-50%);z-index:5;pointer-events:none;width:min(380px, calc(100% - 24px));background:#000;border:2px solid {{ ripCol }};display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:6px 12px"><span style="font:900 clamp(16px,4.6vw,22px) var(--font-heading);color:{{ ripCol }}">{{ ripWord }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em;color:#ffd23a;white-space:nowrap">ON THE LINE {{ ripPct }}</span></div>
+      <div style="height:8px;margin:0 12px 10px;background:#2a2826;display:flex"><span style="display:block;background:#ffd23a;width:{{ ripProg }}"></span></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ pressOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="bottom" style="position:absolute;left:50%;bottom:{{ meterBottom }};transform:translateX(-50%);z-index:5;pointer-events:none;width:min(420px, calc(100% - 24px));background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:6px 12px"><span style="font:900 clamp(18px,5vw,24px) var(--font-heading);color:{{ pressCol }}">{{ h.press.zone }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em;color:#ffd23a;white-space:nowrap">GROOVE · LET GO IN GREEN</span></div>
+      <div style="position:relative;height:22px;margin:0 12px 10px;display:flex;gap:2px">
+        <span style="flex:{{ pz.a }};background:#9ca3af;display:block"></span><span style="flex:{{ pz.b }};background:#22c55e;outline:3px solid #ffd23a;display:block"></span><span style="flex:{{ pz.c }};background:#e6b45a;display:block"></span><span style="flex:{{ pz.d }};background:#ec3013;display:block"></span>
+        <span style="position:absolute;top:-6px;bottom:-6px;left:{{ pressX }};width:4px;margin-left:-2px;background:#ffffff;display:block"></span>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ flashOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ flashTop }};transform:translateX(-50%);z-index:5;pointer-events:none;max-width:calc(100% - 24px);background:rgba(0,0,0,0.9);border:2px solid {{ flashCol }};display:flex;align-items:stretch">
+      <span style="flex:none;width:10px;background:{{ flashCol }};display:block"></span>
+      <span style="padding:8px 14px;font:900 clamp(15px,4vw,22px) var(--font-heading);letter-spacing:0.04em;color:#fff;text-wrap:pretty">{{ flashTxt }}</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ reactOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ reactTop }};transform:translateX(-50%);z-index:6;pointer-events:none;width:min(420px, calc(100% - 24px));background:#000;border:3px solid {{ h.react.col }};display:flex;flex-direction:column">
+      <div style="display:flex;align-items:stretch"><div style="flex:1;padding:10px 14px;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">{{ h.react.who }}</span><span style="font:900 clamp(30px,9vw,44px) var(--font-heading);line-height:1;color:{{ h.react.col }}">{{ h.react.word }}</span></div><div style="flex:none;min-width:96px;padding:0 12px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;background:{{ h.react.col }};color:#000"><span style="font:900 20px var(--font-heading);letter-spacing:0.04em">{{ reactStars }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.08em">{{ reactPay }}</span></div></div>
+      <div style="padding:8px 14px 10px;border-top:2px solid #2a2826;font:700 15px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">“{{ h.react.line }}”</div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(10px, env(safe-area-inset-left));bottom:{{ trayBottom }};z-index:7;pointer-events:none;width:min(460px, calc(100% - 112px));background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="padding:5px 12px;border-bottom:2px solid #3a3836;font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;background:#ec3013;display:block"></span>DEMO</div>
+      <div style="display:flex;align-items:stretch"><sc-if value="{{ demoKeyOn }}" hint-placeholder-val="{{ false }}"><div style="flex:none;min-width:64px;display:flex;align-items:center;justify-content:center;padding:0 10px;background:#ec3013;color:#fff;font:900 14px var(--font-heading);border-right:2px solid #3a3836">{{ h.demo.key }}</div></sc-if><div style="padding:9px 12px;font:900 clamp(14px,3.8vw,19px) var(--font-heading);letter-spacing:0.03em;line-height:1.2;color:#fff;text-wrap:pretty">{{ h.demo.cap }}</div></div>
+    </div>
+    <button onClick="{{ demoExit }}" aria-label="Exit the demo" style="position:absolute;right:max(10px, env(safe-area-inset-right));bottom:{{ trayBottom }};z-index:7;min-width:88px;min-height:48px;padding:0 14px;border:2px solid #ec3013;border-radius:0;background:#ec3013;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">EXIT DEMO</button>
+  </sc-if>
+  <sc-if value="{{ introOn }}" hint-placeholder-val="{{ true }}">
+    <div data-safe="intro" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:6;width:min(420px, calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column">
+      <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">NEBO · CEDAR'S LUMBER MILL · DAY {{ h.day }}</span><span style="font:900 26px var(--font-heading);line-height:1.05">Work the mill</span><span style="font:700 13px var(--font-body);color:#cfcac2;text-wrap:pretty">A neighbour orders, a log rolls in from the forest. Peel it, cut it, saw it, turn it, plane it and stain it, then hand it over. No clock. Careful work earns stars and tips, in gold.</span></div>
+      <sc-for list="{{ introRows }}" as="r" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:76px minmax(0,1fr);gap:12px;padding:6px 16px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;color:#e6b45a">{{ r.v }}</span></div></sc-for>
+      <button onClick="{{ soundToggle }}" aria-label="{{ soundAria }}" style="display:grid;grid-template-columns:76px minmax(0,1fr);gap:12px;align-items:center;min-height:44px;padding:6px 16px;border:0;border-bottom:2px solid #2a2826;border-radius:0;background:#000;color:#fff;cursor:pointer;text-align:left;font:700 13px var(--font-body)" style-hover="background:#1a1816"><span>Sound</span><span style="font-family:var(--font-heading);font-weight:800;color:#e6b45a">{{ soundTxt }}</span></button>
+      <sc-if value="{{ backOn }}" hint-placeholder-val="{{ false }}"><a href="{{ backHref }}" style="display:flex;align-items:center;min-height:44px;padding:0 16px;border-bottom:2px solid #2a2826;background:#000;color:#ffd23a;font:900 12px var(--font-heading);letter-spacing:0.1em;text-decoration:none">← LEAVE · BACK TO {{ backName }}</a></sc-if>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+        <button onClick="{{ demoGo }}" style="min-height:48px;padding:0 16px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WATCH THE DEMO</button>
+        <button onClick="{{ walkGo }}" style="min-height:48px;padding:0 16px;border:0;border-radius:0;background:#000;color:#ffd23a;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">LOOK AROUND</button>
+      </div>
+      <button onClick="{{ goWork }}" style="min-height:56px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">PUT ME TO WORK</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ helpOn }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ helpToggle }}" style="position:absolute;inset:0;z-index:9;background:rgba(0,0,0,0.82);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #ffd23a;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="padding:10px 14px;border-bottom:2px solid #3a3836;font:900 16px var(--font-heading);letter-spacing:0.06em;color:#ffd23a">HOW THE MILL WORKS</div>
+        <sc-for list="{{ helpRows }}" as="r" hint-placeholder-count="8"><div style="display:grid;grid-template-columns:88px minmax(0,1fr);gap:10px;padding:7px 14px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body);line-height:1.35"><span style="font:900 11px var(--font-heading);letter-spacing:0.08em;color:#e6b45a">{{ r.k }}</span><span style="text-wrap:pretty">{{ r.v }}</span></div></sc-for>
+        <div style="padding:10px 14px;font:700 12px var(--font-body);color:#cfcac2">Tap anywhere to close</div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:8;background:rgba(0,0,0,0.78);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #3a3836;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+          <div style="padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ doneKicker }}</span><span style="font:900 24px var(--font-heading);line-height:1.05">Day's work done</span><span style="font:700 12px var(--font-body);color:#cfcac2">{{ doneSub }}</span></div>
+          <div style="width:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#ec3013"><span style="font:900 30px var(--font-heading)">{{ d.total }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em">GOLD</span></div>
+        </div>
+        <sc-if value="{{ eodOn }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:10px;padding:10px 16px;background:#ffd23a;color:#000;border-bottom:2px solid #000;font:900 14px var(--font-heading);letter-spacing:0.06em"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18.5 21 12 16.8 5.5 21l2-7.5L2 9h7z" fill="#000"></path></svg>EMPLOYEE OF THE DAY</div></sc-if>
+        <sc-for list="{{ doneRows }}" as="r" hint-placeholder-count="5"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:7px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;font-variant-numeric:tabular-nums">{{ r.v }}</span></div></sc-for>
+        <sc-for list="{{ unlocks }}" as="u" hint-placeholder-count="1"><div style="padding:7px 16px;border-bottom:2px solid #2a2826;font:800 13px var(--font-heading);letter-spacing:0.04em;color:#22c55e">UNLOCKED · {{ u.t }}</div></sc-for>
+        <div style="padding:8px 16px 4px;font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">UPGRADE THE MILL · YOU HAVE {{ goldTxt }}</div>
+        <sc-for list="{{ shop }}" as="s" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 16px;border-top:2px solid #2a2826">
+            <div style="display:flex;flex-direction:column;min-width:0"><span style="font:900 13px var(--font-heading);letter-spacing:0.04em">{{ s.name }}</span><span style="font:600 12px var(--font-body);color:#cfcac2">{{ s.line }}</span></div>
+            <button onClick="{{ s.buy }}" disabled="{{ s.off }}" style="min-width:84px;min-height:44px;padding:0 12px;border:2px solid {{ s.bd }};border-radius:0;background:{{ s.bg }};color:{{ s.fg }};font:900 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;opacity:{{ s.op }}" style-hover="filter:brightness(1.15)">{{ s.btn }}</button>
+          </div>
+        </sc-for>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:8px">
+          <button onClick="{{ goWork }}" style="min-height:52px;padding:0 14px;border:0;border-top:2px solid #3a3836;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">NEXT DAY</button>
+          <button onClick="{{ walkGo }}" style="min-height:52px;padding:0 14px;border:0;border-top:2px solid #3a3836;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">LOOK AROUND</button>
+          <button onClick="{{ toIntro }}" style="min-height:52px;padding:0 14px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">TAKE A BREAK</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  state = { h: null, help: false, vw: 1200, vh: 800, hi: null };
+  stageRef = React.createRef();
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs(); try { this.ro = new ResizeObserver(this.onRs); this.stageRef.current && this.ro.observe(this.stageRef.current.parentElement); } catch (e) {}
+    try { let m = null, err = null; for (const p of ['minigames/nebo/lumber-mill.js', new URL('minigames/nebo/lumber-mill.js', document.baseURI).href]) { try { m = await import(p); break; } catch (e) { err = e; console.warn('mill import ' + p + ': ' + e); } } if (!m) throw err; this.g = await m.createLumberMill({ container: this.stageRef.current, onState: h => this.setState({ h }), music: this.musicUrls() }); window.__mill = this.g; this.forceUpdate(); if (/[?&]demo=1/.test(location.search)) setTimeout(() => this.g.demoStart(), 400); else if (/[?&]walk=1/.test(location.search)) setTimeout(() => this.g.enterWalk(), 400); }
+    catch (e) { console.warn('lumber mill failed: ' + (e && e.stack || String(e))); }
+  }
+  componentDidUpdate() { const root = this.stageRef.current && this.stageRef.current.parentElement; if (!root || !this.g || !this.g.setSafe) return; const rb = root.getBoundingClientRect(); let top = 0, bot = 0, left = 0; root.querySelectorAll('[data-safe]').forEach(el => { const r = el.getBoundingClientRect(); if (!r.height) return; if (el.dataset.safe === 'top') top = Math.max(top, r.bottom - rb.top); else if (el.dataset.safe === 'intro' && rb.width > rb.height) left = Math.max(left, r.right - rb.left); else bot = Math.max(bot, rb.bottom - r.top); }); const H = rb.height; this.g.setSafe(Math.round(Math.min(top, H * 0.36)), Math.round(Math.min(bot, H * (this.g.hud().phase === 'intro' ? 0.62 : 0.42))), Math.round(Math.min(left, rb.width * 0.6))); }
+  componentWillUnmount() { removeEventListener('resize', this.onRs); this.g && this.g.destroy(); }
+  onRs = () => { const el = this.stageRef.current, r = el && el.parentElement ? el.parentElement.getBoundingClientRect() : null; this.setState({ vw: r && r.width ? r.width : innerWidth, vh: r && r.height ? r.height : innerHeight }); };
+  onHud = hi => this.setState({ hi });
+  // music files (the canvas copy points these at uploaded assets)
+  MUSIC = { work: 'module:minigames/nebo/audio/mill-work.js', walk: 'module:minigames/nebo/audio/mill-walk.js' };
+  musicUrls() { const r = u => /^(\/|https?:|blob:|module:|data:)/.test(u) ? u : new URL(u, document.baseURI).href; return { work: r(this.MUSIC.work), walk: r(this.MUSIC.walk) }; }
+  renderVals() {
+    const S = this.state, g = this.g, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const h = S.h || { phase: 'intro', day: 1, orderN: 0, perDay: 3, earned: 0, tips: 0, stars: 0, job: null, tool: null, flash: null, say: '', react: null, done: null, gold: 0, upgrades: [], press: null, hint: null, buck: null, rip: null, walk: null };
+    const busy = ['arrive', 'order', 'work', 'react', 'leave'].includes(h.phase), work = h.phase === 'work', J = h.job, d = h.done || { total: 0 }, port = S.vh > S.vw, walk = h.phase === 'walk';
+    const swatchOn = work && h.stainPick, extra = swatchOn;
+    const tools = !J || !work ? [] : [...J.tasks.map(t => { const on = h.tool === t.id, nx = h.hint && h.hint.tool === t.id && !on; return { label: t.label, aria: t.name, badge: t.done ? 'DONE ✓' : t.locked ? 'LATER' : nx ? 'NEXT ▸' : t.txt, bg: on ? '#ffd23a' : nx ? '#1f3a24' : '#000000', fg: on ? '#000000' : t.done || t.locked ? '#8a847e' : '#ffffff', bc: on ? '#000000' : t.done ? '#22c55e' : nx ? '#ffd23a' : '#8a847e', go: e => { blur(e); g && g.setTool(t.id); } }; }),
+      { label: 'HAND OVER', aria: 'Hand the order over', badge: h.allDone ? 'READY' : h.confirm ? 'TAP AGAIN' : 'NOT DONE', bg: h.allDone ? '#ec3013' : '#000000', fg: '#ffffff', bc: h.allDone ? '#ffffff' : '#8a847e', go: e => { blur(e); g && g.handOver(); } }];
+    const rows2 = port && tools.length > 5, barH = (rows2 ? 128 : 70) + (extra ? 56 : 0);
+    const W = h.walk || {}, sv = (() => { try { return JSON.parse(localStorage.getItem('8gates.save.v1') || 'null'); } catch (e) { return null; } })();
+    const stdHud = { hp: 100, hpMax: 100, en: 100, gold: h.gold, hour: 10.5, day: 1, items: sv ? Object.entries(sv.items || {}).filter(([, n]) => n > 0).map(([id, n]) => ({ id, n, label: id })) : [], place: "Nebo · Cedar's Lumber Mill", quest: W.quest || { text: 'LOOK AROUND' }, prompt: W.prompt || null, toast: W.toast || null, dialog: W.dialog || null, muted: false, weather: 'Clear', boat: false, inCave: false, weapons: [], vehicles: [], vehAmmo: [] };
+    const B = h.buck, R = h.rip, pr = h.press;
+    return {
+      stageRef: this.stageRef, h, d, g: g || null, stdHud, walkOn: walk && !!g, hudBusy: !walk, onHud: this.onHud, keysList: [['WASD', 'walk'], ['E', 'talk'], ['1', 'chop'], ['2', 'whistle'], ['Space', 'hop'], ['Drag', 'look']], skipKeys: ['KeyE', 'Digit1', 'Digit2', 'Digit3', 'Space'],
+      topOn: busy && !h.done, cardOn: !!J && busy && !h.react, barOn: work, introOn: h.phase === 'intro' && !h.demo, doneOn: !!h.done, helpOn: S.help && busy,
+      orderTxt: 'ORDER ' + Math.min(h.orderN + 1, h.perDay) + ' / ' + h.perDay, earnedTxt: (h.earned + h.tips) + 'g', starsTxt: h.stars ? '★ ' + h.stars : '★ –',
+      chips: J ? J.tasks.map(t => ({ t: (t.done ? '✓ ' : '') + t.label + (t.done ? '' : ' · ' + t.txt), bg: t.done ? '#e6f6ea' : h.tool === t.id ? '#ffd23a' : '#fbfbf7', bd: t.done ? '#22c55e' : '#201e1d', fg: t.done ? '#1f6a3a' : '#201e1d' })) : [],
+      chipsOn: !work, notes: J ? [...(J.hasBuck ? [{ t: J.want.toFixed(2) + ' m', sw: '#000', swD: 'none' }] : []), ...(J.hasStain ? [{ t: J.stainName, sw: J.stainCol, swD: 'block' }] : [])] : [],
+      toolCols: rows2 ? Math.ceil(tools.length / 2) : tools.length || 1, tools, swatchOn,
+      swatches: [['honey', 'HONEY', '#d99a3a'], ['walnut', 'WALNUT', '#6b3f22'], ['cherry', 'CHERRY', '#a8442e'], ['forest', 'FOREST', '#2f6b45']].map(([k, name, col]) => ({ name, col, aria: 'Pick ' + name + ' stain', ol: h.brush === k ? '3px solid #ffd23a' : 'none', go: e => { blur(e); g && g.setBrush(k); } })),
+      barPE: h.demo ? 'none' : 'auto', demoOn: !!h.demo, demoKeyOn: !!(h.demo && h.demo.key), demoGo: e => { blur(e); g && g.demoStart(); }, demoExit: e => { blur(e); g && g.demoStop(); }, walkGo: e => { blur(e); g && g.enterWalk(); },
+      hintOn: !h.demo && work && !!h.hint && !pr && !h.flash && !B && !R, hintTxt: h.hint ? h.hint.text : '', trayBottom: 'calc(' + barH + 'px + env(safe-area-inset-bottom))', meterBottom: 'calc(' + (barH + 10) + 'px + env(safe-area-inset-bottom))',
+      sayOn: !h.demo && !!h.say && busy && !h.react && !(port && work && (h.hint || B || R || pr)), sayBottom: work ? 'calc(' + (barH + 40) + 'px + env(safe-area-inset-bottom))' : 'calc(12px + env(safe-area-inset-bottom))',
+      buckOn: !!B && !h.demo || !!B && !!h.demo, buckLen: B ? B.len + ' m' : '', buckWant: B ? B.want + ' m' : '', buckZone: B ? B.zone : '', buckCol: B ? (B.ok ? '#22c55e' : '#ffffff') : '#fff',
+      ripOn: !!R, ripPct: R ? R.pct + '%' : '', ripProg: R ? R.prog + '%' : '0%', ripWord: !R ? '' : !R.hold ? 'HOLD TO FEED' : R.state === 'on' ? 'ON THE LINE' : R.state === 'near' ? 'DRIFTING' : 'OFF THE LINE', ripCol: !R ? '#fff' : !R.hold ? '#ffd23a' : R.state === 'on' ? '#22c55e' : R.state === 'near' ? '#e6b45a' : '#ec3013',
+      pressOn: !!pr, pressX: pr ? (Math.min(1, pr.v) * 100).toFixed(1) + '%' : '0%', pressCol: pr ? (pr.zone === 'JUST RIGHT' ? '#22c55e' : pr.zone === 'TOO SHALLOW' ? '#ffffff' : '#ec3013') : '#fff',
+      pz: pr ? { a: Math.round(pr.g0 * 100), b: Math.round((pr.g1 - pr.g0) * 100), c: Math.round((1 / 1.06 - pr.g1) * 100), d: Math.round((1 - 1 / 1.06) * 100) } : { a: 43, b: 28, c: 24, d: 5 },
+      flashOn: !!h.flash, flashTxt: h.flash ? h.flash.txt : '', flashCol: h.flash ? h.flash.col : '#ffd23a', flashTop: port ? '40%' : '46%',
+      reactOn: !!h.react, reactTop: port ? 'calc(64px + env(safe-area-inset-top))' : '58px', reactStars: h.react ? '★'.repeat(h.react.stars) + '☆'.repeat(3 - h.react.stars) : '', reactPay: h.react ? '+' + h.react.pay + 'g' + (h.react.tip ? ' · TIP ' + h.react.tip : '') + (h.react.streak >= 2 ? ' · STREAK ×' + h.react.streak : '') : '',
+      introRows: [['Gold', h.gold + 'g' + (h.best ? ' · best day ' + h.best + 'g' : '')], ['Today', h.perDay + ' orders, no clock'], ['Uniform', h.uniform ? "Yours · beanie, rag + Cedar's tee" : 'Finish a day to keep it']].map(([k, v]) => ({ k, v })),
+      unlock: () => { g && g.unlock && g.unlock(); },
+      soundOn: !h.sound || h.sound.sfx || h.sound.music, soundOff: !!h.sound && !h.sound.sfx && !h.sound.music, soundTxt: !h.sound || h.sound.sfx || h.sound.music ? 'ON · music + effects' : 'OFF · tap to turn on', soundAria: 'Sound on or off',
+      soundToggle: e => { blur(e); if (g && g.toggleSound) { g.unlock(); g.toggleSound(); this.forceUpdate(); } },
+      ...(() => { const q = new URLSearchParams(location.search), b = q.get('back'); return { backOn: !!b, backHref: b || '#', backName: (q.get('backName') || 'NEBO').toUpperCase() }; })(),
+      goWork: e => { blur(e); g && g.startDay(); }, toIntro: e => { blur(e); g && g.toIntro(); }, helpToggle: e => { blur(e); this.setState({ help: !S.help }); },
+      helpRows: [['ORDER', 'A Nebo neighbour comes to the counter. The order card says what they want, the length, and the stain.'], ['DEBARK', 'Swipe along the log on the rollers to peel the bark off. It turns as you go, so keep swiping.'], ['CUT', 'Drag the log left or right until its end meets the yellow flag on the tape. Let go and the saw drops.'], ['SAW', 'Hold anywhere to feed the log into the band saw. Slide left and right to keep the blade on the pencil line.'], ['TURN', 'On the lathe: tap a yellow ring, hold to cut the groove, let go when the bar is in the green.'], ['PLANE', 'Rub left and right, along the grain, over each rough spot. Up and down tears the wood.'], ['STAIN', 'Pick the stain on the order card, then swipe each section. Cedar\'s brand burns on when you finish.'], ['HAND OVER', 'Every job done? Hand it over. Careful work earns stars and tips.'], ['LOOK AROUND', 'Between shifts, walk the mill with the stick. 1 chops firewood at the block, 2 pulls the mill whistle, 3 hops. Talk to Cedar to work.']].map(([k, v]) => ({ k, v })),
+      doneKicker: h.done ? 'DAY ' + d.day + " · CEDAR'S LUMBER MILL" : '', doneSub: h.done ? (d.newDay ? 'Day ' + (d.day + 1) + ' tomorrow: bigger orders' : 'Average 2 stars to move up a day') + ' · ★ ' + d.stars + ' employee stars' : '', eodOn: !!(h.done && d.eod),
+      doneRows: h.done ? [['Orders filled', String(d.fixed)], ['Average stars', String(d.avg)], ['Wage', d.wage + 'g'], ['Orders', d.earned + 'g'], ['Tips', d.tips + 'g']].map(([k, v]) => ({ k, v })) : [], unlocks: h.done ? d.unlock.map(t => ({ t })) : [], goldTxt: h.gold + 'g',
+      shop: h.upgrades.map(u => { const afford = h.gold >= u.cost; return { name: u.name, line: u.line, btn: u.owned ? 'OWNED' : u.cost + 'g', off: u.owned || !afford, bg: u.owned ? '#22c55e' : afford ? '#ffd23a' : '#000000', fg: u.owned || afford ? '#000000' : '#8a847e', bd: u.owned ? '#22c55e' : afford ? '#ffd23a' : '#3a3836', op: u.owned || afford ? 1 : 0.6, buy: e => { blur(e); g && g.buyUpgrade(u.id); } }; }),
+    };
+  }
+}
+</script>
+</body>
+</html>

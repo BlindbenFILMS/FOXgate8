@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;background:#201e1d}a{color:#f3f2f2}a:hover{color:#ec3013}button:focus-visible,input:focus-visible{outline:2px solid #ec3013;outline-offset:2px}input[type=range]{accent-color:#ec3013}input[type=color]{-webkit-appearance:none;border:2px solid #f3f2f2;padding:0;background:none}input[type=color]::-webkit-color-swatch-wrapper{padding:0}input[type=color]::-webkit-color-swatch{border:0;border-radius:0}</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column;font-family:var(--font-body);color:#f3f2f2;background:#201e1d" data-screen-label="Character Workshop">
+  <div style="display:flex;flex-wrap:wrap;align-items:baseline;column-gap:14px;row-gap:2px;padding:12px 16px;border-bottom:2px solid #f3f2f2">
+    <div style="font-family:var(--font-heading);font-weight:800;font-size:22px;letter-spacing:0.01em">CHARACTER WORKSHOP</div>
+    <div style="font-size:14px;color:#c9c6c4">{{ status }}</div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));border-bottom:2px solid #f3f2f2">
+    <sc-for list="{{ worlds }}" as="w" hint-placeholder-count="11">
+      <button onClick="{{ w.pick }}" style="min-height:52px;padding:0 14px;text-align:left;font:800 15px var(--font-heading);letter-spacing:0.02em;background:{{ w.bg }};color:#f3f2f2;border:0;border-right:2px solid #f3f2f2;border-bottom:2px solid #f3f2f2;margin:0 -2px -2px 0;cursor:pointer" style-hover="background:#5c1a0e">{{ w.label }}</button>
+    </sc-for>
+  </div>
+  <div style="display:flex;flex-direction:column;border-bottom:2px solid #f3f2f2;background:#2a2725">
+    <div style="padding:8px 16px 0;font:800 12px var(--font-heading);letter-spacing:0.12em;color:#ec3013">{{ areaTitle }}</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));padding:8px 16px 14px;gap:8px">
+      <sc-for list="{{ items }}" as="it" hint-placeholder-count="5">
+        <button onClick="{{ it.pick }}" style="min-height:52px;padding:6px 14px;text-align:left;font:800 14px var(--font-heading);background:{{ it.bg }};color:{{ it.fg }};border:2px solid #f3f2f2;cursor:{{ it.cur }};opacity:{{ it.op }}" style-hover="background:#5c1a0e;color:#f3f2f2">{{ it.label }}<span style="display:block;font:600 12px var(--font-body);color:{{ it.subC }}">{{ it.sub }}</span></button>
+      </sc-for>
+      <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:10px 0;font:600 15px var(--font-body);color:#c9c6c4">Nothing here yet. This list fills in over the next sessions.</div>
+      </sc-if>
+    </div>
+  </div>
+  <div style="flex:1;min-height:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));align-items:start">
+    <div style="position:sticky;top:0;height:min(76vh,760px);min-height:420px;border-right:2px solid #f3f2f2;border-bottom:2px solid #f3f2f2">
+      <div ref="{{ stage }}" style="position:absolute;inset:0;touch-action:none"></div>
+      <div style="position:absolute;left:12px;bottom:12px;padding:8px 12px;background:#201e1d;border:2px solid #f3f2f2;font:800 15px var(--font-heading)">{{ selName }}</div>
+    </div>
+    <div style="display:flex;flex-direction:column;min-width:0;max-width:520px;width:100%">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));border-bottom:2px solid #f3f2f2">
+        <sc-for list="{{ cats }}" as="c" hint-placeholder-count="7">
+          <button onClick="{{ c.pick }}" style="min-height:48px;padding:0 12px;text-align:left;font:800 13px var(--font-heading);letter-spacing:0.04em;background:{{ c.bg }};color:{{ c.fg }};border:0;border-right:2px solid #f3f2f2;border-bottom:2px solid #f3f2f2;margin:0 -2px -2px 0;cursor:pointer" style-hover="background:#5c1a0e;color:#f3f2f2">{{ c.label }}</button>
+        </sc-for>
+      </div>
+      <sc-for list="{{ panels }}" as="p" hint-placeholder-count="5">
+        <div style="border-bottom:2px solid #f3f2f2">
+          <button onClick="{{ p.toggle }}" style="width:100%;min-height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;text-align:left;font:800 15px var(--font-heading);letter-spacing:0.03em;background:{{ p.hbg }};color:#f3f2f2;border:0;cursor:pointer" style-hover="background:#3a2f2b"><span style="flex:1;min-width:0">{{ p.title }}</span><span style="font-size:20px;flex:none">{{ p.mark }}</span></button>
+          <sc-if value="{{ p.open }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:6px 16px 16px;display:flex;flex-direction:column;gap:12px">
+              <sc-if value="{{ p.note }}" hint-placeholder-val="{{ false }}"><div style="font:500 14px var(--font-body);color:#c9c6c4;text-wrap:pretty">{{ p.note }}</div></sc-if>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:6px">
+                <sc-for list="{{ p.btns }}" as="b" hint-placeholder-count="0">
+                  <button onClick="{{ b.pick }}" style="min-height:46px;padding:0 12px;text-align:left;font:700 13px var(--font-heading);background:{{ b.bg }};color:{{ b.fg }};border:2px solid #f3f2f2;cursor:pointer;text-transform:uppercase" style-hover="background:#5c1a0e;color:#f3f2f2"><span style="display:flex;align-items:center;gap:8px"><sc-if value="{{ b.ic }}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="width:20px;height:20px;flex:none;background-size:contain;background-repeat:no-repeat;background-position:center;background-image:{{ b.icCss }}"></span></sc-if><span style="min-width:0;overflow-wrap:normal;word-break:normal;hyphens:auto">{{ b.label }}</span></span></button>
+                </sc-for>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px">
+                <sc-for list="{{ p.colors }}" as="c" hint-placeholder-count="0">
+                  <label style="display:flex;align-items:center;gap:10px;min-height:44px;font:600 14px var(--font-body)"><input type="color" value="{{ c.v }}" onInput="{{ c.set }}" style="width:44px;height:44px;flex:none"><span>{{ c.label }}</span></label>
+                </sc-for>
+              </div>
+              <sc-for list="{{ p.sliders }}" as="s" hint-placeholder-count="0">
+                <label style="display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:10px">
+                  <span style="font:600 14px var(--font-body)">{{ s.label }}</span><span style="font:700 14px var(--font-body)">{{ s.txt }}</span>
+                  <input type="range" min="{{ s.min }}" max="{{ s.max }}" step="{{ s.step }}" value="{{ s.v }}" onInput="{{ s.set }}" style="grid-column:1 / span 2;width:100%;height:30px;margin:0">
+                </label>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const LOOKS = [
+  { title: 'FUR COLOURS', colors: [['fur', 'Fur'], ['furDark', 'Dark fur'], ['muzzle', 'Muzzle'], ['snout', 'Snout'], ['chin', 'Chin'], ['ear', 'Ears'], ['earInner', 'Inner ear'], ['fluff', 'Cheek fluff'], ['nose', 'Nose']] },
+  { title: 'TAIL, PAWS + LEGS', colors: [['tailBase', 'Tail base'], ['tailMid', 'Tail mid'], ['tailTip', 'Tail tip'], ['paw', 'Paws'], ['leg', 'Legs'], ['boot', 'Boots'], ['ink', 'Line ink'], ['armorAccent', 'Armour accent']],
+    sliders: [['tailSize', 'Tail size', 0.5, 1.8, 0.01], ['tailCurl', 'Tail curl', 0, 1, 0.01], ['tailLift', 'Tail angle', 0.3, 1.6, 0.01], ['bodyScale', 'Overall size', 0.8, 1.25, 0.01]] },
+  { title: 'HEAD SHAPE', sliders: [['headScale', 'Head size', 0.8, 1.35, 0.01], ['headWidth', 'Width', 0.85, 1.35, 0.01], ['headHeight', 'Height', 0.8, 1.15, 0.01], ['cheeks', 'Cheeks', 0, 2, 0.01], ['snoutLength', 'Snout length', 0.4, 1.6, 0.01], ['snoutSize', 'Snout size', 0.7, 1.4, 0.01], ['fluffSize', 'Cheek fluff', 0, 1.8, 0.01], ['headTuft', 'Head tuft', 0, 2, 0.01]] },
+  { title: 'CHIN + UNDER THE SNOUT', colors: [['chinPatchCol', 'Patch round the mouth'], ['chinTuftCol', 'Chin tuft'], ['chin', 'Chin'], ['underSnout', 'Under the snout']], sliders: [['underDepth', 'Under depth', 0.5, 1.6, 0.01], ['underRise', 'Under slope', 0, 0.8, 0.01], ['chinLine', 'Colour line', -1, 1, 0.01], ['jawTuck', 'Jaw tuck', 0, 0.6, 0.01], ['chinPoint', 'Chin point', 0, 1.5, 0.01], ['chinPatch', 'Chin patch size', 0.4, 1.6, 0.01], ['chinTuft', 'Chin tuft size', 0, 2, 0.01]] },
+  { title: 'EARS', sliders: [['earHeight', 'Height', 0.6, 1.7, 0.01], ['earWidth', 'Width', 0.6, 1.5, 0.01], ['earSpread', 'Spread', 0.7, 1.4, 0.01], ['earTilt', 'Tilt out', 0, 0.8, 0.01], ['earBack', 'Lean back', 0, 1, 0.01]] },
+  { title: 'EYES + FACE', sliders: [['eyeSize', 'Eye size', 0.7, 1.5, 0.01], ['eyeSpacing', 'Spacing', 36, 72, 1], ['eyeY', 'Height', 80, 126, 1], ['eyeTilt', 'Tilt', -0.4, 0.4, 0.01], ['irisSize', 'Iris size', 0.6, 1.3, 0.01], ['pupil', 'Pupil size', 0.4, 1.8, 0.01], ['browWeight', 'Brow weight', 2, 10, 0.5], ['blush', 'Blush', 0, 0.8, 0.01]] },
+];
+const HOPE_BOW = { title: "HOPE'S BOW", colors: [['hopeBowCol', 'Bow'], ['hopeBowKnot', 'Knot'], ['hopeBowGem', 'Gem']] };
+const MOODS = ['neutral', 'happy', 'excited', 'warm', 'curious', 'surprised', 'sad', 'stern', 'smug', 'determined'];
+class Component extends DCLogic {
+  state = { world: 'heroes', cat: 'cast', sel: 0, open: null, look: null, costume: 'own', gear: 'holster', mood: 'neutral', pose: null, focus: 'full', spin: false, saved: false, n: 0 };
+  stage = React.createRef();
+  async componentDidMount() {
+    const [mod, R] = await Promise.all([import(new URL('fox-workshop.js?v=s710', document.baseURI).href), import(new URL('engine/workshop-roster.js?v=s709', document.baseURI).href)]);
+    this.mod = mod; this.R = R; this.ws = await mod.createWorkshop({ container: this.stage.current }); window.__charWS = this.ws;
+    this.ws.setGear && this.ws.setGear('holster');   /* s699 Ben: every hero carries the sword + laser (GEAR → None = relaxed arms) */
+    this.pick('heroes', 'cast', 0);
+  }
+  componentWillUnmount() { this.ws && this.ws.destroy(); }
+  item() { const R = this.R; return R ? R.itemsFor(this.state.world, this.state.cat)[this.state.sel] : null; }
+  pick(world, cat, i) { const R = this.R, ws = this.ws, mod = this.mod; if (!R || !ws) return; ws.superTargets && ws.superTargets(false); const it = R.itemsFor(world, cat)[i]; const st = { world, cat, sel: i, open: null, costume: 'own', saved: false, pose: null };
+    if (!it || it.kind === 'soon') { this.setState(st); return; }
+    if (it.kind === 'char') { ws.setOutfit(it.key); if (it.sex) ws.setSex(it.sex); const C = mod.CHARACTERS[it.key] || {}, fem = C.female || it.sex === 'f';
+      /* s680 (Ben: the player's hair was gone): start from the character's OWN preset, exactly what the game builds (cast.js: player = PLAYER_MALE), never the old saved workshop look; nothing is applied until you edit */
+      st.look = { ...mod.DEFAULT_LOOK, ...(C.look === 'max' ? mod.MAX_LOOK : C.look === 'hope' ? mod.HOPE_LOOK : fem ? mod.PLAYER_FEMALE : mod.PLAYER_MALE), ...(C.lookX || {}) }; }
+    else if (it.kind === 'boss') { const b = mod.BOSSES[it.key], bf = b && b.fox && mod.BOSS_FOX[b.fox]; ws.setBoss(it.key); st.pose = b && b.poses ? b.poses[0][0] : null; st.look = bf ? { ...mod.DEFAULT_LOOK, ...bf.look } : null; }
+    else if (it.kind === 'def') { ws.setDef(it.def); st.look = { ...mod.DEFAULT_LOOK, ...(it.def.female ? mod.PLAYER_FEMALE : mod.PLAYER_MALE), ...(it.def.look || {}) }; }
+    else if (it.kind === 'machine') { ws.setMachine(it.type); st.look = null; } else if (it.kind === 'friend') { ws.setFriend(it.key === 'maker' ? 'prime' : 'warden'); st.look = null; }
+    else if (it.kind === 'model') { ws.setModel(it.id); st.look = null; }
+    ws.setFocus('full'); st.focus = 'full'; this.setState(st); }
+  setLook(k, v) { const look = { ...(this.state.look || (this.mod && this.mod.DEFAULT_LOOK) || {}), [k]: v }; if (k === 'chin' || k === 'chinPatch') look.keepChin = true;   /* s672 your chin edits win over the all-fox chin */ this.setState({ look, saved: false }); this.ws && this.ws.setLook(look); }
+  renderVals() {
+    const S = this.state, R = this.R, mod = this.mod, ws = this.ws, it = this.item(), look = S.look || (mod ? mod.DEFAULT_LOOK : {});
+    const W = R ? R.WORLDS : {}, cats = R ? R.CATS : [], items = R ? R.itemsFor(S.world, S.cat) : [];
+    const isFox = it && (it.kind === 'char' || it.kind === 'def' || (it.kind === 'boss' && mod && mod.BOSSES[it.key] && mod.BOSSES[it.key].fox));
+    const tog = k => () => this.setState({ open: S.open === k ? null : k });
+    const btn = (label, onSel, pick, ick) => ({ label, bg: onSel ? '#f3f2f2' : 'transparent', fg: onSel ? '#201e1d' : '#f3f2f2', pick, ic: !!(ick && mod && mod.iconURL), icCss: ick && mod && mod.iconURL ? 'url("' + mod.iconURL(ick, onSel ? '#201e1d' : '#ec3013') + '")' : 'none' });
+    const P = [];
+    const add = (k, title, o) => P.push({ title, open: S.open === k, mark: S.open === k ? '−' : '+', hbg: S.open === k ? '#3a2f2b' : 'transparent', toggle: tog(k), btns: [], colors: [], sliders: [], note: '', ...o });
+    if (it && it.kind === 'char' && mod) { const C = mod.CHARACTERS[it.key];
+      add('outfit', 'OUTFIT', { btns: mod.costumesFor(it.key).map(c => btn(mod.COSTUMES[c].label, S.costume === c, () => { this.setState({ costume: c }); ws.setCostume(c); })), note: C && C.chair ? 'Noble wears his armour in the chair.' : '' }); }
+    const kitK = it && it.kind === 'machine' && it.type === 'r8' ? 'r8' : it && it.kind === 'friend' ? it.key : null, KIT = kitK && mod && mod.ROBOT_KITS && mod.ROBOT_KITS[kitK], RN = kitK === 'r8' ? 'R-8' : kitK === 'warden' ? 'WARDEN' : 'MAKER';
+    if (KIT) { const wm = S.r8m || KIT.melee[0].k, wr = S.r8r || KIT.ranged[0].k;   /* s707 each weapon is equippable: pick one melee (right arm) + one ranged (left arm), ATTACK uses it */
+      add('r8m', RN + ' · MELEE WEAPON', { note: 'Equip one. It is worn on the right. Five training robots appear when you attack.', btns: [...KIT.melee.map(q => btn(q.name, wm === q.k, () => { this.setState({ r8m: q.k }); ws.r8Equip('melee', q.k); }, q.k)), btn('ATTACK \u25B6', false, () => ws.r8Attack('melee'))] });
+      add('r8r', RN + ' · RANGED WEAPON', { note: 'Equip one. It is worn on the left.', btns: [...KIT.ranged.map(q => btn(q.name, wr === q.k, () => { this.setState({ r8r: q.k }); ws.r8Equip('ranged', q.k); }, q.k)), btn('FIRE \u25B6', false, () => ws.r8Attack('ranged'))] }); add('r8s', RN + ' SUPERS', { note: 'A freed machine\u2019s powers.', btns: KIT.supers.map((q, i) => btn(String(i + 1).padStart(2, '0') + ' ' + q.name, false, () => ws.r8Weapon(q.k), q.k)) }); }
+    if (it && it.key === 'hope' && mod && mod.HOPE_SUPERS) add('hsupers', 'HOPE SUPERS', { note: 'Hope is blind: her supers are sound you can see + her guide birds. Five training robots appear.', btns: mod.HOPE_SUPERS.map((q, i) => btn(String(i + 1).padStart(2, '0') + ' ' + q.name, false, () => ws.hopeSuper(q.k), q.k)) });
+    if (it && it.key === 'noble' && mod && mod.NOBLE_SUPERS) add('supers', 'NOBLE SUPERS', { note: 'Five training robots appear to hit. They get back up.', btns: mod.NOBLE_SUPERS.map((q, i) => btn(String(i + 1).padStart(2, '0') + ' ' + q.name, false, () => ws.nobleSuper(q.k), q.k)) });
+    if (it && it.key === 'noble') add('nweap', 'CHAIR WEAPONS', { note: 'Built into his chair. Hands stay on the wheels.', btns: [['spike', 'Spike wheel'], ['ram', 'Battering ram'], ['horn', 'Audio horn'], ['spin', 'Spin-out (hold 1)'], ['rockets', 'Launchers (hold 2)'], ['hover', 'Hover on / off']].map(([k, l]) => btn(l, false, () => ws.nobleWeapon(k))) });
+    if (it && it.key === 'noble') add('shoes', 'SHOE DRONES', { note: 'He reaches down, takes a drone, throws it; it boomerangs back, circles him 3 times, then docks.', btns: [btn('Throw right shoe', false, () => ws.throwShoe(0)), btn('Throw left shoe', false, () => ws.throwShoe(1))] });
+    if (it && it.kind === 'boss' && mod && mod.BOSSES[it.key].poses) add('poses', 'POSES', { btns: mod.BOSSES[it.key].poses.map(([k, l]) => btn(l, S.pose === k, () => { this.setState({ pose: k }); ws.setPose(k); })) });
+    if (isFox && it.kind !== 'boss') add('gear', 'GEAR', { btns: [['holster', 'Belt + sheath'], ['both', 'In hand'], ['sword', 'Sword'], ['laser', 'Laser'], ['none', 'None']].map(([k, l]) => btn(l, S.gear === k, () => { this.setState({ gear: k }); ws.setGear(k); })) });
+    if (isFox) { const crowned = it.kind === 'boss' && mod && mod.BOSSES[it.key] && mod.BOSS_FOX[mod.BOSSES[it.key].fox] && mod.BOSS_FOX[mod.BOSSES[it.key].fox].crown;
+      const hk = look.hat ?? (crowned ? 'crown' : 'none'), on = hk !== 'none';
+      add('hat', 'HAT', { note: on ? '' : 'Pick a hat above; the sliders move it once it is on.',
+        btns: [btn('Hat off', !on, () => this.setLook('hat', 'none'))].concat([['crown', 'Crown'], ['top', 'Top hat'], ['cap', 'Cap'], ['beanie', 'Beanie'], ['cowboy', 'Cowboy'], ['wizard', 'Wizard']].map(([k, l]) => btn(l, hk === k, () => this.setLook('hat', k)))),
+        colors: [['hatColor', 'Hat'], ['hatBand', 'Band / trim']].map(([k, l]) => ({ label: l, v: look[k] || (k === 'hatColor' ? ({ crown: '#e6b45a', top: '#1f2937', cap: '#2563eb', beanie: '#dc2626', cowboy: '#92400e', wizard: '#4338ca' }[hk]) : ({ crown: '#c42d3c', top: '#b91c1c', cap: '#f3f2f2', beanie: '#f3f2f2', cowboy: '#3b1d0a', wizard: '#fde047' }[hk])), set: e => this.setLook(k, e.target.value) })),
+        sliders: [['hatY', 'Up / down', -0.25, 0.3, 0.005, 0], ['hatZ', 'Forward / backward', -0.25, 0.25, 0.005, 0], ['hatX', 'Left / right', -0.25, 0.25, 0.005, 0], ['hatSize', 'Size', 0.5, 1.8, 0.01, 1]].map(([k, l, a, b, s, d]) => { const v = look[k] ?? d; return { label: l, min: a, max: b, step: s, v, txt: (+v).toFixed(2), set: e => this.setLook(k, +e.target.value) }; }) }); }
+    if (isFox) add('mood', 'MOOD', { btns: MOODS.map(m => btn(m, S.mood === m, () => { this.setState({ mood: m }); ws.setMood(m); })) });
+    if (isFox) { const secs = it.key === 'hope' ? [HOPE_BOW, ...LOOKS] : LOOKS; secs.forEach((sec, i) => add('look' + i, sec.title, {
+      colors: (sec.colors || []).map(([k, l]) => ({ label: l, v: look[k] || (k === 'chinTuftCol' || k === 'underSnout' || k === 'chinPatchCol' ? (look.chin || '#fff5f5') : '#000000'), set: e => this.setLook(k, e.target.value) })),
+      sliders: (sec.sliders || []).map(([k, l, a, b, s]) => { const v = look[k] ?? (a + b) / 2; return { label: l, min: a, max: b, step: s, v, txt: (+v).toFixed(s < 1 ? 2 : 0), set: e => this.setLook(k, +e.target.value) }; }) })); }
+    if (it && it.kind !== 'soon') add('view', 'VIEW', { btns: [['front', 'Front'], ['three', '3/4'], ['side', 'Side'], ['back', 'Back']].map(([k, l]) => btn(l, false, () => ws.view(k))).concat([btn(S.focus === 'face' ? 'Full body' : 'Face close-up', S.focus === 'face', () => { const f = S.focus === 'face' ? 'full' : 'face'; this.setState({ focus: f }); ws.setFocus(f); }), btn('Spin', S.spin, () => { this.setState({ spin: !S.spin }); ws.setSpin(!S.spin); })]) });
+    if (isFox) { const key = it.key === 'hope' ? 'hope.look.v1' : it.kind === 'char' && it.key === 'player' && it.sex !== 'f' ? 'meru.foxLook.v1' : null;
+      add('save', 'SAVE', { note: key ? (S.saved ? 'Saved. Reload a map to see it.' : 'Saves this look for ' + (it.key === 'hope' ? 'Hope' : 'the player') + ' everywhere.') : 'This character\'s look is set in its world file for now. COPY LOOK puts it on the clipboard.',
+        btns: [key ? btn(S.saved ? 'Saved ✓' : 'Save look', S.saved, () => { ws.save(look, key); this.setState({ saved: true }); }) : btn('Copy look', false, () => { try { navigator.clipboard.writeText(JSON.stringify(look)); } catch (e) {} }), btn('Reset', false, () => this.pick(S.world, S.cat, S.sel))] }); }
+    const wl = W[S.world];
+    return {
+      stage: this.stage,
+      status: !R ? 'Loading…' : 'Pick a world, then a category on the right · drag to turn · scroll to zoom',
+      worlds: Object.entries(W).map(([k, w]) => ({ label: w.label, bg: S.world === k ? '#ec3013' : 'transparent', pick: () => this.pick(k, 'cast', 0) })),
+      areaTitle: wl ? wl.label + ' · ' + ((cats.find(c => c[0] === S.cat) || [0, ''])[1]) : '',
+      items: items.map((x, i) => { const on = i === S.sel && x.kind !== 'soon', sn = x.kind === 'soon'; return { label: x.label, sub: sn ? 'COMING SOON' : x.kind === 'machine' ? 'MACHINE FLEET' : (x.sub || ''), subC: on ? '#5c1a0e' : '#ec3013', bg: on ? '#f3f2f2' : 'transparent', fg: on ? '#201e1d' : '#f3f2f2', op: sn ? 0.55 : 1, cur: sn ? 'default' : 'pointer', pick: () => { if (!sn) this.pick(S.world, S.cat, i); } }; }),
+      empty: !!R && !items.length,
+      cats: cats.map(([k, l]) => ({ label: l, bg: S.cat === k ? '#f3f2f2' : 'transparent', fg: S.cat === k ? '#201e1d' : '#f3f2f2', pick: () => { const L = R.itemsFor(S.world, k); const i = L.findIndex(x => x.kind !== 'soon'); if (i >= 0) this.pick(S.world, k, i); else this.setState({ cat: k, sel: -1, open: null }); } })),
+      selName: it && it.kind !== 'soon' ? it.label : '—',
+      panels: P,
+    };
+  }
+}
+</script>
+</body>
+</html>

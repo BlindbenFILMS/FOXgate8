@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0;background:#3a3836;font-family:Archivo,sans-serif}</style></helmet>
+<div style="padding:16px;display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start;color:#f3f2f2">
+  <div style="display:flex;flex-direction:column;gap:8px"><div style="font-weight:900">390 × 844</div><iframe src="Load Screen Phone Check.dc.html?frame=1" style="width:390px;height:844px;border:2px solid #f3f2f2;background:#000"></iframe></div>
+  <div style="display:flex;flex-direction:column;gap:8px"><div style="font-weight:900">844 × 390</div><iframe src="Load Screen Phone Check.dc.html?frame=1" style="width:844px;height:390px;border:2px solid #f3f2f2;background:#000"></iframe></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  async componentDidMount() { if (!/frame=1/.test(location.search)) return; document.body.innerHTML = ''; try { const m = await import(new URL('engine/meru-loader.js?v=s648h', document.baseURI).href); const fn = m.meruLoader || m.default || Object.values(m).find(v => typeof v === 'function'); const Ld = fn(); let p = 0; const iv = setInterval(() => { p += 0.08; Ld.set(Math.min(1, p)); if (p >= 1) { clearInterval(iv); setTimeout(() => Ld.end(), 4000); } }, 400); } catch (e) { document.body.textContent = 'loader: ' + e.message; } }
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

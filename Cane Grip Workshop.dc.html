@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#201e1d}a{color:#f3f2f2}a:hover{color:#ec3013}button:focus-visible,input:focus-visible{outline:2px solid #ec3013;outline-offset:2px}input[type=range]{accent-color:#ec3013}</style>
+</helmet>
+<div style="position:fixed;inset:0;display:flex;flex-direction:column;font-family:var(--font-body);color:#f3f2f2;background:#201e1d" data-screen-label="Cane Grip Workshop">
+  <div style="display:flex;flex-wrap:wrap;align-items:baseline;column-gap:12px;row-gap:2px;padding:10px 14px;border-bottom:2px solid #f3f2f2">
+    <div style="font-family:var(--font-heading);font-weight:800;font-size:18px;letter-spacing:0.02em">CANE GRIP WORKSHOP</div>
+    <div style="font-size:13px;color:#b8b5b3">{{ status }}</div>
+  </div>
+  <div style="flex:1;min-height:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));grid-auto-rows:minmax(0,1fr);overflow:hidden">
+    <div style="position:relative;min-height:0">
+      <div ref="{{ stage }}" style="position:absolute;inset:0;touch-action:none"></div>
+    </div>
+    <div style="min-height:0;overflow-y:auto;border-left:2px solid #f3f2f2;border-top:2px solid #f3f2f2">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);border-bottom:2px solid #f3f2f2">
+        <sc-for list="{{ views }}" as="v" hint-placeholder-count="6">
+          <button onClick="{{ v.pick }}" style="min-height:48px;padding:0 12px;text-align:left;font:800 14px var(--font-heading);background:{{ v.bg }};color:{{ v.fg }};border:0;border-right:2px solid #f3f2f2;border-bottom:2px solid #f3f2f2;margin:0 -2px -2px 0;cursor:pointer" style-hover="background:#3a0f08">{{ v.name }}</button>
+        </sc-for>
+      </div>
+      <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+        <div style="border-bottom:2px solid #f3f2f2;padding:10px 14px 4px">
+          <div style="font:800 13px var(--font-heading);letter-spacing:0.06em;color:#ec3013;margin-bottom:4px">{{ g.title }}</div>
+          <sc-for list="{{ g.rows }}" as="s" hint-placeholder-count="3">
+            <label style="display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:10px;padding:6px 0">
+              <span style="font:700 15px var(--font-body)">{{ s.label }}</span>
+              <span style="font:700 15px var(--font-body);min-width:56px;text-align:right">{{ s.txt }}</span>
+              <input type="range" min="{{ s.min }}" max="{{ s.max }}" step="{{ s.step }}" value="{{ s.v }}" onInput="{{ s.set }}" style="grid-column:1 / span 2;width:100%;height:32px;margin:0">
+            </label>
+          </sc-for>
+        </div>
+      </sc-for>
+      <div style="display:grid;grid-template-columns:1fr 1fr">
+        <button onClick="{{ onSave }}" style="min-height:52px;padding:0 14px;text-align:left;font:800 15px var(--font-heading);background:#ec3013;color:#f3f2f2;border:0;border-right:2px solid #f3f2f2;cursor:pointer" style-hover="background:#b8240e">{{ saveTxt }}</button>
+        <button onClick="{{ onReset }}" style="min-height:52px;padding:0 14px;text-align:left;font:800 15px var(--font-heading);background:transparent;color:#f3f2f2;border:0;cursor:pointer" style-hover="background:#3a0f08">RESET</button>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { ready: false, view: 'hand', walk: false, saved: false, n: 0 };
+  stage = React.createRef();
+  KEY = 'cane.grip.v1';
+  DEF = { gripAngle: 75, palmIn: 0.045, slide: 0, palmUp: 0.35, palmFwd: 0, gripRoll: 0, curl: [0.5, 1, 1, 1], thumb: 0, thumbUp: 0, top: 13 };
+  cfg = (() => { try { return { ...this.DEF, ...(JSON.parse(localStorage.getItem('cane.grip.v1') || 'null') || {}) }; } catch (e) { return { ...this.DEF }; } })();
+  async componentDidMount() {
+    const m = await import('./engine/leg-lab.js?v=s666'); this.lab = await m.startLegLab(this.stage.current); window.__caneGrip = this.lab;
+    this.lab.setWho('hope'); this.applyView('hand'); this.push(); this.setState({ ready: true });
+  }
+  componentWillUnmount() { this.lab && this.lab.destroy(); }
+  rig() { const f = this.lab && this.lab._fox; return f && f.userData.rig; }
+  push() { const r = this.rig(); if (r && r.set) r.set({ ...this.cfg, curl: this.cfg.curl.slice() }); }
+  applyView(v) { const L = this.lab; if (!L) return;
+    if (v === 'walk') { L.set('walk'); L.focusHand(false); L.turn(1.3); L.zoom(0.75); L.look(1.1); return; }
+    L.set('idle'); if (v === 'whole') { L.focusHand(false); L.turn(0.6); L.zoom(0.6); L.look(1.0); return; }
+    L.focusHand(true); L.zoom(0.3); L.turn({ hand: 0.3, side: 1.3, back: -0.5, below: 2.2 }[v] ?? 0.3); }
+  setK(k, val, i) { if (i != null) { this.cfg.curl = this.cfg.curl.slice(); this.cfg.curl[i] = val; } else this.cfg[k] = val; this.push(); this.setState({ n: this.state.n + 1, saved: false }); }
+  renderVals() {
+    const s = this.state, C = this.cfg, dg = v => Math.round(v) + '°', cm = v => (v * 100).toFixed(1) + ' cm', pc = v => Math.round(v * 100) + '%', n2 = v => (+v).toFixed(2);
+    const row = (k, label, min, max, step, fmt, i) => { const v = i != null ? C.curl[i] : C[k]; return { label, min, max, step, v, txt: fmt(v), set: e => this.setK(k, +e.target.value, i) }; };
+    return {
+      stage: this.stage,
+      status: !s.ready ? 'Loading Hope…' : 'Drag to turn · scroll / pinch to zoom · changes show live',
+      views: [['hand', 'HAND'], ['side', 'SIDE'], ['back', 'BACK'], ['below', 'BELOW'], ['whole', 'WHOLE'], ['walk', 'WALK']].map(([k, name]) => ({ name, bg: s.view === k ? '#f3f2f2' : 'transparent', fg: s.view === k ? '#201e1d' : '#f3f2f2', pick: () => { this.applyView(k); this.setState({ view: k }); } })),
+      groups: [
+        { title: 'CANE IN THE HAND', rows: [row('gripAngle', 'Angle across the palm', 0, 110, 1, dg), row('gripRoll', 'Roll round the cane', -90, 90, 1, dg), row('palmIn', 'Deep in the palm', -0.03, 0.12, 0.002, cm), row('slide', 'Slide along the cane', -0.12, 0.12, 0.002, cm), row('top', 'Handle above the fist', 0, 30, 0.5, v => (+v).toFixed(1))] },
+        { title: 'PALM FACES', rows: [row('palmUp', 'Up / down', -1, 1.5, 0.01, n2), row('palmFwd', 'Forward / back', -1, 1, 0.01, n2)] },
+        { title: 'FINGERS + THUMB', rows: [row('curl', 'Index curl', 0, 1.2, 0.01, pc, 0), row('curl', 'Middle curl', 0, 1.2, 0.01, pc, 1), row('curl', 'Ring curl', 0, 1.2, 0.01, pc, 2), row('curl', 'Pinky curl', 0, 1.2, 0.01, pc, 3), row('thumb', 'Thumb across', 0, 1, 0.01, pc), row('thumbUp', 'Thumb up', 0, 1, 0.01, pc)] },
+      ],
+      saveTxt: s.saved ? 'SAVED ✓' : 'SAVE',
+      onSave: () => { try { localStorage.setItem(this.KEY, JSON.stringify(this.cfg)); } catch (e) {} this.setState({ saved: true }); },
+      onReset: () => { this.cfg = { ...this.DEF, curl: this.DEF.curl.slice() }; try { localStorage.removeItem(this.KEY); } catch (e) {} this.push(); this.setState({ n: s.n + 1, saved: false }); },
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,504 @@
+{
+ "note": "Cut from the DSF map (Ben s349). For a later small station map.",
+ "zones": [
+  {
+   "key": "dsfOutKu",
+   "label": "Kufa Station",
+   "r": [
+    -62,
+    62,
+    228,
+    336
+   ],
+   "music": "kufastation",
+   "depth": 108,
+   "from2d": true,
+   "away": true
+  }
+ ],
+ "buildings": [
+  {
+   "key": "dsfOutKuImex",
+   "label": "Import / Export",
+   "role": "shop",
+   "h": 6,
+   "color": "#3a2e26",
+   "interior": true,
+   "note": "[dsfOutKu_imex] 2D: IMPORT / EXPORT, CONTRACTS. Factor Kia: contracts + manifests.",
+   "outside": "A customs gate front with stacked manifest screens and a cargo scale.",
+   "sign": {
+    "roof": "IMPORT / EXPORT",
+    "door": "IMPORT / EXPORT · CONTRACTS"
+   },
+   "f": [
+    -9,
+    9,
+    234,
+    246
+   ],
+   "door": [
+    0,
+    246
+   ],
+   "face": "S",
+   "room2d": "dsfOutKu_imex",
+   "trim": "#d08a4a"
+  },
+  {
+   "key": "dsfOutKuCrew",
+   "label": "Crew for Hire",
+   "role": "shop",
+   "h": 6,
+   "color": "#3a2e26",
+   "interior": true,
+   "note": "[dsfOutKu_crew] 2D: CREW FOR HIRE, HIRING HALL. Kane signs hands on; Brin, Toll, A Quiet One wait to be hired.",
+   "outside": "A rough hall front with a board of crew faces and a bell to ring for the hiring master.",
+   "sign": {
+    "roof": "CREW FOR HIRE",
+    "door": "CREW FOR HIRE · HIRING HALL"
+   },
+   "f": [
+    36,
+    48,
+    273,
+    291
+   ],
+   "door": [
+    36,
+    282
+   ],
+   "face": "W",
+   "room2d": "dsfOutKu_crew",
+   "trim": "#d08a4a"
+  },
+  {
+   "key": "dsfOutKuCharts",
+   "label": "Maps & Charts",
+   "role": "shop",
+   "h": 6,
+   "color": "#3a2e26",
+   "interior": true,
+   "note": "[dsfOutKu_charts] 2D: MAPS & CHARTS, CHART HOUSE. Old Merrit sells what he has heard.",
+   "outside": "A round star-chart dome glowing over a narrow door, rolled charts in a barrel outside.",
+   "sign": {
+    "roof": "MAPS & CHARTS",
+    "door": "MAPS & CHARTS · CHART HOUSE"
+   },
+   "f": [
+    -9,
+    9,
+    318,
+    330
+   ],
+   "door": [
+    0,
+    318
+   ],
+   "face": "N",
+   "room2d": "dsfOutKu_charts",
+   "trim": "#d08a4a"
+  },
+  {
+   "key": "dsfOutKuRelics",
+   "label": "Relic Exchange",
+   "role": "shop",
+   "h": 6,
+   "color": "#3a2e26",
+   "interior": true,
+   "note": "[dsfOutKu_relics] 2D: RELIC EXCHANGE, ASSAY. Assayer Vetch buys old things.",
+   "outside": "An assay counter with brass scales in the window and a locked display of old relics.",
+   "sign": {
+    "roof": "RELIC EXCHANGE",
+    "door": "RELIC EXCHANGE · ASSAY"
+   },
+   "f": [
+    -48,
+    -36,
+    273,
+    291
+   ],
+   "door": [
+    -36,
+    282
+   ],
+   "face": "E",
+   "room2d": "dsfOutKu_relics",
+   "trim": "#d08a4a"
+  },
+  {
+   "key": "dsfOutKuOps",
+   "label": "Kufa Station Ops",
+   "role": "shop",
+   "h": 7,
+   "color": "#2a3034",
+   "interior": true,
+   "note": "[dsfOutKu_ops] 2D: OPERATIONS, STATION OPS. Sub-Warden Kaspar + Crewman Nix on the boards.",
+   "outside": "A small raised ops pod with a curved window and a rotating sensor dish on the roof.",
+   "sign": {
+    "roof": "KUFA OPS",
+    "door": "STATION OPS · SUB-WARDEN KASPAR"
+   },
+   "f": [
+    30,
+    48,
+    236,
+    248
+   ],
+   "door": [
+    39,
+    248
+   ],
+   "face": "S",
+   "room2d": "dsfOutKu_ops",
+   "trim": "#d08a4a"
+  }
+ ],
+ "paths": [
+  {
+   "key": "dsfOutKuRing",
+   "label": "Kufa Station ring",
+   "w": 8,
+   "p": [
+    [
+     0,
+     256
+    ],
+    [
+     5.1,
+     256.5
+    ],
+    [
+     9.9,
+     258
+    ],
+    [
+     14.4,
+     260.4
+    ],
+    [
+     18.4,
+     263.6
+    ],
+    [
+     21.6,
+     267.6
+    ],
+    [
+     24,
+     272.1
+    ],
+    [
+     25.5,
+     276.9
+    ],
+    [
+     26,
+     282
+    ],
+    [
+     25.5,
+     287.1
+    ],
+    [
+     24,
+     291.9
+    ],
+    [
+     21.6,
+     296.4
+    ],
+    [
+     18.4,
+     300.4
+    ],
+    [
+     14.4,
+     303.6
+    ],
+    [
+     9.9,
+     306
+    ],
+    [
+     5.1,
+     307.5
+    ],
+    [
+     0,
+     308
+    ],
+    [
+     -5.1,
+     307.5
+    ],
+    [
+     -9.9,
+     306
+    ],
+    [
+     -14.4,
+     303.6
+    ],
+    [
+     -18.4,
+     300.4
+    ],
+    [
+     -21.6,
+     296.4
+    ],
+    [
+     -24,
+     291.9
+    ],
+    [
+     -25.5,
+     287.1
+    ],
+    [
+     -26,
+     282
+    ],
+    [
+     -25.5,
+     276.9
+    ],
+    [
+     -24,
+     272.1
+    ],
+    [
+     -21.6,
+     267.6
+    ],
+    [
+     -18.4,
+     263.6
+    ],
+    [
+     -14.4,
+     260.4
+    ],
+    [
+     -9.9,
+     258
+    ],
+    [
+     -5.1,
+     256.5
+    ],
+    [
+     0,
+     256
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 16
+  },
+  {
+   "key": "dsfOutKuImexWalk",
+   "label": "door",
+   "w": 5,
+   "p": [
+    [
+     0,
+     246
+    ],
+    [
+     0,
+     256
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20
+  },
+  {
+   "key": "dsfOutKuCrewWalk",
+   "label": "door",
+   "w": 5,
+   "p": [
+    [
+     36,
+     282
+    ],
+    [
+     26,
+     282
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20
+  },
+  {
+   "key": "dsfOutKuChartsWalk",
+   "label": "door",
+   "w": 5,
+   "p": [
+    [
+     0,
+     318
+    ],
+    [
+     0,
+     308
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20
+  },
+  {
+   "key": "dsfOutKuRelicsWalk",
+   "label": "door",
+   "w": 5,
+   "p": [
+    [
+     -36,
+     282
+    ],
+    [
+     -26,
+     282
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20
+  },
+  {
+   "key": "dsfOutKuOpsWalk",
+   "label": "door",
+   "w": 5,
+   "p": [
+    [
+     39,
+     248
+    ],
+    [
+     39,
+     262
+    ],
+    [
+     18,
+     262
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20
+  },
+  {
+   "key": "dsfOutKuDockWalk",
+   "label": "commons",
+   "w": 6,
+   "p": [
+    [
+     0,
+     308
+    ],
+    [
+     0,
+     282
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20
+  }
+ ],
+ "spots": [
+  {
+   "key": "dsfOutKuPad",
+   "at": [
+    0,
+    308
+   ],
+   "kind": "vehicle",
+   "note": "The VOLE docks here (arrival from Deep Space Fox). Commons."
+  },
+  {
+   "key": "kuGarden",
+   "at": [
+    -8,
+    288
+   ],
+   "kind": "npc",
+   "note": "SISTER HOLLY keeps the garden (commons)",
+   "from2d": true
+  },
+  {
+   "key": "kuSitA",
+   "at": [
+    8,
+    276
+   ],
+   "kind": "crowd",
+   "note": "Docker Pell, a Gayan traveller (kuSitA, kuSitB); a small Kufan by the water (kuWater)",
+   "from2d": true
+  },
+  {
+   "key": "kuOps",
+   "at": [
+    39,
+    240
+   ],
+   "kind": "keeper",
+   "note": "SUB-WARDEN KASPAR",
+   "from2d": true
+  },
+  {
+   "key": "kuImex",
+   "at": [
+    0,
+    239
+   ],
+   "kind": "keeper",
+   "note": "FACTOR KIA",
+   "from2d": true
+  },
+  {
+   "key": "kuCrew",
+   "at": [
+    45,
+    282
+   ],
+   "kind": "keeper",
+   "note": "KANE",
+   "from2d": true
+  },
+  {
+   "key": "kuCharts",
+   "at": [
+    0,
+    325
+   ],
+   "kind": "keeper",
+   "note": "OLD MERRIT",
+   "from2d": true
+  },
+  {
+   "key": "kuRelic",
+   "at": [
+    -45,
+    282
+   ],
+   "kind": "keeper",
+   "note": "ASSAYER VETCH",
+   "from2d": true
+  }
+ ],
+ "decks": [
+  {
+   "key": "dsfOutKu",
+   "label": "KUFA STATION (away, in orbit over Kufa)",
+   "away": true,
+   "r": [
+    -62,
+    62,
+    228,
+    336
+   ],
+   "lift": [
+    0,
+    300
+   ],
+   "note": "Reached by the Runabout Vole (dsfShip) through the airlocks. Smaller than Deep Space Fox."
+  }
+ ]
+}

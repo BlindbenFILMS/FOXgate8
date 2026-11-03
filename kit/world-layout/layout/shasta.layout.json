@@ -1,0 +1,2158 @@
+{
+ "meta": {
+  "world": "shasta",
+  "version": 1,
+  "date": "2026-10-22",
+  "from": "uploads/SHASTA_BRIEF.md (the old Home planet section of 8GATES_DESIGN_BRIEF_ALL.md) + uploads/surface_player.html (the 2D file, add it)",
+  "notes": "DRAFT by Claude (s348) for Ben. RENAME (Ben s348): the old HOME PLANET is now SHASTA, a SNOW WORLD WITH MOUNTAINS. There is a NEW player planet (not this one; built later). Clubhouse 8 stays here. The player's place is a FLAT INSIDE an apartment block (Summit View Apartments), not its own house. The 2D files use gaya… keys for these rooms: each building/zone keeps its 2D key in \"room2d\". SHASTA = an alpine snow town in a valley under MOUNT SHASTA. The CROSS-SHAPED square (two avenues) has an OUTDOOR SKATING RINK where they cross (transport pad beside it). N: North Avenue past the shrine, Snow Watch, Avalanche & Fire, Snowpost, Infirmary to the white castle + barracks; royal court EAST of the castle. E: Lodge Road to the SKI LODGE plaza (Bram's Ski Works, Mountain Hut, fire, chair lift) and up the mountain: SLOPES, GLOW-WORM GROTTO, SNOW FORT. S: the glassy SHASTA LAKE (jetty, pontoon, drone range), Snowberry Farm. W: West Avenue (Stadium Path) to THE RINK + Curling Club, the playground, Sled & Skate Hire. Mountains ring the whole valley. EVERY BUILDING IS UNIQUE (\"outside\" note), roof sign + eye-level door sign.",
+  "rooms": {
+   "shastaTownSquare": "zone (2D gayaTownSquare)",
+   "shastaCastlePath": "zone (gayaCastlePath)",
+   "shastaStadiumPath": "zone (gayaStadiumPath)",
+   "shastaSkiLodge": "zone (gayaMountainPath)",
+   "shastaSlopes": "zone (gayaMountainBase)",
+   "shastaGrotto": "gate cave (gayaMountainCave)",
+   "shastaSnowFort": "gate battle (gayaSnowFort)",
+   "shastaLake": "zone (gayaCanyon)",
+   "shastaGlass": "gate battle map (gayaGlass)",
+   "shastaClub8": "building (gayaChurch)",
+   "shastaPizza": "building (gayaBathhouse)",
+   "shastaTavern": "building (gayaTavern)",
+   "shastaArmory": "building (gayaArmory)",
+   "shastaItemShop": "building (gayaItemShop)",
+   "shastaComics": "building (gayaLibrarySquare)",
+   "shastaMuseum": "building (gayaMuseum)",
+   "shastaApartments": "building: YOUR PLACE is a flat inside (gayaApartment)",
+   "shastaMountainHut": "building (gayaMountainHut)",
+   "shastaThroneRoom": "building (gayaThroneRoom)",
+   "shastaBarracks": "building (gayaBarracks)",
+   "shastaRink": "building (gayaStadium)"
+  }
+ },
+ "map": {
+  "half": 440,
+  "spawn": [
+   0,
+   22
+  ],
+  "spawnFace": "N"
+ },
+ "palette": {
+  "path": "#9aa6b2",
+  "wall": "#7a5a42",
+  "roof": "#3a4a62",
+  "trim": "#d9b24a",
+  "notes": "Timber + grey stone under deep snow, ice-blue + gold trim, lilac window boxes, warm amber windows."
+ },
+ "zones": [
+  {
+   "key": "shastaTown",
+   "label": "Shasta",
+   "r": [
+    -112,
+    112,
+    -112,
+    132
+   ],
+   "music": "town",
+   "depth": 224,
+   "new": true
+  },
+  {
+   "key": "shastaTownSquare",
+   "label": "Shasta Town Square",
+   "r": [
+    -48,
+    48,
+    -48,
+    48
+   ],
+   "music": "town",
+   "depth": 96,
+   "room2d": "gayaTownSquare"
+  },
+  {
+   "key": "shastaCastlePath",
+   "label": "Castle Path",
+   "r": [
+    -60,
+    110,
+    -268,
+    -112
+   ],
+   "music": "castlepath",
+   "depth": 156,
+   "room2d": "gayaCastlePath"
+  },
+  {
+   "key": "shastaCastleGrounds",
+   "label": "Shasta Castle",
+   "r": [
+    -110,
+    120,
+    -350,
+    -268
+   ],
+   "music": "castle",
+   "depth": 82,
+   "new": true
+  },
+  {
+   "key": "shastaStadiumPath",
+   "label": "Stadium Path",
+   "r": [
+    -350,
+    -112,
+    -90,
+    60
+   ],
+   "music": "stadium",
+   "depth": 150,
+   "room2d": "gayaStadiumPath"
+  },
+  {
+   "key": "shastaSkiLodge",
+   "label": "Ski Lodge",
+   "r": [
+    200,
+    336,
+    -60,
+    60
+   ],
+   "music": "lodge",
+   "depth": 120,
+   "room2d": "gayaMountainPath"
+  },
+  {
+   "key": "shastaSlopes",
+   "label": "Mount Shasta Slopes",
+   "r": [
+    220,
+    438,
+    -438,
+    -60
+   ],
+   "music": "slopes",
+   "depth": 378,
+   "room2d": "gayaMountainBase"
+  },
+  {
+   "key": "shastaLake",
+   "label": "Shasta Lake",
+   "r": [
+    -120,
+    200,
+    132,
+    320
+   ],
+   "music": "lake",
+   "depth": 188,
+   "room2d": "gayaCanyon"
+  },
+  {
+   "key": "shastaDockYard",
+   "label": "Shasta Space Dock",
+   "r": [
+    -260,
+    -180,
+    200,
+    290
+   ],
+   "music": "dock",
+   "depth": 80,
+   "new": true
+  },
+  {
+   "key": "shastaFrostRidge",
+   "label": "Frost Ridge",
+   "r": [
+    -330,
+    -140,
+    -260,
+    -120
+   ],
+   "music": "ridge",
+   "depth": 140,
+   "new": true
+  }
+ ],
+ "surfaces": [
+  {
+   "s": "stone",
+   "r": [
+    -40,
+    40,
+    -8,
+    8
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -8,
+    8,
+    -40,
+    40
+   ]
+  },
+  {
+   "s": "tile",
+   "r": [
+    -12,
+    12,
+    -12,
+    12
+   ],
+   "note": "OUTDOOR SKATING RINK (ice) in the middle of the cross; transport pad at its edge"
+  },
+  {
+   "s": "stone",
+   "r": [
+    -40,
+    40,
+    -286,
+    -274
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    46,
+    112,
+    -318,
+    -284
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    90,
+    102,
+    -308,
+    -296
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    58,
+    66,
+    -306,
+    -298
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    62,
+    74,
+    -193,
+    -181
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    220,
+    232,
+    26,
+    38
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    240,
+    330,
+    -8,
+    40
+   ],
+   "note": "lodge plaza"
+  },
+  {
+   "s": "wood",
+   "r": [
+    -4,
+    4,
+    166,
+    196
+   ]
+  }
+ ],
+ "water": [
+  {
+   "e": [
+    30,
+    240,
+    120,
+    56
+   ],
+   "frozen": "edges",
+   "note": "SHASTA LAKE: glassy, still; ice at the edges"
+  }
+ ],
+ "roads": [],
+ "paths": [
+  {
+   "key": "shastaNorthAvenue",
+   "label": "North Avenue",
+   "w": 10,
+   "p": [
+    [
+     0,
+     -14
+    ],
+    [
+     0,
+     -280
+    ]
+   ],
+   "lining": "lamps",
+   "every": 18
+  },
+  {
+   "key": "shastaSouthAvenue",
+   "label": "South Avenue",
+   "w": 10,
+   "p": [
+    [
+     0,
+     14
+    ],
+    [
+     0,
+     166
+    ]
+   ],
+   "lining": "lamps",
+   "every": 18
+  },
+  {
+   "key": "shastaWestAvenue",
+   "label": "West Avenue",
+   "w": 10,
+   "p": [
+    [
+     -14,
+     0
+    ],
+    [
+     -300,
+     0
+    ]
+   ],
+   "lining": "lamps",
+   "every": 18
+  },
+  {
+   "key": "shastaEastAvenue",
+   "label": "Lodge Road",
+   "w": 10,
+   "p": [
+    [
+     14,
+     0
+    ],
+    [
+     300,
+     0
+    ]
+   ],
+   "lining": "lamps",
+   "every": 18
+  },
+  {
+   "key": "shastaRinkRing",
+   "label": "Skating Ring",
+   "w": 6,
+   "p": [
+    [
+     -14,
+     -14
+    ],
+    [
+     14,
+     -14
+    ],
+    [
+     14,
+     14
+    ],
+    [
+     -14,
+     14
+    ],
+    [
+     -14,
+     -14
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 10,
+   "note": "walk round the outdoor skating rink in the middle of the cross"
+  },
+  {
+   "key": "shastaBarracksWalk",
+   "label": "Barracks walk",
+   "w": 6,
+   "p": [
+    [
+     0,
+     -241
+    ],
+    [
+     -60,
+     -241
+    ]
+   ],
+   "lining": "lamps",
+   "every": 14
+  },
+  {
+   "key": "shastaRoyalWalk",
+   "label": "Royal Walk",
+   "w": 6,
+   "p": [
+    [
+     0,
+     -262
+    ],
+    [
+     80,
+     -262
+    ],
+    [
+     80,
+     -290
+    ]
+   ],
+   "lining": "lamps",
+   "every": 14,
+   "note": "royal court EAST of the castle this time"
+  },
+  {
+   "key": "shastaMedevacWalk",
+   "label": "Medevac walk",
+   "w": 6,
+   "p": [
+    [
+     46,
+     -187
+    ],
+    [
+     62,
+     -187
+    ]
+   ],
+   "lining": "lamps",
+   "every": 10
+  },
+  {
+   "key": "shastaChaletLane",
+   "label": "Chalet lane",
+   "w": 6,
+   "p": [
+    [
+     0,
+     119
+    ],
+    [
+     -10,
+     119
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 10
+  },
+  {
+   "key": "shastaLodgePadWalk",
+   "label": "Lodge helipad walk",
+   "w": 6,
+   "p": [
+    [
+     226,
+     0
+    ],
+    [
+     226,
+     24
+    ]
+   ],
+   "lining": "lamps",
+   "every": 12
+  },
+  {
+   "key": "shastaShoreWalk",
+   "label": "Shore Walk",
+   "w": 6,
+   "p": [
+    [
+     -100,
+     166
+    ],
+    [
+     150,
+     166
+    ],
+    [
+     150,
+     160
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 16
+  },
+  {
+   "key": "shastaJetty",
+   "label": "Jetty",
+   "w": 4,
+   "p": [
+    [
+     0,
+     166
+    ],
+    [
+     0,
+     196
+    ]
+   ],
+   "lining": "lamps",
+   "every": 10,
+   "note": "long JETTY + PONTOON"
+  },
+  {
+   "key": "shastaDockRoad",
+   "label": "Dock Road",
+   "w": 8,
+   "p": [
+    [
+     -220,
+     0
+    ],
+    [
+     -220,
+     226
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20
+  },
+  {
+   "key": "shastaGlassTrail",
+   "label": "Glass Trail",
+   "w": 6,
+   "p": [
+    [
+     -100,
+     166
+    ],
+    [
+     -260,
+     300
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20
+  },
+  {
+   "key": "shastaRidgeTrail",
+   "label": "Frost Ridge trail",
+   "w": 6,
+   "p": [
+    [
+     -150,
+     0
+    ],
+    [
+     -150,
+     -150
+    ],
+    [
+     -230,
+     -200
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20
+  },
+  {
+   "key": "shastaSlopeTrail",
+   "label": "Slope trail",
+   "w": 6,
+   "p": [
+    [
+     300,
+     0
+    ],
+    [
+     330,
+     -40
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 14,
+   "note": "to the CHAIR LIFT base: the slopes, grotto + snow fort are up the mountain"
+  },
+  {
+   "key": "shastaHutLane",
+   "label": "Hut lane",
+   "w": 6,
+   "p": [
+    [
+     313,
+     0
+    ],
+    [
+     313,
+     4
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 10
+  },
+  {
+   "key": "shastaFarmLane",
+   "label": "Farm lane",
+   "w": 6,
+   "p": [
+    [
+     150,
+     166
+    ],
+    [
+     150,
+     160
+    ],
+    [
+     132,
+     160
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 10
+  }
+ ],
+ "buildings": [
+  {
+   "key": "shastaClub8",
+   "label": "Clubhouse 8",
+   "role": "other",
+   "f": [
+    -46,
+    -8,
+    -52,
+    -16
+   ],
+   "door": [
+    -8,
+    -34
+   ],
+   "face": "E",
+   "h": 11,
+   "color": "#3a3a5a",
+   "interior": true,
+   "room2d": "gayaChurch",
+   "note": "8 ARCADE CABINETS (4 each wall), COUNTER (shifts: A Quiet Hour, The Evening Rush; token + item sales), banner + crest, lounge, 8 lamps. Pip at front of house.",
+   "games": [
+    "3D-GAMES/g/clubhouse-8/Main.dc.html"
+   ],
+   "outside": "The town's signature: a dark timber arcade lodge with a giant glowing 8 in a ring on the roof, neon cabinet silhouettes in the frosted windows, a red carpet under a snow canopy.",
+   "sign": {
+    "roof": "CLUBHOUSE 8",
+    "door": "CLUBHOUSE 8 · ARCADE"
+   }
+  },
+  {
+   "key": "shastaTavern",
+   "label": "Tavern",
+   "role": "tavern",
+   "f": [
+    -40,
+    -8,
+    -98,
+    -62
+   ],
+   "door": [
+    -8,
+    -80
+   ],
+   "face": "E",
+   "h": 10,
+   "color": "#6a3a2a",
+   "interior": true,
+   "room2d": "gayaTavern",
+   "note": "Bar (5 stools), AIR HOCKEY table, jukebox, darts, 2 tables, barrels, torches. Barkeep Sorrel, Grish the explorer, Volley, Pip. Pizza delivery stop.",
+   "games": [
+    "3D-GAMES/g/tavern-games/HockeyMain.dc.html"
+   ],
+   "outside": "Big log tavern with a steep snow-loaded roof, a stone chimney puffing smoke, icicles along the eaves, a giant air-hockey puck + mallet sign over the door.",
+   "sign": {
+    "roof": "TAVERN",
+    "door": "TAVERN · AIR HOCKEY"
+   }
+  },
+  {
+   "key": "shastaPizza",
+   "label": "Pizza Place",
+   "role": "shop",
+   "f": [
+    8,
+    36,
+    -46,
+    -18
+   ],
+   "door": [
+    8,
+    -32
+   ],
+   "face": "W",
+   "h": 8,
+   "color": "#b8402a",
+   "interior": true,
+   "room2d": "gayaBathhouse",
+   "note": "Sal's two-oven kitchen: OVEN MINIGAME (Sal's Round). Pizza DELIVERY runs start here (NOT BUILT YET in 3D).",
+   "outside": "Red brick pizzeria with 2 brick oven domes glowing through round windows, a spinning pizza on the roof, a delivery sled parked by the door.",
+   "sign": {
+    "roof": "PIZZA",
+    "door": "SAL'S PIZZA PLACE · DELIVERIES"
+   }
+  },
+  {
+   "key": "shastaComics",
+   "label": "Bramble's Comics",
+   "role": "specialty",
+   "f": [
+    8,
+    34,
+    -96,
+    -64
+   ],
+   "door": [
+    8,
+    -80
+   ],
+   "face": "W",
+   "h": 8,
+   "color": "#2a5aa0",
+   "interior": true,
+   "room2d": "gayaLibrarySquare",
+   "note": "SUPERFOX + IRONFOX standees over SHELF SCREENS. Bramble. Pizza delivery stop.",
+   "games": [
+    "3D-GAMES/Comic Shop.dc.html"
+   ],
+   "outside": "UNIQUE SPECIALTY SHOP: a pop-art front in bright blue + yellow, a giant SUPERFOX cut-out bursting through the roof sign, comic-panel windows.",
+   "sign": {
+    "roof": "COMICS",
+    "door": "BRAMBLE'S COMICS"
+   }
+  },
+  {
+   "key": "shastaArmory",
+   "label": "Armory",
+   "role": "armory",
+   "f": [
+    50,
+    74,
+    -34,
+    -8
+   ],
+   "door": [
+    62,
+    -8
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#4a4a52",
+   "interior": true,
+   "room2d": "gayaArmory",
+   "note": "Armorer Bree: Halberd, Reinforced Armor.",
+   "outside": "Stone forge cottage with an iron-shuttered window, a glowing forge vent melting a ring in the snow, crossed halberds over the door.",
+   "sign": {
+    "roof": "ARMORY",
+    "door": "ARMORY · BREE"
+   }
+  },
+  {
+   "key": "shastaItemShop",
+   "label": "Item Shop",
+   "role": "itemshop",
+   "f": [
+    82,
+    110,
+    -36,
+    -8
+   ],
+   "door": [
+    96,
+    -8
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#8a6a4a",
+   "interior": true,
+   "room2d": "gayaItemShop",
+   "note": "Shopkeeper Fenn: Heal Beam Battery, Energy Cell, Box of Chocolates, Keeper's Draught.",
+   "outside": "General store with a wraparound porch, sleds + snowshoes for sale out front, a lit lantern sign shaped like a gift box.",
+   "sign": {
+    "roof": "ITEM SHOP",
+    "door": "ITEM SHOP · FENN"
+   }
+  },
+  {
+   "key": "shastaMuseum",
+   "label": "Relic Museum",
+   "role": "other",
+   "f": [
+    50,
+    84,
+    8,
+    42
+   ],
+   "door": [
+    67,
+    8
+   ],
+   "face": "N",
+   "h": 12,
+   "color": "#d8d4cc",
+   "interior": true,
+   "room2d": "gayaMuseum",
+   "note": "10 GLASS CASES for relics, centre table, archivist desk, 2 globes, 4 braziers. Quill the curator.",
+   "outside": "Round white stone ROTUNDA with a copper dome gone green, columns round the front, 4 braziers on the steps.",
+   "sign": {
+    "roof": "RELIC MUSEUM",
+    "door": "RELIC MUSEUM · QUILL"
+   }
+  },
+  {
+   "key": "shastaCakes",
+   "label": "Foxy Cakes",
+   "role": "restaurant",
+   "f": [
+    90,
+    112,
+    8,
+    30
+   ],
+   "door": [
+    101,
+    8
+   ],
+   "face": "N",
+   "h": 8,
+   "color": "#f0b8c8",
+   "interior": true,
+   "games": [
+    "3D-GAMES/g/foxy-cakes/Main.dc.html"
+   ],
+   "new": true,
+   "outside": "UNIQUE RESTAURANT: a pink-and-cream bakery like a frosted layer cake (white icing drips along the roof edge), a giant cupcake with a candle on top.",
+   "sign": {
+    "roof": "FOXY CAKES",
+    "door": "FOXY CAKES · NOW HIRING"
+   }
+  },
+  {
+   "key": "shastaApartments",
+   "label": "Summit View Apartments",
+   "role": "home",
+   "f": [
+    -46,
+    -8,
+    18,
+    62
+   ],
+   "door": [
+    -8,
+    40
+   ],
+   "face": "E",
+   "h": 18,
+   "color": "#7a5a42",
+   "interior": true,
+   "room2d": "gayaApartment",
+   "note": "Ben s348: the player's place is a FLAT INSIDE this apartment block (YOUR PLACE: bed/rest, plinth + trophy wall, table, TV, couch, kitchen, window, posters). Neighbours live in the other flats.",
+   "outside": "4-storey timber + stone APARTMENT BLOCK: wooden balconies with snow on the rails, a lit stairwell tower, YOUR LANDING sign by the door. The PLAYER'S APARTMENT is one flat inside (2nd floor, the gold door).",
+   "sign": {
+    "roof": "SUMMIT VIEW",
+    "door": "APARTMENTS · YOUR LANDING"
+   }
+  },
+  {
+   "key": "shastaToyWorkshop",
+   "label": "Toy Workshop",
+   "role": "shop",
+   "f": [
+    -40,
+    -8,
+    70,
+    98
+   ],
+   "door": [
+    -8,
+    84
+   ],
+   "face": "E",
+   "h": 9,
+   "color": "#c0502a",
+   "interior": true,
+   "games": [
+    "3D-GAMES/g/toy-workshop/Main.dc.html"
+   ],
+   "new": true,
+   "outside": "Crooked gingerbread-style workshop: candy-stripe trim, a big wind-up key turning on the roof, toy trains in the window.",
+   "sign": {
+    "roof": "TOY WORKSHOP",
+    "door": "TOY WORKSHOP · NOW HIRING"
+   }
+  },
+  {
+   "key": "shastaChess",
+   "label": "Chess Club",
+   "role": "shop",
+   "f": [
+    8,
+    32,
+    18,
+    42
+   ],
+   "door": [
+    8,
+    30
+   ],
+   "face": "W",
+   "h": 9,
+   "color": "#2a2a2a",
+   "interior": true,
+   "games": [
+    "3D-GAMES/g/chess-club/chess-club.dc.html"
+   ],
+   "new": true,
+   "outside": "Black-and-white chequered stone front, a giant knight piece on the roof, a tall arched window with a board inside.",
+   "sign": {
+    "roof": "CHESS CLUB",
+    "door": "CHESS CLUB"
+   }
+  },
+  {
+   "key": "shastaCheckers",
+   "label": "Checkers Club",
+   "role": "shop",
+   "f": [
+    8,
+    30,
+    50,
+    72
+   ],
+   "door": [
+    8,
+    61
+   ],
+   "face": "W",
+   "h": 8,
+   "color": "#a8202a",
+   "interior": true,
+   "games": [
+    "3D-GAMES/g/checkers-club/checkers-club.dc.html"
+   ],
+   "new": true,
+   "outside": "Round red cabin with a flat drum roof stacked like checkers pieces (red + black), a crown on top.",
+   "sign": {
+    "roof": "CHECKERS CLUB",
+    "door": "CHECKERS CLUB"
+   }
+  },
+  {
+   "key": "shastaPost",
+   "label": "Galactic Post Office (Meru Embassy)",
+   "role": "post",
+   "f": [
+    8,
+    36,
+    80,
+    106
+   ],
+   "door": [
+    8,
+    93
+   ],
+   "face": "W",
+   "h": 10,
+   "color": "#b89a6a",
+   "interior": true,
+   "new": true,
+   "outside": "Timber post house with a clock tower + Meru flag, a mail sled rack, the Galactic Post dish frosted on the roof.",
+   "sign": {
+    "roof": "POST OFFICE",
+    "door": "GALACTIC POST · MERU EMBASSY"
+   }
+  },
+  {
+   "key": "shastaBank",
+   "label": "Glacier Bank",
+   "role": "bank",
+   "f": [
+    -86,
+    -52,
+    -36,
+    -8
+   ],
+   "door": [
+    -69,
+    -8
+   ],
+   "face": "S",
+   "h": 11,
+   "color": "#9ab4c8",
+   "interior": true,
+   "new": true,
+   "outside": "Blue-grey granite with tall frosted glass, an ice-crystal crest over heavy brass doors, a round vault window.",
+   "sign": {
+    "roof": "GLACIER BANK",
+    "door": "GLACIER BANK"
+   }
+  },
+  {
+   "key": "shastaWeapons",
+   "label": "Frost & Flint",
+   "role": "weapons",
+   "f": [
+    -110,
+    -92,
+    -30,
+    -8
+   ],
+   "door": [
+    -101,
+    -8
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#3a4a5a",
+   "interior": true,
+   "note": "SPECIAL WEAPONS: the 8 extra ranged + melee",
+   "new": true,
+   "outside": "Slate-roofed stone shop, blue ice-crystal blade + laser sign, weapon racks behind frosted glass.",
+   "sign": {
+    "roof": "FROST & FLINT",
+    "door": "SPECIAL WEAPONS"
+   }
+  },
+  {
+   "key": "shastaFlats1",
+   "label": "Pinecone Flats",
+   "role": "housing",
+   "f": [
+    -82,
+    -52,
+    8,
+    38
+   ],
+   "door": [
+    -67,
+    8
+   ],
+   "face": "N",
+   "h": 14,
+   "color": "#6a7a4a",
+   "interior": true,
+   "new": true,
+   "outside": "3-storey apartment block with green shutters + pinecone carvings, window boxes of winter berries.",
+   "sign": {
+    "roof": "PINECONE FLATS",
+    "door": "APARTMENTS"
+   }
+  },
+  {
+   "key": "shastaFlats2",
+   "label": "Icicle Row",
+   "role": "housing",
+   "f": [
+    -110,
+    -90,
+    8,
+    34
+   ],
+   "door": [
+    -100,
+    8
+   ],
+   "face": "N",
+   "h": 12,
+   "color": "#c8d8e8",
+   "interior": true,
+   "new": true,
+   "outside": "Tall narrow pale-blue row flats with long icicles, a rooftop greenhouse.",
+   "sign": {
+    "roof": "ICICLE ROW",
+    "door": "APARTMENTS"
+   }
+  },
+  {
+   "key": "shastaChalet",
+   "label": "Chalet",
+   "role": "housing",
+   "f": [
+    -38,
+    -10,
+    110,
+    128
+   ],
+   "door": [
+    -10,
+    119
+   ],
+   "face": "E",
+   "h": 9,
+   "color": "#8a5a3a",
+   "interior": true,
+   "new": true,
+   "outside": "A-frame chalet with a deep snow roof, a sauna hut + log pile beside it.",
+   "sign": {
+    "roof": "CHALET",
+    "door": "CHALET"
+   }
+  },
+  {
+   "key": "shastaWatch",
+   "label": "Snow Watch",
+   "role": "police",
+   "f": [
+    -40,
+    -12,
+    -152,
+    -126
+   ],
+   "door": [
+    -12,
+    -139
+   ],
+   "face": "E",
+   "h": 9,
+   "color": "#3a4a6a",
+   "interior": true,
+   "new": true,
+   "outside": "Stone watch house with a blue lamp, a lookout bell tower, rescue skis hung on the wall.",
+   "sign": {
+    "roof": "SNOW WATCH",
+    "door": "SNOW WATCH · POLICE"
+   }
+  },
+  {
+   "key": "shastaFireHall",
+   "label": "Avalanche & Fire",
+   "role": "fire",
+   "f": [
+    12,
+    40,
+    -152,
+    -126
+   ],
+   "door": [
+    12,
+    -139
+   ],
+   "face": "W",
+   "h": 9,
+   "color": "#c0302a",
+   "interior": true,
+   "new": true,
+   "outside": "Red timber fire hall with a wide bay, a snowcat with a plough + a fire sled out front, a siren tower.",
+   "sign": {
+    "roof": "AVALANCHE & FIRE",
+    "door": "FIRE + MOUNTAIN RESCUE"
+   }
+  },
+  {
+   "key": "shastaNews",
+   "label": "The Shasta Snowpost",
+   "role": "news",
+   "f": [
+    -38,
+    -12,
+    -198,
+    -174
+   ],
+   "door": [
+    -12,
+    -186
+   ],
+   "face": "E",
+   "h": 10,
+   "color": "#5a5a6a",
+   "interior": true,
+   "note": "PAPER ROUTE starts here (NOT BUILT YET)",
+   "new": true,
+   "outside": "Tall narrow newsroom with a radio mast covered in rime ice, a news ticker under the roof sign, newspaper bundles on a sled.",
+   "sign": {
+    "roof": "SNOWPOST",
+    "door": "THE SHASTA SNOWPOST · NEWS"
+   }
+  },
+  {
+   "key": "shastaHospital",
+   "label": "Shasta Infirmary",
+   "role": "hospital",
+   "f": [
+    12,
+    46,
+    -204,
+    -170
+   ],
+   "door": [
+    12,
+    -187
+   ],
+   "face": "W",
+   "h": 12,
+   "color": "#eef2f4",
+   "interior": true,
+   "new": true,
+   "outside": "White timber hospital with red trim, a glass sunroom, a red cross on the roof, the medevac helipad beside it.",
+   "sign": {
+    "roof": "INFIRMARY",
+    "door": "SHASTA INFIRMARY"
+   }
+  },
+  {
+   "key": "shastaThroneRoom",
+   "label": "Throne Room",
+   "role": "castle",
+   "f": [
+    -40,
+    40,
+    -336,
+    -280
+   ],
+   "door": [
+    0,
+    -280
+   ],
+   "face": "S",
+   "h": 22,
+   "color": "#e8e4dc",
+   "interior": true,
+   "room2d": "gayaThroneRoom",
+   "note": "Castle hall; THRONE. King Grant, proudly average; Hope beside him (the NINE SEAMS).",
+   "outside": "The grandest building: a white stone castle with tall blue slate spires dusted with snow, gold trim, ice-blue banners, a frozen waterfall beside the gate.",
+   "sign": {
+    "roof": "SHASTA CASTLE",
+    "door": "THRONE ROOM · KING GRANT"
+   }
+  },
+  {
+   "key": "shastaBarracks",
+   "label": "Barracks",
+   "role": "barracks",
+   "f": [
+    -104,
+    -60,
+    -256,
+    -226
+   ],
+   "door": [
+    -60,
+    -241
+   ],
+   "face": "E",
+   "h": 10,
+   "color": "#7a7a82",
+   "interior": true,
+   "room2d": "gayaBarracks",
+   "note": "Guard Captain, Master of Arms. Pizza delivery stop.",
+   "outside": "Long grey stone guard hall with a snowy training yard, a bell, the crest banner on a pole.",
+   "sign": {
+    "roof": "BARRACKS",
+    "door": "BARRACKS · GUARD CAPTAIN"
+   }
+  },
+  {
+   "key": "shastaRink",
+   "label": "The Rink",
+   "role": "sport",
+   "f": [
+    -340,
+    -240,
+    -82,
+    -12
+   ],
+   "door": [
+    -290,
+    -12
+   ],
+   "face": "S",
+   "h": 14,
+   "color": "#4a7ab0",
+   "interior": true,
+   "room2d": "gayaStadium",
+   "note": "Ice, nets, benches, tunnel: 4-a-side vs The Cubs, The Pines, Iron Eight. Ref Furlong; skaters Fleet, Cinder, Bracken.",
+   "games": [
+    "3D-GAMES/Home Hockey.dc.html"
+   ],
+   "outside": "UNIQUE SPORT: a big curved-roof ice arena, blue + white, a giant crossed hockey stick sign, glass walls glowing at night.",
+   "sign": {
+    "roof": "THE RINK",
+    "door": "THE IRON CUP · ICE HOCKEY"
+   }
+  },
+  {
+   "key": "shastaCurling",
+   "label": "Curling Club",
+   "role": "sport",
+   "f": [
+    -300,
+    -250,
+    12,
+    42
+   ],
+   "door": [
+    -275,
+    12
+   ],
+   "face": "N",
+   "h": 7,
+   "color": "#5a8aa0",
+   "interior": true,
+   "games": [
+    "3D-GAMES/g/curling-club/Main.dc.html"
+   ],
+   "new": true,
+   "outside": "Long low club house with 3 outdoor curling sheets behind it, a giant curling stone on the roof.",
+   "sign": {
+    "roof": "CURLING CLUB",
+    "door": "CURLING CLUB"
+   }
+  },
+  {
+   "key": "shastaSkateHire",
+   "label": "Sled & Skate Hire",
+   "role": "carRental",
+   "f": [
+    -204,
+    -172,
+    -34,
+    -8
+   ],
+   "door": [
+    -188,
+    -8
+   ],
+   "face": "S",
+   "h": 7,
+   "color": "#e0a030",
+   "interior": true,
+   "note": "Car rental Shasta style: sleds, snowmobile (DRAFT), ROCKET SKATES",
+   "new": true,
+   "outside": "Bright yellow hire hut with skis, sleds, rocket skates + pogo sticks racked on the walls, a big sled-runner sign.",
+   "sign": {
+    "roof": "SLED & SKATE",
+    "door": "HIRE · ROCKET SKATES"
+   }
+  },
+  {
+   "key": "shastaRelicShop",
+   "label": "The Frost Vault",
+   "role": "relicShop",
+   "f": [
+    -164,
+    -142,
+    10,
+    28
+   ],
+   "door": [
+    -153,
+    10
+   ],
+   "face": "N",
+   "h": 7,
+   "color": "#a8d0e8",
+   "interior": true,
+   "note": "The famous Shasta relic to BUY (DRAFT: Ben picks)",
+   "new": true,
+   "outside": "Tiny shop carved like a block of blue glacier ice, one relic frozen in a lit ice pillar in the window.",
+   "sign": {
+    "roof": "FROST VAULT",
+    "door": "THE FROST VAULT · RELICS"
+   }
+  },
+  {
+   "key": "shastaSkiWorks",
+   "label": "Bram's Ski Works",
+   "role": "shop",
+   "f": [
+    250,
+    290,
+    -50,
+    -14
+   ],
+   "door": [
+    270,
+    -14
+   ],
+   "face": "S",
+   "h": 9,
+   "color": "#8a4a2a",
+   "interior": true,
+   "note": "Ski rentals by the shed (2D); Bram waxes boards.",
+   "games": [
+    "3D-GAMES/g/bram-ski-works/Main.dc.html"
+   ],
+   "outside": "Ski workshop with a huge ski + board crossed on the roof, a waxing bench on the porch, racks of skis in the snow.",
+   "sign": {
+    "roof": "SKI WORKS",
+    "door": "BRAM'S SKI WORKS · RENTALS"
+   }
+  },
+  {
+   "key": "shastaMountainHut",
+   "label": "Mountain Hut",
+   "role": "other",
+   "f": [
+    300,
+    326,
+    12,
+    32
+   ],
+   "door": [
+    313,
+    12
+   ],
+   "face": "N",
+   "h": 7,
+   "color": "#6a4a32",
+   "interior": true,
+   "room2d": "gayaMountainHut",
+   "note": "Hearth + kettle. Acolyte Ember-in-Ash.",
+   "outside": "Tiny stone refuge with a turf roof under deep snow, a single glowing window, a kettle chimney.",
+   "sign": {
+    "roof": "MOUNTAIN HUT",
+    "door": "MOUNTAIN HUT · REFUGE"
+   }
+  },
+  {
+   "key": "shastaFarm",
+   "label": "Snowberry Farm",
+   "role": "farm",
+   "f": [
+    140,
+    190,
+    140,
+    180
+   ],
+   "door": [
+    140,
+    160
+   ],
+   "face": "W",
+   "h": 8,
+   "color": "#7a3a3a",
+   "interior": true,
+   "games": [
+    "3D-GAMES/g/fox-farm/Main.dc.html"
+   ],
+   "new": true,
+   "outside": "Red barn + 2 glass greenhouse domes glowing warm, snowberry bushes, a reindeer-style fox sled.",
+   "sign": {
+    "roof": "SNOWBERRY FARM",
+    "door": "SNOWBERRY FARM · NOW HIRING"
+   }
+  }
+ ],
+ "spots": [
+  {
+   "key": "shastaTownsfolk1",
+   "at": [
+    -24,
+    -24
+   ],
+   "kind": "crowd",
+   "note": "Plum, Mauve, Iris, Brother Cinnabar",
+   "draft": true
+  },
+  {
+   "key": "shastaTownsfolk2",
+   "at": [
+    24,
+    24
+   ],
+   "kind": "crowd",
+   "note": "Amethyst, Lilac, Sister Damson, Orchid",
+   "draft": true
+  },
+  {
+   "key": "shastaBastion",
+   "at": [
+    10,
+    -120
+   ],
+   "kind": "npc",
+   "note": "SHRINE on the Castle Path: acolyte Bastion",
+   "draft": true
+  },
+  {
+   "key": "shastaNoble",
+   "at": [
+    -200,
+    10
+   ],
+   "kind": "npc",
+   "note": "Crest junction: Noble watches the games; novice Pennant",
+   "draft": true
+  },
+  {
+   "key": "shastaNix",
+   "at": [
+    330,
+    -50
+   ],
+   "kind": "npc",
+   "note": "Nix runs the CHAIR LIFT; Perri teaches beginners",
+   "draft": true
+  },
+  {
+   "key": "shastaChairLift",
+   "at": [
+    338,
+    -46
+   ],
+   "kind": "game",
+   "note": "CHAIR LIFT up the mountain to the SLOPES: THREE SLALOM RUNS (Blue Ribbon, The Pines, one more), gates set, PATROL HUT, creek"
+  },
+  {
+   "key": "shastaLodgeFire",
+   "at": [
+    270,
+    20
+   ],
+   "kind": "game",
+   "note": "Lodge plaza FIRE (warm up); pizza delivery stop"
+  },
+  {
+   "key": "shastaDroneRange",
+   "at": [
+    110,
+    200
+   ],
+   "kind": "game",
+   "note": "LAKE 8 DRONE RANGE (Sighting In, Pairs, Open Water). Gunner. LOOK viewpoint."
+  },
+  {
+   "key": "shastaAnglers",
+   "at": [
+    -60,
+    180
+   ],
+   "kind": "npc",
+   "note": "Anglers Ross (west), Brin (east), Otto (jetty), Mara (pontoon); church readers Fathom + Sounding",
+   "draft": true
+  },
+  {
+   "key": "shastaPlayground",
+   "at": [
+    -120,
+    40
+   ],
+   "kind": "game",
+   "note": "PLAYGROUND (3D-GAMES/g/playground/Playground.dc.html): swings, slide, snow fort climber"
+  },
+  {
+   "key": "shastaPaperRoute",
+   "at": [
+    -50,
+    -186
+   ],
+   "kind": "hiring",
+   "note": "PAPER ROUTE board at the Snowpost (NOT BUILT YET)"
+  },
+  {
+   "key": "shastaPizzaRuns",
+   "at": [
+    40,
+    -30
+   ],
+   "kind": "hiring",
+   "note": "PIZZA DELIVERY board outside the Pizza Place (NOT BUILT YET in 3D)"
+  },
+  {
+   "key": "shastaHiring",
+   "at": [
+    -22,
+    22
+   ],
+   "kind": "hiring",
+   "note": "NOW HIRING board in the square"
+  },
+  {
+   "key": "shastaRocketSkates",
+   "at": [
+    -188,
+    -2
+   ],
+   "kind": "vehicle",
+   "note": "ROCKET SKATES (Vehicle Workshop ?v=rskates) from Sled & Skate Hire"
+  },
+  {
+   "key": "shastaHamsterBall",
+   "at": [
+    -128,
+    50
+   ],
+   "kind": "vehicle",
+   "note": "HAMSTER BALL (Vehicle Workshop ?v=hamster) at the playground: roll down the snowy streets"
+  },
+  {
+   "key": "shastaPogo",
+   "at": [
+    -14,
+    84
+   ],
+   "kind": "vehicle",
+   "note": "POGO STICK (Vehicle Workshop ?v=pogo) outside the Toy Workshop"
+  },
+  {
+   "key": "shastaHopper",
+   "at": [
+    -112,
+    52
+   ],
+   "kind": "vehicle",
+   "note": "SPACE HOPPER (Vehicle Workshop ?v=hopper) at the playground"
+  },
+  {
+   "key": "shastaRelicFind",
+   "at": [
+    -40,
+    210
+   ],
+   "kind": "relicFind",
+   "note": "DRAFT: the legendary + historical relic to find, frozen under the ice at the end of the long jetty (Ben picks)"
+  },
+  {
+   "key": "shastaRoyalHelipad",
+   "at": [
+    96,
+    -302
+   ],
+   "kind": "helipad",
+   "note": "ROYAL HELIPAD east of the castle (Meru 2 worlds/meru2-royalpad.js): the royal 8 helicopter; King Grant's guards fly you to the other pads."
+  },
+  {
+   "key": "shastaRoyalTelepad",
+   "at": [
+    62,
+    -302
+   ],
+   "kind": "telepad",
+   "note": "ROYAL TELEPORT PAD east of the castle: E / TALK → beam out → the Shasta Space Dock; arriving by telepad beams you in here."
+  },
+  {
+   "key": "shastaInfirmaryHelipad",
+   "at": [
+    68,
+    -187
+   ],
+   "kind": "helipad",
+   "note": "INFIRMARY HELIPAD (medevac + mountain rescue)"
+  },
+  {
+   "key": "shastaLodgeHelipad",
+   "at": [
+    226,
+    32
+   ],
+   "kind": "helipad",
+   "note": "SKI LODGE HELIPAD: heli-ski drops onto the slopes"
+  }
+ ],
+ "dock": {
+  "key": "shastaSpacedock",
+  "pad": [
+   -220,
+   246
+  ],
+  "r": 14,
+  "face": "N"
+ },
+ "gates": [
+  {
+   "key": "shastaGlass",
+   "at": [
+    -266,
+    306
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "THE GLASS [gayaGlass] battle map: landing fight, defend the TRANSPORT CORE, arsenal, turret, tank + walker. 6 Sink Wardens, 3 Sink Sentries, 3 Sink Chargers (HACKED Machine Fleet: free them)."
+  },
+  {
+   "key": "shastaSnowFort",
+   "at": [
+    320,
+    -360
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "THE SNOW FORT [gayaSnowFort] high on the mountain: one way in, one way out, trench fort. 17 Fort Sentries, 17 Fort Guards, boss THE SNOW KING."
+  },
+  {
+   "key": "shastaIceGates",
+   "at": [
+    360,
+    -150
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "THE THREE ICE GATES on the slopes (Lower, Park, Far Seam; 240 HP each) spawn snowmen: 3 Icicle Snowmen, 2 Snowball Sentries."
+  },
+  {
+   "key": "shastaFrostRidgeGate",
+   "at": [
+    -236,
+    -206
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "DRAFT: FROST RIDGE: snow wolves + ice beetles (creatures) in the pines north-west"
+  },
+  {
+   "key": "shastaGrotto",
+   "at": [
+    250,
+    -280
+   ],
+   "r": 8,
+   "kind": "cave",
+   "note": "GLOW-WORM GROTTO [gayaMountainCave]: glowing cave with boat water. Wren the keeper, Barrow the boatman (feed pail). 12 Spitter Worms, 8 Burrower Worms, boss THE FED ONE. Take the SEAM STONE to Hope."
+  }
+ ],
+ "wild": [
+  {
+   "key": "shastaGlassWild",
+   "r": [
+    -340,
+    -280,
+    320,
+    420
+   ],
+   "for": "shastaGlass",
+   "creatures": [
+    "robots"
+   ]
+  },
+  {
+   "key": "shastaFortWild",
+   "r": [
+    340,
+    420,
+    -420,
+    -330
+   ],
+   "for": "shastaSnowFort",
+   "creatures": [
+    "monsters"
+   ]
+  },
+  {
+   "key": "shastaGateWild",
+   "r": [
+    380,
+    438,
+    -220,
+    -100
+   ],
+   "for": "shastaIceGates",
+   "creatures": [
+    "monsters"
+   ],
+   "note": "snowmen"
+  },
+  {
+   "key": "shastaRidgeWild",
+   "r": [
+    -320,
+    -250,
+    -250,
+    -160
+   ],
+   "for": "shastaFrostRidgeGate",
+   "creatures": [
+    "creatures"
+   ]
+  }
+ ],
+ "props": [
+  {
+   "k": "statue",
+   "at": [
+    18,
+    18
+   ],
+   "note": "TRANSPORT PAD at the rink edge"
+  },
+  {
+   "k": "bench",
+   "at": [
+    -24,
+    -14
+   ]
+  },
+  {
+   "k": "bench",
+   "at": [
+    24,
+    -14
+   ]
+  },
+  {
+   "k": "lamp",
+   "at": [
+    -20,
+    20
+   ],
+   "note": "gold-trimmed lantern"
+  },
+  {
+   "k": "planter",
+   "at": [
+    20,
+    -20
+   ],
+   "note": "lilac window-box planter"
+  },
+  {
+   "k": "sign",
+   "at": [
+    10,
+    -110
+   ],
+   "note": "CASTLE signpost"
+  },
+  {
+   "k": "sign",
+   "at": [
+    10,
+    110
+   ],
+   "note": "LAKE signpost"
+  },
+  {
+   "k": "sign",
+   "at": [
+    110,
+    10
+   ],
+   "note": "SKI LODGE signpost"
+  },
+  {
+   "k": "sign",
+   "at": [
+    -110,
+    10
+   ],
+   "note": "STADIUM signpost"
+  },
+  {
+   "k": "statue",
+   "at": [
+    -14,
+    -118
+   ],
+   "note": "SHRINE"
+  },
+  {
+   "k": "fountain",
+   "at": [
+    -30,
+    -226
+   ],
+   "note": "frozen fountain"
+  },
+  {
+   "k": "crate",
+   "at": [
+    -130,
+    30
+   ],
+   "note": "playground swings"
+  },
+  {
+   "k": "crate",
+   "at": [
+    -120,
+    52
+   ],
+   "note": "playground slide"
+  },
+  {
+   "k": "lamp",
+   "at": [
+    282,
+    20
+   ],
+   "note": "LODGE FIRE pit"
+  },
+  {
+   "k": "crate",
+   "at": [
+    244,
+    -20
+   ],
+   "note": "ski rental shed"
+  },
+  {
+   "k": "fence",
+   "at": [
+    334,
+    -60
+   ],
+   "note": "CHAIR LIFT base station"
+  },
+  {
+   "k": "crate",
+   "at": [
+    0,
+    200
+   ],
+   "note": "PONTOON"
+  },
+  {
+   "k": "sign",
+   "at": [
+    120,
+    210
+   ],
+   "note": "LOOK viewpoint"
+  },
+  {
+   "k": "fence",
+   "at": [
+    100,
+    220
+   ],
+   "note": "drone range targets"
+  }
+ ],
+ "look": {
+  "sky": [
+   "#7aa8d8",
+   "#eaf2fa"
+  ],
+  "fog": "#e4ecf4",
+  "sun": "#fff8ec",
+  "light": "#f4f8ff",
+  "grass": "#eef3f8",
+  "ground": "#dfe6ee",
+  "water": "#7ab4d4",
+  "lamps": "#ffcf7a",
+  "banners": [
+   "#3a5a9a",
+   "#d9b24a"
+  ],
+  "trees": [
+   "#2e4a3a",
+   "#3a5a42",
+   "#4a6a4a"
+  ],
+  "notes": "SNOW WORLD WITH MOUNTAINS (Ben s348): crisp ice-blue sky to a white horizon, deep snow on every roof, snowy ground (the \"grass\" is snow), dark snow-dusted pines, glassy blue lake with ice at the edges. Timber + grey stone, gold-trimmed signs, lilac window boxes, warm amber windows + lanterns at night. Light snowfall, breath steam."
+ },
+ "terrain": {
+  "notes": "SHASTA = a flat valley town ringed by MOUNTAINS. MOUNT SHASTA (the big peak) fills the north-east: the slopes, the Ice Gates, the Glow-Worm Grotto + the Snow Fort sit on it, reached by the CHAIR LIFT from the Ski Lodge. More peaks ring the valley (north-west, north, west, south-east, south). The town, the avenues and the lake shore stay flat.",
+  "hills": [
+   {
+    "key": "shastaMountShasta",
+    "c": [
+     370,
+     -280
+    ],
+    "r": 160,
+    "h": 160
+   },
+   {
+    "key": "shastaNorthWestPeak",
+    "c": [
+     -340,
+     -360
+    ],
+    "r": 110,
+    "h": 110
+   },
+   {
+    "key": "shastaNorthPeak",
+    "c": [
+     -120,
+     -430
+    ],
+    "r": 80,
+    "h": 80
+   },
+   {
+    "key": "shastaCastleCrag",
+    "c": [
+     150,
+     -430
+    ],
+    "r": 70,
+    "h": 70,
+    "cliff": true
+   },
+   {
+    "key": "shastaWestPeak",
+    "c": [
+     -440,
+     100
+    ],
+    "r": 70,
+    "h": 70
+   },
+   {
+    "key": "shastaSouthEastPeak",
+    "c": [
+     380,
+     360
+    ],
+    "r": 100,
+    "h": 100
+   },
+   {
+    "key": "shastaSouthPeak",
+    "c": [
+     60,
+     440
+    ],
+    "r": 70,
+    "h": 60
+   },
+   {
+    "key": "shastaSouthWestHill",
+    "c": [
+     -420,
+     380
+    ],
+    "r": 60,
+    "h": 40
+   }
+  ],
+  "cuts": [],
+  "forests": [
+   {
+    "key": "shastaFrostPines",
+    "r": [
+     -330,
+     -140,
+     -270,
+     -110
+    ],
+    "every": 10,
+    "mix": "pine",
+    "giants": 0.03
+   },
+   {
+    "key": "shastaSlopePines",
+    "r": [
+     200,
+     438,
+     -438,
+     -80
+    ],
+    "every": 13,
+    "mix": "pine",
+    "giants": 0.02
+   },
+   {
+    "key": "shastaLakePines",
+    "r": [
+     -120,
+     -60,
+     170,
+     320
+    ],
+    "every": 11,
+    "mix": "pine",
+    "giants": 0
+   },
+   {
+    "key": "shastaEastShorePines",
+    "r": [
+     200,
+     260,
+     120,
+     320
+    ],
+    "every": 11,
+    "mix": "pine",
+    "giants": 0
+   },
+   {
+    "key": "shastaSouthPines",
+    "r": [
+     -60,
+     200,
+     300,
+     438
+    ],
+    "every": 12,
+    "mix": "pine",
+    "giants": 0.03
+   },
+   {
+    "key": "shastaCastlePines",
+    "r": [
+     -110,
+     -50,
+     -330,
+     -270
+    ],
+    "every": 10,
+    "mix": "pine",
+    "giants": 0
+   }
+  ],
+  "clearings": [
+   {
+    "key": "shastaRoyalCourt",
+    "r": [
+     44,
+     114,
+     -320,
+     -282
+    ]
+   },
+   {
+    "key": "shastaGrottoMouth",
+    "r": [
+     230,
+     270,
+     -300,
+     -260
+    ]
+   },
+   {
+    "key": "shastaFortYard",
+    "r": [
+     300,
+     340,
+     -380,
+     -340
+    ]
+   },
+   {
+    "key": "shastaIceGateField",
+    "r": [
+     340,
+     380,
+     -170,
+     -130
+    ]
+   },
+   {
+    "key": "shastaLift",
+    "r": [
+     320,
+     350,
+     -60,
+     -30
+    ]
+   }
+  ]
+ }
+}

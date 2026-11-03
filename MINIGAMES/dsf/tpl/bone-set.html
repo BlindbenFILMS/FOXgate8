@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="1d05e79e-a540-4189-8dfa-6a1a4218125b"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+
+<style>/* Modernist — design-system tokens and component classes. This file is the source of truth for the system's look; retune it here and see readme.md. */
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("743b4d00-0993-4e73-840b-e632b6e5a487") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("c273f9e7-7ea0-4784-aacc-6624938a0fbf") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("6ef2b8be-7c4f-4ce8-9054-2c864e93db34") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("743b4d00-0993-4e73-840b-e632b6e5a487") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("c273f9e7-7ea0-4784-aacc-6624938a0fbf") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("6ef2b8be-7c4f-4ce8-9054-2c864e93db34") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("743b4d00-0993-4e73-840b-e632b6e5a487") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("c273f9e7-7ea0-4784-aacc-6624938a0fbf") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("6ef2b8be-7c4f-4ce8-9054-2c864e93db34") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+
+:root {
+  --color-bg: #f3f2f2;
+  --color-surface: #eae9e9;
+  --color-text: #201e1d;
+  --color-accent: #ec3013;
+  --color-accent-2: #e15b47;
+  --color-divider: color-mix(in srgb, #201e1d 40%, transparent);
+
+  /* Tonal ramps — generated in OKLCH on one shared lightness scale, so the
+     same step of any role matches the others in visual value. */
+  --color-neutral-100: #f8f4f4;
+  --color-neutral-200: #eae7e7;
+  --color-neutral-300: #d7d3d3;
+  --color-neutral-400: #bab6b6;
+  --color-neutral-500: #9b9797;
+  --color-neutral-600: #7d7979;
+  --color-neutral-700: #605d5d;
+  --color-neutral-800: #444141;
+  --color-neutral-900: #2d2b2b;
+
+  --color-accent-100: #fff2ef;
+  --color-accent-200: #ffe0d9;
+  --color-accent-300: #ffc4b8;
+  --color-accent-400: #ff9783;
+  --color-accent-500: #ff563c;
+  --color-accent-600: #dd2b0f;
+  --color-accent-700: #ae1800;
+  --color-accent-800: #7c1405;
+  --color-accent-900: #4d170e;
+
+  --color-accent-2-100: #fff2ef;
+  --color-accent-2-200: #ffe0da;
+  --color-accent-2-300: #ffc4b9;
+  --color-accent-2-400: #ff9784;
+  --color-accent-2-500: #ef6853;
+  --color-accent-2-600: #c94b39;
+  --color-accent-2-700: #9e3526;
+  --color-accent-2-800: #71261b;
+  --color-accent-2-900: #471d16;
+
+  --font-heading: "Archivo", system-ui, sans-serif;
+  --font-heading-weight: 800;
+  --font-body: "Archivo", system-ui, sans-serif;
+
+  --space-1: 4.0px;
+  --space-2: 8.0px;
+  --space-3: 12.0px;
+  --space-4: 16.0px;
+  --space-6: 24.0px;
+  --space-8: 32.0px;
+
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+
+  /* Elevation — derived from the ground: soft ink-tinted shadows on a
+     light theme, a hairline edge + ambient darkness on a dark one. */
+  --shadow-sm: 0 1px 2px color-mix(in srgb, #2d2b2b 14%, transparent);
+  --shadow-md: 0 3px 10px color-mix(in srgb, #2d2b2b 16%, transparent);
+  --shadow-lg: 0 12px 32px color-mix(in srgb, #2d2b2b 22%, transparent);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: var(--font-heading-weight); }
+
+.grayscale{filter:grayscale(1) contrast(1.08)}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Components — built with the tokens above. Plain CSS
+   on plain HTML: no JavaScript, no build step. Each class is documented in
+   readme.md and demonstrated in foundations/ and components/.
+   ══════════════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-size: 15px; line-height: 1.55; font-weight: 400; }
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 var(--space-2);
+}
+h1 { font-size: 42px; }
+h2 { font-size: 32px; }
+h3 { font-size: 25px; }
+h4 { font-size: 20px; }
+h5 { font-size: 16px; }
+h6 { font-size: 13px; }
+h6 { letter-spacing: 0.08em; text-transform: uppercase; }
+p { margin: 0 0 var(--space-3); }
+a { color: var(--color-accent); text-underline-offset: 3px; }
+img { display: block; max-width: 100%; }
+figure { margin: 0; }
+figcaption {
+  font-size: 11px; margin-top: var(--space-1);
+  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+}
+.text-muted { color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
+
+/* — rules — */
+.hr {
+  height: 2px; border: 0; margin: var(--space-4) 0;
+  background: var(--color-divider);
+}
+
+/* — buttons — */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  cursor: pointer; text-decoration: none;
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 14px; line-height: 1.2; color: var(--color-text); /* matches the .input's 14px —
+     the pair sits side by side in sign-up rows */
+  background: transparent; border: 1px solid transparent;
+  padding: var(--space-2) calc(var(--space-3) * 1.2);
+  border-radius: var(--radius-md);
+}
+.btn svg { display: block; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-primary { background: var(--color-accent); color: var(--color-bg); }
+.btn-primary:hover { background: var(--color-accent-600); }
+.btn-primary:active { background: var(--color-accent-700); }
+.btn-secondary { border-color: var(--color-divider); }
+.btn-secondary:hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.btn-secondary:active { background: color-mix(in srgb, var(--color-text) 14%, transparent); }
+.btn-ghost { color: var(--color-accent); padding-inline: var(--space-1); }
+.btn-ghost:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+.btn-ghost:active { background: color-mix(in srgb, var(--color-accent) 18%, transparent); }
+.btn-icon { width: 36px; height: 36px; padding: 0; }
+.btn-block { width: 100%; margin-top: var(--space-2); justify-content: flex-start; text-align: left; }
+
+/* — forms — */
+.field > label {
+  display: block; font-size: 12px; margin-bottom: 5px;
+  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+}
+.input {
+  width: 100%; min-height: 36px; padding: 6px 10px; font: inherit;
+  font-size: 14px; color: var(--color-text); caret-color: var(--color-accent);
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+}
+.input:hover { border-color: color-mix(in srgb, var(--color-text) 45%, transparent); }
+.input:focus-visible { border-color: var(--color-accent); outline-offset: 0; }
+textarea.input { min-height: 90px; resize: vertical; }
+.radio { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
+.radio input, .seg-opt input {
+  position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;
+}
+.radio .dot {
+  width: 16px; height: 16px; flex: none; border-radius: 50%;
+  border: 1.5px solid var(--color-divider);
+}
+.radio:hover .dot { border-color: var(--color-accent); }
+.radio input:checked + .dot {
+  border-color: var(--color-accent); background: var(--color-accent);
+  box-shadow: inset 0 0 0 4px var(--color-bg);
+}
+.radio input:focus-visible + .dot { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.seg {
+  display: inline-flex; overflow: hidden;
+  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+}
+.seg-opt {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 12px; font-size: 13px; cursor: pointer;
+}
+.seg-opt + .seg-opt { border-left: 1px solid var(--color-divider); }
+.seg-opt:has(input:checked) { background: var(--color-accent); color: var(--color-bg); }
+.seg-opt:not(:has(input:checked)):hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.seg-opt:has(input:focus-visible) { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+
+/* — cards — */
+.card {
+  display: flex; flex-direction: column; gap: var(--space-2);
+  padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-surface);
+}
+.card-kicker { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent); }
+.card-title {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 17px; line-height: 1.2;
+}
+.card-body { margin: 0; font-size: 13px; opacity: 0.8; flex: 1; }
+.card-meta {
+  display: flex; align-items: center; gap: 6px; font-size: 11px;
+  color: color-mix(in srgb, var(--color-text) 50%, transparent);
+}
+.elev-sm { box-shadow: var(--shadow-sm); }
+.elev-md { box-shadow: var(--shadow-md); }
+.elev-lg { box-shadow: var(--shadow-lg); }
+
+/* — tags — */
+.tag {
+  display: inline-flex; align-items: center; font-size: 11px;
+  letter-spacing: 0.02em; padding: 3px 10px;
+  border-radius: calc(var(--radius-md) * 0.75);
+}
+.tag-accent { background: var(--color-accent-100); color: var(--color-accent-800); }
+.tag-accent-2 { background: var(--color-accent-2-100); color: var(--color-accent-2-800); }
+.tag-neutral { background: var(--color-neutral-100); color: var(--color-neutral-800); }
+.tag-outline { border: 1px solid var(--color-accent); color: var(--color-accent); }
+
+/* — navigation — */
+.nav {
+  display: flex; align-items: center; gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 2px solid var(--color-divider);
+}
+.nav-brand {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 18px; margin-right: auto;
+}
+.nav a { color: inherit; text-decoration: none; font-size: 14px; }
+.nav a:hover, .nav a[aria-current='page'] { color: var(--color-accent); }
+
+/* — tables — */
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table th {
+  text-align: left; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  padding: var(--space-2); border-bottom: 2px solid var(--color-divider);
+}
+.table td {
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--color-divider);
+}
+.table tbody tr:hover { background: color-mix(in srgb, var(--color-text) 4%, transparent); }
+
+/* — dialog — */
+.dialog-backdrop {
+  position: fixed; inset: 0; display: grid; place-items: center;
+  padding: var(--space-4);
+  background: color-mix(in srgb, var(--color-neutral-900) 50%, transparent);
+}
+.dialog {
+  width: min(440px, 100%); display: flex; flex-direction: column; gap: var(--space-3);
+  padding: var(--space-4); border-radius: var(--radius-lg);
+  background: var(--color-surface); box-shadow: var(--shadow-lg);
+}
+.dialog-title {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 20px;
+}
+.dialog-body { font-size: 14px; opacity: 0.85; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-2); }
+
+</style>
+<script src="16e97b58-078c-434c-8043-280d70936ab2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("743b4d00-0993-4e73-840b-e632b6e5a487") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("c273f9e7-7ea0-4784-aacc-6624938a0fbf") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("6ef2b8be-7c4f-4ce8-9054-2c864e93db34") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("743b4d00-0993-4e73-840b-e632b6e5a487") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("c273f9e7-7ea0-4784-aacc-6624938a0fbf") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("6ef2b8be-7c4f-4ce8-9054-2c864e93db34") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("743b4d00-0993-4e73-840b-e632b6e5a487") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("c273f9e7-7ea0-4784-aacc-6624938a0fbf") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("6ef2b8be-7c4f-4ce8-9054-2c864e93db34") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("743b4d00-0993-4e73-840b-e632b6e5a487") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("c273f9e7-7ea0-4784-aacc-6624938a0fbf") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("6ef2b8be-7c4f-4ce8-9054-2c864e93db34") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+<style>
+  html, body { margin: 0; height: 100%; background: #182a30; overflow: hidden; }
+  * { box-sizing: border-box; }
+  a { color: #ec3013; }
+  a:hover { color: #b8250e; }
+  @keyframes inIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes inTitle { 0% { opacity: 0; transform: scale(.94); } 16% { opacity: 1; transform: scale(1); } 78% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes inScan { 0% { opacity: .05; } 50% { opacity: .16; } 100% { opacity: .05; } }
+  @keyframes inPulse { 0%, 100% { opacity: .35; } 50% { opacity: .95; } }
+  @keyframes inKnit { 0% { opacity: 0; stroke-width: 4; } 40% { opacity: 1; } 100% { opacity: 0; stroke-width: 1; } }
+  @keyframes inPop { 0% { transform: scale(.6); opacity: 0; } 60% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+</style>
+</helmet>
+
+<div style="position:absolute; inset:0; display:flex; flex-direction:column; background:#182a30; font-family:var(--font-body), Archivo, sans-serif; color:#201e1d; user-select:none; -webkit-user-select:none">
+
+  <div style="display:flex; align-items:stretch; background:#f3f2f2; border-bottom:2px solid #201e1d; flex:0 0 auto; z-index:4">
+    <div style="padding:9px 14px; display:flex; flex-direction:column; gap:1px; flex:0 0 auto">
+      <span style="font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:#ec3013; font-weight:700; white-space:nowrap">{{ hudKicker }}</span>
+      <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:15px; font-weight:800; letter-spacing:-.01em; text-transform:uppercase; line-height:1.1; white-space:nowrap; width:max-content">Bone Set</span>
+    </div>
+    <div style="border-left:2px solid #201e1d; padding:9px 14px; display:flex; flex-direction:column; gap:1px; justify-content:center; flex:1 1 auto; min-width:0">
+      <span style="font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:#6b6864; font-weight:700">Case</span>
+      <span style="font-size:10px; font-weight:700; line-height:1.3; overflow-wrap:break-word">{{ caseText }}</span>
+    </div>
+    <div style="border-left:2px solid #201e1d; padding:9px 14px; display:flex; align-items:center; gap:9px; flex:0 0 auto">
+      <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:22px; font-weight:800; line-height:1; color:{{ timerColor }}; font-variant-numeric:tabular-nums">{{ timerText }}</span>
+      <div style="width:44px; height:6px; background:#dedcd6; border:1px solid #201e1d">
+        <div style="height:100%; width:{{ timerPct }}%; background:{{ timerColor }}"></div>
+      </div>
+    </div>
+    <div style="border-left:2px solid #201e1d; padding:9px 14px; display:flex; flex-direction:column; gap:1px; justify-content:center; flex:0 0 auto">
+      <span style="font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:#6b6864; font-weight:700">Set</span>
+      <span style="font-size:11px; font-weight:700; font-variant-numeric:tabular-nums; color:{{ setColor }}; white-space:nowrap">{{ setText }}</span>
+    </div>
+    <div style="display:flex; align-items:stretch; flex:0 0 auto">
+      <button sc-camel-on-click="{{ toggleMusic }}" style="padding:0 12px; border:0; border-left:2px solid #201e1d; background:#f3f2f2; color:{{ musicColor }}; font-family:var(--font-body), Archivo, sans-serif; font-size:9px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; white-space:nowrap" style-hover="background:#e6e4dd">{{ musicLabel }}</button>
+      <button sc-camel-on-click="{{ toggleSound }}" style="padding:0 12px; border:0; border-left:2px solid #201e1d; background:#f3f2f2; color:{{ soundColor }}; font-family:var(--font-body), Archivo, sans-serif; font-size:9px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; white-space:nowrap" style-hover="background:#e6e4dd">{{ soundLabel }}</button>
+    </div>
+  </div>
+
+  <div data-screen-label="{{ stageLabel }}" style="position:relative; flex:1 1 auto; min-height:0; overflow:hidden; background:#182a30; touch-action:none" sc-camel-on-pointer-down="{{ onDown }}" sc-camel-on-pointer-move="{{ onMove }}" sc-camel-on-pointer-up="{{ onUp }}" sc-camel-on-pointer-leave="{{ onUp }}" sc-camel-on-pointer-cancel="{{ onUp }}">
+
+    <svg sc-camel-view-box="0 0 200 140" sc-camel-preserve-aspect-ratio="xMidYMid slice" style="position:absolute; inset:0; width:100%; height:100%; display:block">
+      <rect x="0" y="0" width="200" height="140" fill="#182a30"></rect>
+      <g stroke="#20353c" stroke-width="0.8" fill="none">
+        <path d="M 0 10 L 200 10"></path><path d="M 0 130 L 200 130"></path>
+        <path d="M 22 0 L 22 140"></path><path d="M 178 0 L 178 140"></path>
+      </g>
+      <g fill="#20353c">
+        <rect x="4" y="3" width="12" height="5"></rect><rect x="184" y="3" width="12" height="5"></rect>
+        <rect x="4" y="132" width="12" height="5"></rect><rect x="184" y="132" width="12" height="5"></rect>
+      </g>
+    </svg>
+
+    <svg sc-camel-view-box="0 0 200 140" sc-camel-preserve-aspect-ratio="xMidYMid meet" style="position:absolute; inset:0; width:100%; height:100%; display:block; z-index:1">
+
+      <g>
+        <rect x="8" y="14" width="184" height="110" fill="#0f2026" stroke="#3a5b64" stroke-width="2"></rect>
+        <rect x="8" y="14" width="184" height="110" fill="#8fd6bf" opacity="0.06" style="animation:inScan 3s ease-in-out infinite"></rect>
+        <rect x="8" y="14" width="184" height="6" fill="#3a5b64"></rect>
+        <foreignObject x="10" y="14.6" width="180" height="6" style="overflow:hidden">
+          <div xmlns="http://www.w3.org/1999/xhtml" style="width:180px; display:flex; justify-content:space-between; align-items:center">
+            <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:4.2px; font-weight:800; letter-spacing:.16em; color:#eaf3f0; white-space:nowrap">OSTEO SCAN</span>
+            <span style="font-size:3.8px; font-weight:700; letter-spacing:.1em; color:#eaf3f0; white-space:nowrap">{{ boneName }}</span>
+          </div>
+        </foreignObject>
+      </g>
+
+      <g>
+        <rect x="12" y="24" width="38" height="46" fill="#0a181d" stroke="#2c464e" stroke-width="1.2"></rect>
+        <g transform="{{ refT }}">
+          <path d="{{ refD }}" fill="#5f8f7f" opacity="0.9"></path>
+        </g>
+        <foreignObject x="12" y="63" width="38" height="7" style="overflow:hidden">
+          <div xmlns="http://www.w3.org/1999/xhtml" style="width:38px; display:flex; justify-content:center">
+            <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:3.8px; font-weight:800; letter-spacing:.12em; color:#6f9d86; white-space:nowrap">HEALTHY</span>
+          </div>
+        </foreignObject>
+      </g>
+
+      <g transform="{{ boneT }}" style="pointer-events:none">
+        <path d="{{ refD }}" fill="none" stroke="#8fd6bf" stroke-width="1.6" stroke-dasharray="3 2.4" opacity="0.55"></path>
+        <path d="{{ refD }}" fill="#8fd6bf" opacity="0.07"></path>
+      </g>
+
+      <g>
+        <rect x="54" y="86" width="134" height="34" fill="#0a181d" stroke="#2c464e" stroke-width="1.2" stroke-dasharray="3 2.6"></rect>
+        <rect x="54" y="86" width="134" height="6" fill="#14262c"></rect>
+        <foreignObject x="57" y="86.4" width="128" height="6" style="overflow:hidden">
+          <div xmlns="http://www.w3.org/1999/xhtml" style="width:128px; display:flex; justify-content:space-between; align-items:center">
+            <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:3.8px; font-weight:800; letter-spacing:.14em; color:#8fd6bf; white-space:nowrap">{{ trayLabel }}</span>
+            <span style="font-size:3.4px; font-weight:700; letter-spacing:.1em; color:#8fd6bf; white-space:nowrap">{{ trayCount }}</span>
+          </div>
+        </foreignObject>
+      </g>
+
+      <sc-for list="{{ frags }}" as="fr" hint-placeholder-count="3">
+        <g transform="{{ fr.t }}" style="{{ fr.cursor }}">
+          <path d="{{ fr.d }}" fill="{{ fr.fill }}" stroke="{{ fr.stroke }}" stroke-width="0.9"></path>
+          <path d="{{ fr.d }}" fill="none" stroke="#ffffff" stroke-width="0.6" opacity="{{ fr.sheen }}"></path>
+          <sc-if value="{{ fr.near }}" hint-placeholder-val="{{ false }}">
+            <path d="{{ fr.d }}" fill="none" stroke="#8fd6bf" stroke-width="1.6" style="animation:inPulse 1s ease-in-out infinite"></path>
+          </sc-if>
+        </g>
+      </sc-for>
+
+      <sc-if value="{{ knitting }}" hint-placeholder-val="{{ false }}">
+        <g transform="{{ boneT }}" style="pointer-events:none">
+          <sc-for list="{{ seams }}" as="sm" hint-placeholder-count="0">
+            <path d="{{ sm.d }}" fill="none" stroke="#8fd6bf" stroke-width="3" stroke-linecap="round" style="animation:inKnit 1.1s ease-out forwards"></path>
+          </sc-for>
+        </g>
+      </sc-if>
+
+      <sc-if value="{{ allSet }}" hint-placeholder-val="{{ false }}">
+        <g style="pointer-events:none; transform-box:fill-box; transform-origin:center; animation:inPop .3s ease-out">
+          <rect x="62" y="72" width="76" height="20" fill="#f3f2f2" stroke="#201e1d" stroke-width="2"></rect>
+          <foreignObject x="62" y="77" width="76" height="12" style="overflow:hidden">
+            <div xmlns="http://www.w3.org/1999/xhtml" style="width:76px; display:flex; justify-content:center">
+              <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:7.4px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#201e1d; white-space:nowrap">Bone knitted</span>
+            </div>
+          </foreignObject>
+        </g>
+      </sc-if>
+    </svg>
+
+    <sc-if value="{{ showHint }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute; left:0; right:0; bottom:0; z-index:2; background:#201e1d; padding:9px 14px; display:flex; align-items:center; gap:9px">
+        <span style="flex:0 0 auto; width:2px; align-self:stretch; background:#ec3013"></span>
+        <span style="flex:1 1 auto; min-width:0; font-size:12px; font-weight:700; color:#f3f2f2; line-height:1.35; overflow-wrap:break-word">{{ hintText }}</span>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showTitleCard }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute; inset:0; z-index:5; display:flex; align-items:center; justify-content:center; pointer-events:none; animation:inTitle 1.6s ease-out forwards">
+        <div style="background:#f3f2f2; border:2px solid #201e1d; padding:16px 26px; max-width:78%">
+          <div style="font-family:var(--font-heading), Archivo, sans-serif; font-size:clamp(24px, 6vw, 42px); font-weight:800; line-height:.98; letter-spacing:-.02em; text-transform:uppercase">{{ cardTitle }}</div>
+          <div style="height:2px; background:#ec3013; width:56px; margin:9px 0"></div>
+          <div style="font-size:13px; color:#201e1d; line-height:1.4">{{ cardHint }}</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showIntro }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute; inset:0; z-index:6; background:rgba(12,22,26,.9); display:flex; flex-direction:column; padding:22px; overflow:auto">
+        <div style="margin:auto 0; display:flex; flex-wrap:wrap-reverse; align-items:center; gap:26px">
+          <svg sc-camel-view-box="0 0 220 200" sc-camel-preserve-aspect-ratio="xMidYMid meet" style="flex:0 1 min(46%, 460px); min-width:0; aspect-ratio:220 / 200; max-height:min(440px, 72vh); order:2; pointer-events:none">
+            <rect x="10" y="16" width="200" height="168" fill="#0f2026" stroke="#3a5b64" stroke-width="4"></rect>
+            <rect x="10" y="16" width="200" height="12" fill="#3a5b64"></rect>
+            <g stroke="#8fd6bf" stroke-width="2.4" stroke-dasharray="6 5" opacity="0.6" fill="none">
+              <path d="M 44 96 q -14 -22 8 -26 q 18 -3 22 15 L 150 79 q 4 -18 22 -15 q 22 4 8 26 q 14 22 -8 26 q -18 3 -22 -15 L 74 107 q 0 18 -22 15 q -22 -4 -8 -26 Z"></path>
+            </g>
+            <g>
+              <path d="M 44 96 q -14 -22 8 -26 q 18 -3 22 15 L 96 83 L 92 111 L 74 107 q 0 18 -22 15 q -22 -4 -8 -26 Z" fill="#ede3cf" stroke="#b8a483" stroke-width="1.6"></path>
+              <path d="M 106 138 L 150 132 L 146 160 L 102 166 Z" fill="#ede3cf" stroke="#b8a483" stroke-width="1.6"></path>
+              <path d="M 158 79 q 4 -18 22 -15 q 22 4 8 26 q 14 22 -8 26 q -18 3 -22 -15 Z" fill="#ede3cf" stroke="#b8a483" stroke-width="1.6"></path>
+            </g>
+            <g stroke="#ec3013" stroke-width="3" fill="none" stroke-linecap="round">
+              <path d="M 112 128 L 122 118"></path>
+              <path d="M 124 146 L 134 136"></path>
+            </g>
+            <circle cx="118" cy="150" r="16" fill="none" stroke="#ec3013" stroke-width="2.6"></circle>
+            <path d="M 129 161 L 142 174" stroke="#ec3013" stroke-width="3.4" stroke-linecap="round"></path>
+          </svg>
+          <div style="flex:1 1 320px; min-width:0; order:1; display:flex; flex-direction:column; gap:14px; max-width:560px">
+            <div style="display:flex; flex-direction:column">
+              <span style="font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#8fd6bf; font-weight:700">Station infirmary · four cases</span>
+              <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:clamp(34px, 8.2vw, 62px); font-weight:800; line-height:.92; letter-spacing:-.03em; text-transform:uppercase; color:#f3f2f2">Bone Set</span>
+            </div>
+            <div style="height:2px; background:#ec3013; width:116px"></div>
+            <p style="margin:0; font-size:15px; line-height:1.5; color:#f3f2f2">The scanner shows a healthy bone as a dashed outline, and the broken fragments sitting loose in the tray below it.</p>
+            <p style="margin:0; font-size:15px; line-height:1.5; color:#f3f2f2">Drag each fragment into the outline where it belongs. Get it close and it locks into place.</p>
+            <p style="margin:0; font-size:14px; line-height:1.5; color:#8fd6bf">It locks wherever you drop it, so a sloppy fragment leaves a visible step in the bone. Line them up properly and the bone knits clean.</p>
+            <button sc-camel-on-click="{{ begin }}" style="align-self:flex-start; padding:16px 26px; border:0; background:#ec3013; color:#f3f2f2; font-family:var(--font-heading), Archivo, sans-serif; font-size:18px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; text-align:left; cursor:pointer" style-hover="background:#b8250e">Open the first case</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showCard }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute; inset:0; z-index:6; background:rgba(10,18,22,.84); display:flex; align-items:center; justify-content:center; padding:18px">
+        <div style="width:100%; max-width:380px; max-height:100%; min-height:0; display:flex; flex-direction:column; background:#f3f2f2; border:2px solid #201e1d; padding:20px; animation:inIn .18s ease-out">
+          <div style="flex:0 0 auto">
+            <div style="font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:#ec3013; font-weight:700">{{ cardKicker }}</div>
+            <div style="font-family:var(--font-heading), Archivo, sans-serif; font-size:30px; font-weight:800; line-height:1; letter-spacing:-.02em; margin:7px 0 4px">{{ cardScore }}</div>
+            <div style="font-size:12px; margin-bottom:14px">{{ cardMood }}</div>
+            <div style="height:2px; background:#201e1d; margin-bottom:13px"></div>
+          </div>
+          <div style="flex:1 1 auto; min-height:0; overflow:auto">
+            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px">
+              <sc-for list="{{ cardRows }}" as="r" hint-placeholder-count="0">
+                <div style="display:flex; align-items:center; gap:9px">
+                  <span style="flex:0 0 92px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em">{{ r.name }}</span>
+                  <div style="flex:1 1 auto; height:8px; background:#dedcd6; border:1px solid #201e1d">
+                    <div style="height:100%; width:{{ r.pct }}%; background:{{ r.color }}"></div>
+                  </div>
+                  <span style="flex:0 0 34px; text-align:right; font-size:12px; font-weight:700; font-variant-numeric:tabular-nums">{{ r.val }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ hasNotes }}" hint-placeholder-val="{{ false }}">
+              <div style="border-top:2px solid #201e1d; padding-top:12px; margin-bottom:16px; display:flex; flex-direction:column; gap:6px">
+                <sc-for list="{{ cardNotes }}" as="nt" hint-placeholder-count="0">
+                  <div style="display:flex; gap:8px; font-size:11px; line-height:1.35">
+                    <span style="color:#ec3013; font-weight:800">—</span>
+                    <span>{{ nt.text }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+          <button sc-camel-on-click="{{ cardAction }}" style="flex:0 0 auto; width:100%; padding:14px 16px; border:0; background:#ec3013; color:#f3f2f2; font-family:var(--font-heading), Archivo, sans-serif; font-size:15px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; text-align:left; cursor:pointer" style-hover="background:#b8250e">{{ cardCta }}</button>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;sound&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Audio&quot;},&quot;music&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Audio&quot;}}">
+const n = v => Math.round(v * 1000) / 1000;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const polyD = pts => "M " + pts.map(p => n(p[0]) + " " + n(p[1])).join(" L ") + " Z";
+
+// ---- bone profiles: thickness and centreline curve along the long axis
+const BONES = [
+  { key: "femur", name: "LEFT FEMUR", L: 46,
+    hw: t => { const a = Math.abs(t); return a > 36 ? 12.5 : a > 27 ? 7 + (a - 27) * 0.61 : 7; },
+    cap: 7, curve: t => t * 0.04, cuts: 2, label: "Transverse fracture, mid-shaft" },
+  { key: "rib", name: "THIRD RIB", L: 44,
+    hw: () => 4.8, cap: 4,
+    curve: t => -14 * Math.cos((t / 44) * 1.35) + 8, cuts: 3, label: "Displaced fracture, two breaks" },
+  { key: "ulna", name: "RIGHT ULNA", L: 42,
+    hw: t => { const u = (t + 42) / 84; return 3.8 + u * u * 7.6; },
+    cap: 5, curve: t => 4 * Math.sin((t / 42) * 1.9), cuts: 3, label: "Comminuted, three fragments" },
+  { key: "clavicle", name: "CLAVICLE", L: 43,
+    hw: t => 4.4 + Math.abs(t) * 0.08, cap: 4,
+    curve: t => 9 * Math.sin((t / 43) * 3.1), cuts: 4, label: "Multiple fragments, S-shaft" }
+];
+
+// taper the last few units to a dome so ends read as bone, not blocks
+function capped(b, t) {
+  const a = Math.abs(t), cap = b.cap || 5, edge = b.L - cap;
+  const base = b.hw(t);
+  if (a <= edge) return base;
+  const u = clamp((a - edge) / cap, 0, 1);
+  return base * Math.sqrt(Math.max(0, 1 - u * u * 0.93));
+}
+
+function outline(b) {
+  const pts = [];
+  const steps = 56;
+  for (let i = 0; i <= steps; i++) {
+    const t = -b.L + (i / steps) * 2 * b.L;
+    pts.push([t, b.curve(t) + capped(b, t)]);
+  }
+  for (let i = steps; i >= 0; i--) {
+    const t = -b.L + (i / steps) * 2 * b.L;
+    pts.push([t, b.curve(t) - capped(b, t)]);
+  }
+  return pts;
+}
+
+// Sutherland-Hodgman against the half-plane dot(p - a, nrm) >= 0
+function clipHalf(poly, a, nrm) {
+  const out = [];
+  const side = p => (p[0] - a[0]) * nrm[0] + (p[1] - a[1]) * nrm[1];
+  for (let i = 0; i < poly.length; i++) {
+    const c = poly[i], d = poly[(i + 1) % poly.length];
+    const sc = side(c), sd = side(d);
+    if (sc >= 0) out.push(c);
+    if ((sc >= 0) !== (sd >= 0)) {
+      const u = sc / (sc - sd);
+      out.push([c[0] + (d[0] - c[0]) * u, c[1] + (d[1] - c[1]) * u]);
+    }
+  }
+  return out;
+}
+
+function centroid(poly) {
+  let a = 0, x = 0, y = 0;
+  for (let i = 0; i < poly.length; i++) {
+    const p = poly[i], q = poly[(i + 1) % poly.length];
+    const cr = p[0] * q[1] - q[0] * p[1];
+    a += cr; x += (p[0] + q[0]) * cr; y += (p[1] + q[1]) * cr;
+  }
+  if (Math.abs(a) < 1e-6) {
+    const m = poly.reduce((acc, p) => [acc[0] + p[0], acc[1] + p[1]], [0, 0]);
+    return [m[0] / poly.length, m[1] / poly.length];
+  }
+  return [x / (3 * a), y / (3 * a)];
+}
+
+function inPoly(poly, x, y) {
+  let hit = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const a = poly[i], b = poly[j];
+    if ((a[1] > y) !== (b[1] > y) && x < a[0] + ((y - a[1]) / (b[1] - a[1])) * (b[0] - a[0])) hit = !hit;
+  }
+  return hit;
+}
+
+function rng(seed) {
+  let s = seed + 0x9e3779b9;
+  return () => {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const ORIGIN = { x: 122, y: 52 };
+const REF = { x: 31, y: 45, s: 0.34 };
+const TRAY = { x: 54, y: 86, w: 134, h: 34, inX0: 58, inX1: 184, inY0: 94, inY1: 120 };
+const SNAP = [7.6, 6.6, 5.8, 5];
+const SECONDS = [50, 50, 55, 60];
+
+function buildCase(round) {
+  const b = BONES[round % BONES.length];
+  const rand = rng(round * 6151 + 29);
+  const shell = outline(b);
+  // cut the shaft into fragments at slightly angled lines
+  const cuts = [];
+  const nCuts = b.cuts;
+  for (let i = 1; i <= nCuts; i++) {
+    const tc = -b.L + (i / (nCuts + 1)) * 2 * b.L + (rand() - 0.5) * 5;
+    const ang = (rand() - 0.5) * 0.7;
+    cuts.push({ tc, nrm: [Math.cos(ang), Math.sin(ang)] });
+  }
+  cuts.sort((p, q) => p.tc - q.tc);
+
+  const frags = [];
+  for (let i = 0; i <= nCuts; i++) {
+    let poly = shell;
+    if (i > 0) { const c = cuts[i - 1]; poly = clipHalf(poly, [c.tc, c.curveAt || 0], c.nrm); }
+    if (i < nCuts) { const c = cuts[i]; poly = clipHalf(poly, [c.tc, 0], [-c.nrm[0], -c.nrm[1]]); }
+    if (poly.length < 3) continue;
+    frags.push({ poly, home: centroid(poly) });
+  }
+
+  // scatter into the tray, order shuffled so shape reading matters
+  const order = frags.map((f, i) => i);
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    const tmp = order[i]; order[i] = order[j]; order[j] = tmp;
+  }
+  const slotW = (TRAY.inX1 - TRAY.inX0) / frags.length;
+  order.forEach((fi, slot) => {
+    const f = frags[fi];
+    let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+    f.poly.forEach(p => {
+      x0 = Math.min(x0, p[0] - f.home[0]); x1 = Math.max(x1, p[0] - f.home[0]);
+      y0 = Math.min(y0, p[1] - f.home[1]); y1 = Math.max(y1, p[1] - f.home[1]);
+    });
+    const lo = TRAY.inX0 + slotW * slot, hi = lo + slotW;
+    const sx = clamp((lo + hi) / 2, lo - x0, Math.max(lo - x0, hi - x1));
+    const cy = (TRAY.inY0 + TRAY.inY1) / 2;
+    const sy = clamp(cy + (rand() - 0.5) * 4, TRAY.inY0 - y0, Math.max(TRAY.inY0 - y0, TRAY.inY1 - y1));
+    f.off = [sx - (ORIGIN.x + f.home[0]), sy - (ORIGIN.y + f.home[1])];
+    f.placed = false;
+    f.residual = 0;
+  });
+
+  return { bone: b, cuts, frags, refD: polyD(shell) };
+}
+
+
+// quiet infirmary loop: glassy music-box figure over a long low note
+const MUSIC = (() => {
+  const notes = [];
+  const chords = [[48, 55, 60], [46, 53, 58], [44, 51, 56], [46, 53, 60]];
+  chords.forEach((ch, s) => {
+    const at = s * 8;
+    notes.push({ b: at, m: ch[0] - 12, d: 7.6, v: "bass" });
+    notes.push({ b: at, m: ch[1], d: 7.2, v: "pad" });
+    [0, 1.5, 3, 4.5, 6].forEach((off, i) => notes.push({ b: at + off, m: ch[i % 3] + 24, d: 1.5, v: "bell" }));
+  });
+  [3.5, 11.5, 19.5, 27.5].forEach(b => notes.push({ b, m: 91, d: 1.8, v: "bell" }));
+  return { notes, beats: 32, spb: 0.54 };
+})();
+const midiHz = m => 440 * Math.pow(2, (m - 69) / 12);
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = Object.assign({ overlay: "intro", muted: false, musicOff: false }, this.freshCase(0));
+  }
+
+  freshCase(round) {
+    const c = buildCase(round);
+    const r = round % 4;
+    return {
+      round, bone: c.bone, cuts: c.cuts, refD: c.refD,
+      frags: c.frags.map(f => ({ poly: f.poly, home: f.home, off: f.off, placed: false, residual: 0 })),
+      snap: SNAP[r], timeLeft: SECONDS[r], total: SECONDS[r],
+      held: null, grab: [0, 0], knitting: false, done: false,
+      titleCard: ["Case " + (r + 1), c.bone.name + " · " + c.bone.label],
+      cardAt: Date.now()
+    };
+  }
+
+  componentDidMount() {
+    window.__boneTarget = this;
+    this.started = false;
+    this.killMusic();
+    setTimeout(() => this.loop(), 0);
+  }
+
+  componentWillUnmount() {
+    if (this.raf) cancelAnimationFrame(this.raf);
+    this.raf = null;
+    this.killMusic();
+  }
+
+  muted() { return this.state.muted || (this.props.sound ?? true) === false; }
+
+  audio() {
+    if (this.muted() || !this.started) return null;
+    if (!window.__boneAC) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      window.__boneAC = new AC();
+      window.addEventListener("pagehide", () => { try { window.__boneAC.close(); } catch (e) {} });
+    }
+    this.actx = window.__boneAC;
+    if (this.actx.state === "suspended") this.actx.resume();
+    return this.actx;
+  }
+
+  tone(freq, dur, gain, type, to) {
+    const ac = this.audio();
+    if (!ac) return;
+    const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime;
+    o.type = type || "sine";
+    o.frequency.setValueAtTime(freq, t);
+    if (to) o.frequency.exponentialRampToValueAtTime(Math.max(20, to), t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(gain, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(ac.destination);
+    o.start(t); o.stop(t + dur + 0.02);
+  }
+
+
+  musicOn() { return !this.muted() && (this.props.music ?? true) !== false && !this.state.musicOff; }
+
+  voice(nt, at) {
+    const ac = this.actx, g = ac.createGain(), o = ac.createOscillator();
+    const dur = nt.d * MUSIC.spb;
+    let peak = 0.02;
+    if (nt.v === "bass") { o.type = "triangle"; peak = 0.044; }
+    else if (nt.v === "pad") { o.type = "sine"; peak = 0.02; }
+    else if (nt.v === "lead") { o.type = "triangle"; peak = 0.03; }
+    else if (nt.v === "bell") { o.type = "sine"; peak = 0.028; }
+    else { o.type = "square"; peak = 0.007; }
+    o.frequency.setValueAtTime(midiHz(nt.m), at);
+    if (nt.g) o.frequency.linearRampToValueAtTime(midiHz(nt.g), at + dur * 0.7);
+    g.gain.setValueAtTime(0.0001, at);
+    g.gain.exponentialRampToValueAtTime(peak, at + (nt.v === "pad" ? 0.4 : 0.016));
+    g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+    o.connect(g); g.connect(window.__boneMusicBus);
+    o.start(at); o.stop(at + dur + 0.03);
+  }
+
+  scheduleMusic() {
+    const ac = this.actx;
+    if (!ac || !this.musicOn()) return;
+    if (!window.__boneMusicBus) {
+      const bus = ac.createGain();
+      bus.gain.value = 0.5;
+      bus.connect(ac.destination);
+      window.__boneMusicBus = bus;
+      this.musicStart = ac.currentTime + 0.12;
+      this.musicBar = 0;
+    }
+    const barLen = MUSIC.beats * MUSIC.spb;
+    while (this.musicStart + this.musicBar * barLen < ac.currentTime + 0.9) {
+      const base = this.musicStart + this.musicBar * barLen;
+      MUSIC.notes.forEach(nt => {
+        const at = base + nt.b * MUSIC.spb;
+        if (at > ac.currentTime - 0.05) this.voice(nt, at);
+      });
+      this.musicBar++;
+    }
+  }
+
+  killMusic() {
+    const bus = window.__boneMusicBus;
+    if (bus) { try { bus.gain.value = 0; bus.disconnect(); } catch (e) {} }
+    window.__boneMusicBus = null;
+    this.musicBar = 0;
+  }
+
+  toggleMusic = () => {
+    this.audio();
+    if (this.musicOn()) this.killMusic();
+    this.setState(s => ({ musicOff: !s.musicOff }));
+  };
+
+  sfx(kind) {
+    if (!this.audio()) return;
+    const hz = m => 440 * Math.pow(2, (m - 69) / 12);
+    if (kind === "lift") this.tone(480, 0.05, 0.03, "triangle", 620);
+    else if (kind === "lock") { this.tone(340, 0.08, 0.05, "square", 560); this.tone(720, 0.07, 0.03, "triangle"); }
+    else if (kind === "drop") this.tone(220, 0.08, 0.035, "sine", 160);
+    else if (kind === "knit") [0, 4, 7, 12].forEach((s, i) => setTimeout(() => this.tone(hz(74 + s), 0.22, 0.05, "triangle"), i * 95));
+    else if (kind === "time") this.tone(180, 0.24, 0.06, "square", 110);
+  }
+
+  loop = () => {
+    this.raf = requestAnimationFrame(this.loop);
+    const now = Date.now();
+    const dt = Math.min(0.05, (now - (this.last || now)) / 1000);
+    this.last = now;
+    const s = this.state;
+    if (this.started && window.__boneTarget === this && window.__boneAC) {
+      if (this.musicOn()) this.scheduleMusic();
+      else if (window.__boneMusicBus) this.killMusic();
+    }
+    if (s.overlay || s.done) return;
+
+    const patch = {};
+    if (s.titleCard && now - s.cardAt > 1700) patch.titleCard = null;
+
+    if (!s.titleCard) {
+      const left = s.timeLeft - dt;
+      if (left <= 0) {
+        this.sfx("time");
+        this.setState({ timeLeft: 0, done: true, held: null }, () => this.finish());
+        return;
+      }
+      patch.timeLeft = left;
+    }
+    this.setState(patch);
+  };
+
+  finish() {
+    setTimeout(() => this.setState({ overlay: "card" }), 900);
+  }
+
+  local(e) {
+    const svg = this.svgEl || (this.svgEl = e.currentTarget.querySelectorAll("svg")[1]);
+    if (!svg) return { x: 0, y: 0 };
+    const r = svg.getBoundingClientRect();
+    const scale = Math.min(r.width / 200, r.height / 140);
+    const ox = (r.width - 200 * scale) / 2, oy = (r.height - 140 * scale) / 2;
+    return { x: (e.clientX - r.left - ox) / scale, y: (e.clientY - r.top - oy) / scale };
+  }
+
+  onDown = e => {
+    const s = this.state;
+    if (this.started && window.__boneTarget === this && window.__boneAC) {
+      if (this.musicOn()) this.scheduleMusic();
+      else if (window.__boneMusicBus) this.killMusic();
+    }
+    if (s.overlay || s.done || s.titleCard) return;
+    this.audio();
+    const p = this.local(e);
+    for (let i = s.frags.length - 1; i >= 0; i--) {
+      const f = s.frags[i];
+      if (f.placed) continue;
+      const lx = p.x - ORIGIN.x - f.off[0], ly = p.y - ORIGIN.y - f.off[1];
+      if (inPoly(f.poly, lx, ly)) {
+        this.sfx("lift");
+        this.setState({ held: i, grab: [p.x - f.off[0], p.y - f.off[1]] });
+        return;
+      }
+    }
+  };
+
+  onMove = e => {
+    const s = this.state;
+    if (this.started && window.__boneTarget === this && window.__boneAC) {
+      if (this.musicOn()) this.scheduleMusic();
+      else if (window.__boneMusicBus) this.killMusic();
+    }
+    if (s.overlay || s.held == null) return;
+    const p = this.local(e);
+    const g = s.grab;
+    this.setState(st => ({
+      frags: st.frags.map((f, i) => i === st.held
+        ? Object.assign({}, f, { off: [p.x - g[0], p.y - g[1]] })
+        : f)
+    }));
+  };
+
+  onUp = () => {
+    const s = this.state;
+    if (this.started && window.__boneTarget === this && window.__boneAC) {
+      if (this.musicOn()) this.scheduleMusic();
+      else if (window.__boneMusicBus) this.killMusic();
+    }
+    if (s.overlay || s.held == null) return;
+    const i = s.held;
+    const f = s.frags[i];
+    const d = Math.hypot(f.off[0], f.off[1]);
+    if (d <= s.snap) {
+      // locks where you dropped it, so sloppy work stays visible
+      this.sfx("lock");
+      const frags = s.frags.map((x, j) => j === i
+        ? Object.assign({}, x, { placed: true, residual: d })
+        : x);
+      const all = frags.every(x => x.placed);
+      this.setState({ held: null, frags, knitting: all }, () => {
+        if (all) {
+          this.sfx("knit");
+          setTimeout(() => this.setState({ done: true }, () => this.finish()), 700);
+        }
+      });
+    } else {
+      this.sfx("drop");
+      this.setState({ held: null });
+    }
+  };
+
+  begin = () => { this.started = true; this.audio(); this.setState({ overlay: null }); };
+
+  cardAction = () => {
+    this.setState(s => Object.assign(this.freshCase(s.round + 1), { overlay: null, muted: s.muted }));
+  };
+
+  toggleSound = () => {
+    if (!this.state.muted) this.killMusic();
+    this.setState(s => ({ muted: !s.muted }));
+  };
+
+  renderVals() {
+    const s = this.state, b = s.bone;
+    const placed = s.frags.filter(f => f.placed).length;
+    const tot = s.frags.length;
+    const all = placed === tot;
+
+    const precisions = s.frags.filter(f => f.placed)
+      .map(f => clamp(1 - f.residual / s.snap, 0, 1));
+    const avgPrec = precisions.length ? precisions.reduce((a, x) => a + x, 0) / precisions.length : 0;
+    const alignment = Math.round(avgPrec * 100);
+    const completion = Math.round((placed / tot) * 100);
+    const score = Math.round(completion * 0.55 + alignment * 0.45);
+
+    const frags = s.frags.map((f, i) => {
+      const d = Math.hypot(f.off[0], f.off[1]);
+      const isHeld = s.held === i;
+      return {
+        t: "translate(" + n(ORIGIN.x + f.off[0]) + " " + n(ORIGIN.y + f.off[1]) + ")",
+        d: polyD(f.poly),
+        cursor: f.placed ? "cursor:default" : isHeld ? "cursor:grabbing" : "cursor:grab",
+        fill: f.placed ? "#f2ead9" : "#ede3cf",
+        stroke: f.placed ? "#9c8a68" : "#b8a483",
+        sheen: isHeld ? 0.45 : 0.18,
+        near: isHeld && d <= s.snap
+      };
+    });
+
+    const seams = s.cuts.map(c => {
+      // draw each cut line across the bone so the knit reads along the breaks
+      const dx = -c.nrm[1], dy = c.nrm[0];
+      const half = 26;
+      return { d: "M " + n(c.tc - dx * half) + " " + n(-dy * half) + " L " + n(c.tc + dx * half) + " " + n(dy * half) };
+    });
+
+    const notes = [];
+    if (placed < tot) notes.push({ text: (tot - placed) + " fragment" + (tot - placed > 1 ? "s" : "") + " never made it into the bone." });
+    const sloppy = s.frags.filter(f => f.placed && f.residual > s.snap * 0.55).length;
+    if (sloppy) notes.push({ text: sloppy + " join" + (sloppy > 1 ? "s" : "") + " left a visible step in the shaft." });
+    if (all && !sloppy) notes.push({ text: "Every fragment seated clean. The bone will knit true." });
+
+    return {
+      hudKicker: "Case " + ((s.round % 4) + 1) + " of 4",
+      stageLabel: b.name,
+      caseText: b.name + " · " + b.label,
+      boneName: b.name,
+      timerText: Math.ceil(s.timeLeft) + "s",
+      timerPct: n(clamp(s.timeLeft / s.total, 0, 1) * 100),
+      timerColor: s.timeLeft < 8 ? "#c2210f" : s.timeLeft < 16 ? "#c2560f" : "#201e1d",
+      setText: placed + " / " + tot,
+      setColor: all ? "#2f7d3a" : "#6b6864",
+      musicLabel: this.musicOn() ? "Music on" : "Music off",
+      musicColor: this.musicOn() ? "#201e1d" : "#a8a6a0",
+      toggleMusic: this.toggleMusic,
+      soundLabel: this.muted() ? "Sound off" : "Sound on",
+      soundColor: this.muted() ? "#a8a6a0" : "#201e1d",
+      toggleSound: this.toggleSound,
+      onDown: this.onDown, onMove: this.onMove, onUp: this.onUp,
+
+      refD: s.refD,
+      refT: "translate(" + REF.x + " " + REF.y + ") scale(" + REF.s + ")",
+      boneT: "translate(" + ORIGIN.x + " " + ORIGIN.y + ")",
+      trayLabel: placed < tot ? "FRAGMENT TRAY" : "TRAY CLEAR",
+      trayCount: (tot - placed) + " LOOSE",
+      frags, seams,
+      knitting: s.knitting,
+      allSet: all && s.done,
+
+      showHint: !s.overlay && !s.titleCard,
+      hintText: all ? "Bone knitted. Every fragment seated."
+        : "Drag each fragment from the tray into the dashed outline. Get it close and it locks where you leave it.",
+
+      showTitleCard: !!s.titleCard && !s.overlay,
+      cardTitle: s.titleCard ? s.titleCard[0] : "",
+      cardHint: s.titleCard ? s.titleCard[1] : "",
+
+      showIntro: s.overlay === "intro",
+      begin: this.begin,
+
+      showCard: s.overlay === "card",
+      cardKicker: s.round + 1 >= 4 ? "Shift over · " + b.name : b.name + " · set",
+      cardScore: score + " / 100",
+      cardMood: score >= 92 ? "A textbook reduction." : score >= 78 ? "Good set."
+        : score >= 60 ? "It will heal, with a ridge." : "That one needs setting again.",
+      cardRows: [
+        { name: "Fragments", val: completion, pct: completion, color: completion >= 75 ? "#2f7d3a" : completion >= 45 ? "#b07d00" : "#c2210f" },
+        { name: "Alignment", val: alignment, pct: alignment, color: alignment >= 75 ? "#2f7d3a" : alignment >= 45 ? "#b07d00" : "#c2210f" }
+      ],
+      cardNotes: notes, hasNotes: notes.length > 0,
+      cardCta: s.round + 1 >= 4 ? "Start the shift again" : "Next case",
+      cardAction: this.cardAction
+    };
+  }
+}
+</script>
+
+
+</body></html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>
+body { margin: 0; background: #f3f2f2; font-family: Archivo, sans-serif; }
+a { color: #201e1d; } a:hover { color: #ec3013; }
+button { font-family: Archivo, sans-serif; }
+button:focus-visible { outline: 2px solid #ec3013; outline-offset: 2px; }
+</style>
+</helmet>
+<div style="min-height:100vh;background:#f3f2f2;display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:16px;box-sizing:border-box">
+  <div style="font-size:15px;font-weight:800;color:#201e1d;white-space:nowrap">BAG MOCK-UP · PHONE PORTRAIT 390 × 844</div>
+  <div style="width:390px;height:844px;background:#201e1d;color:#f3f2f2;border:2px solid #201e1d;display:flex;flex-direction:column;overflow:hidden;position:relative;box-sizing:border-box">
+    <div style="padding:14px 14px 12px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="display:flex;align-items:center;gap:10px;flex:1"><span style="width:8px;height:28px;background:#ec3013"></span><span style="font-size:30px;font-weight:900;letter-spacing:0.01em">BAG</span></div>
+        <div style="font-size:14px;font-weight:800">{{ levelLine }}</div>
+        <button aria-label="Close" style="width:44px;height:44px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:20px;font-weight:900;cursor:pointer" style-hover="background:#4a1a10">×</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px">
+        <sc-for list="{{ foxTabs }}" as="f" hint-placeholder-count="3">
+          <button onClick="{{ f.pick }}" style="min-height:44px;padding:0 10px;background:{{ f.bg }};color:{{ f.fg }};border:2px solid #f3f2f2;border-radius:0;font-size:15px;font-weight:900;text-align:left;cursor:pointer">{{ f.label }}</button>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="display:flex;align-items:baseline;gap:6px"><span style="font-size:12px;font-weight:900;letter-spacing:0.06em">CARRYING</span><span style="font-size:22px;font-weight:900">{{ wNow }}</span><span style="font-size:14px;font-weight:800">/ {{ wCap }} KG</span></span><span style="font-size:13px;font-weight:800">GEAR {{ gearKg }} KG</span></div>
+        <div style="height:16px;border:2px solid #f3f2f2;position:relative;box-sizing:border-box"><div style="position:absolute;left:0;top:0;bottom:0;width:{{ wPct }}%;background:{{ wCol }}"></div><div style="position:absolute;left:25%;top:0;bottom:0;width:2px;background:#201e1d"></div><div style="position:absolute;left:50%;top:0;bottom:0;width:2px;background:#201e1d"></div><div style="position:absolute;left:75%;top:0;bottom:0;width:2px;background:#201e1d"></div></div>
+      </div>
+      <sc-if value="{{ full }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#ec3013;color:#f3f2f2;padding:8px 10px;font-size:15px;font-weight:900;line-height:1.3">BAG FULL. Store something or leave it behind.</div>
+      </sc-if>
+      
+    </div>
+            <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column">
+      <sc-if value="{{ tabBag }}" hint-placeholder-val="{{ true }}">
+        <sc-for list="{{ groups }}" as="g" hint-placeholder-count="4">
+          <div style="display:flex;flex-direction:column;border-bottom:2px solid #f3f2f2">
+            <button onClick="{{ g.toggle }}" aria-expanded="{{ g.open }}" style="min-height:72px;padding:12px 14px;background:#201e1d;color:#f3f2f2;border:0;border-radius:0;display:grid;grid-template-columns:48px minmax(0,1fr) 36px;align-items:center;gap:12px;text-align:left;cursor:pointer" style-hover="background:#2e2a28" style-active="background:#4a1a10">
+              <span style="width:48px;height:48px;background:{{ g.col }};display:flex;align-items:center;justify-content:center">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#201e1d" stroke-width="2.2" stroke-linecap="square" stroke-linejoin="miter"><path d="{{ g.icon }}"></path></svg>
+              </span>
+              <span style="display:flex;flex-direction:column;gap:3px;min-width:0">
+                <span style="display:flex;align-items:baseline;gap:8px"><span style="font-size:18px;font-weight:900;letter-spacing:0.01em">{{ g.title }}</span><span style="font-size:15px;font-weight:900;color:{{ g.col }}">{{ g.count }}</span></span>
+                <span style="font-size:13px;font-weight:600;line-height:1.3">{{ g.sum }}</span>
+              </span>
+              <span style="width:36px;height:36px;border:2px solid #f3f2f2;display:flex;align-items:center;justify-content:center;box-sizing:border-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f3f2f2" stroke-width="3" stroke-linecap="square"><path d="{{ g.chevPath }}"></path></svg>
+              </span>
+            </button>
+            <sc-if value="{{ g.open }}" hint-placeholder-val="{{ false }}">
+              <sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="2">
+                <div style="display:flex;flex-direction:column;border-top:2px solid #3a3633;background:{{ r.bg }};border-left:6px solid {{ g.col }}">
+                  <button onClick="{{ r.pick }}" style="min-height:68px;padding:10px 14px 10px 8px;background:transparent;color:#f3f2f2;border:0;border-radius:0;display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:12px;text-align:left;cursor:pointer" style-hover="background:#2e2a28">
+                    <span style="width:44px;height:44px;border:2px solid {{ g.col }};display:flex;align-items:center;justify-content:center;box-sizing:border-box">
+                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#f3f2f2" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter"><path d="{{ r.icon }}"></path></svg>
+                    </span>
+                    <span style="display:flex;flex-direction:column;gap:3px;min-width:0">
+                      <span style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                        <span style="background:{{ g.col }};color:#201e1d;padding:1px 6px;font-size:14px;font-weight:900">{{ r.tag }}</span>
+                        <sc-if value="{{ r.isNew }}" hint-placeholder-val="{{ false }}"><span style="border:2px solid #ec3013;color:#f3f2f2;padding:0 5px;font-size:12px;font-weight:900">NEW</span></sc-if>
+                      </span>
+                      <span style="font-size:17px;font-weight:800;line-height:1.15">{{ r.name }}</span>
+                      <span style="font-size:13px;font-weight:600">{{ r.sub }}</span>
+                    </span>
+                    <span style="display:flex;flex-direction:column;align-items:flex-end;gap:0"><span style="font-size:24px;font-weight:900;line-height:1">{{ r.n }}</span><span style="font-size:11px;font-weight:800;letter-spacing:0.06em">CARRIED</span></span>
+                  </button>
+                  <sc-if value="{{ r.sel }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;flex-direction:column;gap:8px;padding:0 14px 14px 64px">
+                      <div style="display:flex;flex-wrap:wrap;gap:6px">
+                        <sc-if value="{{ r.canUse }}" hint-placeholder-val="{{ true }}"><button onClick="{{ r.use }}" style="min-height:44px;padding:0 14px;background:#ec3013;color:#f3f2f2;border:2px solid #ec3013;border-radius:0;font-size:14px;font-weight:900;text-align:left;cursor:pointer" style-hover="background:#c42a10">USE</button></sc-if>
+                        <button onClick="{{ r.storeToggle }}" style="min-height:44px;padding:0 14px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:14px;font-weight:900;text-align:left;cursor:pointer" style-hover="background:#4a1a10">STORE</button>
+                        <button onClick="{{ r.give }}" style="min-height:44px;padding:0 14px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:14px;font-weight:900;text-align:left;cursor:pointer;opacity:{{ giveOp }}" style-hover="background:#4a1a10">{{ giveLabel }}</button>
+                      </div>
+                      <sc-if value="{{ r.storeOpen }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;flex-direction:column;gap:6px">
+                          <sc-for list="{{ r.places }}" as="pl" hint-placeholder-count="3">
+                            <button onClick="{{ pl.pick }}" style="min-height:44px;padding:6px 12px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;display:flex;flex-direction:column;gap:2px;text-align:left;cursor:pointer" style-hover="background:#4a1a10">
+                              <span style="font-size:14px;font-weight:900">{{ pl.label }}</span><span style="font-size:12px;font-weight:600">{{ pl.sub }}</span>
+                            </button>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </sc-if>
+          </div>
+        </sc-for>
+      </sc-if>
+      <sc-if value="{{ tabKey }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:10px 14px;font-size:14px;font-weight:700;line-height:1.4;border-bottom:2px solid #f3f2f2">Key items weigh nothing and can't be sold.</div>
+        <sc-for list="{{ keyRows }}" as="r" hint-placeholder-count="4">
+          <div style="min-height:60px;padding:8px 14px;display:grid;grid-template-columns:40px minmax(0,1fr);align-items:center;gap:10px;border-bottom:2px solid #4a4644">
+            <span style="width:40px;height:40px;border:2px solid #f3f2f2;display:flex;align-items:center;justify-content:center;box-sizing:border-box"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#f3f2f2" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter"><path d="{{ r.icon }}"></path></svg></span>
+            <span style="display:flex;flex-direction:column;gap:3px"><span style="font-size:16px;font-weight:800">{{ r.name }}</span><span style="font-size:13px;font-weight:600">{{ r.sub }}</span></span>
+          </div>
+        </sc-for>
+      </sc-if>
+      <sc-if value="{{ tabShelf }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:10px 14px;display:flex;flex-direction:column;gap:8px;border-bottom:2px solid #f3f2f2">
+          <div style="font-size:14px;font-weight:700;line-height:1.4">Trophies weigh 3 kg each. Send them to your Home shelf to free up room.</div>
+          <button onClick="{{ sendShelf }}" style="min-height:44px;padding:0 14px;background:#ec3013;color:#f3f2f2;border:2px solid #ec3013;border-radius:0;font-size:14px;font-weight:900;text-align:left;cursor:pointer" style-hover="background:#c42a10">{{ shelfBtn }}</button>
+        </div>
+        <sc-for list="{{ shelfRows }}" as="r" hint-placeholder-count="4">
+          <div style="min-height:60px;padding:8px 14px;display:grid;grid-template-columns:40px minmax(0,1fr);align-items:center;gap:10px;border-bottom:2px solid #4a4644">
+            <span style="width:40px;height:40px;border:2px solid #d9b24a;display:flex;align-items:center;justify-content:center;box-sizing:border-box"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#d9b24a" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter"><path d="{{ r.icon }}"></path></svg></span>
+            <span style="display:flex;flex-direction:column;gap:3px"><span style="font-size:16px;font-weight:800">{{ r.name }}</span><span style="font-size:13px;font-weight:600">{{ r.sub }}</span></span>
+          </div>
+        </sc-for>
+      </sc-if>
+      <sc-if value="{{ tabStore }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:10px 14px;font-size:14px;font-weight:700;line-height:1.4;border-bottom:2px solid #f3f2f2">Go back to a place to collect what you left there. Banks share one vault across every world, and banks are the safest place.</div>
+        <sc-for list="{{ places }}" as="pl" hint-placeholder-count="3">
+          <div style="display:flex;flex-direction:column;border-bottom:2px solid #f3f2f2">
+            <div style="padding:10px 14px 6px;display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+              <span style="font-size:17px;font-weight:900">{{ pl.label }}</span><span style="font-size:13px;font-weight:800">{{ pl.cap }}</span>
+            </div>
+            <div style="padding:0 14px 6px;font-size:13px;font-weight:600">{{ pl.sub }}</div>
+            <sc-for list="{{ pl.rows }}" as="r" hint-placeholder-count="2">
+              <div style="padding:6px 14px;display:grid;grid-template-columns:32px minmax(0,1fr) auto;align-items:center;gap:10px;border-top:2px solid #4a4644">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f3f2f2" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter"><path d="{{ r.icon }}"></path></svg>
+                <span style="font-size:15px;font-weight:800">{{ r.name }}</span><span style="font-size:16px;font-weight:900">×{{ r.n }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-for>
+      </sc-if>
+    </div>
+    <sc-if value="{{ hasPerks }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:6px;padding:10px 14px 12px;border-top:2px solid #f3f2f2">
+          <div style="font-size:12px;font-weight:900;letter-spacing:0.06em">ALWAYS ON</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <sc-for list="{{ perks }}" as="p" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;gap:6px;background:#d9b24a;color:#201e1d;padding:5px 10px 5px 6px;font-size:13px;font-weight:900;letter-spacing:0.02em">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#201e1d" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><path d="{{ p.icon }}"></path></svg>
+                <span>{{ p.tag }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    <sc-if value="{{ toastOn }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:14px;right:14px;bottom:14px;background:#f3f2f2;color:#201e1d;border:2px solid #201e1d;padding:10px 12px;font-size:15px;font-weight:800;line-height:1.35">{{ toast }}</div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:440,&quot;height&quot;:920},&quot;bagFull&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;together&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+const IC = {
+  hotPie: 'M3 13h18l-2 6H5zM5 13c0-4 3-6 7-6s7 2 7 6M9 10l1-2M14 10l1-2',
+  slushie: 'M7 8h10l-1.5 13h-7zM6 8h12M12 8V3l3-1',
+  firstAidKit: 'M3 7h18v13H3zM9 7V4h6v3M12 10v7M8.5 13.5h7',
+  apple: 'M12 7c-4-2-8 1-7 6s4 8 7 6c3 2 6-1 7-6s-3-8-7-6zM12 7c0-2 1-4 3-4',
+  erToGo: 'M4 9h14v6H4zM18 11h2v2h-2zM8 9v6M11 12h4',
+  energyPod: 'M8 3h8v18H8zM10 1h4v2M12 8l-2 4h4l-2 4',
+  energyDrink: 'M8 4h8v17H8zM9 2h6v2M10 10l3-2v4l2-1',
+  chocolates: 'M3 8h18v10H3zM3 8l9 4 9-4M12 12v6',
+  luckyGolfBall: 'M12 3a7 7 0 1 0 .01 0M10 8h.01M14 8h.01M12 11h.01M9 12h.01M15 12h.01M10 19h4l-1 3h-2z',
+  loyaltyCard: 'M2 6h20v12H2zM2 10h20M6 15h4',
+  cocoaCharm: 'M12 21l-7-8a4 4 0 0 1 7-5 4 4 0 0 1 7 5zM12 3v2',
+  bambooRod: 'M4 21L18 3M18 3v10M18 13a2 2 0 1 0 .01 0M7 17l2 1M11 12l2 1',
+  binoculars: 'M4 12a4 4 0 1 0 .01 0M16 12a4 4 0 1 0 .01 0M8 16h8M6 12V6h4v6M14 12V6h4v6',
+  grapplingHook: 'M12 2v12M12 14c-4 0-6-2-6-5M12 14c4 0 6-2 6-5M12 14v3M10 22h4',
+  daptKey: 'M7 12a4 4 0 1 0 .01 0M11 12h10M17 12v3M20 12v2',
+  stampBook: 'M5 3h12v18H5zM17 3h2v18h-2M8 7h6v6H8z',
+  bigLaserGun: 'M2 10h14v4H2zM16 11h6M6 14l-1 5h3l1-5M10 10V8h4v2',
+  halberd: 'M12 2v20M12 4c4 0 6 2 6 5h-6M12 4c-3 1-4 3-4 4h4',
+  reinforced: 'M12 2l8 3v6c0 5-4 9-8 11-4-2-8-6-8-11V5zM12 7v10M8 11h8',
+  oakBoard: 'M3 8h18v8H3zM6 11h5M13 13h5',
+  goldenBadge: 'M12 2l8 4v6c0 5-4 8-8 10-4-2-8-5-8-10V6zM9 12l2 2 4-4',
+  goldenAnvil: 'M4 8h14l2 3h-6v3H8v-3H4zM7 17h10v3H7zM10 14v3h4v-3',
+  summitMedal: 'M8 2l4 7 4-7M12 9a6 6 0 1 0 .01 0M10 15l2-2 2 2',
+  fossil: 'M4 18c0-8 6-14 14-14M8 18c0-5 4-10 10-10M12 18c0-3 2-6 6-6',
+  silverCup: 'M7 3h10v6a5 5 0 0 1-10 0zM7 5H4v2a3 3 0 0 0 3 3M17 5h3v2a3 3 0 0 1-3 3M12 14v4M8 21h8',
+  sportsDrink: 'M9 3h6v3l2 3v12H7V9l2-3zM7 13h10',
+  gelatoScoop: 'M8 11l4 10 4-10M7 11a5 5 0 0 1 10 0z',
+  megaCell: 'M4 7h14v10H4zM18 10h2v4h-2zM7 10v4M10 10v4M13 10v4',
+  kite: 'M12 2l6 8-6 8-6-8zM12 18c0 2-2 3-4 4',
+};
+// name, kind, tag (the effect, same unit for every item that does the same thing), power (for STRONGEST), from, kg
+const M = {
+  hotPie: ['Hot Pie', 'heal', '+40 HP', 40, 'Pie Shop', 1], slushie: ['Slushie', 'heal', '+30 HP', 30, 'Gas station', 1], firstAidKit: ['First Aid Kit', 'heal', '+100 HP', 100, 'Hospital', 2],
+  apple: ['Russet Apple', 'heal', '+15 HP', 15, 'Russet Orchard', 1], erToGo: ['Heal Beam Battery', 'heal', '+40 HP', 40, 'Kia · Item Shop', 1], sportsDrink: ['Sports Drink', 'heal', '+25 HP', 25, 'Skip Stride', 1],
+  gelatoScoop: ['Single Scoop', 'heal', '+30 HP', 30, 'Magpie', 1], megaCell: ['Mega Cell', 'heal', '+70 HP', 70, 'Ollie Ohm', 1],
+  energyPod: ['Energy Cell', 'energy', 'ENERGY FULL', 100, 'Kia · Item Shop', 1], energyDrink: ['Energy Drink', 'energy', 'FAST 30 S', 30, 'Minimart', 1],
+  chocolates: ['Box of Chocolates', 'treat', 'GIFT · FAST 20 S', 20, 'Kia · Item Shop', 1],
+  kite: ['Kite', 'tool', 'FLY IT', 1, 'Hobby Shop', 2],
+  halberd: ['Halberd', 'gear', 'MELEE', 30, 'Bram · Armory', 8], reinforced: ['Reinforced Armor', 'gear', 'ARMOUR', 40, 'Bram · Armory', 10],
+  oakBoard: ['Oak Board', 'material', 'BUILD', 1, 'Meru Hardware', 2],
+  luckyGolfBall: ['Lucky Golf Ball', 'perk', '+25% GOLD · BIRDIE\u2019S', 0, 'Birdie', 0.5], loyaltyCard: ['Loyalty Card', 'perk', '+25% GOLD · MINIMART', 0, 'Minimart', 0.5], cocoaCharm: ['Cocoa Charm', 'perk', 'LUCKY DICE', 0, 'Chocolatier', 0.5],
+  bambooRod: ['Bamboo Rod', 'key', 'Fish from any shore or jetty', 0, 'Bait Shop', 0], binoculars: ['Ranger Binoculars', 'key', 'Tap to look anywhere', 0, 'Ranger Moss', 0], grapplingHook: ['Grappling Hook', 'key', 'Zip up at the Rock Wall anchors', 0, 'Rock Wall', 0],
+  daptKey: ['Flat 3G Key', 'key', 'Deco Apartments · floor three', 0, 'Deco Apartments', 0], stampBook: ['Stamp Book', 'key', 'One stamp per world', 0, 'Post Office', 0], bigLaserGun: ['Big Laser Gun', 'key', 'The King\u2019s gift', 0, 'King Might', 0],
+  goldenBadge: ['Golden Badge', 'trophy', 'All twelve Meru Police jobs', 0, 'Police', 3], goldenAnvil: ['Golden Anvil', 'trophy', 'All eight Armory jobs', 0, 'Armory', 3], summitMedal: ['Summit Medal', 'trophy', 'Big Tall\u2019s summit medal', 0, 'Rock Wall', 3],
+  fossil: ['Fossil', 'trophy', 'A real fossil', 0, 'Museum', 3], silverCup: ['Silver Cup', 'trophy', 'Full member of the Country Club', 0, 'Country Club', 3],
+};
+const GROUPS = [['heal', 'HEALING', '#4fb06e', 'M9 3h6v6h6v6h-6v6H9v-6H3V9h6z'], ['energy', 'ENERGY', '#4aa3d8', 'M13 2L4 14h7l-1 8 9-12h-7z'], ['treat', 'TREATS + GIFTS', '#e07aa0', 'M3 9h18v4H3zM5 13h14v8H5zM12 9v12M12 9C10 5 6 5 6 7.5S10 9 12 9c2 0 6 1 6-1.5S14 5 12 9'], ['gear', 'EQUIPABLE', '#ff6a4f', 'M14 3h7v7L9 22l-3-3zM5 14l5 5M3 21l3-3'], ['material', 'TOOLS/MATERIALS', '#f08a42', 'M14 6a4 4 0 0 0 5 5l-9 9-3-3 9-9a4 4 0 0 0-2-2z']];
+const TAB_IC = { bag: 'M5 8h14l-1 13H6zM9 8V5a3 3 0 0 1 6 0v3', key: 'M7 12a4 4 0 1 0 .01 0M11 12h10M17 12v3M20 12v2', shelf: 'M7 3h10v6a5 5 0 0 1-10 0zM7 5H4v2a3 3 0 0 0 3 3M17 5h3v2a3 3 0 0 1-3 3M12 14v4M8 21h8', store: 'M3 9l9-6 9 6v12H3zM8 21v-7h8v7M8 17h8' };
+const FOX = { you: 'YOU', hope: 'HOPE', noble: 'NOBLE' };
+const START = {
+  you: { hotPie: 3, slushie: 2, firstAidKit: 1, apple: 4, erToGo: 3, energyPod: 2, energyDrink: 1, chocolates: 1, halberd: 1, reinforced: 1, oakBoard: 3, luckyGolfBall: 1, loyaltyCard: 1, cocoaCharm: 1, bambooRod: 1, binoculars: 1, grapplingHook: 1, daptKey: 1, stampBook: 1, bigLaserGun: 1, goldenBadge: 1, summitMedal: 1, fossil: 1 },
+  hope: { gelatoScoop: 2, sportsDrink: 3, energyPod: 1, chocolates: 2 },
+  noble: { megaCell: 2, hotPie: 1, kite: 1, energyDrink: 2 },
+};
+const CAP = { you: 70, hope: 30, noble: 30 };
+const NEWI = { apple: 1, chocolates: 1, megaCell: 1 };
+class Component extends DCLogic {
+  state = { fox: 'you', tab: 'bag', sort: 'strong', open: {}, sel: null, storeOpen: null, bags: JSON.parse(JSON.stringify(START)), stored: { ship: { oakBoard: 4 }, flat: { goldenAnvil: 1, silverCup: 1 }, bank: {} }, seen: {}, toast: '' };
+  say(t) { clearTimeout(this._t); this.setState({ toast: t }); this._t = setTimeout(() => this.setState({ toast: '' }), 2600); }
+  kg(bag) { let w = 0; for (const [id, n] of Object.entries(bag)) w += (M[id] ? M[id][5] : 1) * n; return Math.round(w * 10) / 10; }
+  move(id, place) { const S = this.state, b = { ...S.bags[S.fox] }; if (!b[id]) return; b[id]--; if (!b[id]) delete b[id]; const st = { ...S.stored, [place]: { ...S.stored[place], [id]: (S.stored[place][id] || 0) + 1 } };
+    this.setState({ bags: { ...S.bags, [S.fox]: b }, stored: st, storeOpen: null, sel: b[id] ? id : null }); this.say('Sent 1 ' + M[id][0] + ' to ' + { ship: 'YOUR SHIP', flat: 'FLAT 3G', bank: 'THE BANK VAULT' }[place] + '. Collect it there.'); }
+  renderVals() {
+    const S = this.state, bag = S.bags[S.fox], cap = CAP[S.fox], forceFull = !!this.props.bagFull, together = !!this.props.together;
+    const wNow = forceFull ? cap : this.kg(bag), pct = Math.min(100, wNow / cap * 100), full = wNow >= cap;
+    const gearKg = Object.entries(bag).filter(([id]) => M[id] && M[id][1] === 'gear').reduce((a, [id, n]) => a + M[id][5] * n, 0);
+    const ids = Object.keys(bag).filter(id => M[id] && bag[id] > 0);
+    const sortF = (a, b) => S.sort === 'most' ? bag[b] - bag[a] : S.sort === 'az' ? M[a][0].localeCompare(M[b][0]) : M[b][3] - M[a][3];
+    const places = id => [['ship', 'YOUR SHIP · PLANETARY DEFENCE FLAGSHIP', 'Big ship, big hold · 60 kg'], ['flat', 'FLAT 3G · DECO APARTMENTS', 'While your rent is paid · 40 kg'], ['bank', 'BANK VAULT', 'Every bank, every world · safest']].map(([k, l, s]) => ({ label: l, sub: s, pick: () => this.move(id, k) }));
+    const groups = GROUPS.map(([k, title, col, gIcon]) => {
+      const rs = ids.filter(id => M[id][1] === k || (k === 'material' && M[id][1] === 'tool')).sort(sortF); if (!rs.length) return null;
+      const n = rs.reduce((a, id) => a + bag[id], 0), hp = k === 'heal' ? rs.reduce((a, id) => a + M[id][3] * bag[id], 0) : 0, kg = rs.reduce((a, id) => a + M[id][5] * bag[id], 0);
+      const open = !!S.open[k], nNew = rs.filter(id => NEWI[id] && !S.seen[id]).length;
+      return { title, col, open, icon: gIcon, count: n, chevPath: open ? 'M5 12h14' : 'M5 12h14M12 5v14', sum: (hp ? hp + ' HP in total · ' : '') + kg + ' kg' + (nNew ? ' · ' + nNew + ' NEW' : ''),
+        toggle: () => this.setState({ open: { ...S.open, [k]: !open } }),
+        rows: rs.map(id => { const m = M[id], sel = S.sel === id;
+          return { name: m[0], tag: m[2], n: bag[id], icon: IC[id] || '', sub: m[4] + ' · ' + m[5] + ' kg each', isNew: !!NEWI[id] && !S.seen[id], sel, bg: sel ? '#2e2a28' : '#201e1d',
+            canUse: k !== 'gear' && k !== 'material' && k !== 'tool', storeOpen: S.storeOpen === id, places: places(id),
+            pick: () => this.setState({ sel: sel ? null : id, storeOpen: null, seen: { ...S.seen, [id]: 1 } }),
+            use: () => { const b = { ...bag }; b[id]--; if (!b[id]) delete b[id]; this.setState({ bags: { ...S.bags, [S.fox]: b }, sel: b[id] ? id : null }); this.say(m[0].toUpperCase() + ' · ' + m[2]); },
+            storeToggle: () => this.setState({ storeOpen: S.storeOpen === id ? null : id }),
+            give: () => this.say(together ? 'Gave 1 ' + m[0] + ' to ' + (S.fox === 'hope' ? 'NOBLE' : 'HOPE') + '.' : 'Stand next to Hope or Noble to give them items.') }; }) };
+    }).filter(Boolean);
+    const row = id => ({ name: M[id][0], icon: IC[id] || '', sub: M[id][2] + ' · ' + M[id][4] });
+    const keyRows = ids.filter(id => M[id][1] === 'key').sort((a, b) => M[a][0].localeCompare(M[b][0])).map(id => ({ ...row(id), sub: M[id][2] + ' · 0 kg' }));
+    const shelfIds = ids.filter(id => M[id][1] === 'trophy').sort((a, b) => M[a][0].localeCompare(M[b][0]));
+    const PL = [['ship', 'YOUR SHIP', '60 kg hold · bigger ships hold more', 60], ['flat', 'FLAT 3G · MERU', 'Deco Apartments · while your rent is paid', 40], ['bank', 'BANK VAULT', 'One vault, every bank on every world · safest', null]];
+    const tabT = [['bag', 'BAG'], ['key', 'KEY ITEMS'], ['shelf', 'SHELF'], ['store', 'STORAGE']];
+    const inv = (on) => ({ bg: on ? '#f3f2f2' : '#201e1d', fg: on ? '#201e1d' : '#f3f2f2' });
+    return {
+      levelLine: S.fox === 'you' ? 'LEVEL 3' : FOX[S.fox] + '\u2019S BAG',
+      foxTabs: Object.entries(FOX).map(([k, l]) => ({ label: l, ...inv(S.fox === k), pick: () => this.setState({ fox: k, sel: null, storeOpen: null }) })),
+      wNow, wCap: cap, wPct: Math.round(pct), wCol: full ? '#ec3013' : pct > 80 ? '#d9b24a' : '#f3f2f2', gearKg, full,
+      perks: ids.filter(id => M[id][1] === 'perk').map(id => ({ tag: M[id][2], icon: IC[id] || '' })), hasPerks: ids.some(id => M[id][1] === 'perk'),
+      tabs: tabT.map(([k, l]) => ({ label: l, icon: TAB_IC[k], ...inv(S.tab === k), pick: () => this.setState({ tab: k }) })),
+      showSort: S.tab === 'bag', sorts: [['strong', 'STRONGEST'], ['most', 'MOST'], ['az', 'A–Z']].map(([k, l]) => ({ label: l, ...inv(S.sort === k), pick: () => this.setState({ sort: k }) })),
+      tabBag: S.tab === 'bag', tabKey: S.tab === 'key', tabShelf: S.tab === 'shelf', tabStore: S.tab === 'store',
+      groups, keyRows, shelfRows: shelfIds.map(row),
+      shelfBtn: shelfIds.length ? 'SEND ALL ' + shelfIds.length + ' HOME · FREES ' + shelfIds.length * 3 + ' KG' : 'SHELF IS EMPTY',
+      sendShelf: () => { if (!shelfIds.length) return; const b = { ...bag }; shelfIds.forEach(id => delete b[id]); this.setState({ bags: { ...S.bags, [S.fox]: b } }); this.say(shelfIds.length + ' trophies sent to your Home shelf.'); },
+      giveLabel: 'GIVE', giveOp: together ? 1 : 0.5,
+      places: PL.map(([k, l, s, c]) => { const st = S.stored[k], rs = Object.entries(st).filter(([id, n]) => n > 0 && M[id]); const kg = rs.reduce((a, [id, n]) => a + M[id][5] * n, 0);
+        return { label: l, sub: s, cap: c ? kg + ' / ' + c + ' KG' : rs.length + ' ITEMS', rows: rs.map(([id, n]) => ({ name: M[id][0], n, icon: IC[id] || '' })) }; }),
+      toast: S.toast, toastOn: !!S.toast,
+    };
+  }
+}
+</script>
+</body>
+</html>

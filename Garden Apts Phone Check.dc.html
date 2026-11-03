@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>html,body{margin:0;background:#888;font-family:Archivo,sans-serif}a{color:#201e1d}a:hover{color:#ec3013}</style>
+</helmet>
+<div style="padding:12px;display:flex;flex-direction:column;gap:8px;transform:scale(0.6);transform-origin:0 0">
+  <div style="font-weight:900;font-size:13px">GARDEN APTS PHONE CHECK · {{ label }}</div>
+  <div ref="{{ frameRef }}" style="position:relative;transform:translateZ(0);overflow:hidden;background:#3a5a48;border:2px solid #201e1d;width:390px;height:844px"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { label: '' };
+  frameRef = React.createRef();
+  async componentDidMount() {
+    const q = new URLSearchParams(location.search); let W = +(q.get('w') || 390), H = +(q.get('h') || 844);
+    Object.defineProperty(window, 'innerWidth', { get: () => W, configurable: true }); Object.defineProperty(window, 'innerHeight', { get: () => H, configurable: true });
+    const F = this.frameRef.current, ap = document.body.appendChild.bind(document.body);
+    document.body.appendChild = el => F.appendChild(el);
+    const THREE = await import(new URL('vendor/three/three.module.js', document.baseURI).href);
+    const mod = await import(new URL('worlds/meru2-gardenapts.js', document.baseURI).href);
+    const S = {}, items = {};
+    const save = { data: { items }, stat: (k, d) => (k in S ? S[k] : d), setStat: (k, v) => { S[k] = v; }, addGold() {}, spend: () => true, give: (id, n = 1) => { items[id] = (items[id] || 0) + n; }, count: id => items[id] || 0, take: () => true, addRelic() {}, setOutfit() {} };
+    const kit = { makeFox: () => { const g = new THREE.Group(); g.userData = { P: { arms: [] } }; return g; }, animFox() {} };
+    const clusters = { rooms: [{ c: { key: 'gardenApts' }, ox: 0, out: null }], addRoom: () => ({ ox: 100 }), geo: { LY: 0, LZ: 0 } };
+    const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(55, W / H, 0.1, 600);
+    const api = mod.buildGardenApts({ THREE, scene, kit, cols: [], save, touch: true, sayTo: (T, L, cb) => cb && setTimeout(cb, 0), camera, wear() {}, clusters, go() {} });
+    document.body.appendChild = ap;
+    const P = { x: 0, y: 0, z: 0, yaw: 0 }; let last = performance.now();
+    const loop = () => { const n = performance.now(), dt = Math.min(0.05, (n - last) / 1000); last = n; try { api.tick(dt, P, null); } catch (e) { console.warn(e); } requestAnimationFrame(loop); }; loop();
+    window.__show = (w, h, job) => { W = w; H = h; F.style.width = w + 'px'; F.style.height = h + 'px'; dispatchEvent(new Event('resize')); try { api.quit(); } catch (e) {} if (job) api._begin(job); this.setState({ label: w + 'x' + h + ' · ' + (job || '') }); return 'ok'; };
+    window.__api = api;
+    window.__show(W, H, q.get('job') || 'valet');
+  }
+  renderVals() { return { label: this.state.label, frameRef: this.frameRef }; }
+}
+</script>
+</body>
+</html>

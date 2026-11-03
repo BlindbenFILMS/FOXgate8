@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foxy Cakes</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<script src="cakes-bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:#f7a8c4}button:focus-visible,input:focus-visible{outline:2px solid #ffd23a;outline-offset:2px}button{-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}button:disabled{cursor:default}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Foxy Cakes">
+  <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+  <div aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap">{{ announce }}</div>
+  <sc-if value="{{ workOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="top" style="position:absolute;left:0;right:0;top:0;z-index:3;pointer-events:none;display:flex;flex-direction:column">
+      <div style="background:#000;border-bottom:2px solid #ffd23a;display:flex;align-items:stretch;padding-top:env(safe-area-inset-top)">
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836;min-width:0"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#f7a8c4;white-space:nowrap">{{ topKicker }}</span><span style="font:900 20px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap">{{ topTitle }}</span></div>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">EARNED</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;color:#e6b45a">{{ earnedTxt }}</span></div>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;min-width:0;flex:1"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">STREAK · ★</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap">{{ streakTxt }}</span></div>
+        <button onClick="{{ helpToggle }}" aria-label="How to bake a cake" style="pointer-events:auto;flex:none;width:52px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 20px var(--font-heading);cursor:pointer" style-hover="background:#2a2826">?</button>
+      </div>
+      <sc-if value="{{ ticketTop }}" hint-placeholder-val="{{ true }}">
+        <div style="margin:6px;background:#fbfbf7;color:#201e1d;border:2px solid #201e1d;display:flex;flex-direction:column;max-width:520px">
+          <div style="background:#2f7d6a;color:#fff;padding:4px 8px;display:flex;justify-content:space-between;gap:8px;align-items:baseline"><span style="font:900 13px var(--font-heading);letter-spacing:0.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.pie }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.06em;white-space:nowrap">FOR {{ t.who }}</span></div>
+          <div style="padding:3px 8px;font:800 10px var(--font-heading);letter-spacing:0.05em;color:#5a544e;border-bottom:1px solid #e8e4da;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ ticketMeta }}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:2px 10px;padding:3px 8px">
+            <sc-for list="{{ reqs }}" as="r" hint-placeholder-count="4"><span style="display:flex;align-items:center;gap:4px;font:800 10px var(--font-heading);color:{{ r.fg }};opacity:{{ r.op }};white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis"><span style="flex:none;width:9px;height:9px;background:{{ r.col }};border:1px solid #201e1d;display:block"></span>{{ r.name }} {{ r.tally }}</span></sc-for>
+          </div>
+          <div style="display:flex;border-top:2px solid #201e1d">
+            <sc-for list="{{ strip }}" as="c" hint-placeholder-count="9"><span style="flex:1;min-width:0;padding:2px 0;text-align:center;font:900 8px var(--font-heading);letter-spacing:0.02em;background:{{ c.bg }};color:{{ c.fg }};border-right:1px solid #201e1d;white-space:nowrap;overflow:hidden">{{ c.t }}</span></sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+    <sc-if value="{{ ticketSide }}" hint-placeholder-val="{{ false }}">
+      <div data-safe="left" style="position:absolute;left:max(6px, env(safe-area-inset-left));top:52px;z-index:3;pointer-events:none;width:210px;background:#fbfbf7;color:#201e1d;border:2px solid #201e1d;display:flex;flex-direction:column">
+        <div style="background:#2f7d6a;color:#fff;padding:4px 8px;display:flex;flex-direction:column"><span style="font:900 12px var(--font-heading);letter-spacing:0.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.pie }}</span><span style="font:800 9px var(--font-heading);letter-spacing:0.06em">FOR {{ t.who }}</span></div>
+        <div style="padding:3px 8px;font:800 9px var(--font-heading);color:#5a544e;border-bottom:1px solid #e8e4da">{{ ticketMeta }}</div>
+        <sc-for list="{{ reqs }}" as="r" hint-placeholder-count="4"><span style="display:flex;align-items:center;gap:4px;padding:1px 8px;font:800 9px var(--font-heading);color:{{ r.fg }};opacity:{{ r.op }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span style="flex:none;width:8px;height:8px;background:{{ r.col }};border:1px solid #201e1d;display:block"></span>{{ r.name }} {{ r.tally }}</span></sc-for>
+        <div style="display:flex;flex-wrap:wrap;border-top:2px solid #201e1d">
+          <sc-for list="{{ strip }}" as="c" hint-placeholder-count="9"><span style="width:25%;box-sizing:border-box;padding:2px 0;text-align:center;font:900 8px var(--font-heading);background:{{ c.bg }};color:{{ c.fg }};border-right:1px solid #201e1d;border-bottom:1px solid #201e1d;white-space:nowrap;overflow:hidden">{{ c.t }}</span></sc-for>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ stageOn }}" hint-placeholder-val="{{ false }}">
+      <div data-safe="bottom" style="position:absolute;left:0;right:0;bottom:0;z-index:4;background:#000;border-top:2px solid #ffd23a;padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:flex;flex-direction:column">
+        <div style="height:4px;background:#2a2826"><div style="height:100%;width:{{ timerW }};background:{{ timerCol }}"></div></div>
+        <sc-if value="{{ jarsOn }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:6px;padding:6px 8px;overflow-x:auto;border-bottom:2px solid #2a2826;touch-action:pan-x">
+            <sc-for list="{{ jars }}" as="j" hint-placeholder-count="9"><button onClick="{{ j.tap }}" disabled="{{ j.added }}" aria-label="Add {{ j.name }}" style="flex:none;min-width:70px;min-height:48px;padding:0 8px;border:2px solid {{ j.bd }};border-radius:0;background:#141312;color:#fff;font:900 11px var(--font-heading);letter-spacing:0.04em;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;opacity:{{ j.op }};pointer-events:{{ barPE }}"><span style="width:100%;height:6px;background:{{ j.col }};border:1px solid #fff;box-sizing:border-box;display:block"></span>{{ j.name }}</button></sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ pipeOn }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:stretch;gap:0;border-bottom:2px solid #2a2826">
+            <div style="flex:1;min-width:0;display:flex;gap:6px;padding:6px 8px;overflow-x:auto;align-items:center;touch-action:pan-x">
+              <sc-for list="{{ swatches }}" as="w" hint-placeholder-count="6"><button onClick="{{ w.pick }}" aria-label="Pipe in {{ w.name }}" aria-pressed="{{ w.on }}" style="flex:none;width:44px;height:44px;border:{{ w.bd }};border-radius:50%;background:{{ w.col }};cursor:pointer;display:flex;align-items:center;justify-content:center;color:{{ w.fg }};font:900 14px var(--font-heading);pointer-events:{{ barPE }}">{{ w.mark }}</button></sc-for>
+            </div>
+            <button onClick="{{ tipToggle }}" aria-label="Change piping tip" style="flex:none;min-width:74px;padding:0 10px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 11px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px;pointer-events:{{ barPE }}"><span style="font:800 9px var(--font-heading);color:#cfcac4">TIP</span>{{ tipLabel }}</button>
+            <button onClick="{{ undo }}" disabled="{{ noUndo }}" aria-label="Undo last stroke" style="flex:none;min-width:64px;padding:0 10px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:{{ undoCol }};font:900 11px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;pointer-events:{{ barPE }}">UNDO</button>
+          </div>
+        </sc-if>
+        <div style="display:flex;align-items:stretch;min-height:{{ rowH }}">
+          <div style="flex:1;min-width:0;padding:6px 12px;display:flex;flex-direction:column;justify-content:center;gap:2px">
+            <span style="font:900 clamp(14px,4vw,18px) var(--font-heading);letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ stageLabel }}</span>
+            <span style="font:700 12px var(--font-body);color:#cfcac2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ stageSub }}</span>
+          </div>
+          <sc-if value="{{ bakeInline }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1.4;min-width:0;padding:6px 12px;display:flex;flex-direction:column;gap:6px;justify-content:center;border-left:2px solid #2a2826">
+              <div style="display:flex;justify-content:space-between;gap:8px"><span style="font:900 13px var(--font-heading);color:{{ bakeNowCol }};white-space:nowrap">{{ bakeNow }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.08em;color:#ffd23a;white-space:nowrap">AIM FOR {{ b.want }}</span></div>
+              <div style="position:relative;height:16px;display:flex;gap:2px">
+                <sc-for list="{{ bakeZones }}" as="z" hint-placeholder-count="3"><span style="flex:{{ z.w }};background:{{ z.col }};outline:{{ z.ol }};display:block"></span></sc-for>
+                <span style="position:absolute;top:-5px;bottom:-5px;left:{{ bakeX }};width:4px;margin-left:-2px;background:#ffffff;display:block"></span>
+              </div>
+            </div>
+          </sc-if>
+          <div style="flex:none;min-width:66px;padding:0 10px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;border-left:2px solid #2a2826"><span style="font:800 9px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">{{ countHead }}</span><span style="font:900 24px var(--font-heading);font-variant-numeric:tabular-nums;color:{{ countCol }}">{{ countVal }}</span></div>
+          <sc-if value="{{ doneOnBtn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ stageDone }}" style="flex:none;min-width:96px;padding:0 14px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#ffd23a;color:#000;font:900 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;pointer-events:{{ barPE }}" style-hover="filter:brightness(1.1)">{{ doneLabel }} ▸</button></sc-if>
+          <sc-if value="{{ bakeInline }}" hint-placeholder-val="{{ false }}"><button onClick="{{ pull }}" disabled="{{ pullOff }}" aria-label="Pull the cake out of the oven" style="flex:none;width:150px;border:0;border-left:2px solid #3a3836;border-radius:0;background:{{ pullBg }};color:#fff;font:900 15px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;padding:0 14px;pointer-events:{{ barPE }}">{{ pullLabel }}</button></sc-if>
+          <sc-if value="{{ serveInline }}" hint-placeholder-val="{{ false }}"><button onClick="{{ serve }}" style="flex:none;min-width:200px;padding:0 16px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#d6336c;color:#fff;font:900 15px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;pointer-events:{{ barPE }}" style-hover="background:#b82a5c">{{ h.serveBtn }} ▸</button></sc-if>
+        </div>
+        <sc-if value="{{ bakeRow }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:stretch;gap:0;border-top:2px solid #2a2826">
+            <div style="flex:1;min-width:0;padding:8px 12px;display:flex;flex-direction:column;gap:6px;justify-content:center">
+              <div style="display:flex;justify-content:space-between;gap:8px"><span style="font:900 14px var(--font-heading);color:{{ bakeNowCol }}">{{ bakeNow }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.08em;color:#ffd23a;text-align:right">AIM FOR {{ b.want }}</span></div>
+              <div style="position:relative;height:20px;display:flex;gap:2px">
+                <sc-for list="{{ bakeZones }}" as="z" hint-placeholder-count="3"><span style="flex:{{ z.w }};background:{{ z.col }};outline:{{ z.ol }};display:block"></span></sc-for>
+                <span style="position:absolute;top:-6px;bottom:-6px;left:{{ bakeX }};width:4px;margin-left:-2px;background:#ffffff;display:block"></span>
+              </div>
+            </div>
+            <button onClick="{{ pull }}" disabled="{{ pullOff }}" aria-label="Pull the cake out of the oven" style="flex:none;width:clamp(116px,32vw,160px);min-height:72px;border:0;border-left:2px solid #3a3836;border-radius:0;background:{{ pullBg }};color:#fff;font:900 16px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;padding:0 14px;pointer-events:{{ barPE }}">{{ pullLabel }}</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ serveRow }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ serve }}" style="min-height:60px;padding:0 16px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#d6336c;color:#fff;font:900 17px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;pointer-events:{{ barPE }}" style-hover="background:#b82a5c">{{ h.serveBtn }} ▸</button>
+        </sc-if>
+      </div>
+    </sc-if>
+    <sc-if value="{{ moodOn }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;right:max(8px, env(safe-area-inset-right));bottom:{{ moodBottom }};z-index:3;pointer-events:none;background:#000;border:2px solid {{ s.moodCol }};display:flex;align-items:stretch">
+        <span style="padding:4px 8px;font:800 9px var(--font-heading);letter-spacing:0.1em;color:#cfcac4;display:flex;align-items:center">CUSTOMER IS</span><span style="padding:4px 8px;font:900 12px var(--font-heading);background:{{ s.moodCol }};color:#000;display:flex;align-items:center;gap:6px">{{ s.mood }} · {{ s.avgNow }}</span>
+      </div>
+    </sc-if>
+    <sc-if value="{{ sayOn }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:max(10px, env(safe-area-inset-left));bottom:{{ moodBottom }};z-index:3;pointer-events:none;max-width:min(320px, 40%);background:rgba(0,0,0,0.88);border:2px solid #3a3836;padding:8px 10px;font:700 13px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">{{ h.say }}</div>
+    </sc-if>
+  </sc-if>
+  <sc-if value="{{ walkOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:0;right:0;top:0;z-index:3;background:#000;border-bottom:2px solid #ffd23a;display:flex;align-items:stretch;padding-top:env(safe-area-inset-top)">
+      <div style="flex:1;min-width:0;padding:6px 12px;display:flex;flex-direction:column;justify-content:center"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#f7a8c4;white-space:nowrap">FOXY CAKES · LOOK AROUND</span><span style="font:700 12px var(--font-body);color:#cfcac2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ walkTip }}</span></div>
+      <button onClick="{{ walkExit }}" style="flex:none;min-width:84px;min-height:48px;padding:0 14px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">EXIT</button>
+    </div>
+    <sc-if value="{{ walkSayOn }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:50%;top:calc(64px + env(safe-area-inset-top));transform:translateX(-50%);z-index:3;pointer-events:none;width:min(420px, calc(100% - 24px));background:rgba(0,0,0,0.88);border:2px solid #3a3836;padding:8px 12px;font:700 14px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty;box-sizing:border-box">{{ h.say }}</div>
+    </sc-if>
+    <button onPointerDown="{{ stickDown }}" onPointerMove="{{ stickMove }}" onPointerUp="{{ stickUp }}" onPointerCancel="{{ stickUp }}" onContextMenu="{{ noMenu }}" aria-label="Move. Drag to walk; on a keyboard use W A S D" style="position:absolute;left:calc(16px + env(safe-area-inset-left));bottom:calc(16px + env(safe-area-inset-bottom));z-index:4;width:132px;height:132px;padding:0;border:3px solid rgba(255,255,255,0.75);border-radius:50%;background:rgba(0,0,0,0.45);cursor:pointer;touch-action:none;display:flex;align-items:center;justify-content:center">
+      <span style="width:56px;height:56px;border-radius:50%;background:#ffd23a;border:3px solid #000;display:block;transform:translate({{ knobX }}px, {{ knobY }}px);pointer-events:none"></span>
+    </button>
+    <div style="position:absolute;right:calc(16px + env(safe-area-inset-right));bottom:calc(16px + env(safe-area-inset-bottom));z-index:4;width:164px;height:150px">
+      <button onClick="{{ walkAct }}" disabled="{{ actOff }}" aria-label="{{ actAria }}" style="position:absolute;right:0;bottom:0;width:84px;height:84px;padding:0;border:3px solid #000;border-radius:50%;background:{{ actBg }};color:{{ actFg }};font:900 12px var(--font-heading);letter-spacing:0.04em;line-height:1.1;cursor:pointer;white-space:pre-line">{{ actLabel }}</button>
+      <button onClick="{{ turnView }}" aria-label="Turn the view" style="position:absolute;right:92px;bottom:4px;width:60px;height:60px;padding:0;border:3px solid #000;border-radius:50%;background:#fbfbf7;color:#000;font:900 11px var(--font-heading);letter-spacing:0.04em;cursor:pointer">TURN</button>
+      <button onClick="{{ walkExit }}" aria-label="Back to the welcome card" style="position:absolute;right:12px;bottom:92px;width:60px;height:60px;padding:0;border:3px solid #000;border-radius:50%;background:#f7a8c4;color:#000;font:900 11px var(--font-heading);letter-spacing:0.04em;cursor:pointer">MENU</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(10px, env(safe-area-inset-left));bottom:{{ demoBottom }};z-index:7;width:min(480px, calc(100% - 20px));background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:stretch;border-bottom:2px solid #3a3836"><span style="padding:5px 12px;font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;background:#d6336c;display:block"></span>DEMO · ONE WHOLE CAKE</span><button onClick="{{ demoExit }}" aria-label="Exit the demo" style="min-width:64px;min-height:44px;padding:0 14px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#d6336c;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#b82a5c">EXIT DEMO</button></div>
+      <div style="display:flex;align-items:stretch;pointer-events:none"><sc-if value="{{ demoKeyOn }}" hint-placeholder-val="{{ false }}"><div style="flex:none;min-width:64px;display:flex;align-items:center;justify-content:center;padding:0 10px;background:#d6336c;color:#fff;font:900 15px var(--font-heading);border-right:2px solid #3a3836">{{ h.demo.key }}</div></sc-if><div style="padding:9px 12px;font:900 clamp(13px,3.6vw,17px) var(--font-heading);letter-spacing:0.03em;line-height:1.2;color:#fff;text-wrap:pretty">{{ h.demo.cap }}</div></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ flashOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ flashTop }};transform:translateX(-50%);z-index:5;pointer-events:none;max-width:calc(100% - 24px);background:rgba(0,0,0,0.9);border:2px solid {{ flashCol }};display:flex;align-items:stretch">
+      <span style="flex:none;width:10px;background:{{ flashCol }};display:block"></span>
+      <span style="padding:8px 14px;font:900 clamp(14px,4vw,22px) var(--font-heading);letter-spacing:0.04em;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ flashTxt }}</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ reactOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ reactTop }};transform:translateX(-50%);z-index:6;pointer-events:none;width:min(420px, calc(100% - 24px));background:#000;border:3px solid {{ h.react.col }};display:flex;flex-direction:column">
+      <div style="display:flex;align-items:stretch"><div style="flex:1;padding:10px 14px;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">{{ h.react.who }}</span><span style="font:900 clamp(30px,9vw,44px) var(--font-heading);line-height:1;color:{{ h.react.col }}">{{ h.react.word }}</span></div><div style="flex:none;min-width:84px;padding:0 12px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;background:{{ h.react.col }};color:#000"><span style="font:900 20px var(--font-heading);letter-spacing:0.04em">{{ reactStars }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.08em">{{ reactTip }}</span></div></div>
+      <div style="padding:8px 14px 10px;border-top:2px solid #2a2826;font:700 15px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">“{{ h.react.line }}”</div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ cardOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="bottom" style="position:absolute;left:0;right:0;bottom:0;z-index:6;background:#000;border-top:2px solid #ffd23a;padding:0 0 env(safe-area-inset-bottom);display:flex;flex-direction:column;max-height:86%;overflow:auto">
+      <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+        <div style="flex:1;padding:10px 14px;display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ cardKicker }}</span><span style="font:900 clamp(22px,6vw,30px) var(--font-heading);line-height:1.05">{{ cardHead }}</span><span style="font:700 12px var(--font-body);color:#cfcac2">{{ cardBody }}</span></div>
+        <div style="width:96px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:0 12px;background:{{ c.col }};color:#000"><span style="font:900 26px var(--font-heading);font-variant-numeric:tabular-nums">{{ c.avg }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.08em">{{ c.mood }}</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:#f7a8c4;color:#000;border-bottom:2px solid #000"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em">DESIGN SCORE</span><span style="font:900 22px var(--font-heading);font-variant-numeric:tabular-nums">{{ c.design }}</span><span style="font:800 12px var(--font-heading);letter-spacing:0.04em">{{ designWord }}</span></div>
+      <div style="display:grid;grid-template-columns:repeat({{ cardCols }},minmax(0,1fr));column-gap:16px;padding:4px 14px">
+        <sc-for list="{{ cardRows }}" as="r" hint-placeholder-count="7"><div style="display:grid;grid-template-columns:minmax(0,1fr) 36px;align-items:center;gap:8px;padding:3px 0;border-bottom:1px solid #2a2826"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:800 11px var(--font-heading);letter-spacing:0.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.k }}</span><span style="height:4px;background:#2a2826;display:block"><span style="height:100%;width:{{ r.w }};background:{{ r.col }};display:block"></span></span></div><span style="font:900 14px var(--font-heading);font-variant-numeric:tabular-nums;text-align:left">{{ r.v }}</span></div></sc-for>
+      </div>
+      <sc-if value="{{ cardMoney }}" hint-placeholder-val="{{ true }}"><div style="display:flex;flex-wrap:wrap;gap:4px 16px;padding:6px 14px 8px;font:800 12px var(--font-heading);color:#cfcac4"><span>PRICE {{ c.price }}g</span><span>TIP {{ c.tip }}g</span><span>SPEED {{ c.speed }}</span><span>STREAK ×{{ c.mult }}</span></div></sc-if>
+      <button onClick="{{ nextOrder }}" style="min-height:56px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#d6336c;color:#fff;font:900 15px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left;pointer-events:{{ barPE }}" style-hover="background:#b82a5c">{{ cardBtn }}</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ introOn }}" hint-placeholder-val="{{ true }}">
+    <div data-safe="intro" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:6;width:min(420px, calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column">
+      <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#f7a8c4">FOXY CAKES · BAKED FRESH · FOX-RUN · DAY {{ h.day }}</span><span style="font:900 26px var(--font-heading);line-height:1.05">Bake the cake</span><sc-if value="{{ introLong }}" hint-placeholder-val="{{ true }}"><span style="font:700 13px var(--font-body);color:#cfcac2;text-wrap:pretty;display:block">Mix it, whisk it, pour it and bake it, then frost it, pipe the message in icing and top it off. Pull it from the oven at the right moment, and the prettier the design, the bigger the tip. Pay is a wage plus prices plus tips, in gold.</span></sc-if></div>
+      <sc-for list="{{ introRows }}" as="r" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:86px minmax(0,1fr);gap:12px;padding:6px 16px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;color:#e6b45a">{{ r.v }}</span></div></sc-for>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+        <button onClick="{{ demoGo }}" style="min-height:48px;padding:0 16px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WATCH THE DEMO</button>
+        <button onClick="{{ walkGo }}" style="min-height:48px;padding:0 16px;border:0;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">LOOK AROUND</button>
+      </div>
+      <button onClick="{{ freeGo }}" style="min-height:48px;padding:0 16px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#f7a8c4;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">BAKE YOUR OWN · WRITE ANY MESSAGE</button>
+      <button onClick="{{ goWork }}" style="min-height:56px;padding:0 18px;border:0;border-radius:0;background:#d6336c;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#b82a5c">PUT ME TO WORK</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ freeOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="intro" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:6;width:min(440px, calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;background:#000;border:2px solid #f7a8c4;display:flex;flex-direction:column;touch-action:pan-y">
+      <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#f7a8c4">BAKE YOUR OWN · NO CLOCK · NO CUSTOMER</span><span style="font:900 24px var(--font-heading);line-height:1.05">Design your cake</span></div>
+      <div style="padding:10px 16px;display:flex;flex-direction:column;gap:6px;border-bottom:2px solid #2a2826">
+        <label for="cake-msg" style="font:800 11px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">MESSAGE IN FROSTING · UP TO 18 LETTERS</label>
+        <input id="cake-msg" type="text" value="{{ freeText }}" onChange="{{ onText }}" maxlength="18" autocomplete="off" spellcheck="false" placeholder="HAPPY BIRTHDAY" style="min-height:48px;padding:0 12px;border:2px solid #fbfbf7;border-radius:0;background:#141312;color:#fff;font:900 20px var(--font-heading);letter-spacing:0.06em;text-transform:uppercase;user-select:text;-webkit-user-select:text;box-sizing:border-box;width:100%">
+        <button onClick="{{ heartToggle }}" aria-pressed="{{ fr.heart }}" style="min-height:44px;padding:0 12px;border:2px solid {{ heartBd }};border-radius:0;background:{{ heartBg }};color:{{ heartFg }};font:900 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">{{ heartLabel }}</button>
+      </div>
+      <sc-for list="{{ freeGroups }}" as="grp" hint-placeholder-count="4">
+        <div style="padding:8px 16px;display:flex;flex-direction:column;gap:6px;border-bottom:2px solid #2a2826">
+          <span style="font:800 11px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">{{ grp.title }}</span>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <sc-for list="{{ grp.items }}" as="o" hint-placeholder-count="5"><button onClick="{{ o.pick }}" aria-pressed="{{ o.on }}" style="min-height:44px;min-width:44px;padding:0 10px;border:{{ o.bd }};border-radius:0;background:{{ o.bg }};color:{{ o.fg }};font:900 11px var(--font-heading);letter-spacing:0.06em;cursor:pointer;display:flex;align-items:center;gap:6px"><span style="width:14px;height:14px;background:{{ o.col }};border:1px solid #fff;display:block"></span>{{ o.name }}</button></sc-for>
+          </div>
+        </div>
+      </sc-for>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+        <button onClick="{{ freeBack }}" style="min-height:52px;padding:0 16px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">BACK</button>
+        <button onClick="{{ freeStart }}" style="min-height:52px;padding:0 16px;border:0;border-radius:0;background:#d6336c;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#b82a5c">START BAKING</button>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ helpOn }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ helpToggle }}" style="position:absolute;inset:0;z-index:9;background:rgba(0,0,0,0.82);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #ffd23a;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="padding:10px 14px;border-bottom:2px solid #3a3836;font:900 16px var(--font-heading);letter-spacing:0.06em;color:#ffd23a">HOW A FOXY CAKE IS MADE</div>
+        <sc-for list="{{ helpRows }}" as="r" hint-placeholder-count="8"><div style="display:grid;grid-template-columns:88px minmax(0,1fr);gap:10px;padding:7px 14px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body);line-height:1.35"><span style="font:900 11px var(--font-heading);letter-spacing:0.08em;color:#f7a8c4">{{ r.k }}</span><span style="text-wrap:pretty">{{ r.v }}</span></div></sc-for>
+        <div style="padding:8px 14px 4px;font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">SOUND + PLAY OPTIONS</div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-bottom:2px solid #2a2826">
+          <sc-for list="{{ optRows }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.flip }}" aria-pressed="{{ o.on }}" style="min-height:52px;padding:0 12px;border:0;border-top:2px solid #2a2826;border-right:2px solid #2a2826;border-radius:0;background:{{ o.bg }};color:{{ o.fg }};font:900 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px"><span>{{ o.name }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.08em;opacity:0.8">{{ o.state }}</span></button></sc-for>
+        </div>
+        <div style="padding:10px 14px;font:700 12px var(--font-body);color:#cfcac2">Tap anywhere to close</div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:8;background:rgba(0,0,0,0.78);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #3a3836;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+          <div style="padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#f7a8c4">{{ doneKicker }}</span><span style="font:900 24px var(--font-heading);line-height:1.05">Shift over</span><span style="font:700 12px var(--font-body);color:#cfcac2">{{ doneSub }}</span></div>
+          <div style="width:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#d6336c"><span style="font:900 30px var(--font-heading)">{{ d.total }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em">GOLD</span></div>
+        </div>
+        <sc-if value="{{ eodOn }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:10px;padding:10px 16px;background:#ffd23a;color:#000;border-bottom:2px solid #000;font:900 14px var(--font-heading);letter-spacing:0.06em"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18.5 21 12 16.8 5.5 21l2-7.5L2 9h7z" fill="#000"></path></svg>EMPLOYEE OF THE DAY</div></sc-if>
+        <sc-for list="{{ doneRows }}" as="r" hint-placeholder-count="6"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:7px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;font-variant-numeric:tabular-nums">{{ r.v }}</span></div></sc-for>
+        <sc-for list="{{ unlocks }}" as="u" hint-placeholder-count="1"><div style="padding:7px 16px;border-bottom:2px solid #2a2826;font:800 13px var(--font-heading);letter-spacing:0.04em;color:#22c55e">UNLOCKED · {{ u.t }}</div></sc-for>
+        <div style="padding:8px 16px 4px;font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">UPGRADE THE BAKERY · YOU HAVE {{ goldTxt }}</div>
+        <sc-for list="{{ shop }}" as="s" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 16px;border-top:2px solid #2a2826">
+            <div style="display:flex;flex-direction:column;min-width:0"><span style="font:900 13px var(--font-heading);letter-spacing:0.04em">{{ s.name }}</span><span style="font:600 12px var(--font-body);color:#cfcac2">{{ s.line }}</span></div>
+            <button onClick="{{ s.buy }}" disabled="{{ s.off }}" style="min-width:84px;min-height:44px;padding:0 12px;border:2px solid {{ s.bd }};border-radius:0;background:{{ s.bg }};color:{{ s.fg }};font:900 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;opacity:{{ s.op }}" style-hover="filter:brightness(1.15)">{{ s.btn }}</button>
+          </div>
+        </sc-for>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:8px">
+          <button onClick="{{ goWork }}" style="min-height:52px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-right:2px solid #3a3836;border-radius:0;background:#d6336c;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#b82a5c">NEXT SHIFT</button>
+          <button onClick="{{ toIntro }}" style="min-height:52px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">TAKE A BREAK</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  state = { h: null, help: false, vw: 1200, vh: 800, freeOpen: false, fr: { text: 'HAPPY BIRTHDAY', heart: false, shape: 'round', flavor: 'vanilla', frost: 'pink', topper: 'strawberry' }, kx: 0, ky: 0 };
+  stageRef = React.createRef();
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs(); try { this.ro = new ResizeObserver(this.onRs); this.stageRef.current && this.ro.observe(this.stageRef.current.parentElement); } catch (e) {}
+    try { const q = new URLSearchParams(location.search), m = await new Promise(res => { const t0 = Date.now(), tick = () => window.FoxyCakes ? res(window.FoxyCakes) : Date.now() - t0 > 15000 ? res(import(new URL('minigames/cake/cake-shift.js', document.baseURI).href)) : setTimeout(tick, 50); tick(); });
+      this.g = await m.createCakeShift({ container: this.stageRef.current, onState: h => this.setState({ h }), opts: { world: q.get('world') || 'meru' } }); window.__cakes = this.g;
+      if (q.get('demo') === '1') setTimeout(() => this.g.demoStart(), 400); else if (q.get('walk') === '1') setTimeout(() => this.g.walkStart(), 300); else if (q.get('free') === '1') this.setState({ freeOpen: true }); else if (q.get('work') === '1') setTimeout(() => this.g.startShift(), 300); }
+    catch (e) { console.warn('cakes failed: ' + (e && e.stack || String(e))); }
+  }
+  componentDidUpdate() { const root = this.stageRef.current && this.stageRef.current.parentElement; if (!root || !this.g || !this.g.setSafe) return; const rb = root.getBoundingClientRect(); let top = 0, bot = 0, left = 0; root.querySelectorAll('[data-safe]').forEach(el => { const r = el.getBoundingClientRect(); if (!r.height) return; if (el.dataset.safe === 'top') top = Math.max(top, r.bottom - rb.top); else if (el.dataset.safe === 'left' || (el.dataset.safe === 'intro' && rb.width > rb.height)) left = Math.max(left, r.right - rb.left); else if (el.dataset.safe !== 'intro' || rb.width <= rb.height) bot = Math.max(bot, rb.bottom - r.top); }); const H = rb.height; this.g.setSafe(Math.round(Math.min(top, H * 0.36)), Math.round(Math.min(bot, H * (this.g.hud().phase === 'intro' ? 0.62 : 0.4))), Math.round(Math.min(left, rb.width * 0.6))); }
+  componentWillUnmount() { removeEventListener('resize', this.onRs); this.g && this.g.destroy(); }
+  onRs = () => { const el = this.stageRef.current, r = el && el.parentElement ? el.parentElement.getBoundingClientRect() : null; this.setState({ vw: r && r.width ? r.width : innerWidth, vh: r && r.height ? r.height : innerHeight }); };
+  stickDown = e => { e.preventDefault && e.preventDefault(); try { e.currentTarget.setPointerCapture(e.pointerId); } catch (er) {} const r = e.currentTarget.getBoundingClientRect(); this.stk = { cx: r.left + r.width / 2, cy: r.top + r.height / 2, R: r.width / 2 - 20 }; this.stickMove(e); };
+  stickMove = e => { if (!this.stk) return; let dx = e.clientX - this.stk.cx, dy = e.clientY - this.stk.cy; const d = Math.hypot(dx, dy), R = this.stk.R; if (d > R) { dx = dx / d * R; dy = dy / d * R; } this.g && this.g.setStick(dx / R, dy / R); this.setState({ kx: Math.round(dx), ky: Math.round(dy) }); };
+  stickUp = () => { this.stk = null; this.g && this.g.setStick(0, 0); this.setState({ kx: 0, ky: 0 }); };
+  renderVals() {
+    const S = this.state, g = this.g, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const h = S.h || { phase: 'intro', day: 1, orderNo: 1, orders: 3, earned: 0, tips: 0, served: 0, combo: 0, stars: 0, gold: 0, ticket: null, stage: null, bake: null, serveBtn: '', react: null, card: null, flash: null, say: '', done: null, uniform: false, upgrades: [], music: true, demo: null, hint: '', walk: null, free: false };
+    const work = h.phase === 'shift' || h.phase === 'glide', land = S.vw > S.vh && S.vh < 560, t = h.ticket || { pie: '', who: '', size: '', done: '', frost: '', msg: '', reqs: [] }, s = h.stage || { strip: [], label: '', hint: '', status: '', frac: 0 }, b = h.bake || { zones: [], d: 0, want: '', now: '' }, c = h.card || { rows: [], mult: '1.00', design: 0 }, d = h.done || { total: 0, unlock: [] };
+    const stageOn = work && !!h.stage && !h.card && !h.react && !h.done, wk = h.walk || { act: '', near: '' }, fr = S.fr;
+    const count = s.id === 'whisk' ? ['TURNS', s.turns] : s.id === 'bake' ? ['BAKED', b.pct + '%'] : s.timed ? ['TIME', s.left] : ['ORDER', h.orderNo + '/' + h.orders];
+    const pp = s.pipe || { swatches: [], tip: 'round', canUndo: false };
+    const FL = [['vanilla', 'VANILLA', '#f3e1b0'], ['chocolate', 'CHOCOLATE', '#7a4a2e'], ['strawberry', 'STRAWBERRY', '#f4b6c2'], ['lemon', 'LEMON', '#f8e48a'], ['redvelvet', 'RED VELVET', '#b8323c']];
+    const SH = [['round', 'ROUND', '#fbfbf7'], ['heart', 'HEART', '#f7a8c4'], ['square', 'SQUARE', '#fbfbf7']];
+    const FR = [['white', 'WHITE', '#fbf7ef'], ['pink', 'PINK', '#f7a8c4'], ['mint', 'MINT', '#a8e6cf'], ['choc', 'CHOCOLATE', '#6b3f26'], ['lemon', 'LEMON', '#fbe58a'], ['lavender', 'LAVENDER', '#c9b6f2'], ['sky', 'SKY BLUE', '#a6d8f7']];
+    const TP = [['strawberry', 'BERRIES', '#e0303c'], ['candle', 'CANDLES', '#7dd3fc'], ['cherry', 'CHERRIES', '#b5121b'], ['blueberry', 'BLUEBERRIES', '#2f3c8f'], ['star', 'GOLD STARS', '#f2b632'], ['sprinkles', 'SPRINKLES', '#f472b6']];
+    const grp = (title, key, list) => ({ title, items: list.map(([id, name, col]) => { const on = fr[key] === id; return { name, col, on, bd: on ? '3px solid #ffd23a' : '2px solid #3a3836', bg: on ? '#2a2826' : '#000', fg: '#fff', pick: e => { blur(e); this.setState({ fr: { ...fr, [key]: id } }); } }; }) });
+    const designV = c.design || 0;
+    return {
+      stageRef: this.stageRef, h, t, s, b, c, d, fr, workOn: work && !h.done, introOn: h.phase === 'intro' && !h.demo && !S.freeOpen, freeOn: h.phase === 'intro' && !h.demo && S.freeOpen, introLong: S.vh >= 480, doneOn: !!h.done, helpOn: S.help && (work || h.phase === 'intro'),
+      topKicker: h.free ? 'FOXY CAKES · BAKE YOUR OWN' : 'FOXY CAKES · DAY ' + h.day, topTitle: h.free ? 'YOUR CAKE' : 'ORDER ' + h.orderNo + '/' + h.orders,
+      earnedTxt: (h.earned + h.tips) + 'g', streakTxt: (h.combo ? '×' + h.combo : '—') + ' · ' + (h.stars || '–'),
+      ticketTop: !!h.ticket && !land && !h.card, ticketSide: !!h.ticket && land && !h.card,
+      ticketMeta: t.who ? 'BAKE ' + t.done + ' · ' + t.frost + ' FROSTING' : '',
+      reqs: t.reqs.map(r => ({ name: r.name, tally: r.tally, col: r.col, fg: r.state === 'now' ? '#c42d5c' : r.state === 'done' ? '#2f7a3a' : '#201e1d', op: r.state === 'todo' ? 0.7 : 1 })),
+      strip: s.strip.map(x => ({ t: x.t, bg: x.state === 'now' ? '#ffd23a' : x.state === 'done' ? '#2f7d6a' : '#fbfbf7', fg: x.state === 'done' ? '#ffffff' : '#201e1d' })),
+      stageOn, stageLabel: s.label ? String(s.n).padStart(2, '0') + ' · ' + s.label : '', stageSub: h.hint || s.status || s.hint,
+      timerW: Math.round((s.frac || 0) * 100) + '%', timerCol: s.urgent ? '#ec3013' : '#ffd23a', countHead: count[0], countVal: count[1], countCol: s.urgent ? '#ff9a8a' : '#ffffff',
+      doneOnBtn: !!s.canDone, doneLabel: s.doneLabel, stageDone: e => { blur(e); g && g.stageDone(); }, barPE: h.demo ? 'none' : 'auto',
+      jarsOn: !!s.jars, jars: (s.jars || []).map(j => ({ name: j.name, col: j.col, added: j.added, op: j.added ? 0.35 : 1, bd: j.next ? '#ffd23a' : '#3a3836', tap: e => { blur(e); g && g.addIng(j.k); } })),
+      pipeOn: !!s.pipe, swatches: pp.swatches.map(w => ({ name: w.name, col: w.col, on: w.on, bd: w.on ? '4px solid #ffd23a' : '2px solid #fbfbf7', fg: w.id === 'white' || w.id === 'gold' ? '#000' : '#fff', mark: w.want && !h.free ? '★' : '', pick: e => { blur(e); g && g.setPipeColor(w.id); } })),
+      tipLabel: pp.tip === 'star' ? 'STAR' : 'ROUND', tipToggle: e => { blur(e); g && g.setTip(pp.tip === 'star' ? 'round' : 'star'); }, undo: e => { blur(e); g && g.undo(); }, noUndo: !pp.canUndo, undoCol: pp.canUndo ? '#fff' : '#5a5650',
+      bakeX: Math.min(100, (b.d || 0) * 100).toFixed(1) + '%', bakeZones: b.zones.map(z => ({ w: Math.max(0.5, z.w), col: z.col, ol: z.want ? '3px solid #ffd23a' : 'none' })), bakeNow: b.now ? b.now + ' · ' + b.pct + '%' : '', bakeNowCol: b.inZone ? '#22c55e' : '#ffffff',
+      pullLabel: b.on ? 'PULL IT OUT' : 'IN THE OVEN…', pullOff: !b.on, pullBg: b.on ? (b.inZone ? '#16a34a' : '#d6336c') : '#3a3836', pull: e => { blur(e); g && g.pullOut(); }, noMenu: e => e.preventDefault(),
+      serveRow: !!h.serveBtn && !land, serveInline: !!h.serveBtn && land, serve: e => { blur(e); g && g.serve(); }, bakeRow: !!h.bake && !land, bakeInline: !!h.bake && land, rowH: land ? '54px' : '60px',
+      demoBottom: h.card ? 'calc(60% + 8px)' : 'calc(' + (h.bake && !land ? 150 : h.serveBtn && !land ? 132 : s.pipe || s.jars ? 132 : 72) + 'px + env(safe-area-inset-bottom))',
+      moodOn: stageOn && !!h.stage && s.avgNow > 0 && !land && !h.demo && !h.free, moodBottom: 'calc(' + (h.bake && !land ? 150 : s.pipe || s.jars ? 132 : 72) + 'px + env(safe-area-inset-bottom))',
+      sayOn: !!h.say && !(S.vh > S.vw) && !land && !h.demo && !h.react && !h.card && stageOn,
+      flashOn: !!h.flash && !h.react, flashTxt: h.flash ? h.flash.txt : '', flashCol: h.flash ? h.flash.col : '#ffd23a', flashTop: land ? '30%' : '44%',
+      reactOn: !!h.react, reactTop: S.vh > S.vw ? 'calc(64px + env(safe-area-inset-top))' : '58px', reactStars: h.react ? (h.react.stars ? '★'.repeat(h.react.stars) + '☆'.repeat(3 - h.react.stars) : '✕') : '', reactTip: h.react ? (h.react.tip ? 'TIP +' + h.react.tip + 'g' : 'NO TIP') : '',
+      cardOn: !!h.card, cardMoney: !c.free, cardKicker: c.free ? 'YOUR CAKE · BAKE YOUR OWN' : 'ORDER COMPLETE · ' + c.who, cardHead: c.free ? 'Ta-da!' : '+' + ((c.price || 0) + (c.tip || 0)) + ' GOLD',
+      cardBody: h.card ? (c.free ? 'Every stage scored. DESIGN is your piping, the star of the show.' : h.combo > 0 ? 'Streak ' + h.combo + ', the whole town is talking about your cakes.' : 'Tidy piping and an on-time bake earn bigger tips.') : '', cardCols: land ? 2 : 1,
+      designWord: designV >= 90 ? 'A MASTERPIECE' : designV >= 75 ? 'BEAUTIFUL' : designV >= 55 ? 'NICE TRY' : 'MESSY',
+      cardRows: c.rows.map(r => ({ k: r.k, v: r.v, w: Math.max(2, r.v) + '%', col: r.v >= 80 ? '#7fd18c' : r.v >= 55 ? '#f7a8c4' : '#a5352a' })), cardBtn: h.card ? (c.free ? 'DONE ▸' : h.card.last ? 'END THE DAY ▸' : 'NEXT ORDER ▸') : '', nextOrder: e => { blur(e); g && g.nextOrder(); },
+      introRows: [['Gold', h.gold + 'g'], ['Today', (3 + Math.min(3, h.day - 1)) + ' cakes · ' + (h.day >= 3 ? 'two toppers a cake' : 'one topper a cake')], ['Uniform', h.uniform ? 'Yours · toque, towel + Foxy Cakes tee' : 'Bake 3 to keep it']].map(([k, v]) => ({ k, v })),
+      goWork: e => { blur(e); g && g.startShift(); }, demoGo: e => { blur(e); g && g.demoStart(); }, demoExit: e => { blur(e); g && g.demoStop(); }, demoOn: !!h.demo, demoKeyOn: !!(h.demo && h.demo.key), toIntro: e => { blur(e); g && g.toIntro(); },
+      walkGo: e => { blur(e); g && g.walkStart(); }, walkOn: h.phase === 'walk', walkExit: e => { blur(e); g && g.walkStop(); }, walkAct: e => { blur(e); g && g.walkAct(); }, turnView: e => { blur(e); g && g.turnView(1); },
+      walkTip: wk.act ? 'Tap ' + wk.act + ' to ' + ({ work: 'start a shift', crumb: 'talk to Miss Crumb', case: 'look in the cake case', oven: 'look at the oven', door: 'leave' }[wk.near] || 'act') : 'Drag the pad to walk · drag the screen to turn', walkSayOn: h.phase === 'walk' && !!h.say,
+      actOff: !wk.act, actLabel: wk.act ? wk.act.replace(' ', '\n') : 'ACT', actAria: wk.act || 'Nothing here', actBg: wk.act ? '#ffd23a' : '#3a3836', actFg: wk.act ? '#000' : '#8a847e',
+      stickDown: this.stickDown, stickMove: this.stickMove, stickUp: this.stickUp, knobX: S.kx, knobY: S.ky,
+      freeGo: e => { blur(e); this.setState({ freeOpen: true }); }, freeBack: e => { blur(e); this.setState({ freeOpen: false }); }, freeStart: e => { blur(e); this.setState({ freeOpen: false }); g && g.startFree({ ...fr }); },
+      freeText: fr.text, onText: e => { const v = String(e.target.value || '').toUpperCase().slice(0, 18); this.setState({ fr: { ...fr, text: v } }); },
+      heartToggle: e => { blur(e); this.setState({ fr: { ...fr, heart: !fr.heart } }); }, heartLabel: fr.heart ? '♥ PIPING A HEART INSTEAD (TAP FOR WORDS)' : 'OR PIPE A HEART INSTEAD', heartBd: fr.heart ? '#ffd23a' : '#3a3836', heartBg: fr.heart ? '#f7a8c4' : '#000', heartFg: fr.heart ? '#000' : '#fff',
+      freeGroups: [grp('SHAPE', 'shape', SH), grp('FLAVOUR', 'flavor', FL), grp('FROSTING', 'frost', FR), grp('TOPPER', 'topper', TP)],
+      optRows: [['music', 'MUSIC'], ['sfx', 'SOUND EFFECTS'], ['voice', 'VOICE GUIDE'], ['haptics', 'VIBRATION']].map(([k, name]) => { const on = !!(h.opts && h.opts[k]); return { name, on, state: on ? 'ON · TAP TO TURN OFF' : 'OFF · TAP TO TURN ON', bg: on ? '#f7a8c4' : '#000', fg: on ? '#000' : '#fff', flip: e => { e.stopPropagation && e.stopPropagation(); blur(e); g && g.setOpt(k, !on); } }; }),
+      announce: h.react ? h.react.who + ' is ' + h.react.word + ' ' + (h.react.tip ? 'tip ' + h.react.tip + ' gold' : '') : h.flash ? h.flash.txt : s.label ? s.label + '. ' + (s.hint || '') : '',
+      helpToggle: e => { blur(e); this.setState({ help: !S.help }); }, musicToggle: e => { e.stopPropagation && e.stopPropagation(); g && g.toggleMusic(); }, musicLabel: h.music ? 'MUSIC · ON (TAP TO TURN OFF)' : 'MUSIC · OFF (TAP TO TURN ON)',
+      helpRows: [['SOUND', 'Every step has its own sound: the oven hums higher as the cake bakes and a bell rings when it is in the green. Turn on VOICE GUIDE below to hear each step read aloud.'], ['MIX', 'Tap the jars on the ticket, or the ingredient buttons. Wrong jars cost points.'], ['WHISK', 'Circle your finger round the bowl. About 8 turns is smooth; much more is overmixed.'], ['POUR', 'Press and pull DOWN to tilt the bowl. Let go at the dashed line in the pan.'], ['BAKE', 'Watch it rise through the glass. PULL IT OUT while the marker is in the green.'], ['FROST', 'The turntable spins. Drag the spatula until the whole top is covered.'], ['PIPE', 'Trace the stencil in the ordered colour (★). ROUND or STAR tip. A border round the edge earns a bonus. UNDO takes back a stroke.'], ['TOPPERS', 'Tap to place berries, candles and stars evenly, off the writing. Drag to shower sprinkles.'], ['SERVE', 'Every stage scores 0-100. The average is the customer\'s mood; 80+ keeps your streak and the tips climb.']].map(([k, v]) => ({ k, v })),
+      doneKicker: h.done ? 'DAY ' + d.day + ' · FOXY CAKES' : '', doneSub: h.done ? (d.newDay ? 'Day ' + (d.day + 1) + ' tomorrow' : 'Average 1.5 stars to move up a day') + ' · ★ ' + d.stars + ' employee stars' : '', eodOn: !!(h.done && d.eod),
+      doneRows: h.done ? [['Cakes served', String(d.served)], ['Average score', String(d.avgScore)], ['Average stars', String(d.avg)], ['Wage', d.wage + 'g'], ['Prices', d.earned + 'g'], ['Tips', d.tips + 'g']].map(([k, v]) => ({ k, v })) : [], unlocks: h.done ? d.unlock.map(u => ({ t: u })) : [], goldTxt: h.gold + 'g',
+      shop: h.upgrades.map(u => { const afford = h.gold >= u.cost; return { name: u.name, line: u.line, btn: u.owned ? 'OWNED' : u.cost + 'g', off: u.owned || !afford, bg: u.owned ? '#22c55e' : afford ? '#ffd23a' : '#000000', fg: u.owned || afford ? '#000000' : '#8a847e', bd: u.owned ? '#22c55e' : afford ? '#ffd23a' : '#3a3836', op: u.owned || afford ? 1 : 0.6, buy: e => { blur(e); g && g.buyUpgrade(u.id); } }; }),
+    };
+  }
+}
+</script>
+</body>
+</html>

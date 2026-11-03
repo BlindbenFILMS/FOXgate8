@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<link rel="stylesheet" href="../../../_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Ur Pyramid Dig">
+  <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+  <sc-if value="{{ errOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:12px;right:12px;top:12px;z-index:20;background:#000;border:2px solid #ec3013;padding:8px 12px;font:700 12px var(--font-body);color:#fff;line-height:1.35;word-break:break-word">3D DID NOT LOAD · {{ errTxt }}</div></sc-if>
+  <div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 75% 70% at 50% 45%, rgba(0,0,0,0) 55%, rgba(26,10,2,0.5) 100%)"></div>
+  <div data-hud-host="1" style="position:absolute;inset:0;pointer-events:none"><dc-import name="Game HUD" game="{{ engine }}" hud="{{ stdHud }}" started="{{ walkOn }}" busy="{{ false }}" on-hud="{{ onHud }}" world="Ur" vehicle="dig" keys="{{ keysList }}" skip-keys="{{ skipKeys }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  <sc-if value="{{ walkOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ musicToggle }}" aria-label="{{ musicAria }}" style="position:absolute;right:max(12px, env(safe-area-inset-right));top:{{ walkTipTop }};z-index:2;width:48px;height:48px;border:2px solid #3a3836;border-radius:0;background:#000;color:{{ musicCol }};cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#2a2826"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="17" cy="16" r="3"></circle></svg></button></sc-if>
+  <sc-if value="{{ walkTipOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:{{ walkTipTop }};z-index:2;pointer-events:none;max-width:min(330px, calc(100% - 84px));background:#000;border:2px solid #ffd23a;padding:6px 10px;display:flex;flex-direction:column;gap:2px">
+      <span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">LOOKING AROUND</span>
+      <span style="font:700 13px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">Tap the floor to walk there. Tap Enhedu (teal robe) to work a dig. Drag to turn the camera.</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ topOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="top" style="position:absolute;left:0;right:0;top:0;z-index:3;pointer-events:none;display:flex;flex-direction:column">
+      <div style="background:#000;border-bottom:2px solid #ffd23a;display:flex;align-items:stretch;padding-top:env(safe-area-inset-top)">
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">PYRAMID DIG · DAY {{ h.day }}</span><span style="font:900 20px var(--font-heading);font-variant-numeric:tabular-nums">{{ findTxt }}</span></div>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">EARNED</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;color:#e6b45a">{{ earnedTxt }}</span></div>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;min-width:0;flex:1"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">STARS</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap">{{ starsTxt }}</span></div>
+        <button onClick="{{ musicToggle }}" aria-label="{{ musicAria }}" style="pointer-events:auto;flex:none;width:48px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:{{ musicCol }};cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#2a2826"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="17" cy="16" r="3"></circle></svg></button>
+        <button onClick="{{ helpToggle }}" aria-label="How the dig works" style="pointer-events:auto;flex:none;width:52px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 20px var(--font-heading);cursor:pointer" style-hover="background:#2a2826">?</button>
+      </div>
+      <sc-if value="{{ cardOn }}" hint-placeholder-val="{{ false }}">
+        <div style="margin:6px;align-self:flex-start;max-width:calc(100% - 12px);line-height:1.25;background:#fbf6ea;color:#201e1d;border:2px solid #201e1d;display:flex;flex-direction:column">
+          <div style="background:#1f6a62;color:#fff;padding:4px 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><span style="font:900 12px var(--font-heading);letter-spacing:0.06em;white-space:nowrap">DIG CARD · SQUARE {{ h.job.square }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.04em;color:#e6b45a;white-space:nowrap">{{ h.job.find }}</span></div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;padding:5px 6px">
+            <sc-for list="{{ chips }}" as="c" hint-placeholder-count="4"><span style="display:flex;gap:5px;align-items:center;padding:2px 6px;border:2px solid {{ c.bd }};background:{{ c.bg }};font:900 11px var(--font-heading);letter-spacing:0.04em;color:{{ c.fg }};white-space:nowrap">{{ c.t }}</span></sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{ barOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="bottom" style="position:absolute;left:0;right:0;bottom:0;z-index:4;display:flex;flex-direction:column;pointer-events:{{ barPE }}">
+      <sc-if value="{{ glyphOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:stretch;justify-content:space-between;background:#000;border-top:2px solid #3a3836">
+          <span style="padding:6px 10px;font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;align-self:center">{{ glyphHead }}</span>
+          <button onClick="{{ replay }}" style="min-height:40px;padding:0 12px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 11px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#1a1816">SHOW AGAIN</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));background:#000;border-top:2px solid #2a2826;opacity:{{ glyphOp }};pointer-events:{{ glyphPE }}">
+          <sc-for list="{{ glyphs }}" as="gl" hint-placeholder-count="6"><button onClick="{{ gl.go }}" aria-label="{{ gl.aria }}" style="min-height:58px;border:0;border-right:2px solid #2a2826;border-radius:0;background:#1a120c;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px 2px;color:#e8c992" style-hover="background:#2e2016"><svg width="28" height="28" viewBox="0 0 24 24"><path d="{{ gl.d }}" fill="#e8c992"></path></svg><span style="font:900 9px var(--font-heading);letter-spacing:0.06em;color:#cfcac2">{{ gl.name }}</span></button></sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ crateOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:#000;border-top:2px solid #3a3836">
+          <sc-for list="{{ crates }}" as="cr" hint-placeholder-count="5"><button onClick="{{ cr.go }}" aria-label="{{ cr.aria }}" style="min-height:52px;border:0;border-right:2px solid #2a2826;border-radius:0;background:#000;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;padding:4px 6px;color:#fff;min-width:0" style-hover="background:#1a1816"><span style="width:100%;height:8px;background:{{ cr.col }};display:block"></span><span style="font:900 11px var(--font-heading);letter-spacing:0.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">{{ cr.name }}</span></button></sc-for>
+        </div>
+      </sc-if>
+      <div style="background:#000;border-top:2px solid #ffd23a;padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:grid;grid-template-columns:repeat({{ toolCols }},minmax(0,1fr))">
+        <sc-for list="{{ tools }}" as="t" hint-placeholder-count="5">
+          <button onClick="{{ t.go }}" aria-label="{{ t.aria }}" style="min-height:58px;padding:6px 4px 6px 8px;border:0;border-right:2px solid #2a2826;border-radius:0;background:{{ t.bg }};color:{{ t.fg }};cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:3px;min-width:0" style-hover="filter:brightness(1.2)">
+            <span style="font:900 13px var(--font-heading);letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.label }}</span>
+            <span style="font:800 9px var(--font-heading);letter-spacing:0.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ t.bc }}">{{ t.badge }}</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ hintOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;right:max(10px, env(safe-area-inset-right));bottom:{{ trayBottom }};z-index:3;pointer-events:none;max-width:min(270px, 66%);background:#000;border:2px solid #ffd23a;padding:5px 10px;font:800 11px var(--font-heading);letter-spacing:0.08em;line-height:1.35;color:#ffd23a;text-wrap:pretty">{{ hintTxt }}</div>
+  </sc-if>
+  <sc-if value="{{ sayOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(10px, env(safe-area-inset-left));bottom:{{ sayBottom }};z-index:3;pointer-events:none;max-width:min(340px, calc(100% - 20px));background:rgba(0,0,0,0.88);border:2px solid #3a3836;padding:8px 10px;font:700 13px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">{{ h.say }}</div>
+  </sc-if>
+  <sc-if value="{{ meterOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ meterTop }};transform:translateX(-50%);z-index:5;pointer-events:none;width:min(400px, calc(100% - 24px));background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:6px 12px"><span style="font:900 clamp(17px,4.6vw,22px) var(--font-heading);color:{{ meterCol }}">{{ meterZone }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#ffd23a;white-space:nowrap">{{ meterLbl }}</span></div>
+      <div style="position:relative;height:18px;margin:0 12px 10px;display:flex;gap:2px">
+        <span style="flex:71;background:#22c55e;display:block"></span><span style="flex:29;background:#ec3013;display:block"></span>
+        <span style="position:absolute;top:-6px;bottom:-6px;left:{{ meterX }};width:4px;margin-left:-2px;background:#ffffff;display:block"></span>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ flashOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ flashTop }};transform:translateX(-50%);z-index:5;pointer-events:none;max-width:calc(100% - 24px);background:rgba(0,0,0,0.9);border:2px solid {{ flashCol }};display:flex;align-items:stretch">
+      <span style="flex:none;width:10px;background:{{ flashCol }};display:block"></span>
+      <span style="padding:8px 14px;font:900 clamp(15px,4vw,22px) var(--font-heading);letter-spacing:0.04em;color:#fff;text-wrap:pretty">{{ flashTxt }}</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ reactOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ reactTop }};transform:translateX(-50%);z-index:6;pointer-events:none;width:min(420px, calc(100% - 24px));background:#000;border:3px solid {{ h.react.col }};display:flex;flex-direction:column">
+      <div style="display:flex;align-items:stretch"><div style="flex:1;padding:10px 14px;display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">{{ h.react.who }}</span><span style="font:900 clamp(30px,9vw,44px) var(--font-heading);line-height:1;color:{{ h.react.col }}">{{ h.react.word }}</span></div><div style="flex:none;min-width:96px;padding:0 12px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;background:{{ h.react.col }};color:#000"><span style="font:900 20px var(--font-heading);letter-spacing:0.04em">{{ reactStars }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.08em">{{ reactPay }}</span></div></div>
+      <div style="padding:8px 14px 10px;border-top:2px solid #2a2826;font:700 15px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">“{{ h.react.line }}”</div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(10px, env(safe-area-inset-left));bottom:{{ trayBottom }};z-index:7;pointer-events:none;width:min(460px, calc(100% - 112px));background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="padding:5px 12px;border-bottom:2px solid #3a3836;font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;background:#ec3013;display:block"></span>DEMO · NOTHING IS SAVED</div>
+      <div style="display:flex;align-items:stretch"><sc-if value="{{ demoKeyOn }}" hint-placeholder-val="{{ false }}"><div style="flex:none;min-width:64px;display:flex;align-items:center;justify-content:center;padding:0 10px;background:#ec3013;color:#fff;font:900 14px var(--font-heading);border-right:2px solid #3a3836">{{ h.demo.key }}</div></sc-if><div style="padding:9px 12px;font:900 clamp(14px,3.8vw,18px) var(--font-heading);letter-spacing:0.03em;line-height:1.2;color:#fff;text-wrap:pretty">{{ h.demo.cap }}</div></div>
+    </div>
+    <button onClick="{{ demoExit }}" aria-label="Exit the demo" style="position:absolute;right:max(10px, env(safe-area-inset-right));bottom:{{ trayBottom }};z-index:7;min-width:88px;min-height:48px;padding:0 14px;border:2px solid #ec3013;border-radius:0;background:#ec3013;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">EXIT DEMO</button>
+  </sc-if>
+  <sc-if value="{{ introOn }}" hint-placeholder-val="{{ true }}">
+    <div data-safe="intro" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:6;width:min(420px, calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column">
+      <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">UR · THE PYRAMID DIG · DAY {{ h.day }}</span><span style="font:900 26px var(--font-heading);line-height:1.05">Work a dig</span><span style="font:700 13px var(--font-body);color:#cfcac2;text-wrap:pretty">Archivist Enhedu points at a square and hands you a dig card. Scrape, brush, lift and record each find for the College, in order, with careful hands. Pay is per find, plus a bonus for clean work.</span></div>
+      <sc-for list="{{ introRows }}" as="r" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:86px minmax(0,1fr);gap:12px;padding:6px 16px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;color:#e6b45a">{{ r.v }}</span></div></sc-for>
+      <button onClick="{{ demoGo }}" style="min-height:48px;padding:0 18px;border:0;border-bottom:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WATCH THE DEMO</button>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;border-bottom:2px solid #3a3836"><button onClick="{{ goWalk }}" style="min-height:48px;padding:0 18px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">{{ walkBtn }}</button><button onClick="{{ musicToggle }}" aria-label="{{ musicAria }}" style="min-height:48px;min-width:112px;padding:0 14px;border:0;border-radius:0;background:#000;color:{{ musicCol }};font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;display:flex;align-items:center;gap:8px" style-hover="background:#2a2826"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="17" cy="16" r="3"></circle></svg>{{ musicTxt }}</button></div>
+      <button onClick="{{ goWork }}" style="min-height:56px;padding:0 18px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">PUT ME TO WORK</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ helpOn }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ helpToggle }}" style="position:absolute;inset:0;z-index:9;background:rgba(0,0,0,0.82);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #ffd23a;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="padding:10px 14px;border-bottom:2px solid #3a3836;font:900 16px var(--font-heading);letter-spacing:0.06em;color:#ffd23a">HOW THE DIG WORKS</div>
+        <sc-for list="{{ helpRows }}" as="r" hint-placeholder-count="8"><div style="display:grid;grid-template-columns:72px minmax(0,1fr);gap:10px;padding:7px 14px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body);line-height:1.35"><span style="font:900 11px var(--font-heading);letter-spacing:0.08em;color:#e6b45a">{{ r.k }}</span><span style="text-wrap:pretty">{{ r.v }}</span></div></sc-for>
+        <div style="padding:10px 14px;font:700 12px var(--font-body);color:#cfcac2">Tap anywhere to close</div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:8;background:rgba(0,0,0,0.78);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #3a3836;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+          <div style="padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ doneKicker }}</span><span style="font:900 24px var(--font-heading);line-height:1.05">Day's dig done</span><span style="font:700 12px var(--font-body);color:#cfcac2">{{ doneSub }}</span></div>
+          <div style="width:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#ec3013"><span style="font:900 30px var(--font-heading)">{{ d.total }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em">GOLD</span></div>
+        </div>
+        <sc-if value="{{ eodOn }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:10px;padding:10px 16px;background:#ffd23a;color:#000;border-bottom:2px solid #000;font:900 14px var(--font-heading);letter-spacing:0.06em"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18.5 21 12 16.8 5.5 21l2-7.5L2 9h7z" fill="#000"></path></svg>EMPLOYEE OF THE DAY</div></sc-if>
+        <sc-for list="{{ doneRows }}" as="r" hint-placeholder-count="5"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:7px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;font-variant-numeric:tabular-nums">{{ r.v }}</span></div></sc-for>
+        <sc-for list="{{ unlocks }}" as="u" hint-placeholder-count="1"><div style="padding:7px 16px;border-bottom:2px solid #2a2826;font:800 13px var(--font-heading);letter-spacing:0.04em;color:#22c55e">UNLOCKED · {{ u.t }}</div></sc-for>
+        <div style="padding:8px 16px 4px;font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">UPGRADE THE DIG KIT · YOU HAVE {{ goldTxt }}</div>
+        <sc-for list="{{ shop }}" as="s" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 16px;border-top:2px solid #2a2826">
+            <div style="display:flex;flex-direction:column;min-width:0"><span style="font:900 13px var(--font-heading);letter-spacing:0.04em">{{ s.name }}</span><span style="font:600 12px var(--font-body);color:#cfcac2">{{ s.line }}</span></div>
+            <button onClick="{{ s.buy }}" disabled="{{ s.off }}" style="min-width:84px;min-height:44px;padding:0 12px;border:2px solid {{ s.bd }};border-radius:0;background:{{ s.bg }};color:{{ s.fg }};font:900 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;opacity:{{ s.op }}" style-hover="filter:brightness(1.15)">{{ s.btn }}</button>
+          </div>
+        </sc-for>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:8px">
+          <button onClick="{{ goWork }}" style="min-height:52px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">NEXT DAY</button>
+          <button onClick="{{ goWalk }}" style="min-height:52px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">TAKE A BREAK</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  state = { h: null, help: false, vw: 1200, vh: 800, hi: { pad: false, menu: false, split: false, bar: 0 }, tipT: 0 };
+  stageRef = React.createRef();
+  onHud = hi => { const o = this.state.hi; if (!o || o.pad !== hi.pad || o.menu !== hi.menu || o.bar !== hi.bar || o.split !== hi.split) this.setState({ hi }); };
+  panel = /[?&]panel=1/.test(location.search);
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs(); try { this.ro = new ResizeObserver(this.onRs); this.stageRef.current && this.ro.observe(this.stageRef.current.parentElement); } catch (e) {}
+    try { let m = null, why = []; for (const u of ['minigames/ur/dig-site.js']) { try { m = await import(new URL(u, document.baseURI).href); break; } catch (er) { why.push(u + ': ' + (er && er.message || er)); } } if (!m) throw new Error(why.join(' | ')); this.g = await m.createDigSite({ container: this.stageRef.current, onState: h => this.setState({ h }), opts: { walk: /[?&]walk=1/.test(location.search), work: /[?&]work=1/.test(location.search) } }); window.__dig = this.g; this.forceUpdate(); if (/[?&]demo=1/.test(location.search)) setTimeout(() => this.g.demoStart(), 400); }
+    catch (e) { console.warn('pyramid dig failed: ' + (e && e.stack || String(e))); this.setState({ err: String(e && e.message || e).slice(0, 400) }); }
+  }
+  componentDidUpdate() { const root = this.stageRef.current && this.stageRef.current.parentElement; if (!root || !this.g || !this.g.setSafe) return; const rb = root.getBoundingClientRect(); let top = 0, bot = 0, left = 0; root.querySelectorAll('[data-safe]').forEach(el => { const r = el.getBoundingClientRect(); if (!r.height) return; if (el.dataset.safe === 'top') top = Math.max(top, r.bottom - rb.top); else if (el.dataset.safe === 'intro' && rb.width > rb.height) left = Math.max(left, r.right - rb.left); else bot = Math.max(bot, rb.bottom - r.top); }); const H = rb.height, ph = this.g.hud().phase; this.g.setSafe(Math.round(Math.min(top, H * 0.36)), Math.round(Math.min(bot, H * (ph === 'intro' ? 0.66 : 0.4))), Math.round(Math.min(left, rb.width * 0.6))); }
+  componentWillUnmount() { removeEventListener('resize', this.onRs); this.g && this.g.destroy(); }
+  onRs = () => { const el = this.stageRef.current, r = el && el.parentElement ? el.parentElement.getBoundingClientRect() : null; this.setState({ vw: r && r.width ? r.width : innerWidth, vh: r && r.height ? r.height : innerHeight }); };
+  renderVals() {
+    const S = this.state, g = this.g, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const h = S.h || { phase: 'intro', day: 1, findN: 0, perDay: 3, earned: 0, tips: 0, stars: 0, job: null, tool: null, flash: null, say: '', react: null, done: null, gold: 0, upgrades: [], meter: null, hint: null, glyphs: [], crates: [], finds: 0, walk: null };
+    const busy = ['arrive', 'work', 'react', 'cart'].includes(h.phase), work = h.phase === 'work', walk = h.phase === 'walk', J = h.job, d = h.done || { total: 0 }, port = S.vh > S.vw, bar = S.hi.bar || 0;
+    const glyphOn = work && !!h.glyphPick, crateOn = work && !!h.cratePick, extra = glyphOn ? 100 : crateOn ? 54 : 0;
+    const tools = !J ? [] : [...J.tasks.map((t, i) => { const on = h.tool === t.id, nx = h.hint && h.hint.tool === t.id && !on; return { label: (i + 1) + ' ' + t.label, aria: 'Step ' + (i + 1) + ': ' + t.name, badge: nx ? 'NEXT ▸' : t.done ? 'DONE ✓' : t.locked ? 'LATER' : t.txt, bg: on ? '#ffd23a' : nx ? '#1f3a24' : '#000000', fg: on ? '#000000' : t.done || t.locked ? '#8a847e' : '#ffffff', bc: on ? '#000000' : t.done ? '#22c55e' : nx ? '#ffd23a' : '#8a847e', go: e => { blur(e); g && g.setTool(t.id); } }; }),
+      { label: 'HAND IN', aria: 'Hand the find in to Enhedu', badge: h.allDone ? 'READY' : h.confirm ? 'TAP AGAIN' : 'NOT DONE', bg: h.allDone ? '#ec3013' : '#000000', fg: '#ffffff', bc: h.allDone ? '#ffffff' : '#8a847e', go: e => { blur(e); g && g.handIn(); } }];
+    const twoRows = port && tools.length > 5, trayPx = (twoRows ? 128 : 70) + extra, W = h.walk || {};
+    const stdHud = { hp: 100, hpMax: 100, en: 100, gold: h.gold, hour: 13, day: 1, items: [], place: 'Ur · The Pyramid Dig', quest: { text: 'THE PYRAMID DIG · TALK TO ENHEDU TO WORK A DIG' }, prompt: W.prompt || null, toast: W.toast || null, muted: false, weather: 'Clear', boat: false, inCave: true, weapons: [], dialog: W.dialog || null, vehicles: [], vehAmmo: [] };
+    const m = h.meter, mz = m ? m.zone : '';
+    return {
+      stageRef: this.stageRef, errOn: !!S.err, errTxt: S.err || '', h, d, engine: g, stdHud, walkOn: !!g && walk, onHud: this.onHud,
+      keysList: [['WASD', 'walk'], ['tap', 'walk there'], ['1', 'trowel'], ['2', 'lamp'], ['Space', 'jump'], ['E', 'talk']], skipKeys: ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'KeyT', 'KeyV', 'KeyN'],
+      walkTipOn: walk && !W.dialog && !S.hi.menu && (h.finds || 0) < 3, walkTipTop: (bar + 48) + 'px',
+      topOn: busy && !h.done, cardOn: !!J && busy && !h.react && h.phase !== 'cart' && !(S.vh < 500 && (glyphOn || crateOn)), barOn: work, introOn: h.phase === 'intro' && !h.demo, doneOn: !!h.done, helpOn: S.help && busy,
+      findTxt: 'FIND ' + Math.min(h.findN + 1, h.perDay) + ' / ' + h.perDay, earnedTxt: (h.earned + h.tips) + 'g', starsTxt: h.stars ? '★ ' + h.stars : '★ –',
+      chips: J ? J.tasks.map((t, i) => ({ t: (t.done ? '✓ ' : (i + 1) + ' ') + t.label + (t.done || t.locked ? '' : ' · ' + t.txt), bg: t.done ? '#e6f6ea' : h.tool === t.id ? '#ffd23a' : '#fbf6ea', bd: t.done ? '#22c55e' : '#201e1d', fg: t.done ? '#1f6a3a' : t.locked ? '#8a847e' : '#201e1d' })).concat(J.tasks.some(t => t.id === 'crate') ? [{ t: 'CRATE: ' + J.crate, bg: '#1f6a62', bd: '#1f6a62', fg: '#ffffff' }] : []) : [],
+      toolCols: twoRows ? Math.ceil(tools.length / 2) : tools.length || 1, tools, glyphOn, crateOn,
+      glyphHead: h.readShow ? 'WATCH THE SIGNS LIGHT UP…' : 'TAP THE SIGNS IN THE SAME ORDER', glyphOp: h.readShow ? 0.45 : 1, glyphPE: h.readShow || h.demo ? 'none' : 'auto', replay: e => { blur(e); g && g.replayRead(); },
+      glyphs: h.glyphs.map(x => ({ d: x.d, name: x.name, aria: 'Sign ' + x.name, go: e => { blur(e); g && g.pickGlyph(x.k); } })),
+      crates: h.crates.map(x => ({ name: x.name, col: x.col, aria: 'Pack it in the ' + x.name + ' crate', go: e => { blur(e); g && g.pickCrate(x.k); } })),
+      barPE: h.demo ? 'none' : 'auto', demoOn: !!h.demo, demoKeyOn: !!(h.demo && h.demo.key), demoGo: e => { blur(e); g && g.demoStart(); }, demoExit: e => { blur(e); g && g.demoStop(); },
+      hintOn: !h.demo && work && !!h.hint && !h.meter && !h.flash, hintTxt: h.hint ? h.hint.text : '', trayBottom: 'calc(' + trayPx + 'px + env(safe-area-inset-bottom))',
+      sayOn: !h.demo && !!h.say && busy && !h.react && !(port && work && h.hint) && !(S.vh < 500 && (glyphOn || crateOn)), sayBottom: work ? 'calc(' + (trayPx + 40) + 'px + env(safe-area-inset-bottom))' : 'calc(12px + env(safe-area-inset-bottom))',
+      meterOn: !!m && work, meterX: m ? (m.v * 100).toFixed(1) + '%' : '0%', meterZone: mz, meterCol: mz === 'TOO FAST' ? '#ec3013' : mz === 'DRAG UP' ? '#ffffff' : '#22c55e', meterLbl: m && m.kind === 'lift' ? 'LIFT · SLOW AND STEADY' : 'OVER THE FIND · GO SLOW', meterTop: port ? '40%' : '44%',
+      flashOn: !!h.flash, flashTxt: h.flash ? h.flash.txt : '', flashCol: h.flash ? h.flash.col : '#ffd23a', flashTop: h.meter ? (port ? '52%' : '62%') : '46%',
+      reactOn: !!h.react, reactTop: port ? 'calc(64px + env(safe-area-inset-top))' : '58px', reactStars: h.react ? '★'.repeat(h.react.stars) + '☆'.repeat(3 - h.react.stars) : '', reactPay: h.react ? '+' + h.react.pay + 'g' + (h.react.tip ? ' · BONUS ' + h.react.tip : '') : '',
+      introRows: [['Gold', h.gold + 'g'], ['Today', h.perDay + ' finds, no clock'], ['Finds', (h.finds || 0) + ' for the College'], ['Uniform', h.uniform ? 'Yours · wide hat, rag + Pyramid Dig tee' : 'Finish a day to keep it']].map(([k, v]) => ({ k, v })),
+      goWork: e => { blur(e); g && g.startDay(); }, goWalk: e => { blur(e); if (this.panel) { try { parent.postMessage({ type: 'urDig:exit', gold: h.gold }, '*'); } catch (er) {} g && g.toIntro(); return; } g && g.toWalk(); }, walkBtn: this.panel ? 'BACK TO THE HALL' : 'LOOK AROUND',
+      musicToggle: e => { blur(e); g && g.setMusic(!h.music); }, musicTxt: h.music === false ? 'MUSIC OFF' : 'MUSIC ON', musicCol: h.music === false ? '#6b6560' : '#ffd23a', musicAria: h.music === false ? 'Turn the music on' : 'Turn the music off', helpToggle: e => { blur(e); this.setState({ help: !S.help }); },
+      helpRows: [['DIG CARD', 'Each find comes with a card. Do the steps in order; tap a step at the bottom and the camera moves there.'], ['DIG', 'Swipe over the square to scrape the soil off, layer by layer. Where it glows amber the find is right below: go slow there or you chip it.'], ['BRUSH', 'Rub back and forth over the dirt clumps on the find.'], ['LIFT', 'Press the find and drag up, slow and steady. Keep the bar green. Too fast and it cracks.'], ['SIEVE', 'Swipe left and right, fast, to shake the soil through. Then tap each bead or shard to pick it out.'], ['MEND', 'Drag each shard onto the gap in the pot that is the same width.'], ['READ', 'Watch the signs light up on the tablet, then tap the same signs below in the same order.'], ['ROLL', 'Drag the seal across the clay from left to right. Going back smudges it.'], ['CRATE', 'Pick the right crate. The card says which.'], ['HAND IN', 'Enhedu checks your work. Careful hands earn stars and a College bonus.']].map(([k, v]) => ({ k, v })),
+      doneKicker: h.done ? 'DAY ' + d.day + ' · THE PYRAMID DIG' : '', doneSub: h.done ? (d.newDay ? 'Day ' + (d.day + 1) + ' tomorrow: deeper squares' : 'Average 2 stars to move up a day') + ' · ★ ' + d.stars + ' employee stars' : '', eodOn: !!(h.done && d.eod),
+      doneRows: h.done ? [['Finds', String(d.finds)], ['Average stars', String(d.avg)], ['Wage', d.wage + 'g'], ['Finds paid', d.earned + 'g'], ['College bonus', d.tips + 'g']].map(([k, v]) => ({ k, v })) : [], unlocks: h.done ? d.unlock.map(t => ({ t })) : [], goldTxt: h.gold + 'g',
+      shop: h.upgrades.map(u => { const afford = h.gold >= u.cost; return { name: u.name, line: u.line, btn: u.owned ? 'OWNED' : u.cost + 'g', off: u.owned || !afford, bg: u.owned ? '#22c55e' : afford ? '#ffd23a' : '#000000', fg: u.owned || afford ? '#000000' : '#8a847e', bd: u.owned ? '#22c55e' : afford ? '#ffd23a' : '#3a3836', op: u.owned || afford ? 1 : 0.6, buy: e => { blur(e); g && g.buyUpgrade(u.id); } }; }),
+    };
+  }
+}
+</script>
+</body>
+</html>

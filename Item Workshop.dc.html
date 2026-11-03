@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>
+body { margin: 0; background: #201e1d; color: #f3f2f2; font-family: Archivo, sans-serif; }
+a { color: #f3f2f2; } a:hover { color: #ec3013; }
+input, select, button { font-family: Archivo, sans-serif; }
+input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid #ec3013; outline-offset: 2px; }
+</style>
+</helmet>
+<div style="min-height:100vh;background:#201e1d;color:#f3f2f2;display:flex;flex-direction:column">
+  <div style="position:sticky;top:0;z-index:5;background:#201e1d;border-bottom:2px solid #f3f2f2;padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px">
+      <div style="font-size:24px;font-weight:900;letter-spacing:0.02em">ITEM WORKSHOP</div>
+      <div style="font-size:15px;font-weight:700">{{ countLine }}</div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      <input value="{{ q }}" onInput="{{ onSearch }}" placeholder="Search name or id" style="flex:1 1 180px;min-width:0;height:44px;padding:0 12px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:16px">
+      <select value="{{ kindF }}" onChange="{{ onKind }}" style="flex:0 1 190px;height:44px;padding:0 10px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:15px;font-weight:700">
+        <sc-for list="{{ kindOpts }}" as="o" hint-placeholder-count="4"><option value="{{ o.v }}">{{ o.t }}</option></sc-for>
+      </select>
+      <select value="{{ showF }}" onChange="{{ onShow }}" style="flex:0 1 190px;height:44px;padding:0 10px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:15px;font-weight:700">
+        <option value="all">EVERY ITEM</option><option value="changed">CHANGED BY BEN</option><option value="cut">CUT (RETIRED)</option><option value="sold">SOLD IN A SHOP</option><option value="free">NOT SOLD</option><option value="check">CHECKER FLAGS</option>
+      </select>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      <button onClick="{{ copyChanges }}" style="min-height:44px;padding:0 14px;background:#ec3013;color:#f3f2f2;border:2px solid #ec3013;border-radius:0;font-size:15px;font-weight:800;text-align:left;cursor:pointer" style-hover="background:#c42a10">{{ copyLabel }}</button>
+      <button onClick="{{ addItem }}" style="min-height:44px;padding:0 14px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:15px;font-weight:800;text-align:left;cursor:pointer" style-hover="background:#4a1a10" style-active="background:#7a2410">ADD ITEM +</button>
+      <button onClick="{{ toggleHelp }}" style="min-height:44px;padding:0 14px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:15px;font-weight:800;text-align:left;cursor:pointer" style-hover="background:#4a1a10" style-active="background:#7a2410">HOW IT WORKS</button>
+    </div>
+    <sc-if value="{{ helpOn }}" hint-placeholder-val="{{ false }}">
+      <div style="font-size:15px;line-height:1.45;max-width:720px;border-top:2px solid #f3f2f2;padding-top:10px;text-wrap:pretty">Every item in the game, one list. Change a name, note, heal or price here and every shop and the HUD on every world use it. CUT retires an item: old saves keep it, shops stop selling it. Nothing is ever deleted. When you are happy, press COPY CHANGES and paste it to Claude to make it permanent in engine/items.js.</div>
+    </sc-if>
+  </div>
+  <div style="display:flex;flex-direction:column">
+    <sc-for list="{{ groups }}" as="g" hint-placeholder-count="2">
+      <div style="display:flex;flex-direction:column">
+        <div style="padding:16px 14px 8px;border-bottom:2px solid #f3f2f2;display:flex;align-items:baseline;gap:12px">
+          <div style="font-size:20px;font-weight:900">{{ g.title }}</div><div style="font-size:15px;font-weight:700">{{ g.n }}</div>
+        </div>
+        <sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="3">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:8px 14px;padding:12px 14px;border-bottom:2px solid #f3f2f2;opacity:{{ r.op }}">
+            <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                <span style="font-size:13px;font-weight:800;letter-spacing:0.04em">{{ r.id }}</span>
+                <sc-if value="{{ r.changed }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;font-weight:900;background:#f3f2f2;color:#201e1d;padding:2px 6px">CHANGED</span></sc-if>
+                <sc-if value="{{ r.cut }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;font-weight:900;background:#ec3013;color:#f3f2f2;padding:2px 6px">CUT</span></sc-if>
+                <sc-if value="{{ r.flag }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;font-weight:900;border:2px solid #ec3013;color:#f3f2f2;padding:0 6px">{{ r.flag }}</span></sc-if>
+              </div>
+              <input value="{{ r.name }}" onChange="{{ r.typeName }}" onBlur="{{ r.setName }}" aria-label="Name" style="height:44px;padding:0 10px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:18px;font-weight:800;min-width:0">
+              <input value="{{ r.note }}" onChange="{{ r.typeNote }}" onBlur="{{ r.setNote }}" aria-label="What it does" placeholder="What it does" style="height:44px;padding:0 10px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:15px;min-width:0">
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+              <div style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr);gap:6px">
+                <label style="display:flex;flex-direction:column;gap:2px;font-size:12px;font-weight:800">KIND
+                  <select value="{{ r.kind }}" onChange="{{ r.setKind }}" style="height:44px;padding:0 6px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:14px;font-weight:700;min-width:0">
+                    <sc-for list="{{ kindList }}" as="o" hint-placeholder-count="4"><option value="{{ o.v }}">{{ o.t }}</option></sc-for>
+                  </select></label>
+                <label style="display:flex;flex-direction:column;gap:2px;font-size:12px;font-weight:800">PRICE G
+                  <input type="number" min="0" value="{{ r.price }}" onChange="{{ r.setPrice }}" placeholder="not sold" style="height:44px;padding:0 8px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:16px;font-weight:800;min-width:0"></label>
+                <label style="display:flex;flex-direction:column;gap:2px;font-size:12px;font-weight:800">HEAL HP
+                  <input type="number" min="0" value="{{ r.heal }}" onChange="{{ r.setHeal }}" style="height:44px;padding:0 8px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:16px;font-weight:800;min-width:0"></label>
+              </div>
+              <div style="font-size:14px;line-height:1.4;text-wrap:pretty"><b>SOLD AT</b> {{ r.sold }}</div>
+              <div style="font-size:14px;line-height:1.4;text-wrap:pretty"><b>GIVEN BY</b> {{ r.from }} · <b>WORLDS</b> {{ r.worlds }}</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <button onClick="{{ r.toggleCut }}" style="min-height:44px;padding:0 14px;background:{{ r.cutBg }};color:#f3f2f2;border:2px solid {{ r.cutBd }};border-radius:0;font-size:14px;font-weight:800;text-align:left;cursor:pointer" style-hover="background:#4a1a10">{{ r.cutLabel }}</button>
+                <sc-if value="{{ r.changed }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ r.reset }}" style="min-height:44px;padding:0 14px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:14px;font-weight:800;text-align:left;cursor:pointer" style-hover="background:#4a1a10">UNDO CHANGES</button>
+                </sc-if>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-for>
+    <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:24px 14px;font-size:16px;font-weight:700">{{ emptyText }}</div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { q: '', kindF: 'all', showF: 'all', v: 0, help: false, copied: false, draft: {} };
+  type(k, v) { this.setState(s => ({ draft: { ...s.draft, [k]: v } })); }
+  commit(k, fn) { const d = this.state.draft; if (!(k in d)) return; fn(d[k]); this.setState(s => { const n = { ...s.draft }; delete n[k]; return { draft: n }; }); }
+  componentDidMount() {
+    import('./engine/items.js').then(m => { this.M = m; this.forceUpdate(); });
+    this._st = e => { if (e.key === 'items.catalog.v1' && this.M) { this.M.items.reload(); this.forceUpdate(); } }; addEventListener('storage', this._st);
+  }
+  componentWillUnmount() { removeEventListener('storage', this._st); }
+  patch(id, k, v) { const I = this.M.items, b = I.base()[id], p = {}; p[k] = b && JSON.stringify(b[k] ?? (k === 'status' ? 'live' : null)) === JSON.stringify(v) ? undefined : v; I.setOverride(id, p); this.setState(s => ({ v: s.v + 1, copied: false })); }
+  flagOf(it, I) {
+    if (it.status === 'retired') return (it.sellers || []).length ? 'CUT BUT A SHOP STILL LISTS IT' : '';
+    if (!(it.sellers || []).length && !it.from) return 'NO WAY TO GET IT';
+    if (it.kind === 'heal' && !(it.heal > 0)) return 'HEAL ITEM WITH 0 HP';
+    if (it.heal > 0 && it.kind !== 'heal') return 'HEALS BUT KIND IS ' + it.kind.toUpperCase();
+    return '';
+  }
+  renderVals() {
+    const S = this.state, M = this.M;
+    if (!M) return { countLine: 'Loading the catalog…', groups: [], kindOpts: [], kindList: [], empty: false, q: S.q, kindF: S.kindF, showF: S.showF, copyLabel: 'COPY CHANGES', helpOn: S.help };
+    const I = M.items, KINDS = M.KINDS, ovr = I.overrides(), all = I.list(), q = S.q.trim().toLowerCase();
+    const nCh = Object.keys(ovr).length, nCut = all.filter(i => i.status === 'retired').length;
+    const rows = all.filter(it => {
+      if (S.kindF !== 'all' && it.kind !== S.kindF) return false;
+      if (q && !(it.name.toLowerCase().includes(q) || it.id.toLowerCase().includes(q))) return false;
+      const sold = (it.sellers || []).length > 0;
+      if (S.showF === 'changed') return !!ovr[it.id]; if (S.showF === 'cut') return it.status === 'retired';
+      if (S.showF === 'sold') return sold; if (S.showF === 'free') return !sold; if (S.showF === 'check') return !!this.flagOf(it, I);
+      return true; });
+    const order = Object.keys(KINDS), groups = order.map(k => {
+      const rs = rows.filter(r => r.kind === k).sort((a, b) => a.name.localeCompare(b.name));
+      return { k, title: KINDS[k], n: rs.length + (rs.length === 1 ? ' item' : ' items'), rows: rs.map(it => {
+        const cut = it.status === 'retired', sl = it.sellers || [];
+        const D = S.draft;
+        return { id: it.id, name: D[it.id + '.name'] ?? it.name, note: D[it.id + '.note'] ?? (it.note || ''),
+          typeName: e => this.type(it.id + '.name', e.target.value), typeNote: e => this.type(it.id + '.note', e.target.value), kind: it.kind, price: it.price == null ? '' : it.price, heal: it.heal || 0,
+          sold: sl.length ? sl.map(s => s.shop + ' ' + s.price + ' G').join(' · ') : 'nobody', from: it.from || (it.added ? 'new item' : '—'), worlds: (it.worlds || []).join(', ').toUpperCase(),
+          changed: !!ovr[it.id], cut, op: cut ? 0.55 : 1, flag: this.flagOf(it, I),
+          cutLabel: cut ? 'BRING BACK' : 'CUT', cutBg: cut ? '#ec3013' : '#201e1d', cutBd: cut ? '#ec3013' : '#f3f2f2',
+          setName: () => this.commit(it.id + '.name', v => this.patch(it.id, 'name', v.trim() || it.name)),
+          setNote: () => this.commit(it.id + '.note', v => this.patch(it.id, 'note', v.trim())),
+          setKind: e => this.patch(it.id, 'kind', e.target.value),
+          setPrice: e => { const v = e.target.value.trim(); this.patch(it.id, 'price', v === '' ? null : Math.max(0, Math.round(+v) || 0)); },
+          setHeal: e => this.patch(it.id, 'heal', Math.max(0, Math.round(+e.target.value) || 0)),
+          toggleCut: () => this.patch(it.id, 'status', cut ? 'live' : 'retired'),
+          reset: () => { I.clearOverride(it.id); this.setState(s => ({ v: s.v + 1 })); } }; }) };
+    }).filter(g => g.rows.length);
+    const kindList = order.map(k => ({ v: k, t: KINDS[k] }));
+    return {
+      countLine: all.length + ' items · ' + nCh + ' changed · ' + nCut + ' cut · showing ' + rows.length,
+      q: S.q, kindF: S.kindF, showF: S.showF, groups, kindList, kindOpts: [{ v: 'all', t: 'EVERY KIND' }, ...kindList],
+      empty: !rows.length, emptyText: S.showF === 'check' ? 'The checker found nothing. Every item can be got.' : 'Nothing matches.',
+      helpOn: S.help, toggleHelp: () => this.setState({ help: !S.help }),
+      onSearch: e => this.setState({ q: e.target.value }), onKind: e => this.setState({ kindF: e.target.value }), onShow: e => this.setState({ showF: e.target.value }),
+      copyLabel: S.copied ? 'COPIED · PASTE IT TO CLAUDE' : 'COPY CHANGES (' + nCh + ')',
+      copyChanges: () => { const txt = 'ITEM CATALOG CHANGES (items.catalog.v1):\n' + JSON.stringify(ovr, null, 1); try { navigator.clipboard.writeText(txt); } catch (e) {} this.setState({ copied: true }); },
+      addItem: () => { const name = prompt('New item name?'); if (!name) return; let id = name.trim().toLowerCase().replace(/[^a-z0-9]+(.)/g, (m, c) => c.toUpperCase()).replace(/[^a-zA-Z0-9]/g, ''); if (!id) return; while (I.has(id)) id += '2';
+        I.setOverride(id, { name: name.trim(), kind: S.kindF !== 'all' ? S.kindF : 'tool', note: '', worlds: ['meru'] }); this.setState(s => ({ v: s.v + 1, q: '', showF: 'all' })); },
+    };
+  }
+}
+</script>
+</body>
+</html>

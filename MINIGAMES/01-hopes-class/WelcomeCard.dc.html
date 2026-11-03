@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="styles.css">
+
+</helmet>
+<div style="width:100%;max-height:100%;overflow:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column;color:#fff;font-family:var(--font-body);pointer-events:auto;box-sizing:border-box">
+  <div style="flex:none;padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:3px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ kicker }}</span><span style="font:900 28px var(--font-heading);line-height:1">{{ title }}</span><span style="font:700 13px var(--font-body);line-height:1.4;color:#cfcac2;text-wrap:pretty">{{ text }}</span></div>
+  <sc-for list="{{ rowsV }}" as="r" hint-placeholder-count="3">
+    <button onClick="{{ r.go }}" style="flex:none;display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:center;padding:7px 16px;border:0;border-bottom:2px solid #2a2826;border-radius:0;background:{{ r.bg }};color:#fff;font:700 13px var(--font-body);text-align:left;cursor:{{ r.cur }}" style-hover="background:#1a1816"><span style="display:flex;align-items:center;gap:8px;white-space:nowrap;font-weight:800"><span style="width:8px;height:8px;background:{{ r.dot }};display:block;flex:none"></span>{{ r.k }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.04em;color:{{ r.c }};text-align:right;text-wrap:pretty">{{ r.v }}</span></button>
+  </sc-for>
+  <button onClick="{{ tut }}" style="flex:none;min-height:48px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">TUTORIAL</button>
+  <button onClick="{{ play }}" style="flex:none;min-height:56px;padding:0 18px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10">{{ playLabelV }}</button>
+  <sc-if value="{{ demoV }}" hint-placeholder-val="{{ true }}"><button onClick="{{ demo }}" style="flex:none;min-height:48px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WATCH THE DEMO</button></sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:420,&quot;height&quot;:380},&quot;kicker&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;LUXOR · TOWN SQUARE&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;title&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Moto School&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;text&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Short line about the game.&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;playLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;RIDE&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;rows&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;{k,v,c?,go?,sel?}[]&quot;},&quot;onPlay&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;() =&gt; void&quot;},&quot;onTutorial&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;() =&gt; void&quot;},&quot;onDemo&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;() =&gt; void&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur(), call = f => e => { blur(e); f && f(e); };
+    return {
+      kicker: p.kicker || '', title: p.title || '', text: p.text || '', playLabelV: p.playLabel || 'PLAY',
+      rowsV: (p.rows || []).map(r => ({ k: r.k, v: r.v, c: r.c || '#ffd23a', dot: r.sel ? '#ffd23a' : '#3a3836', bg: r.sel ? '#1f1d1b' : '#000000', cur: r.go ? 'pointer' : 'default', go: call(r.go) })),
+      tut: call(p.onTutorial), play: call(p.onPlay), demo: call(p.onDemo), demoV: !!p.onDemo,
+    };
+  }
+}
+</script>
+</body>
+</html>

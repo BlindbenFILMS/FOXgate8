@@ -1,0 +1,45 @@
+{
+ "v": 3,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-10-05T20:47:40Z"
+ },
+ "title": "Jib's Surf Shop",
+ "launch": {
+  "view": "canvas"
+ },
+ "pages": [],
+ "boards": {
+  "Main.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Jib's Surf Shop \u00b7 phone portrait",
+   "is_interactive": true
+  },
+  "Landscape.dc.html": {
+   "x": 470,
+   "y": 0,
+   "w": 844,
+   "h": 390,
+   "title": "Jib's Surf Shop \u00b7 phone landscape",
+   "is_interactive": true
+  },
+  "Game_HUD.dc.html": {
+   "x": 1394,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Game HUD (shared, imported)",
+   "is_interactive": true
+  }
+ },
+ "order": [
+  "Main.dc.html",
+  "Landscape.dc.html",
+  "Game_HUD.dc.html"
+ ],
+ "notes": {},
+ "designSystems": []
+}

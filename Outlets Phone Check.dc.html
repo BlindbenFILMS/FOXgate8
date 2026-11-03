@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="display:flex;gap:16px;padding:16px;background:#201e1d;min-height:100vh;align-items:flex-start;box-sizing:border-box;flex-wrap:wrap">
+  <iframe id="phoneP" style="width:390px;height:844px;border:2px solid #f3f2f2;flex:none;background:#000"></iframe>
+  <iframe id="phoneL" style="width:844px;height:390px;border:2px solid #f3f2f2;flex:none;background:#000"></iframe>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() {
+    const q = new URLSearchParams(location.search), st = q.get('start') || 'sportopen', which = q.get('o') || 'pl';
+    const src = 'FOXGATE8-PLAYABLE.dc.html?start=' + st;
+    const p = document.getElementById('phoneP'), l = document.getElementById('phoneL');
+    if (which.includes('p')) p.src = src; else p.style.display = 'none';
+    if (which.includes('l')) l.src = src; else l.style.display = 'none';
+  }
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

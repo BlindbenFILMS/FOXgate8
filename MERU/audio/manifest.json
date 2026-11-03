@@ -1,0 +1,9 @@
+{
+  "_how": "Meru 2.0 audio manifest (worlds/meru2-audio.js). Paths are relative to the project root. Leave a key out and the synth placeholder plays. See AUDIO_HOOKS.md.",
+  "music": {},
+  "rooms": {
+    "casino": "audio/meru/casino-floor.mp3",
+    "tavern": "audio/meru/tavern-crowd.mp3"
+  },
+  "voice": {}
+}

@@ -1,0 +1,2126 @@
+{
+ "meta": {
+  "world": "luxor",
+  "version": 2,
+  "date": "2026-10-22",
+  "from": "uploads/LUXOR_BRIEF.md (Luxor section of 8GATES_DESIGN_BRIEF_ALL.md + the Pyramid moved from Ur) + uploads/surface_luxor.html (add it)",
+  "notes": "DRAFT by Claude (s348) for Ben. SWAP (Ben s348): the PYRAMID moves from Ur to LUXOR (Pyramid Path, Pyramid Entry, First Chamber, Gate Hall, Second Chamber, the Pyramid Dig game + the Wrecking Crane); the ZOO (Zoo Path + Hessa's Menagerie) moves from Luxor to UR. LUXOR = a basalt FORTRESS TOWN under a volcano, laid out in RINGS: the red-cobbled square, ringed by the clockwise BIKE TRACK, four avenues out through a black city WALL with four gates. N: Castle Path over the tar SPIKE DITCH (iron bridge) to King Lox's keep + Barracks. E: PIT ROAD (Boxing Gym, Cinder Court) to the FIGHTING PIT. S: Volcano Road over the LAVA RIVER (lava bridge) to the VOLCANO PLAINS, the Volcano Run track and the cave. W: PYRAMID PATH to the great basalt PYRAMID; RED PLAINS branch off it to the north-west (3 bridges, hidden ship). EVERY BUILDING IS UNIQUE (\"outside\" note) with a roof sign + eye-level door sign. Water entries with \"lava\": true are LAVA (the viewer should paint them glowing). NPC keys are draft until surface_luxor.html comes in. LOOK (Ben s348): slightly red sky + RED as the build theme colour. THE VOLCANO = terrain hill luxorVolcano (110 m tall, glowing crater, smoke plume) south of the lava river.",
+  "rooms": {
+   "luxorTownSquare": "zone",
+   "luxorCastlePath": "zone",
+   "luxorFightingPitPath": "zone",
+   "luxorFightingPit": "building (sport, quick fade into the pit)",
+   "luxorVolcanoPlains": "zone",
+   "luxorRedPlains": "zone",
+   "luxorFurnace": "gate (battle map)",
+   "luxorTavern": "building",
+   "luxorDeli": "building",
+   "luxorBikeShop": "building",
+   "luxorItemShop": "building",
+   "luxorArmory": "building",
+   "luxorBoxingGym": "building",
+   "luxorThroneRoom": "building (castle)",
+   "luxorBarracks": "building",
+   "luxorVolcanoCave": "gate (cave)",
+   "luxorPyramidPath": "zone (MOVED FROM UR: urPyramidPath)",
+   "luxorPyramidEntry": "interior in the pyramid (was urPyramidEntry)",
+   "luxorPyramidInt1": "interior (was urPyramidInt1)",
+   "luxorPyramidGate": "interior (was urPyramidGate)",
+   "luxorPyramidInt2": "interior (was urPyramidInt2)"
+  },
+  "moved": {
+   "toUr": {
+    "luxorZooPath": "the Zoo Path (10 cages, keeper hut, feed cart, Hessa) + Hessa's Menagerie game → Ur (urZooPath)"
+   },
+   "fromUr": [
+    "urPyramidPath",
+    "urPyramidEntry",
+    "urPyramidInt1",
+    "urPyramidGate",
+    "urPyramidInt2",
+    "Ur Pyramid Dig",
+    "Wrecking Crane"
+   ]
+  }
+ },
+ "map": {
+  "half": 440,
+  "spawn": [
+   0,
+   18
+  ],
+  "spawnFace": "N"
+ },
+ "palette": {
+  "path": "#8a3a2a",
+  "wall": "#b23a2a",
+  "roof": "#7a1a12",
+  "trim": "#ff6a1a",
+  "accent": "#2e2826",
+  "notes": "RED = Luxor's build theme colour (walls, roofs, trim, doors, banners); basalt black second; iron + lava orange accents."
+ },
+ "zones": [
+  {
+   "key": "luxorTown",
+   "label": "Luxor",
+   "r": [
+    -130,
+    130,
+    -130,
+    130
+   ],
+   "music": "town",
+   "depth": 260,
+   "new": true
+  },
+  {
+   "key": "luxorTownSquare",
+   "label": "Luxor Town Square",
+   "r": [
+    -52,
+    52,
+    -52,
+    52
+   ],
+   "music": "town",
+   "depth": 104
+  },
+  {
+   "key": "luxorCastlePath",
+   "label": "Castle Path",
+   "r": [
+    -60,
+    110,
+    -268,
+    -130
+   ],
+   "music": "castlepath",
+   "depth": 138
+  },
+  {
+   "key": "luxorCastleGrounds",
+   "label": "Luxor Keep",
+   "r": [
+    -120,
+    110,
+    -350,
+    -268
+   ],
+   "music": "castle",
+   "depth": 82,
+   "new": true
+  },
+  {
+   "key": "luxorFightingPitPath",
+   "label": "Pit Road",
+   "r": [
+    130,
+    250,
+    -60,
+    60
+   ],
+   "music": "pitroad",
+   "depth": 120
+  },
+  {
+   "key": "luxorPitGrounds",
+   "label": "Fighting Pit",
+   "r": [
+    250,
+    360,
+    -60,
+    60
+   ],
+   "music": "pit",
+   "depth": 110,
+   "new": true
+  },
+  {
+   "key": "luxorDockYard",
+   "label": "Ember Dock",
+   "r": [
+    170,
+    240,
+    -240,
+    -170
+   ],
+   "music": "dock",
+   "depth": 70,
+   "new": true
+  },
+  {
+   "key": "luxorVolcanoPlains",
+   "label": "Volcano Plains",
+   "r": [
+    -280,
+    280,
+    130,
+    440
+   ],
+   "music": "volcano",
+   "depth": 310
+  },
+  {
+   "key": "luxorPyramidPath",
+   "label": "Pyramid Path",
+   "r": [
+    -330,
+    -130,
+    -60,
+    120
+   ],
+   "music": "pyramid",
+   "depth": 180
+  },
+  {
+   "key": "luxorPyramidGrounds",
+   "label": "The Pyramid",
+   "r": [
+    -438,
+    -330,
+    -70,
+    120
+   ],
+   "music": "pyramid",
+   "depth": 108,
+   "new": true
+  },
+  {
+   "key": "luxorRedPlains",
+   "label": "Red Plains",
+   "r": [
+    -438,
+    -150,
+    -438,
+    -110
+   ],
+   "music": "redplains",
+   "depth": 328
+  }
+ ],
+ "surfaces": [
+  {
+   "s": "stone",
+   "r": [
+    -40,
+    40,
+    -40,
+    40
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    -8,
+    8,
+    -8,
+    8
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -40,
+    40,
+    -286,
+    -274
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -112,
+    -46,
+    -318,
+    -284
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    -102,
+    -90,
+    -308,
+    -296
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    -66,
+    -58,
+    -306,
+    -298
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    54,
+    66,
+    -116,
+    -104
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    220,
+    232,
+    -66,
+    -54
+   ]
+  },
+  {
+   "s": "dirt",
+   "r": [
+    -400,
+    -320,
+    60,
+    110
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -330,
+    -300,
+    -20,
+    20
+   ]
+  },
+  {
+   "s": "dirt",
+   "r": [
+    20,
+    70,
+    120,
+    150
+   ]
+  },
+  {
+   "s": "grass",
+   "r": [
+    -410,
+    -350,
+    -360,
+    -310
+   ]
+  }
+ ],
+ "water": [
+  {
+   "r": [
+    -280,
+    -60,
+    198,
+    214
+   ],
+   "lava": true
+  },
+  {
+   "r": [
+    -70,
+    70,
+    206,
+    222
+   ],
+   "lava": true
+  },
+  {
+   "r": [
+    60,
+    280,
+    196,
+    212
+   ],
+   "lava": true
+  },
+  {
+   "r": [
+    -438,
+    -150,
+    -268,
+    -254
+   ],
+   "lava": false,
+   "note": "the red river of the Red Plains (real water, rust red)"
+  }
+ ],
+ "roads": [
+  {
+   "w": 8,
+   "p": [
+    [
+     -46,
+     -46
+    ],
+    [
+     46,
+     -46
+    ],
+    [
+     46,
+     46
+    ],
+    [
+     -46,
+     46
+    ],
+    [
+     -46,
+     -46
+    ]
+   ],
+   "note": "clockwise BIKE TRACK ringing the square"
+  },
+  {
+   "w": 10,
+   "p": [
+    [
+     0,
+     140
+    ],
+    [
+     40,
+     140
+    ],
+    [
+     200,
+     150
+    ],
+    [
+     250,
+     240
+    ],
+    [
+     180,
+     300
+    ],
+    [
+     90,
+     280
+    ],
+    [
+     60,
+     200
+    ],
+    [
+     40,
+     140
+    ]
+   ],
+   "note": "VOLCANO RUN bike race: 3 laps, LAVA JUMP where it crosses the lava river"
+  }
+ ],
+ "paths": [
+  {
+   "key": "luxorSquareEW",
+   "label": "Square crossing",
+   "w": 10,
+   "p": [
+    [
+     -50,
+     0
+    ],
+    [
+     50,
+     0
+    ]
+   ],
+   "lining": "lamps",
+   "every": 16
+  },
+  {
+   "key": "luxorSquareNS",
+   "label": "Square crossing",
+   "w": 10,
+   "p": [
+    [
+     0,
+     -50
+    ],
+    [
+     0,
+     50
+    ]
+   ],
+   "lining": "lamps",
+   "every": 16
+  },
+  {
+   "key": "luxorCastleRoad",
+   "label": "Castle Path",
+   "w": 10,
+   "p": [
+    [
+     0,
+     -50
+    ],
+    [
+     0,
+     -280
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20,
+   "note": "IRON BRIDGE over the tar SPIKE DITCH"
+  },
+  {
+   "key": "luxorBarracksWalk",
+   "label": "Barracks walk",
+   "w": 6,
+   "p": [
+    [
+     0,
+     -240
+    ],
+    [
+     60,
+     -240
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 16
+  },
+  {
+   "key": "luxorRoyalWalk",
+   "label": "Royal Walk",
+   "w": 6,
+   "p": [
+    [
+     0,
+     -262
+    ],
+    [
+     -80,
+     -262
+    ],
+    [
+     -80,
+     -290
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 16
+  },
+  {
+   "key": "luxorMedevacWalk",
+   "label": "Medevac walk",
+   "w": 6,
+   "p": [
+    [
+     5,
+     -90
+    ],
+    [
+     60,
+     -90
+    ],
+    [
+     60,
+     -102
+    ]
+   ],
+   "lining": "lamps",
+   "every": 14
+  },
+  {
+   "key": "luxorPitRoad",
+   "label": "Pit Road",
+   "w": 10,
+   "p": [
+    [
+     50,
+     0
+    ],
+    [
+     250,
+     0
+    ]
+   ],
+   "lining": "lamps",
+   "every": 18,
+   "note": "bike lane"
+  },
+  {
+   "key": "luxorDockWalk",
+   "label": "Dock Road",
+   "w": 8,
+   "p": [
+    [
+     200,
+     0
+    ],
+    [
+     200,
+     -186
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20
+  },
+  {
+   "key": "luxorPitPadWalk",
+   "label": "Pit helipad walk",
+   "w": 6,
+   "p": [
+    [
+     200,
+     -60
+    ],
+    [
+     220,
+     -60
+    ]
+   ],
+   "lining": "lamps",
+   "every": 14
+  },
+  {
+   "key": "luxorVolcanoRoad",
+   "label": "Volcano Road",
+   "w": 10,
+   "p": [
+    [
+     0,
+     50
+    ],
+    [
+     0,
+     236
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20,
+   "note": "LAVA BRIDGE over the lava river"
+  },
+  {
+   "key": "luxorFarmSpur",
+   "label": "Ash Farm lane",
+   "w": 6,
+   "p": [
+    [
+     0,
+     175
+    ],
+    [
+     30,
+     175
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 14
+  },
+  {
+   "key": "luxorPyramidRoad",
+   "label": "Pyramid Path",
+   "w": 10,
+   "p": [
+    [
+     -50,
+     0
+    ],
+    [
+     -330,
+     0
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20,
+   "note": "braziers + the SPHINX near the end"
+  },
+  {
+   "key": "luxorDigSpur",
+   "label": "Dig road",
+   "w": 8,
+   "p": [
+    [
+     -300,
+     0
+    ],
+    [
+     -300,
+     80
+    ],
+    [
+     -350,
+     80
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20
+  },
+  {
+   "key": "luxorRedPlainsTrail",
+   "label": "Red Plains",
+   "w": 8,
+   "p": [
+    [
+     -200,
+     0
+    ],
+    [
+     -200,
+     -120
+    ],
+    [
+     -260,
+     -200
+    ],
+    [
+     -300,
+     -300
+    ],
+    [
+     -380,
+     -340
+    ]
+   ],
+   "lining": "trees",
+   "every": 18,
+   "note": "bridge 1 over the red river"
+  },
+  {
+   "key": "luxorRedLoopEast",
+   "label": "Red Plains, east bank",
+   "w": 6,
+   "p": [
+    [
+     -260,
+     -200
+    ],
+    [
+     -180,
+     -230
+    ],
+    [
+     -180,
+     -300
+    ],
+    [
+     -300,
+     -300
+    ]
+   ],
+   "lining": "trees",
+   "every": 18,
+   "note": "bridge 2"
+  },
+  {
+   "key": "luxorRedLoopWest",
+   "label": "Red Plains, west bank",
+   "w": 6,
+   "p": [
+    [
+     -300,
+     -300
+    ],
+    [
+     -410,
+     -300
+    ],
+    [
+     -410,
+     -220
+    ],
+    [
+     -260,
+     -200
+    ]
+   ],
+   "lining": "trees",
+   "every": 18,
+   "note": "bridge 3"
+  }
+ ],
+ "buildings": [
+  {
+   "key": "luxorTavern",
+   "label": "Tavern",
+   "role": "tavern",
+   "f": [
+    -90,
+    -58,
+    -34,
+    -10
+   ],
+   "door": [
+    -74,
+    -10
+   ],
+   "face": "S",
+   "h": 10,
+   "color": "#7a2a1a",
+   "interior": true,
+   "note": "Red-lit hall: POOL TABLE (Dabb), BAR (shop). UNIQUE TAVERN GAME: FOOSBALL. Barkeep Vesta takes bets on the pit; Mell, Boge, Tib.",
+   "games": [
+    "3D-GAMES/g/tavern-games/FoosMain.dc.html"
+   ],
+   "outside": "Squat basalt hall with a spiked iron porch roof, two fire braziers either side of the door, red glass windows glowing from the bar, a giant foosball rod + player over the door.",
+   "sign": {
+    "roof": "TAVERN",
+    "door": "TAVERN · FOOSBALL · POOL"
+   }
+  },
+  {
+   "key": "luxorDeli",
+   "label": "Foxy Deli",
+   "role": "restaurant",
+   "f": [
+    -118,
+    -96,
+    -28,
+    -10
+   ],
+   "door": [
+    -107,
+    -10
+   ],
+   "face": "S",
+   "h": 7,
+   "color": "#c84a2a",
+   "interior": true,
+   "note": "Cooking-order job. Pia at the counter.",
+   "games": [
+    "3D-GAMES/Luxor Deli.dc.html"
+   ],
+   "outside": "UNIQUE RESTAURANT: red-and-cream striped awning, a big sandwich sign on the roof, a smoking chimney pot, a chalkboard menu by the door.",
+   "sign": {
+    "roof": "FOXY DELI",
+    "door": "FOXY DELI · NOW HIRING"
+   }
+  },
+  {
+   "key": "luxorItemShop",
+   "label": "Item Shop",
+   "role": "itemshop",
+   "f": [
+    -86,
+    -58,
+    10,
+    34
+   ],
+   "door": [
+    -72,
+    10
+   ],
+   "face": "N",
+   "h": 8,
+   "color": "#5a3a2a",
+   "interior": true,
+   "note": "Keeper Ottoline (Nore, Fig, Quill): potion stack + gear shelves.",
+   "outside": "Narrow basalt shop with a stepped (mini-pyramid) roof, potion bottles glowing in a round window, an iron lantern sign.",
+   "sign": {
+    "roof": "ITEM SHOP",
+    "door": "ITEM SHOP · OTTOLINE"
+   }
+  },
+  {
+   "key": "luxorArmory",
+   "label": "Armory",
+   "role": "armory",
+   "f": [
+    -114,
+    -92,
+    10,
+    30
+   ],
+   "door": [
+    -103,
+    10
+   ],
+   "face": "N",
+   "h": 8,
+   "color": "#3a2a2a",
+   "interior": true,
+   "note": "Keeper Garrow (Dace, Bryn, Halla): Pit Halberd, Basalt Plate, Vent Spear. BASALT FORGE job (NOT BUILT YET).",
+   "outside": "Forge-front armory: an open forge glowing in the front wall, a grindstone on the porch, crossed pit halberds over the door, sparks from the chimney.",
+   "sign": {
+    "roof": "ARMORY",
+    "door": "ARMORY · GARROW"
+   }
+  },
+  {
+   "key": "luxorBikeShop",
+   "label": "Luxor Bike Shop",
+   "role": "carRental",
+   "f": [
+    58,
+    86,
+    -30,
+    -10
+   ],
+   "door": [
+    72,
+    -10
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#2a2a2a",
+   "interior": true,
+   "note": "Sparrow builds bikes, Lucius behind the counter, Cobb tunes. Also Luxor's CAR RENTAL: rent a motorcycle.",
+   "games": [
+    "3D-GAMES/g/luxor-bike-shop/Main.dc.html"
+   ],
+   "outside": "Steel garage with a roll-up door, a TUNE PAD out front, a giant chrome motorbike hung on the facade, chequered flag trim.",
+   "sign": {
+    "roof": "BIKE SHOP",
+    "door": "BIKE SHOP · BIKE RENTAL"
+   }
+  },
+  {
+   "key": "luxorBank",
+   "label": "Basalt Bank",
+   "role": "bank",
+   "f": [
+    92,
+    122,
+    -34,
+    -10
+   ],
+   "door": [
+    107,
+    -10
+   ],
+   "face": "S",
+   "h": 11,
+   "color": "#2e2826",
+   "interior": true,
+   "new": true,
+   "outside": "Black basalt block with gold seams like cooling lava, a round iron vault door in the facade, 2 flame columns at the steps.",
+   "sign": {
+    "roof": "BASALT BANK",
+    "door": "BASALT BANK"
+   }
+  },
+  {
+   "key": "luxorPost",
+   "label": "Galactic Post Office (Meru Embassy)",
+   "role": "post",
+   "f": [
+    58,
+    84,
+    10,
+    30
+   ],
+   "door": [
+    71,
+    10
+   ],
+   "face": "N",
+   "h": 10,
+   "color": "#8a5a3a",
+   "interior": true,
+   "new": true,
+   "outside": "Red brick with a small iron clock tower + Meru flag, the Galactic Post dish on the roof, a heat-proof red mail box.",
+   "sign": {
+    "roof": "POST OFFICE",
+    "door": "GALACTIC POST · MERU EMBASSY"
+   }
+  },
+  {
+   "key": "luxorGlassWorks",
+   "label": "Lava Glass Works",
+   "role": "specialty",
+   "f": [
+    90,
+    108,
+    10,
+    26
+   ],
+   "door": [
+    99,
+    10
+   ],
+   "face": "N",
+   "h": 7,
+   "color": "#4a2a3a",
+   "interior": true,
+   "note": "DRAFT new specialty shop (the zoo moved to Ur, Ben s348). Ben may pick another.",
+   "new": true,
+   "outside": "UNIQUE SPECIALTY SHOP (DRAFT, replaces the zoo): a glass-blower's furnace dome with a glowing mouth, shelves of lava-glass in a big window, a giant glass flame on the roof.",
+   "sign": {
+    "roof": "LAVA GLASS",
+    "door": "LAVA GLASS WORKS"
+   }
+  },
+  {
+   "key": "luxorWatch",
+   "label": "Ash Watch",
+   "role": "police",
+   "f": [
+    -40,
+    -10,
+    -86,
+    -62
+   ],
+   "door": [
+    -10,
+    -74
+   ],
+   "face": "E",
+   "h": 9,
+   "color": "#3a3232",
+   "interior": true,
+   "new": true,
+   "outside": "Stocky watch post: arrow-slit windows, a red siren lamp on a spike, an iron cage cell on the side, the L crest on a shield.",
+   "sign": {
+    "roof": "ASH WATCH",
+    "door": "ASH WATCH · POLICE"
+   }
+  },
+  {
+   "key": "luxorFireStation",
+   "label": "Cinder Brigade",
+   "role": "fire",
+   "f": [
+    10,
+    38,
+    -84,
+    -64
+   ],
+   "door": [
+    10,
+    -74
+   ],
+   "face": "W",
+   "h": 9,
+   "color": "#a8301a",
+   "interior": true,
+   "new": true,
+   "outside": "Red iron fire hall with a wide bay door, a lava-foam tanker out front, a tall hose-drying tower with a siren.",
+   "sign": {
+    "roof": "CINDER BRIGADE",
+    "door": "CINDER BRIGADE · FIRE"
+   }
+  },
+  {
+   "key": "luxorNews",
+   "label": "The Ember Times",
+   "role": "news",
+   "f": [
+    -36,
+    -10,
+    -120,
+    -96
+   ],
+   "door": [
+    -10,
+    -108
+   ],
+   "face": "E",
+   "h": 10,
+   "color": "#5a3a2a",
+   "interior": true,
+   "new": true,
+   "outside": "Tall thin tower with a smoking printing chimney, a radio mast on top, a glowing news ticker strip running round the top floor.",
+   "sign": {
+    "roof": "EMBER TIMES",
+    "door": "THE EMBER TIMES · NEWS"
+   }
+  },
+  {
+   "key": "luxorHospital",
+   "label": "Luxor Infirmary",
+   "role": "hospital",
+   "f": [
+    10,
+    44,
+    -124,
+    -96
+   ],
+   "door": [
+    10,
+    -110
+   ],
+   "face": "W",
+   "h": 12,
+   "color": "#e8dcd0",
+   "interior": true,
+   "new": true,
+   "outside": "The only pale building in town: white-washed stone with red trim, a cooling water tower on the roof, a red cross banner, the medevac helipad beside it.",
+   "sign": {
+    "roof": "INFIRMARY",
+    "door": "LUXOR INFIRMARY"
+   }
+  },
+  {
+   "key": "luxorWeapons",
+   "label": "Spike & Spark",
+   "role": "weapons",
+   "f": [
+    -30,
+    -10,
+    60,
+    76
+   ],
+   "door": [
+    -10,
+    68
+   ],
+   "face": "E",
+   "h": 8,
+   "color": "#2a2222",
+   "interior": true,
+   "note": "SPECIAL WEAPONS: the 8 extra ranged + melee",
+   "new": true,
+   "outside": "Spiked black front, laser + blade crossed in red neon, weapon racks behind iron bars, spikes along the roof edge.",
+   "sign": {
+    "roof": "SPIKE & SPARK",
+    "door": "SPECIAL WEAPONS"
+   }
+  },
+  {
+   "key": "luxorRelicShop",
+   "label": "The Obsidian Vault",
+   "role": "relicShop",
+   "f": [
+    -28,
+    -10,
+    82,
+    96
+   ],
+   "door": [
+    -10,
+    89
+   ],
+   "face": "E",
+   "h": 7,
+   "color": "#1e1a1a",
+   "interior": true,
+   "note": "The famous Luxor relic to BUY (DRAFT: Ben picks)",
+   "new": true,
+   "outside": "A small obsidian pyramid shop, glassy black, one relic on a lit plinth in the window, a red crystal on the tip.",
+   "sign": {
+    "roof": "OBSIDIAN VAULT",
+    "door": "THE OBSIDIAN VAULT · RELICS"
+   }
+  },
+  {
+   "key": "luxorHome",
+   "label": "Basalt Loft",
+   "role": "home",
+   "f": [
+    -26,
+    -10,
+    102,
+    116
+   ],
+   "door": [
+    -10,
+    109
+   ],
+   "face": "E",
+   "h": 9,
+   "color": "#4a3a32",
+   "interior": true,
+   "note": "the player rents / buys it",
+   "new": true,
+   "outside": "Loft over a garage: a roll-up door for your bike, a balcony with a fire pit on top, warm windows.",
+   "sign": {
+    "roof": "BASALT LOFT",
+    "door": "YOUR LOFT"
+   }
+  },
+  {
+   "key": "luxorHouse1",
+   "label": "Tower House",
+   "role": "housing",
+   "f": [
+    10,
+    26,
+    60,
+    74
+   ],
+   "door": [
+    10,
+    67
+   ],
+   "face": "W",
+   "h": 14,
+   "color": "#3a2e2a",
+   "interior": true,
+   "new": true,
+   "outside": "Narrow 3-storey basalt tower house, red door, a brazier on the roof.",
+   "sign": {
+    "roof": "TOWER HOUSE",
+    "door": "HOUSE"
+   }
+  },
+  {
+   "key": "luxorHouse2",
+   "label": "Tower House",
+   "role": "housing",
+   "f": [
+    10,
+    26,
+    80,
+    94
+   ],
+   "door": [
+    10,
+    87
+   ],
+   "face": "W",
+   "h": 12,
+   "color": "#5a3a2e",
+   "interior": true,
+   "new": true,
+   "outside": "Tower house with a spiked balcony + hanging iron lanterns, black door.",
+   "sign": {
+    "roof": "TOWER HOUSE",
+    "door": "HOUSE"
+   }
+  },
+  {
+   "key": "luxorHouse3",
+   "label": "Tower House",
+   "role": "housing",
+   "f": [
+    10,
+    26,
+    100,
+    114
+   ],
+   "door": [
+    10,
+    107
+   ],
+   "face": "W",
+   "h": 10,
+   "color": "#6a2a1e",
+   "interior": true,
+   "new": true,
+   "outside": "Squat red-brick tower with a glass lava-lamp window, orange door.",
+   "sign": {
+    "roof": "TOWER HOUSE",
+    "door": "HOUSE"
+   }
+  },
+  {
+   "key": "luxorBoxingGym",
+   "label": "Boxing Gym",
+   "role": "shop",
+   "f": [
+    150,
+    180,
+    -34,
+    -10
+   ],
+   "door": [
+    165,
+    -10
+   ],
+   "face": "S",
+   "h": 9,
+   "color": "#5a2a1a",
+   "interior": true,
+   "note": "Heavy bags, squat rack, counter, the board of eight belts. Coach Bruno, Gid, Mox.",
+   "outside": "Brick gym with huge iron gloves hanging over the door, big windows showing the heavy bags, the board of 8 belts painted on the side.",
+   "sign": {
+    "roof": "BOXING GYM",
+    "door": "BOXING GYM · COACH BRUNO"
+   }
+  },
+  {
+   "key": "luxorCinderCourt",
+   "label": "The Cinder Court",
+   "role": "shop",
+   "f": [
+    150,
+    186,
+    10,
+    40
+   ],
+   "door": [
+    168,
+    10
+   ],
+   "face": "N",
+   "h": 10,
+   "color": "#7a3a2a",
+   "interior": true,
+   "games": [
+    "3D-GAMES/g/basketball/Main.dc.html",
+    "3D-GAMES/g/dodgeball/Dodgeball.dc.html"
+   ],
+   "new": true,
+   "outside": "Sports hall with a curved iron roof, a giant basketball hoop over the door, a dodgeball mural, floodlights on the corners.",
+   "sign": {
+    "roof": "CINDER COURT",
+    "door": "BASKETBALL · DODGEBALL"
+   }
+  },
+  {
+   "key": "luxorFightingPit",
+   "label": "Fighting Pit",
+   "role": "sport",
+   "f": [
+    250,
+    350,
+    -50,
+    50
+   ],
+   "door": [
+    250,
+    0
+   ],
+   "face": "W",
+   "h": 16,
+   "color": "#5a2a1a",
+   "interior": true,
+   "note": "Round sand arena, BOXING RING in the centre, 200 fox fans. Lyra the champion, Rell, Podd, Vek, Sura, Ferro.",
+   "games": [
+    "3D-GAMES/Luxor Boxing.dc.html"
+   ],
+   "outside": "UNIQUE SPORT: a round sand arena inside a ring of basalt walls with 4 iron gates, 4 tiers of seats, braziers on the rim, the IRON BELT trophy on a spike over the west gate.",
+   "sign": {
+    "roof": "FIGHTING PIT",
+    "door": "FOXY BOXING"
+   }
+  },
+  {
+   "key": "luxorAshFarm",
+   "label": "Ash Farm",
+   "role": "farm",
+   "f": [
+    30,
+    70,
+    160,
+    190
+   ],
+   "door": [
+    30,
+    175
+   ],
+   "face": "W",
+   "h": 8,
+   "color": "#6a4a2a",
+   "interior": true,
+   "games": [
+    "3D-GAMES/g/fox-farm/Main.dc.html"
+   ],
+   "new": true,
+   "outside": "Terraced FIRE-PEPPER farm on black volcanic soil: glass greenhouse domes, a steam vent pipe, red pepper strings drying on racks.",
+   "sign": {
+    "roof": "ASH FARM",
+    "door": "ASH FARM · NOW HIRING"
+   }
+  },
+  {
+   "key": "luxorPyramid",
+   "label": "The Pyramid",
+   "role": "other",
+   "f": [
+    -430,
+    -330,
+    -50,
+    50
+   ],
+   "door": [
+    -330,
+    0
+   ],
+   "face": "E",
+   "h": 48,
+   "color": "#3a2e2a",
+   "interior": true,
+   "note": "Inside (quick fade): PYRAMID ENTRY [luxorPyramidEntry] → FIRST CHAMBER [luxorPyramidInt1] → THE GATE HALL [luxorPyramidGate] → SECOND CHAMBER [luxorPyramidInt2] (was urPyramidEntry / urPyramidInt1 / urPyramidGate / urPyramidInt2). The crystal SEAM in the Second Chamber can tie to Lox's missing crystal (Ben decides).",
+   "room2d": "urPyramidPath",
+   "outside": "MOVED FROM UR (Ben s348): a huge stepped BASALT PYRAMID with lava seams glowing between the steps, the SPHINX + the readable MONOLITH out front, braziers up the stair, a red crystal glint at the top.",
+   "sign": {
+    "roof": "THE PYRAMID",
+    "door": "PYRAMID ENTRY"
+   }
+  },
+  {
+   "key": "luxorThroneRoom",
+   "label": "Throne Room",
+   "role": "castle",
+   "f": [
+    -40,
+    40,
+    -336,
+    -280
+   ],
+   "door": [
+    0,
+    -280
+   ],
+   "face": "S",
+   "h": 22,
+   "color": "#2e2826",
+   "interior": true,
+   "note": "Long red nave, colonnade, 3-step dais, spiked high-back throne, CRYSTAL STAND (empty: the crystal is missing), treasury. King Lox, Hest, Mord, Yuki.",
+   "outside": "The grandest building: a black basalt keep shaped like a cut-off pyramid, iron spikes along every ledge, a huge L crest in glowing red over the gate, lava channels either side of the stair.",
+   "sign": {
+    "roof": "LUXOR KEEP",
+    "door": "THRONE ROOM · KING LOX"
+   }
+  },
+  {
+   "key": "luxorBarracks",
+   "label": "Barracks",
+   "role": "barracks",
+   "f": [
+    60,
+    104,
+    -256,
+    -226
+   ],
+   "door": [
+    60,
+    -241
+   ],
+   "face": "W",
+   "h": 10,
+   "color": "#3a2a2a",
+   "interior": true,
+   "note": "Mess for sixteen, bunk wing, sparring cage, war table, barred vault. Marshal Ede, Sgt Nix, Fenn, Sark, Wick, Bray, Pell, Cass.",
+   "outside": "Zigzag keep in red stone with a sparring cage on the roof, spiked palisade round its yard, the L banner on a pole.",
+   "sign": {
+    "roof": "BARRACKS",
+    "door": "BARRACKS · MARSHAL EDE"
+   }
+  }
+ ],
+ "spots": [
+  {
+   "key": "luxorVash",
+   "at": [
+    8,
+    10
+   ],
+   "kind": "npc",
+   "note": "Vash on pad duty",
+   "draft": true
+  },
+  {
+   "key": "luxorStroller1",
+   "at": [
+    -24,
+    20
+   ],
+   "kind": "crowd",
+   "note": "Cinder, Beck, Rill, Cobb, Jax, Brek"
+  },
+  {
+   "key": "luxorRiders",
+   "at": [
+    24,
+    -24
+   ],
+   "kind": "crowd",
+   "note": "riders Wick, Ansel, Peel, Sabe, Ornn on the bike track"
+  },
+  {
+   "key": "luxorVail",
+   "at": [
+    -10,
+    -270
+   ],
+   "kind": "npc",
+   "note": "Vail on the north post + 2 guards",
+   "draft": true
+  },
+  {
+   "key": "luxorTace",
+   "at": [
+    232,
+    10
+   ],
+   "kind": "npc",
+   "note": "TICKET BOOTH: Tace keeps the card",
+   "draft": true
+  },
+  {
+   "key": "luxorTam",
+   "at": [
+    120,
+    8
+   ],
+   "kind": "npc",
+   "note": "Tam sells water; Odile, Holt, Wren, Patch, Sela, Oddi, Ferro",
+   "draft": true
+  },
+  {
+   "key": "luxorOrn",
+   "at": [
+    12,
+    244
+   ],
+   "kind": "npc",
+   "note": "Orn the surveyor at the cave mouth",
+   "draft": true
+  },
+  {
+   "key": "luxorTarn",
+   "at": [
+    48,
+    132
+   ],
+   "kind": "npc",
+   "note": "Tarn marshals the Volcano Run",
+   "draft": true
+  },
+  {
+   "key": "luxorGault",
+   "at": [
+    -212,
+    -130
+   ],
+   "kind": "npc",
+   "note": "Gault + Bel on road watch (Red Plains); Yuki",
+   "draft": true
+  },
+  {
+   "key": "luxorPyramidCarter",
+   "at": [
+    -318,
+    12
+   ],
+   "kind": "npc",
+   "note": "MOVED FROM UR: Carter + visitors at the Pyramid (names were Ur-Nanshe, Ninshubur, Puzur, Bau; Hero Eresh inside): Ben may rename for Luxor",
+   "draft": true
+  },
+  {
+   "key": "luxorMotoSchool",
+   "at": [
+    40,
+    130
+   ],
+   "kind": "game",
+   "note": "MOTO SCHOOL + VOLCANO RUN start/finish pits (3D-GAMES/Luxor Moto.dc.html)"
+  },
+  {
+   "key": "luxorPitCrew",
+   "at": [
+    60,
+    126
+   ],
+   "kind": "hiring",
+   "note": "BIKE PIT CREW board at the Volcano Run pits (NOT BUILT YET)"
+  },
+  {
+   "key": "luxorForge",
+   "at": [
+    -103,
+    36
+   ],
+   "kind": "hiring",
+   "note": "BASALT FORGE / blacksmith job by the Armory (NOT BUILT YET)"
+  },
+  {
+   "key": "luxorPyramidDig",
+   "at": [
+    -360,
+    90
+   ],
+   "kind": "game",
+   "note": "UR PYRAMID DIG (moved from Ur): 3D-GAMES/g/ur-dig/Main.dc.html. Dig site beside the pyramid."
+  },
+  {
+   "key": "luxorMoto",
+   "at": [
+    30,
+    142
+   ],
+   "kind": "vehicle",
+   "note": "MOTORCYCLE (Vehicle Workshop ?v=moto): from the Volcano Run pits (rent at the Bike Shop)"
+  },
+  {
+   "key": "luxorSpider",
+   "at": [
+    -60,
+    170
+   ],
+   "kind": "vehicle",
+   "note": "ROBOT SPIDER (Vehicle Workshop ?v=spider) on the ash fields: climbs the volcano slopes"
+  },
+  {
+   "key": "luxorCrane",
+   "at": [
+    -340,
+    96
+   ],
+   "kind": "vehicle",
+   "note": "WRECKING CRANE (Vehicle Workshop ?v=crane) at the Pyramid Dig (moved from Ur)"
+  },
+  {
+   "key": "luxorRelicFind",
+   "at": [
+    -300,
+    -330
+   ],
+   "kind": "relicFind",
+   "note": "DRAFT: the legendary + historical relic to find, \"the truth buried on the plains\", by the hidden ship on the Red Plains (Ben picks)"
+  },
+  {
+   "key": "luxorRoyalHelipad",
+   "at": [
+    -96,
+    -302
+   ],
+   "kind": "helipad",
+   "note": "ROYAL HELIPAD west of the keep (Meru 2 worlds/meru2-royalpad.js): the royal 8 helicopter; King Lox's guards fly you to the other pads."
+  },
+  {
+   "key": "luxorRoyalTelepad",
+   "at": [
+    -62,
+    -302
+   ],
+   "kind": "telepad",
+   "note": "ROYAL TELEPORT PAD west of the keep: E / TALK → beam out → the Ember Dock (Luxor space dock); arriving by telepad beams you in here."
+  },
+  {
+   "key": "luxorInfirmaryHelipad",
+   "at": [
+    60,
+    -110
+   ],
+   "kind": "helipad",
+   "note": "INFIRMARY HELIPAD (medevac, red cross on the H)"
+  },
+  {
+   "key": "luxorPitHelipad",
+   "at": [
+    226,
+    -60
+   ],
+   "kind": "helipad",
+   "note": "FIGHTING PIT HELIPAD: fight-night arrivals"
+  }
+ ],
+ "dock": {
+  "key": "luxorSpacedock",
+  "pad": [
+   200,
+   -200
+  ],
+  "r": 14,
+  "face": "S"
+ },
+ "gates": [
+  {
+   "key": "luxorFurnace",
+   "at": [
+    330,
+    260
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "FURNACE [luxorFurnace] battle map: scorched arena, defend the CORE + TRANSPORT PAD 30 s, tank, walker, bike, turret, steam vents. Furnace Sentries, Chargers, Wardens (HACKED Machine Fleet: free them)."
+  },
+  {
+   "key": "luxorAshFields",
+   "at": [
+    -180,
+    300
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "VOLCANO PLAINS ash fields: 3 Slagback, 2 Ember, 1 Ventmaw"
+  },
+  {
+   "key": "luxorAshwalker",
+   "at": [
+    -260,
+    -380
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "RED PLAINS road camp: 5 Ember, 3 Slagback, 1 Ventmaw, boss THE ASHWALKER"
+  },
+  {
+   "key": "luxorPyramidSteps",
+   "at": [
+    -300,
+    -80
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "PYRAMID STEPS (DRAFT, moved with the pyramid): Ray Sentinels (ancient machines, glitching like the hacked Fleet) + Wrapped Attendants"
+  },
+  {
+   "key": "luxorVolcanoCave",
+   "at": [
+    0,
+    250
+   ],
+   "r": 8,
+   "kind": "cave",
+   "note": "VOLCANO CAVE [luxorVolcanoCave]: stone bridge over a lava river, a hall, the LAKE SPAN over a lava lake, PRIZE CHAMBER with Kelm's LOST BIKE. 3 Slagback, 3 Ember, 2 Ventmaw, boss THE FIRST CINDER."
+  }
+ ],
+ "wild": [
+  {
+   "key": "luxorFurnaceWild",
+   "r": [
+    350,
+    438,
+    180,
+    340
+   ],
+   "for": "luxorFurnace",
+   "creatures": [
+    "robots"
+   ]
+  },
+  {
+   "key": "luxorAshWild",
+   "r": [
+    -280,
+    -200,
+    320,
+    436
+   ],
+   "for": "luxorAshFields",
+   "creatures": [
+    "monsters"
+   ]
+  },
+  {
+   "key": "luxorRedWild",
+   "r": [
+    -438,
+    -300,
+    -438,
+    -390
+   ],
+   "for": "luxorAshwalker",
+   "creatures": [
+    "monsters",
+    "creatures"
+   ],
+   "note": "roaming animals of the red grassland + embers"
+  },
+  {
+   "key": "luxorRedGrazers",
+   "r": [
+    -360,
+    -260,
+    -180,
+    -120
+   ],
+   "for": "luxorAshwalker",
+   "creatures": [
+    "creatures"
+   ],
+   "note": "roaming animals (off the trail)"
+  },
+  {
+   "key": "luxorPyramidWild",
+   "r": [
+    -326,
+    -240,
+    -130,
+    -96
+   ],
+   "for": "luxorPyramidSteps",
+   "creatures": [
+    "robots"
+   ]
+  }
+ ],
+ "props": [
+  {
+   "k": "statue",
+   "at": [
+    0,
+    0
+   ],
+   "note": "IRON TRANSPORT PAD + L crest"
+  },
+  {
+   "k": "statue",
+   "at": [
+    -24,
+    -24
+   ],
+   "note": "CINDER CUP trophy stand"
+  },
+  {
+   "k": "bench",
+   "at": [
+    24,
+    24
+   ]
+  },
+  {
+   "k": "bench",
+   "at": [
+    -24,
+    24
+   ]
+  },
+  {
+   "k": "lamp",
+   "at": [
+    24,
+    -24
+   ],
+   "note": "iron brazier"
+  },
+  {
+   "k": "lamp",
+   "at": [
+    -24,
+    10
+   ],
+   "note": "iron brazier"
+  },
+  {
+   "k": "crate",
+   "at": [
+    30,
+    -12
+   ],
+   "note": "bike racks"
+  },
+  {
+   "k": "fence",
+   "at": [
+    -128,
+    -128
+   ],
+   "note": "CITY WALL corner tower"
+  },
+  {
+   "k": "fence",
+   "at": [
+    128,
+    -128
+   ],
+   "note": "CITY WALL corner tower"
+  },
+  {
+   "k": "fence",
+   "at": [
+    -128,
+    128
+   ],
+   "note": "CITY WALL corner tower"
+  },
+  {
+   "k": "fence",
+   "at": [
+    128,
+    128
+   ],
+   "note": "CITY WALL corner tower"
+  },
+  {
+   "k": "sign",
+   "at": [
+    10,
+    -132
+   ],
+   "note": "NORTH GATE"
+  },
+  {
+   "k": "sign",
+   "at": [
+    10,
+    132
+   ],
+   "note": "SOUTH GATE"
+  },
+  {
+   "k": "sign",
+   "at": [
+    132,
+    10
+   ],
+   "note": "EAST GATE"
+  },
+  {
+   "k": "sign",
+   "at": [
+    -132,
+    10
+   ],
+   "note": "WEST GATE"
+  },
+  {
+   "k": "rock",
+   "at": [
+    -30,
+    -184
+   ],
+   "note": "spike ditch spikes"
+  },
+  {
+   "k": "rock",
+   "at": [
+    30,
+    -184
+   ],
+   "note": "spike ditch spikes"
+  },
+  {
+   "k": "fence",
+   "at": [
+    -30,
+    -200
+   ],
+   "note": "palisade + trophy racks"
+  },
+  {
+   "k": "sign",
+   "at": [
+    236,
+    -12
+   ],
+   "note": "FIGHTING PIT sign"
+  },
+  {
+   "k": "crate",
+   "at": [
+    220,
+    14
+   ],
+   "note": "crates"
+  },
+  {
+   "k": "crate",
+   "at": [
+    -40,
+    150
+   ],
+   "note": "parked bikes"
+  },
+  {
+   "k": "rock",
+   "at": [
+    -120,
+    300
+   ],
+   "note": "ash boulders"
+  },
+  {
+   "k": "statue",
+   "at": [
+    -316,
+    -24
+   ],
+   "note": "the SPHINX"
+  },
+  {
+   "k": "sign",
+   "at": [
+    -316,
+    24
+   ],
+   "note": "the MONOLITH (readable)"
+  },
+  {
+   "k": "lamp",
+   "at": [
+    -280,
+    -12
+   ],
+   "note": "brazier"
+  },
+  {
+   "k": "lamp",
+   "at": [
+    -280,
+    12
+   ],
+   "note": "brazier"
+  },
+  {
+   "k": "crate",
+   "at": [
+    -200,
+    -140
+   ],
+   "note": "road camp"
+  },
+  {
+   "k": "statue",
+   "at": [
+    -380,
+    -330
+   ],
+   "note": "the HIDDEN SHIP in the west flat"
+  }
+ ],
+ "look": {
+  "sky": [
+   "#8a2a1e",
+   "#e8784a"
+  ],
+  "fog": "#a4513a",
+  "sun": "#ff9a4a",
+  "light": "#ffd0a0",
+  "grass": "#5a3a32",
+  "ground": "#2e2826",
+  "water": "#ff5a1a",
+  "lamps": "#ff8a2a",
+  "banners": [
+   "#c0281a",
+   "#1a1a1a"
+  ],
+  "trees": [
+   "#3a4a2a",
+   "#5a5a2a",
+   "#7a3a22"
+  ],
+  "notes": "SLIGHTLY RED SKY (Ben s348): a warm red-tinted dusk, deep red at the top to a red-orange horizon, a little ash in the air (not black, not too dark). RED IS THE BUILD THEME COLOUR: every building uses red (red stone walls, red roofs, red trim, red doors, red L-crest banners) with black basalt as the second colour and iron + lava orange as accents. Glowing lava seams; water marked lava glows orange; the Red Plains river is rust-red water with red grass + scorched trees."
+ },
+ "terrain": {
+  "notes": "LUXOR = the volcano world. The walled town, the avenues and the Pit Road stay flat. The VOLCANO is the big cone south of the lava river (cave at its foot); ash dunes and basalt ridges round the plains; the PYRAMID stands on flat ground in the west. The SPIKE DITCH is a tar-filled cut across the Castle Path (iron bridge).",
+  "hills": [
+   {
+    "key": "luxorVolcano",
+    "c": [
+     0,
+     360
+    ],
+    "r": 110,
+    "h": 110,
+    "crater": {
+     "r": 22,
+     "lava": true
+    },
+    "note": "THE VOLCANO (Ben: the big landmark, seen from everywhere): a tall cone south of the lava river, a glowing LAVA CRATER at the top with a smoke plume + ember sparks, lava streams down the south face, the Volcano Cave in its north foot (luxorVolcanoCave). The Volcano Run loop + the ash fields at its feet; the Robot Spider can climb it."
+   },
+   {
+    "key": "luxorVolcanoShoulderW",
+    "c": [
+     -120,
+     400
+    ],
+    "r": 50,
+    "h": 30
+   },
+   {
+    "key": "luxorVolcanoShoulderE",
+    "c": [
+     120,
+     410
+    ],
+    "r": 44,
+    "h": 26
+   },
+   {
+    "key": "luxorBasaltRidgeNE",
+    "c": [
+     330,
+     -330
+    ],
+    "r": 70,
+    "h": 30,
+    "cliff": true
+   },
+   {
+    "key": "luxorBasaltRidgeN",
+    "c": [
+     180,
+     -380
+    ],
+    "r": 50,
+    "h": 24,
+    "cliff": true
+   },
+   {
+    "key": "luxorAshDuneE",
+    "c": [
+     400,
+     60
+    ],
+    "r": 40,
+    "h": 10
+   },
+   {
+    "key": "luxorAshDuneW",
+    "c": [
+     -220,
+     110
+    ],
+    "r": 30,
+    "h": 8
+   },
+   {
+    "key": "luxorRedHill",
+    "c": [
+     -300,
+     -160
+    ],
+    "r": 26,
+    "h": 8
+   },
+   {
+    "key": "luxorBasaltCrag",
+    "c": [
+     -110,
+     -370
+    ],
+    "r": 30,
+    "h": 20,
+    "cliff": true
+   }
+  ],
+  "cuts": [
+   {
+    "key": "luxorSpikeDitch",
+    "r": [
+     -100,
+     100,
+     -190,
+     -176
+    ],
+    "depth": 4
+   }
+  ],
+  "forests": [
+   {
+    "key": "luxorRedPlainsTrees",
+    "r": [
+     -438,
+     -150,
+     -240,
+     -120
+    ],
+    "every": 18,
+    "mix": "broad",
+    "giants": 0
+   },
+   {
+    "key": "luxorRedPlainsSouth",
+    "r": [
+     -438,
+     -320,
+     -438,
+     -280
+    ],
+    "every": 18,
+    "mix": "broad",
+    "giants": 0
+   }
+  ],
+  "clearings": [
+   {
+    "key": "luxorRoyalCourt",
+    "r": [
+     -114,
+     -44,
+     -320,
+     -282
+    ]
+   },
+   {
+    "key": "luxorHiddenShip",
+    "r": [
+     -420,
+     -340,
+     -370,
+     -300
+    ]
+   }
+  ]
+ }
+}

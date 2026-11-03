@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}button:disabled{cursor:default}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#1d1630;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Arcade Vending Machine">
+  <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+  <div aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">{{ h.live }}</div>
+
+  <sc-if value="{{ loadingOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:max(12px, env(safe-area-inset-top));background:#000;border:2px solid #ffd23a;padding:10px 14px;font:900 14px var(--font-heading);letter-spacing:0.1em;color:#ffd23a">STOCKING THE MACHINE…</div>
+  </sc-if>
+
+  <!-- TOP BAR -->
+  <sc-if value="{{ barOn }}" hint-placeholder-val="{{ true }}">
+    <div data-safe="top" style="position:absolute;left:0;right:0;top:0;z-index:3;display:flex;flex-direction:column;pointer-events:none">
+      <div style="background:#000;border-bottom:2px solid #ffd23a;display:flex;align-items:stretch;padding-top:env(safe-area-inset-top);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)">
+        <div style="padding:5px 10px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836;min-width:0">
+          <span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap">SNACK STOP</span>
+          <span style="font:900 20px var(--font-heading);font-variant-numeric:tabular-nums;color:#e6b45a;white-space:nowrap">{{ goldTxt }}</span>
+        </div>
+        <div style="padding:5px 10px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836">
+          <span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4;white-space:nowrap">BAG</span>
+          <span style="font:900 20px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap">{{ h.bagTotal }}</span>
+        </div>
+        <div style="flex:1;min-width:0"></div>
+        <button onClick="{{ soundGo }}" aria-pressed="{{ soundPressed }}" style="flex:none;width:54px;min-height:48px;padding:0;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:{{ soundFg }};font:900 10px var(--font-heading);letter-spacing:0.06em;cursor:pointer;pointer-events:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px" style-hover="background:#2a2826">SFX<span style="font:800 9px var(--font-heading)">{{ soundTxt }}</span></button>
+        <button onClick="{{ musicGo }}" aria-pressed="{{ musicPressed }}" style="flex:none;width:58px;min-height:48px;padding:0;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:{{ musicFg }};font:900 10px var(--font-heading);letter-spacing:0.06em;cursor:pointer;pointer-events:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px" style-hover="background:#2a2826">MUSIC<span style="font:800 9px var(--font-heading)">{{ musicTxt }}</span></button>
+        <sc-if value="{{ embedOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ backOut }}" aria-label="Leave the vending machine" style="flex:none;min-height:48px;padding:0 12px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;pointer-events:auto" style-hover="background:#2a2826">BACK</button></sc-if>
+      </div>
+      <sc-if value="{{ sayOn }}" hint-placeholder-val="{{ false }}">
+        <div style="align-self:flex-start;margin:6px 0 0 max(12px, env(safe-area-inset-left));max-width:calc(100% - 24px);background:rgba(0,0,0,0.88);border:2px solid #3a3836;padding:6px 12px;font:800 clamp(13px,3.6vw,15px) var(--font-heading);letter-spacing:0.03em;color:#fff">{{ h.say }}</div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ flashOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ flashTop }};transform:translateX(-50%);z-index:6;pointer-events:none;max-width:calc(100% - 24px);background:rgba(0,0,0,0.9);border:2px solid {{ flashCol }};display:flex;align-items:stretch">
+      <span style="flex:none;width:12px;background:{{ flashCol }};display:block"></span>
+      <span style="padding:8px 16px;font:900 clamp(16px,4.6vw,26px) var(--font-heading);letter-spacing:0.05em;line-height:1.1;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ flashTxt }}</span>
+    </div>
+  </sc-if>
+
+  <!-- PICK + BUY PANEL -->
+  <sc-if value="{{ panelOn }}" hint-placeholder-val="{{ true }}">
+    <div data-safe="{{ panelSafe }}" style="position:absolute;left:{{ panelLeft }};right:{{ panelRight }};bottom:{{ panelBottom }};z-index:5;width:{{ panelW }};max-height:{{ panelMaxH }};overflow-y:auto;background:#000;border:{{ panelBorder }};border-top:2px solid #ffd23a;display:flex;flex-direction:column;box-sizing:border-box;padding-bottom:{{ panelPadB }}">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 12px 5px">
+        <span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">PICK A SNACK · TAP A BUTTON OR THE GLASS</span>
+        <sc-if value="{{ demoBadge }}" hint-placeholder-val="{{ false }}"><button onClick="{{ demoExit }}" style="flex:none;min-height:44px;padding:0 12px;border:2px solid #ec3013;border-radius:0;background:#ec3013;color:#fff;font:900 11px var(--font-heading);letter-spacing:0.1em;cursor:pointer" style-hover="background:#c82a10">EXIT DEMO</button></sc-if>
+      </div>
+      <div style="display:grid;grid-template-columns:{{ gridCols }};gap:6px;padding:0 10px 8px">
+        <sc-for list="{{ tiles }}" as="t" hint-placeholder-count="5">
+          <button onClick="{{ t.go }}" aria-pressed="{{ t.pressed }}" aria-label="{{ t.aria }}" style="position:relative;min-height:{{ tileH }};padding:4px 4px 6px;border:2px solid {{ t.bd }};border-radius:0;background:{{ t.bg }};color:{{ t.fg }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:2px;opacity:{{ t.op }}" style-hover="filter:brightness(1.12)">
+            <span style="position:absolute;left:0;top:0;width:20px;height:20px;background:{{ t.col }};color:#000;font:900 12px var(--font-heading);display:flex;align-items:center;justify-content:center">{{ t.code }}</span>
+            <span role="img" aria-hidden="true" style="width:{{ thumbSz }};height:{{ thumbSz }};display:block;background:center/contain no-repeat;background-image:{{ t.img }}"></span>
+            <span style="font:900 10px var(--font-heading);letter-spacing:0.02em;line-height:1.05;text-align:center;min-height:21px;display:flex;align-items:center">{{ t.name }}</span>
+            <span style="font:900 13px var(--font-heading);font-variant-numeric:tabular-nums;color:{{ t.pc }}">{{ t.price }}</span>
+            <span style="font:800 9px var(--font-heading);letter-spacing:0.06em;color:{{ t.sc }}">{{ t.stock }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <button onClick="{{ buyGo }}" disabled="{{ buyOff }}" style="margin:0 10px;min-height:58px;padding:4px 16px;border:3px solid {{ buyBd }};border-radius:0;background:{{ buyBg }};color:{{ buyFg }};cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:1px" style-hover="filter:brightness(1.1)" style-active="transform:translateY(2px)"><span style="font:900 {{ buyFs }} var(--font-heading);letter-spacing:0.05em;line-height:1.1">{{ buyTxt }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.08em;opacity:0.9">{{ buySub }}</span></button>
+      <div style="display:grid;grid-template-columns:auto repeat(3,minmax(0,1fr)) auto;margin-top:8px;border-top:2px solid #3a3836;align-items:stretch">
+        <span style="padding:0 10px 0 12px;display:flex;align-items:center;font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">FOX</span>
+        <sc-for list="{{ foxBtns }}" as="f" hint-placeholder-count="3">
+          <button onClick="{{ f.go }}" aria-pressed="{{ f.pressed }}" style="min-height:44px;padding:0 10px;border:0;border-left:2px solid #3a3836;border-radius:0;background:{{ f.bg }};color:{{ f.fg }};font:900 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left" style-hover="filter:brightness(1.15)">{{ f.name }}</button>
+        </sc-for>
+        <button onClick="{{ moreGo }}" style="min-height:44px;padding:0 12px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 11px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">{{ moreTxt }}</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- VENDING STATUS (+ SHAKE when stuck) -->
+  <sc-if value="{{ statusOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="{{ panelSafe }}" style="position:absolute;left:{{ panelLeft }};right:{{ panelRight }};bottom:{{ panelBottom }};z-index:5;width:{{ panelW }};background:#000;border:{{ panelBorder }};border-top:2px solid {{ stCol }};display:flex;flex-direction:column;box-sizing:border-box;padding-bottom:{{ panelPadB }}">
+      <div style="display:flex;align-items:stretch;gap:0">
+        <span style="flex:none;width:14px;background:{{ stCol }};display:block"></span>
+        <div style="flex:1;min-width:0;padding:10px 14px;display:flex;flex-direction:column;gap:2px"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:{{ stCol }}">{{ stKicker }}</span><span style="font:900 clamp(20px,5.6vw,26px) var(--font-heading);line-height:1.05">{{ stTitle }}</span></div>
+      </div>
+      <sc-if value="{{ shakeOn }}" hint-placeholder-val="{{ false }}">
+        <button onPointerDown="{{ shakeGo }}" aria-label="Shake the machine" style="margin:4px 10px 0;min-height:72px;padding:0 16px;border:3px solid #ffd23a;border-radius:0;background:#ec3013;color:#fff;font:900 26px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left;touch-action:none;display:flex;align-items:center;justify-content:space-between" style-hover="background:#c82a10" style-active="transform:translateX(4px)">SHAKE IT!<span style="font:900 12px var(--font-heading);letter-spacing:0.08em">{{ shakeSub }}</span></button>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- GOT IT card -->
+  <sc-if value="{{ cardOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="{{ panelSafe }}" style="position:absolute;left:{{ panelLeft }};right:{{ panelRight }};bottom:{{ panelBottom }};z-index:6;width:{{ panelW }};background:#000;border:{{ panelBorder }};border-top:3px solid {{ c.col }};display:flex;flex-direction:column;box-sizing:border-box;padding-bottom:{{ panelPadB }}">
+      <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+        <span role="img" aria-hidden="true" style="flex:none;width:84px;background:#1d1630 center/76px no-repeat;background-image:{{ cardImg }};border-right:2px solid #3a3836;display:block"></span>
+        <div style="flex:1;min-width:0;padding:9px 14px;display:flex;flex-direction:column;gap:3px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:{{ c.col }}">{{ cardKicker }}</span><span style="font:900 clamp(22px,6.4vw,28px) var(--font-heading);line-height:1.02">{{ cardTitle }}</span><span style="font:600 13px var(--font-body);line-height:1.35;color:#cfcac2">{{ c.line }}</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:7px 14px;border-bottom:2px solid #3a3836;background:#ffd23a;color:#000"><span style="font:900 13px var(--font-heading);letter-spacing:0.06em">{{ cardTag }}</span></div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+        <button onClick="{{ eatGo }}" disabled="{{ eatOff }}" style="min-height:54px;padding:0 14px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;opacity:{{ eatOp }}" style-hover="background:#2a2826">{{ eatTxt }}</button>
+        <button onClick="{{ keepGo }}" style="min-height:54px;padding:0 14px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10">BUY ANOTHER</button>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { h: null, vw: 1200, vh: 800, failed: false };
+  stageRef = React.createRef();
+  embed = /[?&]embed=1/.test(location.search);
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs(); try { this.ro = new ResizeObserver(this.onRs); this.stageRef.current && this.ro.observe(this.stageRef.current.parentElement); } catch (e) {}
+    try { const m = await import(new URL('minigames/arcade/vending-machine.js', document.baseURI).href); const sg = /[?&]sign=([^&]+)/.exec(location.search);
+      this.g = await m.createVendingMachine({ container: this.stageRef.current, onState: h => this.setState({ h }), opts: { sign: sg ? decodeURIComponent(sg[1]).toUpperCase() : undefined } }); window.__vend = this.g; this.setState({ h: this.g.hud() });
+      if (/[?&]demo=1/.test(location.search)) setTimeout(() => this.g.demoStart(), 400); }
+    catch (e) { console.warn('vending machine failed: ' + (e && e.stack || String(e))); this.setState({ failed: true }); }
+  }
+  componentDidUpdate() { const root = this.stageRef.current && this.stageRef.current.parentElement; if (!root || !this.g) return; const rb = root.getBoundingClientRect(); let top = 0, bot = 0, left = 0;
+    root.querySelectorAll('[data-safe]').forEach(el => { const r = el.getBoundingClientRect(); if (!r.height) return; const k = el.dataset.safe; if (k === 'top') top = Math.max(top, r.bottom - rb.top); else if (k === 'left') left = Math.max(left, r.right - rb.left); else if (k === 'bottom') bot = Math.max(bot, rb.bottom - r.top); });
+    this.g.setSafe(Math.round(Math.min(top, rb.height * 0.3)), Math.round(Math.min(bot, rb.height * 0.6)), Math.round(Math.min(left, rb.width * 0.55)), 0); }
+  componentWillUnmount() { removeEventListener('resize', this.onRs); this.ro && this.ro.disconnect(); this.g && this.g.destroy(); }
+  onRs = () => { const el = this.stageRef.current, r = el && el.parentElement ? el.parentElement.getBoundingClientRect() : null; this.setState({ vw: r && r.width ? r.width : innerWidth, vh: r && r.height ? r.height : innerHeight }); };
+  back() { try { window.parent && window.parent !== window && window.parent.postMessage({ type: '8gates:minigame', action: 'back', game: 'arcadeVend' }, '*'); } catch (e) {} }
+  renderVals() {
+    const S = this.state, g = this.g, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur(), go = f => e => { blur(e); f(); };
+    const h = S.h || { phase: 'select', sel: 'healthBar', snacks: [], selName: 'HEALTH BAR', selPrice: 4, selStock: 8, gold: 0, free: false, canAfford: true, flash: null, say: '', live: '', demo: false, card: null, sound: true, music: true, foxKey: 'player', foxName: 'BEN', stuckTries: 0, bagTotal: 0, allSold: false };
+    const { vw, vh } = S, port = vh >= vw, lowH = vh < 520, side = !port && lowH, ph = h.phase, c = h.card || { col: '#ffd23a', line: '', name: '', effect: '', n: 1, count: 0, verb: 'EAT', free: false, ate: false };
+    const vendPh = ['pay', 'spin', 'stuck', 'fall', 'walk', 'reach', 'lift', 'eat'].includes(ph);
+    const foxN = { player: 'BEN', hope: 'HOPE', noble: 'NOBLE' };
+    const st = { pay: ['PAYING', h.selName ? 'Coin in…' : '', '#ffd23a'], spin: ['VENDING', 'The spiral turns…', '#7dd3fc'], fall: ['DROPPING', 'Here it comes!', '#7dd3fc'], stuck: ['UH OH', 'It\'s stuck on the spiral!', '#ec3013'], walk: ['PICK UP', h.foxName + ' is going for it…', '#22c55e'], reach: ['PICK UP', h.foxName + ' reaches in…', '#22c55e'], lift: ['GOT IT', 'Yes!', '#22c55e'], eat: ['YUM', c.verb === 'DRINK' ? 'Glug glug glug…' : 'Crunch crunch…', '#ffd23a'] }[ph] || ['', '', '#ffd23a'];
+    return {
+      stageRef: this.stageRef, h, c, loadingOn: !S.h && !S.failed, barOn: !!S.h, embedOn: this.embed, backOut: go(() => this.back()),
+      goldTxt: h.gold + ' GOLD', sayOn: !!h.say && (ph === 'stuck' || ph === 'walk'),
+      soundGo: go(() => g && g.setSound(!h.sound)), soundTxt: h.sound ? 'ON' : 'OFF', soundFg: h.sound ? '#ffffff' : '#8a847e', soundPressed: h.sound ? 'true' : 'false',
+      musicGo: go(() => g && g.setMusic(!h.music)), musicTxt: h.music ? 'ON' : 'OFF', musicFg: h.music ? '#ffffff' : '#8a847e', musicPressed: h.music ? 'true' : 'false',
+      flashOn: !!h.flash, flashTxt: h.flash ? h.flash.txt : '', flashCol: h.flash ? h.flash.col : '#ffd23a', flashTop: port ? (ph === 'stuck' ? '46%' : '26%') : '20%',
+      // panel geometry: bottom sheet on tall screens, left column on short landscape
+      panelSafe: side ? 'left' : 'bottom', panelLeft: side ? 'max(12px, env(safe-area-inset-left))' : '0', panelRight: side ? 'auto' : '0', panelBottom: side ? 'calc(12px + env(safe-area-inset-bottom))' : '0', panelW: side ? '330px' : 'auto',
+      panelMaxH: side ? 'calc(100% - 76px)' : '62%', panelBorder: side ? '2px solid #3a3836' : '0', panelPadB: side ? '0' : 'env(safe-area-inset-bottom)',
+      gridCols: side ? 'repeat(3,minmax(0,1fr))' : 'repeat(5,minmax(0,1fr))', tileH: side ? '76px' : '118px', thumbSz: side ? '30px' : (vw < 380 ? '44px' : '52px'),
+      panelOn: !!S.h && (ph === 'select'), statusOn: vendPh, cardOn: ph === 'show' && !!h.card,
+      tiles: h.snacks.map(t => { const on = t.id === h.sel, out = !t.stock; return { code: t.code, name: t.name, price: t.price + 'g', stock: out ? 'SOLD OUT' : t.bag ? 'BAG ×' + t.bag : 'IN STOCK ' + t.stock, img: t.thumb ? 'url(' + t.thumb + ')' : 'none', col: t.col, bd: on ? '#ffd23a' : '#3a3836', bg: on ? '#2a2140' : '#0d0a16', fg: '#ffffff', pc: on ? '#ffd23a' : '#e6b45a', sc: out ? '#ec3013' : t.bag ? '#22c55e' : '#8a847e', op: out ? 0.5 : 1, pressed: on ? 'true' : 'false', aria: t.name + ', ' + t.price + ' gold' + (out ? ', sold out' : ''), go: go(() => g && g.select(t.id)) }; }),
+      buyFs: side ? '15px' : '18px', buyGo: go(() => g && g.buy()), buyOff: h.demo || !h.selStock || !h.canAfford,
+      buyTxt: !h.selStock ? 'SOLD OUT' : h.free ? 'FREE SAMPLE · ' + h.selName : !h.canAfford ? 'NOT ENOUGH GOLD' : 'BUY ' + h.selName + ' · ' + h.selPrice + 'g',
+      buySub: !h.selStock ? 'PICK ANOTHER SNACK' : h.free ? 'YOUR FIRST SNACK IS ON THE HOUSE' : !h.canAfford ? 'YOU HAVE ' + h.gold + 'g · EARN GOLD IN TOWN' : (h.snacks.find(t => t.id === h.sel) || {}).effect + ' · GOES IN YOUR BAG',
+      buyBg: !h.selStock || !h.canAfford ? '#2a2826' : '#ec3013', buyFg: !h.selStock || !h.canAfford ? '#8a847e' : '#ffffff', buyBd: !h.selStock || !h.canAfford ? '#3a3836' : '#ffd23a',
+      foxBtns: ['player', 'hope', 'noble'].map(k => { const on = h.foxKey === k; return { name: foxN[k], pressed: on ? 'true' : 'false', bg: on ? '#ffd23a' : '#000000', fg: on ? '#000000' : '#ffffff', go: go(() => g && g.setFox(k)) }; }),
+      moreTxt: h.allSold ? 'RESTOCK' : h.demo ? 'DEMO ON' : 'DEMO', moreGo: go(() => { if (!g) return; if (h.allSold) g.restock(); else if (h.demo) g.demoStop(); else g.demoStart(); }),
+      demoBadge: h.demo, demoExit: go(() => g && g.demoStop()),
+      stKicker: st[0], stTitle: st[1], stCol: st[2], shakeOn: ph === 'stuck', shakeGo: e => { e && e.preventDefault && e.preventDefault(); g && g.shake(); }, shakeSub: h.stuckTries ? 'SHAKES · ' + h.stuckTries : 'TAP!',
+      cardImg: c.thumb ? 'url(' + c.thumb + ')' : 'none', cardKicker: (c.free ? 'FREE SAMPLE · ' : '') + 'GOT IT · ' + c.effect, cardTitle: (c.n > 1 ? c.n + ' × ' : '') + c.name,
+      cardTag: c.demo ? 'DEMO · NOT KEPT' : c.n > 1 ? 'BONUS! IN YOUR BAG ×' + c.count : 'IN YOUR BAG ×' + c.count, eatTxt: (c.verb === 'DRINK' ? 'DRINK' : 'EAT') + ' IT NOW', eatGo: go(() => g && g.eat()), eatOff: !c.count, eatOp: c.count ? 1 : 0.4, keepGo: go(() => g && g.keep()),
+    };
+  }
+}
+</script>
+</body>
+</html>

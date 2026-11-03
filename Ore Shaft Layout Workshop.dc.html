@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#201e1d}a{color:#f3f2f2}a:hover{color:var(--color-accent)}button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}input[type=range]{width:100%;height:44px;margin:0;accent-color:#ec3013;background:transparent}</style>
+</helmet>
+<div style="display:grid;grid-template-rows:auto minmax(0,1fr);height:100vh;height:100dvh;background:var(--color-text);color:var(--color-bg);font-family:var(--font-body)" data-screen-label="Ore Shaft Layout Workshop">
+  <div style="display:flex;align-items:stretch;border-bottom:2px solid var(--color-bg);min-width:0">
+    <div style="padding:10px 16px;display:flex;flex-direction:column;gap:2px;flex:1;min-width:0">
+      <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;color:var(--color-accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">8 GATES · DEEP SPACE FOX · ORE SHAFT</div>
+      <div style="font-family:var(--font-heading);font-size:20px;font-weight:800;line-height:1.05">Layout Workshop</div>
+    </div>
+    <div style="display:flex;align-items:center;padding:0 14px;border-left:2px solid var(--color-bg);font:800 11px var(--font-heading);letter-spacing:0.1em;color:{{ checkCol }};white-space:nowrap">{{ checkTxt }}</div>
+    <div style="display:flex;align-items:center;padding:0 14px;border-left:2px solid var(--color-bg);font:800 11px var(--font-heading);letter-spacing:0.1em;color:{{ savedCol }};white-space:nowrap">{{ savedTxt }}</div>
+  </div>
+
+  <div style="display:grid;grid-template-areas:{{ areas }};grid-template-columns:{{ cols }};grid-template-rows:{{ rows }};min-height:0">
+    <div style="grid-area:tabs;display:flex;flex-direction:{{ tabsDir }};overflow:auto;border-right:{{ tabsBorderR }};border-bottom:{{ tabsBorderB }};min-width:0">
+      <sc-for list="{{ levelTabs }}" as="t" hint-placeholder-count="3">
+        <button onClick="{{ t.pick }}" style="flex:{{ t.flex }};display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;min-height:52px;padding:8px 14px;border:0;border-bottom:{{ t.bb }};border-right:{{ t.br }};border-radius:0;background:{{ t.bg }};color:var(--color-bg);text-align:left;cursor:pointer;min-width:0" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">
+          <span style="font:700 10px var(--font-heading);letter-spacing:0.1em;color:{{ t.mc }};white-space:nowrap">{{ t.num }}</span>
+          <span style="font:800 13px var(--font-heading);letter-spacing:0.05em;white-space:nowrap">{{ t.name }}</span>
+          <span style="font:700 10px var(--font-heading);letter-spacing:0.1em;color:{{ t.cc }};white-space:nowrap">{{ t.meta }}</span>
+        </button>
+      </sc-for>
+    </div>
+
+    <div style="grid-area:view;position:relative;min-width:0;min-height:0;overflow:hidden;border-bottom:{{ viewBorderB }}">
+      <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+      <div style="position:absolute;left:8px;top:8px;right:8px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;pointer-events:none">
+        <div style="background:var(--color-text);border:2px solid var(--color-bg);padding:6px 10px;font:900 14px var(--font-heading);letter-spacing:0.06em">{{ levelName }}</div>
+        <sc-if value="{{ hasHint }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#ec3013;border:2px solid var(--color-bg);padding:6px 10px;font:900 14px var(--font-heading);letter-spacing:0.06em;color:#f3f2f2">{{ hint }}</div>
+        </sc-if>
+      </div>
+      <div style="position:absolute;left:8px;bottom:8px;right:8px;display:flex;flex-wrap:wrap;gap:6px;pointer-events:none">
+        <div style="display:flex;flex-wrap:wrap;border:2px solid var(--color-bg);background:var(--color-text);pointer-events:auto">
+          <sc-for list="{{ modeBtns }}" as="b" hint-placeholder-count="3">
+            <button onClick="{{ b.go }}" style="min-height:44px;padding:0 12px;border:0;border-right:2px solid var(--color-bg);border-radius:0;background:{{ b.bg }};color:var(--color-bg);font:800 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;white-space:nowrap" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">{{ b.label }}</button>
+          </sc-for>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;border:2px solid var(--color-bg);background:var(--color-text);pointer-events:auto">
+          <sc-for list="{{ viewBtns }}" as="b" hint-placeholder-count="2">
+            <button onClick="{{ b.go }}" style="min-height:44px;padding:0 12px;border:0;border-right:2px solid var(--color-bg);border-radius:0;background:{{ b.bg }};color:var(--color-bg);font:800 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;white-space:nowrap" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">{{ b.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <div style="grid-area:panel;min-height:0;overflow-y:auto;border-left:{{ panelBorderL }}">
+      <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:10px 16px;border-bottom:2px solid var(--color-bg);display:flex;align-items:center;gap:8px;background:#2c2a28">
+          <span style="width:14px;height:14px;background:{{ selCol }};border:2px solid var(--color-bg);display:block;flex:none"></span>
+          <span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:var(--color-accent)">SELECTED</span>
+          <span style="font:900 14px var(--font-heading);letter-spacing:0.05em">{{ selName }}</span>
+        </div>
+        <div style="padding:8px 16px;border-bottom:2px solid #3a3836;font:600 13px var(--font-body);line-height:1.4;text-wrap:pretty">{{ selTip }}</div>
+        <sc-if value="{{ hasMType }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:10px 16px;border-bottom:2px solid #3a3836;display:flex;flex-wrap:wrap;gap:4px">
+            <sc-for list="{{ mtypeBtns }}" as="b" hint-placeholder-count="4">
+              <button onClick="{{ b.go }}" style="min-height:44px;padding:0 12px;border:2px solid var(--color-bg);border-radius:0;background:{{ b.bg }};color:var(--color-bg);font:800 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">{{ b.label }}</button>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-for list="{{ selSliders }}" as="r" hint-placeholder-count="2">
+          <div style="padding:8px 16px 0;border-bottom:2px solid #3a3836">
+            <div style="display:flex;align-items:baseline;gap:8px"><span style="font:800 12px var(--font-heading);letter-spacing:0.08em">{{ r.label }}</span><span style="font:800 13px var(--font-heading);font-variant-numeric:tabular-nums">{{ r.txt }}</span></div>
+            <input type="range" min="{{ r.min }}" max="{{ r.max }}" step="{{ r.step }}" value="{{ r.val }}" onChange="{{ r.set }}">
+          </div>
+        </sc-for>
+        <div style="padding:10px 16px;border-bottom:2px solid var(--color-bg);display:flex;flex-wrap:wrap;gap:4px">
+          <sc-for list="{{ selBtns }}" as="b" hint-placeholder-count="2">
+            <button onClick="{{ b.go }}" style="min-height:44px;padding:0 12px;border:2px solid var(--color-bg);border-radius:0;background:{{ b.bg }};color:var(--color-bg);font:800 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">{{ b.label }}</button>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <div style="padding:10px 16px;border-bottom:2px solid var(--color-bg);font:800 11px var(--font-heading);letter-spacing:0.12em;color:var(--color-accent)">ADD TO {{ levelShort }}</div>
+      <div style="padding:10px 16px;border-bottom:2px solid #3a3836;display:flex;flex-wrap:wrap;gap:4px">
+        <sc-for list="{{ baseTools }}" as="b" hint-placeholder-count="2">
+          <button onClick="{{ b.go }}" style="min-height:44px;padding:0 12px;border:2px solid var(--color-bg);border-radius:0;background:{{ b.bg }};color:var(--color-bg);font:800 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">{{ b.label }}</button>
+        </sc-for>
+      </div>
+      <sc-for list="{{ toolGroups }}" as="g" hint-placeholder-count="4">
+        <div style="padding:8px 16px 10px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:6px">
+          <span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#b8b2ac">{{ g.name }}</span>
+          <div style="display:flex;flex-wrap:wrap;gap:4px">
+            <sc-for list="{{ g.tools }}" as="b" hint-placeholder-count="4">
+              <button onClick="{{ b.go }}" style="min-height:44px;padding:0 10px;border:2px solid var(--color-bg);border-radius:0;background:{{ b.bg }};color:var(--color-bg);font:800 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;display:flex;align-items:center;gap:8px" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)"><span style="width:12px;height:12px;background:{{ b.col }};border:2px solid var(--color-bg);display:block;flex:none"></span>{{ b.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+
+      <div style="padding:10px 16px;border-bottom:2px solid var(--color-bg);border-top:2px solid var(--color-bg);margin-top:8px;font:800 11px var(--font-heading);letter-spacing:0.12em;color:var(--color-accent)">CHECK · {{ levelShort }}</div>
+      <sc-for list="{{ checks }}" as="c" hint-placeholder-count="6">
+        <div style="padding:7px 16px;border-bottom:2px solid #3a3836;display:flex;gap:10px;align-items:baseline">
+          <span style="flex:none;width:40px;font:900 11px var(--font-heading);letter-spacing:0.08em;color:{{ c.col }}">{{ c.s }}</span>
+          <span style="font:600 13px var(--font-body);line-height:1.35;text-wrap:pretty">{{ c.t }}</span>
+        </div>
+      </sc-for>
+
+      <div style="padding:10px 16px;border-bottom:2px solid var(--color-bg);border-top:2px solid var(--color-bg);margin-top:8px;font:800 11px var(--font-heading);letter-spacing:0.12em;color:var(--color-accent)">THIS LEVEL IN THE MISSION</div>
+      <div style="padding:10px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:6px">
+        <span style="font:600 13px var(--font-body);line-height:1.45;color:#b8b2ac;text-wrap:pretty">{{ levelNote }}</span>
+        <sc-for list="{{ beats }}" as="b" hint-placeholder-count="3">
+          <div style="display:flex;gap:10px;align-items:baseline"><span style="flex:none;font:900 12px var(--font-heading);color:var(--color-accent)">{{ b.n }}</span><span style="font:600 13px var(--font-body);line-height:1.4;text-wrap:pretty">{{ b.t }}</span></div>
+        </sc-for>
+      </div>
+      <sc-for list="{{ levelSliders }}" as="r" hint-placeholder-count="1">
+        <div style="padding:8px 16px 0;border-bottom:2px solid #3a3836">
+          <div style="display:flex;align-items:baseline;gap:8px"><span style="font:800 12px var(--font-heading);letter-spacing:0.08em">{{ r.label }}</span><span style="font:800 13px var(--font-heading);font-variant-numeric:tabular-nums">{{ r.txt }}</span></div>
+          <input type="range" min="{{ r.min }}" max="{{ r.max }}" step="{{ r.step }}" value="{{ r.val }}" onChange="{{ r.set }}">
+        </div>
+      </sc-for>
+      <div style="display:flex;flex-direction:column;padding:16px;gap:8px">
+        <div style="display:flex;flex-wrap:wrap;gap:4px">
+          <button onClick="{{ resetLevel }}" style="min-height:48px;padding:0 16px;border:2px solid var(--color-bg);border-radius:0;background:var(--color-text);color:var(--color-bg);font:800 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">{{ resetTxt }}</button>
+          <a href="{{ playHref }}" style="min-height:48px;padding:0 16px;border:2px solid var(--color-bg);background:#ec3013;color:#f3f2f2;font:800 13px var(--font-heading);letter-spacing:0.1em;display:flex;align-items:center;text-decoration:none" style-hover="background:var(--color-accent-700)">PLAY THIS LEVEL</a>
+          <button onClick="{{ copyJson }}" style="min-height:48px;padding:0 16px;border:2px solid var(--color-bg);border-radius:0;background:var(--color-text);color:var(--color-bg);font:800 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">{{ copyTxt }}</button>
+        </div>
+        <span style="font:600 12px var(--font-body);line-height:1.4;color:#b8b2ac;text-wrap:pretty">PLAN: drag to move things, drag empty ground to pan, pinch or scroll to zoom. Lamps line every path on their own. Changes save on their own (ore.shaft.layout); the Ore Shaft cave will read them.</span>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { vw: 1200, vh: 800, li: 0, mode: 'plan', tool: 'move', sel: null, labels: true, saved: false, ver: 0, copied: false, armReset: false };
+  stageRef = React.createRef();
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs();
+    try {
+      this.D = await import(new URL('worlds/ore-shaft-layout.js?v=s365', document.baseURI).href);
+      const W = await import(new URL('worlds/ore-shaft-layout-workshop.js?v=s365d', document.baseURI).href);
+      const L = this.D.loadLayout();
+      this.ws = await W.createOreLayoutWorkshop({ container: this.stageRef.current, onEvent: e => {
+        if (e.sel !== undefined) this.setState({ sel: e.sel });
+        if (e.tool) this.setState({ tool: e.tool });
+        if (e.tour === false && this.state.mode === 'tour') this.setState({ mode: '3d' });
+        if (e.edit) { this.D.saveLayout(this.ws.layout); this.setState(s => ({ ver: s.ver + 1, saved: true })); clearTimeout(this.st); this.st = setTimeout(() => this.setState({ saved: false }), 1000); } } });
+      this.ws.set(L, 0); window.__orelay = this.ws; this.setState({ ver: 1 });
+    } catch (e) { console.warn('ore layout workshop failed: ' + (e && e.stack || e)); }
+  }
+  componentWillUnmount() { this.ws && this.ws.destroy(); removeEventListener('resize', this.onRs); }
+  onRs = () => this.setState({ vw: innerWidth, vh: innerHeight });
+  setLevel(i) { this.setState({ li: i, sel: null, tool: 'move', armReset: false }); if (this.ws) { this.ws.setTool('move'); this.ws.set(this.ws.layout, i); } }
+  setMode(m) { this.setState({ mode: m }); this.ws && this.ws.setMode(m); }
+  setTool(t, m) { const v = this.state.tool === t && t !== 'move' ? 'move' : t; this.setState({ tool: v }); this.ws && this.ws.setTool(v, m); if (v !== 'move' && this.state.mode !== 'plan') this.setMode('plan'); }
+  renderVals() {
+    const S = this.state, Dm = this.D, ws = this.ws, L = ws && ws.layout, { vw, vh } = S, wide = vw >= 900, land = !wide && vw > vh, li = S.li;
+    const LV = Dm ? Dm.LEVELS : [{ name: 'LEVEL 1 · ROBOT WORKS', short: 'ROBOT WORKS' }, { name: 'LEVEL 2 · ASTEROID HALL', short: 'ASTEROID HALL' }, { name: 'LEVEL 3 · THE DEEP', short: 'THE DEEP' }];
+    const checks = L ? Dm.checkLayout(L) : [], here = checks.filter(c => c.lv === li), fails = checks.filter(c => c.s === 'FAIL').length, warns = checks.filter(c => c.s === 'WARN').length;
+    const SC = { PASS: '#7cff9b', WARN: '#ffd23a', FAIL: '#ff6b5a' };
+    const btn = (label, on, go) => ({ label, bg: on ? '#ec3013' : 'var(--color-text)', go });
+    const l = L && L.levels[li], sel = S.sel;
+    let selItem = null, selPath = null; if (l && sel) { if (sel.type === 'item') selItem = l.items.find(i => i.id === sel.id); else selPath = l.paths.find(p => p.id === sel.id); }
+    const fmt = (v, st) => st < 1 ? (+v).toFixed(1) : String(Math.round(v));
+    const slider = (key, val, set) => { const [label, min, max, step, unit] = Dm.UI[key]; return { label, min, max, step, val, txt: fmt(val, step) + (unit ? ' ' + unit : ''), set: e => set(parseFloat(e.target.value)) }; };
+    let selName = '', selTip = '', selCol = '#f3f2f2', selSliders = [], selBtns = [], mtypeBtns = [], hasMType = false;
+    if (selItem) { const K = Dm.KINDS[selItem.k]; selName = K.label + (selItem.m ? ' · ' + Dm.MNAME[selItem.m] : ''); selTip = K.tip + (selItem.k === 'guard' ? ' Drops the ' + Dm.TOOL[li].part + ' → ' + Dm.TOOL[li].name + '.' : ''); selCol = K.col;
+      for (const k of ['r', 'w', 'd', 'len', 'ang', 'n', 'h']) if (selItem[k] != null) selSliders.push(slider(k, selItem[k], v => ws.patch(selItem.id, { [k]: v })));
+      if (selItem.k === 'spawn' || selItem.k === 'guard') { hasMType = true; mtypeBtns = Dm.MTYPES.map(t => btn(Dm.MNAME[t], selItem.m === t, () => ws.patch(selItem.id, { m: t }))); }
+      if (selItem.k === 'belt') selBtns.push(btn(selItem.dir === 'up' ? 'ORE BELT ↑ (TAP: CHUTE)' : 'TO CHUTE (TAP: ORE UP)', false, () => ws.patch(selItem.id, { dir: selItem.dir === 'up' ? 'chute' : 'up' })));
+      selBtns.push(btn('DELETE', false, () => ws.remove())); }
+    else if (selPath) { selName = 'PATH · ' + selPath.pts.length + ' POINTS · ' + Math.round(Dm.pathLen(selPath)) + ' m'; selTip = 'Steel walkway + glowing guide line; lamps line it. Drag a white square to move a point. ADD POINTS, then tap the map to extend it.'; selCol = '#ffd23a';
+      selSliders.push(slider('pw', selPath.w, v => ws.patch(selPath.id, { w: v })));
+      selBtns.push(btn(S.tool === 'path' ? 'ADDING POINTS · DONE' : 'ADD POINTS', S.tool === 'path', () => this.setTool('path')));
+      if (sel.pi >= 0) selBtns.push(btn('DELETE POINT', false, () => ws.remove()));
+      selBtns.push(btn('DELETE PATH', false, () => { ws.select({ type: 'path', id: selPath.id, pi: -1 }); ws.remove(); })); }
+    const groups = Dm ? Dm.GROUPS.map(gn => ({ name: gn, tools: Object.keys(Dm.KINDS).filter(k => Dm.KINDS[k].grp === gn && (!Dm.KINDS[k].lv || Dm.KINDS[k].lv.includes(li))).map(k => ({ label: Dm.KINDS[k].label, col: Dm.KINDS[k].col, bg: S.tool === k ? '#ec3013' : 'var(--color-text)', go: () => this.setTool(k) })) })) : [];
+    const hint = S.tool === 'move' ? '' : S.tool === 'path' ? (selPath ? 'TAP THE MAP TO EXTEND THE PATH' : 'TAP THE MAP TO START A PATH') : 'TAP THE MAP TO PLACE: ' + (Dm ? Dm.KINDS[S.tool].label : '');
+    const T = Dm ? Dm.TOOL : [];
+    const BEATS = [
+      ['Arrive by the broken lift with R-8 (glitchy, shorting out).', 'Hacked miners work off the path. Without the unhacker you can only STUN them; they power down and wait.', 'Beat the TOUGH guard: it drops the ' + (T[0] ? T[0].part : '') + '. R-8 builds the ' + (T[0] ? T[0].name : '') + ', then repairs the lift.'],
+      ['The signal grabs R-8 by the lift: fight him + UNHACK him. Your first unhack.', 'Free the miners harvesting the asteroids. The path crosses the flood on catwalks.', 'The TOUGH guard drops the ' + (T[1] ? T[1].part : '') + ': faster unhack. R-8 repairs the lift.'],
+      ['Ice and falling rubble from the trash chute.', 'The TOUGH guard drops the ' + (T[2] ? T[2].part : '') + ': the ' + (T[2] ? T[2].name : '') + '.', 'Arena: the DRILL RIG guards the SIGNAL RELAY. Dodge the Rig, wreck the relay, then stun + UNHACK the Rig. Meru\u2019s bots go back to normal.'],
+    ][li];
+    return {
+      stageRef: this.stageRef,
+      areas: wide ? '"tabs view panel"' : land ? '"view tabs" "view panel"' : '"view" "tabs" "panel"',
+      cols: wide ? '200px minmax(0,1fr) 360px' : land ? 'minmax(0,1fr) 320px' : 'minmax(0,1fr)',
+      rows: wide ? 'minmax(0,1fr)' : land ? 'auto minmax(0,1fr)' : 'minmax(0,50%) auto minmax(0,1fr)',
+      tabsDir: wide ? 'column' : 'row', tabsBorderR: wide ? '2px solid var(--color-bg)' : '0', tabsBorderB: wide ? '0' : '2px solid var(--color-bg)', viewBorderB: !wide && !land ? '2px solid var(--color-bg)' : '0', panelBorderL: wide || land ? '2px solid var(--color-bg)' : '0',
+      levelTabs: LV.map((d, i) => { const c = checks.filter(x => x.lv === i), f = c.filter(x => x.s === 'FAIL').length, w = c.filter(x => x.s === 'WARN').length; return { num: 'LEVEL ' + (i + 1), name: d.short, meta: !L ? '' : f ? f + ' FAIL' : w ? w + ' WARN' : 'ALL PASS', cc: f ? '#ff6b5a' : w ? '#ffd23a' : '#7cff9b', mc: i === li ? 'var(--color-bg)' : '#b8b2ac', bg: i === li ? '#ec3013' : 'var(--color-text)', bb: wide ? '2px solid #3a3836' : '0', br: wide ? '0' : '2px solid #3a3836', flex: wide ? 'none' : '1 1 0', pick: () => this.setLevel(i) }; }),
+      levelName: LV[li].name, levelShort: LV[li].short, levelNote: LV[li].note || '',
+      hasHint: !!hint && S.mode === 'plan', hint,
+      modeBtns: [btn('PLAN', S.mode === 'plan', () => this.setMode('plan')), btn('3D', S.mode === '3d', () => this.setMode('3d')), btn('TOUR', S.mode === 'tour', () => this.setMode('tour'))],
+      viewBtns: S.mode === 'plan' ? [btn('FIT', false, () => ws && ws.fit()), btn(S.labels ? 'LABELS · ON' : 'LABELS · OFF', S.labels, () => { const v = !S.labels; this.setState({ labels: v }); ws && ws.setLabels(v); })]
+        : [btn('TOP', false, () => { if (S.mode === 'tour') this.setMode('3d'); ws && ws.view('top'); }), btn('ANGLE', false, () => { if (S.mode === 'tour') this.setMode('3d'); ws && ws.view('angle'); }), btn(S.labels ? 'LABELS · ON' : 'LABELS · OFF', S.labels, () => { const v = !S.labels; this.setState({ labels: v }); ws && ws.setLabels(v); })],
+      hasSel: !!(selItem || selPath), selName, selTip, selCol, selSliders, selBtns, mtypeBtns, hasMType,
+      baseTools: [btn('MOVE / SELECT', S.tool === 'move', () => this.setTool('move')), btn('NEW PATH', S.tool === 'path' && !selPath, () => { ws && ws.newPath(); this.setState({ tool: 'path', sel: null }); if (S.mode !== 'plan') this.setMode('plan'); })],
+      toolGroups: groups,
+      checks: here.map(c => ({ s: c.s, t: c.t, col: SC[c.s] })),
+      checkTxt: !L ? '' : fails ? fails + ' FAIL · ' + warns + ' WARN' : warns ? warns + ' WARN' : 'ALL PASS', checkCol: fails ? '#ff6b5a' : warns ? '#ffd23a' : '#7cff9b',
+      beats: (BEATS || []).map((t, i) => ({ n: String(i + 1), t })),
+      levelSliders: l && Dm ? [slider('lampEvery', l.lampEvery || 9, v => ws.patchLevel({ lampEvery: v }))] : [],
+      savedTxt: S.saved ? 'SAVED' : 'AUTO-SAVE', savedCol: S.saved ? '#7cff9b' : '#b8b2ac',
+      resetTxt: S.armReset ? 'TAP AGAIN TO RESET ' + LV[li].short : 'RESET THIS LEVEL',
+      resetLevel: () => { if (!S.armReset) { this.setState({ armReset: true }); clearTimeout(this.rt); this.rt = setTimeout(() => this.setState({ armReset: false }), 2500); return; } const L2 = ws.layout; L2.levels[li] = Dm.defaultLevel(li); Dm.saveLayout(L2); ws.set(L2, li); ws.select(null); this.setState(s => ({ armReset: false, ver: s.ver + 1 })); },
+      playHref: 'Ore Shaft.dc.html?level=' + (li + 1),
+      copyTxt: S.copied ? 'COPIED' : 'COPY JSON',
+      copyJson: () => { try { navigator.clipboard.writeText(JSON.stringify(ws.layout)); } catch (e) {} this.setState({ copied: true }); setTimeout(() => this.setState({ copied: false }), 1200); },
+    };
+  }
+}
+</script>
+</body>
+</html>

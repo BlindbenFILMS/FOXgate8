@@ -1,0 +1,25 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Nebo Candy Shop</title>
+<style>
+:root{--bg:#1a1416;--fg:#fff;--y:#ffd23a}
+html,body{margin:0;background:var(--bg);color:var(--fg);font-family:Archivo,Arial,sans-serif}
+.wrap{display:flex;flex-wrap:wrap;gap:24px;padding:16px;align-items:flex-start}
+.lab{font:800 12px Archivo,Arial;letter-spacing:.12em;color:var(--y);margin-bottom:8px}
+.frame{border:2px solid #000;background:#000;display:block}
+.full{position:fixed;inset:0;width:100%;height:100%;border:0;display:none}
+@media (max-width:700px){.wrap{display:none}.full{display:block}}
+a{color:var(--y)}
+</style>
+<iframe class="full" id="fullF" title="Nebo Candy Shop" allow="autoplay"></iframe>
+<div class="wrap">
+  <div><div class="lab">IPHONE PORTRAIT &middot; 390 &times; 844</div><iframe class="frame" id="pF" title="Portrait" style="width:390px;height:844px" allow="autoplay"></iframe></div>
+  <div><div class="lab">IPHONE LANDSCAPE &middot; 844 &times; 390</div><iframe class="frame" id="lF" title="Landscape" style="width:844px;height:390px" allow="autoplay"></iframe>
+    <p style="max-width:844px;font:600 13px/1.5 Archivo,Arial;color:#cfcac2">Opens walking in the shop. Walk to ANGELICA, tap TALK, pick &ldquo;Sounds SWEET! Put me to work.&rdquo; <a href="candy.html?card=1" target="_blank">Open the welcome card</a> &middot; <a href="candy.html?demo=1" target="_blank">Watch the demo</a> &middot; <a href="candy.html" target="_blank">Full screen</a></p></div>
+</div>
+<script>
+const small = matchMedia('(max-width:700px)').matches;
+if (small) document.getElementById('fullF').src = 'candy.html';
+else { document.getElementById('pF').src = 'candy.html'; document.getElementById('lF').src = 'candy.html?card=1'; }
+</script>
+
+</body></html>

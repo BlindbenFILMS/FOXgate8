@@ -1,0 +1,71 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Hope's Class</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&display=swap">
+<style>
+/* Layout: one dark stage, a phone frame centred, a slim control strip above it. Single dark look on purpose (the game is black/yellow). */
+:root {
+  --stage: #0d0c0b; --bezel: #1f1d1b; --rule: #3a3836; --ink: #ffffff; --muted: #cfcac4; --yellow: #ffd23a; --red: #ec3013;
+  --display: "Archivo", "Arial Black", Arial, sans-serif;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body { margin: 0; background: var(--stage); color: var(--ink); font-family: var(--display); overflow: hidden; }
+.wrap { height: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 12px; padding-block: 12px; padding-inline: 16px; }
+.bar { flex: none; width: 100%; max-width: 900px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.name { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.kick { font-weight: 800; font-size: 11px; letter-spacing: 0.14em; color: var(--yellow); }
+.title { font-weight: 900; font-size: 22px; line-height: 1; text-wrap: balance; }
+.seg { display: flex; border: 2px solid var(--rule); }
+.seg button { font: 900 12px var(--display); letter-spacing: 0.08em; color: var(--ink); background: transparent; border: 0; padding: 0 14px; min-height: 40px; cursor: pointer; }
+.seg button + button { border-left: 2px solid var(--rule); }
+.seg button[aria-pressed="true"] { background: var(--yellow); color: #000; }
+.seg button:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
+.stage { flex: 1 1 auto; min-height: 0; width: 100%; display: flex; align-items: center; justify-content: center; }
+.phone { position: relative; background: var(--bezel); border: 2px solid var(--rule); border-radius: 34px; padding: 12px; box-sizing: content-box; transform-origin: center center; }
+.phone iframe { display: block; border: 0; border-radius: 22px; background: #000; width: 100%; height: 100%; }
+.hint { flex: none; font-weight: 600; font-size: 12px; color: var(--muted); text-align: center; max-width: 640px; line-height: 1.4; }
+/* On a real phone: drop the frame and fill the screen */
+@media (max-width: 560px) {
+  .wrap { padding: 0; gap: 0; }
+  .bar, .hint { display: none; }
+  .phone { border: 0; border-radius: 0; padding: 0; transform: none !important; width: 100% !important; height: 100% !important; }
+  .phone iframe { border-radius: 0; }
+  .stage { align-items: stretch; }
+}
+</style>
+
+<div class="wrap">
+  <div class="bar">
+    <div class="name"><span class="kick">MERU · SCHOOL FOR THE BLIND</span><span class="title">Hope's Class</span></div>
+    <div class="seg" role="group" aria-label="Phone orientation">
+      <button id="portrait" aria-pressed="true">PORTRAIT 390 × 844</button>
+      <button id="landscape" aria-pressed="false">LANDSCAPE 844 × 390</button>
+    </div>
+  </div>
+  <div class="stage" id="stage">
+    <div class="phone" id="phone"><iframe id="game" src="game.html" title="Hope's Class game" allow="autoplay; fullscreen"></iframe></div>
+  </div>
+  <p class="hint">Tap the game once to start the sound. Walk with the joystick, 1 LISTEN, 2 HELLO. On a computer: WASD to walk, E to talk.</p>
+</div>
+
+<script>
+(() => {
+  const phone = document.getElementById('phone'), stage = document.getElementById('stage');
+  const P = document.getElementById('portrait'), Lb = document.getElementById('landscape');
+  let land = false;
+  try { land = localStorage.getItem('hopesClass.land') === '1'; } catch (e) {}
+  function fit() {
+    const w = land ? 844 : 390, h = land ? 390 : 844;
+    phone.style.width = w + 'px'; phone.style.height = h + 'px';
+    const r = stage.getBoundingClientRect(), k = Math.min(1, (r.width - 8) / (w + 28), (r.height - 8) / (h + 28));
+    phone.style.transform = 'scale(' + Math.max(0.3, k).toFixed(3) + ')';
+    P.setAttribute('aria-pressed', String(!land)); Lb.setAttribute('aria-pressed', String(land));
+  }
+  P.addEventListener('click', () => { land = false; try { localStorage.setItem('hopesClass.land', '0'); } catch (e) {} fit(); });
+  Lb.addEventListener('click', () => { land = true; try { localStorage.setItem('hopesClass.land', '1'); } catch (e) {} fit(); });
+  addEventListener('resize', fit); fit();
+})();
+</script>
+
+</body></html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<script src="ocean-world.bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>:root{--font-heading:"Archivo",system-ui,sans-serif;--font-body:"Archivo",system-ui,sans-serif;--color-accent:#ec3013}</style>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div onPointerDown="{{ unlock }}" style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Ocean World Aquarium">
+  <div ref="{{ stageRef }}" style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0;overflow:hidden"></div>
+  <div data-hud-host="1" style="position:absolute;inset:0;pointer-events:none;display:{{ hudDisp }}"><dc-import name="Game-HUD" game="{{ engine }}" hud="{{ stdHud }}" started="{{ walkOn }}" busy="{{ hudBusy }}" on-hud="{{ onHud }}" world="Jidda" keys="{{ keysList }}" skip-keys="{{ skipKeys }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  <sc-if value="{{ topOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="top" style="position:absolute;left:0;right:0;top:0;z-index:3;pointer-events:none;display:flex;flex-direction:column">
+      <div style="background:#000;border-bottom:2px solid #ffd23a;display:flex;align-items:stretch;padding-top:env(safe-area-inset-top)">
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836;min-width:0"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap">OCEAN WORLD · DAY {{ h.day }}</span><span style="font:900 18px var(--font-heading);white-space:nowrap">{{ actTxt }}</span></div>
+        <div style="flex:1;min-width:0;border-right:2px solid #3a3836"></div>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">FISH</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;color:#7dd3fc;white-space:nowrap">{{ fishTxt }}</span></div>
+        <button onClick="{{ soundCycle }}" aria-label="{{ soundAria }}" style="pointer-events:auto;flex:none;width:52px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:{{ soundCol }};cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#2a2826"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h4l5-4v14l-5-4H3z" fill="currentColor"></path><sc-if value="{{ sndWaves }}" hint-placeholder-val="{{ true }}"><path d="M15 8.5a5 5 0 0 1 0 7M17.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2"></path></sc-if><sc-if value="{{ sndX }}" hint-placeholder-val="{{ false }}"><path d="M15 9l6 6M21 9l-6 6" stroke="currentColor" stroke-width="2.4"></path></sc-if></svg></button>
+        <button onClick="{{ helpToggle }}" aria-label="How the show works" style="pointer-events:auto;flex:none;width:52px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 20px var(--font-heading);cursor:pointer" style-hover="background:#2a2826">?</button>
+      </div>
+      <div style="height:16px;background:#141210;border-bottom:2px solid #3a3836;position:relative;display:flex;align-items:center"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ appW }};background:{{ appCol }};display:block"></span><span style="position:relative;padding-left:10px;font:900 10px var(--font-heading);letter-spacing:0.14em;color:#fff;text-shadow:0 1px 2px #000">APPLAUSE {{ h.applause }}%</span></div>
+      <sc-if value="{{ cardOn }}" hint-placeholder-val="{{ false }}">
+        <div style="margin:6px;align-self:flex-start;max-width:calc(100% - 12px);line-height:1.25;background:#fbfbf7;color:#201e1d;border:2px solid #201e1d;display:flex;flex-direction:column">
+          <div style="background:#0e5a7a;color:#fff;padding:4px 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><span style="font:900 12px var(--font-heading);letter-spacing:0.06em;white-space:nowrap">SHOW CARD · {{ h.act.name }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.04em;color:#ff9ab8;white-space:nowrap">MOOD {{ moodTxt }}</span></div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;padding:5px 6px">
+            <sc-for list="{{ chips }}" as="c" hint-placeholder-count="3"><span style="display:flex;gap:5px;align-items:center;padding:2px 6px;border:2px solid {{ c.bd }};background:{{ c.bg }};font:900 11px var(--font-heading);letter-spacing:0.04em;color:{{ c.fg }};white-space:nowrap">{{ c.t }}</span></sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{ mcOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ mcTop }};transform:translateX(-50%);z-index:3;pointer-events:none;max-width:calc(100% - 24px);background:#000;border:2px solid #3a3836;display:flex;align-items:stretch">
+      <span style="padding:5px 8px;background:#2f9a8f;font:800 10px var(--font-heading);letter-spacing:0.12em;color:#fff;display:flex;align-items:center;white-space:nowrap">JUNO · MC</span>
+      <span style="padding:5px 12px;font:900 clamp(14px,3.8vw,18px) var(--font-heading);letter-spacing:0.02em;color:#fff;text-wrap:pretty">{{ h.mc }}</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ sigOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;bottom:{{ trayBottom }};transform:translateX(-50%);z-index:5;pointer-events:none;width:min(420px, calc(100% - 24px));background:#000;border:2px solid #22c55e;display:flex;align-items:stretch">
+      <div style="flex:none;width:72px;display:flex;align-items:center;justify-content:center;background:#22c55e">
+        <sc-if value="{{ icUp }}" hint-placeholder-val="{{ true }}"><svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><path d="M22 38V8M10 19L22 7l12 12" fill="none" stroke="#000" stroke-width="5" stroke-linecap="square"></path></svg></sc-if>
+        <sc-if value="{{ icDouble }}" hint-placeholder-val="{{ false }}"><svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><path d="M13 38V10M5 18l8-8 8 8M31 38V10M23 18l8-8 8 8" fill="none" stroke="#000" stroke-width="4.5" stroke-linecap="square"></path></svg></sc-if>
+        <sc-if value="{{ icDown }}" hint-placeholder-val="{{ false }}"><svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><path d="M22 6v30M10 25l12 12 12-12" fill="none" stroke="#000" stroke-width="5" stroke-linecap="square"></path></svg></sc-if>
+        <sc-if value="{{ icCircle }}" hint-placeholder-val="{{ false }}"><svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><path d="M33 12A14 14 0 1 0 36 24" fill="none" stroke="#000" stroke-width="5"></path><path d="M27 6l7 6-8 4" fill="none" stroke="#000" stroke-width="4.5"></path></svg></sc-if>
+        <sc-if value="{{ icZig }}" hint-placeholder-val="{{ false }}"><svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><path d="M8 8l28 7-28 7 28 7-28 7" fill="none" stroke="#000" stroke-width="4.5" stroke-linejoin="miter"></path></svg></sc-if>
+        <sc-if value="{{ icTap }}" hint-placeholder-val="{{ false }}"><svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="15" fill="none" stroke="#000" stroke-width="4"></circle><circle cx="22" cy="22" r="6" fill="#000"></circle></svg></sc-if>
+        <sc-if value="{{ icHold }}" hint-placeholder-val="{{ false }}"><svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="8" fill="#000"></circle><circle cx="22" cy="22" r="16" fill="none" stroke="#000" stroke-width="3" stroke-dasharray="5 4"></circle></svg></sc-if>
+      </div>
+      <div style="padding:8px 12px;display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#22c55e">SIGNAL NOW · {{ h.act.name }} IS WATCHING</span><span style="font:900 clamp(20px,6vw,28px) var(--font-heading);line-height:1">{{ h.sig.label }}</span><span style="font:800 13px var(--font-heading);letter-spacing:0.06em;color:#ffd23a">{{ h.sig.sig }}</span></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ holdOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;bottom:{{ trayBottom }};transform:translateX(-50%);z-index:5;pointer-events:none;width:min(420px, calc(100% - 24px));background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:6px 12px"><span style="font:900 clamp(18px,5vw,24px) var(--font-heading);color:{{ holdCol }}">{{ h.hold.zone }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em;color:#ffd23a;white-space:nowrap">TAILWALK · LET GO IN GREEN</span></div>
+      <div style="position:relative;height:22px;margin:0 12px 10px;display:flex;gap:2px">
+        <span style="flex:41;background:#9ca3af;display:block"></span><span style="flex:32;background:#22c55e;outline:3px solid #ffd23a;display:block"></span><span style="flex:18;background:#e6b45a;display:block"></span><span style="flex:9;background:#ec3013;display:block"></span>
+        <span style="position:absolute;top:-6px;bottom:-6px;left:{{ holdX }};width:4px;margin-left:-2px;background:#ffffff;display:block"></span>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ barOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="bottom" style="position:absolute;left:0;right:0;bottom:0;z-index:4;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);background:#000;border-top:2px solid #ffd23a;padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);pointer-events:{{ barPE }}">
+      <button onClick="{{ whistleGo }}" aria-label="Blow the whistle" style="min-height:62px;padding:6px 8px 6px 14px;border:0;border-right:2px solid #2a2826;border-radius:0;background:{{ whBg }};color:{{ whFg }};cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;min-width:0" style-hover="filter:brightness(1.2)">
+        <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M3 12h13a8 8 0 1 1-8 8H3z" fill="none" stroke="currentColor" stroke-width="3"></path><path d="M16 12V7h6" fill="none" stroke="currentColor" stroke-width="3"></path><circle cx="16" cy="20" r="2.5" fill="currentColor"></circle></svg>
+        <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:900 15px var(--font-heading);letter-spacing:0.04em">WHISTLE</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ whSub }}</span></span>
+      </button>
+      <button onClick="{{ fishGo }}" aria-label="Toss a fish" style="min-height:62px;padding:6px 8px 6px 14px;border:0;border-radius:0;background:{{ fiBg }};color:{{ fiFg }};cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;min-width:0" style-hover="filter:brightness(1.2)">
+        <svg width="34" height="24" viewBox="0 0 34 24" aria-hidden="true"><path d="M4 12c5-8 15-9 21-2l6-6v16l-6-6c-6 7-16 6-21-2z" fill="currentColor"></path><circle cx="10" cy="10" r="1.8" fill="#000"></circle></svg>
+        <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:900 15px var(--font-heading);letter-spacing:0.04em">FISH × {{ h.fish }}</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ fiSub }}</span></span>
+      </button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ hintOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;right:max(10px, env(safe-area-inset-right));bottom:{{ hintBottom }};z-index:3;pointer-events:none;max-width:min(280px, 70%);background:#000;border:2px solid #ffd23a;padding:5px 10px;font:800 11px var(--font-heading);letter-spacing:0.08em;line-height:1.35;color:#ffd23a;text-wrap:pretty">{{ h.hint }}</div>
+  </sc-if>
+  <sc-if value="{{ flashOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ flashTop }};transform:translateX(-50%);z-index:5;pointer-events:none;max-width:calc(100% - 24px);background:rgba(0,0,0,0.9);border:2px solid {{ flashCol }};display:flex;align-items:stretch">
+      <span style="flex:none;width:10px;background:{{ flashCol }};display:block"></span>
+      <span style="padding:8px 14px;font:900 clamp(15px,4vw,22px) var(--font-heading);letter-spacing:0.04em;color:#fff;text-wrap:pretty">{{ flashTxt }}</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ reactOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ reactTop }};transform:translateX(-50%);z-index:6;pointer-events:none;width:min(420px, calc(100% - 24px));background:#000;border:3px solid {{ h.react.col }};display:flex;flex-direction:column">
+      <div style="display:flex;align-items:stretch"><div style="flex:1;padding:8px 14px;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">{{ h.react.who }}</span><span style="font:900 clamp(26px,8vw,40px) var(--font-heading);line-height:1;color:{{ h.react.col }}">{{ h.react.word }}</span></div><div style="flex:none;min-width:88px;padding:0 12px;display:flex;align-items:center;background:{{ h.react.col }};color:#000;font:900 20px var(--font-heading);letter-spacing:0.04em">{{ reactStars }}</div></div>
+      <div style="padding:6px 14px 8px;border-top:2px solid #2a2826;font:700 14px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">“{{ h.react.line }}”</div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ sayOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(10px, env(safe-area-inset-left));top:{{ sayTop }};z-index:3;pointer-events:none;max-width:min(340px, calc(100% - 20px));background:rgba(0,0,0,0.88);border:2px solid #3a3836;padding:8px 10px;font:700 13px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">{{ h.say }}</div>
+  </sc-if>
+  <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(10px, env(safe-area-inset-left));bottom:{{ trayBottom }};z-index:7;pointer-events:none;width:min(460px, calc(100% - 112px));background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="padding:5px 12px;border-bottom:2px solid #3a3836;font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;background:#ec3013;display:block"></span>DEMO</div>
+      <div style="display:flex;align-items:stretch"><sc-if value="{{ demoKeyOn }}" hint-placeholder-val="{{ false }}"><div style="flex:none;min-width:64px;display:flex;align-items:center;justify-content:center;padding:0 10px;background:#ec3013;color:#fff;font:900 14px var(--font-heading);border-right:2px solid #3a3836;white-space:nowrap">{{ h.demo.key }}</div></sc-if><div style="padding:9px 12px;font:900 clamp(14px,3.8vw,19px) var(--font-heading);letter-spacing:0.03em;line-height:1.2;color:#fff;text-wrap:pretty">{{ h.demo.cap }}</div></div>
+    </div>
+    <button onClick="{{ demoExit }}" aria-label="Exit the demo" style="position:absolute;right:max(10px, env(safe-area-inset-right));bottom:{{ trayBottom }};z-index:7;min-width:88px;min-height:48px;padding:0 14px;border:2px solid #ec3013;border-radius:0;background:#ec3013;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">EXIT DEMO</button>
+  </sc-if>
+  <sc-if value="{{ introOn }}" hint-placeholder-val="{{ true }}">
+    <div data-safe="intro" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:6;width:min(420px, calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column">
+      <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">JIDDA · OCEAN WORLD AQUARIUM · DAY {{ h.day }}</span><span style="font:900 26px var(--font-heading);line-height:1.05">Dolphin trainer</span><span style="font:700 13px var(--font-body);color:#cfcac2;text-wrap:pretty;display:{{ introDesc }}">Run the DOLPHIN SPLASH with Juno. Give each trick's hand signal, blow the whistle at the top of the jump, then pay in fish. Happy dolphins, happy crowd, bigger tips.</span></div>
+      <sc-for list="{{ introRows }}" as="r" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:76px minmax(0,1fr);gap:12px;padding:6px 16px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;color:#e6b45a">{{ r.v }}</span></div></sc-for>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
+        <button onClick="{{ demoGo }}" style="min-height:48px;padding:0 16px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WATCH THE DEMO</button>
+        <button onClick="{{ walkGo }}" style="min-height:48px;padding:0 16px;border:0;border-radius:0;background:#000;color:#7dd3fc;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WALK THE AQUARIUM</button>
+      </div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border-top:2px solid #3a3836">
+        <button onClick="{{ toggleSound }}" aria-pressed="{{ soundOn }}" style="min-height:44px;padding:0 16px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:{{ sndBtnCol }};font:900 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">{{ sndBtnTxt }}</button>
+        <button onClick="{{ toggleMusic }}" aria-pressed="{{ musicOn }}" style="min-height:44px;padding:0 16px;border:0;border-radius:0;background:#000;color:{{ musBtnCol }};font:900 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">{{ musBtnTxt }}</button>
+      </div>
+      <button onClick="{{ goWork }}" style="min-height:56px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">PUT ME TO WORK</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ helpOn }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ helpToggle }}" style="position:absolute;inset:0;z-index:9;background:rgba(0,0,0,0.82);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #ffd23a;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="padding:10px 14px;border-bottom:2px solid #3a3836;font:900 16px var(--font-heading);letter-spacing:0.06em;color:#ffd23a">HOW THE SHOW WORKS</div>
+        <sc-for list="{{ helpRows }}" as="r" hint-placeholder-count="8"><div style="display:grid;grid-template-columns:92px minmax(0,1fr);gap:10px;padding:7px 14px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body);line-height:1.35"><span style="font:900 11px var(--font-heading);letter-spacing:0.08em;color:#e6b45a">{{ r.k }}</span><span style="text-wrap:pretty">{{ r.v }}</span></div></sc-for>
+        <div style="padding:10px 14px;font:700 12px var(--font-body);color:#cfcac2">Tap anywhere to close</div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:8;background:rgba(0,0,0,0.78);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #3a3836;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+          <div style="padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ doneKicker }}</span><span style="font:900 24px var(--font-heading);line-height:1.05">Show's over!</span><span style="font:700 12px var(--font-body);color:#cfcac2">{{ doneSub }}</span></div>
+          <div style="width:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#ec3013"><span style="font:900 30px var(--font-heading)">{{ d.total }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em">GOLD</span></div>
+        </div>
+        <sc-if value="{{ doneSayOn }}" hint-placeholder-val="{{ false }}"><div style="padding:8px 16px;border-bottom:2px solid #3a3836;font:700 13px var(--font-body);line-height:1.35;color:#e8e4de;text-wrap:pretty">{{ h.say }}</div></sc-if>
+        <sc-if value="{{ eodOn }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:10px;padding:10px 16px;background:#ffd23a;color:#000;border-bottom:2px solid #000;font:900 14px var(--font-heading);letter-spacing:0.06em"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 7h7l-5.5 4.5L18.5 21 12 16.8 5.5 21l2-7.5L2 9h7z" fill="#000"></path></svg>EMPLOYEE OF THE DAY</div></sc-if>
+        <sc-for list="{{ doneRows }}" as="r" hint-placeholder-count="5"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:7px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;font-variant-numeric:tabular-nums">{{ r.v }}</span></div></sc-for>
+        <sc-for list="{{ unlocks }}" as="u" hint-placeholder-count="1"><div style="padding:7px 16px;border-bottom:2px solid #2a2826;font:800 13px var(--font-heading);letter-spacing:0.04em;color:#22c55e">UNLOCKED · {{ u.t }}</div></sc-for>
+        <div style="padding:8px 16px 4px;font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">UPGRADE THE STADIUM · YOU HAVE {{ goldTxt }}</div>
+        <sc-for list="{{ shop }}" as="s" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 16px;border-top:2px solid #2a2826">
+            <div style="display:flex;flex-direction:column;min-width:0"><span style="font:900 13px var(--font-heading);letter-spacing:0.04em">{{ s.name }}</span><span style="font:600 12px var(--font-body);color:#cfcac2">{{ s.line }}</span></div>
+            <button onClick="{{ s.buy }}" disabled="{{ s.off }}" style="min-width:84px;min-height:44px;padding:0 12px;border:2px solid {{ s.bd }};border-radius:0;background:{{ s.bg }};color:{{ s.fg }};font:900 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;opacity:{{ s.op }}" style-hover="filter:brightness(1.15)">{{ s.btn }}</button>
+          </div>
+        </sc-for>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:8px">
+          <button onClick="{{ goWork }}" style="min-height:52px;padding:0 12px;border:0;border-top:2px solid #3a3836;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10">NEXT SHOW</button>
+          <button onClick="{{ walkGo }}" style="min-height:52px;padding:0 12px;border:0;border-top:2px solid #3a3836;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#7dd3fc;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WALK AROUND</button>
+          <button onClick="{{ toIntro }}" style="min-height:52px;padding:0 12px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">TAKE A BREAK</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { h: null, help: false, vw: 1200, vh: 800, hi: { pad: false, menu: false, split: false, bar: 0 } };
+  stageRef = React.createRef();
+  onHud = hi => this.setState({ hi });
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs(); try { this.ro = new ResizeObserver(this.onRs); this.stageRef.current && this.ro.observe(this.stageRef.current.parentElement); } catch (e) {}
+    let m = window.OceanWorld || null, err = null;
+    if (!m) for (const b of ['', 'project/']) { try { m = await import(new URL(b + 'minigames/jidda/ocean-world.js', document.baseURI).href); break; } catch (e) { err = e; } }
+    if (!m) { console.warn('ocean world failed: ' + (err && err.stack || String(err))); return; }
+    try { this.g = await m.createOceanWorld({ container: this.stageRef.current, onState: h => this.setState({ h }) }); window.__ocean = this.g; this.forceUpdate(); const q = location.search; this.embed = /[?&]embed=1/.test(q); if (/[?&]demo=1/.test(q)) setTimeout(() => this.g.demoStart(), 400); else if (/[?&]walk=1/.test(q)) this.g.startWalk(); else if (/[?&]show=1/.test(q)) this.g.startDay(); }
+    catch (e) { console.warn('ocean world failed: ' + (e && e.stack || String(e))); }
+  }
+  componentDidUpdate() { const root = this.stageRef.current && this.stageRef.current.parentElement; if (!root || !this.g || !this.g.setSafe) return; const rb = root.getBoundingClientRect(); let top = 0, bot = 0, left = 0; root.querySelectorAll('[data-safe]').forEach(el => { const r = el.getBoundingClientRect(); if (!r.height) return; if (el.dataset.safe === 'top') top = Math.max(top, r.bottom - rb.top); else if (el.dataset.safe === 'intro' && rb.width > rb.height) left = Math.max(left, r.right - rb.left); else bot = Math.max(bot, rb.bottom - r.top); }); const H = rb.height, ph = this.g.hud().mode; if (ph === 'show') bot += 84; this.g.setSafe(Math.round(Math.min(top, H * 0.36)), Math.round(Math.min(bot, H * (ph === 'intro' ? 0.62 : 0.42))), Math.round(Math.min(left, rb.width * 0.6))); }
+  componentWillUnmount() { removeEventListener('resize', this.onRs); this.g && this.g.destroy(); }
+  onRs = () => { const el = this.stageRef.current, r = el && el.parentElement ? el.parentElement.getBoundingClientRect() : null; this.setState({ vw: r && r.width ? r.width : innerWidth, vh: r && r.height ? r.height : innerHeight }); };
+  renderVals() {
+    const S = this.state, g = this.g, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const h = S.h || { mode: 'intro', ph: '', day: 1, gold: 0, uniform: false, upgrades: [], done: null, flash: null, say: '', mc: '', react: null, demo: null, hint: null, act: null, fish: 9, fishMax: 9, applause: 20, card: [], sig: null, whistleOn: false, rewardOn: false, hold: null, walk: null };
+    const port = S.vh > S.vw, show = h.mode === 'show', walk = h.mode === 'walk', bar = S.hi.bar || 0, d = h.done || { total: 0 }, W = h.walk;
+    const stdHud = { hp: 100, hpMax: 100, en: 100, gold: h.gold, hour: 14, day: 1, items: [], place: W ? W.place : 'Jidda · Ocean World', quest: { text: W ? W.quest : 'OCEAN WORLD AQUARIUM' }, prompt: W ? W.prompt : null, toast: W && W.toast ? W.toast.text : null, muted: false, weather: 'Clear', boat: false, inCave: false, weapons: [], dialog: W ? W.dialog : null, vehicles: [], vehAmmo: [] };
+    const trayB = 74, appC = h.applause > 66 ? '#22c55e' : h.applause > 33 ? '#ffd23a' : '#ec3013', G = h.sig ? h.sig.g : '';
+    return {
+      stageRef: this.stageRef, engine: g, stdHud, walkOn: !!g && walk, hudBusy: !walk, hudDisp: walk ? 'block' : 'none', onHud: this.onHud, h, d, stageTop: walk ? bar + 'px' : '0px',
+      keysList: [['WASD', 'walk'], ['E', 'talk · look'], ['Drag', 'look around'], ['Tap floor', 'walk there'], ['M', 'map']], skipKeys: ['KeyT', 'KeyN', 'KeyV', 'KeyC', 'KeyO', 'KeyH', 'KeyB', 'KeyZ', 'KeyF'],
+      topOn: show && !h.done, cardOn: show && !!h.act && !h.react && !h.demo, barOn: show, barPE: h.demo ? 'none' : 'auto',
+      actTxt: h.act ? 'ACT ' + h.act.n + '/3 · ' + h.act.name : 'SHOW', appW: Math.max(2, h.applause) + '%', appCol: appC, fishTxt: h.fish + ' / ' + h.fishMax,
+      moodTxt: h.act ? '♥'.repeat(Math.max(1, Math.round(h.act.mood * 5))) + '♡'.repeat(5 - Math.max(1, Math.round(h.act.mood * 5))) : '',
+      chips: h.card.map(c => ({ t: (c.done ? '✓ ' : c.cur ? '▸ ' : '') + c.label + (c.done ? ' ' + '★'.repeat(c.stars) : ' · ' + c.sig), bg: c.done ? '#e6f6ea' : c.cur ? '#ffd23a' : '#fbfbf7', bd: c.done ? '#22c55e' : '#201e1d', fg: c.done ? '#1f6a3a' : '#201e1d' })),
+      mcOn: show && !!h.mc && !h.react, mcTop: port ? 'calc(118px + env(safe-area-inset-top))' : '150px',
+      sigOn: show && !!h.sig && !h.demo && !h.hold, icUp: G === 'up', icDouble: G === 'double', icDown: G === 'down', icCircle: G === 'circle', icZig: G === 'zigzag', icTap: G === 'hoop' || G === 'ball', icHold: G === 'hold', trayBottom: 'calc(' + trayB + 'px + env(safe-area-inset-bottom))',
+      holdOn: !!h.hold, holdX: h.hold ? (h.hold.v * 100).toFixed(1) + '%' : '0%', holdCol: h.hold ? (h.hold.zone === 'JUST RIGHT' ? '#22c55e' : h.hold.zone === 'SPLAT' ? '#ec3013' : '#ffffff') : '#fff',
+      whBg: h.whistleOn ? '#ffd23a' : '#000000', whFg: h.whistleOn ? '#000000' : '#8a847e', whSub: h.whistleOn ? 'TAP IN THE GREEN · OR TAP THE POOL' : 'DURING A TRICK · SPACE',
+      fiBg: h.rewardOn ? '#22c55e' : '#000000', fiFg: h.rewardOn ? '#000000' : '#cfe8f4', fiSub: h.rewardOn ? 'TAP = TOSS · OR FLICK FROM THE BOTTOM' : 'AFTER EACH TRICK · F',
+      whistleGo: e => { blur(e); g && g.whistle(); }, fishGo: e => { blur(e); g && g.tossFish(); },
+      hintOn: show && !h.demo && !!h.hint && !h.sig && !h.hold && !h.flash, hintBottom: 'calc(' + (trayB + 6) + 'px + env(safe-area-inset-bottom))',
+      flashOn: show && !!h.flash, flashTop: port ? '44%' : '40%', flashTxt: h.flash ? h.flash.txt : '', flashCol: h.flash ? h.flash.col : '#ffd23a',
+      reactOn: show && !!h.react, reactTop: port ? 'calc(64px + env(safe-area-inset-top))' : '58px', reactStars: h.react ? '★'.repeat(h.react.stars) + '☆'.repeat(3 - h.react.stars) : '',
+      sayOn: !!h.say && h.mode === 'intro', sayTop: 'calc(12px + env(safe-area-inset-top))',
+      demoOn: !!h.demo, demoKeyOn: !!(h.demo && h.demo.key), demoGo: e => { blur(e); g && g.demoStart(); }, demoExit: e => { blur(e); g && g.demoStop(); },
+      introOn: h.mode === 'intro' && !h.demo, introDesc: S.vh < 470 ? 'none' : 'block',
+      introRows: [['Gold', h.gold + 'g'], ['Today', '3 acts · PEARL, TIDE, JINX'], ['Signals', h.day <= 1 ? 'JUMP · SPLASH · HOOP' : h.day <= 2 ? '+ SPIN · BALL · WAVE · FINALE' : 'ALL 8, TAILWALK TOO'], ['Uniform', h.uniform ? 'Yours · visor, whistle + tee' : 'Finish a show to keep it']].filter((r, i) => S.vh >= 470 || i === 0 || i === 2).map(([k, v]) => ({ k, v })),
+      goWork: e => { blur(e); g && g.startDay(); }, walkGo: e => { blur(e); g && g.startWalk(); }, toIntro: e => { blur(e); if (this.embed && window.parent !== window) { try { window.parent.postMessage({ type: 'oceanWorld:exit', gold: h.gold }, '*'); } catch (er) {} } g && g.toIntro(); },
+      unlock: () => { g && g.audioInit && g.audioInit(); },
+      soundOn: !h.muted, musicOn: !!h.musicOn, sndBtnTxt: h.muted ? 'SOUND · OFF' : 'SOUND · ON', sndBtnCol: h.muted ? '#8a847e' : '#22c55e', musBtnTxt: h.musicOn ? 'MUSIC · ON' : 'MUSIC · OFF', musBtnCol: h.musicOn ? '#22c55e' : '#8a847e',
+      toggleSound: e => { blur(e); g && g.setMuted(!h.muted); }, toggleMusic: e => { blur(e); g && g.setMusic(!h.musicOn); },
+      soundCycle: e => { blur(e); if (!g) return; if (h.muted) { g.setMuted(false); g.setMusic(true); } else if (h.musicOn) g.setMusic(false); else g.setMuted(true); }, soundAria: h.muted ? 'Sound off. Tap to turn sound on' : h.musicOn ? 'Sound and music on. Tap to turn music off' : 'Music off. Tap to mute', soundCol: h.muted ? '#8a847e' : h.musicOn ? '#22c55e' : '#ffd23a', sndWaves: !h.muted, sndX: !!h.muted, helpToggle: e => { blur(e); this.setState({ help: !S.help }); }, helpOn: S.help && show,
+      helpRows: [['SHOW CARD', 'Each act has one dolphin and a list of tricks. Do them in order.'], ['1 · SIGNAL', 'Wait for the dolphin to swim into the yellow ring (it turns green). Then draw its hand signal anywhere on the screen.'], ['SIGNALS', 'JUMP swipe up · SPLASH swipe down · SPIN draw a circle · WAVE zigzag · HOOP tap the hoop · BALL tap the ball · TAILWALK hold, let go in the green · FINALE swipe up twice.'], ['2 · WHISTLE', 'A ring closes in on the dolphin. Tap anywhere (or WHISTLE) as it turns green, right at the top of the trick.'], ['3 · FISH', 'The dolphin comes to the edge. Flick a fish up from the bottom of the screen to its mouth, or tap FISH. Rub its head for a bonus.'], ['MOOD', 'Fed dolphins stay happy. A grumpy dolphin ignores signals until you toss it a fish.'], ['STARS', 'Right signal + perfect whistle + fish = 3 stars. Good shows fill the APPLAUSE bar, and applause is your tips.'], ['KEYS', '↑ jump · ↓ splash · C spin · Z wave · H hoop · B ball · hold T tailwalk · ↑↑ finale · Space whistle · F fish.']].map(([k, v]) => ({ k, v })),
+      doneOn: h.mode === 'done' && !!h.done, doneKicker: h.done ? 'DAY ' + d.day + ' · DOLPHIN SPLASH' : '', doneSub: h.done ? (d.newDay ? 'Day ' + (d.day + 1) + ' tomorrow: new signals' : 'Average 2 stars to move up a day') + ' · ★ ' + d.stars + ' employee stars' : '', eodOn: !!(h.done && d.eod), doneSayOn: !!(h.done && h.say),
+      doneRows: h.done ? [['Tricks', String(d.tricks)], ['Average stars', String(d.avg)], ['Applause', d.applause + '%'], ['Wage', d.wage + 'g'], ['Tricks pay', d.pay + 'g'], ['Crowd tips', d.tips + 'g']].map(([k, v]) => ({ k, v })) : [], unlocks: h.done ? d.unlock.map(t => ({ t })) : [], goldTxt: h.gold + 'g',
+      shop: h.upgrades.map(u => { const afford = h.gold >= u.cost; return { name: u.name, line: u.line, btn: u.owned ? 'OWNED' : u.cost + 'g', off: u.owned || !afford, bg: u.owned ? '#22c55e' : afford ? '#ffd23a' : '#000000', fg: u.owned || afford ? '#000000' : '#8a847e', bd: u.owned ? '#22c55e' : afford ? '#ffd23a' : '#3a3836', op: u.owned || afford ? 1 : 0.6, buy: e => { blur(e); g && g.buyUpgrade(u.id); } }; }),
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tavern Pool</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<script type="module" src="tavern-pool.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="blob/71cb95ab71761e06f2215918ef73b0e8.css">
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}@keyframes poolPulse{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(0.82)}}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Tavern Pool">
+  <div ref="{{ stageCb }}" style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0;overflow:hidden;background:#1a0c08"></div>
+  <div ref="{{ statusCb }}" style="position:absolute;right:6px;bottom:4px;z-index:30;pointer-events:none;font:700 10px var(--font-body);color:#8a847e;max-width:70%;text-align:right;white-space:pre-wrap"></div>
+  <div data-hud-host="1" style="position:absolute;inset:0;pointer-events:none"><dc-import name="GameHUD" game="{{ engine }}" hud="{{ stdHud }}" started="{{ started }}" busy="{{ busy }}" on-hud="{{ onHud }}" world="{{ worldName }}" keys="{{ keysList }}" skip-keys="{{ skipKeys }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+
+  <div data-pool-host="1" style="position:absolute;inset:0;pointer-events:none"><dc-import name="PoolOverlay" embedded="{{ true }}" game="{{ engine }}" h="{{ h }}" bar="{{ barPx }}" err="{{ err }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"world":{"editor":"text","default":"luxor"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  state = { h: null, hi: { pad: false, menu: false, split: false, bar: 0 }, err: '' };
+  stageRef = React.createRef();
+  onHud = hi => this.setState({ hi });
+  stageNode = null; statusNode = null;
+  status(t) { this.statusTxt = t; if (this.statusNode) this.statusNode.textContent = t; }
+  statusCb = el => { this.statusNode = el; if (el) el.textContent = this.statusTxt || ''; };
+  stageCb = el => { if (el) { this.stageNode = el; this.stageRef.current = el; this.boot(); } };
+  componentDidMount() {
+        if (!this.errHooked) { this.errHooked = true; addEventListener('error', e => { if (!this.g) this.status('3D error: ' + (e.message || e.error || 'unknown')); }); addEventListener('unhandledrejection', e => { if (!this.g) this.status('3D error: ' + (e.reason && e.reason.message || String(e.reason))); }); }
+    this.status('3D: waiting for the stage…');
+    this.boot();
+  }
+  // the game ships as a project file (tavern-pool.js, loaded by the <script> in <head>); it registers itself on window.__8gTavern
+  async loadMod() { const ok = () => window.__8gTavern && window.__8gTavern.createPoolHall; for (let i = 0; i < 300 && !ok(); i++) { if (i === 40) this.status('3D: still loading the table…'); await new Promise(r => setTimeout(r, 100)); }
+    if (!ok()) throw new Error('tavern-pool.js did not load (30 s). Reload the page.'); return window.__8gTavern; }
+  // the canvas shows many boards at once: only draw the ones on screen, and say so plainly if the graphics card drops this one
+  watch(el) { const g = this.g; if (!g || this._io) return; this._id = Math.random().toString(36).slice(2); let bc = null;
+    // only the board you are touching keeps drawing; the others freeze on their last frame (the canvas shows them all at once)
+    const vis = () => { const on = !document.hidden && this._inView !== false && (this._act || !this._warm); g.setVisible && g.setVisible(on); };
+    try { bc = new BroadcastChannel('8g-tavern-3d'); bc.onmessage = e => { if (e.data !== this._id && this._act) { this._act = false; vis(); } }; } catch (e) {}
+    const wake = () => { if (this._act) return; this._act = true; vis(); try { bc && bc.postMessage(this._id); } catch (e) {} };
+    addEventListener('pointerdown', wake, true); addEventListener('keydown', wake, true); setTimeout(() => { this._warm = true; vis(); }, 3500);
+    try { this._io = new IntersectionObserver(es => { for (const e of es) this._inView = e.isIntersecting; vis(); }, { threshold: 0.01 }); this._io.observe(el); } catch (e) {}
+    document.addEventListener('visibilitychange', vis);
+    const cv = el.querySelector('canvas'); if (cv) { cv.addEventListener('webglcontextlost', e => { e.preventDefault(); this.status('3D paused: the graphics card dropped this board (too many open). Reload the page to bring it back.'); }); cv.addEventListener('webglcontextrestored', () => this.status('')); } }
+  async boot() {
+    const el = this.stageNode; if (!el || el.__poolBoot) return; el.__poolBoot = true;
+    const q = new URLSearchParams(location.search), world = (q.get('world') || this.props.world || 'luxor').toLowerCase();
+    try { this.status('3D: loading the table…'); const m = await this.loadMod(); this.status('3D: building the tavern…');
+      this.g = await m.createPoolHall({ container: el, onState: h => this.setState({ h }), world, startIn: q.get('walk') === '1' ? 'walk' : 'intro' }); window.__pool = this.g; this.watch(el); this.status(''); this.forceUpdate();
+      if (q.get('demo') === '1') setTimeout(() => this.g.demoStart(), 400);  }
+    catch (e) { el.__poolBoot = false; const msg = 'The 3D table could not load: ' + (e && e.message || String(e)); console.warn(msg, e); this.status(msg); this.setState({ err: msg }); }
+  }
+  componentWillUnmount() { this.g && this.g.destroy(); }
+  renderVals() {
+    const S = this.state, g = this.g, h = S.h, bar = S.hi.bar || 0;
+    const tv = h ? h.tv : { world: 'Luxor', place: 'Luxor · Tavern' }, mode = h ? h.mode : 'intro', std = (h && h.std) || {};
+    let sv = null; try { sv = JSON.parse(localStorage.getItem('8gates.save.v1') || 'null'); } catch (e) {}
+    const stdHud = { hp: 100, hpMax: 100, en: 100, gold: h ? h.gold : 0, hour: 21, day: sv && sv.stats ? sv.stats.worldDay || 1 : 1, items: sv ? Object.entries(sv.items || {}).filter(([, n]) => n > 0).map(([id, n]) => ({ id, n, label: id })) : [], place: tv.place, quest: { text: h ? h.quest : '' }, prompt: std.prompt || null, toast: std.toast || null, muted: false, weather: 'Clear', boat: false, inCave: false, weapons: [], dialog: std.dialog || null, vehicles: [], vehAmmo: [] };
+    const started = !!g && (mode === 'walk' || mode === 'play' || mode === 'stake' || mode === 'done');
+    return {
+      stageCb: this.stageCb, statusCb: this.statusCb, stageRef: this.stageRef, engine: g || null, h, err: S.err, stdHud, started, busy: mode !== 'walk', onHud: this.onHud, worldName: tv.world, barPx: started ? bar : 0,
+      stageTop: (started ? bar : 0) + 'px',
+      keysList: mode === 'walk' ? [['WASD', 'walk'], ['E', 'talk'], ['Space', 'hop'], ['M', 'map'], ['I', 'menu']] : [['DRAG', 'aim'], ['A / D', 'aim'], ['W / S', 'power'], ['Space', 'shoot'], ['V', 'view']], skipKeys: ['KeyT', 'KeyN', 'KeyV', 'KeyC', 'KeyH', 'KeyO'],
+    };
+  }
+}
+</script>
+</body>
+</html>

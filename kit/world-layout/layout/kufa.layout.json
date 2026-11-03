@@ -1,0 +1,2563 @@
+{
+ "meta": {
+  "world": "kufa",
+  "version": 4,
+  "date": "2026-10-22",
+  "from": "uploads/KUFA_BRIEF.md (Kufa section of 8GATES_DESIGN_BRIEF_ALL.md) + uploads/surface_kufa.html (add it)",
+  "notes": "DRAFT by Claude (s347) for Ben to move in the Map Workshop. KUFA = a hot DESERT CARAVAN TOWN at the edge of the dry. A square sandstone town: the TOWN SQUARE (K crest, tally board, standpipe, caravan gate) sits on the crossing of CARAVAN WAY (east-west, the caravans' road right through town) and CREST STREET (north-south). The five brief shops + post, bank and watch face the square. WEST: the covered BAZAAR souk (stalls, Ummi's dead-end Camel Pen, Dominoes Club) → the CARAVAN ROAD out through the dunes → the FAR LEG (the Siphon rig) → THE WAY STATION → THE BERTH. NORTH: Castle Path over the dry WADI (bridge) to Emir Tahir's hall + the Barracks. SOUTH: THE OASIS (the only lake: dock, skiff dive to Station 9), the date-palm Fox Farm and the Sand Dock. EAST: Stadium Path fork → the Kufa Stadium. Everything else is open DUNE SEA (off-path freedom, creatures live out there). Palms come from terrain.forests mix 'palm' (new s347). NPC keys are draft until surface_kufa.html comes in. EVERY BUILDING IS UNIQUE (Ben, s348): each building has an \"outside\" note = its own shape, roof and landmark detail for phase 2. No two share a design.",
+  "rooms": {
+   "kufaTownSquare": "zone",
+   "kufaBazaar": "zone",
+   "kufaCastlePath": "zone",
+   "kufaOasis": "zone",
+   "kufaStadiumPath": "zone",
+   "kufaStadium": "building (sport, quick fade into the stadium set)",
+   "kufaCaravanRoad1": "zone",
+   "kufaCaravanRoad2": "zone",
+   "kufaWayStation": "zone",
+   "kufaBerth": "zone",
+   "kufaConvoy": "gate (battle map)",
+   "kufaTavern": "building",
+   "kufaItemShop": "building",
+   "kufaArmory": "building",
+   "kufaSpyShop": "building",
+   "kufaCreamery": "building",
+   "kufaThroneRoom": "building (castle)",
+   "kufaBarracks": "building",
+   "kufaSpyLock": "interior (Station 9, under the oasis: skiff dive, quick fade)",
+   "kufaSpyHalls": "interior (Station 9)",
+   "kufaSpyCore": "interior (Station 9)",
+   "kufaSpyWard": "interior (Station 9)",
+   "kufaSpyWing": "interior (Station 9)"
+  }
+ },
+ "map": {
+  "half": 440,
+  "spawn": [
+   0,
+   20
+  ],
+  "spawnFace": "N"
+ },
+ "palette": {
+  "path": "#c8a36a",
+  "wall": "#d8b88a",
+  "roof": "#a8553a",
+  "trim": "#b8893a"
+ },
+ "zones": [
+  {
+   "key": "kufaTown",
+   "label": "Kufa",
+   "r": [
+    -112,
+    128,
+    -112,
+    112
+   ],
+   "music": "town",
+   "depth": 224,
+   "new": true
+  },
+  {
+   "key": "kufaTownSquare",
+   "label": "Kufa Town Square",
+   "r": [
+    -44,
+    44,
+    -44,
+    44
+   ],
+   "music": "town",
+   "depth": 88
+  },
+  {
+   "key": "kufaBazaar",
+   "label": "Kufa Bazaar",
+   "r": [
+    -262,
+    -112,
+    -140,
+    60
+   ],
+   "music": "bazaar",
+   "depth": 150
+  },
+  {
+   "key": "kufaCaravanRoad1",
+   "label": "Caravan Road",
+   "r": [
+    -342,
+    -262,
+    -90,
+    70
+   ],
+   "music": "caravan",
+   "depth": 80
+  },
+  {
+   "key": "kufaCaravanRoad2",
+   "label": "Caravan Road, Far Leg",
+   "r": [
+    -438,
+    -342,
+    -140,
+    70
+   ],
+   "music": "farleg",
+   "depth": 96
+  },
+  {
+   "key": "kufaWayStation",
+   "label": "The Way Station",
+   "r": [
+    -438,
+    -330,
+    -230,
+    -140
+   ],
+   "music": "waystation",
+   "depth": 90
+  },
+  {
+   "key": "kufaBerth",
+   "label": "The Berth",
+   "r": [
+    -438,
+    -300,
+    -438,
+    -230
+   ],
+   "music": "berth",
+   "depth": 138
+  },
+  {
+   "key": "kufaCastlePath",
+   "label": "Castle Path",
+   "r": [
+    -60,
+    80,
+    -262,
+    -112
+   ],
+   "music": "castlepath",
+   "depth": 140
+  },
+  {
+   "key": "kufaCastleGrounds",
+   "label": "Emir's Hall",
+   "r": [
+    -120,
+    120,
+    -340,
+    -262
+   ],
+   "music": "castle",
+   "depth": 78,
+   "new": true
+  },
+  {
+   "key": "kufaOasis",
+   "label": "Oasis",
+   "r": [
+    -110,
+    120,
+    124,
+    330
+   ],
+   "music": "oasis",
+   "depth": 206
+  },
+  {
+   "key": "kufaStadiumPath",
+   "label": "Stadium Path",
+   "r": [
+    128,
+    300,
+    -110,
+    70
+   ],
+   "music": "stadiumpath",
+   "depth": 142
+  },
+  {
+   "key": "kufaSandDock",
+   "label": "Sand Dock",
+   "r": [
+    -300,
+    -220,
+    196,
+    290
+   ],
+   "music": "dock",
+   "depth": 80,
+   "new": true
+  }
+ ],
+ "surfaces": [
+  {
+   "s": "stone",
+   "r": [
+    -34,
+    34,
+    -34,
+    34
+   ]
+  },
+  {
+   "s": "tile",
+   "r": [
+    -8,
+    8,
+    -8,
+    8
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -250,
+    -122,
+    -10,
+    10
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -430,
+    -352,
+    -214,
+    -150
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    -410,
+    -370,
+    -420,
+    -380
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -40,
+    40,
+    -268,
+    -256
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -104,
+    -44,
+    -316,
+    -276
+   ]
+  },
+  {
+   "s": "wood",
+   "r": [
+    -3,
+    3,
+    178,
+    192
+   ]
+  },
+  {
+   "s": "dirt",
+   "r": [
+    150,
+    210,
+    -14,
+    14
+   ]
+  },
+  {
+   "s": "grass",
+   "r": [
+    -176,
+    -124,
+    152,
+    186
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    -96,
+    -84,
+    -302,
+    -290
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    -62,
+    -54,
+    -300,
+    -292
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    -368,
+    -356,
+    -204,
+    -192
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    250,
+    262,
+    -76,
+    -64
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    52,
+    64,
+    86,
+    98
+   ]
+  }
+ ],
+ "water": [
+  {
+   "e": [
+    0,
+    250,
+    74,
+    56
+   ]
+  }
+ ],
+ "roads": [
+  {
+   "w": 10,
+   "p": [
+    [
+     -290,
+     236
+    ],
+    [
+     -290,
+     40
+    ],
+    [
+     -276,
+     0
+    ]
+   ],
+   "note": "WAGON ROAD: pack wagons + vehicles, Sand Dock → Caravan Road"
+  }
+ ],
+ "paths": [
+  {
+   "key": "kufaCaravanWay",
+   "label": "Caravan Way",
+   "w": 10,
+   "p": [
+    [
+     -112,
+     0
+    ],
+    [
+     128,
+     0
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "kufaCrestStreet",
+   "label": "Crest Street",
+   "w": 10,
+   "p": [
+    [
+     0,
+     -112
+    ],
+    [
+     0,
+     112
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "kufaCrestRing",
+   "label": "Crest Ring",
+   "w": 6,
+   "p": [
+    [
+     -40,
+     -40
+    ],
+    [
+     40,
+     -40
+    ],
+    [
+     40,
+     40
+    ],
+    [
+     -40,
+     40
+    ],
+    [
+     -40,
+     -40
+    ]
+   ],
+   "lining": "trees",
+   "every": 16,
+   "note": "palms line the square"
+  },
+  {
+   "key": "kufaSoukStreet",
+   "label": "Souk Street",
+   "w": 10,
+   "p": [
+    [
+     -112,
+     0
+    ],
+    [
+     -262,
+     0
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 18
+  },
+  {
+   "key": "kufaPenLane",
+   "label": "Camel Pen Lane",
+   "w": 6,
+   "p": [
+    [
+     -232,
+     0
+    ],
+    [
+     -232,
+     -96
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 16
+  },
+  {
+   "key": "kufaCaravanTrail",
+   "label": "Caravan Road",
+   "w": 10,
+   "p": [
+    [
+     -262,
+     0
+    ],
+    [
+     -300,
+     0
+    ],
+    [
+     -342,
+     -30
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20,
+   "note": "MILESTONE + ambush pockets on the shoulders"
+  },
+  {
+   "key": "kufaFarLegTrail",
+   "label": "Caravan Road, Far Leg",
+   "w": 10,
+   "p": [
+    [
+     -342,
+     -30
+    ],
+    [
+     -380,
+     -60
+    ],
+    [
+     -392,
+     -110
+    ],
+    [
+     -392,
+     -150
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20,
+   "note": "the CHOKE point at (-380,-60)"
+  },
+  {
+   "key": "kufaBerthTrail",
+   "label": "Berth Road",
+   "w": 8,
+   "p": [
+    [
+     -392,
+     -214
+    ],
+    [
+     -392,
+     -300
+    ],
+    [
+     -390,
+     -376
+    ]
+   ],
+   "lining": "lamps",
+   "every": 18
+  },
+  {
+   "key": "kufaCastleTrail",
+   "label": "Castle Path",
+   "w": 8,
+   "p": [
+    [
+     0,
+     -112
+    ],
+    [
+     0,
+     -150
+    ],
+    [
+     14,
+     -170
+    ],
+    [
+     0,
+     -190
+    ],
+    [
+     0,
+     -270
+    ]
+   ],
+   "lining": "lamps",
+   "every": 18
+  },
+  {
+   "key": "kufaBarracksWalk",
+   "label": "Barracks walk",
+   "w": 6,
+   "p": [
+    [
+     0,
+     -222
+    ],
+    [
+     30,
+     -222
+    ]
+   ],
+   "lining": "lamps",
+   "every": 16
+  },
+  {
+   "key": "kufaRoyalWalk",
+   "label": "Royal Walk",
+   "w": 6,
+   "p": [
+    [
+     0,
+     -246
+    ],
+    [
+     -74,
+     -246
+    ],
+    [
+     -74,
+     -276
+    ]
+   ],
+   "lining": "lamps",
+   "every": 16
+  },
+  {
+   "key": "kufaOasisWalk",
+   "label": "Oasis Walk",
+   "w": 8,
+   "p": [
+    [
+     0,
+     112
+    ],
+    [
+     0,
+     178
+    ]
+   ],
+   "lining": "trees",
+   "every": 12
+  },
+  {
+   "key": "kufaShoreWalk",
+   "label": "Shore Walk",
+   "w": 6,
+   "p": [
+    [
+     -90,
+     150
+    ],
+    [
+     90,
+     150
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 16
+  },
+  {
+   "key": "kufaGroveLane",
+   "label": "Date Grove Lane",
+   "w": 6,
+   "p": [
+    [
+     -90,
+     150
+    ],
+    [
+     -150,
+     150
+    ],
+    [
+     -150,
+     142
+    ]
+   ],
+   "lining": "trees",
+   "every": 12
+  },
+  {
+   "key": "kufaDockWalk",
+   "label": "Dock Walk",
+   "w": 6,
+   "p": [
+    [
+     -150,
+     150
+    ],
+    [
+     -260,
+     150
+    ],
+    [
+     -260,
+     236
+    ]
+   ],
+   "lining": "lamps",
+   "every": 18
+  },
+  {
+   "key": "kufaConvoyTrail",
+   "label": "Convoy Trail",
+   "w": 6,
+   "p": [
+    [
+     90,
+     150
+    ],
+    [
+     150,
+     190
+    ],
+    [
+     220,
+     296
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "kufaStadiumRoad",
+   "label": "Stadium Path",
+   "w": 8,
+   "p": [
+    [
+     128,
+     0
+    ],
+    [
+     200,
+     0
+    ],
+    [
+     226,
+     -40
+    ],
+    [
+     226,
+     -110
+    ]
+   ],
+   "lining": "lamps",
+   "every": 16
+  },
+  {
+   "key": "kufaDrainRun",
+   "label": "Drain Run",
+   "w": 6,
+   "p": [
+    [
+     200,
+     0
+    ],
+    [
+     330,
+     0
+    ],
+    [
+     352,
+     -60
+    ],
+    [
+     352,
+     -160
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "kufaHollowTrail",
+   "label": "Scorpion Trail",
+   "w": 6,
+   "p": [
+    [
+     352,
+     -160
+    ],
+    [
+     396,
+     -260
+    ],
+    [
+     400,
+     -362
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20,
+   "note": "DRAFT trail to the cave"
+  },
+  {
+   "key": "kufaPadWalk",
+   "label": "Helipad walk",
+   "w": 6,
+   "p": [
+    [
+     226,
+     -70
+    ],
+    [
+     250,
+     -70
+    ]
+   ],
+   "lining": "lamps",
+   "every": 12
+  },
+  {
+   "key": "kufaMedevacWalk",
+   "label": "Medevac walk",
+   "w": 6,
+   "p": [
+    [
+     42,
+     92
+    ],
+    [
+     52,
+     92
+    ]
+   ],
+   "lining": "lamps",
+   "every": 10
+  }
+ ],
+ "buildings": [
+  {
+   "key": "kufaTavern",
+   "label": "Tavern",
+   "role": "tavern",
+   "f": [
+    -36,
+    -8,
+    -72,
+    -48
+   ],
+   "door": [
+    -22,
+    -48
+   ],
+   "face": "S",
+   "h": 9,
+   "color": "#c98a4a",
+   "interior": true,
+   "note": "Warm hall, every caravan rumour arrives first. UNIQUE TAVERN GAME: BACKGAMMON (plan) + the 2D FOOSBALL, jukebox, darts, BAR (harira, mint tea, pastry). Nasrin, Sura, Jibril.",
+   "games": [
+    "3D-GAMES/g/backgammon-club/backgammon-club.dc.html"
+   ],
+   "sign": {
+    "roof": "TAVERN",
+    "door": "TAVERN · BACKGAMMON"
+   },
+   "outside": "Two-storey sandstone caravanserai front, deep arched porch on 4 columns, striped terracotta awning, roof terrace with lanterns, a brass backgammon board hung over the door."
+  },
+  {
+   "key": "kufaArmory",
+   "label": "Armory",
+   "role": "armory",
+   "f": [
+    8,
+    36,
+    -72,
+    -48
+   ],
+   "door": [
+    22,
+    -48
+   ],
+   "face": "S",
+   "h": 9,
+   "color": "#a86a3a",
+   "interior": true,
+   "note": "Hot forge hall, brass over steel. Zohra: halberd, brigandine, maul, spears, claws",
+   "outside": "Squat thick-walled forge: brass-studded double doors, a tall smoking chimney with a glowing vent, crossed halberds over the door.",
+   "sign": {
+    "roof": "ARMORY",
+    "door": "ARMORY"
+   }
+  },
+  {
+   "key": "kufaItemShop",
+   "label": "Item Shop",
+   "role": "itemshop",
+   "f": [
+    -72,
+    -48,
+    -36,
+    -8
+   ],
+   "door": [
+    -48,
+    -22
+   ],
+   "face": "E",
+   "h": 8,
+   "color": "#d8b88a",
+   "interior": true,
+   "note": "Hadi: Heal Beam Batteries, Energy Cells, dates, canteen",
+   "sign": {
+    "roof": "ITEMS",
+    "door": "ITEM SHOP · HADI"
+   },
+   "outside": "Narrow shopfront under a cream canvas awning, shelves of clay jars + canteens in the window, a hanging brass scale sign."
+  },
+  {
+   "key": "kufaSpyShop",
+   "label": "Rafiq's Spy Shop",
+   "role": "specialty",
+   "f": [
+    48,
+    72,
+    -36,
+    -8
+   ],
+   "door": [
+    48,
+    -22
+   ],
+   "face": "W",
+   "h": 8,
+   "color": "#6b5a4a",
+   "interior": true,
+   "note": "UNIQUE SPECIALTY SHOP: dim front room, FALSE BOOKCASE to the BACK ROOM. Rafiq: Signal Cell, Sealed Package",
+   "games": [
+    "3D-GAMES/g/spyshop-of-kufa/Main.dc.html"
+   ],
+   "sign": {
+    "roof": "SPY",
+    "door": "RAFIQ'S SPY SHOP"
+   },
+   "outside": "The plainest front on the square: dark shuttered windows, one small brass eye over the door, a fake \"BOOKS\" sign under the roof sign."
+  },
+  {
+   "key": "kufaCreamery",
+   "label": "The Creamery",
+   "role": "restaurant",
+   "f": [
+    -36,
+    -8,
+    48,
+    72
+   ],
+   "door": [
+    -22,
+    48
+   ],
+   "face": "N",
+   "h": 8,
+   "color": "#e8efe6",
+   "interior": true,
+   "note": "UNIQUE RESTAURANT: the only cold room on Kufa (mint + cream). ICE CREAM MACHINE, 3 nozzles: SOFT SERVE. Jamil. HIRING sign.",
+   "games": [
+    "3D-GAMES/g/kufa-creamery/Main.dc.html"
+   ],
+   "sign": {
+    "roof": "CREAMERY",
+    "door": "THE CREAMERY · NOW HIRING"
+   },
+   "outside": "The only cool-coloured building: mint + white plaster, a rounded dome roof like a scoop of ice cream, frosty glass front, a big cone on the roof."
+  },
+  {
+   "key": "kufaBank",
+   "label": "The Water Bank",
+   "role": "bank",
+   "f": [
+    8,
+    36,
+    48,
+    72
+   ],
+   "door": [
+    22,
+    48
+   ],
+   "face": "N",
+   "h": 10,
+   "color": "#cdb48a",
+   "interior": true,
+   "new": true,
+   "note": "Water is currency: the bank keeps the jar tallies",
+   "outside": "Columned sandstone front with a stepped roof, a giant brass water-drop over the door, carved jar reliefs along the frieze.",
+   "sign": {
+    "roof": "THE WATER BANK",
+    "door": "THE WATER BANK"
+   }
+  },
+  {
+   "key": "kufaPost",
+   "label": "Galactic Post Office (Meru Embassy)",
+   "role": "post",
+   "f": [
+    -72,
+    -48,
+    8,
+    36
+   ],
+   "door": [
+    -48,
+    22
+   ],
+   "face": "E",
+   "h": 10,
+   "color": "#e0cfae",
+   "interior": true,
+   "new": true,
+   "sign": {
+    "roof": "POST OFFICE",
+    "door": "GALACTIC POST · MERU EMBASSY"
+   },
+   "outside": "Pale stone with a small clock tower + Meru flag, a red mail slot box by the door, the Galactic Post antenna dish on the roof."
+  },
+  {
+   "key": "kufaWatchHouse",
+   "label": "Watch House",
+   "role": "police",
+   "f": [
+    48,
+    72,
+    8,
+    36
+   ],
+   "door": [
+    48,
+    22
+   ],
+   "face": "W",
+   "h": 9,
+   "color": "#9a7a5a",
+   "interior": true,
+   "new": true,
+   "note": "Police: the Kufa Watch",
+   "outside": "Low fort: crenellated roofline, blue lamp over the door, a lookout turret on one corner, barred windows.",
+   "sign": {
+    "roof": "WATCH HOUSE",
+    "door": "WATCH HOUSE"
+   }
+  },
+  {
+   "key": "kufaFireStation",
+   "label": "Sand & Fire Brigade",
+   "role": "fire",
+   "f": [
+    -36,
+    -8,
+    -104,
+    -80
+   ],
+   "door": [
+    -8,
+    -92
+   ],
+   "face": "E",
+   "h": 9,
+   "color": "#c0553a",
+   "interior": true,
+   "new": true,
+   "note": "Fire station + sandstorm rescue",
+   "outside": "Red-plastered hall with a wide roll-up bay door, a sand-rescue buggy parked out front, a bell tower with a siren.",
+   "sign": {
+    "roof": "SAND & FIRE BRIGADE",
+    "door": "SAND & FIRE BRIGADE"
+   }
+  },
+  {
+   "key": "kufaCrier",
+   "label": "The Kufa Crier",
+   "role": "news",
+   "f": [
+    8,
+    36,
+    -104,
+    -80
+   ],
+   "door": [
+    8,
+    -92
+   ],
+   "face": "W",
+   "h": 10,
+   "color": "#bfa27a",
+   "interior": true,
+   "new": true,
+   "note": "News station",
+   "sign": {
+    "roof": "KUFA CRIER",
+    "door": "THE KUFA CRIER · NEWS"
+   },
+   "outside": "Tall thin tower with a wraparound balcony, a big radio mast + dish on top, a news ticker board under the roof sign."
+  },
+  {
+   "key": "kufaHospital",
+   "label": "Oasis Infirmary",
+   "role": "hospital",
+   "f": [
+    8,
+    42,
+    78,
+    106
+   ],
+   "door": [
+    8,
+    92
+   ],
+   "face": "W",
+   "h": 12,
+   "color": "#eee4d0",
+   "interior": true,
+   "new": true,
+   "note": "Hospital",
+   "outside": "White plaster with blue trim, an inner courtyard with a palm, a red cross on the roof, the medevac helipad beside it.",
+   "sign": {
+    "roof": "OASIS INFIRMARY",
+    "door": "OASIS INFIRMARY"
+   }
+  },
+  {
+   "key": "kufaHome",
+   "label": "Courtyard House",
+   "role": "home",
+   "f": [
+    -34,
+    -8,
+    80,
+    104
+   ],
+   "door": [
+    -8,
+    92
+   ],
+   "face": "E",
+   "h": 8,
+   "color": "#d8b88a",
+   "interior": true,
+   "new": true,
+   "note": "the player rents / buys it (roof terrace)",
+   "outside": "Courtyard house: blank outer walls, carved wooden door, a rooftop terrace with a striped shade sail + plants.",
+   "sign": {
+    "roof": "COURTYARD HOUSE",
+    "door": "COURTYARD HOUSE"
+   }
+  },
+  {
+   "key": "kufaHouse1",
+   "label": "House",
+   "role": "housing",
+   "f": [
+    78,
+    96,
+    -32,
+    -10
+   ],
+   "door": [
+    87,
+    -10
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#d8b88a",
+   "interior": true,
+   "new": true,
+   "outside": "Small cube house, flat roof with a water tank, blue door.",
+   "sign": {
+    "roof": "HOUSE",
+    "door": "HOUSE"
+   }
+  },
+  {
+   "key": "kufaHouse2",
+   "label": "House",
+   "role": "housing",
+   "f": [
+    102,
+    120,
+    -32,
+    -10
+   ],
+   "door": [
+    111,
+    -10
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#cfa878",
+   "interior": true,
+   "new": true,
+   "outside": "Cube house with a wind-catcher tower on the roof, green door.",
+   "sign": {
+    "roof": "HOUSE",
+    "door": "HOUSE"
+   }
+  },
+  {
+   "key": "kufaHouse3",
+   "label": "House",
+   "role": "housing",
+   "f": [
+    78,
+    96,
+    10,
+    32
+   ],
+   "door": [
+    87,
+    10
+   ],
+   "face": "N",
+   "h": 8,
+   "color": "#cfa878",
+   "interior": true,
+   "new": true,
+   "outside": "Two-storey house with a wooden mashrabiya balcony, red door.",
+   "sign": {
+    "roof": "HOUSE",
+    "door": "HOUSE"
+   }
+  },
+  {
+   "key": "kufaHouse4",
+   "label": "House",
+   "role": "housing",
+   "f": [
+    102,
+    120,
+    10,
+    32
+   ],
+   "door": [
+    111,
+    10
+   ],
+   "face": "N",
+   "h": 8,
+   "color": "#d8b88a",
+   "interior": true,
+   "new": true,
+   "outside": "Cube house with a roof dome + laundry line, yellow door.",
+   "sign": {
+    "roof": "HOUSE",
+    "door": "HOUSE"
+   }
+  },
+  {
+   "key": "kufaWeapons",
+   "label": "Brass & Blade",
+   "role": "weapons",
+   "f": [
+    -152,
+    -126,
+    -40,
+    -12
+   ],
+   "door": [
+    -139,
+    -12
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#8a6a3a",
+   "interior": true,
+   "new": true,
+   "note": "SPECIAL WEAPONS: the 8 extra ranged + melee",
+   "sign": {
+    "roof": "BRASS & BLADE",
+    "door": "SPECIAL WEAPONS"
+   },
+   "outside": "Dark bronze front, weapon-rack shutters that fold open by day, a huge crossed sword + laser sign."
+  },
+  {
+   "key": "kufaRelicShop",
+   "label": "The Brass Astrolabe",
+   "role": "relicShop",
+   "f": [
+    -186,
+    -160,
+    -40,
+    -12
+   ],
+   "door": [
+    -173,
+    -12
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#b8893a",
+   "interior": true,
+   "new": true,
+   "note": "The famous Kufa relic to BUY (DRAFT: Ben picks)",
+   "outside": "Brass-domed shop, a giant spinning ASTROLABE on the roof (slow turn), star patterns cut in the shutters.",
+   "sign": {
+    "roof": "THE BRASS ASTROLABE",
+    "door": "THE BRASS ASTROLABE"
+   }
+  },
+  {
+   "key": "kufaDominoes",
+   "label": "Dominoes Club",
+   "role": "shop",
+   "f": [
+    -218,
+    -194,
+    -40,
+    -12
+   ],
+   "door": [
+    -206,
+    -12
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#a8553a",
+   "interior": true,
+   "new": true,
+   "games": [
+    "3D-GAMES/g/dominoes-club/dominoes-club.dc.html"
+   ],
+   "sign": {
+    "roof": "DOMINOES",
+    "door": "DOMINOES CLUB"
+   },
+   "outside": "Open-front club house: arched arcade with tables outside under awnings, a giant domino tile as the roof sign."
+  },
+  {
+   "key": "kufaWagonHire",
+   "label": "Dune Rides",
+   "role": "carRental",
+   "f": [
+    -152,
+    -126,
+    12,
+    40
+   ],
+   "door": [
+    -139,
+    12
+   ],
+   "face": "N",
+   "h": 7,
+   "color": "#c98a4a",
+   "interior": true,
+   "new": true,
+   "note": "Car rental, Kufa style: dune buggies, pack wagons, a camel cart (DRAFT)",
+   "outside": "Open garage shed with a corrugated roof, buggies + a camel cart lined up out front, tyre stack sign.",
+   "sign": {
+    "roof": "DUNE RIDES",
+    "door": "DUNE RIDES"
+   }
+  },
+  {
+   "key": "kufaOstrichStable",
+   "label": "Ostrich Stable",
+   "role": "other",
+   "f": [
+    -196,
+    -160,
+    12,
+    40
+   ],
+   "door": [
+    -178,
+    12
+   ],
+   "face": "N",
+   "h": 7,
+   "color": "#b08a5a",
+   "interior": true,
+   "new": true,
+   "note": "Get the OSTRICH here (spot kufaOstrich)",
+   "outside": "Reed + timber stable with a tall feathered weather vane, ostriches peeking over the half doors.",
+   "sign": {
+    "roof": "OSTRICH STABLE",
+    "door": "OSTRICH STABLE"
+   }
+  },
+  {
+   "key": "kufaCamelPen",
+   "label": "Ummi's Camel Pen",
+   "role": "other",
+   "f": [
+    -254,
+    -210,
+    -136,
+    -96
+   ],
+   "door": [
+    -232,
+    -96
+   ],
+   "face": "S",
+   "h": 6,
+   "color": "#b98a52",
+   "interior": true,
+   "note": "The bazaar DEAD-END CAMEL PEN with 3 loaded wagons. Ummi Reyhan.",
+   "games": [
+    "3D-GAMES/Kufa Camel Pen.dc.html"
+   ],
+   "sign": {
+    "roof": "CAMEL PEN",
+    "door": "UMMI'S CAMEL PEN"
+   },
+   "outside": "Mud-brick yard wall with a wide wooden gate, a canvas shade tent inside, 3 loaded wagons, a camel head sign."
+  },
+  {
+   "key": "kufaThroneRoom",
+   "label": "Emir's Hall",
+   "role": "castle",
+   "f": [
+    -36,
+    36,
+    -322,
+    -270
+   ],
+   "door": [
+    0,
+    -270
+   ],
+   "face": "S",
+   "h": 20,
+   "color": "#d2b080",
+   "interior": true,
+   "note": "THRONE ROOM inside: stone nave, DAIS + THRONE, side aisles, TREASURY, crest medallion. Emir Tahir. Quick fade.",
+   "sign": {
+    "roof": "EMIR'S HALL",
+    "door": "THRONE ROOM · EMIR TAHIR"
+   },
+   "outside": "The grandest building: a tall sandstone hall with a gold onion dome, 2 minarets, a red + brass K crest over the arched gate, banners."
+  },
+  {
+   "key": "kufaBarracks",
+   "label": "Barracks",
+   "role": "barracks",
+   "f": [
+    30,
+    74,
+    -236,
+    -208
+   ],
+   "door": [
+    30,
+    -222
+   ],
+   "face": "W",
+   "h": 10,
+   "color": "#b89a6a",
+   "interior": true,
+   "note": "Rotunda desk, dorm aisle, training stand, armory stand. Captain Idris.",
+   "outside": "Long fortified block with arrow slits, a training yard behind a low wall, the Emir's banner on a pole.",
+   "sign": {
+    "roof": "BARRACKS",
+    "door": "BARRACKS"
+   }
+  },
+  {
+   "key": "kufaFoxFarm",
+   "label": "Fox Farm",
+   "role": "farm",
+   "f": [
+    -176,
+    -124,
+    152,
+    186
+   ],
+   "door": [
+    -150,
+    152
+   ],
+   "face": "N",
+   "h": 8,
+   "color": "#a8733f",
+   "interior": true,
+   "new": true,
+   "note": "Date-palm farm by the oasis",
+   "games": [
+    "3D-GAMES/g/fox-farm/Main.dc.html"
+   ],
+   "sign": {
+    "roof": "FOX FARM",
+    "door": "FOX FARM · NOW HIRING"
+   },
+   "outside": "Mud-brick farmhouse among the date palms, a water wheel + channel, drying racks of dates."
+  },
+  {
+   "key": "kufaStadium",
+   "label": "Kufa Stadium",
+   "role": "sport",
+   "f": [
+    160,
+    296,
+    -236,
+    -110
+   ],
+   "door": [
+    226,
+    -110
+   ],
+   "face": "S",
+   "h": 16,
+   "color": "#d8b88a",
+   "interior": true,
+   "note": "UNIQUE SPORT: THE CISTERN CUP (soccer). Running track + pitch, CISTERN HEAD ring at centre, 4 drain mouths. Master Faruq. Quick fade into the stadium set.",
+   "games": [
+    "3D-GAMES/Kufa Soccer.dc.html"
+   ],
+   "sign": {
+    "roof": "KUFA STADIUM",
+    "door": "THE CISTERN CUP"
+   },
+   "outside": "Round sandstone bowl with arched outer walls, 4 tall floodlight masts, the Cistern Cup banner over the south gate."
+  }
+ ],
+ "spots": [
+  {
+   "key": "kufaHadi",
+   "at": [
+    -56,
+    -30
+   ],
+   "kind": "npc",
+   "draft": true,
+   "note": "Hadi (in the Item Shop by day)"
+  },
+  {
+   "key": "kufaTallyBoard",
+   "at": [
+    -20,
+    -26
+   ],
+   "kind": "hiring",
+   "note": "TALLY BOARD + water jars: WELL TALLY KEEPER job (NOT BUILT YET)"
+  },
+  {
+   "key": "kufaHiring",
+   "at": [
+    22,
+    24
+   ],
+   "kind": "hiring",
+   "note": "NOW HIRING board"
+  },
+  {
+   "key": "kufaStroller1",
+   "at": [
+    -26,
+    10
+   ],
+   "kind": "crowd",
+   "note": "square crowd"
+  },
+  {
+   "key": "kufaStroller2",
+   "at": [
+    26,
+    -10
+   ],
+   "kind": "crowd",
+   "note": "square crowd"
+  },
+  {
+   "key": "kufaPlatedCoat",
+   "at": [
+    12,
+    -30
+   ],
+   "kind": "npc",
+   "draft": true,
+   "note": "The Plated Coat + 4 Coat Guards appear LATE (story)"
+  },
+  {
+   "key": "kufaRukayaLate",
+   "at": [
+    -12,
+    30
+   ],
+   "kind": "npc",
+   "draft": true,
+   "note": "Rukaya, late in the story"
+  },
+  {
+   "key": "kufaGhazi",
+   "at": [
+    -200,
+    12
+   ],
+   "kind": "hiring",
+   "note": "Ghazi, caravan master: CARAVAN HIRING BOARD (escort jobs) + CARAVAN PACKER job (NOT BUILT YET)"
+  },
+  {
+   "key": "kufaQasim",
+   "at": [
+    -166,
+    10
+   ],
+   "kind": "npc",
+   "draft": true,
+   "note": "Qasim al-Warid, water broker (his count does not add up)"
+  },
+  {
+   "key": "kufaUmmi",
+   "at": [
+    -226,
+    -90
+   ],
+   "kind": "npc",
+   "draft": true,
+   "note": "Ummi Reyhan, camel pen"
+  },
+  {
+   "key": "kufaOstrich",
+   "at": [
+    -178,
+    22
+   ],
+   "kind": "vehicle",
+   "note": "OSTRICH (Vehicle Workshop ?v=ostrich): ride it on the roads + open dunes"
+  },
+  {
+   "key": "kufaKroo",
+   "at": [
+    196,
+    12
+   ],
+   "kind": "vehicle",
+   "note": "KANGAROO BOOTS (Vehicle Workshop ?v=kroo) from a booth on the Stadium Path"
+  },
+  {
+   "key": "kufaMilestone",
+   "at": [
+    -300,
+    8
+   ],
+   "kind": "npc",
+   "draft": true,
+   "note": "MILESTONE on the Caravan Road (prop + lore)"
+  },
+  {
+   "key": "kufaDahab",
+   "at": [
+    -372,
+    -72
+   ],
+   "kind": "npc",
+   "draft": true,
+   "note": "Dahab hides at the choke"
+  },
+  {
+   "key": "kufaRukaya",
+   "at": [
+    -380,
+    -180
+   ],
+   "kind": "npc",
+   "draft": true,
+   "note": "Rukaya, Way Station keeper"
+  },
+  {
+   "key": "kufaBashir",
+   "at": [
+    -408,
+    -170
+   ],
+   "kind": "npc",
+   "draft": true,
+   "note": "Bashir + his pipe crew"
+  },
+  {
+   "key": "kufaNuri",
+   "at": [
+    -380,
+    -300
+   ],
+   "kind": "npc",
+   "draft": true,
+   "note": "Nuri, weighbridge clerk at the Berth"
+  },
+  {
+   "key": "kufaGuard1",
+   "at": [
+    -8,
+    -262
+   ],
+   "kind": "npc",
+   "draft": true,
+   "note": "castle gate guard"
+  },
+  {
+   "key": "kufaGuard2",
+   "at": [
+    8,
+    -262
+   ],
+   "kind": "npc",
+   "draft": true,
+   "note": "castle gate guard"
+  },
+  {
+   "key": "kufaBahri",
+   "at": [
+    -10,
+    172
+   ],
+   "kind": "npc",
+   "draft": true,
+   "note": "Bahri keeps the oasis"
+  },
+  {
+   "key": "kufaSkiff",
+   "at": [
+    6,
+    182
+   ],
+   "kind": "game",
+   "note": "THE SKIFF at the dock: row to the lake centre, DIVE → Station 9 THE LOCK [kufaSpyLock] (then Halls, Operations, Ward, Old Wing). Up the shaft = back here."
+  },
+  {
+   "key": "kufaFaruq",
+   "at": [
+    214,
+    -100
+   ],
+   "kind": "npc",
+   "draft": true,
+   "note": "Master Faruq at the stadium gate (the Watch)"
+  },
+  {
+   "key": "kufaTreasureDig",
+   "at": [
+    330,
+    140
+   ],
+   "kind": "game",
+   "note": "TREASURE DIG in the dunes (NOT BUILT YET)"
+  },
+  {
+   "key": "kufaRelicFind",
+   "at": [
+    -150,
+    330
+   ],
+   "kind": "relicFind",
+   "note": "DRAFT: the legendary + historical relic to find: half buried by an old caravan obelisk in the south dunes (Ben picks)"
+  },
+  {
+   "key": "kufaRoyalHelipad",
+   "at": [
+    -90,
+    -296
+   ],
+   "kind": "helipad",
+   "note": "ROYAL HELIPAD at the Emir's Hall (like Meru 2 worlds/meru2-royalpad.js): yellow H on a brass-edged pad; the royal 8 helicopter lands here; the Emir's guards fly you to the other pads (Way Station, Stadium, Infirmary)."
+  },
+  {
+   "key": "kufaRoyalTelepad",
+   "at": [
+    -58,
+    -296
+   ],
+   "kind": "telepad",
+   "note": "ROYAL TELEPORT PAD at the Emir's Hall (like Meru 2): glowing ring, E / TALK → beam out → the Sand Dock; arriving by telepad beams you in here. Gate guards watch it."
+  },
+  {
+   "key": "kufaWayStationHelipad",
+   "at": [
+    -362,
+    -198
+   ],
+   "kind": "helipad",
+   "note": "WAY STATION HELIPAD inside the wall: fly back to the Emir's Hall, or out from here before the Berth."
+  },
+  {
+   "key": "kufaStadiumHelipad",
+   "at": [
+    256,
+    -70
+   ],
+   "kind": "helipad",
+   "note": "STADIUM HELIPAD beside the Stadium Path (cup-day arrivals); fly to the Emir's Hall / Way Station."
+  },
+  {
+   "key": "kufaInfirmaryHelipad",
+   "at": [
+    58,
+    92
+   ],
+   "kind": "helipad",
+   "note": "OASIS INFIRMARY HELIPAD: the medevac pad (red cross on the H); sandstorm rescues from the Fire Brigade land here."
+  }
+ ],
+ "dock": {
+  "key": "kufaSpacedock",
+  "pad": [
+   -260,
+   256
+  ],
+  "r": 14,
+  "face": "N"
+ },
+ "gates": [
+  {
+   "key": "kufaConvoy",
+   "at": [
+    220,
+    304
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "THE CONVOY [kufaConvoy]: defend the TRANSPORT PAD 30 s while the transport crosses. Road + Siege Spitters, Road Scarabs, Convoy Wyrms."
+  },
+  {
+   "key": "kufaSiphonRig",
+   "at": [
+    -418,
+    -74
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "THE SIPHON on the Far Leg pipe head: The Breaker + Warden of the Siphon, Grey Frames (HACKED Machine Fleet: free them), Husks, Dune Scarabs"
+  },
+  {
+   "key": "kufaBerthGate",
+   "at": [
+    -390,
+    -390
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "THE BERTH lander pad: The Plated Coat (KASPER), Plated Frames, The Factor's Frame (HACKED robots: glitches, voices not their own)"
+  },
+  {
+   "key": "kufaCisternWyrm",
+   "at": [
+    352,
+    -170
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "Drain mouth behind the stadium: THE CISTERN WYRM (boss), Drain Husks, Drain Spitters, Sump Scarabs"
+  },
+  {
+   "key": "kufaScorpionHollow",
+   "at": [
+    400,
+    -372
+   ],
+   "r": 8,
+   "kind": "cave",
+   "note": "DRAFT: THE SCORPION HOLLOW, a cave in the north-east dune rocks; boss for Ben to pick"
+  }
+ ],
+ "wild": [
+  {
+   "key": "kufaConvoyWild",
+   "r": [
+    240,
+    436,
+    220,
+    436
+   ],
+   "for": "kufaConvoy",
+   "creatures": [
+    "creatures"
+   ]
+  },
+  {
+   "key": "kufaFarLegWild",
+   "r": [
+    -438,
+    -404,
+    -140,
+    40
+   ],
+   "for": "kufaSiphonRig",
+   "creatures": [
+    "monsters",
+    "robots"
+   ],
+   "note": "Husks + Grey Frames in the ambush pockets"
+  },
+  {
+   "key": "kufaRoadWild",
+   "r": [
+    -340,
+    -266,
+    24,
+    90
+   ],
+   "for": "kufaSiphonRig",
+   "creatures": [
+    "monsters",
+    "creatures"
+   ],
+   "note": "Caravan Road: 6 Husks, 4 Grit Spitters, 2 Dune Scarabs, 2 Dust Devils"
+  },
+  {
+   "key": "kufaBerthWild",
+   "r": [
+    -438,
+    -402,
+    -436,
+    -240
+   ],
+   "for": "kufaBerthGate",
+   "creatures": [
+    "robots"
+   ]
+  },
+  {
+   "key": "kufaDrainWild",
+   "r": [
+    370,
+    436,
+    -180,
+    -40
+   ],
+   "for": "kufaCisternWyrm",
+   "creatures": [
+    "creatures",
+    "monsters"
+   ]
+  },
+  {
+   "key": "kufaStadiumWild",
+   "r": [
+    140,
+    300,
+    24,
+    110
+   ],
+   "for": "kufaStadiumPath",
+   "creatures": [
+    "creatures",
+    "monsters"
+   ],
+   "note": "4 Apron Scarabs, 2 Dry Devils, 2 Standpipe Husks, 2 Overflow Spitters"
+  },
+  {
+   "key": "kufaHollowWild",
+   "r": [
+    300,
+    384,
+    -436,
+    -280
+   ],
+   "for": "kufaScorpionHollow",
+   "creatures": [
+    "monsters"
+   ]
+  }
+ ],
+ "props": [
+  {
+   "k": "statue",
+   "at": [
+    0,
+    0
+   ],
+   "note": "K CREST set in the square + the TRANSPORT PAD"
+  },
+  {
+   "k": "fountain",
+   "at": [
+    -22,
+    -14
+   ],
+   "note": "running STANDPIPE"
+  },
+  {
+   "k": "barrel",
+   "at": [
+    -26,
+    -20
+   ],
+   "note": "water jars"
+  },
+  {
+   "k": "barrel",
+   "at": [
+    -26,
+    -16
+   ],
+   "note": "water jars"
+  },
+  {
+   "k": "sign",
+   "at": [
+    -20,
+    -30
+   ],
+   "note": "TALLY BOARD"
+  },
+  {
+   "k": "sign",
+   "at": [
+    -46,
+    6
+   ],
+   "note": "CARAVAN GATE arch (west)"
+  },
+  {
+   "k": "bench",
+   "at": [
+    24,
+    12
+   ]
+  },
+  {
+   "k": "bench",
+   "at": [
+    -24,
+    12
+   ]
+  },
+  {
+   "k": "bench",
+   "at": [
+    24,
+    -12
+   ]
+  },
+  {
+   "k": "planter",
+   "at": [
+    28,
+    28
+   ],
+   "note": "palm planter"
+  },
+  {
+   "k": "planter",
+   "at": [
+    -28,
+    28
+   ],
+   "note": "palm planter"
+  },
+  {
+   "k": "crate",
+   "at": [
+    -244,
+    -104
+   ],
+   "note": "loaded wagon"
+  },
+  {
+   "k": "crate",
+   "at": [
+    -232,
+    -112
+   ],
+   "note": "loaded wagon"
+  },
+  {
+   "k": "crate",
+   "at": [
+    -220,
+    -104
+   ],
+   "note": "loaded wagon"
+  },
+  {
+   "k": "rock",
+   "at": [
+    -300,
+    -10
+   ],
+   "note": "MILESTONE"
+  },
+  {
+   "k": "fence",
+   "at": [
+    -400,
+    -214
+   ],
+   "note": "Way Station WALL + GATE"
+  },
+  {
+   "k": "fountain",
+   "at": [
+    -410,
+    -200
+   ],
+   "note": "the WELL + the cistern HEAD"
+  },
+  {
+   "k": "fence",
+   "at": [
+    -398,
+    -376
+   ],
+   "note": "GANTRY"
+  },
+  {
+   "k": "sign",
+   "at": [
+    -372,
+    -396
+   ],
+   "note": "red band + live cutter beams"
+  },
+  {
+   "k": "rock",
+   "at": [
+    -30,
+    -170
+   ],
+   "note": "wadi stone"
+  },
+  {
+   "k": "rock",
+   "at": [
+    32,
+    -166
+   ],
+   "note": "wadi stone"
+  },
+  {
+   "k": "lamp",
+   "at": [
+    -30,
+    200
+   ],
+   "note": "FIRE RING"
+  },
+  {
+   "k": "stall",
+   "at": [
+    30,
+    196
+   ],
+   "note": "shelter"
+  },
+  {
+   "k": "stall",
+   "at": [
+    180,
+    -16
+   ],
+   "note": "booth"
+  },
+  {
+   "k": "stall",
+   "at": [
+    180,
+    16
+   ],
+   "note": "booth"
+  },
+  {
+   "k": "sign",
+   "at": [
+    8,
+    -116
+   ],
+   "note": "CASTLE PATH signpost"
+  },
+  {
+   "k": "sign",
+   "at": [
+    8,
+    116
+   ],
+   "note": "OASIS signpost"
+  },
+  {
+   "k": "sign",
+   "at": [
+    132,
+    8
+   ],
+   "note": "STADIUM signpost"
+  },
+  {
+   "k": "sign",
+   "at": [
+    -116,
+    8
+   ],
+   "note": "BAZAAR signpost"
+  },
+  {
+   "k": "rock",
+   "at": [
+    -150,
+    320
+   ],
+   "note": "old caravan OBELISK (relic)"
+  },
+  {
+   "k": "stall",
+   "at": [
+    -156,
+    -8
+   ],
+   "note": "SOUK STALLS (canvas awnings)"
+  },
+  {
+   "k": "stall",
+   "at": [
+    -190,
+    -8
+   ]
+  },
+  {
+   "k": "stall",
+   "at": [
+    -224,
+    -8
+   ]
+  },
+  {
+   "k": "stall",
+   "at": [
+    -248,
+    -8
+   ]
+  },
+  {
+   "k": "stall",
+   "at": [
+    -120.5,
+    8
+   ]
+  },
+  {
+   "k": "stall",
+   "at": [
+    -200,
+    8
+   ]
+  },
+  {
+   "k": "stall",
+   "at": [
+    -220,
+    8
+   ]
+  },
+  {
+   "k": "stall",
+   "at": [
+    -244,
+    8
+   ]
+  }
+ ],
+ "look": {
+  "sky": [
+   "#c9773a",
+   "#f6dca4"
+  ],
+  "fog": "#f0d6a4",
+  "sun": "#fff0c8",
+  "light": "#fff6e2",
+  "grass": "#dcb878",
+  "ground": "#c49a5e",
+  "water": "#3aa7a0",
+  "lamps": "#ffb347",
+  "banners": [
+   "#b5432a",
+   "#d9a441"
+  ],
+  "trees": [
+   "#4f7a2e",
+   "#6b8f34",
+   "#8aa03a"
+  ],
+  "notes": "Amber desert haze: burnt orange sky to a pale gold horizon, blazing sun, long shadows. Sandstone walls, canvas awnings (terracotta + cream), brass trim over steel, the K crest in red + brass. Turquoise oasis water, dusty green palms. Hot and bright by day, warm brass lanterns at night."
+ },
+ "terrain": {
+  "notes": "KUFA IS A DESERT (Ben). The town, the bazaar and every road stay flat; the open DUNE SEA rolls between them (long dune hills, off-path freedom, creatures out there). The dry WADI crosses the Castle Path (bridge). Palms only where there is water or shade: town courtyards, the souk, the oasis groves, the date farm, the Way Station well.",
+  "hills": [
+   {
+    "key": "kufaNorthErg",
+    "c": [
+     -200,
+     -330
+    ],
+    "r": 110,
+    "h": 26
+   },
+   {
+    "key": "kufaNorthDune1",
+    "c": [
+     -150,
+     -210
+    ],
+    "r": 46,
+    "h": 10
+   },
+   {
+    "key": "kufaNorthDune2",
+    "c": [
+     -260,
+     -230
+    ],
+    "r": 40,
+    "h": 9
+   },
+   {
+    "key": "kufaEastErg",
+    "c": [
+     150,
+     -380
+    ],
+    "r": 80,
+    "h": 20
+   },
+   {
+    "key": "kufaNorthEastRocks",
+    "c": [
+     420,
+     -430
+    ],
+    "r": 60,
+    "h": 24,
+    "cliff": true
+   },
+   {
+    "key": "kufaRoadDune1",
+    "c": [
+     -310,
+     -120
+    ],
+    "r": 30,
+    "h": 8
+   },
+   {
+    "key": "kufaRoadDune2",
+    "c": [
+     -330,
+     140
+    ],
+    "r": 44,
+    "h": 11
+   },
+   {
+    "key": "kufaRoadDune3",
+    "c": [
+     -400,
+     130
+    ],
+    "r": 36,
+    "h": 9
+   },
+   {
+    "key": "kufaSouthErg",
+    "c": [
+     -80,
+     400
+    ],
+    "r": 90,
+    "h": 18
+   },
+   {
+    "key": "kufaSouthDune1",
+    "c": [
+     -190,
+     270
+    ],
+    "r": 30,
+    "h": 7
+   },
+   {
+    "key": "kufaSouthDune2",
+    "c": [
+     110,
+     380
+    ],
+    "r": 40,
+    "h": 9
+   },
+   {
+    "key": "kufaEastDune1",
+    "c": [
+     380,
+     60
+    ],
+    "r": 44,
+    "h": 10
+   },
+   {
+    "key": "kufaEastDune2",
+    "c": [
+     420,
+     190
+    ],
+    "r": 36,
+    "h": 8
+   },
+   {
+    "key": "kufaEastDune3",
+    "c": [
+     300,
+     -60
+    ],
+    "r": 24,
+    "h": 5
+   },
+   {
+    "key": "kufaBazaarDune",
+    "c": [
+     -180,
+     -210
+    ],
+    "r": 24,
+    "h": 6
+   },
+   {
+    "key": "kufaOasisDune",
+    "c": [
+     160,
+     260
+    ],
+    "r": 28,
+    "h": 7
+   },
+   {
+    "key": "kufaWestErg",
+    "c": [
+     -430,
+     330
+    ],
+    "r": 70,
+    "h": 16
+   },
+   {
+    "key": "kufaWestDune",
+    "c": [
+     -330,
+     -360
+    ],
+    "r": 34,
+    "h": 8
+   }
+  ],
+  "cuts": [
+   {
+    "key": "kufaWadi",
+    "r": [
+     -240,
+     240,
+     -178,
+     -162
+    ],
+    "depth": 6
+   }
+  ],
+  "forests": [
+   {
+    "key": "kufaPalmCourtNW",
+    "r": [
+     -72,
+     -44,
+     -72,
+     -44
+    ],
+    "every": 9,
+    "mix": "palm",
+    "giants": 0
+   },
+   {
+    "key": "kufaPalmCourtNE",
+    "r": [
+     44,
+     72,
+     -72,
+     -44
+    ],
+    "every": 9,
+    "mix": "palm",
+    "giants": 0
+   },
+   {
+    "key": "kufaPalmCourtSW",
+    "r": [
+     -72,
+     -44,
+     44,
+     72
+    ],
+    "every": 9,
+    "mix": "palm",
+    "giants": 0
+   },
+   {
+    "key": "kufaPalmCourtSE",
+    "r": [
+     44,
+     72,
+     44,
+     72
+    ],
+    "every": 9,
+    "mix": "palm",
+    "giants": 0
+   },
+   {
+    "key": "kufaSoukPalms",
+    "r": [
+     -262,
+     -112,
+     -60,
+     -46
+    ],
+    "every": 12,
+    "mix": "palm",
+    "giants": 0
+   },
+   {
+    "key": "kufaOasisGroves",
+    "r": [
+     -110,
+     120,
+     160,
+     330
+    ],
+    "every": 10,
+    "mix": "palm",
+    "giants": 0.04
+   },
+   {
+    "key": "kufaDateFarm",
+    "r": [
+     -210,
+     -112,
+     190,
+     240
+    ],
+    "every": 8,
+    "mix": "palm",
+    "giants": 0
+   },
+   {
+    "key": "kufaWadiPalms",
+    "r": [
+     -90,
+     90,
+     -200,
+     -140
+    ],
+    "every": 14,
+    "mix": "palm",
+    "giants": 0
+   },
+   {
+    "key": "kufaWellPalms",
+    "r": [
+     -438,
+     -352,
+     -230,
+     -216
+    ],
+    "every": 10,
+    "mix": "palm",
+    "giants": 0
+   }
+  ],
+  "clearings": [
+   {
+    "key": "kufaShore",
+    "r": [
+     -80,
+     80,
+     186,
+     202
+    ]
+   },
+   {
+    "key": "kufaRoyalCourt",
+    "r": [
+     -108,
+     -40,
+     -320,
+     -270
+    ]
+   },
+   {
+    "key": "kufaWayPad",
+    "r": [
+     -372,
+     -352,
+     -208,
+     -188
+    ]
+   }
+  ]
+ }
+}

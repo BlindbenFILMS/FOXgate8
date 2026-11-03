@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Goldsmith of Zion</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<script src="goldsmith-bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}@keyframes ccSpin{to{transform:rotate(360deg)}}@keyframes ccPulse{0%{transform:scale(.55);opacity:1}100%{transform:scale(1.5);opacity:0}}@keyframes ccDrag{0%{transform:translate(0,0);opacity:0}12%{opacity:1}75%{transform:translate(var(--dx),var(--dy));opacity:1}100%{transform:translate(var(--dx),var(--dy));opacity:0}}@keyframes ccDown{0%{transform:translateY(-10px);opacity:0}15%{opacity:1}100%{transform:translateY(70px);opacity:0}}@keyframes ccUpDown{0%,100%{transform:translateY(45px)}50%{transform:translateY(-45px)}}@keyframes ccRub{0%,100%{transform:translateX(-46px)}50%{transform:translateX(46px)}}@keyframes ccDash{0%{stroke-dashoffset:900}70%,100%{stroke-dashoffset:0}}.cc-spin{animation:ccSpin 1.1s linear infinite}.cc-pulse{animation:ccPulse 1.1s ease-out infinite}.cc-drag{animation:ccDrag 1.5s ease-in-out infinite}.cc-down{animation:ccDown 1.1s ease-in infinite}.cc-updown{animation:ccUpDown 1.4s ease-in-out infinite}.cc-rub{animation:ccRub 0.9s ease-in-out infinite}.cc-dash{stroke-dasharray:900;animation:ccDash 2.2s linear infinite}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Goldsmith of Zion">
+  <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+  <sc-if value="{{ walkOn }}" hint-placeholder-val="{{ false }}">
+    <div data-hud-host="1" style="position:absolute;inset:0;pointer-events:none"><dc-import name="Game-HUD" game="{{ engine }}" hud="{{ stdHud }}" started="{{ walkStarted }}" busy="{{ false }}" on-hud="{{ onHud }}" world="Zion" vehicle="gold" keys="{{ keysList }}" skip-keys="{{ skipKeys }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  </sc-if>
+  <sc-if value="{{ workOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="top" style="position:absolute;left:0;right:0;top:0;z-index:3;pointer-events:none;display:flex;flex-direction:column">
+      <div style="background:#000;border-bottom:2px solid #ffd23a;display:flex;align-items:stretch;padding-top:env(safe-area-inset-top)">
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap">GOLDWORKS · DAY {{ h.day }}</span><span style="font:900 22px var(--font-heading);font-variant-numeric:tabular-nums;color:{{ clockCol }}">{{ clock }}</span></div>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">EARNED</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;color:#e6b45a">{{ earnedTxt }}</span></div>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;min-width:0;flex:1"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">SERVED · STARS</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap">{{ servedTxt }}</span></div>
+        <button onClick="{{ soundToggle }}" aria-label="{{ soundAria }}" style="pointer-events:auto;flex:none;width:52px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:{{ soundCol }};cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#2a2826"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"></path><path d="{{ soundWave }}"></path></svg></button>
+        <button onClick="{{ helpToggle }}" aria-label="How to work the gold" style="pointer-events:auto;flex:none;width:52px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 20px var(--font-heading);cursor:pointer" style-hover="background:#2a2826">?</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:6px 6px 0">
+        <sc-for list="{{ tickets }}" as="o" hint-placeholder-count="2">
+          <button onClick="{{ o.pick }}" aria-label="{{ o.aria }}" style="pointer-events:auto;padding:0;background:#fbf3d2;color:#201e1d;border:2px solid {{ o.bd }};border-radius:0;display:flex;flex-direction:column;min-width:0;text-align:left;cursor:pointer;font:inherit">
+            <div style="background:{{ o.headBg }};color:{{ o.headFg }};padding:3px 6px;font:900 11px var(--font-heading);letter-spacing:0.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;align-self:stretch">{{ o.head }}</div>
+            <div style="height:5px;background:#e8dcc0;align-self:stretch"><div style="height:100%;width:{{ o.patW }};background:{{ o.patCol }}"></div></div>
+            <sc-if value="{{ fullTix }}" hint-placeholder-val="{{ true }}"><sc-for list="{{ o.lines }}" as="l" hint-placeholder-count="3"><div style="padding:2px 6px;font:{{ l.font }};color:{{ l.col }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-top:1px solid #e8dcc0;align-self:stretch">{{ l.t }}</div></sc-for>
+            <div style="padding:2px 6px;font:800 10px var(--font-heading);color:#6b5a3a;border-top:1px solid #e8dcc0;align-self:stretch">{{ o.totalTxt }}</div></sc-if><sc-if value="{{ compactTix }}" hint-placeholder-val="{{ false }}"><div style="padding:2px 6px;font:800 10px var(--font-heading);color:#201e1d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;align-self:stretch">{{ o.short }}</div></sc-if>
+          </button>
+        </sc-for>
+      </div>
+      <sc-if value="{{ stepsOn }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-wrap:wrap;gap:4px;padding:6px 6px 0;align-items:center">
+          <span style="font:900 10px var(--font-heading);letter-spacing:0.08em;color:#ffd23a;background:#000;padding:4px 6px;border:2px solid #3a3836">{{ cardHead }}</span>
+          <sc-for list="{{ stepChips }}" as="c" hint-placeholder-count="5"><span style="font:900 10px var(--font-heading);letter-spacing:0.06em;padding:4px 6px;background:{{ c.bg }};color:{{ c.fg }};border:2px solid {{ c.bd }};white-space:nowrap">{{ c.t }}</span></sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ sayOn }}" hint-placeholder-val="{{ false }}">
+        <div style="margin:6px 6px 0;align-self:flex-start;max-width:{{ sayW }};background:rgba(0,0,0,0.88);border:2px solid #3a3836;padding:6px 10px;font:700 12px var(--font-body);line-height:1.3;color:#fff;text-wrap:pretty;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden">{{ h.say }}</div>
+      </sc-if>
+    </div>
+    <sc-if value="{{ guideOn }}" hint-placeholder-val="{{ false }}">
+      <div data-safe="{{ guideSafe }}" style="position:absolute;left:{{ guideLeft }};right:{{ guideRight }};bottom:{{ guideBottom }};z-index:4;pointer-events:none;width:{{ guideW }};max-width:100%;box-sizing:border-box;background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+        <div style="padding:5px 10px;font:800 10px var(--font-heading);letter-spacing:0.1em;color:#ffd23a;border-bottom:2px solid #3a3836;line-height:1.3;text-wrap:pretty">{{ guideKick }}</div>
+        <div style="display:flex;align-items:stretch">
+          <sc-if value="{{ gemOn }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:none;width:64px;border-right:2px solid #3a3836;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 0">
+              <sc-if value="{{ gemRound }}" hint-placeholder-val="{{ true }}"><svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="13" fill="{{ gemCol }}" stroke="#fff" stroke-width="3"></circle></svg></sc-if><sc-if value="{{ gemDiamond }}" hint-placeholder-val="{{ false }}"><svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><path d="M17 3 L31 17 L17 31 L3 17 Z" fill="{{ gemCol }}" stroke="#fff" stroke-width="3"></path></svg></sc-if><sc-if value="{{ gemSquare }}" hint-placeholder-val="{{ false }}"><svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="5" y="5" width="24" height="24" fill="{{ gemCol }}" stroke="#fff" stroke-width="3"></rect></svg></sc-if>
+              <span style="font:900 9px var(--font-heading);letter-spacing:0.06em;color:#fff">{{ gemName }}</span>
+            </div>
+          </sc-if>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;padding:6px 10px 8px">
+            <sc-if value="{{ guideTitleOn }}" hint-placeholder-val="{{ true }}"><span style="font:900 clamp(14px,4vw,17px) var(--font-heading);letter-spacing:0.02em">{{ guideTitle }}</span></sc-if>
+            <sc-for list="{{ bars }}" as="b" hint-placeholder-count="1">
+              <div style="display:grid;grid-template-columns:62px minmax(0,1fr) 80px;gap:8px;align-items:center">
+                <span style="font:900 10px var(--font-heading);letter-spacing:0.08em;color:#cfcac4">{{ b.label }}</span>
+                <div style="position:relative;height:18px;background:#2a2826;border:1px solid #3a3836">
+                  <span style="position:absolute;top:0;bottom:0;left:{{ b.lo }};width:{{ b.w }};background:#1f5a32;display:block"></span>
+                  <span style="position:absolute;top:0;bottom:0;left:0;width:{{ b.fill }};background:{{ b.col }};opacity:0.55;display:block"></span>
+                  <span style="position:absolute;top:-4px;bottom:-4px;left:{{ b.fill }};width:4px;margin-left:-2px;background:{{ b.col }};display:block"></span>
+                </div>
+                <span style="font:900 11px var(--font-heading);color:{{ b.col }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ b.state }}</span>
+              </div>
+            </sc-for>
+            <sc-if value="{{ cardOn }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-wrap:wrap;gap:4px"><sc-for list="{{ cardRows }}" as="r" hint-placeholder-count="4"><span style="font:900 10px var(--font-heading);padding:3px 6px;background:{{ r.bg }};color:#000">{{ r.t }}</span></sc-for></div>
+              <sc-if value="{{ cardNoteOn }}" hint-placeholder-val="{{ false }}"><span style="font:700 12px var(--font-body);color:#ff9a8a;line-height:1.3;text-wrap:pretty">{{ cardNote }}</span></sc-if>
+            </sc-if>
+          </div>
+          <sc-if value="{{ depthOn }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:none;width:58px;border-left:2px solid #3a3836;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:4px 0">
+              <span style="font:900 9px var(--font-heading);color:#ffd23a">{{ depthTop }}</span>
+              <div style="position:relative;width:12px;flex:1;margin:3px 0;background:#2a2826;border:1px solid #3a3836"><span style="position:absolute;left:-5px;right:-5px;height:6px;margin-top:-3px;top:{{ depthY }};background:#ffd23a;display:block"></span></div>
+              <span style="font:900 9px var(--font-heading);color:#ff9a8a">{{ depthBot }}</span>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ barOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="bottom" style="position:absolute;left:0;right:0;bottom:0;z-index:4;background:#000;border-top:2px solid #ffd23a;padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));pointer-events:{{ barPE }}">
+      <sc-for list="{{ stations }}" as="st" hint-placeholder-count="5">
+        <button onClick="{{ st.go }}" aria-label="{{ st.aria }}" style="min-height:58px;padding:{{ stPad }};border:0;border-right:2px solid #2a2826;border-radius:0;background:{{ st.bg }};color:{{ st.fg }};cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:3px;min-width:0" style-hover="filter:brightness(1.2)">
+          <span style="font:900 {{ stFs }} var(--font-heading);letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ st.label }}</span>
+          <span style="font:800 9px var(--font-heading);letter-spacing:0.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ st.bc }}">{{ st.badge }}</span>
+        </button>
+      </sc-for>
+    </div>
+    </sc-if>
+  </sc-if>
+  <sc-if value="{{ coachOn }}" hint-placeholder-val="{{ false }}">
+    <div aria-hidden="true" style="position:absolute;left:{{ cX }};top:{{ cY }};width:0;height:0;z-index:5;pointer-events:none">
+      <sc-if value="{{ cPulse }}" hint-placeholder-val="{{ false }}"><div class="cc-pulse" style="position:absolute;left:-30px;top:-30px;width:60px;height:60px;border:4px solid #ffd23a;border-radius:50%;box-shadow:0 0 0 3px #000"></div><div style="position:absolute;left:-11px;top:-11px;width:22px;height:22px;border-radius:50%;background:#ffd23a;border:3px solid #000"></div></sc-if>
+      <sc-if value="{{ cDrag }}" hint-placeholder-val="{{ false }}"><div class="cc-drag" style="--dx:{{ cDx }};--dy:{{ cDy }};position:absolute;left:-14px;top:-14px;width:28px;height:28px;border-radius:50%;background:#ffd23a;border:3px solid #000"></div></sc-if>
+      <sc-if value="{{ cDown }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:-3px;top:-6px;width:6px;height:90px;background:rgba(0,0,0,0.5)"></div><div class="cc-down" style="position:absolute;left:-14px;top:-14px;width:28px;height:28px;border-radius:50%;background:#ffd23a;border:3px solid #000"></div></sc-if>
+      <sc-if value="{{ cUpDown }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:-3px;top:-60px;width:6px;height:120px;background:rgba(0,0,0,0.5)"></div><div class="cc-updown" style="position:absolute;left:-14px;top:-14px;width:28px;height:28px;border-radius:50%;background:#ffd23a;border:3px solid #000"></div><span style="position:absolute;left:18px;top:-66px;font:900 11px var(--font-heading);color:#ffd23a;background:#000;padding:2px 5px">{{ cUpLab }}</span><span style="position:absolute;left:18px;top:48px;font:900 11px var(--font-heading);color:#ff9a8a;background:#000;padding:2px 5px">{{ cDownLab }}</span></sc-if>
+      <sc-if value="{{ cRub }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:-60px;top:-3px;width:120px;height:6px;background:rgba(0,0,0,0.5)"></div><div class="cc-rub" style="position:absolute;left:-14px;top:-14px;width:28px;height:28px;border-radius:50%;background:#ffd23a;border:3px solid #000"></div></sc-if>
+      <sc-if value="{{ cPath }}" hint-placeholder-val="{{ false }}"><svg viewBox="-200 -200 400 400" style="position:absolute;left:-200px;top:-200px;width:400px;height:400px;overflow:visible"><path d="{{ cD }}" fill="none" stroke="#000" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" class="cc-dash"></path><path d="{{ cD }}" fill="none" stroke="#ffd23a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="cc-dash"></path><circle cx="{{ cSx }}" cy="{{ cSy }}" r="9" fill="#ffd23a" stroke="#000" stroke-width="3"></circle></svg></sc-if>
+      <div style="position:absolute;left:-70px;top:{{ cLabTop }};width:140px;display:flex;justify-content:center"><span style="font:900 12px var(--font-heading);letter-spacing:0.08em;color:#ffd23a;background:#000;border:2px solid #ffd23a;padding:3px 8px;white-space:nowrap">{{ cLabel }}</span></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(10px, env(safe-area-inset-left));bottom:{{ demoBottom }};z-index:7;pointer-events:none;width:min(460px, calc(100% - 108px));background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 12px;border-bottom:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;background:#ec3013;display:block"></span>DEMO</span><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">{{ demoN }}</span></div>
+      <div style="display:flex;align-items:stretch"><sc-if value="{{ demoKeyOn }}" hint-placeholder-val="{{ false }}"><div style="flex:none;min-width:64px;display:flex;align-items:center;justify-content:center;padding:0 10px;background:#ec3013;color:#fff;font:900 14px var(--font-heading);border-right:2px solid #3a3836">{{ h.demo.key }}</div></sc-if><div style="padding:9px 12px;font:900 clamp(13px,3.6vw,18px) var(--font-heading);letter-spacing:0.03em;line-height:1.2;color:#fff;text-wrap:pretty">{{ h.demo.cap }}</div></div>
+    </div>
+    <button onClick="{{ demoExit }}" aria-label="Exit the demo" style="position:absolute;right:max(10px, env(safe-area-inset-right));bottom:{{ demoBottom }};z-index:7;min-width:64px;min-height:48px;padding:0 14px;border:2px solid #ec3013;border-radius:0;background:#ec3013;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">EXIT DEMO</button>
+  </sc-if>
+  <sc-if value="{{ reactOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ reactTop }};transform:translateX(-50%);z-index:6;pointer-events:none;width:min(420px, calc(100% - 24px));background:#000;border:3px solid {{ h.react.col }};display:flex;flex-direction:column">
+      <div style="display:flex;align-items:stretch"><div style="flex:1;padding:10px 14px;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">{{ reactWho }}</span><span style="font:900 clamp(28px,8.5vw,42px) var(--font-heading);line-height:1;color:{{ h.react.col }}">{{ h.react.word }}</span></div><div style="flex:none;min-width:84px;padding:0 12px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;background:{{ h.react.col }};color:#000"><span style="font:900 20px var(--font-heading);letter-spacing:0.04em">{{ reactStars }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.08em">{{ reactTip }}</span></div></div>
+      <div style="padding:8px 14px 10px;border-top:2px solid #2a2826;font:700 15px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">“{{ h.react.line }}”</div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ flashOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ flashTop }};transform:translateX(-50%);z-index:5;pointer-events:none;max-width:calc(100% - 24px);background:rgba(0,0,0,0.9);border:2px solid {{ flashCol }};display:flex;align-items:stretch">
+      <span style="flex:none;width:10px;background:{{ flashCol }};display:block"></span>
+      <span style="padding:8px 14px;font:900 clamp(14px,3.8vw,22px) var(--font-heading);letter-spacing:0.04em;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ flashTxt }}</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ payOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="bottom" style="position:absolute;left:0;right:0;bottom:0;z-index:6;background:#000;border-top:2px solid #ffd23a;padding:10px max(12px, env(safe-area-inset-left)) calc(10px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline">
+        <span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">GIVE THE CHANGE</span>
+        <span style="font:700 14px var(--font-body);color:#cfcac2">{{ payLine }}</span>
+      </div>
+      <div style="display:flex;align-items:stretch;gap:8px;flex-wrap:wrap">
+        <div style="min-width:110px;padding:6px 12px;border:2px solid #3a3836;display:flex;flex-direction:column;justify-content:center"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">GIVEN / OWED</span><span style="font:900 24px var(--font-heading);font-variant-numeric:tabular-nums">{{ payGiven }}</span></div>
+        <sc-for list="{{ coins }}" as="cn" hint-placeholder-count="4">
+          <button onClick="{{ cn.give }}" style="min-width:64px;min-height:56px;padding:0 14px;border:2px solid #e6b45a;border-radius:0;background:#1a1612;color:#e6b45a;font:900 20px var(--font-heading);cursor:pointer;text-align:left" style-hover="background:#2a2420" style-active="background:#3a3020">{{ cn.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ introOn }}" hint-placeholder-val="{{ true }}">
+    <div data-safe="intro" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:6;width:min(420px, calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column">
+      <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">ZION · AUREL’S GOLDWORKS · DAY {{ h.day }}</span><span style="font:900 26px var(--font-heading);line-height:1.05">Work a shift</span><span style="font:700 13px var(--font-body);color:#cfcac2;text-wrap:pretty">Three minutes at Aurel’s forge and bench. Melt river gold, pour it, hammer it, set the stone and polish it till it shines, then slide it across the counter. Pay is a wage plus prices plus tips, in gold.</span></div>
+      <sc-for list="{{ introRows }}" as="r" hint-placeholder-count="5"><div style="display:grid;grid-template-columns:76px minmax(0,1fr);gap:12px;padding:6px 16px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;color:#e6b45a">{{ r.v }}</span></div></sc-for>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+        <button onClick="{{ demoGo }}" style="min-height:48px;padding:0 16px;border:0;border-top:2px solid #3a3836;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WATCH THE DEMO</button>
+        <button onClick="{{ goWalk }}" style="min-height:48px;padding:0 16px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">JUST LOOKING</button>
+      </div>
+      <button onClick="{{ goWork }}" style="min-height:56px;padding:0 18px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">PUT ME TO WORK</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ helpOn }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ helpToggle }}" style="position:absolute;inset:0;z-index:9;background:rgba(0,0,0,0.82);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #ffd23a;width:min(480px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="padding:10px 14px;border-bottom:2px solid #3a3836;font:900 16px var(--font-heading);letter-spacing:0.06em;color:#ffd23a">HOW AUREL WORKS THE GOLD</div>
+        <sc-for list="{{ helpRows }}" as="r" hint-placeholder-count="8"><div style="display:grid;grid-template-columns:76px minmax(0,1fr);gap:10px;padding:7px 14px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body);line-height:1.35"><span style="font:900 11px var(--font-heading);letter-spacing:0.08em;color:#e6b45a">{{ r.k }}</span><span style="text-wrap:pretty">{{ r.v }}</span></div></sc-for>
+        <div style="padding:10px 14px;font:700 12px var(--font-body);color:#cfcac2">Tap anywhere to close</div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:8;background:rgba(0,0,0,0.78);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #3a3836;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+          <div style="padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ doneKicker }}</span><span style="font:900 24px var(--font-heading);line-height:1.05">Shift over</span><span style="font:700 12px var(--font-body);color:#cfcac2">{{ doneSub }}</span></div>
+          <div style="width:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#ec3013"><span style="font:900 30px var(--font-heading)">{{ d.total }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em">GOLD</span></div>
+        </div>
+        <sc-if value="{{ eodOn }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:10px;padding:10px 16px;background:#ffd23a;color:#000;border-bottom:2px solid #000;font:900 14px var(--font-heading);letter-spacing:0.06em"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18.5 21 12 16.8 5.5 21l2-7.5L2 9h7z" fill="#000"></path></svg>EMPLOYEE OF THE DAY</div></sc-if>
+        <sc-for list="{{ doneRows }}" as="r" hint-placeholder-count="6"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:7px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;font-variant-numeric:tabular-nums">{{ r.v }}</span></div></sc-for>
+        <sc-for list="{{ unlocks }}" as="u" hint-placeholder-count="1"><div style="padding:7px 16px;border-bottom:2px solid #2a2826;font:800 13px var(--font-heading);letter-spacing:0.04em;color:#22c55e">UNLOCKED · {{ u.t }}</div></sc-for>
+        <div style="padding:8px 16px 4px;font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">UPGRADE THE WORKSHOP · YOU HAVE {{ goldTxt }}</div>
+        <sc-for list="{{ shop }}" as="s" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 16px;border-top:2px solid #2a2826">
+            <div style="display:flex;flex-direction:column;min-width:0"><span style="font:900 13px var(--font-heading);letter-spacing:0.04em">{{ s.name }}</span><span style="font:600 12px var(--font-body);color:#cfcac2">{{ s.line }}</span></div>
+            <button onClick="{{ s.buy }}" disabled="{{ s.off }}" style="min-width:84px;min-height:44px;padding:0 12px;border:2px solid {{ s.bd }};border-radius:0;background:{{ s.bg }};color:{{ s.fg }};font:900 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;opacity:{{ s.op }}" style-hover="filter:brightness(1.15)">{{ s.btn }}</button>
+          </div>
+        </sc-for>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:8px">
+          <button onClick="{{ goWork }}" style="min-height:52px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">NEXT SHIFT</button>
+          <button onClick="{{ goWalk }}" style="min-height:52px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">TAKE A BREAK</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ fadeOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;z-index:30;background:#000;opacity:{{ fadeOp }};pointer-events:none"></div></sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  state = { h: null, help: false, vw: 1200, vh: 800, hi: { pad: false, menu: false, split: false, bar: 0 } };
+  stageRef = React.createRef();
+  onHud = hi => this.setState({ hi });
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs(); try { this.ro = new ResizeObserver(this.onRs); this.stageRef.current && this.ro.observe(this.stageRef.current.parentElement); } catch (e) {}
+    const q = location.search, mode = /[?&]walk=1/.test(q) ? 'walk' : 'intro';
+    try { let m = null; for (let i = 0; i < 40 && !window.GoldsmithBundle; i++) await new Promise(r => setTimeout(r, 50)); m = window.GoldsmithBundle || await import(new URL('minigames/zion/goldsmith-shift.js', document.baseURI).href); this.g = await m.createGoldsmithShift({ container: this.stageRef.current, mode, onState: h => this.setState({ h }) }); window.__goldsmith = this.g; this.forceUpdate(); if (/[?&]demo=1/.test(q)) setTimeout(() => this.g.demoStart(), 400); }
+    catch (e) { console.warn('goldsmith failed: ' + (e && e.stack || String(e))); }
+  }
+  componentDidUpdate() { const root = this.stageRef.current && this.stageRef.current.parentElement; if (!root || !this.g || !this.g.setSafe) return; const rb = root.getBoundingClientRect(); let top = 0, bot = 0, left = 0; root.querySelectorAll('[data-safe]').forEach(el => { const r = el.getBoundingClientRect(); if (!r.height) return; if (el.dataset.safe === 'top') top = Math.max(top, r.bottom - rb.top); else if (el.dataset.safe === 'left' || (el.dataset.safe === 'intro' && rb.width > rb.height)) left = Math.max(left, r.right - rb.left); else bot = Math.max(bot, rb.bottom - r.top); }); const H = rb.height; this.g.setSafe(Math.round(Math.min(top, H * 0.36)), Math.round(Math.min(bot, H * (this.g.hud().phase === 'intro' ? 0.62 : 0.34))), Math.round(Math.min(left, rb.width * 0.6))); }
+  componentWillUnmount() { removeEventListener('resize', this.onRs); this.ro && this.ro.disconnect(); this.g && this.g.destroy(); }
+  onRs = () => { const el = this.stageRef.current, r = el && el.parentElement ? el.parentElement.getBoundingClientRect() : null; this.setState({ vw: r && r.width ? r.width : innerWidth, vh: r && r.height ? r.height : innerHeight }); };
+  renderVals() {
+    const S = this.state, g = this.g, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const h = S.h || { phase: 'intro', mode: 'shift', day: 1, left: 180, earned: 0, tips: 0, served: 0, lost: 0, stars: 0, orders: [], steps: [], card: null, press: null, pay: null, flash: null, say: '', done: null, gold: 0, upgrades: [], menu: [], stones: [], badges: {}, fade: 0, walk: null, pieces: 0 };
+    const work = h.phase === 'shift' || h.phase === 'glide', d = h.done || { total: 0 }, m = Math.floor(h.left / 60), s = Math.floor(h.left % 60), port = S.vh > S.vw, land = !port && S.vh < 520, narrow = S.vw < 480;
+    let sv = null; try { sv = JSON.parse(localStorage.getItem('8gates.save.v1') || 'null'); } catch (e) {}
+    const W = h.walk || {}, walkOn = h.phase === 'walk';
+    const stdHud = { hp: 100, hpMax: 100, en: 100, gold: h.gold, hour: 9, day: sv && sv.stats ? sv.stats.worldDay || 1 : 1, items: sv ? Object.entries(sv.items || {}).filter(([, n]) => n > 0).map(([id, n]) => ({ id, n, label: id })) : [], place: 'Zion · Aurel’s Goldworks', quest: { text: h.hired ? 'AUREL’S GOLDWORKS · THE FORGE IS HOT · TALK TO AUREL AT THE COUNTER' : 'AUREL’S GOLDWORKS · AUREL NEEDS A SECOND PAIR OF PAWS · TALK TO AUREL' }, prompt: W.prompt || null, toast: W.toast || null, muted: false, weather: 'Clear', boat: false, inCave: false, weapons: [], dialog: W.dialog || null, vehicles: [], vehAmmo: [] };
+    const P = h.press, showGuide = work && !h.done && !h.pay && !h.react && !h.demo && (P || h.hint || h.card && h.step === 'serve');
+    const guideW = land ? '280px' : narrow ? '100%' : 'min(540px, 100%)', barH = 'calc(60px + env(safe-area-inset-bottom))';
+    const bars = (P && P.bars || []).map(b => ({ label: b.label, state: b.state, lo: (Math.max(0, b.lo) * 100).toFixed(1) + '%', w: b.lo < 0 ? '0%' : Math.max(1.5, (b.hi - b.lo) * 100).toFixed(1) + '%', fill: (b.v * 100).toFixed(1) + '%', col: b.ok ? '#22c55e' : b.over ? '#ec3013' : '#ffffff' }));
+    const cardRows = h.card ? h.card.rows.map(r => ({ t: r.k + ' ' + r.v, bg: r.v >= 80 ? '#22c55e' : r.v >= 55 ? '#ffd23a' : '#ff9a8a' })) : [];
+    const stepChips = (h.steps || []).map(c => ({ t: c.label + (c.score != null ? ' ' + c.score : c.now ? ' ▸' : ''), bg: c.now ? '#ffd23a' : '#000', fg: c.now ? '#000' : c.done ? (c.score == null ? '#22c55e' : c.score >= 80 ? '#22c55e' : c.score >= 55 ? '#ffd23a' : '#ff9a8a') : '#8a847e', bd: c.now ? '#ffd23a' : '#3a3836' }));
+    const GEMTXT = { RUBY: '#b0122e', SAPPHIRE: '#1d4fd1', EMERALD: '#0f7a3c' }, gm = P && P.gem;
+    return {
+      stageRef: this.stageRef, engine: g, stdHud, walkOn, walkStarted: !!g && walkOn, onHud: this.onHud, h, d,
+      keysList: [['WASD', 'walk'], ['E', 'talk'], ['1', 'wave'], ['2', 'sit'], ['Space', 'jump'], ['M', 'map'], ['I', 'menu']], skipKeys: ['KeyE', 'Digit1', 'Digit2', 'Space', 'KeyN', 'KeyV', 'KeyC', 'KeyT', 'KeyO', 'KeyH'],
+      workOn: work && !h.done, introOn: h.phase === 'intro', doneOn: !!h.done, helpOn: S.help && work,
+      clock: m + ':' + String(s).padStart(2, '0'), clockCol: h.left < 20 ? '#ff9a8a' : '#ffffff', earnedTxt: (h.earned + h.tips) + 'g', servedTxt: h.served + (h.lost ? ' · ' + h.lost + ' LEFT' : '') + ' · ★ ' + (h.stars || '–'),
+      fullTix: !land, compactTix: land,
+      tickets: h.orders.map(o => ({ head: (o.making ? '▸ ' : '') + o.name + (o.making ? ' · MAKING' : o.waiting ? '' : ' · ARRIVING'), headBg: o.making ? '#ffd23a' : '#5e3a1e', headFg: o.making ? '#000' : '#fff', bd: o.making ? '#ffd23a' : '#201e1d', aria: 'Ticket for ' + o.name, short: o.short, patW: Math.round(o.pat * 100) + '%', patCol: o.pat < 0.3 ? '#ec3013' : o.pat < 0.6 ? '#ffd23a' : '#22c55e', totalTxt: o.total + 'g',
+        lines: o.lines.map(l => ({ t: l.t, font: l.k === 'name' ? '900 11px var(--font-heading)' : l.k === 'gem' || l.k === 'extra' ? '800 10px var(--font-heading)' : '700 10px var(--font-body)', col: l.k === 'name' ? '#201e1d' : l.k === 'gem' ? (GEMTXT[(l.t.split(' ')[1] || '')] || '#201e1d') : l.k === 'extra' ? '#7a5a10' : '#5e3a1e' })), pick: e => { blur(e); g && g.pickOrder(o.id); } })),
+      stepsOn: !!h.card && !land, cardHead: h.card ? h.card.who + ' · ' + h.card.piece : '', stepChips,
+      sayOn: !!h.say && !h.demo && !h.react && !land, sayW: port ? 'calc(100% - 12px)' : 'min(460px, 60%)',
+      guideOn: showGuide, guideSafe: land ? 'left' : 'bottom', guideLeft: land ? 'max(0px, env(safe-area-inset-left))' : narrow ? '0' : 'max(0px, calc(50% - 270px))', guideRight: land || !narrow ? 'auto' : '0', guideBottom: barH, guideW,
+      guideKick: h.hint ? 'NEXT · ' + h.hint.text : P ? P.sub : '', guideTitleOn: !!P, guideTitle: P ? P.title : '', bars,
+      gemOn: !!gm, gemCol: gm ? gm.col : '#fff', gemName: gm ? gm.name : '', gemRound: !!gm && gm.shape === 'round', gemDiamond: !!gm && gm.shape === 'diamond', gemSquare: !!gm && gm.shape === 'square',
+      depthOn: !!(P && P.depth != null), depthY: P && P.depth != null ? ((1 - P.depth) * 100).toFixed(1) + '%' : '50%', depthTop: P && P.depthTop || '', depthBot: P && P.depthBot || '',
+      cardOn: !!(h.card && h.step === 'serve'), cardRows, cardNoteOn: !!(h.card && h.step === 'serve' && h.card.notes.length), cardNote: h.card && h.card.notes.length ? h.card.notes[h.card.notes.length - 1] : '',
+      barOn: work && !h.done && !h.pay && !h.react, barPE: h.demo ? 'none' : 'auto', stPad: narrow ? '6px 1px 6px 6px' : '6px 4px 6px 10px', stFs: narrow ? '11px' : '13px',
+      stations: [['all', 'ALL'], ['forge', 'FORGE'], ['anvil', 'ANVIL'], ['bench', 'BENCH'], ['counter', 'COUNTER']].map(([id, label]) => { const on = (h.focus || 'all') === id, b = (h.badges || {})[id] || '', now = b === 'NOW', na = b === '—'; return { label, aria: 'Look at the ' + label.toLowerCase(), badge: now ? (on ? 'HERE' : 'NOW ▸') : b === '✓' ? '✓ DONE' : na ? '–' : b || (on ? 'VIEWING' : ' '), bg: on ? '#ffd23a' : now ? '#1f3a24' : '#000000', fg: on ? '#000000' : na ? '#5a554f' : '#ffffff', bc: on ? '#000000' : now ? '#ffd23a' : b === '✓' ? '#22c55e' : '#8a847e', go: e => { blur(e); g && g.setFocus(id); } }; }),
+      flashOn: !!h.flash, flashTxt: h.flash ? h.flash.txt : '', flashCol: h.flash ? h.flash.col : '#ffd23a', flashTop: port ? '40%' : '38%',
+      payOn: !!h.pay, payLine: h.pay ? 'Bill ' + h.pay.total + 'g · they paid ' + h.pay.paid + 'g · tap coins to make ' + h.pay.owed + 'g' : '', payGiven: h.pay ? h.pay.given + ' / ' + h.pay.owed + 'g' : '',
+      coins: [1, 2, 5, 10].map(v => ({ label: v + 'g', give: e => { blur(e); g && g.giveCoin(v); } })),
+      introRows: [['Gold', h.gold + 'g'], ['Pieces', h.menu.map(r => r.name + ' ' + r.price + 'g').join(', ')], ['Stones', (h.stones || []).join(', ') || 'Ruby, Sapphire'], ['Made', (h.pieces || 0) + ' pieces at the Goldworks'], ['Apron', h.uniform ? 'Yours · leather apron + loupe' : 'Make 3 to keep it']].map(([k, v]) => ({ k, v })),
+      goWork: e => { blur(e); g && g.startShift(); }, goWalk: e => { blur(e); g && g.toWalk(); },
+      reactOn: !!h.react, reactTop: port ? 'calc(64px + env(safe-area-inset-top))' : '58px', reactWho: h.react ? h.react.who + (h.react.score ? ' · PIECE ' + h.react.score + ' / 100' : '') : '', reactStars: h.react ? (h.react.stars ? '★'.repeat(h.react.stars) + '☆'.repeat(3 - h.react.stars) : '✕') : '', reactTip: h.react ? (h.react.stars ? (h.react.tip ? 'TIP +' + h.react.tip + 'g' : 'NO TIP') : h.react.binned ? 'REMELT' : 'NOT MINE') : '',
+      demoGo: e => { blur(e); g && g.demoStart(); }, demoExit: e => { blur(e); g && g.demoStop(); }, demoOn: !!h.demo, demoKeyOn: !!(h.demo && h.demo.key), demoN: h.demo ? 'SERVED ' + h.demo.n + ' / ' + h.demo.of : '', demoBottom: 'calc(70px + env(safe-area-inset-bottom))', helpToggle: e => { blur(e); this.setState({ help: !S.help }); },
+      helpRows: [['MELT', 'Tap the nugget dish once per nugget on the ticket. Then pump the bellows: slide your finger up and down. Keep the HEAT in the green until MELT fills. Pump too hard and the gold boils.'], ['POUR', 'Press and drag DOWN to tip the crucible. A little drag trickles, a long drag floods. Let go when FILL reaches the white line.'], ['HAMMER', 'A white ring closes on the gold mark. Tap the moment they meet. Keep the beat for every strike.'], ['STONE', 'Read the ticket. Ruby is ROUND and red, sapphire is a DIAMOND and blue, emerald is SQUARE and green. Tap it (or drag it onto the piece), then tap 4 times to close the prongs.'], ['ENGRAVE', 'Trace the dotted Z with one steady finger: top left, across, down the diagonal, across.'], ['POLISH', 'Rub back and forth on the piece. Steady wins. Too fast heats it and leaves a smear.'], ['SERVE', 'Slide the tray across the counter to the customer (drag it, flick it, or tap them).'], ['PAY', 'Some pay exact. Some hand you a bill: tap coins to give the right change.']].map(([k, v]) => ({ k, v })),
+      doneKicker: h.done ? 'DAY ' + d.day + ' · AUREL’S GOLDWORKS' : '', doneSub: h.done ? (d.newDay ? 'Day ' + (d.day + 1) + ' tomorrow' : 'Serve ' + (2 + d.day) + ' to move up a day') + ' · ★ ' + d.stars + ' employee stars' : '', eodOn: !!(h.done && d.eod),
+      doneRows: h.done ? [['Served', String(d.served)], ['Walked out', String(d.lost)], ['Average stars', String(d.avg)], ['Wage', d.wage + 'g'], ['Prices', d.earned + 'g'], ['Tips', d.tips + 'g'], ['XP', '+' + (d.xp || 0)]].map(([k, v]) => ({ k, v })) : [], unlocks: h.done ? d.unlock.map(t => ({ t })) : [], goldTxt: h.gold + 'g',
+      shop: h.upgrades.map(u => { const afford = h.gold >= u.cost; return { name: u.name, line: u.line, btn: u.owned ? 'OWNED' : u.cost + 'g', off: u.owned || !afford, bg: u.owned ? '#22c55e' : afford ? '#ffd23a' : '#000000', fg: u.owned || afford ? '#000000' : '#8a847e', bd: u.owned ? '#22c55e' : afford ? '#ffd23a' : '#3a3836', op: u.owned || afford ? 1 : 0.6, buy: e => { blur(e); g && g.buyUpgrade(u.id); } }; }),
+      ...(() => { const c = h.coach, k = c && c.kind, pts = c && c.pts || [], dd = pts.length ? 'M' + pts.map(p => Math.round(p[0]) + ' ' + Math.round(p[1])).join(' L') : '', maxY = pts.length ? Math.max(...pts.map(p => p[1])) : 0;
+        return { coachOn: !!c && !S.help, cX: c ? c.x + 'px' : '0', cY: c ? c.y + 'px' : '0', cPulse: k === 'hold' || k === 'tap', cDrag: k === 'drag', cDown: k === 'down', cUpDown: k === 'updown', cRub: k === 'rub', cPath: k === 'path', cD: dd, cSx: pts.length ? Math.round(pts[0][0]) : 0, cSy: pts.length ? Math.round(pts[0][1]) : 0, cUpLab: c && c.up || 'UP', cDownLab: c && c.down || 'DOWN', cDx: c ? (c.dx || 0) + 'px' : '0', cDy: c ? (c.dy || 0) + 'px' : '0', cLabel: c ? c.label : '', cLabTop: (k === 'updown' ? 70 : k === 'path' ? Math.round(maxY + 22) : k === 'down' ? 90 : k === 'rub' ? 30 : 36) + 'px' }; })(),
+      fadeOn: (h.fade || 0) > 0.01, fadeOp: (h.fade || 0).toFixed(2),
+      soundToggle: e => { blur(e); g && g.toggleSound(); }, soundAria: h.muted ? 'Turn sound on' : 'Turn sound off', soundCol: h.muted ? '#8a847e' : '#ffd23a', soundWave: h.muted ? 'M16 9l5 6M21 9l-5 6' : 'M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12',
+    };
+  }
+}
+</script>
+</body>
+</html>

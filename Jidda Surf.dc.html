@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}@keyframes coinSpin{from{transform:rotateY(0deg)}to{transform:rotateY(360deg)}}@keyframes coinPulse{0%,100%{opacity:1}50%{opacity:0.3}}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Jidda Surf">
+  <div ref="{{ stageRef }}" style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0;overflow:hidden"></div>
+  <sc-if value="{{ edgeOn }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0;pointer-events:none;z-index:3">
+    <div style="position:absolute;left:{{ edgeL }};top:{{ edgeT }};transform:translate(-50%,-50%);transition:left 0.15s linear,top 0.15s linear;display:flex;flex-direction:column;align-items:center">
+      <div style="width:46px;height:46px;box-sizing:border-box;background:#000;border:2px solid #ffd23a;display:flex;align-items:center;justify-content:center"><svg width="28" height="28" viewBox="0 0 24 24" style="transform:rotate({{ edgeRot }})"><path d="M4 12h13M12 5l7 7-7 7" fill="none" stroke="#ffd23a" stroke-width="3" stroke-linecap="square"></path></svg></div>
+      <div style="background:#000;border:2px solid #ffd23a;border-top:0;padding:2px 6px;font:800 10px var(--font-heading);letter-spacing:0.08em;color:#fff;white-space:nowrap">{{ edgeTxt }}</div>
+    </div>
+  </div>
+  </sc-if>
+  <div data-hud-host="1" style="position:absolute;left:0;right:0;top:0;bottom:0;pointer-events:none"><dc-import name="Game HUD" game="{{ engine }}" hud="{{ stdHud }}" started="{{ started }}" busy="{{ hudBusy }}" on-hud="{{ onHud }}" world="Jidda" vehicle="surf" full-armory="{{ true }}" keys="{{ keysList }}" skip-keys="{{ skipKeys }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  <sc-if value="{{ showCard }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:{{ cardTop }};width:{{ colW }};display:flex;flex-direction:column;pointer-events:none;z-index:2">
+    <sc-if value="{{ showStats }}" hint-placeholder-val="{{ true }}"><div style="background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="padding:{{ cardPad }};display:flex;flex-direction:column;gap:4px;border-bottom:2px solid #3a3836">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#ffd23a;white-space:nowrap">The Break · jSurfContest</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px">
+          <div style="font-family:var(--font-heading);font-size:{{ titleSize }};font-weight:800;line-height:1;letter-spacing:-0.02em;white-space:nowrap">{{ roundTxt }}</div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><span style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#cfcac4">RIDE</span><span style="font:800 18px var(--font-heading);font-variant-numeric:tabular-nums">{{ rideTxt }}</span></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-bottom:2px solid #3a3836">
+        <div style="padding:5px 10px;display:flex;flex-direction:column;gap:1px;border-right:2px solid #3a3836"><span style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#cfcac4">WAVE</span><span style="font:800 15px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap">{{ waveTxt }}</span></div>
+        <div style="padding:5px 10px;display:flex;flex-direction:column;gap:1px;border-right:2px solid #3a3836"><span style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#cfcac4">BEST 2</span><span style="font:800 15px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap;color:#ffd23a">{{ b2Txt }}</span></div>
+        <div style="padding:5px 10px;display:flex;flex-direction:column;gap:1px"><span style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#cfcac4">{{ vsLbl }}</span><span style="font:800 15px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap;color:#7dd3fc">{{ vsTxt }}</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:6px 10px">
+        <span style="display:flex;gap:3px"><sc-for list="{{ pips }}" as="p" hint-placeholder-count="8"><span style="width:7px;height:14px;background:{{ p.c }};display:block"></span></sc-for></span>
+        <span style="margin-left:auto;font:800 11px var(--font-heading);letter-spacing:0.1em;color:#e6b45a;white-space:nowrap">{{ spdTxt }}</span>
+      </div>
+      <sc-if value="{{ gapOn }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:10px;padding:6px 10px;border-top:2px solid #3a3836;background:{{ gapBg }}"><span style="font-size:10px;font-weight:800;letter-spacing:0.1em;color:#000;background:#7dd3fc;padding:1px 4px">JOB</span><span style="font:800 12px var(--font-heading);letter-spacing:0.06em;color:#fff;white-space:nowrap">{{ gapTxt }}</span></div></sc-if>
+    </div></sc-if>
+    <sc-if value="{{ hasBanner }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:-2px;background:#000;border:2px solid #ffd23a;padding:8px 12px;font:800 clamp(13px,3.4vw,16px) var(--font-heading);letter-spacing:0.04em;line-height:1.3;color:#ffd23a;text-wrap:pretty">{{ c.banner }}</div>
+    </sc-if>
+    <sc-if value="{{ hasRadio }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:-2px;background:#000;border:2px solid #ffd23a;padding:8px 12px;display:flex;flex-direction:column;gap:3px">
+        <span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;background:#ec3013;display:block"></span>{{ radioWho }}</span>
+        <span style="font:700 clamp(13px,3.4vw,15px) var(--font-body);line-height:1.3;color:#fff;text-wrap:pretty">{{ c.radio }}</span>
+      </div>
+    </sc-if>
+  </div>
+  </sc-if>
+  <sc-if value="{{ showActions }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;right:max(12px, env(safe-area-inset-right));top:{{ actTop }};display:flex;flex-direction:column;pointer-events:auto;z-index:4">
+      <button onClick="{{ boardOpen }}" aria-label="Open the heat sheet" style="width:64px;height:48px;padding:0;border:2px solid #ffd23a;border-radius:0;background:#000;color:#fff;font:900 11px var(--font-heading);letter-spacing:0.08em;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer" style-hover="background:#2a2826">SHEET<span style="font:700 9px var(--font-heading);color:#8a847e">{{ boardKey }}</span></button>
+      <button onClick="{{ reset }}" aria-label="Back to the take-off ring" style="width:64px;height:48px;padding:0;border:2px solid #ffd23a;border-top:0;border-radius:0;background:#000;color:#fff;font:900 11px var(--font-heading);letter-spacing:0.06em;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer" style-hover="background:#2a2826">RING<span style="font:700 9px var(--font-heading);color:#8a847e">{{ resetKey }}</span></button>
+      <button onClick="{{ viewNext }}" aria-label="Change the view" style="width:64px;height:48px;padding:0;border:2px solid #ffd23a;border-top:0;border-radius:0;background:#ffd23a;color:#000;font:900 11px var(--font-heading);letter-spacing:0.06em;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer" style-hover="background:#ffe27a">VIEW<span style="font:800 9px var(--font-heading);color:#000">{{ viewName }}</span></button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ flashOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ flashTop }};transform:translateX(-50%);z-index:5;pointer-events:none;max-width:calc(100% - 24px);background:#000;border:2px solid {{ flashCol }};padding:8px 16px;font:900 clamp(18px,5vw,30px) var(--font-heading);letter-spacing:0.04em;line-height:1.1;color:{{ flashCol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ flashTxt }}</div>
+  </sc-if>
+  <sc-if value="{{ promptOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ promptTop }};transform:translateX(-50%);z-index:5;pointer-events:none;width:min(320px, calc(100% - 24px));background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="padding:8px 14px;font:900 clamp(20px,5.4vw,28px) var(--font-heading);letter-spacing:0.06em;color:#ffd23a">{{ promptTxt }}</div>
+      <div style="height:12px;background:#3a3836;border-top:2px solid #ffd23a"><div style="height:100%;width:{{ promptW }};background:{{ promptCol }}"></div></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ watchOn }}" hint-placeholder-val="{{ false }}">
+    <button onClick="{{ skipJob }}" aria-label="Skip Job's wave" style="position:absolute;left:50%;transform:translateX(-50%);top:{{ demoTop }};z-index:6;pointer-events:auto;max-width:calc(100% - 24px);min-height:52px;padding:8px 18px;border:3px solid #000;border-radius:0;background:#7dd3fc;color:#000;font:900 clamp(15px,4.2vw,22px) var(--font-heading);letter-spacing:0.06em;line-height:1.15;text-align:left;cursor:pointer;display:flex;align-items:center;gap:12px" style-hover="background:#a5e3fd"><span style="width:14px;height:14px;background:#000;display:block;flex:none"></span>JOB IS RIDING · TAP TO SKIP</button>
+  </sc-if>
+  <sc-if value="{{ cardsOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ cardsTop }};transform:translateX(-50%);z-index:7;pointer-events:none;background:#000;border:2px solid #ffffff;display:flex;flex-direction:column;width:max-content;max-width:calc(100% - 16px)">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:8px 12px;border-bottom:2px solid #3a3836"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap">{{ cardsHead }}</span><span style="font:700 11px var(--font-heading);letter-spacing:0.08em;color:#cfcac4;white-space:nowrap">{{ cardsWhy }}</span></div>
+      <div style="display:flex;gap:6px;padding:10px 12px">
+        <sc-for list="{{ cardsList }}" as="k" hint-placeholder-count="5">
+          <div style="width:{{ cardW }};height:{{ cardH }};box-sizing:border-box;background:{{ k.bg }};border:2px solid #201e1d;outline:2px solid {{ k.ring }};display:flex;flex-direction:column;justify-content:space-between;padding:4px 6px;opacity:{{ k.op }};transform:translateY({{ k.ty }});transition:opacity 0.18s,transform 0.22s">
+            <span style="font:800 9px var(--font-heading);letter-spacing:0.1em;color:#5b5753">{{ k.j }}</span>
+            <span style="font:900 clamp(20px,5.6vw,28px) var(--font-heading);font-variant-numeric:tabular-nums;color:{{ k.fg }};text-decoration:{{ k.dec }};line-height:1">{{ k.v }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 12px;border-top:2px solid #3a3836;opacity:{{ totOp }};transition:opacity 0.2s"><span style="font:800 13px var(--font-heading);letter-spacing:0.08em">WAVE SCORE</span><span style="font:900 26px var(--font-heading);font-variant-numeric:tabular-nums;color:#ffd23a">{{ cardsTot }}</span></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ wcOn }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:10;width:min(420px, calc(100% - 24px));max-height:calc(100% - 24px);display:flex;pointer-events:none"><dc-import name="Welcome Card" kicker="JIDDA · SURF CONTEST" title="Surf Contest" text="Carve, trick and jump for the judges." rows="{{ wcRows }}" play-label="{{ wcPlay }}" on-play="{{ wcGo }}" on-tutorial="{{ wcTut }}" on-demo="{{ wcDemo }}" hint-size="100%,340px" style="width:100%"></dc-import></div>
+  </sc-if>
+  <sc-if value="{{ boardOn }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;inset:0;z-index:10;background:rgba(0,0,0,0.9);display:flex;flex-direction:{{ ovDir }};align-items:stretch;padding:12px;gap:10px;box-sizing:border-box">
+      <div style="flex:1;min-height:0;display:flex;align-items:center;justify-content:flex-start;container-type:size">
+        <div style="position:relative;width:{{ bdW }};aspect-ratio:{{ bdAR }};border:2px solid #3a3836;box-sizing:border-box;background:#1f2b27">
+          <img ref="{{ boardRef }}" alt="The Break heat sheet" style="display:block;width:100%;height:100%;object-fit:fill">
+          <div style="position:absolute;left:{{ coinL }};top:{{ coinT }};width:{{ coinW }};aspect-ratio:1;transform:translate(-50%,-50%);perspective:400px;pointer-events:none">{{ coinEl }}</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;flex:none;width:{{ btnW }}">
+        <button onClick="{{ boardGo }}" style="width:100%;min-height:56px;padding:0 22px;border-radius:0;border:2px solid #ec3013;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">{{ boardBtn }}</button>
+        <div style="min-height:44px;display:flex;align-items:center;padding:8px 14px;font:700 13px var(--font-body);line-height:1.35;color:#cfcac2;border:2px solid #3a3836;border-top:0;text-wrap:pretty">{{ boardNote }}</div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:11;background:rgba(0,0,0,0.82);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #3a3836;width:min(460px,100%);display:flex;flex-direction:column">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+          <div style="padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">THE BREAK · HEAT SHEET</span><span style="font:900 26px var(--font-heading);line-height:1.05">{{ doneTitle }}</span><span style="font:700 12px var(--font-body);color:#cfcac2">{{ bestTxt }}</span></div>
+          <div style="width:96px;display:flex;align-items:center;justify-content:center;background:#ec3013;font:900 60px var(--font-heading)">{{ d.grade }}</div>
+        </div>
+        <sc-for list="{{ rows }}" as="r" hint-placeholder-count="6">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:9px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;font-variant-numeric:tabular-nums">{{ r.v }}</span></div>
+        </sc-for>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;padding:12px 16px;font:900 18px var(--font-heading)"><span>HEAT POINTS</span><span style="font-variant-numeric:tabular-nums;color:#ffd23a">{{ d.total }}</span></div>
+        <button onClick="{{ again }}" style="min-height:52px;padding:0 18px;border-radius:0;border:0;border-top:2px solid #3a3836;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">PADDLE OUT AGAIN</button>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { vw: 1200, vh: 800, hud: { course: null }, hi: { pad: false, menu: false, split: false, bar: 0 } };
+  stageRef = React.createRef(); boardRef = React.createRef();
+  coinEl = React.createElement('span', { style: { display: 'block', width: '100%', height: '100%', animation: 'coinPulse 1.2s ease-in-out infinite' } }, React.createElement('span', { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', borderRadius: '50%', background: '#e6b45a', boxShadow: 'inset 0 0 0 3px #a8792e, 0 0 0 3px #f5e08a', color: '#201e1d', font: '900 clamp(10px, 2.2cqw, 30px) Archivo, sans-serif', animation: 'coinSpin 1.6s linear infinite' } }, '8'));
+  onHud = hi => this.setState({ hi });
+  componentDidUpdate() { const im = this.boardRef.current, cr = this.lab && this.lab.course(), u = cr && (this.state.vh > this.state.vw ? cr.boardURLP : cr.boardURL); if (im && u && this.lastBoard !== u) { this.lastBoard = u; im.src = u; } }
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); addEventListener('keydown', this.onKey); this.onRs();
+    import(new URL('engine/save.js', document.baseURI).href).then(m => { this.save = m.save; this.forceUpdate(); }).catch(() => {});
+    import(new URL('worlds/meru-shops.js', document.baseURI).href).then(m => { this.labels = m.ITEM_LABELS; this.forceUpdate(); }).catch(() => {});
+    try {
+      const mod = await import(new URL('minigames/jidda/surf-break.js', document.baseURI).href);
+      this.lab = await mod.createSurfBreak({ container: this.stageRef.current, onState: hud => this.setState({ hud }) });
+      window.__surf = this.lab; this.engine = Object.assign(Object.create(this.lab), { useItem: id => this.useItem(id) });
+      this.forceUpdate(); this.bindZoom();
+    } catch (e) { console.warn('surf break failed: ' + (e && e.stack || String(e))); }
+  }
+  bindZoom() { const el = this.stageRef.current; if (!el || this.zoomBound) return; this.zoomBound = true; let pd = 0; const cv = () => el.querySelector('canvas'), dist = t => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY), onCv = e => [...e.touches].every(tt => tt.target === cv());
+    el.addEventListener('touchstart', e => { if (e.touches.length === 2 && onCv(e)) pd = dist(e.touches); }, { passive: true });
+    el.addEventListener('touchmove', e => { if (e.touches.length === 2 && pd && onCv(e)) { const nd = dist(e.touches); if (nd > 0 && this.lab) this.lab.zoomBy(pd / nd); pd = nd; } }, { passive: true });
+    el.addEventListener('touchend', e => { if (e.touches.length < 2) pd = 0; }, { passive: true });
+    el.addEventListener('wheel', e => { if (this.lab) { e.preventDefault(); this.lab.zoomBy(1 + Math.max(-0.2, Math.min(0.2, e.deltaY * 0.0015))); } }, { passive: false }); }
+  componentWillUnmount() { this.lab && this.lab.destroy(); removeEventListener('resize', this.onRs); removeEventListener('keydown', this.onKey); }
+  onRs = () => this.setState({ vw: innerWidth, vh: innerHeight });
+  onKey = e => { const cr = this.lab && this.lab.course(), c = cr ? cr.hud() : null; if (!c) return; if (c.board && (e.code === 'Enter' || e.code === 'Escape' || e.code === 'Space')) { e.preventDefault(); e.stopPropagation(); this.boardGo(); } else if (e.code === 'KeyB' && !c.board && c.state === 'run' && !this.state.hi.menu) cr.openBoard(); else if (e.code === 'Enter' && c.watching) cr.skip(); };
+  useItem(id) { const cr = this.lab && this.lab.course(); if (!cr) return; const name = (this.labels && this.labels[id]) || id; cr.say(String(name).toUpperCase() + ': SAVE IT FOR THE BEACH', 2); }
+  boardGo = () => { const cr = this.lab && this.lab.course(); if (!cr) return; if (cr.hud().state === 'ready') cr.rollOut(); else cr.closeBoard(); };
+  renderVals() { const v = this.renderVals0(), PB = v.placeBtns || [], isSchool = p => /SCHOOL|LESSON|TRAINING|PRACTICE|TRIALS? 1/i.test(p.name), school = PB.find(isSchool), rest = PB.filter(p => !isSchool(p)), go = () => setTimeout(() => v.boardGo && v.boardGo(), 30);
+    return { ...v, wcRows: rest.map(p => ({ k: p.name, v: p.locked ? 'LOCKED' : p.sub, c: p.locked ? '#8a847e' : '#ffd23a', sel: p.bd === '#ffd23a' || p.bg === '#ffd23a', go: p.locked ? null : p.pick })), wcPlay: v.boardBtn || 'PLAY',
+      wcGo: () => { this.setState({ showBoard: false }); const sel = PB.find(p => p.bd === '#ffd23a' || p.bg === '#ffd23a'); if (school && sel === school && rest.find(p => !p.locked)) rest.find(p => !p.locked).pick(); go(); },
+      wcTut: () => { if (school && !school.locked) { school.pick(); this.setState({ showBoard: false }); go(); } else this.setState({ showBoard: true }); }, wcDemo: v.demoGo || null }; }
+  renderVals0() {
+    const S = this.state, lab = this.lab, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const c = S.hud.course || { state: 'ready', phase: 'ready', board: true, done: null, banner: '', radio: '', radioWho: 'JOSS', round: 'free', turn: 'ben', waveN: 0, list: [], best2: 0, target: 11, job: [], jobB2: 0, ridePts: null, pocket: 0, speed: 0, quest: '' };
+    const { vw, vh } = S, phone = Math.min(vw, vh) < 520, land = phone && vw > vh, port = vh > vw, lowH = vh < 520, pad = !!S.hi.pad, bar = S.hi.bar || 0, sv = this.save && this.save.data;
+    const d = c.done || { grade: '', total: 0 }, play = !c.board && !c.done, f2 = v => (v || 0).toFixed(2), cardsPh = c.phase === 'cards' && !!c.cards;
+    const stdHud = { hp: 100, hpMax: 100, en: 100, gold: sv ? sv.gold : 0, hour: 12, day: sv && sv.stats ? sv.stats.worldDay || 1 : 1, items: sv ? Object.entries(sv.items || {}).filter(([, n]) => n > 0).map(([id, n]) => ({ id, n, label: (this.labels && this.labels[id]) || id })) : [], place: 'Jidda · The Break', quest: { text: c.quest || 'Three waves · best two make the final · beat Job' }, prompt: null, toast: null, muted: false, weather: 'Clear', boat: false, inCave: true, weapons: [], dialog: null, vehicles: ['surf'], vehAmmo: [null, null, null] };
+    const top0 = bar + 42 + (c.watching ? 66 : 0), colPx = phone ? (land ? 232 : Math.min(250, vw - 96)) : 268;
+    const cd = c.cards, cardsList = cd ? cd.scores.map((v, i) => { const shown = cd.t > 0.4 + i * 0.32, drop = i === cd.lo || i === cd.hi, struck = drop && cd.t > 2.0; return { v: v.toFixed(1), j: 'J' + (i + 1), op: shown ? 1 : 0, ty: shown ? '0px' : '14px', bg: struck ? '#cfcac4' : '#ffffff', fg: struck ? '#8a847e' : '#201e1d', dec: struck ? 'line-through' : 'none', ring: v >= 8 && !struck ? '#ffd23a' : 'transparent' }; }) : [];
+    return {
+      stageRef: this.stageRef, engine: this.engine, stdHud, started: !!lab && c.state !== 'ready', hudBusy: !play, onHud: this.onHud, c, d,
+      stageTop: S.hi.split ? 'calc(' + bar + 'px + (100% - ' + bar + 'px) / 2)' : bar + 'px',
+      keysList: [['WASD', 'point the board'], ['1 / J', 'carve'], ['2 / K', 'trick'], ['Space', 'paddle · jump'], ['B', 'heat sheet'], ['R', 'back to ring'], ['V', 'view'], ['M', 'map'], ['I', 'menu'], ['Wheel', 'zoom']],
+      skipKeys: ['KeyJ', 'KeyK', 'KeyT', 'KeyN', 'KeyO', 'KeyH'],
+      showCard: play && !S.hi.menu && !cardsPh && (!pad || !!c.banner || !!c.radio), showStats: !pad, hasBanner: !!c.banner, hasRadio: !!c.radio, radioWho: 'RADIO · ' + (c.radioWho || 'JOSS'),
+      cardTop: top0 + 'px', colW: phone ? (land ? '232px' : 'min(250px, calc(100% - 96px))') : '268px', cardPad: phone ? '7px 10px' : '10px 12px', titleSize: phone ? '18px' : '24px',
+      roundTxt: c.round === 'final' ? (c.watching ? 'Job rides' : 'Final vs Job') : 'Free surf', rideTxt: c.ridePts == null ? '-' : c.ridePts,
+      waveTxt: Math.max(1, Math.min(3, (c.list || []).length + 1)) + ' / 3', b2Txt: f2(c.best2), vsLbl: c.round === 'final' ? 'JOB' : 'TARGET', vsTxt: c.round === 'final' ? f2(c.jobB2) : f2(c.target),
+      pips: [0, 1, 2, 3, 4, 5, 6, 7].map(i => ({ c: i < (c.pocket || 0) ? (c.inTube ? '#ffd23a' : '#38bdf8') : '#3a3836' })), spdTxt: c.inTube ? 'IN THE TUBE' : c.pw ? ({ x2: '2X POINTS', mag: 'MAGNET', wax: 'WAX' })[c.pw] : 'TOKENS ' + (c.tok || 0) + '/8 · COINS ' + (c.coins || 0), gapOn: c.jobGap != null, gapTxt: c.jobGap != null ? (c.jobGap < 3 ? 'ON YOUR TAIL · ' + Math.max(0, c.jobGap) + ' M' : Math.round(c.jobGap) + ' M BEHIND YOU') : '', gapBg: c.jobGap != null && c.jobGap < 3 ? '#ec3013' : '#000000',
+      viewName: c.view || 'BEACH', viewNext: e => { blur(e); lab && lab.togglePov(); },
+      ...(() => { const gq = c.goal; if (!play || S.hi.menu || !gq) return { edgeOn: false }; let x = gq.nx, y = gq.ny; if (gq.behind) { x = -x; y = -y; if (Math.abs(x) < 0.05 && Math.abs(y) < 0.05) y = -1; } if (!gq.behind && Math.abs(x) < 0.92 && Math.abs(y) < 0.88) return { edgeOn: false }; const k = Math.max(Math.abs(x) / 0.86, Math.abs(y) / 0.8, 1e-3), ex = x / k, ey = y / k, top = Math.min(72, Math.max(14, (1 - ey) / 2 * 100)); const lo = !pad ? 12 + colPx + 66 : 66, hi = vw - (!pad ? 12 + 64 + 66 : 66), xpx = Math.min(Math.max((ex + 1) / 2 * vw, lo), Math.max(lo, hi)); return { edgeOn: true, edgeL: Math.round(xpx) + 'px', edgeT: top.toFixed(1) + '%', edgeRot: (Math.atan2(-ey, ex) * 180 / Math.PI).toFixed(0) + 'deg', edgeTxt: gq.label + ' · ' + gq.dist + ' M' }; })(),
+      showActions: play && !S.hi.menu && !pad, actTop: top0 + 'px', boardKey: pad ? '' : 'B', resetKey: pad ? '' : 'R',
+      boardOpen: e => { blur(e); const cr = lab && lab.course(); if (cr && c.state === 'run') cr.openBoard(); }, reset: e => { blur(e); lab && lab.reset(); },
+      flashOn: play && !!c.flash && !cardsPh, flashTxt: c.flash ? c.flash.txt : '', flashCol: c.flash ? c.flash.col || '#ffd23a' : '#ffd23a', flashTop: port ? '70%' : '74%',
+      promptOn: play && !!c.prompt, promptTxt: c.prompt ? c.prompt.txt : '', promptW: c.prompt ? Math.round(c.prompt.p * 100) + '%' : '0%', promptCol: c.prompt && c.prompt.p >= 1 ? '#5ec97e' : '#ffd23a', promptTop: port ? '40%' : '34%',
+      watchOn: play && !!c.watching, demoTop: (bar + 8) + 'px', skipJob: e => { blur(e); const cr = lab && lab.course(); cr && cr.skip(); },
+      cardsOn: !!cd && !c.board && !c.done, cardsTop: (bar + (phone && !port ? 10 : 56)) + 'px', cardsHead: cd ? 'JUDGES · ' + cd.who + ' · WAVE ' + cd.n : '', cardsWhy: cd ? cd.why : '', cardsList, cardW: phone ? '52px' : '64px', cardH: phone ? '62px' : '76px', totOp: cd && cd.t > 2.2 ? 1 : 0, cardsTot: cd ? f2(cd.total) : '',
+      boardOn: !!c.board && !(c.state === 'ready' && !S.showBoard), wcOn: !!c.board && c.state === 'ready' && !S.showBoard, boardRef: this.boardRef, coinEl: this.coinEl, ovDir: !port && lowH ? 'row' : 'column', btnW: !port && lowH ? '220px' : '100%',
+      bdW: port ? 'min(100cqw, 100cqh * 9 / 16)' : 'min(100cqw, 100cqh * 16 / 9)', bdAR: port ? '9/16' : '16/9',
+      coinL: port ? ((lab && lab.course().coinP.x || 0.46) * 100).toFixed(1) + '%' : '93.25%', coinT: port ? ((lab && lab.course().coinP.y || 0.925) * 100).toFixed(1) + '%' : '82.9%', coinW: port ? '8.5%' : '4.2%',
+      boardBtn: c.state === 'ready' ? 'PADDLE OUT' : 'BACK IN THE WATER', boardNote: c.state === 'ready' ? 'Heat sheet. Name, board, and whether anybody should come looking for you.' : 'Enter / Space to close',
+      boardGo: e => { blur(e); this.boardGo(); },
+      doneOn: !!c.done, doneTitle: c.done ? (c.done.win ? 'You took the break off Job' : c.done.fin ? 'Job keeps the break' : 'Not through to the final') : '', bestTxt: c.done ? (c.done.newBest ? 'NEW BEST' : 'BEST ' + c.done.best) : '',
+      rows: c.done ? [['Free surf waves', d.free.map(f2).join(' · ')], ['Free surf best two', f2(d.freeB2) + ' / ' + f2(c.target)], ...(d.fin ? [['Final · your waves', d.ben.map(f2).join(' · ')], ['Final · Job', d.job.map(f2).join(' · ')], ['Best two', f2(d.benB2) + ' vs ' + f2(d.jobB2)]] : []), ['Airs · tubes', d.stats.airs + ' · ' + d.stats.tubes], ['Longest tube', d.stats.longTube.toFixed(1) + ' s'], ['Best move', d.stats.best ? d.stats.best.n + ' +' + d.stats.best.v : '-'], ['Wipeouts', String(d.stats.wipeouts)]].map(([k, v]) => ({ k, v })) : [],
+      again: e => { blur(e); location.reload(); },
+    };
+  }
+}
+</script>
+</body>
+</html>

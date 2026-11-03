@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;min-height:100%;background:#201e1d}a{color:#f3f2f2}a:hover{color:var(--color-accent)}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}input[type=range]{accent-color:#ec3013;width:100%;height:32px;margin:0}</style>
+</helmet>
+<div style="min-height:100dvh;background:#201e1d;font-family:var(--font-body);color:#f3f2f2;display:flex;flex-direction:column">
+  <div style="display:flex;align-items:stretch;border-bottom:2px solid #f3f2f2">
+    <div style="padding:10px 14px;display:flex;flex-direction:column;gap:2px;border-right:2px solid #f3f2f2;flex:1;min-width:0">
+      <div style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-300)">Arcade</div>
+      <div style="font-family:var(--font-heading);font-size:22px;font-weight:800;line-height:1.05">Cabinet Workshop</div>
+    </div>
+    <a href="Lanes Arcade Workshop.dc.html" style="display:flex;align-items:center;padding:0 14px;min-height:44px;font-weight:800;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;border-right:2px solid #f3f2f2;white-space:nowrap">Layout →</a>
+    <a href="Meru 2 Blockout.dc.html?walk=1" style="display:flex;align-items:center;padding:0 14px;min-height:44px;font-weight:800;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;white-space:nowrap">Meru 2 →</a>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;flex:1;min-height:0">
+    <div style="flex:1 1 380px;min-width:0;display:flex;flex-direction:column;align-self:flex-start;position:sticky;top:0;border-bottom:2px solid #f3f2f2;box-sizing:border-box">
+      <div ref="{{ stageRef }}" style="position:relative;flex:none;height:min(62dvh, 640px);min-height:300px;overflow:hidden;background:#15122a;touch-action:none;cursor:grab"></div>
+      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:2px solid #f3f2f2">
+        <sc-for list="{{ views }}" as="v" hint-placeholder-count="4">
+          <button onClick="{{ v.go }}" style="min-height:48px;border:0;border-right:2px solid #f3f2f2;background:{{ v.bg }};color:{{ v.fg }};font:800 15px var(--font-body);text-align:left;padding:0 12px;cursor:pointer">{{ v.name }}</button>
+        </sc-for>
+      </div>
+      <div style="padding:10px 14px;font-size:15px;line-height:1.4;border-top:2px solid #f3f2f2">Drag the picture to turn it. The orange outline is a fox, 2.2 m tall, for scale.</div>
+    </div>
+    <div style="flex:1 1 320px;min-width:0;display:flex;flex-direction:column;border-left:2px solid #f3f2f2;box-sizing:border-box">
+      <div style="padding:12px 14px 6px;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-300)">Game on the cabinet</div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:2px solid #f3f2f2;border-bottom:2px solid #f3f2f2">
+        <sc-for list="{{ games }}" as="g" hint-placeholder-count="6">
+          <button onClick="{{ g.go }}" style="min-height:46px;border:0;border-bottom:1px solid #5a5654;border-right:1px solid #5a5654;background:{{ g.bg }};color:{{ g.fg }};font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;background:{{ g.sw }};flex:none"></span>{{ g.name }}</button>
+        </sc-for>
+      </div>
+      <div style="flex:1;min-height:0;overflow:auto">
+        <sc-for list="{{ sliders }}" as="s" hint-placeholder-count="16">
+          <label style="display:flex;flex-direction:column;gap:2px;padding:8px 14px;border-bottom:1px solid #5a5654">
+            <span style="display:flex;justify-content:space-between;gap:10px;font-size:15px;font-weight:700"><span style="flex:1;min-width:0">{{ s.label }}</span><span style="font-variant-numeric:tabular-nums">{{ s.txt }}</span></span>
+            <input type="range" min="{{ s.min }}" max="{{ s.max }}" step="{{ s.step }}" value="{{ s.val }}" onInput="{{ s.set }}" aria-label="{{ s.label }}">
+          </label>
+        </sc-for>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+          <sc-for list="{{ toggles }}" as="t" hint-placeholder-count="5">
+            <button onClick="{{ t.go }}" aria-pressed="{{ t.pressed }}" style="min-height:48px;border:0;border-bottom:1px solid #5a5654;border-right:1px solid #5a5654;background:{{ t.bg }};color:{{ t.fg }};font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer">{{ t.txt }}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:2px solid #f3f2f2">
+        <button onClick="{{ save }}" style="min-height:54px;border:0;border-right:2px solid #f3f2f2;background:var(--color-accent);color:#ffffff;font:800 15px var(--font-body);text-align:left;padding:0 12px;cursor:pointer">{{ saveLabel }}</button>
+        <button onClick="{{ copy }}" style="min-height:54px;border:0;border-right:2px solid #f3f2f2;background:transparent;font:800 15px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2">{{ copyLabel }}</button>
+        <button onClick="{{ reset }}" style="min-height:54px;border:0;background:transparent;font:800 15px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2">Reset</button>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { cfg: null, game: 0, view: 'three', saved: false, copied: false };
+  stageRef = React.createRef();
+  async componentDidMount() {
+    const base = document.baseURI, T = await import(new URL('vendor/three/three.module.js', base).href), K = await import(new URL('worlds/meru2-roomkit.js', base).href), C = await import(new URL('worlds/arcade-cabinet.js', base).href);
+    this.T = T; this.C = C; this.kit = K.makeRoomKit({ THREE: T, touch: false }); this.skins = C.gameSkins(this.kit.CT);
+    const el = this.stageRef.current, r = new T.WebGLRenderer({ antialias: true }); r.setPixelRatio(Math.min(2, devicePixelRatio)); r.outputColorSpace = T.SRGBColorSpace; el.appendChild(r.domElement); r.domElement.style.cssText = 'display:block;width:100%;height:100%';
+    const sc = new T.Scene(); sc.background = new T.Color('#15122a'); const cam = new T.PerspectiveCamera(38, 1, 0.1, 100);
+    sc.add(new T.HemisphereLight(0xfff1d6, 0x2a2440, 1.4)); const dl = new T.DirectionalLight(0xffffff, 1.6); dl.position.set(-4, 6, 3); sc.add(dl);
+    const floor = new T.Mesh(new T.PlaneGeometry(12, 12), new T.MeshLambertMaterial({ color: '#1b1830' })); floor.rotation.x = -Math.PI / 2; sc.add(floor);
+    const wall = new T.Mesh(new T.PlaneGeometry(12, 5), new T.MeshLambertMaterial({ color: '#2a2648' })); wall.position.set(0.02, 2.5, 0); wall.rotation.y = -Math.PI / 2; sc.add(wall);
+    const fox = new T.LineSegments(new T.EdgesGeometry(new T.CapsuleGeometry(0.32, 2.2 - 0.64, 2, 10)), new T.LineBasicMaterial({ color: '#f97316' })); fox.position.set(-2.3, 1.1, 1.0); sc.add(fox);
+    Object.assign(this, { r, sc, cam, yaw: -0.65, pitch: 0.18, dist: 6 });
+    let drag = null; el.addEventListener('pointerdown', e => { drag = [e.clientX, e.clientY, this.yaw, this.pitch]; el.setPointerCapture(e.pointerId); });
+    el.addEventListener('pointermove', e => { if (!drag) return; this.yaw = drag[2] - (e.clientX - drag[0]) * 0.008; this.pitch = Math.max(-0.1, Math.min(1.2, drag[3] + (e.clientY - drag[1]) * 0.006)); this.setState({ view: '' }); });
+    const up = () => { drag = null; }; el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+    el.addEventListener('wheel', e => { e.preventDefault(); this.dist = Math.max(2.5, Math.min(12, this.dist * (1 + Math.sign(e.deltaY) * 0.1))); }, { passive: false });
+    const size = () => { const w = el.clientWidth, h = el.clientHeight; if (!w || !h) return; r.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); };
+    this.ro = new ResizeObserver(size); this.ro.observe(el); size();
+    this.setState({ cfg: C.loadCab() }, () => this.rebuild());
+    const loop = () => { if (this.dead) return; const c = this.state.cfg, hgt = c ? c.height * c.size : 2.5, cy = hgt * 0.5, d = this.dist, tx = -0.6;
+      cam.position.set(tx - Math.cos(this.pitch) * Math.cos(this.yaw) * d, cy + Math.sin(this.pitch) * d, Math.cos(this.pitch) * Math.sin(this.yaw) * d); cam.lookAt(tx, cy, 0); const now = performance.now() / 1000; if (c && c.screenAnim && this.skins && now - (this.lastA || 0) > 0.066) { this.lastA = now; this.skins[this.state.game].anim(now); } r.render(sc, cam); this.raf = requestAnimationFrame(loop); };
+    loop();
+  }
+  componentWillUnmount() { this.dead = true; cancelAnimationFrame(this.raf); try { this.ro.disconnect(); this.r.dispose(); } catch (e) {} }
+  rebuild() { if (!this.sc || !this.state.cfg) return; const T = this.T;
+    if (this.G) { this.sc.remove(this.G); this.G.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material && !o.material.map) o.material.dispose(); }); }
+    const G = new T.Group(), b = this.kit.Bin(); this.C.buildCabinet({ b, wallPlane: this.kit.wallPlane, G }, this.state.cfg, 0, 0, 0, this.skins[this.state.game]); b.build(G); this.sc.add(G); this.G = G; }
+  put(cfg) { this.setState({ cfg, saved: false }, () => this.rebuild()); }
+  renderVals() {
+    const S = this.state, c = S.cfg, C = this.C, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const VIEWS = [['three', '3/4', -0.65, 0.18], ['front', 'Front', 0, 0.12], ['side', 'Side', -Math.PI / 2, 0.08], ['top', 'Above', -0.5, 1.0]];
+    const fmt = (k, v) => /Tilt|lean/.test(k) ? Math.round(v) + '°' : k === 'size' ? '× ' + v.toFixed(2) : (v * (c ? (k === 'size' ? 1 : c.size) : 1)).toFixed(2) + ' m';
+    return {
+      stageRef: this.stageRef,
+      views: VIEWS.map(([id, name, y, p]) => ({ name, bg: S.view === id ? '#f3f2f2' : 'transparent', fg: S.view === id ? '#201e1d' : '#f3f2f2', go: e => { blur(e); this.yaw = y; this.pitch = p; this.setState({ view: id }); } })),
+      games: (C ? C.ARCADE_GAMES : []).map((g, i) => ({ name: g.name, sw: g.body, bg: S.game === i ? '#f3f2f2' : 'transparent', fg: S.game === i ? '#201e1d' : '#f3f2f2', go: e => { blur(e); this.setState({ game: i }, () => this.rebuild()); } })),
+      sliders: c && C ? C.CAB_RANGES.map(([k, label, min, max, step]) => ({ label, min, max, step, val: c[k], txt: fmt(k, c[k]), set: e => this.put({ ...c, [k]: parseFloat(e.target.value) }) })) : [],
+      toggles: c && C ? C.CAB_TOGGLES.map(([k, label]) => ({ txt: label + (c[k] ? ' · ON' : ' · OFF'), pressed: c[k] ? 'true' : 'false', bg: c[k] ? '#f3f2f2' : 'transparent', fg: c[k] ? '#201e1d' : '#f3f2f2', go: e => { blur(e); this.put({ ...c, [k]: !c[k] }); } })) : [],
+      saveLabel: S.saved ? 'Saved. Meru 2 uses it' : 'Save cabinet',
+      save: e => { blur(e); if (!c || !C) return; C.saveCab(c); this.setState({ saved: true }); },
+      copyLabel: S.copied ? 'Copied' : 'Copy for Claude',
+      copy: e => { blur(e); if (!c) return; const t = JSON.stringify(c); (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).catch(() => prompt('Copy:', t)); this.setState({ copied: true }); setTimeout(() => this.setState({ copied: false }), 1600); },
+      reset: e => { blur(e); if (!C) return; this.put({ ...C.CAB_DEFAULTS }); },
+    };
+  }
+}
+</script>
+</body>
+</html>

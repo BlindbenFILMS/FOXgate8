@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#201e1d}a{color:#f3f2f2}a:hover{color:#ec3013}button:focus-visible{outline:2px solid #ec3013;outline-offset:2px}</style>
+</helmet>
+<div style="position:fixed;inset:0;display:flex;flex-direction:column;font-family:var(--font-body);color:#f3f2f2;background:#201e1d" data-screen-label="Fox Proportions Lab">
+  <div style="display:flex;flex-wrap:wrap;align-items:baseline;column-gap:12px;row-gap:2px;padding:10px 14px;border-bottom:2px solid #f3f2f2">
+    <div style="font-family:var(--font-heading);font-weight:800;font-size:18px;letter-spacing:0.02em">FOX PROPORTIONS LAB</div>
+    <div style="font-size:13px;color:#b8b5b3">{{ status }}</div>
+  </div>
+  <div style="flex:1;min-height:0;position:relative">
+    <div ref="{{ stage }}" style="position:absolute;inset:0;touch-action:none"></div>
+  </div>
+  <div style="border-top:2px solid #f3f2f2;display:flex;flex-direction:column">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));border-bottom:2px solid #f3f2f2">
+      <button onClick="{{ onAll }}" style="min-height:48px;padding:0 12px;text-align:left;font:800 13px var(--font-heading);background:{{ allBg }};color:{{ allFg }};border:0;border-right:2px solid #f3f2f2;cursor:pointer">ALL 4</button>
+      <sc-for list="{{ builds }}" as="b" hint-placeholder-count="4">
+        <button onClick="{{ b.pick }}" style="min-height:48px;padding:0 12px;text-align:left;font:700 13px var(--font-body);background:{{ b.bg }};color:{{ b.fg }};border:0;border-right:2px solid #f3f2f2;cursor:pointer" style-hover="background:#3a0f08">{{ b.name }}</button>
+      </sc-for>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;padding:8px 14px">
+      <button onClick="{{ onWalk }}" style="min-height:44px;padding:0 14px;text-align:left;font:700 13px var(--font-body);background:{{ walkBg }};color:{{ walkFg }};border:2px solid #f3f2f2;cursor:pointer">{{ walkLabel }}</button>
+      <button onClick="{{ onFront }}" style="min-height:44px;padding:0 14px;text-align:left;font:700 13px var(--font-body);background:transparent;color:#f3f2f2;border:2px solid #f3f2f2;cursor:pointer" style-hover="background:#3a0f08">FRONT</button>
+      <button onClick="{{ onSide }}" style="min-height:44px;padding:0 14px;text-align:left;font:700 13px var(--font-body);background:transparent;color:#f3f2f2;border:2px solid #f3f2f2;cursor:pointer" style-hover="background:#3a0f08">SIDE</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { ready: false, focus: -1, walk: false };
+  stage = React.createRef();
+  async componentDidMount() { const m = await import('./engine/proportion-lab.js?v=s662u'); this.lab = await m.startPropLab(this.stage.current); window.__propLab = this.lab; this.setState({ ready: true }); }
+  componentWillUnmount() { this.lab && this.lab.destroy(); }
+  renderVals() {
+    const L = this.lab, s = this.state, B = L ? L.builds : [];
+    const pick = i => { if (!L) return; L.focus(i); this.setState({ focus: i }); };
+    return {
+      stage: this.stage,
+      status: !s.ready ? 'Loading the cast…' : 'Each group: PLAYER · HOPE · a town fox (short arms) · drag to turn · D is now the game build for every jointed fox',
+      builds: B.map((b, i) => ({ name: b.name, pick: () => pick(i), bg: s.focus === i ? '#f3f2f2' : 'transparent', fg: s.focus === i ? '#201e1d' : '#f3f2f2' })),
+      onAll: () => pick(-1), allBg: s.focus < 0 ? '#f3f2f2' : 'transparent', allFg: s.focus < 0 ? '#201e1d' : '#f3f2f2',
+      onWalk: () => L && this.setState({ walk: L.walk() }), walkLabel: s.walk ? 'WALK · ON' : 'WALK · OFF', walkBg: s.walk ? '#f3f2f2' : 'transparent', walkFg: s.walk ? '#201e1d' : '#f3f2f2',
+      onFront: () => L && L.turn(0), onSide: () => L && L.turn(Math.PI / 2),
+    };
+  }
+}
+</script>
+</body>
+</html>

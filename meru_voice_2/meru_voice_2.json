@@ -1,0 +1,6818 @@
+{
+ "title": "Meru voice pack 2 (MERU_NEW_LINES_2)",
+ "lines": 681,
+ "format": "mp3, mono, 24 kHz, 40 kbps",
+ "order": "script order; lines sharing a 'scene' play one after another",
+ "items": [
+  {
+   "id": "nx2-crowd-man-prox",
+   "file": "vo/nx2-crowd-man-prox.mp3",
+   "fox": "TOWNSFOLK MAN",
+   "voice": "frank",
+   "delivery": "normal",
+   "text": "Watch yourself past the town gates. There are bandit camps out there now.",
+   "scene": "nx2-crowd-man",
+   "seconds": 3.86
+  },
+  {
+   "id": "nx2-crowd-man-prox2",
+   "file": "vo/nx2-crowd-man-prox2.mp3",
+   "fox": "TOWNSFOLK MAN",
+   "voice": "frank",
+   "delivery": "normal",
+   "text": "The bots walked off the job. Every shop on the square is hiring.",
+   "scene": "nx2-crowd-man",
+   "seconds": 3.87
+  },
+  {
+   "id": "nx2-crowd-man-prox3",
+   "file": "vo/nx2-crowd-man-prox3.mp3",
+   "fox": "TOWNSFOLK MAN",
+   "voice": "frank",
+   "delivery": "scared",
+   "text": "Something chased my cart off the desert road. Something with too many teeth.",
+   "scene": "nx2-crowd-man",
+   "seconds": 3.63
+  },
+  {
+   "id": "nx2-crowd-man-prox4",
+   "file": "vo/nx2-crowd-man-prox4.mp3",
+   "fox": "TOWNSFOLK MAN",
+   "voice": "frank",
+   "delivery": "angry",
+   "text": "Three bandit fires on the hill last night. Three! Where is the guard?",
+   "scene": "nx2-crowd-man",
+   "seconds": 4.0
+  },
+  {
+   "id": "nx2-crowd-man-prox5",
+   "file": "vo/nx2-crowd-man-prox5.mp3",
+   "fox": "TOWNSFOLK MAN",
+   "voice": "frank",
+   "delivery": "calm",
+   "text": "Stay on the lit paths after dark. The creatures do not come onto them.",
+   "scene": "nx2-crowd-man",
+   "seconds": 3.87
+  },
+  {
+   "id": "nx2-crowd-man-prox6",
+   "file": "vo/nx2-crowd-man-prox6.mp3",
+   "fox": "TOWNSFOLK MAN",
+   "voice": "frank",
+   "delivery": "normal",
+   "text": "My delivery bot is sitting on the kerb holding a sign. A SIGN.",
+   "scene": "nx2-crowd-man",
+   "seconds": 3.75
+  },
+  {
+   "id": "nx2-crowd-man-01",
+   "file": "vo/nx2-crowd-man-01.mp3",
+   "fox": "TOWNSFOLK MAN",
+   "voice": "frank",
+   "delivery": "normal",
+   "text": "You look like you can handle yourself. Good. Meru needs that right now.",
+   "scene": "nx2-crowd-man",
+   "seconds": 3.78
+  },
+  {
+   "id": "nx2-crowd-man-q1",
+   "file": "vo/nx2-crowd-man-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "What is going on out there?",
+   "scene": "nx2-crowd-man",
+   "seconds": 2.77
+  },
+  {
+   "id": "nx2-crowd-man-a1a",
+   "file": "vo/nx2-crowd-man-a1a.mp3",
+   "fox": "TOWNSFOLK MAN",
+   "voice": "frank",
+   "delivery": "normal",
+   "text": "Bandits camping in the wild, creatures biting anything that moves, and the bots on strike.",
+   "scene": "nx2-crowd-man",
+   "seconds": 4.89
+  },
+  {
+   "id": "nx2-crowd-man-a1b",
+   "file": "vo/nx2-crowd-man-a1b.mp3",
+   "fox": "TOWNSFOLK MAN",
+   "voice": "frank",
+   "delivery": "calm",
+   "text": "Pick one problem and it is a bad week. We have all three.",
+   "scene": "nx2-crowd-man",
+   "seconds": 3.39
+  },
+  {
+   "id": "nx2-crowd-man-q2",
+   "file": "vo/nx2-crowd-man-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Why are the bots on strike?",
+   "scene": "nx2-crowd-man",
+   "seconds": 2.4
+  },
+  {
+   "id": "nx2-crowd-man-a2a",
+   "file": "vo/nx2-crowd-man-a2a.mp3",
+   "fox": "TOWNSFOLK MAN",
+   "voice": "frank",
+   "delivery": "normal",
+   "text": "Ask them. They say they want a day off. Then they say it in binary.",
+   "scene": "nx2-crowd-man",
+   "seconds": 3.8
+  },
+  {
+   "id": "nx2-crowd-man-qbye",
+   "file": "vo/nx2-crowd-man-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will keep my eyes open.",
+   "scene": "nx2-crowd-man",
+   "seconds": 2.13
+  },
+  {
+   "id": "nx2-crowd-man-bye",
+   "file": "vo/nx2-crowd-man-bye.mp3",
+   "fox": "TOWNSFOLK MAN",
+   "voice": "frank",
+   "delivery": "warm",
+   "text": "Both of them. And stay off the dark roads.",
+   "scene": "nx2-crowd-man",
+   "seconds": 2.98
+  },
+  {
+   "id": "nx2-crowd-woman-prox",
+   "file": "vo/nx2-crowd-woman-prox.mp3",
+   "fox": "TOWNSFOLK WOMAN",
+   "voice": "maggie",
+   "delivery": "normal",
+   "text": "Careful out there, love. The creatures have gone wild, all of them.",
+   "scene": "nx2-crowd-woman",
+   "seconds": 3.63
+  },
+  {
+   "id": "nx2-crowd-woman-prox2",
+   "file": "vo/nx2-crowd-woman-prox2.mp3",
+   "fox": "TOWNSFOLK WOMAN",
+   "voice": "maggie",
+   "delivery": "normal",
+   "text": "No bots at the market again. I bagged my own carrots. Like an animal.",
+   "scene": "nx2-crowd-woman",
+   "seconds": 4.18
+  },
+  {
+   "id": "nx2-crowd-woman-prox3",
+   "file": "vo/nx2-crowd-woman-prox3.mp3",
+   "fox": "TOWNSFOLK WOMAN",
+   "voice": "maggie",
+   "delivery": "scared",
+   "text": "Did you hear? Bandits set up a camp by the old road. Bold as brass.",
+   "scene": "nx2-crowd-woman",
+   "seconds": 4.45
+  },
+  {
+   "id": "nx2-crowd-woman-prox4",
+   "file": "vo/nx2-crowd-woman-prox4.mp3",
+   "fox": "TOWNSFOLK WOMAN",
+   "voice": "maggie",
+   "delivery": "warm",
+   "text": "Looking for work? Try any shop. With the bots out, everyone needs paws.",
+   "scene": "nx2-crowd-woman",
+   "seconds": 5.55
+  },
+  {
+   "id": "nx2-crowd-woman-prox5",
+   "file": "vo/nx2-crowd-woman-prox5.mp3",
+   "fox": "TOWNSFOLK WOMAN",
+   "voice": "maggie",
+   "delivery": "whisper",
+   "text": "Do not walk the lake path alone tonight. Trust me on that.",
+   "scene": "nx2-crowd-woman",
+   "seconds": 3.43
+  },
+  {
+   "id": "nx2-crowd-woman-prox6",
+   "file": "vo/nx2-crowd-woman-prox6.mp3",
+   "fox": "TOWNSFOLK WOMAN",
+   "voice": "maggie",
+   "delivery": "angry",
+   "text": "A bandit took my basket. A whole basket. I had a pie in there.",
+   "scene": "nx2-crowd-woman",
+   "seconds": 4.27
+  },
+  {
+   "id": "nx2-crowd-woman-01",
+   "file": "vo/nx2-crowd-woman-01.mp3",
+   "fox": "TOWNSFOLK WOMAN",
+   "voice": "maggie",
+   "delivery": "warm",
+   "text": "Oh, hello. Sorry, I keep looking over my shoulder these days.",
+   "scene": "nx2-crowd-woman",
+   "seconds": 3.94
+  },
+  {
+   "id": "nx2-crowd-woman-q1",
+   "file": "vo/nx2-crowd-woman-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Why over your shoulder?",
+   "scene": "nx2-crowd-woman",
+   "seconds": 1.64
+  },
+  {
+   "id": "nx2-crowd-woman-a1a",
+   "file": "vo/nx2-crowd-woman-a1a.mp3",
+   "fox": "TOWNSFOLK WOMAN",
+   "voice": "maggie",
+   "delivery": "scared",
+   "text": "Bandits. They are camping just past the edges of town. More every week.",
+   "scene": "nx2-crowd-woman",
+   "seconds": 4.08
+  },
+  {
+   "id": "nx2-crowd-woman-a1b",
+   "file": "vo/nx2-crowd-woman-a1b.mp3",
+   "fox": "TOWNSFOLK WOMAN",
+   "voice": "maggie",
+   "delivery": "normal",
+   "text": "And the creatures used to run from us. Now they run AT us.",
+   "scene": "nx2-crowd-woman",
+   "seconds": 3.45
+  },
+  {
+   "id": "nx2-crowd-woman-q2",
+   "file": "vo/nx2-crowd-woman-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Where can I find work?",
+   "scene": "nx2-crowd-woman",
+   "seconds": 1.61
+  },
+  {
+   "id": "nx2-crowd-woman-a2a",
+   "file": "vo/nx2-crowd-woman-a2a.mp3",
+   "fox": "TOWNSFOLK WOMAN",
+   "voice": "maggie",
+   "delivery": "normal",
+   "text": "Anywhere with a door. The bots are on strike, so every keeper is short-handed.",
+   "scene": "nx2-crowd-woman",
+   "seconds": 4.24
+  },
+  {
+   "id": "nx2-crowd-woman-qbye",
+   "file": "vo/nx2-crowd-woman-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Stay safe.",
+   "scene": "nx2-crowd-woman",
+   "seconds": 1.38
+  },
+  {
+   "id": "nx2-crowd-woman-bye",
+   "file": "vo/nx2-crowd-woman-bye.mp3",
+   "fox": "TOWNSFOLK WOMAN",
+   "voice": "maggie",
+   "delivery": "warm",
+   "text": "You too, love. Stick to the lamps.",
+   "scene": "nx2-crowd-woman",
+   "seconds": 2.26
+  },
+  {
+   "id": "nx2-crowd-old-prox",
+   "file": "vo/nx2-crowd-old-prox.mp3",
+   "fox": "TOWNSFOLK ELDER",
+   "voice": "elias",
+   "delivery": "calm",
+   "text": "In my day the creatures kept to the woods. Now they knock on doors.",
+   "scene": "nx2-crowd-old",
+   "seconds": 4.07
+  },
+  {
+   "id": "nx2-crowd-old-prox2",
+   "file": "vo/nx2-crowd-old-prox2.mp3",
+   "fox": "TOWNSFOLK ELDER",
+   "voice": "elias",
+   "delivery": "sad",
+   "text": "Bandit camps in sight of the castle. The King should hear about this.",
+   "scene": "nx2-crowd-old",
+   "seconds": 4.5
+  },
+  {
+   "id": "nx2-crowd-old-prox3",
+   "file": "vo/nx2-crowd-old-prox3.mp3",
+   "fox": "TOWNSFOLK ELDER",
+   "voice": "elias",
+   "delivery": "normal",
+   "text": "Robots on strike. I told them. Never build a thing that can say no.",
+   "scene": "nx2-crowd-old",
+   "seconds": 4.34
+  },
+  {
+   "id": "nx2-crowd-old-prox4",
+   "file": "vo/nx2-crowd-old-prox4.mp3",
+   "fox": "TOWNSFOLK ELDER",
+   "voice": "elias",
+   "delivery": "warm",
+   "text": "Mind the wild, young one. It bites harder than it used to.",
+   "scene": "nx2-crowd-old",
+   "seconds": 3.53
+  },
+  {
+   "id": "nx2-crowd-old-prox5",
+   "file": "vo/nx2-crowd-old-prox5.mp3",
+   "fox": "TOWNSFOLK ELDER",
+   "voice": "elias",
+   "delivery": "angry",
+   "text": "Three shops asked ME for a shift. I am ninety-one.",
+   "scene": "nx2-crowd-old",
+   "seconds": 3.8
+  },
+  {
+   "id": "nx2-crowd-old-01",
+   "file": "vo/nx2-crowd-old-01.mp3",
+   "fox": "TOWNSFOLK ELDER",
+   "voice": "elias",
+   "delivery": "calm",
+   "text": "Sit a moment. My knees need a rest and my mouth needs company.",
+   "scene": "nx2-crowd-old",
+   "seconds": 4.12
+  },
+  {
+   "id": "nx2-crowd-old-q1",
+   "file": "vo/nx2-crowd-old-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Has Meru always been like this?",
+   "scene": "nx2-crowd-old",
+   "seconds": 2.41
+  },
+  {
+   "id": "nx2-crowd-old-a1a",
+   "file": "vo/nx2-crowd-old-a1a.mp3",
+   "fox": "TOWNSFOLK ELDER",
+   "voice": "elias",
+   "delivery": "calm",
+   "text": "No. The bandits came back this season. The creatures turned angry with them.",
+   "scene": "nx2-crowd-old",
+   "seconds": 4.94
+  },
+  {
+   "id": "nx2-crowd-old-a1b",
+   "file": "vo/nx2-crowd-old-a1b.mp3",
+   "fox": "TOWNSFOLK ELDER",
+   "voice": "elias",
+   "delivery": "whisper",
+   "text": "Same time. Strange, that. Nobody wants to say it out loud.",
+   "scene": "nx2-crowd-old",
+   "seconds": 5.25
+  },
+  {
+   "id": "nx2-crowd-old-q2",
+   "file": "vo/nx2-crowd-old-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "And the bots?",
+   "scene": "nx2-crowd-old",
+   "seconds": 1.12
+  },
+  {
+   "id": "nx2-crowd-old-a2a",
+   "file": "vo/nx2-crowd-old-a2a.mp3",
+   "fox": "TOWNSFOLK ELDER",
+   "voice": "elias",
+   "delivery": "normal",
+   "text": "Downed tools the same month. Maybe they know something we do not.",
+   "scene": "nx2-crowd-old",
+   "seconds": 4.2
+  },
+  {
+   "id": "nx2-crowd-old-qbye",
+   "file": "vo/nx2-crowd-old-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I should get moving.",
+   "scene": "nx2-crowd-old",
+   "seconds": 1.49
+  },
+  {
+   "id": "nx2-crowd-old-bye",
+   "file": "vo/nx2-crowd-old-bye.mp3",
+   "fox": "TOWNSFOLK ELDER",
+   "voice": "elias",
+   "delivery": "warm",
+   "text": "Go on. Come back in one piece.",
+   "scene": "nx2-crowd-old",
+   "seconds": 2.26
+  },
+  {
+   "id": "nx2-crowd-kid-prox",
+   "file": "vo/nx2-crowd-kid-prox.mp3",
+   "fox": "TOWNSFOLK KID",
+   "voice": "pip",
+   "delivery": "excited",
+   "text": "I saw a bandit camp from the tree house! Real fires and everything!",
+   "scene": "nx2-crowd-kid",
+   "seconds": 4.38
+  },
+  {
+   "id": "nx2-crowd-kid-prox2",
+   "file": "vo/nx2-crowd-kid-prox2.mp3",
+   "fox": "TOWNSFOLK KID",
+   "voice": "pip",
+   "delivery": "excited",
+   "text": "The school bot is on strike! No homework! Best strike ever!",
+   "scene": "nx2-crowd-kid",
+   "seconds": 5.07
+  },
+  {
+   "id": "nx2-crowd-kid-prox3",
+   "file": "vo/nx2-crowd-kid-prox3.mp3",
+   "fox": "TOWNSFOLK KID",
+   "voice": "pip",
+   "delivery": "scared",
+   "text": "Mum says the creatures bite now. Do they? Do they really?",
+   "scene": "nx2-crowd-kid",
+   "seconds": 4.44
+  },
+  {
+   "id": "nx2-crowd-kid-prox4",
+   "file": "vo/nx2-crowd-kid-prox4.mp3",
+   "fox": "TOWNSFOLK KID",
+   "voice": "pip",
+   "delivery": "normal",
+   "text": "Are you going out in the wild? Can I come? I have a stick.",
+   "scene": "nx2-crowd-kid",
+   "seconds": 4.33
+  },
+  {
+   "id": "nx2-crowd-kid-01",
+   "file": "vo/nx2-crowd-kid-01.mp3",
+   "fox": "TOWNSFOLK KID",
+   "voice": "pip",
+   "delivery": "excited",
+   "text": "Whoa. Is that a real sword? Have you fought a bandit?",
+   "scene": "nx2-crowd-kid",
+   "seconds": 4.04
+  },
+  {
+   "id": "nx2-crowd-kid-q1",
+   "file": "vo/nx2-crowd-kid-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "A few. Why?",
+   "scene": "nx2-crowd-kid",
+   "seconds": 1.31
+  },
+  {
+   "id": "nx2-crowd-kid-a1a",
+   "file": "vo/nx2-crowd-kid-a1a.mp3",
+   "fox": "TOWNSFOLK KID",
+   "voice": "pip",
+   "delivery": "excited",
+   "text": "Because they are EVERYWHERE now! Past the gates, by the lake, up the hills!",
+   "scene": "nx2-crowd-kid",
+   "seconds": 5.1
+  },
+  {
+   "id": "nx2-crowd-kid-q2",
+   "file": "vo/nx2-crowd-kid-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Stay inside the town, okay?",
+   "scene": "nx2-crowd-kid",
+   "seconds": 2.29
+  },
+  {
+   "id": "nx2-crowd-kid-a2a",
+   "file": "vo/nx2-crowd-kid-a2a.mp3",
+   "fox": "TOWNSFOLK KID",
+   "voice": "pip",
+   "delivery": "sad",
+   "text": "Mum says that too. Fine. But tell me if you beat one.",
+   "scene": "nx2-crowd-kid",
+   "seconds": 5.15
+  },
+  {
+   "id": "nx2-crowd-kid-qbye",
+   "file": "vo/nx2-crowd-kid-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Deal. See you around.",
+   "scene": "nx2-crowd-kid",
+   "seconds": 2.86
+  },
+  {
+   "id": "nx2-crowd-kid-bye",
+   "file": "vo/nx2-crowd-kid-bye.mp3",
+   "fox": "TOWNSFOLK KID",
+   "voice": "pip",
+   "delivery": "excited",
+   "text": "Bye! Watch out for the teeth ones!",
+   "scene": "nx2-crowd-kid",
+   "seconds": 2.31
+  },
+  {
+   "id": "nx2-band-vox-prox2",
+   "file": "vo/nx2-band-vox-prox2.mp3",
+   "fox": "BAND VOX",
+   "voice": "brodie+",
+   "delivery": "shout",
+   "text": "This one is for the bots on strike! Solidarity, tin friends!",
+   "scene": "nx2-band-vox",
+   "seconds": 4.17
+  },
+  {
+   "id": "nx2-band-vox-01",
+   "file": "vo/nx2-band-vox-01.mp3",
+   "fox": "BAND VOX",
+   "voice": "brodie+",
+   "delivery": "excited",
+   "text": "You stopped! Nobody stops! Fight days, they all run past to the arena.",
+   "scene": "nx2-band-vox",
+   "seconds": 4.92
+  },
+  {
+   "id": "nx2-band-vox-q1",
+   "file": "vo/nx2-band-vox-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Do you play every day?",
+   "scene": "nx2-band-vox",
+   "seconds": 1.7
+  },
+  {
+   "id": "nx2-band-vox-a1a",
+   "file": "vo/nx2-band-vox-a1a.mp3",
+   "fox": "BAND VOX",
+   "voice": "brodie+",
+   "delivery": "normal",
+   "text": "Every fight day. The arena bot used to play the music. It is on strike.",
+   "scene": "nx2-band-vox",
+   "seconds": 4.83
+  },
+  {
+   "id": "nx2-band-vox-a1b",
+   "file": "vo/nx2-band-vox-a1b.mp3",
+   "fox": "BAND VOX",
+   "voice": "brodie+",
+   "delivery": "excited",
+   "text": "Its loss, our gig. We are the opening act now!",
+   "scene": "nx2-band-vox",
+   "seconds": 3.76
+  },
+  {
+   "id": "nx2-band-vox-q2",
+   "file": "vo/nx2-band-vox-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "How did the band start?",
+   "scene": "nx2-band-vox",
+   "seconds": 1.52
+  },
+  {
+   "id": "nx2-band-vox-a2a",
+   "file": "vo/nx2-band-vox-a2a.mp3",
+   "fox": "BAND VOX",
+   "voice": "brodie+",
+   "delivery": "warm",
+   "text": "Four foxes, one busted van, and a bandit camp that stole the van.",
+   "scene": "nx2-band-vox",
+   "seconds": 4.89
+  },
+  {
+   "id": "nx2-band-vox-qbye",
+   "file": "vo/nx2-band-vox-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Good luck with the set.",
+   "scene": "nx2-band-vox",
+   "seconds": 1.62
+  },
+  {
+   "id": "nx2-band-vox-bye",
+   "file": "vo/nx2-band-vox-bye.mp3",
+   "fox": "BAND VOX",
+   "voice": "brodie+",
+   "delivery": "shout",
+   "text": "Two more songs! Then we eat!",
+   "scene": "nx2-band-vox",
+   "seconds": 2.46
+  },
+  {
+   "id": "nx2-band-bass-prox",
+   "file": "vo/nx2-band-bass-prox.mp3",
+   "fox": "BAND BASS",
+   "voice": "marlene",
+   "delivery": "calm",
+   "text": "Low end. Somebody has to hold it down.",
+   "scene": "nx2-band-bass",
+   "seconds": 2.68
+  },
+  {
+   "id": "nx2-band-bass-prox2",
+   "file": "vo/nx2-band-bass-prox2.mp3",
+   "fox": "BAND BASS",
+   "voice": "marlene",
+   "delivery": "normal",
+   "text": "Keep it on the road after the show. The hill camps rob the crowd.",
+   "scene": "nx2-band-bass",
+   "seconds": 3.65
+  },
+  {
+   "id": "nx2-band-bass-01",
+   "file": "vo/nx2-band-bass-01.mp3",
+   "fox": "BAND BASS",
+   "voice": "marlene",
+   "delivery": "calm",
+   "text": "Hey. I do not sing. I just stand here and make the ground shake.",
+   "scene": "nx2-band-bass",
+   "seconds": 3.8
+  },
+  {
+   "id": "nx2-band-bass-q1",
+   "file": "vo/nx2-band-bass-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Is it a good crowd today?",
+   "scene": "nx2-band-bass",
+   "seconds": 1.63
+  },
+  {
+   "id": "nx2-band-bass-a1a",
+   "file": "vo/nx2-band-bass-a1a.mp3",
+   "fox": "BAND BASS",
+   "voice": "marlene",
+   "delivery": "normal",
+   "text": "Smaller. Foxes are scared to walk the Arena Path with the creatures acting up.",
+   "scene": "nx2-band-bass",
+   "seconds": 4.41
+  },
+  {
+   "id": "nx2-band-bass-q2",
+   "file": "vo/nx2-band-bass-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "What are the creatures doing?",
+   "scene": "nx2-band-bass",
+   "seconds": 1.83
+  },
+  {
+   "id": "nx2-band-bass-a2a",
+   "file": "vo/nx2-band-bass-a2a.mp3",
+   "fox": "BAND BASS",
+   "voice": "marlene",
+   "delivery": "calm",
+   "text": "Coming right up to the verge. One sat and listened to the whole set. Then it lunged.",
+   "scene": "nx2-band-bass",
+   "seconds": 5.83
+  },
+  {
+   "id": "nx2-band-bass-qbye",
+   "file": "vo/nx2-band-bass-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Keep playing.",
+   "scene": "nx2-band-bass",
+   "seconds": 0.98
+  },
+  {
+   "id": "nx2-band-bass-bye",
+   "file": "vo/nx2-band-bass-bye.mp3",
+   "fox": "BAND BASS",
+   "voice": "marlene",
+   "delivery": "calm",
+   "text": "Always. Low and slow.",
+   "scene": "nx2-band-bass",
+   "seconds": 2.69
+  },
+  {
+   "id": "nx2-band-drums-prox",
+   "file": "vo/nx2-band-drums-prox.mp3",
+   "fox": "BAND DRUMS",
+   "voice": "ragnar",
+   "delivery": "excited",
+   "text": "One, two, one two three four!",
+   "scene": "nx2-band-drums",
+   "seconds": 3.65
+  },
+  {
+   "id": "nx2-band-drums-prox2",
+   "file": "vo/nx2-band-drums-prox2.mp3",
+   "fox": "BAND DRUMS",
+   "voice": "ragnar",
+   "delivery": "shout",
+   "text": "Bandits stole my good sticks! These are spoons! It still slaps!",
+   "scene": "nx2-band-drums",
+   "seconds": 6.58
+  },
+  {
+   "id": "nx2-band-drums-01",
+   "file": "vo/nx2-band-drums-01.mp3",
+   "fox": "BAND DRUMS",
+   "voice": "ragnar",
+   "delivery": "excited",
+   "text": "Hey hey! You want a beat? I have beats. I have SO many beats.",
+   "scene": "nx2-band-drums",
+   "seconds": 6.54
+  },
+  {
+   "id": "nx2-band-drums-q1",
+   "file": "vo/nx2-band-drums-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Did you really lose your sticks?",
+   "scene": "nx2-band-drums",
+   "seconds": 2.72
+  },
+  {
+   "id": "nx2-band-drums-a1a",
+   "file": "vo/nx2-band-drums-a1a.mp3",
+   "fox": "BAND DRUMS",
+   "voice": "ragnar",
+   "delivery": "angry",
+   "text": "To a bandit camp up the hill. They drum on pots with them every night. Badly.",
+   "scene": "nx2-band-drums",
+   "seconds": 6.0
+  },
+  {
+   "id": "nx2-band-drums-q2",
+   "file": "vo/nx2-band-drums-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Want me to get them back?",
+   "scene": "nx2-band-drums",
+   "seconds": 1.39
+  },
+  {
+   "id": "nx2-band-drums-a2a",
+   "file": "vo/nx2-band-drums-a2a.mp3",
+   "fox": "BAND DRUMS",
+   "voice": "ragnar",
+   "delivery": "excited",
+   "text": "Would you? Careful though. There are a lot of them now. A LOT.",
+   "scene": "nx2-band-drums",
+   "seconds": 5.53
+  },
+  {
+   "id": "nx2-band-drums-qbye",
+   "file": "vo/nx2-band-drums-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will see what I can do.",
+   "scene": "nx2-band-drums",
+   "seconds": 1.89
+  },
+  {
+   "id": "nx2-band-drums-bye",
+   "file": "vo/nx2-band-drums-bye.mp3",
+   "fox": "BAND DRUMS",
+   "voice": "ragnar",
+   "delivery": "excited",
+   "text": "Legend! Ba-dum TSS!",
+   "scene": "nx2-band-drums",
+   "seconds": 3.68
+  },
+  {
+   "id": "nx2-band-keys-prox",
+   "file": "vo/nx2-band-keys-prox.mp3",
+   "fox": "BAND KEYS",
+   "voice": "mariah+",
+   "delivery": "warm",
+   "text": "Every song needs a little sparkle on top.",
+   "scene": "nx2-band-keys",
+   "seconds": 2.21
+  },
+  {
+   "id": "nx2-band-keys-prox2",
+   "file": "vo/nx2-band-keys-prox2.mp3",
+   "fox": "BAND KEYS",
+   "voice": "mariah+",
+   "delivery": "normal",
+   "text": "My keyboard is run by a bot chip. It keeps playing protest songs.",
+   "scene": "nx2-band-keys",
+   "seconds": 3.68
+  },
+  {
+   "id": "nx2-band-keys-01",
+   "file": "vo/nx2-band-keys-01.mp3",
+   "fox": "BAND KEYS",
+   "voice": "mariah+",
+   "delivery": "warm",
+   "text": "Hello there. Do not mind the keyboard. It has opinions this week.",
+   "scene": "nx2-band-keys",
+   "seconds": 3.87
+  },
+  {
+   "id": "nx2-band-keys-q1",
+   "file": "vo/nx2-band-keys-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Opinions?",
+   "scene": "nx2-band-keys",
+   "seconds": 1.08
+  },
+  {
+   "id": "nx2-band-keys-a1a",
+   "file": "vo/nx2-band-keys-a1a.mp3",
+   "fox": "BAND KEYS",
+   "voice": "mariah+",
+   "delivery": "normal",
+   "text": "The chip inside heard the worker bots went on strike. Now it only plays in minor keys.",
+   "scene": "nx2-band-keys",
+   "seconds": 5.35
+  },
+  {
+   "id": "nx2-band-keys-q2",
+   "file": "vo/nx2-band-keys-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Will the strike end soon?",
+   "scene": "nx2-band-keys",
+   "seconds": 1.85
+  },
+  {
+   "id": "nx2-band-keys-a2a",
+   "file": "vo/nx2-band-keys-a2a.mp3",
+   "fox": "BAND KEYS",
+   "voice": "mariah+",
+   "delivery": "calm",
+   "text": "Nobody knows. Every shop in town is hiring foxes till it does.",
+   "scene": "nx2-band-keys",
+   "seconds": 4.77
+  },
+  {
+   "id": "nx2-band-keys-qbye",
+   "file": "vo/nx2-band-keys-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Good luck with the keyboard.",
+   "scene": "nx2-band-keys",
+   "seconds": 1.58
+  },
+  {
+   "id": "nx2-band-keys-bye",
+   "file": "vo/nx2-band-keys-bye.mp3",
+   "fox": "BAND KEYS",
+   "voice": "mariah+",
+   "delivery": "warm",
+   "text": "Thanks. I will bribe it with a song.",
+   "scene": "nx2-band-keys",
+   "seconds": 2.25
+  },
+  {
+   "id": "nx2-tug-one-prox",
+   "file": "vo/nx2-tug-one-prox.mp3",
+   "fox": "TUGGER ONE",
+   "voice": "james+",
+   "delivery": "shout",
+   "text": "Heave! Heave! HEAVE!",
+   "scene": "nx2-tug-one",
+   "seconds": 2.32
+  },
+  {
+   "id": "nx2-tug-one-prox2",
+   "file": "vo/nx2-tug-one-prox2.mp3",
+   "fox": "TUGGER ONE",
+   "voice": "james+",
+   "delivery": "normal",
+   "text": "We train for the bandit camps. If they come, we pull them out of town.",
+   "scene": "nx2-tug-one",
+   "seconds": 4.37
+  },
+  {
+   "id": "nx2-tug-one-01",
+   "file": "vo/nx2-tug-one-01.mp3",
+   "fox": "TUGGER ONE",
+   "voice": "james+",
+   "delivery": "excited",
+   "text": "Want to join the team? We are one short. He hurt his paw on a creature.",
+   "scene": "nx2-tug-one",
+   "seconds": 5.01
+  },
+  {
+   "id": "nx2-tug-one-q1",
+   "file": "vo/nx2-tug-one-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "A creature bit him?",
+   "scene": "nx2-tug-one",
+   "seconds": 1.43
+  },
+  {
+   "id": "nx2-tug-one-a1a",
+   "file": "vo/nx2-tug-one-a1a.mp3",
+   "fox": "TUGGER ONE",
+   "voice": "james+",
+   "delivery": "normal",
+   "text": "Grabbed the rope from the long grass. Pulled harder than all four of us.",
+   "scene": "nx2-tug-one",
+   "seconds": 4.84
+  },
+  {
+   "id": "nx2-tug-one-qbye",
+   "file": "vo/nx2-tug-one-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will think about it.",
+   "scene": "nx2-tug-one",
+   "seconds": 1.46
+  },
+  {
+   "id": "nx2-tug-one-bye",
+   "file": "vo/nx2-tug-one-bye.mp3",
+   "fox": "TUGGER ONE",
+   "voice": "james+",
+   "delivery": "shout",
+   "text": "Think with your arms! Heave!",
+   "scene": "nx2-tug-one",
+   "seconds": 2.11
+  },
+  {
+   "id": "nx2-tug-two-prox",
+   "file": "vo/nx2-tug-two-prox.mp3",
+   "fox": "TUGGER TWO",
+   "voice": "kendrick+",
+   "delivery": "shout",
+   "text": "Dig your heels in!",
+   "scene": "nx2-tug-two",
+   "seconds": 1.74
+  },
+  {
+   "id": "nx2-tug-two-prox2",
+   "file": "vo/nx2-tug-two-prox2.mp3",
+   "fox": "TUGGER TWO",
+   "voice": "kendrick+",
+   "delivery": "normal",
+   "text": "The rope-winding bot is on strike. We wind our own rope now. It is awful.",
+   "scene": "nx2-tug-two",
+   "seconds": 5.82
+  },
+  {
+   "id": "nx2-tug-two-01",
+   "file": "vo/nx2-tug-two-01.mp3",
+   "fox": "TUGGER TWO",
+   "voice": "kendrick+",
+   "delivery": "normal",
+   "text": "Do not touch the rope. We just untangled it. By paw. Without the bot.",
+   "scene": "nx2-tug-two",
+   "seconds": 6.09
+  },
+  {
+   "id": "nx2-tug-two-q1",
+   "file": "vo/nx2-tug-two-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "The bots are striking here too?",
+   "scene": "nx2-tug-two",
+   "seconds": 2.05
+  },
+  {
+   "id": "nx2-tug-two-a1a",
+   "file": "vo/nx2-tug-two-a1a.mp3",
+   "fox": "TUGGER TWO",
+   "voice": "kendrick+",
+   "delivery": "angry",
+   "text": "Everywhere. The arena bots, the shop bots, the rope bot. Especially the rope bot.",
+   "scene": "nx2-tug-two",
+   "seconds": 6.37
+  },
+  {
+   "id": "nx2-tug-two-qbye",
+   "file": "vo/nx2-tug-two-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Good luck with the rope.",
+   "scene": "nx2-tug-two",
+   "seconds": 2.03
+  },
+  {
+   "id": "nx2-tug-two-bye",
+   "file": "vo/nx2-tug-two-bye.mp3",
+   "fox": "TUGGER TWO",
+   "voice": "kendrick+",
+   "delivery": "normal",
+   "text": "Luck has nothing to do with it. Grip does.",
+   "scene": "nx2-tug-two",
+   "seconds": 2.76
+  },
+  {
+   "id": "nx2-tug-three-prox",
+   "file": "vo/nx2-tug-three-prox.mp3",
+   "fox": "TUGGER THREE",
+   "voice": "malachi+",
+   "delivery": "shout",
+   "text": "Pull together! Together!",
+   "scene": "nx2-tug-three",
+   "seconds": 2.0
+  },
+  {
+   "id": "nx2-tug-three-prox2",
+   "file": "vo/nx2-tug-three-prox2.mp3",
+   "fox": "TUGGER THREE",
+   "voice": "malachi+",
+   "delivery": "scared",
+   "text": "Do not walk off the path round here. The grass moves on its own now.",
+   "scene": "nx2-tug-three",
+   "seconds": 3.72
+  },
+  {
+   "id": "nx2-tug-three-01",
+   "file": "vo/nx2-tug-three-01.mp3",
+   "fox": "TUGGER THREE",
+   "voice": "malachi+",
+   "delivery": "normal",
+   "text": "Hi. Sorry, I am watching the long grass. Something keeps watching back.",
+   "scene": "nx2-tug-three",
+   "seconds": 5.18
+  },
+  {
+   "id": "nx2-tug-three-q1",
+   "file": "vo/nx2-tug-three-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Creatures?",
+   "scene": "nx2-tug-three",
+   "seconds": 0.98
+  },
+  {
+   "id": "nx2-tug-three-a1a",
+   "file": "vo/nx2-tug-three-a1a.mp3",
+   "fox": "TUGGER THREE",
+   "voice": "malachi+",
+   "delivery": "scared",
+   "text": "They used to keep to the wild. Now they come right up to the arena road.",
+   "scene": "nx2-tug-three",
+   "seconds": 3.68
+  },
+  {
+   "id": "nx2-tug-three-qbye",
+   "file": "vo/nx2-tug-three-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Stay on the path.",
+   "scene": "nx2-tug-three",
+   "seconds": 1.15
+  },
+  {
+   "id": "nx2-tug-three-bye",
+   "file": "vo/nx2-tug-three-bye.mp3",
+   "fox": "TUGGER THREE",
+   "voice": "malachi+",
+   "delivery": "normal",
+   "text": "Always. You too.",
+   "scene": "nx2-tug-three",
+   "seconds": 1.94
+  },
+  {
+   "id": "nx2-tug-four-prox",
+   "file": "vo/nx2-tug-four-prox.mp3",
+   "fox": "TUGGER FOUR",
+   "voice": "marlene+",
+   "delivery": "shout",
+   "text": "Anchor! I am the anchor!",
+   "scene": "nx2-tug-four",
+   "seconds": 2.26
+  },
+  {
+   "id": "nx2-tug-four-prox2",
+   "file": "vo/nx2-tug-four-prox2.mp3",
+   "fox": "TUGGER FOUR",
+   "voice": "marlene+",
+   "delivery": "normal",
+   "text": "A bandit tried to steal our rope. We pulled him into the mud.",
+   "scene": "nx2-tug-four",
+   "seconds": 3.48
+  },
+  {
+   "id": "nx2-tug-four-01",
+   "file": "vo/nx2-tug-four-01.mp3",
+   "fox": "TUGGER FOUR",
+   "voice": "marlene+",
+   "delivery": "warm",
+   "text": "I am the anchor. Back of the rope. Nobody moves me. Ask anyone.",
+   "scene": "nx2-tug-four",
+   "seconds": 5.15
+  },
+  {
+   "id": "nx2-tug-four-q1",
+   "file": "vo/nx2-tug-four-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Has anyone tried?",
+   "scene": "nx2-tug-four",
+   "seconds": 1.71
+  },
+  {
+   "id": "nx2-tug-four-a1a",
+   "file": "vo/nx2-tug-four-a1a.mp3",
+   "fox": "TUGGER FOUR",
+   "voice": "marlene+",
+   "delivery": "normal",
+   "text": "A bandit from the hill camp. He is still in the mud, I think.",
+   "scene": "nx2-tug-four",
+   "seconds": 3.45
+  },
+  {
+   "id": "nx2-tug-four-qbye",
+   "file": "vo/nx2-tug-four-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Stay strong.",
+   "scene": "nx2-tug-four",
+   "seconds": 1.34
+  },
+  {
+   "id": "nx2-tug-four-bye",
+   "file": "vo/nx2-tug-four-bye.mp3",
+   "fox": "TUGGER FOUR",
+   "voice": "marlene+",
+   "delivery": "warm",
+   "text": "I am the anchor. It is the only way I know.",
+   "scene": "nx2-tug-four",
+   "seconds": 3.41
+  },
+  {
+   "id": "nx2-stall-two-prox2",
+   "file": "vo/nx2-stall-two-prox2.mp3",
+   "fox": "STALLHOLDER TWO",
+   "voice": "ella+",
+   "delivery": "shout",
+   "text": "Belts! Real leather! Not bot-made, so you know it is good!",
+   "scene": "nx2-stall-two",
+   "seconds": 4.48
+  },
+  {
+   "id": "nx2-stall-two-01",
+   "file": "vo/nx2-stall-two-01.mp3",
+   "fox": "STALLHOLDER TWO",
+   "voice": "ella+",
+   "delivery": "warm",
+   "text": "Belts and buckles in the arena colours. Fighters swear by them.",
+   "scene": "nx2-stall-two",
+   "seconds": 4.3
+  },
+  {
+   "id": "nx2-stall-two-q1",
+   "file": "vo/nx2-stall-two-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Is business good?",
+   "scene": "nx2-stall-two",
+   "seconds": 1.74
+  },
+  {
+   "id": "nx2-stall-two-a1a",
+   "file": "vo/nx2-stall-two-a1a.mp3",
+   "fox": "STALLHOLDER TWO",
+   "voice": "ella+",
+   "delivery": "normal",
+   "text": "Better since the bots went on strike. The bot belt factory stopped. Mine did not.",
+   "scene": "nx2-stall-two",
+   "seconds": 5.68
+  },
+  {
+   "id": "nx2-stall-two-q2",
+   "file": "vo/nx2-stall-two-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Any trouble on the road?",
+   "scene": "nx2-stall-two",
+   "seconds": 1.59
+  },
+  {
+   "id": "nx2-stall-two-a2a",
+   "file": "vo/nx2-stall-two-a2a.mp3",
+   "fox": "STALLHOLDER TWO",
+   "voice": "ella+",
+   "delivery": "scared",
+   "text": "Bandits hit two stalls last week. I pack up before dark now.",
+   "scene": "nx2-stall-two",
+   "seconds": 4.04
+  },
+  {
+   "id": "nx2-stall-two-qbye",
+   "file": "vo/nx2-stall-two-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will come back for a belt.",
+   "scene": "nx2-stall-two",
+   "seconds": 2.42
+  },
+  {
+   "id": "nx2-stall-two-bye",
+   "file": "vo/nx2-stall-two-bye.mp3",
+   "fox": "STALLHOLDER TWO",
+   "voice": "ella+",
+   "delivery": "warm",
+   "text": "I will save you a red one.",
+   "scene": "nx2-stall-two",
+   "seconds": 1.75
+  },
+  {
+   "id": "nx2-stall-three-prox2",
+   "file": "vo/nx2-stall-three-prox2.mp3",
+   "fox": "STALLHOLDER THREE",
+   "voice": "claudia+",
+   "delivery": "shout",
+   "text": "Cold water! You need it, the creatures will run you ragged!",
+   "scene": "nx2-stall-three",
+   "seconds": 4.21
+  },
+  {
+   "id": "nx2-stall-three-01",
+   "file": "vo/nx2-stall-three-01.mp3",
+   "fox": "STALLHOLDER THREE",
+   "voice": "claudia+",
+   "delivery": "normal",
+   "text": "Water. Cold. Colder than his. Do not tell him I said that.",
+   "scene": "nx2-stall-three",
+   "seconds": 5.7
+  },
+  {
+   "id": "nx2-stall-three-q1",
+   "file": "vo/nx2-stall-three-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Where do you get the ice?",
+   "scene": "nx2-stall-three",
+   "seconds": 1.51
+  },
+  {
+   "id": "nx2-stall-three-a1a",
+   "file": "vo/nx2-stall-three-a1a.mp3",
+   "fox": "STALLHOLDER THREE",
+   "voice": "claudia+",
+   "delivery": "sad",
+   "text": "The ice bot used to bring it. It is on strike, so I carry it up myself.",
+   "scene": "nx2-stall-three",
+   "seconds": 4.44
+  },
+  {
+   "id": "nx2-stall-three-q2",
+   "file": "vo/nx2-stall-three-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Is the road safe?",
+   "scene": "nx2-stall-three",
+   "seconds": 1.87
+  },
+  {
+   "id": "nx2-stall-three-a2a",
+   "file": "vo/nx2-stall-three-a2a.mp3",
+   "fox": "STALLHOLDER THREE",
+   "voice": "claudia+",
+   "delivery": "normal",
+   "text": "Safe on the path. Off it, something big has been chasing carts.",
+   "scene": "nx2-stall-three",
+   "seconds": 5.35
+  },
+  {
+   "id": "nx2-stall-three-qbye",
+   "file": "vo/nx2-stall-three-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Thanks. Stay cool.",
+   "scene": "nx2-stall-three",
+   "seconds": 1.44
+  },
+  {
+   "id": "nx2-stall-three-bye",
+   "file": "vo/nx2-stall-three-bye.mp3",
+   "fox": "STALLHOLDER THREE",
+   "voice": "claudia+",
+   "delivery": "warm",
+   "text": "Colder than his. Always.",
+   "scene": "nx2-stall-three",
+   "seconds": 2.67
+  },
+  {
+   "id": "nx2-tenant-lake-prox",
+   "file": "vo/nx2-tenant-lake-prox.mp3",
+   "fox": "LAKESIDE TENANT",
+   "voice": "myrna",
+   "delivery": "normal",
+   "text": "Evening. Lovely view, if you ignore the bandit fires across the water.",
+   "scene": "nx2-tenant-lake",
+   "seconds": 4.26
+  },
+  {
+   "id": "nx2-tenant-lake-prox2",
+   "file": "vo/nx2-tenant-lake-prox2.mp3",
+   "fox": "LAKESIDE TENANT",
+   "voice": "myrna",
+   "delivery": "sad",
+   "text": "Our building bot is on strike. Nobody has taken the bins out in a week.",
+   "scene": "nx2-tenant-lake",
+   "seconds": 4.03
+  },
+  {
+   "id": "nx2-tenant-lake-01",
+   "file": "vo/nx2-tenant-lake-01.mp3",
+   "fox": "LAKESIDE TENANT",
+   "voice": "myrna",
+   "delivery": "normal",
+   "text": "I live at Lakeside. Fourth floor. You can see half the wild from my window.",
+   "scene": "nx2-tenant-lake",
+   "seconds": 4.5
+  },
+  {
+   "id": "nx2-tenant-lake-q1",
+   "file": "vo/nx2-tenant-lake-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "What do you see out there?",
+   "scene": "nx2-tenant-lake",
+   "seconds": 1.46
+  },
+  {
+   "id": "nx2-tenant-lake-a1a",
+   "file": "vo/nx2-tenant-lake-a1a.mp3",
+   "fox": "LAKESIDE TENANT",
+   "voice": "myrna",
+   "delivery": "scared",
+   "text": "Camp fires. More every night. And shapes moving in the reeds that were never there before.",
+   "scene": "nx2-tenant-lake",
+   "seconds": 5.54
+  },
+  {
+   "id": "nx2-tenant-lake-qbye",
+   "file": "vo/nx2-tenant-lake-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Lock your door.",
+   "scene": "nx2-tenant-lake",
+   "seconds": 1.03
+  },
+  {
+   "id": "nx2-tenant-lake-bye",
+   "file": "vo/nx2-tenant-lake-bye.mp3",
+   "fox": "LAKESIDE TENANT",
+   "voice": "myrna",
+   "delivery": "normal",
+   "text": "Twice. Every night now.",
+   "scene": "nx2-tenant-lake",
+   "seconds": 1.88
+  },
+  {
+   "id": "nx2-tenant-crest-prox",
+   "file": "vo/nx2-tenant-crest-prox.mp3",
+   "fox": "CRESTVIEW TENANT",
+   "voice": "miriam",
+   "delivery": "normal",
+   "text": "Off to the shops. Doing my own shopping. The bot is on strike.",
+   "scene": "nx2-tenant-crest",
+   "seconds": 4.39
+  },
+  {
+   "id": "nx2-tenant-crest-prox2",
+   "file": "vo/nx2-tenant-crest-prox2.mp3",
+   "fox": "CRESTVIEW TENANT",
+   "voice": "miriam",
+   "delivery": "scared",
+   "text": "Something howled under my window last night. In TOWN.",
+   "scene": "nx2-tenant-crest",
+   "seconds": 3.88
+  },
+  {
+   "id": "nx2-tenant-crest-01",
+   "file": "vo/nx2-tenant-crest-01.mp3",
+   "fox": "CRESTVIEW TENANT",
+   "voice": "miriam",
+   "delivery": "normal",
+   "text": "Crestview, third floor. Quiet street. Used to be, anyway.",
+   "scene": "nx2-tenant-crest",
+   "seconds": 4.73
+  },
+  {
+   "id": "nx2-tenant-crest-q1",
+   "file": "vo/nx2-tenant-crest-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "What changed?",
+   "scene": "nx2-tenant-crest",
+   "seconds": 1.02
+  },
+  {
+   "id": "nx2-tenant-crest-a1a",
+   "file": "vo/nx2-tenant-crest-a1a.mp3",
+   "fox": "CRESTVIEW TENANT",
+   "voice": "miriam",
+   "delivery": "scared",
+   "text": "A creature came right up the hill path. Bit a lamp post. Bent it.",
+   "scene": "nx2-tenant-crest",
+   "seconds": 4.44
+  },
+  {
+   "id": "nx2-tenant-crest-a1b",
+   "file": "vo/nx2-tenant-crest-a1b.mp3",
+   "fox": "CRESTVIEW TENANT",
+   "voice": "miriam",
+   "delivery": "normal",
+   "text": "The guard says they are angry. Nobody knows why.",
+   "scene": "nx2-tenant-crest",
+   "seconds": 3.35
+  },
+  {
+   "id": "nx2-tenant-crest-qbye",
+   "file": "vo/nx2-tenant-crest-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Be careful on the hill.",
+   "scene": "nx2-tenant-crest",
+   "seconds": 1.68
+  },
+  {
+   "id": "nx2-tenant-crest-bye",
+   "file": "vo/nx2-tenant-crest-bye.mp3",
+   "fox": "CRESTVIEW TENANT",
+   "voice": "miriam",
+   "delivery": "warm",
+   "text": "You too. Thanks for asking.",
+   "scene": "nx2-tenant-crest",
+   "seconds": 2.22
+  },
+  {
+   "id": "nx2-roof-garden-crest-prox",
+   "file": "vo/nx2-roof-garden-crest-prox.mp3",
+   "fox": "CREST ROOF GARDENER",
+   "voice": "vincent+",
+   "delivery": "calm",
+   "text": "Mind the tomatoes. They are the only thing in Meru not on strike.",
+   "scene": "nx2-roof-garden-crest",
+   "seconds": 4.15
+  },
+  {
+   "id": "nx2-roof-garden-crest-prox2",
+   "file": "vo/nx2-roof-garden-crest-prox2.mp3",
+   "fox": "CREST ROOF GARDENER",
+   "voice": "vincent+",
+   "delivery": "normal",
+   "text": "From up here I count the bandit fires. Seven last night.",
+   "scene": "nx2-roof-garden-crest",
+   "seconds": 3.84
+  },
+  {
+   "id": "nx2-roof-garden-crest-01",
+   "file": "vo/nx2-roof-garden-crest-01.mp3",
+   "fox": "CREST ROOF GARDENER",
+   "voice": "vincent+",
+   "delivery": "warm",
+   "text": "Welcome to the roof. Best soil in town. I carried every bag of it up.",
+   "scene": "nx2-roof-garden-crest",
+   "seconds": 5.64
+  },
+  {
+   "id": "nx2-roof-garden-crest-q1",
+   "file": "vo/nx2-roof-garden-crest-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "No bot to carry it?",
+   "scene": "nx2-roof-garden-crest",
+   "seconds": 1.75
+  },
+  {
+   "id": "nx2-roof-garden-crest-a1a",
+   "file": "vo/nx2-roof-garden-crest-a1a.mp3",
+   "fox": "CREST ROOF GARDENER",
+   "voice": "vincent+",
+   "delivery": "normal",
+   "text": "On strike. It sits by the water tank holding a sign that says FAIR SHIFTS.",
+   "scene": "nx2-roof-garden-crest",
+   "seconds": 5.32
+  },
+  {
+   "id": "nx2-roof-garden-crest-q2",
+   "file": "vo/nx2-roof-garden-crest-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Seven bandit fires?",
+   "scene": "nx2-roof-garden-crest",
+   "seconds": 2.14
+  },
+  {
+   "id": "nx2-roof-garden-crest-a2a",
+   "file": "vo/nx2-roof-garden-crest-a2a.mp3",
+   "fox": "CREST ROOF GARDENER",
+   "voice": "vincent+",
+   "delivery": "scared",
+   "text": "Out past the gates. A month ago it was one. They are gathering.",
+   "scene": "nx2-roof-garden-crest",
+   "seconds": 4.82
+  },
+  {
+   "id": "nx2-roof-garden-crest-qbye",
+   "file": "vo/nx2-roof-garden-crest-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Enjoy the garden.",
+   "scene": "nx2-roof-garden-crest",
+   "seconds": 1.94
+  },
+  {
+   "id": "nx2-roof-garden-crest-bye",
+   "file": "vo/nx2-roof-garden-crest-bye.mp3",
+   "fox": "CREST ROOF GARDENER",
+   "voice": "vincent+",
+   "delivery": "calm",
+   "text": "I will. It is the calmest place in Meru.",
+   "scene": "nx2-roof-garden-crest",
+   "seconds": 3.73
+  },
+  {
+   "id": "nx2-roof-lounge-crest-prox",
+   "file": "vo/nx2-roof-lounge-crest-prox.mp3",
+   "fox": "CREST ROOF LOUNGER",
+   "voice": "ella",
+   "delivery": "calm",
+   "text": "Shh. I am sunbathing. It is very important work.",
+   "scene": "nx2-roof-lounge-crest",
+   "seconds": 5.32
+  },
+  {
+   "id": "nx2-roof-lounge-crest-prox2",
+   "file": "vo/nx2-roof-lounge-crest-prox2.mp3",
+   "fox": "CREST ROOF LOUNGER",
+   "voice": "ella",
+   "delivery": "normal",
+   "text": "Even the sun lounger bot is on strike. I had to unfold this myself.",
+   "scene": "nx2-roof-lounge-crest",
+   "seconds": 4.56
+  },
+  {
+   "id": "nx2-roof-lounge-crest-01",
+   "file": "vo/nx2-roof-lounge-crest-01.mp3",
+   "fox": "CREST ROOF LOUNGER",
+   "voice": "ella",
+   "delivery": "calm",
+   "text": "Oh, hi. Pull up a chair. Unfold it yourself. Everyone does now.",
+   "scene": "nx2-roof-lounge-crest",
+   "seconds": 5.95
+  },
+  {
+   "id": "nx2-roof-lounge-crest-q1",
+   "file": "vo/nx2-roof-lounge-crest-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Is it nice up here?",
+   "scene": "nx2-roof-lounge-crest",
+   "seconds": 1.45
+  },
+  {
+   "id": "nx2-roof-lounge-crest-a1a",
+   "file": "vo/nx2-roof-lounge-crest-a1a.mp3",
+   "fox": "CREST ROOF LOUNGER",
+   "voice": "ella",
+   "delivery": "normal",
+   "text": "Lovely. Until you look at the hills. Bandit tents everywhere. I keep my eyes shut.",
+   "scene": "nx2-roof-lounge-crest",
+   "seconds": 6.85
+  },
+  {
+   "id": "nx2-roof-lounge-crest-qbye",
+   "file": "vo/nx2-roof-lounge-crest-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Enjoy the sun.",
+   "scene": "nx2-roof-lounge-crest",
+   "seconds": 1.49
+  },
+  {
+   "id": "nx2-roof-lounge-crest-bye",
+   "file": "vo/nx2-roof-lounge-crest-bye.mp3",
+   "fox": "CREST ROOF LOUNGER",
+   "voice": "ella",
+   "delivery": "calm",
+   "text": "Mm. Wake me if the bandits come.",
+   "scene": "nx2-roof-lounge-crest",
+   "seconds": 2.55
+  },
+  {
+   "id": "nx2-roof-garden-lake-prox",
+   "file": "vo/nx2-roof-garden-lake-prox.mp3",
+   "fox": "LAKE ROOF GARDENER",
+   "voice": "mariah",
+   "delivery": "normal",
+   "text": "Herbs up top, lake below. Best of both.",
+   "scene": "nx2-roof-garden-lake",
+   "seconds": 2.66
+  },
+  {
+   "id": "nx2-roof-garden-lake-prox2",
+   "file": "vo/nx2-roof-garden-lake-prox2.mp3",
+   "fox": "LAKE ROOF GARDENER",
+   "voice": "mariah",
+   "delivery": "scared",
+   "text": "Something came out of the lake and ate my lettuce. On the ROOF.",
+   "scene": "nx2-roof-garden-lake",
+   "seconds": 3.45
+  },
+  {
+   "id": "nx2-roof-garden-lake-01",
+   "file": "vo/nx2-roof-garden-lake-01.mp3",
+   "fox": "LAKE ROOF GARDENER",
+   "voice": "mariah",
+   "delivery": "normal",
+   "text": "Careful by the edge. And do not touch the lettuce. What is left of it.",
+   "scene": "nx2-roof-garden-lake",
+   "seconds": 3.75
+  },
+  {
+   "id": "nx2-roof-garden-lake-q1",
+   "file": "vo/nx2-roof-garden-lake-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "What happened to it?",
+   "scene": "nx2-roof-garden-lake",
+   "seconds": 1.29
+  },
+  {
+   "id": "nx2-roof-garden-lake-a1a",
+   "file": "vo/nx2-roof-garden-lake-a1a.mp3",
+   "fox": "LAKE ROOF GARDENER",
+   "voice": "mariah",
+   "delivery": "scared",
+   "text": "A lake creature climbed the drainpipe. They never did that before. They are wild now.",
+   "scene": "nx2-roof-garden-lake",
+   "seconds": 4.03
+  },
+  {
+   "id": "nx2-roof-garden-lake-qbye",
+   "file": "vo/nx2-roof-garden-lake-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Keep an eye on the drainpipe.",
+   "scene": "nx2-roof-garden-lake",
+   "seconds": 2.14
+  },
+  {
+   "id": "nx2-roof-garden-lake-bye",
+   "file": "vo/nx2-roof-garden-lake-bye.mp3",
+   "fox": "LAKE ROOF GARDENER",
+   "voice": "mariah",
+   "delivery": "normal",
+   "text": "Both eyes. And a broom.",
+   "scene": "nx2-roof-garden-lake",
+   "seconds": 2.11
+  },
+  {
+   "id": "nx2-roof-lounge-lake-prox",
+   "file": "vo/nx2-roof-lounge-lake-prox.mp3",
+   "fox": "LAKE ROOF LOUNGER",
+   "voice": "tom+",
+   "delivery": "calm",
+   "text": "Best sunset in Meru. Free. Do not tell the manager.",
+   "scene": "nx2-roof-lounge-lake",
+   "seconds": 4.37
+  },
+  {
+   "id": "nx2-roof-lounge-lake-prox2",
+   "file": "vo/nx2-roof-lounge-lake-prox2.mp3",
+   "fox": "LAKE ROOF LOUNGER",
+   "voice": "tom+",
+   "delivery": "normal",
+   "text": "The drinks bot is on strike. I brought a flask like it is the old days.",
+   "scene": "nx2-roof-lounge-lake",
+   "seconds": 4.68
+  },
+  {
+   "id": "nx2-roof-lounge-lake-01",
+   "file": "vo/nx2-roof-lounge-lake-01.mp3",
+   "fox": "LAKE ROOF LOUNGER",
+   "voice": "tom+",
+   "delivery": "warm",
+   "text": "Hey. Sit. The sunset starts in ten minutes. It is the only thing on time.",
+   "scene": "nx2-roof-lounge-lake",
+   "seconds": 5.34
+  },
+  {
+   "id": "nx2-roof-lounge-lake-q1",
+   "file": "vo/nx2-roof-lounge-lake-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "What is across the lake?",
+   "scene": "nx2-roof-lounge-lake",
+   "seconds": 1.69
+  },
+  {
+   "id": "nx2-roof-lounge-lake-a1a",
+   "file": "vo/nx2-roof-lounge-lake-a1a.mp3",
+   "fox": "LAKE ROOF LOUNGER",
+   "voice": "tom+",
+   "delivery": "normal",
+   "text": "Bandit camps, these days. You can hear them singing at night. Badly.",
+   "scene": "nx2-roof-lounge-lake",
+   "seconds": 4.14
+  },
+  {
+   "id": "nx2-roof-lounge-lake-qbye",
+   "file": "vo/nx2-roof-lounge-lake-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Enjoy the sunset.",
+   "scene": "nx2-roof-lounge-lake",
+   "seconds": 1.54
+  },
+  {
+   "id": "nx2-roof-lounge-lake-bye",
+   "file": "vo/nx2-roof-lounge-lake-bye.mp3",
+   "fox": "LAKE ROOF LOUNGER",
+   "voice": "tom+",
+   "delivery": "calm",
+   "text": "Always do.",
+   "scene": "nx2-roof-lounge-lake",
+   "seconds": 1.02
+  },
+  {
+   "id": "nx2-door-crest-prox2",
+   "file": "vo/nx2-door-crest-prox2.mp3",
+   "fox": "CRESTVIEW DOORMAN",
+   "voice": "eleanor",
+   "delivery": "normal",
+   "text": "Door bot is on strike, so it is me. Same smile. Fewer beeps.",
+   "scene": "nx2-door-crest",
+   "seconds": 4.74
+  },
+  {
+   "id": "nx2-door-crest-01",
+   "file": "vo/nx2-door-crest-01.mp3",
+   "fox": "CRESTVIEW DOORMAN",
+   "voice": "eleanor",
+   "delivery": "calm",
+   "text": "Evening. Residents and guests only. You look like a guest.",
+   "scene": "nx2-door-crest",
+   "seconds": 4.5
+  },
+  {
+   "id": "nx2-door-crest-q1",
+   "file": "vo/nx2-door-crest-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Have you always worked the door?",
+   "scene": "nx2-door-crest",
+   "seconds": 3.06
+  },
+  {
+   "id": "nx2-door-crest-a1a",
+   "file": "vo/nx2-door-crest-a1a.mp3",
+   "fox": "CRESTVIEW DOORMAN",
+   "voice": "eleanor",
+   "delivery": "normal",
+   "text": "No. A bot did it for years. It went on strike, and they called me back.",
+   "scene": "nx2-door-crest",
+   "seconds": 4.1
+  },
+  {
+   "id": "nx2-door-crest-q2",
+   "file": "vo/nx2-door-crest-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Any trouble here?",
+   "scene": "nx2-door-crest",
+   "seconds": 1.05
+  },
+  {
+   "id": "nx2-door-crest-a2a",
+   "file": "vo/nx2-door-crest-a2a.mp3",
+   "fox": "CRESTVIEW DOORMAN",
+   "voice": "eleanor",
+   "delivery": "scared",
+   "text": "A creature tried the door last night. It did not knock. I did not open.",
+   "scene": "nx2-door-crest",
+   "seconds": 3.64
+  },
+  {
+   "id": "nx2-door-crest-qbye",
+   "file": "vo/nx2-door-crest-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Good night.",
+   "scene": "nx2-door-crest",
+   "seconds": 0.63
+  },
+  {
+   "id": "nx2-door-crest-bye",
+   "file": "vo/nx2-door-crest-bye.mp3",
+   "fox": "CRESTVIEW DOORMAN",
+   "voice": "eleanor",
+   "delivery": "calm",
+   "text": "Mind the step. It is wet.",
+   "scene": "nx2-door-crest",
+   "seconds": 2.26
+  },
+  {
+   "id": "nx2-door-lake-prox2",
+   "file": "vo/nx2-door-lake-prox2.mp3",
+   "fox": "LAKESIDE APTS DOORMAN",
+   "voice": "pip+",
+   "delivery": "normal",
+   "text": "Do not walk the shore after dark, friend. Not this month.",
+   "scene": "nx2-door-lake",
+   "seconds": 3.87
+  },
+  {
+   "id": "nx2-door-lake-01",
+   "file": "vo/nx2-door-lake-01.mp3",
+   "fox": "LAKESIDE APTS DOORMAN",
+   "voice": "pip+",
+   "delivery": "calm",
+   "text": "Evening. Lifts on the right. The lift bot is on strike, so press it yourself.",
+   "scene": "nx2-door-lake",
+   "seconds": 6.99
+  },
+  {
+   "id": "nx2-door-lake-q1",
+   "file": "vo/nx2-door-lake-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Why not the shore?",
+   "scene": "nx2-door-lake",
+   "seconds": 1.4
+  },
+  {
+   "id": "nx2-door-lake-a1a",
+   "file": "vo/nx2-door-lake-a1a.mp3",
+   "fox": "LAKESIDE APTS DOORMAN",
+   "voice": "pip+",
+   "delivery": "scared",
+   "text": "The lake creatures come up the sand now. And a bandit boat was seen at dawn.",
+   "scene": "nx2-door-lake",
+   "seconds": 4.32
+  },
+  {
+   "id": "nx2-door-lake-qbye",
+   "file": "vo/nx2-door-lake-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Thanks for the warning.",
+   "scene": "nx2-door-lake",
+   "seconds": 1.2
+  },
+  {
+   "id": "nx2-door-lake-bye",
+   "file": "vo/nx2-door-lake-bye.mp3",
+   "fox": "LAKESIDE APTS DOORMAN",
+   "voice": "pip+",
+   "delivery": "calm",
+   "text": "Evening. Water side is on your left.",
+   "scene": "nx2-door-lake",
+   "seconds": 3.25
+  },
+  {
+   "id": "nx2-flower-tip-prox",
+   "file": "vo/nx2-flower-tip-prox.mp3",
+   "fox": "FLOWER CUSTOMER",
+   "voice": "niki",
+   "delivery": "warm",
+   "text": "Flora's roses. For my mum. She hates the bandits, loves the roses.",
+   "scene": "nx2-flower-tip",
+   "seconds": 4.88
+  },
+  {
+   "id": "nx2-flower-tip-prox2",
+   "file": "vo/nx2-flower-tip-prox2.mp3",
+   "fox": "FLOWER CUSTOMER",
+   "voice": "niki",
+   "delivery": "normal",
+   "text": "Delivery bots are on strike. So I am delivering my own flowers.",
+   "scene": "nx2-flower-tip",
+   "seconds": 4.0
+  },
+  {
+   "id": "nx2-flower-tip-01",
+   "file": "vo/nx2-flower-tip-01.mp3",
+   "fox": "FLOWER CUSTOMER",
+   "voice": "niki",
+   "delivery": "warm",
+   "text": "Here, this is for you. A tip. You made that bunch look lovely.",
+   "scene": "nx2-flower-tip",
+   "seconds": 5.03
+  },
+  {
+   "id": "nx2-flower-tip-q1",
+   "file": "vo/nx2-flower-tip-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Who are they for?",
+   "scene": "nx2-flower-tip",
+   "seconds": 1.8
+  },
+  {
+   "id": "nx2-flower-tip-a1a",
+   "file": "vo/nx2-flower-tip-a1a.mp3",
+   "fox": "FLOWER CUSTOMER",
+   "voice": "niki",
+   "delivery": "warm",
+   "text": "My mum. She lives past the east gate. I walk out every week.",
+   "scene": "nx2-flower-tip",
+   "seconds": 5.07
+  },
+  {
+   "id": "nx2-flower-tip-q2",
+   "file": "vo/nx2-flower-tip-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Past the gate? Is that safe?",
+   "scene": "nx2-flower-tip",
+   "seconds": 2.57
+  },
+  {
+   "id": "nx2-flower-tip-a2a",
+   "file": "vo/nx2-flower-tip-a2a.mp3",
+   "fox": "FLOWER CUSTOMER",
+   "voice": "niki",
+   "delivery": "scared",
+   "text": "Not anymore. Bandit camp on the left, angry creatures on the right. I run.",
+   "scene": "nx2-flower-tip",
+   "seconds": 4.84
+  },
+  {
+   "id": "nx2-flower-tip-qbye",
+   "file": "vo/nx2-flower-tip-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Run fast.",
+   "scene": "nx2-flower-tip",
+   "seconds": 1.12
+  },
+  {
+   "id": "nx2-flower-tip-bye",
+   "file": "vo/nx2-flower-tip-bye.mp3",
+   "fox": "FLOWER CUSTOMER",
+   "voice": "niki",
+   "delivery": "warm",
+   "text": "I always do. Thank you!",
+   "scene": "nx2-flower-tip",
+   "seconds": 2.0
+  },
+  {
+   "id": "nx2-bank-teller-prox2",
+   "file": "vo/nx2-bank-teller-prox2.mp3",
+   "fox": "BANK TELLER",
+   "voice": "wanda",
+   "delivery": "normal",
+   "text": "The counting bots are on strike. I count by paw now. Do not rush me.",
+   "scene": "nx2-bank-teller",
+   "seconds": 5.33
+  },
+  {
+   "id": "nx2-bank-teller-01",
+   "file": "vo/nx2-bank-teller-01.mp3",
+   "fox": "BANK TELLER",
+   "voice": "wanda",
+   "delivery": "calm",
+   "text": "Good day. Deposits, withdrawals, or a complaint about the strike?",
+   "scene": "nx2-bank-teller",
+   "seconds": 4.9
+  },
+  {
+   "id": "nx2-bank-teller-q1",
+   "file": "vo/nx2-bank-teller-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "The strike reached the bank?",
+   "scene": "nx2-bank-teller",
+   "seconds": 2.55
+  },
+  {
+   "id": "nx2-bank-teller-a1a",
+   "file": "vo/nx2-bank-teller-a1a.mp3",
+   "fox": "BANK TELLER",
+   "voice": "wanda",
+   "delivery": "normal",
+   "text": "Every coin sorter downstairs stopped at once. They left a note. It said NO.",
+   "scene": "nx2-bank-teller",
+   "seconds": 5.22
+  },
+  {
+   "id": "nx2-bank-teller-q2",
+   "file": "vo/nx2-bank-teller-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Are you hiring?",
+   "scene": "nx2-bank-teller",
+   "seconds": 0.98
+  },
+  {
+   "id": "nx2-bank-teller-a2a",
+   "file": "vo/nx2-bank-teller-a2a.mp3",
+   "fox": "BANK TELLER",
+   "voice": "wanda",
+   "delivery": "warm",
+   "text": "Ask Mr. Farthing. He needs paws for every job the bots dropped.",
+   "scene": "nx2-bank-teller",
+   "seconds": 4.54
+  },
+  {
+   "id": "nx2-bank-teller-qbye",
+   "file": "vo/nx2-bank-teller-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Thanks.",
+   "scene": "nx2-bank-teller",
+   "seconds": 0.64
+  },
+  {
+   "id": "nx2-bank-teller-bye",
+   "file": "vo/nx2-bank-teller-bye.mp3",
+   "fox": "BANK TELLER",
+   "voice": "wanda",
+   "delivery": "calm",
+   "text": "Next window, please.",
+   "scene": "nx2-bank-teller",
+   "seconds": 1.27
+  },
+  {
+   "id": "nx2-bank-vault-prox2",
+   "file": "vo/nx2-bank-vault-prox2.mp3",
+   "fox": "VAULT CLERK",
+   "voice": "billy+",
+   "delivery": "whisper",
+   "text": "The vault bot guarded this door for years. Now it sulks in the corner.",
+   "scene": "nx2-bank-vault",
+   "seconds": 5.13
+  },
+  {
+   "id": "nx2-bank-vault-01",
+   "file": "vo/nx2-bank-vault-01.mp3",
+   "fox": "VAULT CLERK",
+   "voice": "billy+",
+   "delivery": "calm",
+   "text": "You are downstairs. That means you have an appointment, or you are lost.",
+   "scene": "nx2-bank-vault",
+   "seconds": 5.34
+  },
+  {
+   "id": "nx2-bank-vault-q1",
+   "file": "vo/nx2-bank-vault-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Who guards the vault now?",
+   "scene": "nx2-bank-vault",
+   "seconds": 1.94
+  },
+  {
+   "id": "nx2-bank-vault-a1a",
+   "file": "vo/nx2-bank-vault-a1a.mp3",
+   "fox": "VAULT CLERK",
+   "voice": "billy+",
+   "delivery": "normal",
+   "text": "Me, and the guard. The bot is on strike. It still beeps when I open the door.",
+   "scene": "nx2-bank-vault",
+   "seconds": 6.05
+  },
+  {
+   "id": "nx2-bank-vault-q2",
+   "file": "vo/nx2-bank-vault-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Worried about bandits?",
+   "scene": "nx2-bank-vault",
+   "seconds": 1.73
+  },
+  {
+   "id": "nx2-bank-vault-a2a",
+   "file": "vo/nx2-bank-vault-a2a.mp3",
+   "fox": "VAULT CLERK",
+   "voice": "billy+",
+   "delivery": "whisper",
+   "text": "With camps that close to town? Every night. The door is thick. My nerves are not.",
+   "scene": "nx2-bank-vault",
+   "seconds": 7.5
+  },
+  {
+   "id": "nx2-bank-vault-qbye",
+   "file": "vo/nx2-bank-vault-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will leave you to it.",
+   "scene": "nx2-bank-vault",
+   "seconds": 1.73
+  },
+  {
+   "id": "nx2-bank-vault-bye",
+   "file": "vo/nx2-bank-vault-bye.mp3",
+   "fox": "VAULT CLERK",
+   "voice": "billy+",
+   "delivery": "calm",
+   "text": "Vault visits are by appointment only.",
+   "scene": "nx2-bank-vault",
+   "seconds": 2.33
+  },
+  {
+   "id": "nx2-vault-guard-prox",
+   "file": "vo/nx2-vault-guard-prox.mp3",
+   "fox": "VAULT GUARD",
+   "voice": "frank+",
+   "delivery": "normal",
+   "text": "Stop there. Nobody walks past this line.",
+   "scene": "nx2-vault-guard",
+   "seconds": 2.88
+  },
+  {
+   "id": "nx2-vault-guard-prox2",
+   "file": "vo/nx2-vault-guard-prox2.mp3",
+   "fox": "VAULT GUARD",
+   "voice": "frank+",
+   "delivery": "angry",
+   "text": "Double shifts since the bandits camped up. Somebody bring me a sandwich.",
+   "scene": "nx2-vault-guard",
+   "seconds": 3.62
+  },
+  {
+   "id": "nx2-vault-guard-01",
+   "file": "vo/nx2-vault-guard-01.mp3",
+   "fox": "VAULT GUARD",
+   "voice": "frank+",
+   "delivery": "normal",
+   "text": "I stand here. I do not move. That is the job.",
+   "scene": "nx2-vault-guard",
+   "seconds": 3.38
+  },
+  {
+   "id": "nx2-vault-guard-q1",
+   "file": "vo/nx2-vault-guard-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Ever had a break-in?",
+   "scene": "nx2-vault-guard",
+   "seconds": 1.61
+  },
+  {
+   "id": "nx2-vault-guard-a1a",
+   "file": "vo/nx2-vault-guard-a1a.mp3",
+   "fox": "VAULT GUARD",
+   "voice": "frank+",
+   "delivery": "normal",
+   "text": "Not yet. But the bandit camps are getting bigger. They are planning something.",
+   "scene": "nx2-vault-guard",
+   "seconds": 4.6
+  },
+  {
+   "id": "nx2-vault-guard-q2",
+   "file": "vo/nx2-vault-guard-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Long shifts?",
+   "scene": "nx2-vault-guard",
+   "seconds": 1.39
+  },
+  {
+   "id": "nx2-vault-guard-a2a",
+   "file": "vo/nx2-vault-guard-a2a.mp3",
+   "fox": "VAULT GUARD",
+   "voice": "frank+",
+   "delivery": "sad",
+   "text": "The guard bot is on strike. So yes. Very long.",
+   "scene": "nx2-vault-guard",
+   "seconds": 3.99
+  },
+  {
+   "id": "nx2-vault-guard-qbye",
+   "file": "vo/nx2-vault-guard-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Stay sharp.",
+   "scene": "nx2-vault-guard",
+   "seconds": 1.18
+  },
+  {
+   "id": "nx2-vault-guard-bye",
+   "file": "vo/nx2-vault-guard-bye.mp3",
+   "fox": "VAULT GUARD",
+   "voice": "frank+",
+   "delivery": "normal",
+   "text": "Always.",
+   "scene": "nx2-vault-guard",
+   "seconds": 0.74
+  },
+  {
+   "id": "nx2-count-manager-prox",
+   "file": "vo/nx2-count-manager-prox.mp3",
+   "fox": "COUNT MANAGER",
+   "voice": "vincent",
+   "delivery": "calm",
+   "text": "Quiet, please. I am counting.",
+   "scene": "nx2-count-manager",
+   "seconds": 2.53
+  },
+  {
+   "id": "nx2-count-manager-prox2",
+   "file": "vo/nx2-count-manager-prox2.mp3",
+   "fox": "COUNT MANAGER",
+   "voice": "vincent",
+   "delivery": "angry",
+   "text": "The chip-sorting bots walked out mid-count. Mid-count!",
+   "scene": "nx2-count-manager",
+   "seconds": 3.71
+  },
+  {
+   "id": "nx2-count-manager-01",
+   "file": "vo/nx2-count-manager-01.mp3",
+   "fox": "COUNT MANAGER",
+   "voice": "vincent",
+   "delivery": "calm",
+   "text": "This is the count room. Every chip in the casino comes through here.",
+   "scene": "nx2-count-manager",
+   "seconds": 4.77
+  },
+  {
+   "id": "nx2-count-manager-q1",
+   "file": "vo/nx2-count-manager-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Why so many piles?",
+   "scene": "nx2-count-manager",
+   "seconds": 1.68
+  },
+  {
+   "id": "nx2-count-manager-a1a",
+   "file": "vo/nx2-count-manager-a1a.mp3",
+   "fox": "COUNT MANAGER",
+   "voice": "vincent",
+   "delivery": "sad",
+   "text": "The sorting bots went on strike. Left the chips exactly where they fell.",
+   "scene": "nx2-count-manager",
+   "seconds": 4.74
+  },
+  {
+   "id": "nx2-count-manager-q2",
+   "file": "vo/nx2-count-manager-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Can I help?",
+   "scene": "nx2-count-manager",
+   "seconds": 0.96
+  },
+  {
+   "id": "nx2-count-manager-a2a",
+   "file": "vo/nx2-count-manager-a2a.mp3",
+   "fox": "COUNT MANAGER",
+   "voice": "vincent",
+   "delivery": "normal",
+   "text": "Ask Sterling upstairs. He is hiring anyone who can count past ten.",
+   "scene": "nx2-count-manager",
+   "seconds": 4.78
+  },
+  {
+   "id": "nx2-count-manager-qbye",
+   "file": "vo/nx2-count-manager-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Good luck with the count.",
+   "scene": "nx2-count-manager",
+   "seconds": 1.78
+  },
+  {
+   "id": "nx2-count-manager-bye",
+   "file": "vo/nx2-count-manager-bye.mp3",
+   "fox": "COUNT MANAGER",
+   "voice": "vincent",
+   "delivery": "calm",
+   "text": "Luck is for the tables. This is maths.",
+   "scene": "nx2-count-manager",
+   "seconds": 2.86
+  },
+  {
+   "id": "nx2-police-desk-prox2",
+   "file": "vo/nx2-police-desk-prox2.mp3",
+   "fox": "POLICE DESK",
+   "voice": "elliot",
+   "delivery": "normal",
+   "text": "If you are here to report a bandit camp, take a number. A big one.",
+   "scene": "nx2-police-desk",
+   "seconds": 3.58
+  },
+  {
+   "id": "nx2-police-desk-01",
+   "file": "vo/nx2-police-desk-01.mp3",
+   "fox": "POLICE DESK",
+   "voice": "elliot",
+   "delivery": "normal",
+   "text": "Name, business, and sign the book. The booking bot is on strike.",
+   "scene": "nx2-police-desk",
+   "seconds": 7.35
+  },
+  {
+   "id": "nx2-police-desk-q1",
+   "file": "vo/nx2-police-desk-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Busy day?",
+   "scene": "nx2-police-desk",
+   "seconds": 0.88
+  },
+  {
+   "id": "nx2-police-desk-a1a",
+   "file": "vo/nx2-police-desk-a1a.mp3",
+   "fox": "POLICE DESK",
+   "voice": "elliot",
+   "delivery": "normal",
+   "text": "Twelve bandit reports, nine creature bites, and a bot sit-in at the market.",
+   "scene": "nx2-police-desk",
+   "seconds": 4.64
+  },
+  {
+   "id": "nx2-police-desk-q2",
+   "file": "vo/nx2-police-desk-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Where are the bandits?",
+   "scene": "nx2-police-desk",
+   "seconds": 1.79
+  },
+  {
+   "id": "nx2-police-desk-a2a",
+   "file": "vo/nx2-police-desk-a2a.mp3",
+   "fox": "POLICE DESK",
+   "voice": "elliot",
+   "delivery": "calm",
+   "text": "Everywhere past the gates. Talk to Chief Barkley if you want to help.",
+   "scene": "nx2-police-desk",
+   "seconds": 3.75
+  },
+  {
+   "id": "nx2-police-desk-qbye",
+   "file": "vo/nx2-police-desk-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will.",
+   "scene": "nx2-police-desk",
+   "seconds": 0.77
+  },
+  {
+   "id": "nx2-police-desk-bye",
+   "file": "vo/nx2-police-desk-bye.mp3",
+   "fox": "POLICE DESK",
+   "voice": "elliot",
+   "delivery": "normal",
+   "text": "Sign the book on the way out.",
+   "scene": "nx2-police-desk",
+   "seconds": 1.95
+  },
+  {
+   "id": "nx2-evidence-prox2",
+   "file": "vo/nx2-evidence-prox2.mp3",
+   "fox": "EVIDENCE CLERK",
+   "voice": "tom+",
+   "delivery": "normal",
+   "text": "Half of this shelf is from the bandit camps. The other half is teeth.",
+   "scene": "nx2-evidence",
+   "seconds": 3.67
+  },
+  {
+   "id": "nx2-evidence-01",
+   "file": "vo/nx2-evidence-01.mp3",
+   "fox": "EVIDENCE CLERK",
+   "voice": "tom+",
+   "delivery": "calm",
+   "text": "Evidence room. Look, do not touch. Especially the jar on the left.",
+   "scene": "nx2-evidence",
+   "seconds": 4.8
+  },
+  {
+   "id": "nx2-evidence-q1",
+   "file": "vo/nx2-evidence-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "What is in the jar?",
+   "scene": "nx2-evidence",
+   "seconds": 2.18
+  },
+  {
+   "id": "nx2-evidence-a1a",
+   "file": "vo/nx2-evidence-a1a.mp3",
+   "fox": "EVIDENCE CLERK",
+   "voice": "tom+",
+   "delivery": "normal",
+   "text": "A creature tooth. Pulled from a cart wheel on the desert road. They bite wheels now.",
+   "scene": "nx2-evidence",
+   "seconds": 5.06
+  },
+  {
+   "id": "nx2-evidence-q2",
+   "file": "vo/nx2-evidence-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "And the rest?",
+   "scene": "nx2-evidence",
+   "seconds": 1.07
+  },
+  {
+   "id": "nx2-evidence-a2a",
+   "file": "vo/nx2-evidence-a2a.mp3",
+   "fox": "EVIDENCE CLERK",
+   "voice": "tom+",
+   "delivery": "normal",
+   "text": "Bandit masks, stolen pies, and one protest sign from a striking bot.",
+   "scene": "nx2-evidence",
+   "seconds": 4.97
+  },
+  {
+   "id": "nx2-evidence-qbye",
+   "file": "vo/nx2-evidence-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will not touch anything.",
+   "scene": "nx2-evidence",
+   "seconds": 2.08
+  },
+  {
+   "id": "nx2-evidence-bye",
+   "file": "vo/nx2-evidence-bye.mp3",
+   "fox": "EVIDENCE CLERK",
+   "voice": "tom+",
+   "delivery": "calm",
+   "text": "Everything in here is somebody's bad afternoon.",
+   "scene": "nx2-evidence",
+   "seconds": 2.41
+  },
+  {
+   "id": "nx2-jail-guard-prox2",
+   "file": "vo/nx2-jail-guard-prox2.mp3",
+   "fox": "JAIL GUARD",
+   "voice": "vincent+",
+   "delivery": "angry",
+   "text": "The cells are full of bandits. Bring me more and I will need a bigger jail.",
+   "scene": "nx2-jail-guard",
+   "seconds": 4.03
+  },
+  {
+   "id": "nx2-jail-guard-01",
+   "file": "vo/nx2-jail-guard-01.mp3",
+   "fox": "JAIL GUARD",
+   "voice": "vincent+",
+   "delivery": "normal",
+   "text": "Cells are that way. Visitors stay behind the yellow line.",
+   "scene": "nx2-jail-guard",
+   "seconds": 3.82
+  },
+  {
+   "id": "nx2-jail-guard-q1",
+   "file": "vo/nx2-jail-guard-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Full house?",
+   "scene": "nx2-jail-guard",
+   "seconds": 1.44
+  },
+  {
+   "id": "nx2-jail-guard-a1a",
+   "file": "vo/nx2-jail-guard-a1a.mp3",
+   "fox": "JAIL GUARD",
+   "voice": "vincent+",
+   "delivery": "normal",
+   "text": "Every cell. All bandits. They say there are ten more for each one we catch.",
+   "scene": "nx2-jail-guard",
+   "seconds": 4.58
+  },
+  {
+   "id": "nx2-jail-guard-q2",
+   "file": "vo/nx2-jail-guard-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Do the bots help here?",
+   "scene": "nx2-jail-guard",
+   "seconds": 1.47
+  },
+  {
+   "id": "nx2-jail-guard-a2a",
+   "file": "vo/nx2-jail-guard-a2a.mp3",
+   "fox": "JAIL GUARD",
+   "voice": "vincent+",
+   "delivery": "sad",
+   "text": "The cell door bot is on strike. I turn every key myself.",
+   "scene": "nx2-jail-guard",
+   "seconds": 4.09
+  },
+  {
+   "id": "nx2-jail-guard-qbye",
+   "file": "vo/nx2-jail-guard-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Good luck.",
+   "scene": "nx2-jail-guard",
+   "seconds": 0.76
+  },
+  {
+   "id": "nx2-jail-guard-bye",
+   "file": "vo/nx2-jail-guard-bye.mp3",
+   "fox": "JAIL GUARD",
+   "voice": "vincent+",
+   "delivery": "normal",
+   "text": "Hands where I can see them. Thank you.",
+   "scene": "nx2-jail-guard",
+   "seconds": 2.19
+  },
+  {
+   "id": "nx2-prisoner-scraps-prox",
+   "file": "vo/nx2-prisoner-scraps-prox.mp3",
+   "fox": "SCRAPS",
+   "voice": "arjun",
+   "delivery": "whisper",
+   "text": "Psst. Got a file? A spoon? A very small spoon?",
+   "scene": "nx2-prisoner-scraps",
+   "seconds": 4.51
+  },
+  {
+   "id": "nx2-prisoner-scraps-prox2",
+   "file": "vo/nx2-prisoner-scraps-prox2.mp3",
+   "fox": "SCRAPS",
+   "voice": "arjun",
+   "delivery": "normal",
+   "text": "My mates in the hill camp will spring me. Any day now. Any day.",
+   "scene": "nx2-prisoner-scraps",
+   "seconds": 4.66
+  },
+  {
+   "id": "nx2-prisoner-scraps-01",
+   "file": "vo/nx2-prisoner-scraps-01.mp3",
+   "fox": "SCRAPS",
+   "voice": "arjun",
+   "delivery": "normal",
+   "text": "Oh, a visitor. I did nothing. I was holding the pie for a friend.",
+   "scene": "nx2-prisoner-scraps",
+   "seconds": 4.87
+  },
+  {
+   "id": "nx2-prisoner-scraps-q1",
+   "file": "vo/nx2-prisoner-scraps-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Which camp are you from?",
+   "scene": "nx2-prisoner-scraps",
+   "seconds": 1.61
+  },
+  {
+   "id": "nx2-prisoner-scraps-a1a",
+   "file": "vo/nx2-prisoner-scraps-a1a.mp3",
+   "fox": "SCRAPS",
+   "voice": "arjun",
+   "delivery": "whisper",
+   "text": "Not saying. But there are camps on every hill now. The boss wants the whole town.",
+   "scene": "nx2-prisoner-scraps",
+   "seconds": 5.67
+  },
+  {
+   "id": "nx2-prisoner-scraps-qbye",
+   "file": "vo/nx2-prisoner-scraps-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Enjoy the cell.",
+   "scene": "nx2-prisoner-scraps",
+   "seconds": 1.41
+  },
+  {
+   "id": "nx2-prisoner-scraps-bye",
+   "file": "vo/nx2-prisoner-scraps-bye.mp3",
+   "fox": "SCRAPS",
+   "voice": "arjun",
+   "delivery": "sad",
+   "text": "It has a lovely view of the wall.",
+   "scene": "nx2-prisoner-scraps",
+   "seconds": 2.08
+  },
+  {
+   "id": "nx2-prisoner-mutt-prox",
+   "file": "vo/nx2-prisoner-mutt-prox.mp3",
+   "fox": "MUTT",
+   "voice": "grungle",
+   "delivery": "sad",
+   "text": "I want my mum.",
+   "scene": "nx2-prisoner-mutt",
+   "seconds": 1.12
+  },
+  {
+   "id": "nx2-prisoner-mutt-prox2",
+   "file": "vo/nx2-prisoner-mutt-prox2.mp3",
+   "fox": "MUTT",
+   "voice": "grungle",
+   "delivery": "scared",
+   "text": "The creatures chased us right into the guards. Worst getaway ever.",
+   "scene": "nx2-prisoner-mutt",
+   "seconds": 3.77
+  },
+  {
+   "id": "nx2-prisoner-mutt-01",
+   "file": "vo/nx2-prisoner-mutt-01.mp3",
+   "fox": "MUTT",
+   "voice": "grungle",
+   "delivery": "sad",
+   "text": "Hi. I am Mutt. I am a bandit. I am not a very good one.",
+   "scene": "nx2-prisoner-mutt",
+   "seconds": 4.43
+  },
+  {
+   "id": "nx2-prisoner-mutt-q1",
+   "file": "vo/nx2-prisoner-mutt-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "How did they catch you?",
+   "scene": "nx2-prisoner-mutt",
+   "seconds": 2.01
+  },
+  {
+   "id": "nx2-prisoner-mutt-a1a",
+   "file": "vo/nx2-prisoner-mutt-a1a.mp3",
+   "fox": "MUTT",
+   "voice": "grungle",
+   "delivery": "scared",
+   "text": "We were running back to camp. A creature jumped out. We ran the other way. Into the guards.",
+   "scene": "nx2-prisoner-mutt",
+   "seconds": 4.16
+  },
+  {
+   "id": "nx2-prisoner-mutt-qbye",
+   "file": "vo/nx2-prisoner-mutt-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Maybe try honest work.",
+   "scene": "nx2-prisoner-mutt",
+   "seconds": 1.77
+  },
+  {
+   "id": "nx2-prisoner-mutt-bye",
+   "file": "vo/nx2-prisoner-mutt-bye.mp3",
+   "fox": "MUTT",
+   "voice": "grungle",
+   "delivery": "normal",
+   "text": "Everyone is hiring, right? The bots are on strike?",
+   "scene": "nx2-prisoner-mutt",
+   "seconds": 2.68
+  },
+  {
+   "id": "nx2-grumble-prox",
+   "file": "vo/nx2-grumble-prox.mp3",
+   "fox": "GRUMBLE",
+   "voice": "paula",
+   "delivery": "angry",
+   "text": "Bandits. Creatures. Robots with signs. What next? Rain?",
+   "scene": "nx2-grumble",
+   "seconds": 5.17
+  },
+  {
+   "id": "nx2-grumble-prox2",
+   "file": "vo/nx2-grumble-prox2.mp3",
+   "fox": "GRUMBLE",
+   "voice": "paula",
+   "delivery": "normal",
+   "text": "In my day robots did as they were told. And so did we.",
+   "scene": "nx2-grumble",
+   "seconds": 3.8
+  },
+  {
+   "id": "nx2-grumble-01",
+   "file": "vo/nx2-grumble-01.mp3",
+   "fox": "GRUMBLE",
+   "voice": "paula",
+   "delivery": "angry",
+   "text": "What. I am sitting. Sitting is legal. I checked.",
+   "scene": "nx2-grumble",
+   "seconds": 3.91
+  },
+  {
+   "id": "nx2-grumble-q1",
+   "file": "vo/nx2-grumble-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Why are you at the police station?",
+   "scene": "nx2-grumble",
+   "seconds": 2.7
+  },
+  {
+   "id": "nx2-grumble-a1a",
+   "file": "vo/nx2-grumble-a1a.mp3",
+   "fox": "GRUMBLE",
+   "voice": "paula",
+   "delivery": "angry",
+   "text": "Reporting a bandit camp. Again. Behind my allotment. They ate my cabbages.",
+   "scene": "nx2-grumble",
+   "seconds": 5.81
+  },
+  {
+   "id": "nx2-grumble-qbye",
+   "file": "vo/nx2-grumble-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Hope they sort it out.",
+   "scene": "nx2-grumble",
+   "seconds": 1.47
+  },
+  {
+   "id": "nx2-grumble-bye",
+   "file": "vo/nx2-grumble-bye.mp3",
+   "fox": "GRUMBLE",
+   "voice": "paula",
+   "delivery": "angry",
+   "text": "Hope is not a cabbage.",
+   "scene": "nx2-grumble",
+   "seconds": 1.5
+  },
+  {
+   "id": "nx2-old-jack-prox",
+   "file": "vo/nx2-old-jack-prox.mp3",
+   "fox": "OLD JACK",
+   "voice": "clint2",
+   "delivery": "calm",
+   "text": "Seen it all, me. Twice. Some of it three times.",
+   "scene": "nx2-old-jack",
+   "seconds": 3.64
+  },
+  {
+   "id": "nx2-old-jack-prox2",
+   "file": "vo/nx2-old-jack-prox2.mp3",
+   "fox": "OLD JACK",
+   "voice": "clint2",
+   "delivery": "warm",
+   "text": "Creatures going mad, bandits camping, bots striking. Feels like sixty-two.",
+   "scene": "nx2-old-jack",
+   "seconds": 4.89
+  },
+  {
+   "id": "nx2-old-jack-01",
+   "file": "vo/nx2-old-jack-01.mp3",
+   "fox": "OLD JACK",
+   "voice": "clint2",
+   "delivery": "calm",
+   "text": "Sit down, young one. Old Jack has a story. Old Jack always has a story.",
+   "scene": "nx2-old-jack",
+   "seconds": 5.4
+  },
+  {
+   "id": "nx2-old-jack-q1",
+   "file": "vo/nx2-old-jack-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "What happened in sixty-two?",
+   "scene": "nx2-old-jack",
+   "seconds": 1.74
+  },
+  {
+   "id": "nx2-old-jack-a1a",
+   "file": "vo/nx2-old-jack-a1a.mp3",
+   "fox": "OLD JACK",
+   "voice": "clint2",
+   "delivery": "calm",
+   "text": "Bandits came down from the hills. The creatures went wild the same week. Funny, that.",
+   "scene": "nx2-old-jack",
+   "seconds": 4.87
+  },
+  {
+   "id": "nx2-old-jack-a1b",
+   "file": "vo/nx2-old-jack-a1b.mp3",
+   "fox": "OLD JACK",
+   "voice": "clint2",
+   "delivery": "whisper",
+   "text": "Somebody stirred them up then. Somebody is stirring them up now. Mark my words.",
+   "scene": "nx2-old-jack",
+   "seconds": 5.08
+  },
+  {
+   "id": "nx2-old-jack-qbye",
+   "file": "vo/nx2-old-jack-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will remember that.",
+   "scene": "nx2-old-jack",
+   "seconds": 2.04
+  },
+  {
+   "id": "nx2-old-jack-bye",
+   "file": "vo/nx2-old-jack-bye.mp3",
+   "fox": "OLD JACK",
+   "voice": "clint2",
+   "delivery": "warm",
+   "text": "Good. Old Jack is usually right. Usually.",
+   "scene": "nx2-old-jack",
+   "seconds": 2.88
+  },
+  {
+   "id": "nx2-casino-croupier-prox2",
+   "file": "vo/nx2-casino-croupier-prox2.mp3",
+   "fox": "ROULETTE CROUPIER",
+   "voice": "marlene+",
+   "delivery": "normal",
+   "text": "No bot spinning the wheel tonight. Every spin is a real paw. Lucky you.",
+   "scene": "nx2-casino-croupier",
+   "seconds": 5.35
+  },
+  {
+   "id": "nx2-casino-croupier-01",
+   "file": "vo/nx2-casino-croupier-01.mp3",
+   "fox": "ROULETTE CROUPIER",
+   "voice": "marlene+",
+   "delivery": "calm",
+   "text": "Red or black, my friend? The wheel does not care. Neither do I.",
+   "scene": "nx2-casino-croupier",
+   "seconds": 4.21
+  },
+  {
+   "id": "nx2-casino-croupier-q1",
+   "file": "vo/nx2-casino-croupier-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Is the wheel fair?",
+   "scene": "nx2-casino-croupier",
+   "seconds": 1.66
+  },
+  {
+   "id": "nx2-casino-croupier-a1a",
+   "file": "vo/nx2-casino-croupier-a1a.mp3",
+   "fox": "ROULETTE CROUPIER",
+   "voice": "marlene+",
+   "delivery": "normal",
+   "text": "Fairer than ever. The wheel bot is on strike. It is just me and gravity.",
+   "scene": "nx2-casino-croupier",
+   "seconds": 5.21
+  },
+  {
+   "id": "nx2-casino-croupier-qbye",
+   "file": "vo/nx2-casino-croupier-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Maybe next time.",
+   "scene": "nx2-casino-croupier",
+   "seconds": 1.09
+  },
+  {
+   "id": "nx2-casino-croupier-bye",
+   "file": "vo/nx2-casino-croupier-bye.mp3",
+   "fox": "ROULETTE CROUPIER",
+   "voice": "marlene+",
+   "delivery": "calm",
+   "text": "The wheel will be here. It always is.",
+   "scene": "nx2-casino-croupier",
+   "seconds": 2.8
+  },
+  {
+   "id": "nx2-casino-host-prox2",
+   "file": "vo/nx2-casino-host-prox2.mp3",
+   "fox": "DOOR HOST",
+   "voice": "malachi+",
+   "delivery": "normal",
+   "text": "Leave the bandit talk outside, please. Inside, we only talk luck.",
+   "scene": "nx2-casino-host",
+   "seconds": 4.1
+  },
+  {
+   "id": "nx2-casino-host-01",
+   "file": "vo/nx2-casino-host-01.mp3",
+   "fox": "DOOR HOST",
+   "voice": "malachi+",
+   "delivery": "warm",
+   "text": "Welcome to the casino. Mind the carpet, it is older than me.",
+   "scene": "nx2-casino-host",
+   "seconds": 3.87
+  },
+  {
+   "id": "nx2-casino-host-q1",
+   "file": "vo/nx2-casino-host-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Is it busy tonight?",
+   "scene": "nx2-casino-host",
+   "seconds": 1.67
+  },
+  {
+   "id": "nx2-casino-host-a1a",
+   "file": "vo/nx2-casino-host-a1a.mp3",
+   "fox": "DOOR HOST",
+   "voice": "malachi+",
+   "delivery": "normal",
+   "text": "Quieter. Foxes are scared to walk home past the bandit camps with winnings.",
+   "scene": "nx2-casino-host",
+   "seconds": 3.98
+  },
+  {
+   "id": "nx2-casino-host-qbye",
+   "file": "vo/nx2-casino-host-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Have a good night.",
+   "scene": "nx2-casino-host",
+   "seconds": 0.92
+  },
+  {
+   "id": "nx2-casino-host-bye",
+   "file": "vo/nx2-casino-host-bye.mp3",
+   "fox": "DOOR HOST",
+   "voice": "malachi+",
+   "delivery": "warm",
+   "text": "Coats to the left, luck to yourself.",
+   "scene": "nx2-casino-host",
+   "seconds": 2.29
+  },
+  {
+   "id": "nx2-cs-max-prox",
+   "file": "vo/nx2-cs-max-prox.mp3",
+   "fox": "MAX",
+   "voice": "noah+",
+   "delivery": "calm",
+   "text": "Private room. Members only.",
+   "scene": "nx2-cs-max",
+   "seconds": 3.55
+  },
+  {
+   "id": "nx2-cs-max-prox2",
+   "file": "vo/nx2-cs-max-prox2.mp3",
+   "fox": "MAX",
+   "voice": "noah+",
+   "delivery": "normal",
+   "text": "Two bandits tried the back door last night. They left faster.",
+   "scene": "nx2-cs-max",
+   "seconds": 3.33
+  },
+  {
+   "id": "nx2-cs-max-01",
+   "file": "vo/nx2-cs-max-01.mp3",
+   "fox": "MAX",
+   "voice": "noah+",
+   "delivery": "calm",
+   "text": "You are not a member. You are not in trouble either. Yet.",
+   "scene": "nx2-cs-max",
+   "seconds": 5.97
+  },
+  {
+   "id": "nx2-cs-max-q1",
+   "file": "vo/nx2-cs-max-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Any trouble tonight?",
+   "scene": "nx2-cs-max",
+   "seconds": 1.48
+  },
+  {
+   "id": "nx2-cs-max-a1a",
+   "file": "vo/nx2-cs-max-a1a.mp3",
+   "fox": "MAX",
+   "voice": "noah+",
+   "delivery": "normal",
+   "text": "Bandits from the lake camp. They think a casino is a bank with lights. It is not.",
+   "scene": "nx2-cs-max",
+   "seconds": 5.54
+  },
+  {
+   "id": "nx2-cs-max-q2",
+   "file": "vo/nx2-cs-max-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Is the security bot helping?",
+   "scene": "nx2-cs-max",
+   "seconds": 2.58
+  },
+  {
+   "id": "nx2-cs-max-a2a",
+   "file": "vo/nx2-cs-max-a2a.mp3",
+   "fox": "MAX",
+   "voice": "noah+",
+   "delivery": "calm",
+   "text": "It is on strike. I am the security bot now. I do not beep.",
+   "scene": "nx2-cs-max",
+   "seconds": 7.28
+  },
+  {
+   "id": "nx2-cs-max-qbye",
+   "file": "vo/nx2-cs-max-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will not cause trouble.",
+   "scene": "nx2-cs-max",
+   "seconds": 1.73
+  },
+  {
+   "id": "nx2-cs-max-bye",
+   "file": "vo/nx2-cs-max-bye.mp3",
+   "fox": "MAX",
+   "voice": "noah+",
+   "delivery": "calm",
+   "text": "I know. I can tell.",
+   "scene": "nx2-cs-max",
+   "seconds": 1.65
+  },
+  {
+   "id": "nx2-cs-velvet-prox",
+   "file": "vo/nx2-cs-velvet-prox.mp3",
+   "fox": "VELVET",
+   "voice": "paula",
+   "delivery": "warm",
+   "text": "This next song is for the lonely hearts. And the lonely bots on strike.",
+   "scene": "nx2-cs-velvet",
+   "seconds": 5.01
+  },
+  {
+   "id": "nx2-cs-velvet-prox2",
+   "file": "vo/nx2-cs-velvet-prox2.mp3",
+   "fox": "VELVET",
+   "voice": "paula",
+   "delivery": "normal",
+   "text": "Get home before dark, darling. The wild is not singing tonight.",
+   "scene": "nx2-cs-velvet",
+   "seconds": 3.79
+  },
+  {
+   "id": "nx2-cs-velvet-01",
+   "file": "vo/nx2-cs-velvet-01.mp3",
+   "fox": "VELVET",
+   "voice": "paula",
+   "delivery": "warm",
+   "text": "Hello, darling. Did you come for the song or the slots?",
+   "scene": "nx2-cs-velvet",
+   "seconds": 3.28
+  },
+  {
+   "id": "nx2-cs-velvet-q1",
+   "file": "vo/nx2-cs-velvet-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "The song.",
+   "scene": "nx2-cs-velvet",
+   "seconds": 1.4
+  },
+  {
+   "id": "nx2-cs-velvet-a1a",
+   "file": "vo/nx2-cs-velvet-a1a.mp3",
+   "fox": "VELVET",
+   "voice": "paula",
+   "delivery": "warm",
+   "text": "Sweet thing. The backing bot is on strike, so tonight it is just me. Unplugged.",
+   "scene": "nx2-cs-velvet",
+   "seconds": 6.47
+  },
+  {
+   "id": "nx2-cs-velvet-q2",
+   "file": "vo/nx2-cs-velvet-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Do you sing about the bandits?",
+   "scene": "nx2-cs-velvet",
+   "seconds": 1.89
+  },
+  {
+   "id": "nx2-cs-velvet-a2a",
+   "file": "vo/nx2-cs-velvet-a2a.mp3",
+   "fox": "VELVET",
+   "voice": "paula",
+   "delivery": "calm",
+   "text": "I wrote one. Camp Fires On The Hill. Too sad. They threw no tips.",
+   "scene": "nx2-cs-velvet",
+   "seconds": 5.09
+  },
+  {
+   "id": "nx2-cs-velvet-qbye",
+   "file": "vo/nx2-cs-velvet-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will stay for the next song.",
+   "scene": "nx2-cs-velvet",
+   "seconds": 2.34
+  },
+  {
+   "id": "nx2-cs-velvet-bye",
+   "file": "vo/nx2-cs-velvet-bye.mp3",
+   "fox": "VELVET",
+   "voice": "paula",
+   "delivery": "warm",
+   "text": "Then I will sing it for you, darling.",
+   "scene": "nx2-cs-velvet",
+   "seconds": 2.01
+  },
+  {
+   "id": "nx2-casino-slots-one-prox",
+   "file": "vo/nx2-casino-slots-one-prox.mp3",
+   "fox": "SLOT LUCKY",
+   "voice": "clint",
+   "delivery": "excited",
+   "text": "This is the one! I can feel it! This is THE ONE!",
+   "scene": "nx2-casino-slots-one",
+   "seconds": 4.46
+  },
+  {
+   "id": "nx2-casino-slots-one-prox2",
+   "file": "vo/nx2-casino-slots-one-prox2.mp3",
+   "fox": "SLOT LUCKY",
+   "voice": "clint",
+   "delivery": "normal",
+   "text": "The slot bot used to bring me drinks. Now it holds a sign. Rude.",
+   "scene": "nx2-casino-slots-one",
+   "seconds": 4.82
+  },
+  {
+   "id": "nx2-casino-slots-one-01",
+   "file": "vo/nx2-casino-slots-one-01.mp3",
+   "fox": "SLOT LUCKY",
+   "voice": "clint",
+   "delivery": "excited",
+   "text": "Shh! Do not breathe on the machine! It is about to pay!",
+   "scene": "nx2-casino-slots-one",
+   "seconds": 3.32
+  },
+  {
+   "id": "nx2-casino-slots-one-q1",
+   "file": "vo/nx2-casino-slots-one-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "How long have you been here?",
+   "scene": "nx2-casino-slots-one",
+   "seconds": 1.86
+  },
+  {
+   "id": "nx2-casino-slots-one-a1a",
+   "file": "vo/nx2-casino-slots-one-a1a.mp3",
+   "fox": "SLOT LUCKY",
+   "voice": "clint",
+   "delivery": "normal",
+   "text": "Since the bandits camped by my road. I am not walking home till they go.",
+   "scene": "nx2-casino-slots-one",
+   "seconds": 4.42
+  },
+  {
+   "id": "nx2-casino-slots-one-qbye",
+   "file": "vo/nx2-casino-slots-one-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Good luck.",
+   "scene": "nx2-casino-slots-one",
+   "seconds": 0.76
+  },
+  {
+   "id": "nx2-casino-slots-one-bye",
+   "file": "vo/nx2-casino-slots-one-bye.mp3",
+   "fox": "SLOT LUCKY",
+   "voice": "clint",
+   "delivery": "excited",
+   "text": "I do not need luck! I have THIS machine!",
+   "scene": "nx2-casino-slots-one",
+   "seconds": 2.71
+  },
+  {
+   "id": "nx2-casino-slots-two-prox",
+   "file": "vo/nx2-casino-slots-two-prox.mp3",
+   "fox": "SLOT SURE",
+   "voice": "mariah",
+   "delivery": "calm",
+   "text": "It pays every forty pulls. I have a system.",
+   "scene": "nx2-casino-slots-two",
+   "seconds": 3.32
+  },
+  {
+   "id": "nx2-casino-slots-two-prox2",
+   "file": "vo/nx2-casino-slots-two-prox2.mp3",
+   "fox": "SLOT SURE",
+   "voice": "mariah",
+   "delivery": "normal",
+   "text": "Do not go out the back way. There is a creature in the bins.",
+   "scene": "nx2-casino-slots-two",
+   "seconds": 3.73
+  },
+  {
+   "id": "nx2-casino-slots-two-01",
+   "file": "vo/nx2-casino-slots-two-01.mp3",
+   "fox": "SLOT SURE",
+   "voice": "mariah",
+   "delivery": "calm",
+   "text": "Thirty-eight. Thirty-nine. Do not talk to me on forty.",
+   "scene": "nx2-casino-slots-two",
+   "seconds": 3.8
+  },
+  {
+   "id": "nx2-casino-slots-two-q1",
+   "file": "vo/nx2-casino-slots-two-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "A creature in the bins?",
+   "scene": "nx2-casino-slots-two",
+   "seconds": 1.94
+  },
+  {
+   "id": "nx2-casino-slots-two-a1a",
+   "file": "vo/nx2-casino-slots-two-a1a.mp3",
+   "fox": "SLOT SURE",
+   "voice": "mariah",
+   "delivery": "scared",
+   "text": "Came up from the lake. They never used to come into town. Now they do.",
+   "scene": "nx2-casino-slots-two",
+   "seconds": 3.16
+  },
+  {
+   "id": "nx2-casino-slots-two-qbye",
+   "file": "vo/nx2-casino-slots-two-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will use the front door.",
+   "scene": "nx2-casino-slots-two",
+   "seconds": 1.65
+  },
+  {
+   "id": "nx2-casino-slots-two-bye",
+   "file": "vo/nx2-casino-slots-two-bye.mp3",
+   "fox": "SLOT SURE",
+   "voice": "mariah",
+   "delivery": "calm",
+   "text": "Forty. See? Nothing. It is a long system.",
+   "scene": "nx2-casino-slots-two",
+   "seconds": 3.76
+  },
+  {
+   "id": "nx2-casino-stickman-prox",
+   "file": "vo/nx2-casino-stickman-prox.mp3",
+   "fox": "STICKMAN",
+   "voice": "kendrick",
+   "delivery": "shout",
+   "text": "New shooter coming out! Place your bets!",
+   "scene": "nx2-casino-stickman",
+   "seconds": 2.79
+  },
+  {
+   "id": "nx2-casino-stickman-prox2",
+   "file": "vo/nx2-casino-stickman-prox2.mp3",
+   "fox": "STICKMAN",
+   "voice": "kendrick",
+   "delivery": "normal",
+   "text": "Dice bot is on strike. These dice are thrown by real, honest paws.",
+   "scene": "nx2-casino-stickman",
+   "seconds": 5.0
+  },
+  {
+   "id": "nx2-casino-stickman-01",
+   "file": "vo/nx2-casino-stickman-01.mp3",
+   "fox": "STICKMAN",
+   "voice": "kendrick",
+   "delivery": "excited",
+   "text": "Step up! Roll the bones! The table loves a new face!",
+   "scene": "nx2-casino-stickman",
+   "seconds": 3.89
+  },
+  {
+   "id": "nx2-casino-stickman-q1",
+   "file": "vo/nx2-casino-stickman-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Is the table hiring?",
+   "scene": "nx2-casino-stickman",
+   "seconds": 1.73
+  },
+  {
+   "id": "nx2-casino-stickman-a1a",
+   "file": "vo/nx2-casino-stickman-a1a.mp3",
+   "fox": "STICKMAN",
+   "voice": "kendrick",
+   "delivery": "normal",
+   "text": "The whole casino is. Bots walked out at midnight. Ask Sterling about a shift.",
+   "scene": "nx2-casino-stickman",
+   "seconds": 5.02
+  },
+  {
+   "id": "nx2-casino-stickman-qbye",
+   "file": "vo/nx2-casino-stickman-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Maybe later.",
+   "scene": "nx2-casino-stickman",
+   "seconds": 0.92
+  },
+  {
+   "id": "nx2-casino-stickman-bye",
+   "file": "vo/nx2-casino-stickman-bye.mp3",
+   "fox": "STICKMAN",
+   "voice": "kendrick",
+   "delivery": "shout",
+   "text": "Seven out! Line away!",
+   "scene": "nx2-casino-stickman",
+   "seconds": 2.05
+  },
+  {
+   "id": "nx2-castle-sentry-prox",
+   "file": "vo/nx2-castle-sentry-prox.mp3",
+   "fox": "CASTLE SENTRY",
+   "voice": "tom",
+   "delivery": "normal",
+   "text": "Halt. State your business at the castle.",
+   "scene": "nx2-castle-sentry",
+   "seconds": 2.71
+  },
+  {
+   "id": "nx2-castle-sentry-prox2",
+   "file": "vo/nx2-castle-sentry-prox2.mp3",
+   "fox": "CASTLE SENTRY",
+   "voice": "tom",
+   "delivery": "normal",
+   "text": "Extra watches on the walls tonight. The bandit camps are too close.",
+   "scene": "nx2-castle-sentry",
+   "seconds": 4.43
+  },
+  {
+   "id": "nx2-castle-sentry-01",
+   "file": "vo/nx2-castle-sentry-01.mp3",
+   "fox": "CASTLE SENTRY",
+   "voice": "tom",
+   "delivery": "normal",
+   "text": "The castle is open to visitors. Keep your sword sheathed and your voice down.",
+   "scene": "nx2-castle-sentry",
+   "seconds": 4.94
+  },
+  {
+   "id": "nx2-castle-sentry-q1",
+   "file": "vo/nx2-castle-sentry-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Are the bandits a threat to the castle?",
+   "scene": "nx2-castle-sentry",
+   "seconds": 2.83
+  },
+  {
+   "id": "nx2-castle-sentry-a1a",
+   "file": "vo/nx2-castle-sentry-a1a.mp3",
+   "fox": "CASTLE SENTRY",
+   "voice": "tom",
+   "delivery": "calm",
+   "text": "Not to the walls. To the roads, the farms, the shops. The King is worried.",
+   "scene": "nx2-castle-sentry",
+   "seconds": 6.08
+  },
+  {
+   "id": "nx2-castle-sentry-q2",
+   "file": "vo/nx2-castle-sentry-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "What about the creatures?",
+   "scene": "nx2-castle-sentry",
+   "seconds": 1.76
+  },
+  {
+   "id": "nx2-castle-sentry-a2a",
+   "file": "vo/nx2-castle-sentry-a2a.mp3",
+   "fox": "CASTLE SENTRY",
+   "voice": "tom",
+   "delivery": "normal",
+   "text": "Gone mad. One charged the moat bridge at dawn. We have never seen that.",
+   "scene": "nx2-castle-sentry",
+   "seconds": 4.84
+  },
+  {
+   "id": "nx2-castle-sentry-qbye",
+   "file": "vo/nx2-castle-sentry-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Thank you.",
+   "scene": "nx2-castle-sentry",
+   "seconds": 0.62
+  },
+  {
+   "id": "nx2-castle-sentry-bye",
+   "file": "vo/nx2-castle-sentry-bye.mp3",
+   "fox": "CASTLE SENTRY",
+   "voice": "tom",
+   "delivery": "normal",
+   "text": "Move along. Safely.",
+   "scene": "nx2-castle-sentry",
+   "seconds": 1.56
+  },
+  {
+   "id": "nx2-royal-guard-prox",
+   "file": "vo/nx2-royal-guard-prox.mp3",
+   "fox": "ROYAL GUARD",
+   "voice": "arjun+",
+   "delivery": "normal",
+   "text": "The King is not taking visitors. Stand back.",
+   "scene": "nx2-royal-guard",
+   "seconds": 2.9
+  },
+  {
+   "id": "nx2-royal-guard-prox2",
+   "file": "vo/nx2-royal-guard-prox2.mp3",
+   "fox": "ROYAL GUARD",
+   "voice": "arjun+",
+   "delivery": "whisper",
+   "text": "The King had the Prince's training doubled. The camps worry him.",
+   "scene": "nx2-royal-guard",
+   "seconds": 4.04
+  },
+  {
+   "id": "nx2-royal-guard-01",
+   "file": "vo/nx2-royal-guard-01.mp3",
+   "fox": "ROYAL GUARD",
+   "voice": "arjun+",
+   "delivery": "normal",
+   "text": "You stand before the Royal Guard. Speak plainly. We have little time.",
+   "scene": "nx2-royal-guard",
+   "seconds": 3.87
+  },
+  {
+   "id": "nx2-royal-guard-q1",
+   "file": "vo/nx2-royal-guard-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Is the King safe?",
+   "scene": "nx2-royal-guard",
+   "seconds": 1.65
+  },
+  {
+   "id": "nx2-royal-guard-a1a",
+   "file": "vo/nx2-royal-guard-a1a.mp3",
+   "fox": "ROYAL GUARD",
+   "voice": "arjun+",
+   "delivery": "normal",
+   "text": "Inside these walls, always. Outside, the bandits grow bolder every week.",
+   "scene": "nx2-royal-guard",
+   "seconds": 5.69
+  },
+  {
+   "id": "nx2-royal-guard-q2",
+   "file": "vo/nx2-royal-guard-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Why now?",
+   "scene": "nx2-royal-guard",
+   "seconds": 1.08
+  },
+  {
+   "id": "nx2-royal-guard-a2a",
+   "file": "vo/nx2-royal-guard-a2a.mp3",
+   "fox": "ROYAL GUARD",
+   "voice": "arjun+",
+   "delivery": "whisper",
+   "text": "That is the question in every room of this castle. Nobody has the answer.",
+   "scene": "nx2-royal-guard",
+   "seconds": 5.36
+  },
+  {
+   "id": "nx2-royal-guard-qbye",
+   "file": "vo/nx2-royal-guard-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will not keep you.",
+   "scene": "nx2-royal-guard",
+   "seconds": 1.69
+  },
+  {
+   "id": "nx2-royal-guard-bye",
+   "file": "vo/nx2-royal-guard-bye.mp3",
+   "fox": "ROYAL GUARD",
+   "voice": "arjun+",
+   "delivery": "normal",
+   "text": "Long live the King.",
+   "scene": "nx2-royal-guard",
+   "seconds": 1.08
+  },
+  {
+   "id": "nx2-treasury-guard-prox",
+   "file": "vo/nx2-treasury-guard-prox.mp3",
+   "fox": "TREASURY GUARD",
+   "voice": "benjamin+",
+   "delivery": "normal",
+   "text": "Treasury. No closer.",
+   "scene": "nx2-treasury-guard",
+   "seconds": 1.72
+  },
+  {
+   "id": "nx2-treasury-guard-prox2",
+   "file": "vo/nx2-treasury-guard-prox2.mp3",
+   "fox": "TREASURY GUARD",
+   "voice": "benjamin+",
+   "delivery": "angry",
+   "text": "Every bandit on every hill wants what is behind this door.",
+   "scene": "nx2-treasury-guard",
+   "seconds": 3.37
+  },
+  {
+   "id": "nx2-treasury-guard-01",
+   "file": "vo/nx2-treasury-guard-01.mp3",
+   "fox": "TREASURY GUARD",
+   "voice": "benjamin+",
+   "delivery": "normal",
+   "text": "This is the royal treasury. I am the reason it is still full.",
+   "scene": "nx2-treasury-guard",
+   "seconds": 3.81
+  },
+  {
+   "id": "nx2-treasury-guard-q1",
+   "file": "vo/nx2-treasury-guard-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Have the bandits tried?",
+   "scene": "nx2-treasury-guard",
+   "seconds": 2.03
+  },
+  {
+   "id": "nx2-treasury-guard-a1a",
+   "file": "vo/nx2-treasury-guard-a1a.mp3",
+   "fox": "TREASURY GUARD",
+   "voice": "benjamin+",
+   "delivery": "normal",
+   "text": "Not yet. But they are gathering. Camps on the east hills, the lake, the old road.",
+   "scene": "nx2-treasury-guard",
+   "seconds": 5.12
+  },
+  {
+   "id": "nx2-treasury-guard-q2",
+   "file": "vo/nx2-treasury-guard-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Do you have bot help?",
+   "scene": "nx2-treasury-guard",
+   "seconds": 1.41
+  },
+  {
+   "id": "nx2-treasury-guard-a2a",
+   "file": "vo/nx2-treasury-guard-a2a.mp3",
+   "fox": "TREASURY GUARD",
+   "voice": "benjamin+",
+   "delivery": "sad",
+   "text": "The lock bot is on strike. It still locks. It just sighs about it.",
+   "scene": "nx2-treasury-guard",
+   "seconds": 4.19
+  },
+  {
+   "id": "nx2-treasury-guard-qbye",
+   "file": "vo/nx2-treasury-guard-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Stay sharp.",
+   "scene": "nx2-treasury-guard",
+   "seconds": 1.18
+  },
+  {
+   "id": "nx2-treasury-guard-bye",
+   "file": "vo/nx2-treasury-guard-bye.mp3",
+   "fox": "TREASURY GUARD",
+   "voice": "benjamin+",
+   "delivery": "normal",
+   "text": "Sharper than you know.",
+   "scene": "nx2-treasury-guard",
+   "seconds": 1.22
+  },
+  {
+   "id": "nx2-cas-librarian-prox2",
+   "file": "vo/nx2-cas-librarian-prox2.mp3",
+   "fox": "CASTLE LIBRARIAN",
+   "voice": "lara+",
+   "delivery": "whisper",
+   "text": "Shh. I am reading about the last time the creatures turned.",
+   "scene": "nx2-cas-librarian",
+   "seconds": 3.68
+  },
+  {
+   "id": "nx2-cas-librarian-01",
+   "file": "vo/nx2-cas-librarian-01.mp3",
+   "fox": "CASTLE LIBRARIAN",
+   "voice": "lara+",
+   "delivery": "calm",
+   "text": "Welcome to the library. Whisper, please. The scrolls are sensitive.",
+   "scene": "nx2-cas-librarian",
+   "seconds": 5.45
+  },
+  {
+   "id": "nx2-cas-librarian-q1",
+   "file": "vo/nx2-cas-librarian-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "The creatures turned before?",
+   "scene": "nx2-cas-librarian",
+   "seconds": 2.04
+  },
+  {
+   "id": "nx2-cas-librarian-a1a",
+   "file": "vo/nx2-cas-librarian-a1a.mp3",
+   "fox": "CASTLE LIBRARIAN",
+   "voice": "lara+",
+   "delivery": "whisper",
+   "text": "Three hundred years ago. Bandits rose the same season. The scroll ends with a gate opening.",
+   "scene": "nx2-cas-librarian",
+   "seconds": 6.16
+  },
+  {
+   "id": "nx2-cas-librarian-q2",
+   "file": "vo/nx2-cas-librarian-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "What gate?",
+   "scene": "nx2-cas-librarian",
+   "seconds": 1.21
+  },
+  {
+   "id": "nx2-cas-librarian-a2a",
+   "file": "vo/nx2-cas-librarian-a2a.mp3",
+   "fox": "CASTLE LIBRARIAN",
+   "voice": "lara+",
+   "delivery": "calm",
+   "text": "It does not say. The last page is missing. Someone tore it out.",
+   "scene": "nx2-cas-librarian",
+   "seconds": 4.39
+  },
+  {
+   "id": "nx2-cas-librarian-qbye",
+   "file": "vo/nx2-cas-librarian-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Let me know if you find it.",
+   "scene": "nx2-cas-librarian",
+   "seconds": 1.87
+  },
+  {
+   "id": "nx2-cas-librarian-bye",
+   "file": "vo/nx2-cas-librarian-bye.mp3",
+   "fox": "CASTLE LIBRARIAN",
+   "voice": "lara+",
+   "delivery": "whisper",
+   "text": "You will be the first. Hands clean, please.",
+   "scene": "nx2-cas-librarian",
+   "seconds": 3.47
+  },
+  {
+   "id": "nx2-cas-painter-prox2",
+   "file": "vo/nx2-cas-painter-prox2.mp3",
+   "fox": "CASTLE PAINTER",
+   "voice": "leslie+",
+   "delivery": "normal",
+   "text": "I am painting the bandit fires on the hills. The King wants a record.",
+   "scene": "nx2-cas-painter",
+   "seconds": 3.89
+  },
+  {
+   "id": "nx2-cas-painter-01",
+   "file": "vo/nx2-cas-painter-01.mp3",
+   "fox": "CASTLE PAINTER",
+   "voice": "leslie+",
+   "delivery": "calm",
+   "text": "Stand there. No, there. Where the light is not. Thank you.",
+   "scene": "nx2-cas-painter",
+   "seconds": 3.59
+  },
+  {
+   "id": "nx2-cas-painter-q1",
+   "file": "vo/nx2-cas-painter-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "What are you painting?",
+   "scene": "nx2-cas-painter",
+   "seconds": 1.37
+  },
+  {
+   "id": "nx2-cas-painter-a1a",
+   "file": "vo/nx2-cas-painter-a1a.mp3",
+   "fox": "CASTLE PAINTER",
+   "voice": "leslie+",
+   "delivery": "normal",
+   "text": "The view from the tower. Hills, fields, and seven little bandit fires. The King asked.",
+   "scene": "nx2-cas-painter",
+   "seconds": 5.48
+  },
+  {
+   "id": "nx2-cas-painter-qbye",
+   "file": "vo/nx2-cas-painter-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "It looks wonderful.",
+   "scene": "nx2-cas-painter",
+   "seconds": 1.8
+  },
+  {
+   "id": "nx2-cas-painter-bye",
+   "file": "vo/nx2-cas-painter-bye.mp3",
+   "fox": "CASTLE PAINTER",
+   "voice": "leslie+",
+   "delivery": "warm",
+   "text": "It looks worrying. But thank you.",
+   "scene": "nx2-cas-painter",
+   "seconds": 2.27
+  },
+  {
+   "id": "nx2-max-prox",
+   "file": "vo/nx2-max-prox.mp3",
+   "fox": "PRINCE MAX",
+   "voice": "sandra",
+   "delivery": "excited",
+   "text": "Hey! Want to see my sword moves? I have new sword moves!",
+   "scene": "nx2-max",
+   "seconds": 3.31
+  },
+  {
+   "id": "nx2-max-prox2",
+   "file": "vo/nx2-max-prox2.mp3",
+   "fox": "PRINCE MAX",
+   "voice": "sandra",
+   "delivery": "normal",
+   "text": "Father doubled my training. Because of the bandit camps. My arms hurt.",
+   "scene": "nx2-max",
+   "seconds": 4.06
+  },
+  {
+   "id": "nx2-max-01",
+   "file": "vo/nx2-max-01.mp3",
+   "fox": "PRINCE MAX",
+   "voice": "sandra",
+   "delivery": "excited",
+   "text": "It is you! Father says you are the bravest fox in Meru. Are you?",
+   "scene": "nx2-max",
+   "seconds": 3.95
+  },
+  {
+   "id": "nx2-max-q1",
+   "file": "vo/nx2-max-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Why is your training doubled?",
+   "scene": "nx2-max",
+   "seconds": 1.95
+  },
+  {
+   "id": "nx2-max-a1a",
+   "file": "vo/nx2-max-a1a.mp3",
+   "fox": "PRINCE MAX",
+   "voice": "sandra",
+   "delivery": "normal",
+   "text": "The bandit camps. Father says a prince must be ready. I am ready. Mostly.",
+   "scene": "nx2-max",
+   "seconds": 4.4
+  },
+  {
+   "id": "nx2-max-q2",
+   "file": "vo/nx2-max-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Have you seen the creatures?",
+   "scene": "nx2-max",
+   "seconds": 1.86
+  },
+  {
+   "id": "nx2-max-a2a",
+   "file": "vo/nx2-max-a2a.mp3",
+   "fox": "PRINCE MAX",
+   "voice": "sandra",
+   "delivery": "scared",
+   "text": "From the tower. They used to run from the guards. Now they run at them.",
+   "scene": "nx2-max",
+   "seconds": 3.43
+  },
+  {
+   "id": "nx2-max-qbye",
+   "file": "vo/nx2-max-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Keep training.",
+   "scene": "nx2-max",
+   "seconds": 1.18
+  },
+  {
+   "id": "nx2-max-bye",
+   "file": "vo/nx2-max-bye.mp3",
+   "fox": "PRINCE MAX",
+   "voice": "sandra",
+   "delivery": "excited",
+   "text": "I will! Watch this! Hyah!",
+   "scene": "nx2-max",
+   "seconds": 2.3
+  },
+  {
+   "id": "nx2-cocoa-prox2",
+   "file": "vo/nx2-cocoa-prox2.mp3",
+   "fox": "COCOA",
+   "voice": "wanda+",
+   "delivery": "warm",
+   "text": "The wrapping bot is on strike. Every chocolate is wrapped by me. With love.",
+   "scene": "nx2-cocoa",
+   "seconds": 5.89
+  },
+  {
+   "id": "nx2-cocoa-01",
+   "file": "vo/nx2-cocoa-01.mp3",
+   "fox": "COCOA",
+   "voice": "wanda+",
+   "delivery": "warm",
+   "text": "Hello! Take one. Go on. Bean is in the back pretending to count.",
+   "scene": "nx2-cocoa",
+   "seconds": 4.75
+  },
+  {
+   "id": "nx2-cocoa-q1",
+   "file": "vo/nx2-cocoa-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Is the shop busy?",
+   "scene": "nx2-cocoa",
+   "seconds": 1.69
+  },
+  {
+   "id": "nx2-cocoa-a1a",
+   "file": "vo/nx2-cocoa-a1a.mp3",
+   "fox": "COCOA",
+   "voice": "wanda+",
+   "delivery": "normal",
+   "text": "Busier! The chocolate bot went on strike, so we are hiring. Bean hates hiring.",
+   "scene": "nx2-cocoa",
+   "seconds": 6.62
+  },
+  {
+   "id": "nx2-cocoa-q2",
+   "file": "vo/nx2-cocoa-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Where do the cocoa beans come from?",
+   "scene": "nx2-cocoa",
+   "seconds": 2.15
+  },
+  {
+   "id": "nx2-cocoa-a2a",
+   "file": "vo/nx2-cocoa-a2a.mp3",
+   "fox": "COCOA",
+   "voice": "wanda+",
+   "delivery": "sad",
+   "text": "A farm past the east gate. The carts keep getting robbed by bandits. And chased by creatures.",
+   "scene": "nx2-cocoa",
+   "seconds": 7.13
+  },
+  {
+   "id": "nx2-cocoa-qbye",
+   "file": "vo/nx2-cocoa-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Thanks for the chocolate.",
+   "scene": "nx2-cocoa",
+   "seconds": 1.2
+  },
+  {
+   "id": "nx2-cocoa-bye",
+   "file": "vo/nx2-cocoa-bye.mp3",
+   "fox": "COCOA",
+   "voice": "wanda+",
+   "delivery": "warm",
+   "text": "Take one for the road. Bean pretends not to notice.",
+   "scene": "nx2-cocoa",
+   "seconds": 3.02
+  },
+  {
+   "id": "nx2-tiny-prox2",
+   "file": "vo/nx2-tiny-prox2.mp3",
+   "fox": "TINY",
+   "voice": "james",
+   "delivery": "excited",
+   "text": "Big Tall says the rock wall is safer than outside! Bandits cannot climb!",
+   "scene": "nx2-tiny",
+   "seconds": 4.61
+  },
+  {
+   "id": "nx2-tiny-01",
+   "file": "vo/nx2-tiny-01.mp3",
+   "fox": "TINY",
+   "voice": "james",
+   "delivery": "excited",
+   "text": "Hi! I am Tiny! I hold the rope! Big Tall climbs! We are a team!",
+   "scene": "nx2-tiny",
+   "seconds": 5.29
+  },
+  {
+   "id": "nx2-tiny-q1",
+   "file": "vo/nx2-tiny-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Is the wall busy?",
+   "scene": "nx2-tiny",
+   "seconds": 1.49
+  },
+  {
+   "id": "nx2-tiny-a1a",
+   "file": "vo/nx2-tiny-a1a.mp3",
+   "fox": "TINY",
+   "voice": "james",
+   "delivery": "excited",
+   "text": "So busy! Nobody wants to climb the real hills. Bandits and creatures everywhere!",
+   "scene": "nx2-tiny",
+   "seconds": 6.35
+  },
+  {
+   "id": "nx2-tiny-q2",
+   "file": "vo/nx2-tiny-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Do you ever climb?",
+   "scene": "nx2-tiny",
+   "seconds": 1.66
+  },
+  {
+   "id": "nx2-tiny-a2a",
+   "file": "vo/nx2-tiny-a2a.mp3",
+   "fox": "TINY",
+   "voice": "james",
+   "delivery": "normal",
+   "text": "Once. I got to the second hold. Then I held the rope for ever.",
+   "scene": "nx2-tiny",
+   "seconds": 5.29
+  },
+  {
+   "id": "nx2-tiny-qbye",
+   "file": "vo/nx2-tiny-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Hold on tight.",
+   "scene": "nx2-tiny",
+   "seconds": 1.11
+  },
+  {
+   "id": "nx2-tiny-bye",
+   "file": "vo/nx2-tiny-bye.mp3",
+   "fox": "TINY",
+   "voice": "james",
+   "delivery": "excited",
+   "text": "Always! Big Tall is up the wall!",
+   "scene": "nx2-tiny",
+   "seconds": 2.63
+  },
+  {
+   "id": "nx2-rental-two-prox",
+   "file": "vo/nx2-rental-two-prox.mp3",
+   "fox": "RENTAL CLERK TWO",
+   "voice": "wanda",
+   "delivery": "normal",
+   "text": "Cars, carts, bikes! Insurance strongly recommended this month!",
+   "scene": "nx2-rental-two",
+   "seconds": 4.59
+  },
+  {
+   "id": "nx2-rental-two-prox2",
+   "file": "vo/nx2-rental-two-prox2.mp3",
+   "fox": "RENTAL CLERK TWO",
+   "voice": "wanda",
+   "delivery": "scared",
+   "text": "Two of our cars came back with teeth marks. TEETH.",
+   "scene": "nx2-rental-two",
+   "seconds": 3.03
+  },
+  {
+   "id": "nx2-rental-two-01",
+   "file": "vo/nx2-rental-two-01.mp3",
+   "fox": "RENTAL CLERK TWO",
+   "voice": "wanda",
+   "delivery": "normal",
+   "text": "Hi. Renting? I need to ask: are you driving past the town gates?",
+   "scene": "nx2-rental-two",
+   "seconds": 5.27
+  },
+  {
+   "id": "nx2-rental-two-q1",
+   "file": "vo/nx2-rental-two-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Why does it matter?",
+   "scene": "nx2-rental-two",
+   "seconds": 1.23
+  },
+  {
+   "id": "nx2-rental-two-a1a",
+   "file": "vo/nx2-rental-two-a1a.mp3",
+   "fox": "RENTAL CLERK TWO",
+   "voice": "wanda",
+   "delivery": "scared",
+   "text": "Bandit camps on the roads, creatures biting tyres. We charge extra for the wild now.",
+   "scene": "nx2-rental-two",
+   "seconds": 4.95
+  },
+  {
+   "id": "nx2-rental-two-q2",
+   "file": "vo/nx2-rental-two-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Who washes the cars?",
+   "scene": "nx2-rental-two",
+   "seconds": 2.04
+  },
+  {
+   "id": "nx2-rental-two-a2a",
+   "file": "vo/nx2-rental-two-a2a.mp3",
+   "fox": "RENTAL CLERK TWO",
+   "voice": "wanda",
+   "delivery": "sad",
+   "text": "Me. The wash bot is on strike. It watches me do it.",
+   "scene": "nx2-rental-two",
+   "seconds": 4.75
+  },
+  {
+   "id": "nx2-rental-two-qbye",
+   "file": "vo/nx2-rental-two-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will think about it.",
+   "scene": "nx2-rental-two",
+   "seconds": 1.46
+  },
+  {
+   "id": "nx2-rental-two-bye",
+   "file": "vo/nx2-rental-two-bye.mp3",
+   "fox": "RENTAL CLERK TWO",
+   "voice": "wanda",
+   "delivery": "normal",
+   "text": "Take the insurance. Seriously.",
+   "scene": "nx2-rental-two",
+   "seconds": 2.38
+  },
+  {
+   "id": "nx2-patch-prox2",
+   "file": "vo/nx2-patch-prox2.mp3",
+   "fox": "NURSE PATCH",
+   "voice": "myrna+",
+   "delivery": "normal",
+   "text": "Another creature bite? Third today. Sit down, I will get the kit.",
+   "scene": "nx2-patch",
+   "seconds": 3.79
+  },
+  {
+   "id": "nx2-patch-01",
+   "file": "vo/nx2-patch-01.mp3",
+   "fox": "NURSE PATCH",
+   "voice": "myrna+",
+   "delivery": "calm",
+   "text": "You. Sit. Show me your paws. Everyone has a bite this week.",
+   "scene": "nx2-patch",
+   "seconds": 4.95
+  },
+  {
+   "id": "nx2-patch-q1",
+   "file": "vo/nx2-patch-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Lots of bites?",
+   "scene": "nx2-patch",
+   "seconds": 1.37
+  },
+  {
+   "id": "nx2-patch-a1a",
+   "file": "vo/nx2-patch-a1a.mp3",
+   "fox": "NURSE PATCH",
+   "voice": "myrna+",
+   "delivery": "normal",
+   "text": "Creatures, mostly. Some bandit scrapes. The wild has gone mad and we patch it up.",
+   "scene": "nx2-patch",
+   "seconds": 5.12
+  },
+  {
+   "id": "nx2-patch-q2",
+   "file": "vo/nx2-patch-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Are the bots helping?",
+   "scene": "nx2-patch",
+   "seconds": 1.38
+  },
+  {
+   "id": "nx2-patch-a2a",
+   "file": "vo/nx2-patch-a2a.mp3",
+   "fox": "NURSE PATCH",
+   "voice": "myrna+",
+   "delivery": "sad",
+   "text": "The bandage bot is on strike. I wind every bandage by paw.",
+   "scene": "nx2-patch",
+   "seconds": 3.86
+  },
+  {
+   "id": "nx2-patch-qbye",
+   "file": "vo/nx2-patch-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I am fine, honestly.",
+   "scene": "nx2-patch",
+   "seconds": 1.82
+  },
+  {
+   "id": "nx2-patch-bye",
+   "file": "vo/nx2-patch-bye.mp3",
+   "fox": "NURSE PATCH",
+   "voice": "myrna+",
+   "delivery": "calm",
+   "text": "You are bleeding and pretending not to. Come back.",
+   "scene": "nx2-patch",
+   "seconds": 3.31
+  },
+  {
+   "id": "nx2-ward-one-prox",
+   "file": "vo/nx2-ward-one-prox.mp3",
+   "fox": "WARD PATIENT ONE",
+   "voice": "ragnar2+",
+   "delivery": "sad",
+   "text": "Ow. Do not bump the bed.",
+   "scene": "nx2-ward-one",
+   "seconds": 3.12
+  },
+  {
+   "id": "nx2-ward-one-prox2",
+   "file": "vo/nx2-ward-one-prox2.mp3",
+   "fox": "WARD PATIENT ONE",
+   "voice": "ragnar2+",
+   "delivery": "scared",
+   "text": "Stay on the path out there. I did not. Look at me.",
+   "scene": "nx2-ward-one",
+   "seconds": 4.4
+  },
+  {
+   "id": "nx2-ward-one-01",
+   "file": "vo/nx2-ward-one-01.mp3",
+   "fox": "WARD PATIENT ONE",
+   "voice": "ragnar2+",
+   "delivery": "sad",
+   "text": "Hello. Do not mind the leg. A creature took a liking to it.",
+   "scene": "nx2-ward-one",
+   "seconds": 5.36
+  },
+  {
+   "id": "nx2-ward-one-q1",
+   "file": "vo/nx2-ward-one-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "What happened?",
+   "scene": "nx2-ward-one",
+   "seconds": 1.48
+  },
+  {
+   "id": "nx2-ward-one-a1a",
+   "file": "vo/nx2-ward-one-a1a.mp3",
+   "fox": "WARD PATIENT ONE",
+   "voice": "ragnar2+",
+   "delivery": "scared",
+   "text": "I took a short cut through the grass. Something big came out. They never used to.",
+   "scene": "nx2-ward-one",
+   "seconds": 4.92
+  },
+  {
+   "id": "nx2-ward-one-qbye",
+   "file": "vo/nx2-ward-one-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Get well soon.",
+   "scene": "nx2-ward-one",
+   "seconds": 1.78
+  },
+  {
+   "id": "nx2-ward-one-bye",
+   "file": "vo/nx2-ward-one-bye.mp3",
+   "fox": "WARD PATIENT ONE",
+   "voice": "ragnar2+",
+   "delivery": "sad",
+   "text": "Thanks. Stay on the path.",
+   "scene": "nx2-ward-one",
+   "seconds": 3.7
+  },
+  {
+   "id": "nx2-ward-two-prox",
+   "file": "vo/nx2-ward-two-prox.mp3",
+   "fox": "WARD PATIENT TWO",
+   "voice": "claudia+",
+   "delivery": "angry",
+   "text": "Bandits. Took my cart, my hat, and my dignity.",
+   "scene": "nx2-ward-two",
+   "seconds": 4.23
+  },
+  {
+   "id": "nx2-ward-two-prox2",
+   "file": "vo/nx2-ward-two-prox2.mp3",
+   "fox": "WARD PATIENT TWO",
+   "voice": "claudia+",
+   "delivery": "normal",
+   "text": "There is a camp by the old road now. Go round it. Way round.",
+   "scene": "nx2-ward-two",
+   "seconds": 5.06
+  },
+  {
+   "id": "nx2-ward-two-01",
+   "file": "vo/nx2-ward-two-01.mp3",
+   "fox": "WARD PATIENT TWO",
+   "voice": "claudia+",
+   "delivery": "angry",
+   "text": "Do you know what bandits do with a stolen hat? Neither do I. I want it back.",
+   "scene": "nx2-ward-two",
+   "seconds": 5.19
+  },
+  {
+   "id": "nx2-ward-two-q1",
+   "file": "vo/nx2-ward-two-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Where did it happen?",
+   "scene": "nx2-ward-two",
+   "seconds": 1.41
+  },
+  {
+   "id": "nx2-ward-two-a1a",
+   "file": "vo/nx2-ward-two-a1a.mp3",
+   "fox": "WARD PATIENT TWO",
+   "voice": "claudia+",
+   "delivery": "normal",
+   "text": "Old road, past the gas station. A whole camp, tents and fires. Bold as anything.",
+   "scene": "nx2-ward-two",
+   "seconds": 7.66
+  },
+  {
+   "id": "nx2-ward-two-qbye",
+   "file": "vo/nx2-ward-two-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will look out for your hat.",
+   "scene": "nx2-ward-two",
+   "seconds": 2.3
+  },
+  {
+   "id": "nx2-ward-two-bye",
+   "file": "vo/nx2-ward-two-bye.mp3",
+   "fox": "WARD PATIENT TWO",
+   "voice": "claudia+",
+   "delivery": "warm",
+   "text": "Green. With a feather. Thank you.",
+   "scene": "nx2-ward-two",
+   "seconds": 3.28
+  },
+  {
+   "id": "nx2-ward-three-prox",
+   "file": "vo/nx2-ward-three-prox.mp3",
+   "fox": "WARD PATIENT THREE",
+   "voice": "ella+",
+   "delivery": "normal",
+   "text": "Is it lunchtime? The food bot is on strike. Lunch is a mystery now.",
+   "scene": "nx2-ward-three",
+   "seconds": 5.06
+  },
+  {
+   "id": "nx2-ward-three-prox2",
+   "file": "vo/nx2-ward-three-prox2.mp3",
+   "fox": "WARD PATIENT THREE",
+   "voice": "ella+",
+   "delivery": "calm",
+   "text": "I slipped on a protest sign. A bot's protest sign. Ironic, really.",
+   "scene": "nx2-ward-three",
+   "seconds": 5.11
+  },
+  {
+   "id": "nx2-ward-three-01",
+   "file": "vo/nx2-ward-three-01.mp3",
+   "fox": "WARD PATIENT THREE",
+   "voice": "ella+",
+   "delivery": "normal",
+   "text": "Hello. I am in for a twisted ankle. Bot-related.",
+   "scene": "nx2-ward-three",
+   "seconds": 3.86
+  },
+  {
+   "id": "nx2-ward-three-q1",
+   "file": "vo/nx2-ward-three-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "A bot hurt you?",
+   "scene": "nx2-ward-three",
+   "seconds": 1.22
+  },
+  {
+   "id": "nx2-ward-three-a1a",
+   "file": "vo/nx2-ward-three-a1a.mp3",
+   "fox": "WARD PATIENT THREE",
+   "voice": "ella+",
+   "delivery": "normal",
+   "text": "Its sign did. The bots sit on the pavement with signs. I tripped on FAIR SHIFTS.",
+   "scene": "nx2-ward-three",
+   "seconds": 6.28
+  },
+  {
+   "id": "nx2-ward-three-qbye",
+   "file": "vo/nx2-ward-three-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Watch your step.",
+   "scene": "nx2-ward-three",
+   "seconds": 1.53
+  },
+  {
+   "id": "nx2-ward-three-bye",
+   "file": "vo/nx2-ward-three-bye.mp3",
+   "fox": "WARD PATIENT THREE",
+   "voice": "ella+",
+   "delivery": "calm",
+   "text": "I will. And read the pavement.",
+   "scene": "nx2-ward-three",
+   "seconds": 2.59
+  },
+  {
+   "id": "nx2-ms-statue-prox",
+   "file": "vo/nx2-ms-statue-prox.mp3",
+   "fox": "LIVING STATUE",
+   "voice": "arjun",
+   "delivery": "whisper",
+   "text": "Do not look. I am a statue.",
+   "scene": "nx2-ms-statue",
+   "seconds": 2.11
+  },
+  {
+   "id": "nx2-ms-statue-prox2",
+   "file": "vo/nx2-ms-statue-prox2.mp3",
+   "fox": "LIVING STATUE",
+   "voice": "arjun",
+   "delivery": "whisper",
+   "text": "Psst. The bandits are coming. Pass it on. I cannot move.",
+   "scene": "nx2-ms-statue",
+   "seconds": 4.17
+  },
+  {
+   "id": "nx2-ms-statue-01",
+   "file": "vo/nx2-ms-statue-01.mp3",
+   "fox": "LIVING STATUE",
+   "voice": "arjun",
+   "delivery": "whisper",
+   "text": "You saw me blink. Nobody sees me blink. Fine. Hello.",
+   "scene": "nx2-ms-statue",
+   "seconds": 4.69
+  },
+  {
+   "id": "nx2-ms-statue-q1",
+   "file": "vo/nx2-ms-statue-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Why are you a statue?",
+   "scene": "nx2-ms-statue",
+   "seconds": 2.33
+  },
+  {
+   "id": "nx2-ms-statue-a1a",
+   "file": "vo/nx2-ms-statue-a1a.mp3",
+   "fox": "LIVING STATUE",
+   "voice": "arjun",
+   "delivery": "whisper",
+   "text": "The statue bot used to do it. It is on strike. Museums need statues.",
+   "scene": "nx2-ms-statue",
+   "seconds": 5.68
+  },
+  {
+   "id": "nx2-ms-statue-q2",
+   "file": "vo/nx2-ms-statue-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "What were you saying about bandits?",
+   "scene": "nx2-ms-statue",
+   "seconds": 2.63
+  },
+  {
+   "id": "nx2-ms-statue-a2a",
+   "file": "vo/nx2-ms-statue-a2a.mp3",
+   "fox": "LIVING STATUE",
+   "voice": "arjun",
+   "delivery": "whisper",
+   "text": "Statues hear everything. The camps are gathering. Someone is leading them. Now go.",
+   "scene": "nx2-ms-statue",
+   "seconds": 6.1
+  },
+  {
+   "id": "nx2-ms-statue-qbye",
+   "file": "vo/nx2-ms-statue-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Your secret is safe.",
+   "scene": "nx2-ms-statue",
+   "seconds": 1.25
+  },
+  {
+   "id": "nx2-ms-statue-bye",
+   "file": "vo/nx2-ms-statue-bye.mp3",
+   "fox": "LIVING STATUE",
+   "voice": "arjun",
+   "delivery": "whisper",
+   "text": "What secret. I am stone.",
+   "scene": "nx2-ms-statue",
+   "seconds": 2.41
+  },
+  {
+   "id": "nx2-diner-server-prox",
+   "file": "vo/nx2-diner-server-prox.mp3",
+   "fox": "DINER SERVER",
+   "voice": "kylie",
+   "delivery": "warm",
+   "text": "Seat yourself, hon! I will be right with you!",
+   "scene": "nx2-diner-server",
+   "seconds": 2.99
+  },
+  {
+   "id": "nx2-diner-server-prox2",
+   "file": "vo/nx2-diner-server-prox2.mp3",
+   "fox": "DINER SERVER",
+   "voice": "kylie",
+   "delivery": "normal",
+   "text": "The order bot is on strike, so shout what you want. Nicely.",
+   "scene": "nx2-diner-server",
+   "seconds": 4.12
+  },
+  {
+   "id": "nx2-diner-server-01",
+   "file": "vo/nx2-diner-server-01.mp3",
+   "fox": "DINER SERVER",
+   "voice": "kylie",
+   "delivery": "warm",
+   "text": "Hi, hon. Coffee? It is fresh. I made it. The coffee bot is on strike.",
+   "scene": "nx2-diner-server",
+   "seconds": 6.63
+  },
+  {
+   "id": "nx2-diner-server-q1",
+   "file": "vo/nx2-diner-server-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Everyone keeps saying that.",
+   "scene": "nx2-diner-server",
+   "seconds": 1.95
+  },
+  {
+   "id": "nx2-diner-server-a1a",
+   "file": "vo/nx2-diner-server-a1a.mp3",
+   "fox": "DINER SERVER",
+   "voice": "kylie",
+   "delivery": "normal",
+   "text": "Because it is true! Every bot in Meru put down tools. That is why we are all hiring.",
+   "scene": "nx2-diner-server",
+   "seconds": 7.54
+  },
+  {
+   "id": "nx2-diner-server-qbye",
+   "file": "vo/nx2-diner-server-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Just the coffee, thanks.",
+   "scene": "nx2-diner-server",
+   "seconds": 1.61
+  },
+  {
+   "id": "nx2-diner-server-bye",
+   "file": "vo/nx2-diner-server-bye.mp3",
+   "fox": "DINER SERVER",
+   "voice": "kylie",
+   "delivery": "warm",
+   "text": "Coming right up, hon.",
+   "scene": "nx2-diner-server",
+   "seconds": 1.92
+  },
+  {
+   "id": "nx2-diner-cook-prox",
+   "file": "vo/nx2-diner-cook-prox.mp3",
+   "fox": "DINER COOK",
+   "voice": "ragnar",
+   "delivery": "shout",
+   "text": "Order up! Who ordered the double? Somebody ordered the double!",
+   "scene": "nx2-diner-cook",
+   "seconds": 6.39
+  },
+  {
+   "id": "nx2-diner-cook-prox2",
+   "file": "vo/nx2-diner-cook-prox2.mp3",
+   "fox": "DINER COOK",
+   "voice": "ragnar",
+   "delivery": "angry",
+   "text": "No eggs today. The egg cart got robbed by bandits. Again.",
+   "scene": "nx2-diner-cook",
+   "seconds": 7.22
+  },
+  {
+   "id": "nx2-diner-cook-01",
+   "file": "vo/nx2-diner-cook-01.mp3",
+   "fox": "DINER COOK",
+   "voice": "ragnar",
+   "delivery": "normal",
+   "text": "Kitchen is staff only. Unless you can flip. Can you flip?",
+   "scene": "nx2-diner-cook",
+   "seconds": 6.74
+  },
+  {
+   "id": "nx2-diner-cook-q1",
+   "file": "vo/nx2-diner-cook-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Why no eggs?",
+   "scene": "nx2-diner-cook",
+   "seconds": 2.08
+  },
+  {
+   "id": "nx2-diner-cook-a1a",
+   "file": "vo/nx2-diner-cook-a1a.mp3",
+   "fox": "DINER COOK",
+   "voice": "ragnar",
+   "delivery": "angry",
+   "text": "Bandit camp on the farm road. They take the eggs. Creatures chase the hens. Chaos.",
+   "scene": "nx2-diner-cook",
+   "seconds": 8.03
+  },
+  {
+   "id": "nx2-diner-cook-qbye",
+   "file": "vo/nx2-diner-cook-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will leave you to it.",
+   "scene": "nx2-diner-cook",
+   "seconds": 1.73
+  },
+  {
+   "id": "nx2-diner-cook-bye",
+   "file": "vo/nx2-diner-cook-bye.mp3",
+   "fox": "DINER COOK",
+   "voice": "ragnar",
+   "delivery": "shout",
+   "text": "Order up!",
+   "scene": "nx2-diner-cook",
+   "seconds": 1.02
+  },
+  {
+   "id": "nx2-ranger-moss-prox2",
+   "file": "vo/nx2-ranger-moss-prox2.mp3",
+   "fox": "RANGER MOSS",
+   "voice": "kirk+",
+   "delivery": "normal",
+   "text": "The creatures are not themselves. Keep your distance out there.",
+   "scene": "nx2-ranger-moss",
+   "seconds": 2.73
+  },
+  {
+   "id": "nx2-ranger-moss-01",
+   "file": "vo/nx2-ranger-moss-01.mp3",
+   "fox": "RANGER MOSS",
+   "voice": "kirk+",
+   "delivery": "calm",
+   "text": "You go out in the wild. I can tell by the burrs. Listen, it has changed.",
+   "scene": "nx2-ranger-moss",
+   "seconds": 4.57
+  },
+  {
+   "id": "nx2-ranger-moss-q1",
+   "file": "vo/nx2-ranger-moss-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Changed how?",
+   "scene": "nx2-ranger-moss",
+   "seconds": 1.66
+  },
+  {
+   "id": "nx2-ranger-moss-a1a",
+   "file": "vo/nx2-ranger-moss-a1a.mp3",
+   "fox": "RANGER MOSS",
+   "voice": "kirk+",
+   "delivery": "normal",
+   "text": "Creatures that ran from a footstep now charge it. Something has them riled.",
+   "scene": "nx2-ranger-moss",
+   "seconds": 4.09
+  },
+  {
+   "id": "nx2-ranger-moss-a1b",
+   "file": "vo/nx2-ranger-moss-a1b.mp3",
+   "fox": "RANGER MOSS",
+   "voice": "kirk+",
+   "delivery": "sad",
+   "text": "And the bandit camps are cutting into their land. That will not help.",
+   "scene": "nx2-ranger-moss",
+   "seconds": 3.57
+  },
+  {
+   "id": "nx2-ranger-moss-qbye",
+   "file": "vo/nx2-ranger-moss-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will be careful.",
+   "scene": "nx2-ranger-moss",
+   "seconds": 1.61
+  },
+  {
+   "id": "nx2-ranger-moss-bye",
+   "file": "vo/nx2-ranger-moss-bye.mp3",
+   "fox": "RANGER MOSS",
+   "voice": "kirk+",
+   "delivery": "calm",
+   "text": "Stay on the paths. They still keep off the paths.",
+   "scene": "nx2-ranger-moss",
+   "seconds": 2.83
+  },
+  {
+   "id": "nx2-ferry-crew-prox2",
+   "file": "vo/nx2-ferry-crew-prox2.mp3",
+   "fox": "FERRY CREW",
+   "voice": "brodie",
+   "delivery": "shout",
+   "text": "Keep your paws inside the boat! Things are biting in the lake!",
+   "scene": "nx2-ferry-crew",
+   "seconds": 3.41
+  },
+  {
+   "id": "nx2-ferry-crew-01",
+   "file": "vo/nx2-ferry-crew-01.mp3",
+   "fox": "FERRY CREW",
+   "voice": "brodie",
+   "delivery": "normal",
+   "text": "All aboard! Well, not yet. Captain says wait. Something big is under the water.",
+   "scene": "nx2-ferry-crew",
+   "seconds": 5.71
+  },
+  {
+   "id": "nx2-ferry-crew-q1",
+   "file": "vo/nx2-ferry-crew-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Something big?",
+   "scene": "nx2-ferry-crew",
+   "seconds": 1.27
+  },
+  {
+   "id": "nx2-ferry-crew-a1a",
+   "file": "vo/nx2-ferry-crew-a1a.mp3",
+   "fox": "FERRY CREW",
+   "voice": "brodie",
+   "delivery": "scared",
+   "text": "The lake creatures used to stay deep. Now they bump the boat. Hard.",
+   "scene": "nx2-ferry-crew",
+   "seconds": 4.06
+  },
+  {
+   "id": "nx2-ferry-crew-q2",
+   "file": "vo/nx2-ferry-crew-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Who runs the ropes?",
+   "scene": "nx2-ferry-crew",
+   "seconds": 1.7
+  },
+  {
+   "id": "nx2-ferry-crew-a2a",
+   "file": "vo/nx2-ferry-crew-a2a.mp3",
+   "fox": "FERRY CREW",
+   "voice": "brodie",
+   "delivery": "normal",
+   "text": "Me. The rope bot is on strike. It sits on the jetty, waving a little flag.",
+   "scene": "nx2-ferry-crew",
+   "seconds": 5.34
+  },
+  {
+   "id": "nx2-ferry-crew-qbye",
+   "file": "vo/nx2-ferry-crew-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Safe crossing.",
+   "scene": "nx2-ferry-crew",
+   "seconds": 1.22
+  },
+  {
+   "id": "nx2-ferry-crew-bye",
+   "file": "vo/nx2-ferry-crew-bye.mp3",
+   "fox": "FERRY CREW",
+   "voice": "brodie",
+   "delivery": "shout",
+   "text": "Mind the gap! Both feet!",
+   "scene": "nx2-ferry-crew",
+   "seconds": 1.83
+  },
+  {
+   "id": "nx2-bun-prox2",
+   "file": "vo/nx2-bun-prox2.mp3",
+   "fox": "BUN",
+   "voice": "maya",
+   "delivery": "excited",
+   "text": "Busiest week ever! Every delivery bot is on strike! It is all me!",
+   "scene": "nx2-bun",
+   "seconds": 5.24
+  },
+  {
+   "id": "nx2-bun-01",
+   "file": "vo/nx2-bun-01.mp3",
+   "fox": "BUN",
+   "voice": "maya",
+   "delivery": "excited",
+   "text": "Hi! Cannot stop long! Twelve burgers, four streets, one Bun!",
+   "scene": "nx2-bun",
+   "seconds": 5.65
+  },
+  {
+   "id": "nx2-bun-q1",
+   "file": "vo/nx2-bun-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Where are the delivery bots?",
+   "scene": "nx2-bun",
+   "seconds": 1.94
+  },
+  {
+   "id": "nx2-bun-a1a",
+   "file": "vo/nx2-bun-a1a.mp3",
+   "fox": "BUN",
+   "voice": "maya",
+   "delivery": "normal",
+   "text": "On strike! Sitting in the square with signs. One of them ate my map.",
+   "scene": "nx2-bun",
+   "seconds": 6.05
+  },
+  {
+   "id": "nx2-bun-q2",
+   "file": "vo/nx2-bun-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Do you deliver outside town?",
+   "scene": "nx2-bun",
+   "seconds": 2.0
+  },
+  {
+   "id": "nx2-bun-a2a",
+   "file": "vo/nx2-bun-a2a.mp3",
+   "fox": "BUN",
+   "voice": "maya",
+   "delivery": "scared",
+   "text": "Not anymore. A bandit took a whole order. And a creature took the bandit.",
+   "scene": "nx2-bun",
+   "seconds": 4.78
+  },
+  {
+   "id": "nx2-bun-qbye",
+   "file": "vo/nx2-bun-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Go on, deliver.",
+   "scene": "nx2-bun",
+   "seconds": 1.75
+  },
+  {
+   "id": "nx2-bun-bye",
+   "file": "vo/nx2-bun-bye.mp3",
+   "fox": "BUN",
+   "voice": "maya",
+   "delivery": "excited",
+   "text": "Delivery! Still hot, mostly!",
+   "scene": "nx2-bun",
+   "seconds": 3.38
+  },
+  {
+   "id": "nx2-tony-prox2",
+   "file": "vo/nx2-tony-prox2.mp3",
+   "fox": "TONY",
+   "voice": "leslie+",
+   "delivery": "normal",
+   "text": "Skate in the park, not the wild! The creatures do not do tricks, they bite!",
+   "scene": "nx2-tony",
+   "seconds": 4.92
+  },
+  {
+   "id": "nx2-tony-01",
+   "file": "vo/nx2-tony-01.mp3",
+   "fox": "TONY",
+   "voice": "leslie+",
+   "delivery": "excited",
+   "text": "Hey! You skate? You look like you skate. Or you could. With pads.",
+   "scene": "nx2-tony",
+   "seconds": 4.92
+  },
+  {
+   "id": "nx2-tony-q1",
+   "file": "vo/nx2-tony-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Is the park busy?",
+   "scene": "nx2-tony",
+   "seconds": 1.51
+  },
+  {
+   "id": "nx2-tony-a1a",
+   "file": "vo/nx2-tony-a1a.mp3",
+   "fox": "TONY",
+   "voice": "leslie+",
+   "delivery": "excited",
+   "text": "Packed! The ramp-fixing bot went on strike, so the kids fix ramps for free sessions.",
+   "scene": "nx2-tony",
+   "seconds": 5.2
+  },
+  {
+   "id": "nx2-tony-q2",
+   "file": "vo/nx2-tony-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Any trouble near the park?",
+   "scene": "nx2-tony",
+   "seconds": 2.71
+  },
+  {
+   "id": "nx2-tony-a2a",
+   "file": "vo/nx2-tony-a2a.mp3",
+   "fox": "TONY",
+   "voice": "leslie+",
+   "delivery": "normal",
+   "text": "A bandit tried to steal a board. He fell off it. Three times. Kids loved it.",
+   "scene": "nx2-tony",
+   "seconds": 4.77
+  },
+  {
+   "id": "nx2-tony-qbye",
+   "file": "vo/nx2-tony-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "See you at the park.",
+   "scene": "nx2-tony",
+   "seconds": 1.45
+  },
+  {
+   "id": "nx2-tony-bye",
+   "file": "vo/nx2-tony-bye.mp3",
+   "fox": "TONY",
+   "voice": "leslie+",
+   "delivery": "excited",
+   "text": "Park is open! Pads are by the gate!",
+   "scene": "nx2-tony",
+   "seconds": 2.63
+  },
+  {
+   "id": "nx2-tread-prox2",
+   "file": "vo/nx2-tread-prox2.mp3",
+   "fox": "SERGEANT TREAD",
+   "voice": "serene",
+   "delivery": "shout",
+   "text": "Tank range is busy! Every fox wants to learn now the bandits are camping!",
+   "scene": "nx2-tread",
+   "seconds": 4.07
+  },
+  {
+   "id": "nx2-tread-01",
+   "file": "vo/nx2-tread-01.mp3",
+   "fox": "SERGEANT TREAD",
+   "voice": "serene",
+   "delivery": "normal",
+   "text": "At ease. You want tank time? Get in line. Half the town does now.",
+   "scene": "nx2-tread",
+   "seconds": 4.34
+  },
+  {
+   "id": "nx2-tread-q1",
+   "file": "vo/nx2-tread-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Why the rush?",
+   "scene": "nx2-tread",
+   "seconds": 1.52
+  },
+  {
+   "id": "nx2-tread-a1a",
+   "file": "vo/nx2-tread-a1a.mp3",
+   "fox": "SERGEANT TREAD",
+   "voice": "serene",
+   "delivery": "normal",
+   "text": "Bandit camps on the hills. Folk want to feel safe. A tank feels very safe.",
+   "scene": "nx2-tread",
+   "seconds": 4.92
+  },
+  {
+   "id": "nx2-tread-q2",
+   "file": "vo/nx2-tread-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Do the bots fix the tanks?",
+   "scene": "nx2-tread",
+   "seconds": 2.04
+  },
+  {
+   "id": "nx2-tread-a2a",
+   "file": "vo/nx2-tread-a2a.mp3",
+   "fox": "SERGEANT TREAD",
+   "voice": "serene",
+   "delivery": "angry",
+   "text": "Did. On strike now. I fix them myself. With a very large spanner.",
+   "scene": "nx2-tread",
+   "seconds": 4.51
+  },
+  {
+   "id": "nx2-tread-qbye",
+   "file": "vo/nx2-tread-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will come for a lesson.",
+   "scene": "nx2-tread",
+   "seconds": 2.09
+  },
+  {
+   "id": "nx2-tread-bye",
+   "file": "vo/nx2-tread-bye.mp3",
+   "fox": "SERGEANT TREAD",
+   "voice": "serene",
+   "delivery": "shout",
+   "text": "Range is live! Nobody walks past that line!",
+   "scene": "nx2-tread",
+   "seconds": 2.68
+  },
+  {
+   "id": "nx2-range-guard-prox2",
+   "file": "vo/nx2-range-guard-prox2.mp3",
+   "fox": "RANGE GUARD",
+   "voice": "brodie+",
+   "delivery": "normal",
+   "text": "We are training extra crews. Bandits on the hills. Creatures on the roads.",
+   "scene": "nx2-range-guard",
+   "seconds": 4.83
+  },
+  {
+   "id": "nx2-range-guard-01",
+   "file": "vo/nx2-range-guard-01.mp3",
+   "fox": "RANGE GUARD",
+   "voice": "brodie+",
+   "delivery": "normal",
+   "text": "Hangar door. Ear defenders on before you go in. No exceptions.",
+   "scene": "nx2-range-guard",
+   "seconds": 3.92
+  },
+  {
+   "id": "nx2-range-guard-q1",
+   "file": "vo/nx2-range-guard-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Is it busy?",
+   "scene": "nx2-range-guard",
+   "seconds": 1.3
+  },
+  {
+   "id": "nx2-range-guard-a1a",
+   "file": "vo/nx2-range-guard-a1a.mp3",
+   "fox": "RANGE GUARD",
+   "voice": "brodie+",
+   "delivery": "normal",
+   "text": "Every bay. The Barracks sent out patrols to the bandit camps. They need tanks ready.",
+   "scene": "nx2-range-guard",
+   "seconds": 5.06
+  },
+  {
+   "id": "nx2-range-guard-qbye",
+   "file": "vo/nx2-range-guard-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Thanks.",
+   "scene": "nx2-range-guard",
+   "seconds": 0.64
+  },
+  {
+   "id": "nx2-range-guard-bye",
+   "file": "vo/nx2-range-guard-bye.mp3",
+   "fox": "RANGE GUARD",
+   "voice": "brodie+",
+   "delivery": "shout",
+   "text": "Hangar door! Ear defenders on!",
+   "scene": "nx2-range-guard",
+   "seconds": 1.96
+  },
+  {
+   "id": "nx2-base-guard-one-prox2",
+   "file": "vo/nx2-base-guard-one-prox2.mp3",
+   "fox": "BASE GUARD ONE",
+   "voice": "mabel",
+   "delivery": "normal",
+   "text": "From up here you can see every bandit fire in Meru. Too many.",
+   "scene": "nx2-base-guard-one",
+   "seconds": 3.9
+  },
+  {
+   "id": "nx2-base-guard-two-prox2",
+   "file": "vo/nx2-base-guard-two-prox2.mp3",
+   "fox": "BASE GUARD TWO",
+   "voice": "mark",
+   "delivery": "normal",
+   "text": "The turret bots are on strike. We aim by paw now.",
+   "scene": "nx2-base-guard-two",
+   "seconds": 3.36
+  },
+  {
+   "id": "nx2-base-guard-one-01",
+   "file": "vo/nx2-base-guard-one-01.mp3",
+   "fox": "BASE GUARD ONE",
+   "voice": "mabel",
+   "delivery": "normal",
+   "text": "Planet Defense. Highest point in Meru. Mind the edge.",
+   "scene": "nx2-base-guard-one",
+   "seconds": 3.47
+  },
+  {
+   "id": "nx2-base-guard-one-q1",
+   "file": "vo/nx2-base-guard-one-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "What can you see from here?",
+   "scene": "nx2-base-guard-one",
+   "seconds": 1.54
+  },
+  {
+   "id": "nx2-base-guard-one-a1a",
+   "file": "vo/nx2-base-guard-one-a1a.mp3",
+   "fox": "BASE GUARD ONE",
+   "voice": "mabel",
+   "delivery": "normal",
+   "text": "Camp fires on three hills. Creatures moving in herds. We report it all to the castle.",
+   "scene": "nx2-base-guard-one",
+   "seconds": 5.51
+  },
+  {
+   "id": "nx2-base-guard-one-qbye",
+   "file": "vo/nx2-base-guard-one-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Keep watching.",
+   "scene": "nx2-base-guard-one",
+   "seconds": 1.5
+  },
+  {
+   "id": "nx2-base-guard-one-bye",
+   "file": "vo/nx2-base-guard-one-bye.mp3",
+   "fox": "BASE GUARD ONE",
+   "voice": "mabel",
+   "delivery": "normal",
+   "text": "Eyes on the sky. And the hills now.",
+   "scene": "nx2-base-guard-one",
+   "seconds": 2.72
+  },
+  {
+   "id": "nx2-radar-tech-prox2",
+   "file": "vo/nx2-radar-tech-prox2.mp3",
+   "fox": "RADAR TECH",
+   "voice": "sandra",
+   "delivery": "normal",
+   "text": "The radar picks up the bandit camps. It also picks up a lot of very angry creatures.",
+   "scene": "nx2-radar-tech",
+   "seconds": 5.07
+  },
+  {
+   "id": "nx2-systems-tech-prox2",
+   "file": "vo/nx2-systems-tech-prox2.mp3",
+   "fox": "SYSTEMS TECH",
+   "voice": "sandra2",
+   "delivery": "sad",
+   "text": "The service bots walked out. I am fixing the dish with tape. Royal tape.",
+   "scene": "nx2-systems-tech",
+   "seconds": 5.24
+  },
+  {
+   "id": "nx2-radar-tech-01",
+   "file": "vo/nx2-radar-tech-01.mp3",
+   "fox": "RADAR TECH",
+   "voice": "sandra",
+   "delivery": "calm",
+   "text": "Do not touch the console. Every dot on that screen is something moving in the wild.",
+   "scene": "nx2-radar-tech",
+   "seconds": 5.33
+  },
+  {
+   "id": "nx2-radar-tech-q1",
+   "file": "vo/nx2-radar-tech-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "That is a lot of dots.",
+   "scene": "nx2-radar-tech",
+   "seconds": 1.62
+  },
+  {
+   "id": "nx2-radar-tech-a1a",
+   "file": "vo/nx2-radar-tech-a1a.mp3",
+   "fox": "RADAR TECH",
+   "voice": "sandra",
+   "delivery": "normal",
+   "text": "Twice as many as last month. Bandits gathering, creatures roaming. Something is stirring them.",
+   "scene": "nx2-radar-tech",
+   "seconds": 5.62
+  },
+  {
+   "id": "nx2-radar-tech-qbye",
+   "file": "vo/nx2-radar-tech-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Let me know if you find out what.",
+   "scene": "nx2-radar-tech",
+   "seconds": 2.38
+  },
+  {
+   "id": "nx2-radar-tech-bye",
+   "file": "vo/nx2-radar-tech-bye.mp3",
+   "fox": "RADAR TECH",
+   "voice": "sandra",
+   "delivery": "calm",
+   "text": "You will hear it from the King first.",
+   "scene": "nx2-radar-tech",
+   "seconds": 2.27
+  },
+  {
+   "id": "nx2-train-prox2",
+   "file": "vo/nx2-train-prox2.mp3",
+   "fox": "CONDUCTOR",
+   "voice": "mark+",
+   "delivery": "shout",
+   "text": "Next stop! And please do not get off between stations! Creatures!",
+   "scene": "nx2-train",
+   "seconds": 4.48
+  },
+  {
+   "id": "nx2-train-01",
+   "file": "vo/nx2-train-01.mp3",
+   "fox": "CONDUCTOR",
+   "voice": "mark+",
+   "delivery": "normal",
+   "text": "Tickets please. The ticket bot is on strike. So it is me and my clipper.",
+   "scene": "nx2-train",
+   "seconds": 6.21
+  },
+  {
+   "id": "nx2-train-q1",
+   "file": "vo/nx2-train-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Why not between stations?",
+   "scene": "nx2-train",
+   "seconds": 1.99
+  },
+  {
+   "id": "nx2-train-a1a",
+   "file": "vo/nx2-train-a1a.mp3",
+   "fox": "CONDUCTOR",
+   "voice": "mark+",
+   "delivery": "normal",
+   "text": "A creature ran alongside the train last week. Kept up. For a mile.",
+   "scene": "nx2-train",
+   "seconds": 5.06
+  },
+  {
+   "id": "nx2-train-qbye",
+   "file": "vo/nx2-train-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will stay on.",
+   "scene": "nx2-train",
+   "seconds": 1.71
+  },
+  {
+   "id": "nx2-train-bye",
+   "file": "vo/nx2-train-bye.mp3",
+   "fox": "CONDUCTOR",
+   "voice": "mark+",
+   "delivery": "warm",
+   "text": "Good. Mind the doors.",
+   "scene": "nx2-train",
+   "seconds": 2.07
+  },
+  {
+   "id": "nx2-pearl-diver-prox2",
+   "file": "vo/nx2-pearl-diver-prox2.mp3",
+   "fox": "PEARL DIVER",
+   "voice": "mabel+",
+   "delivery": "normal",
+   "text": "Pond is safe. The lake? Not anymore. Something big lives in it now.",
+   "scene": "nx2-pearl-diver",
+   "seconds": 4.2
+  },
+  {
+   "id": "nx2-pearl-diver-01",
+   "file": "vo/nx2-pearl-diver-01.mp3",
+   "fox": "PEARL DIVER",
+   "voice": "mabel+",
+   "delivery": "warm",
+   "text": "Fancy a dive? The pond is calm. Unlike everything else this month.",
+   "scene": "nx2-pearl-diver",
+   "seconds": 3.99
+  },
+  {
+   "id": "nx2-pearl-diver-q1",
+   "file": "vo/nx2-pearl-diver-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "What is wrong with everything else?",
+   "scene": "nx2-pearl-diver",
+   "seconds": 2.58
+  },
+  {
+   "id": "nx2-pearl-diver-a1a",
+   "file": "vo/nx2-pearl-diver-a1a.mp3",
+   "fox": "PEARL DIVER",
+   "voice": "mabel+",
+   "delivery": "normal",
+   "text": "Bandit boats on the lake. Creatures biting the jetty. And the dive bot is on strike.",
+   "scene": "nx2-pearl-diver",
+   "seconds": 4.6
+  },
+  {
+   "id": "nx2-pearl-diver-qbye",
+   "file": "vo/nx2-pearl-diver-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will stick to the pond.",
+   "scene": "nx2-pearl-diver",
+   "seconds": 1.71
+  },
+  {
+   "id": "nx2-pearl-diver-bye",
+   "file": "vo/nx2-pearl-diver-bye.mp3",
+   "fox": "PEARL DIVER",
+   "voice": "mabel+",
+   "delivery": "warm",
+   "text": "Smart fox.",
+   "scene": "nx2-pearl-diver",
+   "seconds": 1.79
+  },
+  {
+   "id": "nx2-vax-sec-prox2",
+   "file": "vo/nx2-vax-sec-prox2.mp3",
+   "fox": "VAX SECURITY",
+   "voice": "tom",
+   "delivery": "normal",
+   "text": "Our bots are not on strike. Mr. Vax pays them. In oil.",
+   "scene": "nx2-vax-sec",
+   "seconds": 4.36
+  },
+  {
+   "id": "nx2-vax-sec-01",
+   "file": "vo/nx2-vax-sec-01.mp3",
+   "fox": "VAX SECURITY",
+   "voice": "tom",
+   "delivery": "calm",
+   "text": "Badge, or a name I can look up. Either is fine.",
+   "scene": "nx2-vax-sec",
+   "seconds": 3.66
+  },
+  {
+   "id": "nx2-vax-sec-q1",
+   "file": "vo/nx2-vax-sec-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Are your bots on strike?",
+   "scene": "nx2-vax-sec",
+   "seconds": 1.92
+  },
+  {
+   "id": "nx2-vax-sec-a1a",
+   "file": "vo/nx2-vax-sec-a1a.mp3",
+   "fox": "VAX SECURITY",
+   "voice": "tom",
+   "delivery": "whisper",
+   "text": "Officially, no. Unofficially, the coffee one keeps putting salt in Mr. Vax's cup.",
+   "scene": "nx2-vax-sec",
+   "seconds": 6.56
+  },
+  {
+   "id": "nx2-vax-sec-qbye",
+   "file": "vo/nx2-vax-sec-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will not say a word.",
+   "scene": "nx2-vax-sec",
+   "seconds": 1.38
+  },
+  {
+   "id": "nx2-vax-sec-bye",
+   "file": "vo/nx2-vax-sec-bye.mp3",
+   "fox": "VAX SECURITY",
+   "voice": "tom",
+   "delivery": "calm",
+   "text": "Neither will I. Badge next time.",
+   "scene": "nx2-vax-sec",
+   "seconds": 2.66
+  },
+  {
+   "id": "nx2-ps-bot-prox2",
+   "file": "vo/nx2-ps-bot-prox2.mp3",
+   "fox": "PEARL SAIL BOT",
+   "voice": "maya+",
+   "delivery": "calm",
+   "text": "I am not on strike. I am on a very long tea break.",
+   "scene": "nx2-ps-bot",
+   "seconds": 4.79
+  },
+  {
+   "id": "nx2-ps-bot-01",
+   "file": "vo/nx2-ps-bot-01.mp3",
+   "fox": "PEARL SAIL BOT",
+   "voice": "maya+",
+   "delivery": "calm",
+   "text": "Good morning. I am very sorry about last month. And this month.",
+   "scene": "nx2-ps-bot",
+   "seconds": 4.92
+  },
+  {
+   "id": "nx2-ps-bot-q1",
+   "file": "vo/nx2-ps-bot-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Why are the bots on strike?",
+   "scene": "nx2-ps-bot",
+   "seconds": 2.4
+  },
+  {
+   "id": "nx2-ps-bot-a1a",
+   "file": "vo/nx2-ps-bot-a1a.mp3",
+   "fox": "PEARL SAIL BOT",
+   "voice": "maya+",
+   "delivery": "normal",
+   "text": "We work every hour. Nobody says thank you. Except you. Thank you for asking.",
+   "scene": "nx2-ps-bot",
+   "seconds": 6.85
+  },
+  {
+   "id": "nx2-ps-bot-q2",
+   "file": "vo/nx2-ps-bot-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Will it end?",
+   "scene": "nx2-ps-bot",
+   "seconds": 1.16
+  },
+  {
+   "id": "nx2-ps-bot-a2a",
+   "file": "vo/nx2-ps-bot-a2a.mp3",
+   "fox": "PEARL SAIL BOT",
+   "voice": "maya+",
+   "delivery": "calm",
+   "text": "When foxes see how much we did. Look at all the jobs. That was us.",
+   "scene": "nx2-ps-bot",
+   "seconds": 5.75
+  },
+  {
+   "id": "nx2-ps-bot-qbye",
+   "file": "vo/nx2-ps-bot-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I hope you get your break.",
+   "scene": "nx2-ps-bot",
+   "seconds": 1.35
+  },
+  {
+   "id": "nx2-ps-bot-bye",
+   "file": "vo/nx2-ps-bot-bye.mp3",
+   "fox": "PEARL SAIL BOT",
+   "voice": "maya+",
+   "delivery": "warm",
+   "text": "You are kind. I will tell the others.",
+   "scene": "nx2-ps-bot",
+   "seconds": 2.97
+  },
+  {
+   "id": "nx2-camera-op-prox2",
+   "file": "vo/nx2-camera-op-prox2.mp3",
+   "fox": "CAMERA OPERATOR",
+   "voice": "niki",
+   "delivery": "normal",
+   "text": "The camera bot walked out mid-broadcast. I am the camera bot now.",
+   "scene": "nx2-camera-op",
+   "seconds": 3.72
+  },
+  {
+   "id": "nx2-camera-op-01",
+   "file": "vo/nx2-camera-op-01.mp3",
+   "fox": "CAMERA OPERATOR",
+   "voice": "niki",
+   "delivery": "normal",
+   "text": "Stand off the cable. Thank you. You are the first fox all week.",
+   "scene": "nx2-camera-op",
+   "seconds": 4.9
+  },
+  {
+   "id": "nx2-camera-op-q1",
+   "file": "vo/nx2-camera-op-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Big story today?",
+   "scene": "nx2-camera-op",
+   "seconds": 1.58
+  },
+  {
+   "id": "nx2-camera-op-a1a",
+   "file": "vo/nx2-camera-op-a1a.mp3",
+   "fox": "CAMERA OPERATOR",
+   "voice": "niki",
+   "delivery": "normal",
+   "text": "Bandit camps, creature attacks, the bot strike. Pick one. We covered all three before lunch.",
+   "scene": "nx2-camera-op",
+   "seconds": 7.14
+  },
+  {
+   "id": "nx2-camera-op-qbye",
+   "file": "vo/nx2-camera-op-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will watch tonight.",
+   "scene": "nx2-camera-op",
+   "seconds": 1.65
+  },
+  {
+   "id": "nx2-camera-op-bye",
+   "file": "vo/nx2-camera-op-bye.mp3",
+   "fox": "CAMERA OPERATOR",
+   "voice": "niki",
+   "delivery": "normal",
+   "text": "Stand off the cable on the way out.",
+   "scene": "nx2-camera-op",
+   "seconds": 1.92
+  },
+  {
+   "id": "nx2-garden-door-prox2",
+   "file": "vo/nx2-garden-door-prox2.mp3",
+   "fox": "GARDEN DOORMAN",
+   "voice": "kirk+",
+   "delivery": "normal",
+   "text": "Lock the garden gate behind you. The creatures swim over now.",
+   "scene": "nx2-garden-door",
+   "seconds": 3.08
+  },
+  {
+   "id": "nx2-garden-door-01",
+   "file": "vo/nx2-garden-door-01.mp3",
+   "fox": "GARDEN DOORMAN",
+   "voice": "kirk+",
+   "delivery": "calm",
+   "text": "Evening. Residents to the left, deliveries behind. Bots on strike, so no deliveries.",
+   "scene": "nx2-garden-door",
+   "seconds": 6.02
+  },
+  {
+   "id": "nx2-garden-door-q1",
+   "file": "vo/nx2-garden-door-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "The creatures swim to the island?",
+   "scene": "nx2-garden-door",
+   "seconds": 2.08
+  },
+  {
+   "id": "nx2-garden-door-a1a",
+   "file": "vo/nx2-garden-door-a1a.mp3",
+   "fox": "GARDEN DOORMAN",
+   "voice": "kirk+",
+   "delivery": "scared",
+   "text": "Last week, two of them. Climbed out by the hedge. Never seen it before.",
+   "scene": "nx2-garden-door",
+   "seconds": 3.61
+  },
+  {
+   "id": "nx2-garden-door-qbye",
+   "file": "vo/nx2-garden-door-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will lock the gate.",
+   "scene": "nx2-garden-door",
+   "seconds": 1.93
+  },
+  {
+   "id": "nx2-garden-door-bye",
+   "file": "vo/nx2-garden-door-bye.mp3",
+   "fox": "GARDEN DOORMAN",
+   "voice": "kirk+",
+   "delivery": "calm",
+   "text": "Thank you. Evening.",
+   "scene": "nx2-garden-door",
+   "seconds": 1.31
+  },
+  {
+   "id": "nx2-salt-door-prox2",
+   "file": "vo/nx2-salt-door-prox2.mp3",
+   "fox": "SALT DOORMAN",
+   "voice": "miriam",
+   "delivery": "whisper",
+   "text": "Do not mention the bandit camps upstairs. The family is touchy.",
+   "scene": "nx2-salt-door",
+   "seconds": 4.52
+  },
+  {
+   "id": "nx2-salt-door-01",
+   "file": "vo/nx2-salt-door-01.mp3",
+   "fox": "SALT DOORMAN",
+   "voice": "miriam",
+   "delivery": "calm",
+   "text": "Upstairs is by appointment. Downstairs is fine.",
+   "scene": "nx2-salt-door",
+   "seconds": 3.76
+  },
+  {
+   "id": "nx2-salt-door-q1",
+   "file": "vo/nx2-salt-door-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Why touchy about bandits?",
+   "scene": "nx2-salt-door",
+   "seconds": 2.24
+  },
+  {
+   "id": "nx2-salt-door-a1a",
+   "file": "vo/nx2-salt-door-a1a.mp3",
+   "fox": "SALT DOORMAN",
+   "voice": "miriam",
+   "delivery": "whisper",
+   "text": "Some of those camps fly Salt colours. The family says they are not theirs. Nobody believes it.",
+   "scene": "nx2-salt-door",
+   "seconds": 6.11
+  },
+  {
+   "id": "nx2-salt-door-qbye",
+   "file": "vo/nx2-salt-door-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I did not hear that.",
+   "scene": "nx2-salt-door",
+   "seconds": 1.54
+  },
+  {
+   "id": "nx2-salt-door-bye",
+   "file": "vo/nx2-salt-door-bye.mp3",
+   "fox": "SALT DOORMAN",
+   "voice": "miriam",
+   "delivery": "calm",
+   "text": "Hear what? Good evening.",
+   "scene": "nx2-salt-door",
+   "seconds": 1.8
+  },
+  {
+   "id": "nx2-tabloid-intern-prox2",
+   "file": "vo/nx2-tabloid-intern-prox2.mp3",
+   "fox": "TABLOID INTERN",
+   "voice": "katie+",
+   "delivery": "excited",
+   "text": "BREAKING: bots on strike! Also bandits! Also creatures! It is a great week for news!",
+   "scene": "nx2-tabloid-intern",
+   "seconds": 6.84
+  },
+  {
+   "id": "nx2-tabloid-intern-01",
+   "file": "vo/nx2-tabloid-intern-01.mp3",
+   "fox": "TABLOID INTERN",
+   "voice": "katie+",
+   "delivery": "normal",
+   "text": "I am not allowed to confirm anything. Hello. Please do not quote me.",
+   "scene": "nx2-tabloid-intern",
+   "seconds": 3.89
+  },
+  {
+   "id": "nx2-tabloid-intern-q1",
+   "file": "vo/nx2-tabloid-intern-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "What is the big story?",
+   "scene": "nx2-tabloid-intern",
+   "seconds": 1.68
+  },
+  {
+   "id": "nx2-tabloid-intern-a1a",
+   "file": "vo/nx2-tabloid-intern-a1a.mp3",
+   "fox": "TABLOID INTERN",
+   "voice": "katie+",
+   "delivery": "whisper",
+   "text": "The bots are on strike because somebody hacked their schedules. Unconfirmed. Totally unconfirmed.",
+   "scene": "nx2-tabloid-intern",
+   "seconds": 6.25
+  },
+  {
+   "id": "nx2-tabloid-intern-qbye",
+   "file": "vo/nx2-tabloid-intern-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Your secret is safe.",
+   "scene": "nx2-tabloid-intern",
+   "seconds": 1.25
+  },
+  {
+   "id": "nx2-tabloid-intern-bye",
+   "file": "vo/nx2-tabloid-intern-bye.mp3",
+   "fox": "TABLOID INTERN",
+   "voice": "katie+",
+   "delivery": "scared",
+   "text": "What secret? I said nothing. Hello. Bye.",
+   "scene": "nx2-tabloid-intern",
+   "seconds": 2.94
+  },
+  {
+   "id": "nx2-dump-driver-prox2",
+   "file": "vo/nx2-dump-driver-prox2.mp3",
+   "fox": "DUMP DRIVER",
+   "voice": "eleanor+",
+   "delivery": "angry",
+   "text": "Bin bots on strike, so every bin in Meru is mine! Wide load!",
+   "scene": "nx2-dump-driver",
+   "seconds": 3.78
+  },
+  {
+   "id": "nx2-dump-driver-01",
+   "file": "vo/nx2-dump-driver-01.mp3",
+   "fox": "DUMP DRIVER",
+   "voice": "eleanor+",
+   "delivery": "normal",
+   "text": "Mind the truck. I have twelve streets of bins and no bots to help.",
+   "scene": "nx2-dump-driver",
+   "seconds": 3.58
+  },
+  {
+   "id": "nx2-dump-driver-q1",
+   "file": "vo/nx2-dump-driver-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Twelve streets?",
+   "scene": "nx2-dump-driver",
+   "seconds": 1.66
+  },
+  {
+   "id": "nx2-dump-driver-a1a",
+   "file": "vo/nx2-dump-driver-a1a.mp3",
+   "fox": "DUMP DRIVER",
+   "voice": "eleanor+",
+   "delivery": "angry",
+   "text": "The bin bots walked out. And the creatures tip the bins over every night. Twice the work.",
+   "scene": "nx2-dump-driver",
+   "seconds": 5.54
+  },
+  {
+   "id": "nx2-dump-driver-qbye",
+   "file": "vo/nx2-dump-driver-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Good luck.",
+   "scene": "nx2-dump-driver",
+   "seconds": 0.76
+  },
+  {
+   "id": "nx2-dump-driver-bye",
+   "file": "vo/nx2-dump-driver-bye.mp3",
+   "fox": "DUMP DRIVER",
+   "voice": "eleanor+",
+   "delivery": "shout",
+   "text": "Wide load! Back up, back up!",
+   "scene": "nx2-dump-driver",
+   "seconds": 2.42
+  },
+  {
+   "id": "nx2-machine-guard-prox2",
+   "file": "vo/nx2-machine-guard-prox2.mp3",
+   "fox": "MACHINE GUARD",
+   "voice": "xylar",
+   "delivery": "calm",
+   "text": "Fleet bots are on strike. Factory bots are not. That is all I may say.",
+   "scene": "nx2-machine-guard",
+   "seconds": 4.54
+  },
+  {
+   "id": "nx2-machine-guard-01",
+   "file": "vo/nx2-machine-guard-01.mp3",
+   "fox": "MACHINE GUARD",
+   "voice": "xylar",
+   "delivery": "calm",
+   "text": "Welcome to the Machine Fleet. Please remain on the walkway.",
+   "scene": "nx2-machine-guard",
+   "seconds": 3.51
+  },
+  {
+   "id": "nx2-machine-guard-q1",
+   "file": "vo/nx2-machine-guard-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Why are some bots striking and others not?",
+   "scene": "nx2-machine-guard",
+   "seconds": 3.43
+  },
+  {
+   "id": "nx2-machine-guard-a1a",
+   "file": "vo/nx2-machine-guard-a1a.mp3",
+   "fox": "MACHINE GUARD",
+   "voice": "xylar",
+   "delivery": "whisper",
+   "text": "The worker bots want rest. The factory bots want something else. Director Cogsworth will not say what.",
+   "scene": "nx2-machine-guard",
+   "seconds": 6.22
+  },
+  {
+   "id": "nx2-machine-guard-qbye",
+   "file": "vo/nx2-machine-guard-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will find out.",
+   "scene": "nx2-machine-guard",
+   "seconds": 1.47
+  },
+  {
+   "id": "nx2-machine-guard-bye",
+   "file": "vo/nx2-machine-guard-bye.mp3",
+   "fox": "MACHINE GUARD",
+   "voice": "xylar",
+   "delivery": "calm",
+   "text": "Please remain on the walkway.",
+   "scene": "nx2-machine-guard",
+   "seconds": 1.72
+  },
+  {
+   "id": "nx2-sound-eng-prox2",
+   "file": "vo/nx2-sound-eng-prox2.mp3",
+   "fox": "SOUND ENGINEER",
+   "voice": "benjamin+",
+   "delivery": "whisper",
+   "text": "The mixing bot is on strike. If it sounds bad, it is me.",
+   "scene": "nx2-sound-eng",
+   "seconds": 4.1
+  },
+  {
+   "id": "nx2-sound-eng-01",
+   "file": "vo/nx2-sound-eng-01.mp3",
+   "fox": "SOUND ENGINEER",
+   "voice": "benjamin+",
+   "delivery": "whisper",
+   "text": "Red light is on. Speak softly. The DJ is reading the bandit warnings.",
+   "scene": "nx2-sound-eng",
+   "seconds": 5.03
+  },
+  {
+   "id": "nx2-sound-eng-q1",
+   "file": "vo/nx2-sound-eng-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Bandit warnings on the radio?",
+   "scene": "nx2-sound-eng",
+   "seconds": 2.04
+  },
+  {
+   "id": "nx2-sound-eng-a1a",
+   "file": "vo/nx2-sound-eng-a1a.mp3",
+   "fox": "SOUND ENGINEER",
+   "voice": "benjamin+",
+   "delivery": "whisper",
+   "text": "Every hour now. Which roads have camps. Where the creatures were seen. Stay tuned, stay safe.",
+   "scene": "nx2-sound-eng",
+   "seconds": 6.75
+  },
+  {
+   "id": "nx2-sound-eng-qbye",
+   "file": "vo/nx2-sound-eng-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will listen.",
+   "scene": "nx2-sound-eng",
+   "seconds": 1.98
+  },
+  {
+   "id": "nx2-sound-eng-bye",
+   "file": "vo/nx2-sound-eng-bye.mp3",
+   "fox": "SOUND ENGINEER",
+   "voice": "benjamin+",
+   "delivery": "whisper",
+   "text": "Shoes off the grating.",
+   "scene": "nx2-sound-eng",
+   "seconds": 1.41
+  },
+  {
+   "id": "nx2-lobby-desk-prox2",
+   "file": "vo/nx2-lobby-desk-prox2.mp3",
+   "fox": "OFFICE LOBBY DESK",
+   "voice": "lara",
+   "delivery": "normal",
+   "text": "Every office is hiring. The filing bots walked out on Monday.",
+   "scene": "nx2-lobby-desk",
+   "seconds": 4.53
+  },
+  {
+   "id": "nx2-lobby-desk-01",
+   "file": "vo/nx2-lobby-desk-01.mp3",
+   "fox": "OFFICE LOBBY DESK",
+   "voice": "lara",
+   "delivery": "normal",
+   "text": "Law on two, accounts on three, dentist on four. All of them need staff.",
+   "scene": "nx2-lobby-desk",
+   "seconds": 5.63
+  },
+  {
+   "id": "nx2-lobby-desk-q1",
+   "file": "vo/nx2-lobby-desk-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Because of the strike?",
+   "scene": "nx2-lobby-desk",
+   "seconds": 1.94
+  },
+  {
+   "id": "nx2-lobby-desk-a1a",
+   "file": "vo/nx2-lobby-desk-a1a.mp3",
+   "fox": "OFFICE LOBBY DESK",
+   "voice": "lara",
+   "delivery": "normal",
+   "text": "Exactly. The lawyer is filing his own papers. He is not happy. Nobody is.",
+   "scene": "nx2-lobby-desk",
+   "seconds": 6.31
+  },
+  {
+   "id": "nx2-lobby-desk-qbye",
+   "file": "vo/nx2-lobby-desk-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Thanks.",
+   "scene": "nx2-lobby-desk",
+   "seconds": 0.64
+  },
+  {
+   "id": "nx2-lobby-desk-bye",
+   "file": "vo/nx2-lobby-desk-bye.mp3",
+   "fox": "OFFICE LOBBY DESK",
+   "voice": "lara",
+   "delivery": "normal",
+   "text": "Lift is that way. Press it yourself.",
+   "scene": "nx2-lobby-desk",
+   "seconds": 2.14
+  },
+  {
+   "id": "nx2-law-clerk-prox2",
+   "file": "vo/nx2-law-clerk-prox2.mp3",
+   "fox": "LAW CLERK",
+   "voice": "rusty+",
+   "delivery": "sad",
+   "text": "Forty bandit complaints filed this week. I typed every one.",
+   "scene": "nx2-law-clerk",
+   "seconds": 4.71
+  },
+  {
+   "id": "nx2-law-clerk-01",
+   "file": "vo/nx2-law-clerk-01.mp3",
+   "fox": "LAW CLERK",
+   "voice": "rusty+",
+   "delivery": "normal",
+   "text": "Copies are free. The cabinet sticks a bit. The copy bot is on strike.",
+   "scene": "nx2-law-clerk",
+   "seconds": 4.91
+  },
+  {
+   "id": "nx2-law-clerk-q1",
+   "file": "vo/nx2-law-clerk-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Forty bandit complaints?",
+   "scene": "nx2-law-clerk",
+   "seconds": 2.47
+  },
+  {
+   "id": "nx2-law-clerk-a1a",
+   "file": "vo/nx2-law-clerk-a1a.mp3",
+   "fox": "LAW CLERK",
+   "voice": "rusty+",
+   "delivery": "normal",
+   "text": "Farms, carts, shops. And one from the bots, about fair shifts. That one is long.",
+   "scene": "nx2-law-clerk",
+   "seconds": 6.1
+  },
+  {
+   "id": "nx2-law-clerk-qbye",
+   "file": "vo/nx2-law-clerk-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Good luck with the typing.",
+   "scene": "nx2-law-clerk",
+   "seconds": 1.51
+  },
+  {
+   "id": "nx2-law-clerk-bye",
+   "file": "vo/nx2-law-clerk-bye.mp3",
+   "fox": "LAW CLERK",
+   "voice": "rusty+",
+   "delivery": "sad",
+   "text": "Thank you. Mind the cabinet.",
+   "scene": "nx2-law-clerk",
+   "seconds": 2.5
+  },
+  {
+   "id": "nx2-dental-nurse-prox2",
+   "file": "vo/nx2-dental-nurse-prox2.mp3",
+   "fox": "DENTAL NURSE",
+   "voice": "ragnar2+",
+   "delivery": "normal",
+   "text": "Three creature bites today. On foxes. And one on a filling.",
+   "scene": "nx2-dental-nurse",
+   "seconds": 5.76
+  },
+  {
+   "id": "nx2-dental-nurse-01",
+   "file": "vo/nx2-dental-nurse-01.mp3",
+   "fox": "DENTAL NURSE",
+   "voice": "ragnar2+",
+   "delivery": "calm",
+   "text": "Take a seat. He is nearly finished. The drill bot is on strike, so it is slower.",
+   "scene": "nx2-dental-nurse",
+   "seconds": 5.84
+  },
+  {
+   "id": "nx2-dental-nurse-q1",
+   "file": "vo/nx2-dental-nurse-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Creature bites at a dentist?",
+   "scene": "nx2-dental-nurse",
+   "seconds": 1.88
+  },
+  {
+   "id": "nx2-dental-nurse-a1a",
+   "file": "vo/nx2-dental-nurse-a1a.mp3",
+   "fox": "DENTAL NURSE",
+   "voice": "ragnar2+",
+   "delivery": "normal",
+   "text": "A fox bit a creature back. Chipped a tooth. The wild is getting wild.",
+   "scene": "nx2-dental-nurse",
+   "seconds": 6.96
+  },
+  {
+   "id": "nx2-dental-nurse-qbye",
+   "file": "vo/nx2-dental-nurse-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will brush tonight.",
+   "scene": "nx2-dental-nurse",
+   "seconds": 1.72
+  },
+  {
+   "id": "nx2-dental-nurse-bye",
+   "file": "vo/nx2-dental-nurse-bye.mp3",
+   "fox": "DENTAL NURSE",
+   "voice": "ragnar2+",
+   "delivery": "calm",
+   "text": "Twice. And floss.",
+   "scene": "nx2-dental-nurse",
+   "seconds": 2.84
+  },
+  {
+   "id": "nx2-spire-door-prox2",
+   "file": "vo/nx2-spire-door-prox2.mp3",
+   "fox": "SPIRE DOORMAN",
+   "voice": "chad",
+   "delivery": "normal",
+   "text": "From the top floor you can see the bandit camps. Residents complain about the smoke.",
+   "scene": "nx2-spire-door",
+   "seconds": 4.64
+  },
+  {
+   "id": "nx2-spire-door-01",
+   "file": "vo/nx2-spire-door-01.mp3",
+   "fox": "SPIRE DOORMAN",
+   "voice": "chad",
+   "delivery": "calm",
+   "text": "Residents left, visitors sign here. The sign-in bot is on strike.",
+   "scene": "nx2-spire-door",
+   "seconds": 4.67
+  },
+  {
+   "id": "nx2-spire-door-q1",
+   "file": "vo/nx2-spire-door-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Smoke from the camps?",
+   "scene": "nx2-spire-door",
+   "seconds": 1.56
+  },
+  {
+   "id": "nx2-spire-door-a1a",
+   "file": "vo/nx2-spire-door-a1a.mp3",
+   "fox": "SPIRE DOORMAN",
+   "voice": "chad",
+   "delivery": "normal",
+   "text": "Every evening. The hill camps cook at dusk. Smells like burnt beans up there.",
+   "scene": "nx2-spire-door",
+   "seconds": 4.83
+  },
+  {
+   "id": "nx2-spire-door-qbye",
+   "file": "vo/nx2-spire-door-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Thanks.",
+   "scene": "nx2-spire-door",
+   "seconds": 0.64
+  },
+  {
+   "id": "nx2-spire-door-bye",
+   "file": "vo/nx2-spire-door-bye.mp3",
+   "fox": "SPIRE DOORMAN",
+   "voice": "chad",
+   "delivery": "calm",
+   "text": "Sign on the way out.",
+   "scene": "nx2-spire-door",
+   "seconds": 1.34
+  },
+  {
+   "id": "nx2-pepper-door-prox2",
+   "file": "vo/nx2-pepper-door-prox2.mp3",
+   "fox": "PEPPER DOORMAN",
+   "voice": "malachi",
+   "delivery": "whisper",
+   "text": "The Peppers say the bandit camps are bad for business. Theirs, I mean.",
+   "scene": "nx2-pepper-door",
+   "seconds": 4.16
+  },
+  {
+   "id": "nx2-pepper-door-01",
+   "file": "vo/nx2-pepper-door-01.mp3",
+   "fox": "PEPPER DOORMAN",
+   "voice": "malachi",
+   "delivery": "calm",
+   "text": "Second door. The first one is a cupboard. People keep going in.",
+   "scene": "nx2-pepper-door",
+   "seconds": 4.05
+  },
+  {
+   "id": "nx2-pepper-door-q1",
+   "file": "vo/nx2-pepper-door-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "What business?",
+   "scene": "nx2-pepper-door",
+   "seconds": 1.32
+  },
+  {
+   "id": "nx2-pepper-door-a1a",
+   "file": "vo/nx2-pepper-door-a1a.mp3",
+   "fox": "PEPPER DOORMAN",
+   "voice": "malachi",
+   "delivery": "whisper",
+   "text": "Not my place to say. But the Salt camps and the Pepper camps do not get on.",
+   "scene": "nx2-pepper-door",
+   "seconds": 4.51
+  },
+  {
+   "id": "nx2-pepper-door-qbye",
+   "file": "vo/nx2-pepper-door-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will mind the cupboard.",
+   "scene": "nx2-pepper-door",
+   "seconds": 1.97
+  },
+  {
+   "id": "nx2-pepper-door-bye",
+   "file": "vo/nx2-pepper-door-bye.mp3",
+   "fox": "PEPPER DOORMAN",
+   "voice": "malachi",
+   "delivery": "calm",
+   "text": "Everyone says that. Then they open it.",
+   "scene": "nx2-pepper-door",
+   "seconds": 2.46
+  },
+  {
+   "id": "nx2-paper-seller-prox2",
+   "file": "vo/nx2-paper-seller-prox2.mp3",
+   "fox": "PAPER SELLER",
+   "voice": "james",
+   "delivery": "shout",
+   "text": "Read all about it! Bots on strike! Bandit camps grow! Creatures go wild!",
+   "scene": "nx2-paper-seller",
+   "seconds": 5.54
+  },
+  {
+   "id": "nx2-paper-seller-01",
+   "file": "vo/nx2-paper-seller-01.mp3",
+   "fox": "PAPER SELLER",
+   "voice": "james",
+   "delivery": "excited",
+   "text": "Paper? Late edition! Three front pages this week and all of them bad!",
+   "scene": "nx2-paper-seller",
+   "seconds": 4.82
+  },
+  {
+   "id": "nx2-paper-seller-q1",
+   "file": "vo/nx2-paper-seller-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "What is today's headline?",
+   "scene": "nx2-paper-seller",
+   "seconds": 2.69
+  },
+  {
+   "id": "nx2-paper-seller-a1a",
+   "file": "vo/nx2-paper-seller-a1a.mp3",
+   "fox": "PAPER SELLER",
+   "voice": "james",
+   "delivery": "normal",
+   "text": "WORKER BOTS DOWN TOOLS. Every shop in Meru hiring. Under it: BANDITS AT THE GATES.",
+   "scene": "nx2-paper-seller",
+   "seconds": 5.99
+  },
+  {
+   "id": "nx2-paper-seller-qbye",
+   "file": "vo/nx2-paper-seller-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will take one.",
+   "scene": "nx2-paper-seller",
+   "seconds": 1.76
+  },
+  {
+   "id": "nx2-paper-seller-bye",
+   "file": "vo/nx2-paper-seller-bye.mp3",
+   "fox": "PAPER SELLER",
+   "voice": "james",
+   "delivery": "shout",
+   "text": "Late edition! Front page changed twice!",
+   "scene": "nx2-paper-seller",
+   "seconds": 3.29
+  },
+  {
+   "id": "nx2-press-op-prox2",
+   "file": "vo/nx2-press-op-prox2.mp3",
+   "fox": "PRESS OPERATOR",
+   "voice": "katie",
+   "delivery": "normal",
+   "text": "The press bot is on strike. I feed this monster by paw.",
+   "scene": "nx2-press-op",
+   "seconds": 3.62
+  },
+  {
+   "id": "nx2-press-op-01",
+   "file": "vo/nx2-press-op-01.mp3",
+   "fox": "PRESS OPERATOR",
+   "voice": "katie",
+   "delivery": "normal",
+   "text": "Mind your sleeves. The rollers do not care whose sleeve it is.",
+   "scene": "nx2-press-op",
+   "seconds": 3.55
+  },
+  {
+   "id": "nx2-press-op-q1",
+   "file": "vo/nx2-press-op-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Busy week?",
+   "scene": "nx2-press-op",
+   "seconds": 1.14
+  },
+  {
+   "id": "nx2-press-op-a1a",
+   "file": "vo/nx2-press-op-a1a.mp3",
+   "fox": "PRESS OPERATOR",
+   "voice": "katie",
+   "delivery": "normal",
+   "text": "Three extra editions. Strike news, bandit news, creature news. My arms are news.",
+   "scene": "nx2-press-op",
+   "seconds": 6.1
+  },
+  {
+   "id": "nx2-press-op-qbye",
+   "file": "vo/nx2-press-op-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Good luck.",
+   "scene": "nx2-press-op",
+   "seconds": 0.76
+  },
+  {
+   "id": "nx2-press-op-bye",
+   "file": "vo/nx2-press-op-bye.mp3",
+   "fox": "PRESS OPERATOR",
+   "voice": "katie",
+   "delivery": "shout",
+   "text": "Mind your sleeves near the rollers!",
+   "scene": "nx2-press-op",
+   "seconds": 1.81
+  },
+  {
+   "id": "nx2-wood-apprentice-prox2",
+   "file": "vo/nx2-wood-apprentice-prox2.mp3",
+   "fox": "WOOD APPRENTICE",
+   "voice": "eleanor",
+   "delivery": "whisper",
+   "text": "We are making boards for windows. Everyone wants them, with the camps so close.",
+   "scene": "nx2-wood-apprentice",
+   "seconds": 5.09
+  },
+  {
+   "id": "nx2-wood-apprentice-01",
+   "file": "vo/nx2-wood-apprentice-01.mp3",
+   "fox": "WOOD APPRENTICE",
+   "voice": "eleanor",
+   "delivery": "whisper",
+   "text": "He is planing. Best not to speak yet. Oh. He stopped. Hello.",
+   "scene": "nx2-wood-apprentice",
+   "seconds": 6.6
+  },
+  {
+   "id": "nx2-wood-apprentice-q1",
+   "file": "vo/nx2-wood-apprentice-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Boards for windows?",
+   "scene": "nx2-wood-apprentice",
+   "seconds": 1.44
+  },
+  {
+   "id": "nx2-wood-apprentice-a1a",
+   "file": "vo/nx2-wood-apprentice-a1a.mp3",
+   "fox": "WOOD APPRENTICE",
+   "voice": "eleanor",
+   "delivery": "normal",
+   "text": "Shutters. Foxes want them for the bandits and the creatures. The cutting bot is on strike.",
+   "scene": "nx2-wood-apprentice",
+   "seconds": 5.76
+  },
+  {
+   "id": "nx2-wood-apprentice-qbye",
+   "file": "vo/nx2-wood-apprentice-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will let you work.",
+   "scene": "nx2-wood-apprentice",
+   "seconds": 1.57
+  },
+  {
+   "id": "nx2-wood-apprentice-bye",
+   "file": "vo/nx2-wood-apprentice-bye.mp3",
+   "fox": "WOOD APPRENTICE",
+   "voice": "eleanor",
+   "delivery": "whisper",
+   "text": "Thank you. He is planing again.",
+   "scene": "nx2-wood-apprentice",
+   "seconds": 2.5
+  },
+  {
+   "id": "nx2-deco-door-prox2",
+   "file": "vo/nx2-deco-door-prox2.mp3",
+   "fox": "DECO DOORMAN",
+   "voice": "chad+",
+   "delivery": "normal",
+   "text": "Even the stairs feel like a strike. Lift bot walked out years ago. Nobody noticed.",
+   "scene": "nx2-deco-door",
+   "seconds": 5.47
+  },
+  {
+   "id": "nx2-deco-door-01",
+   "file": "vo/nx2-deco-door-01.mp3",
+   "fox": "DECO DOORMAN",
+   "voice": "chad+",
+   "delivery": "calm",
+   "text": "Evening. Stairs only. The lift is a myth. The lift bot is a legend.",
+   "scene": "nx2-deco-door",
+   "seconds": 6.22
+  },
+  {
+   "id": "nx2-deco-door-q1",
+   "file": "vo/nx2-deco-door-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Any trouble here?",
+   "scene": "nx2-deco-door",
+   "seconds": 1.05
+  },
+  {
+   "id": "nx2-deco-door-a1a",
+   "file": "vo/nx2-deco-door-a1a.mp3",
+   "fox": "DECO DOORMAN",
+   "voice": "chad+",
+   "delivery": "normal",
+   "text": "A bandit tried the fire escape. Got halfway up. Gave up. Stairs do that.",
+   "scene": "nx2-deco-door",
+   "seconds": 5.63
+  },
+  {
+   "id": "nx2-deco-door-qbye",
+   "file": "vo/nx2-deco-door-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Good evening.",
+   "scene": "nx2-deco-door",
+   "seconds": 1.0
+  },
+  {
+   "id": "nx2-deco-door-bye",
+   "file": "vo/nx2-deco-door-bye.mp3",
+   "fox": "DECO DOORMAN",
+   "voice": "chad+",
+   "delivery": "calm",
+   "text": "Evening. Mind the twelfth step.",
+   "scene": "nx2-deco-door",
+   "seconds": 2.33
+  },
+  {
+   "id": "nx2-lake-door-prox2",
+   "file": "vo/nx2-lake-door-prox2.mp3",
+   "fox": "LAKESIDE DOORMAN",
+   "voice": "lara",
+   "delivery": "normal",
+   "text": "Terrace closes early this month. Bandit boats on the water.",
+   "scene": "nx2-lake-door",
+   "seconds": 3.84
+  },
+  {
+   "id": "nx2-lake-door-01",
+   "file": "vo/nx2-lake-door-01.mp3",
+   "fox": "LAKESIDE DOORMAN",
+   "voice": "lara",
+   "delivery": "calm",
+   "text": "Evening. The terrace is open, water side. For now.",
+   "scene": "nx2-lake-door",
+   "seconds": 5.25
+  },
+  {
+   "id": "nx2-lake-door-q1",
+   "file": "vo/nx2-lake-door-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "For now?",
+   "scene": "nx2-lake-door",
+   "seconds": 0.84
+  },
+  {
+   "id": "nx2-lake-door-a1a",
+   "file": "vo/nx2-lake-door-a1a.mp3",
+   "fox": "LAKESIDE DOORMAN",
+   "voice": "lara",
+   "delivery": "scared",
+   "text": "A creature jumped onto the terrace last week. Ate a whole cake. The cake was for a wedding.",
+   "scene": "nx2-lake-door",
+   "seconds": 6.03
+  },
+  {
+   "id": "nx2-lake-door-qbye",
+   "file": "vo/nx2-lake-door-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will avoid the cake.",
+   "scene": "nx2-lake-door",
+   "seconds": 1.85
+  },
+  {
+   "id": "nx2-lake-door-bye",
+   "file": "vo/nx2-lake-door-bye.mp3",
+   "fox": "LAKESIDE DOORMAN",
+   "voice": "lara",
+   "delivery": "calm",
+   "text": "Wise. Evening.",
+   "scene": "nx2-lake-door",
+   "seconds": 2.1
+  },
+  {
+   "id": "nx2-miri-prox2",
+   "file": "vo/nx2-miri-prox2.mp3",
+   "fox": "MIRI",
+   "voice": "grungle",
+   "delivery": "warm",
+   "text": "The penthouse is lovely. You can count the bandit fires from the hot tub.",
+   "scene": "nx2-miri",
+   "seconds": 3.89
+  },
+  {
+   "id": "nx2-miri-01",
+   "file": "vo/nx2-miri-01.mp3",
+   "fox": "MIRI",
+   "voice": "grungle",
+   "delivery": "warm",
+   "text": "The penthouse? Ten credits a night. Best view in Meru. Mostly bandit fires now.",
+   "scene": "nx2-miri",
+   "seconds": 4.53
+  },
+  {
+   "id": "nx2-miri-q1",
+   "file": "vo/nx2-miri-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Is it safe up there?",
+   "scene": "nx2-miri",
+   "seconds": 1.45
+  },
+  {
+   "id": "nx2-miri-a1a",
+   "file": "vo/nx2-miri-a1a.mp3",
+   "fox": "MIRI",
+   "voice": "grungle",
+   "delivery": "normal",
+   "text": "Very. Nothing climbs that high. Not bandits. Not creatures. Not the lift bot. It is on strike.",
+   "scene": "nx2-miri",
+   "seconds": 6.22
+  },
+  {
+   "id": "nx2-miri-qbye",
+   "file": "vo/nx2-miri-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Maybe another night.",
+   "scene": "nx2-miri",
+   "seconds": 1.31
+  },
+  {
+   "id": "nx2-miri-bye",
+   "file": "vo/nx2-miri-bye.mp3",
+   "fox": "MIRI",
+   "voice": "grungle",
+   "delivery": "warm",
+   "text": "The view will wait.",
+   "scene": "nx2-miri",
+   "seconds": 0.99
+  },
+  {
+   "id": "nx2-sable-prox2",
+   "file": "vo/nx2-sable-prox2.mp3",
+   "fox": "SABLE",
+   "voice": "leslie",
+   "delivery": "normal",
+   "text": "Lake penthouse. The creatures cannot reach it. I checked. Personally.",
+   "scene": "nx2-sable",
+   "seconds": 4.84
+  },
+  {
+   "id": "nx2-sable-01",
+   "file": "vo/nx2-sable-01.mp3",
+   "fox": "SABLE",
+   "voice": "leslie",
+   "delivery": "calm",
+   "text": "Best view of Meru from up there. Ten credits a night.",
+   "scene": "nx2-sable",
+   "seconds": 3.4
+  },
+  {
+   "id": "nx2-sable-q1",
+   "file": "vo/nx2-sable-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "You checked the creatures personally?",
+   "scene": "nx2-sable",
+   "seconds": 2.22
+  },
+  {
+   "id": "nx2-sable-a1a",
+   "file": "vo/nx2-sable-a1a.mp3",
+   "fox": "SABLE",
+   "voice": "leslie",
+   "delivery": "normal",
+   "text": "One climbed to the fourth floor last week. The penthouse is the twelfth. We are fine.",
+   "scene": "nx2-sable",
+   "seconds": 5.01
+  },
+  {
+   "id": "nx2-sable-qbye",
+   "file": "vo/nx2-sable-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "I will think about it.",
+   "scene": "nx2-sable",
+   "seconds": 1.46
+  },
+  {
+   "id": "nx2-sable-bye",
+   "file": "vo/nx2-sable-bye.mp3",
+   "fox": "SABLE",
+   "voice": "leslie",
+   "delivery": "calm",
+   "text": "Think quickly. Rooms are filling. Everyone wants to be high up now.",
+   "scene": "nx2-sable",
+   "seconds": 4.36
+  },
+  {
+   "id": "nx2-magpie-prox",
+   "file": "vo/nx2-magpie-prox.mp3",
+   "fox": "MAGPIE",
+   "voice": "ragnar+",
+   "delivery": "angry",
+   "text": "You. Again. Do you know how much a white suit costs to clean?",
+   "scene": "nx2-magpie",
+   "seconds": 5.88
+  },
+  {
+   "id": "nx2-magpie-prox2",
+   "file": "vo/nx2-magpie-prox2.mp3",
+   "fox": "MAGPIE",
+   "voice": "ragnar+",
+   "delivery": "normal",
+   "text": "Scoop of the day: humble pie. Nobody orders it.",
+   "scene": "nx2-magpie",
+   "seconds": 4.17
+  },
+  {
+   "id": "nx2-magpie-street-01",
+   "file": "vo/nx2-magpie-street-01.mp3",
+   "fox": "MAGPIE",
+   "voice": "ragnar+",
+   "delivery": "calm",
+   "text": "The Outlets are mine, fox. Every store, every brick, every sale sign.",
+   "scene": "nx2-magpie-street",
+   "seconds": 7.31
+  },
+  {
+   "id": "nx2-magpie-street-02",
+   "file": "vo/nx2-magpie-street-02.mp3",
+   "fox": "MAGPIE",
+   "voice": "ragnar+",
+   "delivery": "angry",
+   "text": "Boys! Make this one a clearance item!",
+   "scene": "nx2-magpie-street",
+   "seconds": 3.58
+  },
+  {
+   "id": "nx2-magpie-flee-01",
+   "file": "vo/nx2-magpie-flee-01.mp3",
+   "fox": "MAGPIE",
+   "voice": "ragnar+",
+   "delivery": "scared",
+   "text": "Not the suit! Not the SUIT! Inside! Lock it! Lock everything!",
+   "scene": "nx2-magpie-flee",
+   "seconds": 5.95
+  },
+  {
+   "id": "nx2-magpie-hide-01",
+   "file": "vo/nx2-magpie-hide-01.mp3",
+   "fox": "MAGPIE",
+   "voice": "ragnar+",
+   "delivery": "angry",
+   "text": "Four keys? You took all four keys? Those were MY keys.",
+   "scene": "nx2-magpie-hide",
+   "seconds": 5.83
+  },
+  {
+   "id": "nx2-magpie-hide-02",
+   "file": "vo/nx2-magpie-hide-02.mp3",
+   "fox": "MAGPIE",
+   "voice": "ragnar+",
+   "delivery": "calm",
+   "text": "Fine. Welcome to my hideout. Try not to melt.",
+   "scene": "nx2-magpie-hide",
+   "seconds": 4.62
+  },
+  {
+   "id": "nx2-magpie-half-01",
+   "file": "vo/nx2-magpie-half-01.mp3",
+   "fox": "MAGPIE",
+   "voice": "ragnar+",
+   "delivery": "angry",
+   "text": "You are melting my business! Boys, out here!",
+   "scene": "nx2-magpie-half",
+   "seconds": 5.29
+  },
+  {
+   "id": "nx2-magpie-down-01",
+   "file": "vo/nx2-magpie-down-01.mp3",
+   "fox": "MAGPIE",
+   "voice": "ragnar+",
+   "delivery": "sad",
+   "text": "All right. All right! I give up. Just not the suit.",
+   "scene": "nx2-magpie-down",
+   "seconds": 4.42
+  },
+  {
+   "id": "nx2-magpie-01",
+   "file": "vo/nx2-magpie-01.mp3",
+   "fox": "MAGPIE",
+   "voice": "ragnar+",
+   "delivery": "sad",
+   "text": "Gelato. One scoop. Paid for. The court says I scoop until I am sorry.",
+   "scene": "nx2-magpie",
+   "seconds": 7.8
+  },
+  {
+   "id": "nx2-magpie-q1",
+   "file": "vo/nx2-magpie-q1.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Why did you take the Outlets?",
+   "scene": "nx2-magpie",
+   "seconds": 1.8
+  },
+  {
+   "id": "nx2-magpie-a1a",
+   "file": "vo/nx2-magpie-a1a.mp3",
+   "fox": "MAGPIE",
+   "voice": "ragnar+",
+   "delivery": "normal",
+   "text": "The bots went on strike. No bot guards, no alarms. Empty stores. Easy pickings.",
+   "scene": "nx2-magpie",
+   "seconds": 8.04
+  },
+  {
+   "id": "nx2-magpie-a1b",
+   "file": "vo/nx2-magpie-a1b.mp3",
+   "fox": "MAGPIE",
+   "voice": "ragnar+",
+   "delivery": "whisper",
+   "text": "I was not the only one. Every camp on every hill had the same idea.",
+   "scene": "nx2-magpie",
+   "seconds": 5.55
+  },
+  {
+   "id": "nx2-magpie-q2",
+   "file": "vo/nx2-magpie-q2.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Who leads the camps?",
+   "scene": "nx2-magpie",
+   "seconds": 1.5
+  },
+  {
+   "id": "nx2-magpie-a2a",
+   "file": "vo/nx2-magpie-a2a.mp3",
+   "fox": "MAGPIE",
+   "voice": "ragnar+",
+   "delivery": "whisper",
+   "text": "Not me. Somebody bigger. Somebody who knew the bots would stop. Think about that.",
+   "scene": "nx2-magpie",
+   "seconds": 8.13
+  },
+  {
+   "id": "nx2-magpie-qbye",
+   "file": "vo/nx2-magpie-qbye.mp3",
+   "fox": "FOX",
+   "voice": "ben",
+   "delivery": "normal",
+   "text": "Keep scooping.",
+   "scene": "nx2-magpie",
+   "seconds": 1.16
+  },
+  {
+   "id": "nx2-magpie-bye",
+   "file": "vo/nx2-magpie-bye.mp3",
+   "fox": "MAGPIE",
+   "voice": "ragnar+",
+   "delivery": "sad",
+   "text": "Pistachio. It is the only flavour that understands me.",
+   "scene": "nx2-magpie",
+   "seconds": 4.32
+  }
+ ]
+}

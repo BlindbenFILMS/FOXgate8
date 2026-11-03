@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;background:#201e1d}a{color:#f3f2f2}a:hover{color:#ec3013}</style>
+</helmet>
+<div style="min-height:100vh;background:var(--color-text);color:var(--color-bg);font-family:var(--font-body);display:flex;flex-wrap:wrap;align-items:flex-start">
+  <div style="flex:1 1 300px;max-width:380px;min-width:0;box-sizing:border-box;border-right:2px solid var(--color-bg);display:flex;flex-direction:column">
+    <div style="padding:18px 18px 14px;border-bottom:2px solid var(--color-bg);display:flex;flex-direction:column;gap:6px">
+      <div style="font:900 20px var(--font-heading);letter-spacing:0.04em;line-height:1.1">HUD LAYOUT WORKSHOP</div>
+      <div style="font:500 13px var(--font-body);line-height:1.4;color:#bdb8b3;text-wrap:pretty">Drag a control on the phone to move it. Saved on this device. Every map with the Game HUD follows, and the SUPER button too.</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:2px solid var(--color-bg)">
+      <button onClick="{{ setPortrait }}" style="min-height:52px;padding:8px 14px;border:0;border-right:2px solid var(--color-bg);border-radius:0;background:{{ oriPBg }};color:{{ oriPFg }};font:800 13px var(--font-heading);letter-spacing:0.06em;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:2px;justify-content:center">PORTRAIT<span style="font:600 11px var(--font-body);letter-spacing:0.02em">390 × 844</span></button>
+      <button onClick="{{ setLandscape }}" style="min-height:52px;padding:8px 14px;border:0;border-radius:0;background:{{ oriLBg }};color:{{ oriLFg }};font:800 13px var(--font-heading);letter-spacing:0.06em;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:2px;justify-content:center">LANDSCAPE<span style="font:600 11px var(--font-body);letter-spacing:0.02em">844 × 390</span></button>
+    </div>
+    <button onClick="{{ toggleSafe }}" style="min-height:48px;padding:0 14px;border:0;border-bottom:2px solid var(--color-bg);border-radius:0;background:var(--color-text);color:var(--color-bg);font:800 12px var(--font-heading);letter-spacing:0.06em;text-align:left;cursor:pointer;display:flex;align-items:center;gap:10px" style-hover="background:var(--color-accent-900)">
+      <span style="width:16px;height:16px;box-sizing:border-box;border:2px solid var(--color-bg);background:{{ safeBox }}"></span>IPHONE SAFE AREAS (NOTCH + HOME BAR)
+    </button>
+    <div style="display:flex;flex-direction:column">
+      <sc-for list="{{ rows }}" as="r" hint-placeholder-count="8">
+        <button onClick="{{ r.pick }}" style="min-height:50px;padding:6px 14px;border:0;border-bottom:2px solid #3a3836;border-radius:0;background:{{ r.bg }};color:{{ r.fg }};text-align:left;cursor:pointer;display:flex;align-items:center;gap:10px" style-hover="background:var(--color-accent-900);color:var(--color-bg)">
+          <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px">
+            <span style="font:800 13px var(--font-heading);letter-spacing:0.05em">{{ r.name }}</span>
+            <span style="font:600 11px var(--font-body);letter-spacing:0.02em;opacity:0.75">{{ r.info }}</span>
+          </span>
+          <span style="flex:none;padding:3px 6px;font:800 10px var(--font-heading);letter-spacing:0.06em;background:{{ r.tagBg }};color:{{ r.tagFg }}">{{ r.tag }}</span>
+        </button>
+      </sc-for>
+    </div>
+    <div style="padding:14px;border-bottom:2px solid var(--color-bg);display:flex;flex-direction:column;gap:12px">
+      <div style="font:900 15px var(--font-heading);letter-spacing:0.05em">{{ selName }}</div>
+      <sc-if value="{{ selFree }}" hint-placeholder-val="{{ true }}"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:2px solid var(--color-bg)">
+        <button onClick="{{ nudgeL }}" aria-label="Left 2 px" style="min-height:46px;border:0;border-right:2px solid var(--color-bg);border-radius:0;background:var(--color-text);color:var(--color-bg);font:900 16px var(--font-heading);cursor:pointer" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">←</button>
+        <button onClick="{{ nudgeU }}" aria-label="Up 2 px" style="min-height:46px;border:0;border-right:2px solid var(--color-bg);border-radius:0;background:var(--color-text);color:var(--color-bg);font:900 16px var(--font-heading);cursor:pointer" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">↑</button>
+        <button onClick="{{ nudgeD }}" aria-label="Down 2 px" style="min-height:46px;border:0;border-right:2px solid var(--color-bg);border-radius:0;background:var(--color-text);color:var(--color-bg);font:900 16px var(--font-heading);cursor:pointer" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">↓</button>
+        <button onClick="{{ nudgeR }}" aria-label="Right 2 px" style="min-height:46px;border:0;border-radius:0;background:var(--color-text);color:var(--color-bg);font:900 16px var(--font-heading);cursor:pointer" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">→</button>
+      </div>
+      <label style="display:flex;flex-direction:column;gap:6px;font:800 11px var(--font-heading);letter-spacing:0.06em">
+        <span style="display:flex;justify-content:space-between"><span>SIZE</span><span>{{ selSize }}</span></span>
+        <input type="range" min="70" max="150" step="5" value="{{ selSizeV }}" onInput="{{ setSize }}" style="width:100%;accent-color:#ec3013;height:28px">
+      </label></sc-if>
+      <sc-if value="{{ selWidthOn }}" hint-placeholder-val="{{ false }}"><label style="display:flex;flex-direction:column;gap:6px;font:800 11px var(--font-heading);letter-spacing:0.06em">
+        <span style="display:flex;justify-content:space-between"><span>WIDTH</span><span>{{ selWidth }} PX</span></span>
+        <input type="range" min="{{ wMin }}" max="{{ wMax }}" step="2" value="{{ selWidth }}" onInput="{{ setWidth }}" style="width:100%;accent-color:#ec3013;height:28px">
+      </label></sc-if>
+      <div style="font:600 12px var(--font-body);line-height:1.4;color:#bdb8b3">{{ selGap }}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;border:2px solid var(--color-bg)">
+        <button onClick="{{ resetSel }}" style="min-height:46px;padding:0 12px;border:0;border-right:2px solid var(--color-bg);border-radius:0;background:var(--color-text);color:var(--color-bg);font:800 12px var(--font-heading);letter-spacing:0.05em;text-align:left;cursor:pointer" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">RESET THIS</button>
+        <button onClick="{{ resetAll }}" style="min-height:46px;padding:0 12px;border:0;border-radius:0;background:var(--color-text);color:var(--color-bg);font:800 12px var(--font-heading);letter-spacing:0.05em;text-align:left;cursor:pointer" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">RESET {{ oriWord }}</button>
+      </div>
+    </div>
+    <div style="padding:14px;display:flex;flex-direction:column;gap:8px">
+      <div style="font:800 11px var(--font-heading);letter-spacing:0.08em;color:{{ chkCol }}">{{ chkHead }}</div>
+      <sc-for list="{{ issues }}" as="is" hint-placeholder-count="0"><div style="font:600 12px var(--font-body);line-height:1.35">{{ is }}</div></sc-for>
+      <a href="Pearl Super Phone Check.dc.html" style="margin-top:6px;font:800 12px var(--font-heading);letter-spacing:0.05em">TRY IT IN PEARL SAIL (PHONE CHECK) →</a>
+    </div>
+  </div>
+  <div ref="{{ stageRef }}" style="flex:999 1 420px;min-width:0;box-sizing:border-box;padding:24px;display:flex;justify-content:flex-start;align-items:flex-start">
+    <div style="flex:none;width:{{ frameW }};height:{{ frameH }};position:relative;outline:2px solid var(--color-bg);outline-offset:6px">
+      <div style="position:absolute;left:0;top:0;width:{{ phW }};height:{{ phH }};transform:{{ phScale }};transform-origin:0 0;overflow:hidden;background:#5d7a86;touch-action:none">
+        <div style="position:absolute;left:0;right:0;bottom:0;height:45%;background:#8b8172"></div>
+        <div style="position:absolute;left:0;right:0;top:{{ topY }};height:{{ topH }};background:#000;border-bottom:2px solid #ffd23a;display:flex;align-items:flex-end;padding:0 0 6px 12px;box-sizing:border-box;font:800 11px var(--font-heading);letter-spacing:0.06em;color:#8a847e">COMPASS + QUEST · LOCKED</div>
+        <div style="position:absolute;left:0;right:0;bottom:0;height:{{ stripH }};background:#000;border-top:2px solid #ffd23a;box-sizing:border-box;display:flex;align-items:flex-start;gap:8px;padding:0 {{ stripPadR }} {{ safeB }} {{ stripPadL }};z-index:4">
+          <div onClick="{{ pickFox }}" role="button" aria-label="Switch foxes" style="flex:0 0 {{ foxW }};height:44px;box-sizing:border-box;padding-right:10px;border-right:1px solid #ffffff;display:flex;flex-direction:column;justify-content:center;gap:2px;outline:{{ foxOl }};outline-offset:-2px;cursor:pointer"><span style="display:grid;gap:2px;width:max-content"><span style="font:900 11px var(--font-heading);letter-spacing:0.08em;margin-right:-0.08em;line-height:1;color:#fff;white-space:nowrap">SWITCH</span><span style="font-weight:900;font-size:{{ foxFs }};font-family:var(--font-heading);letter-spacing:0.08em;margin-right:-0.08em;line-height:1;color:#ffd23a;white-space:nowrap">FOXES</span></span></div>
+          <div onClick="{{ pickItem }}" role="button" aria-label="Use item" style="flex:1 1 auto;height:44px;box-sizing:border-box;padding-right:10px;display:flex;flex-direction:column;justify-content:center;gap:3px;min-width:0;outline:{{ itemOl }};outline-offset:-2px;cursor:pointer"><span style="font:900 11px var(--font-heading);letter-spacing:0.08em;line-height:1;color:#ffd23a">USE ITEM</span><span style="font:800 10px var(--font-heading);letter-spacing:0.04em;line-height:1.05;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">HEALTH POTION ×3</span></div>
+          <div onClick="{{ pickSuper }}" role="button" aria-label="Super" style="flex:0 0 {{ supWpx }};min-width:0;height:44px;display:flex;outline:{{ supOl }};outline-offset:-2px;cursor:pointer">
+            <div style="flex:0 0 40px;display:flex;align-items:center;justify-content:center;background:#1f8bff;border-right:2px solid #3a3836"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="square"><path d="M12.8 19.6A2 2 0 1 0 14 16H2M17.5 8a2.5 2.5 0 1 1 2 4H2M9.8 4.4A2 2 0 1 1 11 8H2"></path></svg></div>
+            <div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:0 8px"><div style="font:900 11px var(--font-heading);letter-spacing:0.04em;line-height:1;color:#fff;white-space:nowrap">WHIRLWIND KICK</div><div style="height:3px;background:#1f8bff"></div></div>
+          </div>
+        </div>
+        <sc-for list="{{ safeZones }}" as="z" hint-placeholder-count="0"><div style="position:absolute;left:{{ z.l }};top:{{ z.t }};width:{{ z.w }};height:{{ z.h }};background:repeating-linear-gradient(45deg,rgba(236,48,19,0.35) 0 4px,transparent 4px 10px);pointer-events:none"></div></sc-for>
+        <sc-for list="{{ els }}" as="e" hint-placeholder-count="8">
+          <div onPointerDown="{{ e.down }}" onPointerMove="{{ e.move }}" onPointerUp="{{ e.up }}" onPointerCancel="{{ e.up }}" role="button" aria-label="{{ e.name }}" style="position:absolute;left:{{ e.l }};top:{{ e.t }};width:{{ e.w }};height:{{ e.h }};box-sizing:border-box;border-radius:{{ e.rad }};background:{{ e.bg }};border:{{ e.bd }};outline:{{ e.ol }};outline-offset:3px;display:flex;align-items:center;justify-content:{{ e.jc }};padding-left:{{ e.pl }};text-align:center;font:900 {{ e.fs }} var(--font-heading);letter-spacing:0.03em;line-height:1.05;color:{{ e.fg }};cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;z-index:{{ e.z }}">{{ e.label }}</div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const foxFsCalc = () => { try { const c = document.createElement('canvas').getContext('2d'), fam = getComputedStyle(document.documentElement).getPropertyValue('--font-heading').trim() || 'Archivo, sans-serif', m = t => { c.font = '900 100px ' + fam; return c.measureText(t).width / 100; };
+  const b = m('SWITCH') + 5 * 0.08, a = m('FOXES') + 4 * 0.08; return a > 0 ? Math.min(16, Math.round(11 * b / a * 10) / 10) : 12.5; } catch (e) { return 12.5; } };   // s342m: FOXES sized so it spans exactly SWITCH's width (11 px, 0.08em)
+const DIM = { portrait: { W: 390, H: 844, ins: { t: 47, b: 34, l: 0, r: 0 } }, landscape: { W: 844, H: 390, ins: { t: 0, b: 21, l: 47, r: 47 } } };
+const EL = [
+  { id: 'super', name: 'SUPER (bottom menu)', label: 'SUPER', w: 100, h: 44, rect: true, dock: true },
+  { id: 'stick', name: 'JOYSTICK', label: 'STICK', w: 113, h: 113 },
+  { id: 'eye', name: 'VIEW (EYE)', label: 'EYE', w: 40, h: 40 },
+  { id: 'clock', name: 'SLOW TIME (CLOCK)', label: 'CLOCK', w: 40, h: 40 },
+  { id: 'b1', name: '1 · MELEE', label: 'MELEE', w: 66, h: 66 },
+  { id: 'b2', name: '2 · RANGE', label: 'RANGED', w: 80, h: 80 },
+  { id: 'menu', name: 'MENU', label: 'MENU', w: 44, h: 44 },
+  { id: 'b3', name: '3 · JUMP', label: 'JUMP', w: 66, h: 66 },
+  { id: 'act', name: 'ACTIONS (pinned left, up to the joystick)', label: 'ACTIONS', w: 135, h: 44, rect: true }];
+const KEY = 'hud.layout.v1';
+const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } };
+class Component extends DCLogic {
+  state = { ori: 'portrait', safe: true, sel: 'super', L: load(), k: 1 };
+  stageRef = React.createRef();
+  componentDidMount() { try { document.fonts && document.fonts.ready.then(() => { this._foxFs = foxFsCalc(); this.forceUpdate(); }); } catch (e) {} this.onR = () => this.fit(); addEventListener('resize', this.onR); this.fit(); setTimeout(() => this.fit(), 300);
+    this.onLs = () => { if (!this.dr) this.setState({ L: load() }); }; addEventListener('storage', this.onLs); addEventListener('hud-layout', this.onLs); addEventListener('focus', this.onLs); }   // s342k: re-read the saved layout when it changes elsewhere (stale offsets drew ACTIONS off-screen)
+  componentWillUnmount() { removeEventListener('resize', this.onR); removeEventListener('storage', this.onLs); removeEventListener('hud-layout', this.onLs); removeEventListener('focus', this.onLs); }
+  fit() { const el = this.stageRef.current; if (!el) return; const D = DIM[this.state.ori], cw = el.clientWidth - 60, ch = innerHeight - 60; const k = Math.max(0.3, Math.min(1, cw / D.W, innerWidth > 800 ? ch / D.H : 9)); if (Math.abs(k - this.state.k) > 0.005) this.setState({ k }); }
+  save(L) { try { localStorage.setItem(KEY, JSON.stringify(L)); } catch (e) {} this.setState({ L }); try { this.dr = true; dispatchEvent(new Event('hud-layout')); } catch (e) {} this.dr = null; }
+  off(id) { const o = (this.state.L[this.state.ori] || {})[id] || {}; return { x: o.x || 0, y: o.y || 0, s: o.s || 1 }; }
+  setOff(id, p, persist = true) { const L = { ...this.state.L, [this.state.ori]: { ...(this.state.L[this.state.ori] || {}) } }; const o = { ...this.off(id), ...p }; if (id === 'act') o.x = 0;   /* s596d ACTIONS pinned left */ if (!o.x && !o.y && o.s === 1) delete L[this.state.ori][id]; else L[this.state.ori][id] = o; if (persist) this.save(L); else this.setState({ L }); }
+  base(D, ins) { const { W, H } = D, i = ins, sH = 46 + i.b, rb = H - sH, mx = (a, b) => Math.max(a, b), cr = W - mx(14, i.r), cb = rb - mx(14, i.b);
+    return { stick: [mx(22, i.l), rb - mx(22, i.b) - 113], eye: [W - mx(14, i.r) - 13 - 40, rb - (mx(14, i.b) + 216) - 40], clock: [mx(22, i.l) + 125, rb - mx(20, i.b) - 40], b1: [cr - 94 - 66, cb - 66], b2: [cr - 80, cb - 80], menu: [cr - 70 - 44, cb - 70 - 44], b3: [cr - 66, cb - 94 - 66], act: [0, rb - mx(22, i.b) - 125 - 44], super: [0, rb + 2] }; }
+  renderVals() {
+    const S = this.state, D = DIM[S.ori], ins = S.safe ? D.ins : { t: 0, b: 0, l: 0, r: 0 }, B = this.base(D, ins), k = S.k;
+    const barH = D.W >= 700 ? 58 : 108, topY = ins.t, stripH = 46 + ins.b;
+    const SWd = (S.L[S.ori] || {}).strip || {}, foxW = SWd.fox || 64, padL = Math.max(8, ins.l), padR = ins.r, supW = (() => { if (!this._mc) this._mc = document.createElement('canvas').getContext('2d'); this._mc.font = '900 11px Archivo, system-ui, sans-serif'; return Math.ceil(40 + 16 + this._mc.measureText('WHIRLWIND KICK').width + 14 * 0.44); })(), itemW = D.W - padL - padR - 16 - foxW - supW; B.super[0] = D.W - padR - supW;
+    const mx0 = Math.max, R = EL.map(e => { const o = e.dock ? { x: 0, y: 0, s: 1 } : this.off(e.id), w = (e.id === 'act' ? mx0(22, ins.l) + 113 : e.dock ? supW : e.wide ? Math.min(360, D.W - Math.max(22, ins.l) - 56 - Math.max(14, ins.r)) : e.w) * o.s * (e.ds || 1), h = e.h * o.s * (e.ds || 1), br = e.id === 'act', bw = e.wide ? w / o.s : e.w, x = e.dock || br ? B[e.id][0] : B[e.id][0] + (bw - w) / 2 + o.x, y = B[e.id][1] + (br ? e.h - h : (e.h - h) / 2) - o.y; return { ...e, o, x, y, w, h }; });
+    const locked = [{ name: 'the top bar', x: 0, y: 0, w: D.W, h: topY + barH }, { name: 'the bottom strip', x: 0, y: D.H - stripH, w: D.W, h: stripH }];
+    if (S.safe) { if (ins.l) locked.push({ name: 'the notch side', x: 0, y: 0, w: ins.l, h: D.H }); if (ins.r) locked.push({ name: 'the notch side', x: D.W - ins.r, y: 0, w: ins.r, h: D.H }); }
+    const circ = a => a.id && !a.rect;
+    const rr = (a, b) => Math.max(b.x - (a.x + a.w), a.x - (b.x + b.w), b.y - (a.y + a.h), a.y - (b.y + b.h));
+    const cr = (c, b) => { const r = c.w / 2, cx = c.x + r, cy = c.y + c.h / 2, nx = Math.max(b.x, Math.min(cx, b.x + b.w)), ny = Math.max(b.y, Math.min(cy, b.y + b.h)); return Math.hypot(cx - nx, cy - ny) - r; };
+    const gap = (a, b) => { if (circ(a) && circ(b)) return Math.hypot(a.x + a.w / 2 - b.x - b.w / 2, a.y + a.h / 2 - b.y - b.h / 2) - a.w / 2 - b.w / 2; if (circ(a)) return cr(a, b); if (circ(b)) return cr(b, a); return rr(a, b); };
+    const prob = {}, issues = [];
+    R.forEach((a, i) => { prob[a.id] = []; if (Math.min(a.w, a.h) < 44) prob[a.id].push('small');
+      R.forEach((b, j) => { if (j !== i && gap(a, b) < 0) prob[a.id].push('hit'); });
+      locked.forEach(z => { if (!a.dock && gap(a, z) < 0) prob[a.id].push('zone'); });
+      if (a.x < 0 || a.y < 0 || a.x + a.w > D.W || a.y + a.h > D.H) prob[a.id].push('off'); });
+    R.forEach((a, i) => { R.forEach((b, j) => { if (j > i && gap(a, b) < 0) issues.push(a.name.split(' (')[0] + ' overlaps ' + b.name.split(' (')[0] + '.'); });
+      locked.forEach(z => { if (!a.dock && gap(a, z) < 0) issues.push(a.name.split(' (')[0] + ' sits on ' + z.name + '.'); });
+      if (Math.min(a.w, a.h) < 44) issues.push(a.name.split(' (')[0] + ' is under 44 px (' + Math.round(Math.min(a.w, a.h)) + ').'); });
+    if (itemW < 80) issues.push('USE ITEM is only ' + Math.round(itemW) + ' px wide. Narrow SWITCH FOXES.');
+    const MENU = { fox: ['SWITCH FOXES (bottom menu)', foxW, 48, 120] }, selMenu = MENU[S.sel], itemSel = S.sel === 'item';
+    const sel = R.find(e => e.id === S.sel) || R[0];
+    let near = null; R.forEach(b => { if (b.id !== sel.id) { const g = gap(sel, b); if (!near || g < near.g) near = { g, n: b.name.split(' (')[0] }; } });
+    const drag = id => ({
+      down: e => { e.preventDefault(); if (EL.find(q => q.id === id).dock) { this.setState({ sel: id }); return; } try { e.currentTarget.setPointerCapture(e.pointerId); } catch (er) {} const o = this.off(id); this.dr = { id, px: e.clientX, py: e.clientY, ox: o.x, oy: o.y }; if (S.sel !== id) this.setState({ sel: id }); },
+      move: e => { const d = this.dr; if (!d || d.id !== id) return; const sn = v => Math.round(v / 2) * 2; this.setOff(id, { x: sn(d.ox + (e.clientX - d.px) / this.state.k), y: sn(d.oy - (e.clientY - d.py) / this.state.k) }, false); },
+      up: () => { if (!this.dr) return; this.dr = null; this.save(this.state.L); } });
+    const tag = id => { if (id === 'super') return ['MENU', '#1f8bff', '#fff']; const p = prob[id]; return p.includes('hit') || p.includes('zone') || p.includes('off') ? ['OVERLAP', '#ec3013', '#fff'] : p.includes('small') ? ['UNDER 44', '#ffd23a', '#000'] : ['CLEAR', '#3a3836', '#f3f2f2']; };
+    const pct = s => Math.round(s * 100) + '%', sg = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v);
+    const nudge = (dx, dy) => () => { const o = this.off(sel.id); this.setOff(sel.id, { x: o.x + dx, y: o.y + dy }); };
+    return {
+      foxFs: (this._foxFs || (this._foxFs = foxFsCalc())) + 'px', stageRef: this.stageRef,
+      setPortrait: () => this.setState({ ori: 'portrait' }, () => this.fit()), setLandscape: () => this.setState({ ori: 'landscape' }, () => this.fit()),
+      oriPBg: S.ori === 'portrait' ? '#f3f2f2' : '#201e1d', oriPFg: S.ori === 'portrait' ? '#201e1d' : '#f3f2f2', oriLBg: S.ori === 'landscape' ? '#f3f2f2' : '#201e1d', oriLFg: S.ori === 'landscape' ? '#201e1d' : '#f3f2f2',
+      oriWord: S.ori === 'portrait' ? 'PORTRAIT' : 'LANDSCAPE',
+      toggleSafe: () => this.setState({ safe: !S.safe }), safeBox: S.safe ? '#ec3013' : 'transparent',
+      rows: [...R.map(e => { const t = tag(e.id), on = e.id === sel.id; return { name: e.name, info: 'x ' + sg(e.o.x) + ' · y ' + sg(e.o.y) + ' · ' + pct(e.o.s), tag: t[0], tagBg: t[1], tagFg: t[2], bg: on ? '#f3f2f2' : '#201e1d', fg: on ? '#201e1d' : '#f3f2f2', pick: () => this.setState({ sel: e.id }) }; }), ...['fox', 'item'].map(id => { const on = S.sel === id; return { name: id === 'item' ? 'USE ITEM (bottom menu)' : MENU[id][0], info: (id === 'item' ? Math.round(itemW) : MENU[id][1]) + ' px wide' + (id === 'item' ? ' · takes the rest' : ''), tag: 'MENU', tagBg: '#1f8bff', tagFg: '#fff', bg: on ? '#f3f2f2' : '#201e1d', fg: on ? '#201e1d' : '#f3f2f2', pick: () => this.setState({ sel: id }) }; })],
+      selFree: !selMenu && !itemSel && !sel.dock, selWidthOn: !!selMenu, selWidth: selMenu ? selMenu[1] : 0, wMin: selMenu ? selMenu[2] : 0, wMax: selMenu ? selMenu[3] : 0,
+      setWidth: ev => { const L = { ...S.L, [S.ori]: { ...(S.L[S.ori] || {}) } }; L[S.ori].strip = { ...(L[S.ori].strip || {}), [S.sel]: +ev.target.value }; this.save(L); },
+      pickFox: () => this.setState({ sel: 'fox' }), pickItem: () => this.setState({ sel: 'item' }), pickSuper: () => this.setState({ sel: 'super' }),
+      foxW: foxW + 'px', supWpx: supW + 'px', foxOl: S.sel === 'fox' ? '3px solid #fff' : 'none', itemOl: S.sel === 'item' ? '3px solid #fff' : 'none', supOl: S.sel === 'super' ? '3px solid #fff' : 'none',
+      selName: itemSel ? 'USE ITEM · ' + Math.round(itemW) + ' PX (THE SPACE LEFT)' : selMenu ? selMenu[0].toUpperCase() : sel.dock ? 'SUPER · FAR RIGHT, AS WIDE AS THE NAME (' + Math.round(supW) + ' PX)' : sel.name.toUpperCase(), selSize: pct(sel.o.s) + ' · ' + Math.round(sel.w) + ' × ' + Math.round(sel.h) + ' PX', selSizeV: Math.round(sel.o.s * 100),
+      setSize: ev => this.setOff(sel.id, { s: (+ev.target.value) / 100 }),
+      selGap: selMenu ? 'USE ITEM gets the rest: ' + Math.round(itemW) + ' px.' : itemSel ? 'Narrow SWITCH FOXES to give it more room.' : sel.dock ? 'Its width follows the picked super\'s name.' : near ? (near.g < 0 ? 'Overlaps ' + near.n + ' by ' + Math.round(-near.g) + ' px.' : 'Nearest: ' + near.n + ', ' + Math.round(near.g) + ' px away.') : '',
+      nudgeL: nudge(-2, 0), nudgeR: nudge(2, 0), nudgeU: nudge(0, 2), nudgeD: nudge(0, -2),
+      resetSel: () => { if (selMenu) { const L = { ...S.L, [S.ori]: { ...(S.L[S.ori] || {}) } }; const st = { ...(L[S.ori].strip || {}) }; delete st[S.sel]; L[S.ori].strip = st; this.save(L); } else this.setOff(sel.id, { x: 0, y: 0, s: 1 }); },
+      resetAll: () => { const L = { ...S.L }; delete L[S.ori]; this.save(L); },
+      chkHead: issues.length ? issues.length + ' TO CHECK · ' + (S.ori === 'portrait' ? 'PORTRAIT' : 'LANDSCAPE') : 'ALL CLEAR · ' + (S.ori === 'portrait' ? 'PORTRAIT' : 'LANDSCAPE'), chkCol: issues.length ? '#ffd23a' : '#f3f2f2', issues,
+      frameW: Math.round(D.W * k) + 'px', frameH: Math.round(D.H * k) + 'px', phW: D.W + 'px', phH: D.H + 'px', phScale: 'scale(' + k + ')',
+      topY: topY + 'px', topH: barH + 'px', stripH: stripH + 'px', safeB: ins.b + 'px', stripPadL: Math.max(8, ins.l) + 'px', stripPadR: ins.r + 'px',
+      safeZones: S.safe ? [ins.t && { l: '0px', t: '0px', w: '100%', h: ins.t + 'px' }, ins.b && { l: '0px', t: (D.H - ins.b) + 'px', w: '100%', h: ins.b + 'px' }, ins.l && { l: '0px', t: '0px', w: ins.l + 'px', h: '100%' }, ins.r && { l: (D.W - ins.r) + 'px', t: '0px', w: ins.r + 'px', h: '100%' }].filter(Boolean) : [],
+      els: R.filter(e => !e.dock).map(e => { const t = tag(e.id), on = e.id === sel.id, dg = drag(e.id), bad = t[0] === 'OVERLAP';
+        return { name: e.name, label: e.label, l: e.x + 'px', t: e.y + 'px', w: e.w + 'px', h: e.h + 'px', rad: e.rect ? '0' : '50%', bg: e.id === 'stick' ? 'rgba(0,0,0,0.32)' : '#000', jc: e.id === 'act' ? 'flex-start' : 'center', pl: e.id === 'act' ? (ins.l + 12) + 'px' : '0', fg: '#fff', fs: e.id === 'act' || e.id === 'b1' || e.id === 'b2' || e.id === 'b3' ? '11px' : e.id === 'stick' ? '13px' : e.w < 50 ? '9px' : '12px',
+          bd: e.id === 'super' ? '0' : e.id === 'act' ? '0' : e.id === 'eye' || e.id === 'clock' ? '2px solid rgba(255,255,255,0.7)' : e.id === 'stick' ? '2px solid rgba(255,255,255,0.6)' : '4px solid #3a3836', ol: on ? '3px solid #ffffff' : bad ? '3px solid #ec3013' : 'none', z: on ? 5 : 3, down: dg.down, move: dg.move, up: dg.up }; }),
+    };
+  }
+}
+</script>
+</body>
+</html>

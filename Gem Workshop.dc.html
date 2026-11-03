@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>
+html, body { margin: 0; background: #201e1d; color: #f3f2f2; font-family: Archivo, sans-serif; }
+a { color: #f3f2f2; } a:hover { color: #ec3013; }
+button, input, select { font-family: Archivo, sans-serif; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid #ec3013; outline-offset: 2px; }
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-wrap:wrap;background:#201e1d;color:#f3f2f2" data-screen-label="Gem Workshop">
+  <div style="flex:1 1 460px;min-height:60vh;position:relative;border-right:2px solid #f3f2f2;border-bottom:2px solid #f3f2f2">
+    <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+    <div style="position:absolute;left:14px;top:12px;display:flex;flex-direction:column;gap:4px;pointer-events:none;max-width:calc(100% - 28px)">
+      <span style="font-size:26px;font-weight:900">{{ selName }}</span>
+      <span style="font-size:15px;font-weight:800">{{ selKind }}</span>
+    </div>
+    <div style="position:absolute;left:14px;bottom:12px;right:14px;font-size:14px;font-weight:700;line-height:1.4;pointer-events:none;text-wrap:pretty">{{ selWhere }}</div>
+  </div>
+  <div style="flex:1 1 400px;max-width:560px;display:flex;flex-direction:column;max-height:100vh;overflow-y:auto">
+    <div style="padding:14px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:4px">
+      <div style="display:flex;align-items:center;gap:10px"><span style="width:8px;height:28px;background:#ec3013"></span><span style="font-size:26px;font-weight:900">GEM WORKSHOP</span></div>
+      <div style="font-size:14px;font-weight:700;line-height:1.4">Gems are never sold and never show on the fox. This is how each one looks lying in the world. Live: changes save into the game.</div>
+    </div>
+    <div style="padding:12px 14px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:12px;font-weight:900;letter-spacing:0.06em">WORLD GEMS · ONE PER WORLD · WORLD SLOT ONLY</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <sc-for list="{{ worldBtns }}" as="g" hint-placeholder-count="6">
+          <button onClick="{{ g.pick }}" style="min-height:44px;padding:0 10px;background:{{ g.bg }};color:#f3f2f2;border:2px solid {{ g.bd }};border-radius:0;display:flex;align-items:center;gap:6px;font-size:13px;font-weight:900;text-align:left;cursor:pointer"><span style="width:12px;height:12px;background:{{ g.col }}"></span>{{ g.label }}</button>
+        </sc-for>
+      </div>
+      <div style="font-size:12px;font-weight:900;letter-spacing:0.06em;margin-top:4px">ANY-SLOT POWER-UP GEMS</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <sc-for list="{{ anyBtns }}" as="g" hint-placeholder-count="6">
+          <button onClick="{{ g.pick }}" style="min-height:44px;padding:0 10px;background:{{ g.bg }};color:#f3f2f2;border:2px solid {{ g.bd }};border-radius:0;display:flex;align-items:center;gap:6px;font-size:13px;font-weight:900;text-align:left;cursor:pointer"><span style="width:12px;height:12px;background:{{ g.col }}"></span>{{ g.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="padding:12px 14px;border-bottom:2px solid #f3f2f2;display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:8px">
+      <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:900;letter-spacing:0.06em">NAME
+        <input value="{{ name }}" onChange="{{ setName }}" style="height:44px;padding:0 10px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:17px;font-weight:800;min-width:0"></label>
+      <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:900;letter-spacing:0.06em">{{ valLabel }}
+        <input type="number" min="0" value="{{ val }}" onChange="{{ setVal }}" style="height:44px;padding:0 10px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:18px;font-weight:900;min-width:0"></label>
+      <sc-if value="{{ isAny }}" hint-placeholder-val="{{ false }}">
+        <label style="grid-column:1 / -1;display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:900;letter-spacing:0.06em">GIVES
+          <select value="{{ stat }}" onChange="{{ setStat }}" style="height:44px;padding:0 8px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:15px;font-weight:800">
+            <sc-for list="{{ statOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.v }}">{{ o.t }}</option></sc-for>
+          </select></label>
+      </sc-if>
+    </div>
+    <sc-if value="{{ isWorld }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:12px 14px 4px;font-size:12px;font-weight:900;letter-spacing:0.06em">WHAT IT GIVES IN EACH PIECE</div>
+      <sc-for list="{{ perRows }}" as="p" hint-placeholder-count="7">
+        <div style="padding:6px 14px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);align-items:center;gap:10px;border-bottom:2px solid #3a3633">
+          <span style="font-size:15px;font-weight:900">{{ p.label }}</span>
+          <select value="{{ p.v }}" onChange="{{ p.set }}" style="height:44px;padding:0 8px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:14px;font-weight:800;min-width:0">
+            <sc-for list="{{ statOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.v }}">{{ o.t }}</option></sc-for>
+          </select>
+        </div>
+      </sc-for>
+      <sc-if value="{{ hasPlaces }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:12px 14px;display:flex;flex-direction:column;gap:6px;border-bottom:2px solid #f3f2f2">
+          <div style="font-size:12px;font-weight:900;letter-spacing:0.06em">WHERE THE 5 ARE</div>
+          <sc-for list="{{ places }}" as="pl" hint-placeholder-count="5"><div style="font-size:14px;font-weight:700">{{ pl }}</div></sc-for>
+        </div>
+      </sc-if>
+    </sc-if>
+    <div style="padding:14px;display:flex;gap:8px;flex-wrap:wrap">
+      <button onClick="{{ reset }}" style="min-height:44px;padding:0 14px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:14px;font-weight:900;text-align:left;cursor:pointer" style-hover="background:#4a1a10">RESET THIS GEM</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { sel: 'meruGem', v: 0 };
+  stageRef = React.createRef();
+  async componentDidMount() {
+    try { this.G = await import('./engine/gems.js'); const m = await import('./engine/gem-stage.js'); this.st = m.startGemStage(this.stageRef.current); window.__gems = this.st; this.show(); this.forceUpdate(); setTimeout(() => this.show(), 300); } catch (e) { console.error(e); }
+  }
+  componentWillUnmount() { this.st && this.st.destroy(); }
+  show() { if (this.st && this.G) this.st.show(this.G.allGems()[this.state.sel]); }
+  tune(fn) { const t = this.G.loadTune(); t[this.state.sel] = t[this.state.sel] || {}; fn(t[this.state.sel]); this.G.saveTune(t); this.setState(s => ({ v: s.v + 1 }), () => this.show()); }
+  renderVals() {
+    const S = this.state, GM = this.G;
+    if (!GM) return { stageRef: this.stageRef, worldBtns: [], anyBtns: [], perRows: [], statOpts: [], places: [], selName: '', selKind: '', selWhere: '', name: '', val: '', valLabel: '', isAny: false, isWorld: false, hasPlaces: false, stat: '' };
+    const all = GM.allGems(), g = all[S.sel], pick = id => () => this.setState({ sel: id }, () => this.show());
+    const btn = x => ({ label: x.name + (x.tbd ? ' (NAME?)' : ''), col: x.col, bg: S.sel === x.id ? '#ec3013' : '#201e1d', bd: S.sel === x.id ? '#ec3013' : '#f3f2f2', pick: pick(x.id) });
+    const statOpts = Object.entries(GM.STATS).map(([k, [t]]) => ({ v: k, t }));
+    const flat = g.kind === 'any' && GM.STATS[g.stat][1] === 'flat';
+    return {
+      stageRef: this.stageRef, statOpts,
+      worldBtns: Object.values(all).filter(x => x.kind === 'world').map(btn), anyBtns: Object.values(all).filter(x => x.kind === 'any').map(btn),
+      selName: g.name, selKind: g.kind === 'world' ? 'WORLD GEM · ' + g.world.toUpperCase() + ' · +' + g.val + ' % in the piece it sits in' : 'ANY-SLOT GEM · ' + GM.fmt(g.stat, g.val),
+      selWhere: g.kind === 'any' ? 'FOUND: ' + g.where : GM.GEM_PLACES[g.id] ? '5 in ' + g.world.toUpperCase() + ', one per place. Never sold.' : 'Found or won on ' + g.world.toUpperCase() + '. Never sold.',
+      name: g.name, setName: e => this.tune(o => { o.name = (e.target.value || '').trim().toUpperCase() || undefined; }),
+      valLabel: g.kind === 'world' ? 'EACH PIECE %' : flat ? 'AMOUNT' : 'AMOUNT %', val: g.val, setVal: e => this.tune(o => { o.val = Math.max(0, Math.round(+e.target.value) || 0); }),
+      isAny: g.kind === 'any', isWorld: g.kind === 'world', stat: g.stat || '', setStat: e => this.tune(o => { o.stat = e.target.value; }),
+      perRows: g.kind === 'world' ? GM.PIECES.map(([k, l]) => ({ label: l, v: g.per[k], set: e => this.tune(o => { o.per = { ...(o.per || {}), [k]: e.target.value }; }) })) : [],
+      hasPlaces: !!GM.GEM_PLACES[g.id], places: GM.GEM_PLACES[g.id] || [],
+      reset: () => { const t = GM.loadTune(); delete t[S.sel]; GM.saveTune(t); this.setState(s => ({ v: s.v + 1 }), () => this.show()); },
+    };
+  }
+}
+</script>
+</body>
+</html>

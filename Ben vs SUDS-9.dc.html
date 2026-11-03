@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:var(--color-accent)}a:hover{color:var(--color-accent-600)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:fixed;inset:0;background:#000" data-screen-label="Ben vs SUDS-9">
+  <iframe ref="{{ frame }}" src="{{ src }}" title="Ben vs SUDS-9" allow="autoplay; fullscreen" style="position:absolute;inset:0;width:100%;height:100%;border:0;display:block"></iframe>
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;display:flex;align-items:flex-start;justify-content:flex-start;padding:16px;box-sizing:border-box;background:rgba(0,0,0,0.55);font-family:var(--font-body)">
+      <div style="width:min(360px,100%);background:#f3f2f2;color:#201e1d;border:2px solid #201e1d;display:flex;flex-direction:column">
+        <div style="background:{{ doneCol }};color:#ffffff;padding:12px 16px;font:900 28px var(--font-heading)">{{ doneTitle }}</div>
+        <div style="padding:12px 16px;font-size:15px;text-wrap:pretty">BEN vs SUDS-9 · best of 3 rounds on the Pearl Sail roof.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;border-top:2px solid #201e1d">
+          <button onClick="{{ again }}" style="min-height:52px;padding:0 16px;text-align:left;font:800 15px var(--font-body);background:#ec3013;color:#ffffff;border:0;border-right:2px solid #201e1d;cursor:pointer" style-hover="background:#c92a10">FIGHT AGAIN</button>
+          <button onClick="{{ close }}" style="min-height:52px;padding:0 16px;text-align:left;font:800 15px var(--font-body);background:#f3f2f2;color:#201e1d;border:0;cursor:pointer" style-hover="background:#e2dfdd">CLOSE</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { n: 0, done: null };
+  frame = React.createRef();
+  componentDidMount() {
+    this.onMsg = e => { const d = e.data; if (!d || d.type !== '8gates:pearl-duel') return; this.setState({ done: { won: !!d.won } });
+      try { if (window.parent !== window) window.parent.postMessage({ type: '8gates:ben-suds', won: !!d.won }, '*'); } catch (err) {} };
+    addEventListener('message', this.onMsg);
+  }
+  componentWillUnmount() { removeEventListener('message', this.onMsg); }
+  renderVals() {
+    const s = this.state, diff = this.props.difficulty === 'Normal' ? '&normal=1' : '';
+    return {
+      frame: this.frame,
+      src: 'FOXFIGHTERS-FINAL/FoxFighters/Kyoto Sword Duel.dc.html?pearl=1&embed=1&match=ben-suds&r=' + s.n + diff,
+      doneOn: !!s.done, doneTitle: s.done && s.done.won ? 'YOU WIN' : 'SUDS-9 WINS', doneCol: s.done && s.done.won ? '#201e1d' : '#ec3013',
+      again: () => this.setState({ done: null, n: s.n + 1 }),
+      close: () => this.setState({ done: null }),
+    };
+  }
+}
+</script>
+</body>
+</html>

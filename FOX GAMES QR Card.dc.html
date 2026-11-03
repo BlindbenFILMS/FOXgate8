@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;background:#201e1d}a{color:#ec3013}a:hover{color:#ffd23a}</style>
+</helmet>
+<div data-screen-label="QR Card" style="width:1920px;height:1080px;background:#f3f2f2;color:#201e1d;font-family:var(--font-heading);display:grid;grid-template-columns:minmax(0,1fr) 760px;overflow:hidden;box-sizing:border-box">
+  <div style="display:flex;flex-direction:column;justify-content:space-between;padding:96px 0 96px 112px;border-right:2px solid #201e1d">
+    <div style="display:flex;align-items:center;gap:20px">
+      <div style="width:56px;height:56px;background:#ec3013"></div>
+      <span style="font-weight:900;font-size:44px;letter-spacing:0.04em">FOX GAMES</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:28px">
+      <span style="font-weight:800;font-size:32px;letter-spacing:0.16em;color:#ec3013">NOW PLAYING · WORLD 1 · MERU</span>
+      <span style="font-weight:900;font-size:220px;line-height:0.86;letter-spacing:-0.035em">FOXGATE8</span>
+      <div style="width:640px;height:4px;background:#201e1d"></div>
+      <span style="font-weight:700;font-size:44px;line-height:1.2;max-width:900px;text-wrap:pretty">Scan with your phone camera to start in Town Square.</span>
+    </div>
+    <div style="display:flex;gap:48px;font-weight:800;font-size:28px;letter-spacing:0.1em">
+      <span>1 · SCAN</span><span>2 · PLAY</span><span>3 · EXPLORE MERU</span>
+    </div>
+  </div>
+  <div style="background:#ec3013;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:0 110px;gap:36px">
+    <div style="width:540px;height:540px;background:#ffffff;border:4px solid #201e1d;box-sizing:border-box;padding:28px">
+      <img src="{{ qr }}" alt="QR code to play FOXGATE8" style="display:block;width:100%;height:100%;image-rendering:pixelated">
+    </div>
+    <span style="font-weight:900;font-size:40px;letter-spacing:0.08em;color:#ffffff">SCAN TO PLAY</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1920,&quot;height&quot;:1080},&quot;url&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://5d57e029-b173-4688-8f87-7728a11b5901.claudeusercontent.com/v1/design/projects/5d57e029-b173-4688-8f87-7728a11b5901/serve/FOXGATE8-PLAYABLE.dc.html&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const url = this.props.url || 'https://5d57e029-b173-4688-8f87-7728a11b5901.claudeusercontent.com/v1/design/projects/5d57e029-b173-4688-8f87-7728a11b5901/serve/FOXGATE8-PLAYABLE.dc.html';
+    return { qr: 'https://api.qrserver.com/v1/create-qr-code/?size=900x900&margin=0&ecc=M&color=201e1d&data=' + encodeURIComponent(url) };
+  }
+}
+</script>
+</body>
+</html>

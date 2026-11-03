@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Casino 8 — Roulette</title>
+<style>
+  html, body {
+    margin: 0; padding: 0; height: 100%; overflow: hidden; background: #04070d;
+    font-family: 'Trebuchet MS', 'Segoe UI', Arial, sans-serif;
+    color: #dbe7f3; -webkit-text-size-adjust: 100%;
+  }
+  /* THE ROOM BEHIND THE TABLE. The five games that came from Meru are all lit
+     the same way — a dark blue box with one cyan edge in it — and a sixth game
+     that does not look like the other five reads as a web page somebody left
+     open in the casino. */
+  #stage {
+    position: absolute; left: 50%; top: 50%; width: 1180px; height: 720px;
+    transform-origin: 50% 50%;
+    background:
+      radial-gradient(120% 90% at 50% 0%, rgba(35,70,110,0.55), rgba(4,7,13,0) 60%),
+      linear-gradient(#070c15, #04070d);
+    border: 2px solid #16304a; border-radius: 14px; box-sizing: border-box;
+    display: flex; gap: 18px; padding: 18px;
+  }
+  #left { width: 470px; display: flex; flex-direction: column; gap: 12px; }
+  #right { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+  #wheelWrap {
+    position: relative; flex: 1;
+    background: radial-gradient(60% 60% at 50% 45%, rgba(30,60,95,0.5), rgba(6,10,18,0) 70%);
+    border: 1px solid #1d3450; border-radius: 12px;
+  }
+  #wheel { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #callBox {
+    position: absolute; left: 0; right: 0; bottom: 10px; text-align: center;
+    font-size: 13px; letter-spacing: 4px; color: #7fd4ff; text-transform: uppercase;
+  }
+  #resultBox {
+    min-height: 84px; display: flex; align-items: center; gap: 14px; padding: 8px 14px;
+    flex: none; box-sizing: border-box;
+    background: rgba(10,18,30,0.72); border: 1px solid #1d3450; border-radius: 10px;
+  }
+  #resultNum {
+    width: 58px; height: 58px; border-radius: 50%; display: flex;
+    align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 900; color: #fff; background: #23303f;
+    border: 2px solid #47617c; flex: none;
+  }
+  #resultText { font-size: 13px; letter-spacing: 2px; color: #9fb6cc; }
+  #resultWin { font-size: 19px; font-weight: 900; letter-spacing: 1px; color: #ffd166; }
+  #resultMid { min-width: 0; flex: 1; }
+  #history { display: flex; gap: 5px; flex-wrap: wrap; max-width: 132px;
+             justify-content: flex-end; flex: none; }
+  .hchip {
+    width: 26px; height: 26px; border-radius: 50%; font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; color: #fff;
+    border: 1px solid rgba(255,255,255,0.25);
+  }
+  #feltWrap { flex: 1; position: relative; border-radius: 12px; overflow: hidden; }
+  #felt { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #bar {
+    height: 92px; display: flex; align-items: center; gap: 9px; padding: 0 12px;
+    overflow: hidden;
+    background: rgba(10,18,30,0.72); border: 1px solid #1d3450; border-radius: 10px;
+  }
+  .chip {
+    width: 52px; height: 52px; border-radius: 50%; cursor: pointer; flex: none;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 16px; color: #0a0f18;
+    border: 3px dashed rgba(255,255,255,0.55); box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+    user-select: none; transition: transform .08s ease;
+  }
+  .chip.sel { outline: 3px solid #ffd166; outline-offset: 3px; transform: translateY(-3px); }
+  button.act {
+    height: 52px; padding: 0 14px; border-radius: 9px; cursor: pointer;
+    background: #132234; color: #cfe6ff; border: 2px solid #2f5b80;
+    font-size: 13px; letter-spacing: 2px; font-weight: 700; flex: none;
+  }
+  button.act:hover { background: #1a2f47; }
+  button.act:disabled { opacity: .35; cursor: default; }
+  #spin {
+    background: linear-gradient(#7a2ea8, #45156a); border-color: #b06fe0; color: #fff;
+    flex: 1 1 auto; min-width: 140px; font-size: 17px;
+  }
+  /* THE MONEY LIVES ON THE LEFT. It was in the button bar, where four chips,
+     four buttons and two readouts wanted nine hundred pixels of a six hundred
+     pixel row — and the thing that went off the end of it was the purse, which
+     is the one number a gambler is never allowed to lose sight of. */
+  #moneyRow { display: flex; gap: 12px; flex: none; }
+  .money {
+    flex: 1; padding: 8px 14px; background: rgba(10,18,30,0.72);
+    border: 1px solid #1d3450; border-radius: 10px;
+  }
+  .money .k { font-size: 11px; letter-spacing: 3px; color: #6f8aa5; }
+  #purse { font-size: 27px; font-weight: 900; color: #ffd166; }
+  #down { font-size: 27px; font-weight: 900; color: #7fd4ff; }
+  #mark {
+    position: absolute; right: 16px; top: 12px; font-size: 11px; letter-spacing: 5px;
+    color: #35506c;
+  }
+  #back {
+    position: fixed; left: 10px; top: 10px; z-index: 2147483647;
+    padding: 8px 13px; border-radius: 6px; border: 2px solid #5fe3ff;
+    background: rgba(4,10,18,0.92); color: #bff2ff; font-size: 13px;
+    letter-spacing: 2px; font-weight: 700; cursor: pointer;
+    font-family: 'Trebuchet MS', Arial, sans-serif;
+  }
+  /* ============================ THE THREE THINGS NOBODY IS BORN KNOWING =====
+     A roulette table is only obvious to somebody who has stood at one. Three
+     hints, in order, each pointing at the one thing to do next — and each one
+     goes away the moment you do it, because a hint that is still there after
+     you have obeyed it is not a hint, it is furniture. */
+  #chipRow { display: flex; gap: 9px; padding: 5px; border-radius: 14px; flex: none;
+             border: 2px solid transparent; transition: border-color .2s ease; }
+  #chipRow.lit {
+    border-color: rgba(127,212,255,0.85);
+    animation: glowRow 1.15s ease-in-out infinite;
+  }
+  @keyframes glowRow {
+    0%, 100% { box-shadow: 0 0 0 rgba(127,212,255,0); }
+    50%      { box-shadow: 0 0 22px rgba(127,212,255,0.55); }
+  }
+  #feltWrap.lit { animation: glowFelt 1.3s ease-in-out infinite; }
+  @keyframes glowFelt {
+    0%, 100% { box-shadow: inset 0 0 0 2px rgba(127,212,255,0.25); }
+    50%      { box-shadow: inset 0 0 0 3px rgba(127,212,255,0.9), 0 0 26px rgba(127,212,255,0.35); }
+  }
+  #spin.pulse {
+    animation: pulseSpin 0.9s ease-in-out infinite;
+  }
+  /* GLOW, NOT MOVEMENT. A button that grows and shrinks is a target that moves
+     under a thumb — and a moving target is also a button an automated harness
+     will not press, because it never holds still long enough to be counted as
+     stable. Measured: thirty seconds of a test waiting for SPIN to settle. */
+  @keyframes pulseSpin {
+    0%, 100% { box-shadow: 0 0 0 rgba(224,132,255,0);    border-color: #b06fe0; }
+    50%      { box-shadow: 0 0 28px rgba(224,132,255,0.8); border-color: #f0c2ff; }
+  }
+  .coach {
+    position: absolute; pointer-events: none; opacity: 0;
+    transition: opacity .25s ease; z-index: 40;
+    font-size: 19px; font-weight: 900; letter-spacing: 4px; color: #eaf7ff;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.9), 0 0 22px rgba(127,212,255,0.75);
+    text-align: center;
+  }
+  .coach.on { opacity: 1; animation: bob 1.15s ease-in-out infinite; }
+  .coach span {
+    display: inline-block; padding: 7px 16px; border-radius: 999px;
+    background: rgba(8,18,30,0.82); border: 2px solid rgba(127,212,255,0.75);
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+  }
+  /* over the middle of the felt, and out of the way of the numbers */
+  #feltHint { left: 0; right: 0; top: 8px; }
+  /* and above the chips, which are at the bottom of the room */
+  #barHint { left: 488px; right: 18px; bottom: 104px; }
+
+  #note {
+    position: absolute; left: 0; right: 0; top: 46%; text-align: center;
+    font-size: 40px; font-weight: 900; letter-spacing: 6px; color: #fff;
+    text-shadow: 0 0 24px rgba(140,220,255,.9); pointer-events: none; opacity: 0;
+    transition: opacity .25s ease;
+  }
+</style>
+</head>
+<body>
+<button id="back">&#9664; BACK TO CASINO</button>
+<div id="stage">
+  <div id="mark">8 GATES</div>
+  <div id="left">
+    <div id="wheelWrap">
+      <canvas id="wheel"></canvas>
+      <div id="callBox">place your bets</div>
+    </div>
+    <div id="moneyRow">
+      <div class="money"><div class="k">YOUR PURSE</div><div id="purse">0</div></div>
+      <div class="money"><div class="k">ON THE TABLE</div><div id="down">0</div></div>
+    </div>
+    <div id="resultBox">
+      <div id="resultNum">&mdash;</div>
+      <div id="resultMid">
+        <div id="resultText">no spin yet</div>
+        <div id="resultWin"></div>
+      </div>
+      <div id="history"></div>
+    </div>
+  </div>
+  <div id="right">
+    <div id="feltWrap"><canvas id="felt"></canvas>
+      <div id="feltHint" class="coach"><span></span></div>
+    </div>
+    <div id="bar">
+      <div id="chipRow">
+        <div class="chip" data-v="1"   style="background:#e8e8e8">1</div>
+        <div class="chip" data-v="5"   style="background:#e0524d">5</div>
+        <div class="chip" data-v="25"  style="background:#3fa45b">25</div>
+        <div class="chip" data-v="100" style="background:#2f6fd0;color:#eaf4ff">100</div>
+      </div>
+      <button class="act" id="undo">UNDO</button>
+      <button class="act" id="clear">CLEAR</button>
+      <button class="act" id="rebet">REBET</button>
+      <button class="act" id="spin">SPIN</button>
+    </div>
+  </div>
+  <div id="note"></div>
+  <div id="barHint" class="coach"><span></span></div>
+</div>
+
+<script>
+(function () {
+'use strict';
+
+/* ===========================================================================
+   ROULETTE, at the table that has said ROULETTE since build 021.
+
+   AMERICAN, WHICH MEANS TWO ZEROS. Casino 8 is on the Strip, and a Strip wheel
+   has 0 and 00 on it — thirty-eight pockets, a house edge of 5.26% on every bet
+   on the felt except one, and that one is worse. The five-number line is 7.89%
+   and it is on here anyway, because it is on every real felt and leaving it off
+   would be tidying up a casino.
+
+   IT KEEPS ITS OWN MONEY. Same contract as the other five games in this
+   building: its own key in its own storage, so the fox's purse cannot be
+   emptied into a wheel and a wheel cannot pay the fox's rent. And it says one
+   thing to its parent, ever — `backToCasino`.
+   ======================================================================== */
+
+var PURSE_KEY = 'roulette_fox_credits';
+var TAUGHT_KEY = 'roulette_fox_taught';
+var START = 1000;
+
+/* The pocket order of an American wheel, clockwise from 0. Not decorative: the
+   ball has to land in the pocket the number says it landed in, and the two
+   zeros sit opposite each other with red and black alternating between them. */
+var ORDER = [0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1,
+             37, 27, 10, 25, 29, 12, 8, 19, 31, 18, 6, 21, 33, 16, 4, 23, 35, 14, 2];
+var REDS = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
+var N = ORDER.length;                       // 38, and the whole edge is in that
+
+function isRed(n) { return REDS.indexOf(n) >= 0; }
+function label(n) { return n === 37 ? '00' : String(n); }
+function colOf(n) { return (n < 1 || n > 36) ? 0 : ((n - 1) % 3 === 0 ? 3 : (n % 3 === 0 ? 3 : n % 3)); }
+
+var S = {
+  purse: START,
+  chip: 5,
+  bets: [],          // {key, nums, pay, label, ax, ay, amt}
+  last: [],          // what was down last spin, for REBET
+  spinning: false,
+  result: null,
+  history: [],
+  pickedChip: false,      // have you chosen what a chip is worth yet
+  taught: false,          // and have you been round the whole loop once
+};
+
+/* ---- money -------------------------------------------------------------- */
+function load() {
+  try {
+    var v = parseInt(localStorage.getItem(PURSE_KEY), 10);
+    if (isFinite(v) && v >= 0) S.purse = v;
+    /* AND A PLAYER IS ONLY TAUGHT ONCE. Somebody who has spun this wheel does
+       not need to be told what a chip is every time they walk back into the
+       room — the lesson is remembered next to the money. */
+    S.taught = localStorage.getItem(TAUGHT_KEY) === '1';
+  } catch (e) {}
+}
+function taught() {
+  S.taught = true;
+  try { localStorage.setItem(TAUGHT_KEY, '1'); } catch (e) {}
+}
+
+function save() {
+  /* IN A TRY, ALWAYS. This page is opened from a blob: URL inside the planet
+     file, which is an opaque origin — storage can throw rather than return
+     nothing, and a throw here would take the spin down with it. */
+  try { localStorage.setItem(PURSE_KEY, String(S.purse)); } catch (e) {}
+}
+
+/* ---- sound: four noises, made on the fly --------------------------------- */
+var AC = null;
+function actx() {
+  try { if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
+  return AC;
+}
+function blip(f, len, type, vol) {
+  var c = actx(); if (!c) return;
+  try {
+    var o = c.createOscillator(), g = c.createGain();
+    o.type = type || 'square'; o.frequency.value = f;
+    g.gain.value = vol === undefined ? 0.05 : vol;
+    g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + len);
+    o.connect(g); g.connect(c.destination);
+    o.start(); o.stop(c.currentTime + len);
+  } catch (e) {}
+}
+
+/* ---- the felt ----------------------------------------------------------- */
+var felt = document.getElementById('felt');
+var fx = felt.getContext('2d');
+/* 730 BY 400, NOT 700. The three "2 TO 1" boxes stand to the right of the last
+   column of numbers and end at 706 — a felt sized to 700 puts them off the edge
+   of its own canvas, and the first screenshot has them sliced down the middle. */
+var FW = 730, FH = 336;                     // the felt's own coordinate space
+var G = { x: 92, y: 26, cw: 46, ch: 62 };   // grid origin and cell size
+var TOL = 11;                               // how near a line counts as on it
+
+function cellNum(col, row) { return 3 * col + (3 - row); }
+
+function numRect(n) {
+  if (n === 0) return { x: G.x - 46, y: G.y, w: 46, h: G.ch * 1.5 };
+  if (n === 37) return { x: G.x - 46, y: G.y + G.ch * 1.5, w: 46, h: G.ch * 1.5 };
+  var col = Math.floor((n - 1) / 3), row = 3 - ((n - 1) % 3) - 1;
+  return { x: G.x + col * G.cw, y: G.y + row * G.ch, w: G.cw, h: G.ch };
+}
+
+/* THE OUTSIDE BETS, as boxes. Each one knows the numbers it covers, so the
+   payout code below never asks what kind of bet it is looking at — it asks
+   whether the number that came up is in the list. */
+function range(a, b) { var o = []; for (var i = a; i <= b; i++) o.push(i); return o; }
+function column(c) { var o = []; for (var i = 1; i <= 36; i++) if (colOf(i) === c) o.push(i); return o; }
+
+var OUTSIDE = [
+  { key: 'col:3', nums: column(3), pay: 2, text: '2 TO 1',
+    x: G.x + 12 * G.cw, y: G.y, w: 62, h: G.ch },
+  { key: 'col:2', nums: column(2), pay: 2, text: '2 TO 1',
+    x: G.x + 12 * G.cw, y: G.y + G.ch, w: 62, h: G.ch },
+  { key: 'col:1', nums: column(1), pay: 2, text: '2 TO 1',
+    x: G.x + 12 * G.cw, y: G.y + 2 * G.ch, w: 62, h: G.ch },
+  { key: 'doz:1', nums: range(1, 12), pay: 2, text: '1st 12',
+    x: G.x, y: G.y + 3 * G.ch, w: 4 * G.cw, h: 44 },
+  { key: 'doz:2', nums: range(13, 24), pay: 2, text: '2nd 12',
+    x: G.x + 4 * G.cw, y: G.y + 3 * G.ch, w: 4 * G.cw, h: 44 },
+  { key: 'doz:3', nums: range(25, 36), pay: 2, text: '3rd 12',
+    x: G.x + 8 * G.cw, y: G.y + 3 * G.ch, w: 4 * G.cw, h: 44 },
+  { key: 'lo', nums: range(1, 18), pay: 1, text: '1 - 18',
+    x: G.x, y: G.y + 3 * G.ch + 44, w: 2 * G.cw, h: 44 },
+  { key: 'even', nums: range(1, 36).filter(function (n) { return n % 2 === 0; }), pay: 1, text: 'EVEN',
+    x: G.x + 2 * G.cw, y: G.y + 3 * G.ch + 44, w: 2 * G.cw, h: 44 },
+  { key: 'red', nums: REDS.slice(), pay: 1, text: 'RED',
+    x: G.x + 4 * G.cw, y: G.y + 3 * G.ch + 44, w: 2 * G.cw, h: 44 },
+  { key: 'black', nums: range(1, 36).filter(function (n) { return !isRed(n); }), pay: 1, text: 'BLACK',
+    x: G.x + 6 * G.cw, y: G.y + 3 * G.ch + 44, w: 2 * G.cw, h: 44 },
+  { key: 'odd', nums: range(1, 36).filter(function (n) { return n % 2 === 1; }), pay: 1, text: 'ODD',
+    x: G.x + 8 * G.cw, y: G.y + 3 * G.ch + 44, w: 2 * G.cw, h: 44 },
+  { key: 'hi', nums: range(19, 36), pay: 1, text: '19 - 36',
+    x: G.x + 10 * G.cw, y: G.y + 3 * G.ch + 44, w: 2 * G.cw, h: 44 },
+];
+
+/* WHAT IS UNDER THE FINGER. Every bet on a felt is either a box or a line, and
+   a line is only a line if you are within a few units of it — which is why a
+   real croupier looks at where the chip is sitting rather than at what the
+   punter says. */
+function feltHit(x, y) {
+  var i, o;
+  for (i = 0; i < OUTSIDE.length; i++) {
+    o = OUTSIDE[i];
+    if (x >= o.x && x <= o.x + o.w && y >= o.y && y <= o.y + o.h)
+      return { key: o.key, nums: o.nums.slice(), pay: o.pay, label: o.text,
+               ax: o.x + o.w / 2, ay: o.y + o.h / 2 };
+  }
+
+  var gx = G.x, gy = G.y, right = G.x + 12 * G.cw, bottom = G.y + 3 * G.ch;
+
+  // the two zeros, and the line between them
+  if (x >= gx - 46 && x < gx && y >= gy && y <= bottom) {
+    var mid = gy + G.ch * 1.5;
+    if (Math.abs(y - mid) < TOL)
+      return { key: 's:0-37', nums: [0, 37], pay: 17, label: '0 / 00', ax: gx - 23, ay: mid };
+    var z = y < mid ? 0 : 37;
+    var zr = numRect(z);
+    return { key: 'n:' + z, nums: [z], pay: 35, label: label(z),
+             ax: zr.x + zr.w / 2, ay: zr.y + zr.h / 2 };
+  }
+
+  if (x < gx - TOL || x > right + TOL || y < gy - TOL || y > bottom + TOL) return null;
+
+  var ex = Math.round((x - gx) / G.cw), ey = Math.round((y - gy) / G.ch);
+  var onV = Math.abs(x - (gx + ex * G.cw)) < TOL;
+  var onH = Math.abs(y - (gy + ey * G.ch)) < TOL;
+  var col = Math.max(0, Math.min(11, Math.floor((x - gx) / G.cw)));
+  var row = Math.max(0, Math.min(2, Math.floor((y - gy) / G.ch)));
+
+  /* THE TOP EDGE IS WHERE STREETS LIVE, and the bottom edge is not, because the
+     bottom edge is the top edge of the dozens. Get that the wrong way round and
+     every street bet is a dozen bet nobody meant to make. */
+  if (onH && ey === 0) {
+    if (onV && ex === 0) {
+      // the corner where the zeros meet the grid: the five-number line
+      return { key: 'top', nums: [0, 37, 1, 2, 3], pay: 6, label: '0-00-1-2-3',
+               ax: gx, ay: gy };
+    }
+    if (onV && ex > 0 && ex < 12) {
+      var a = cellNum(ex - 1, 0), b = cellNum(ex, 0);
+      var six = [a - 2, a - 1, a, b - 2, b - 1, b].sort(function (p, q) { return p - q; });
+      return { key: 'sl:' + six[0], nums: six, pay: 5, label: six[0] + '-' + six[5],
+               ax: gx + ex * G.cw, ay: gy };
+    }
+    var s0 = cellNum(col, 0);
+    return { key: 'st:' + (s0 - 2), nums: [s0 - 2, s0 - 1, s0], pay: 11,
+             label: (s0 - 2) + '-' + s0, ax: gx + col * G.cw + G.cw / 2, ay: gy };
+  }
+
+  if (onV && onH && ex > 0 && ex < 12 && ey > 0 && ey < 3) {
+    var q = [cellNum(ex - 1, ey - 1), cellNum(ex, ey - 1),
+             cellNum(ex - 1, ey), cellNum(ex, ey)].sort(function (p, r) { return p - r; });
+    return { key: 'c:' + q[0], nums: q, pay: 8, label: q[0] + '/' + q[3],
+             ax: gx + ex * G.cw, ay: gy + ey * G.ch };
+  }
+  if (onV && ex > 0 && ex < 12) {
+    var l = cellNum(ex - 1, row), r2 = cellNum(ex, row);
+    return { key: 's:' + Math.min(l, r2) + '-' + Math.max(l, r2), nums: [l, r2], pay: 17,
+             label: l + ' / ' + r2, ax: gx + ex * G.cw, ay: gy + row * G.ch + G.ch / 2 };
+  }
+  if (onH && ey > 0 && ey < 3) {
+    var u = cellNum(col, ey - 1), d = cellNum(col, ey);
+    return { key: 's:' + Math.min(u, d) + '-' + Math.max(u, d), nums: [u, d], pay: 17,
+             label: u + ' / ' + d, ax: gx + col * G.cw + G.cw / 2, ay: gy + ey * G.ch };
+  }
+
+  var n = cellNum(col, row);
+  var rr = numRect(n);
+  return { key: 'n:' + n, nums: [n], pay: 35, label: String(n),
+           ax: rr.x + rr.w / 2, ay: rr.y + rr.h / 2 };
+}
+
+/* THE FELT IS 700 BY 400 AND THE CANVAS IS WHATEVER THE ROOM GIVES IT. One
+   scale, worked out here and nowhere else, and the pointer is put through the
+   same sum backwards — two different mappings is a chip that lands one cell
+   away from where you put it. */
+function feltFit() {
+  var k = Math.min(felt.width / FW, felt.height / FH);
+  return { k: k, ox: (felt.width - FW * k) / 2, oy: (felt.height - FH * k) / 2 };
+}
+
+function drawFelt() {
+  fx.setTransform(1, 0, 0, 1, 0, 0);
+  fx.clearRect(0, 0, felt.width, felt.height);
+  var F = feltFit();
+  fx.setTransform(F.k, 0, 0, F.k, F.ox, F.oy);
+
+  fx.fillStyle = '#0b3a25';
+  fx.fillRect(0, 0, FW, FH);
+  fx.strokeStyle = 'rgba(255,255,255,0.09)';
+  fx.lineWidth = 1;
+  for (var i = 0; i < 40; i++) {                 // the nap of the cloth
+    fx.beginPath(); fx.moveTo(0, i * 11); fx.lineTo(FW, i * 11 - 40); fx.stroke();
+  }
+
+  function box(x, y, w, h, fill, text, size, col) {
+    fx.fillStyle = fill;
+    fx.fillRect(x, y, w, h);
+    fx.strokeStyle = '#e8e2d0'; fx.lineWidth = 2;
+    fx.strokeRect(x, y, w, h);
+    if (!text) return;
+    fx.fillStyle = col || '#fff';
+    fx.font = '700 ' + (size || 15) + 'px Trebuchet MS, Arial, sans-serif';
+    fx.textAlign = 'center'; fx.textBaseline = 'middle';
+    fx.fillText(text, x + w / 2, y + h / 2 + 1);
+  }
+
+  // the zeros
+  var z0 = numRect(0), z1 = numRect(37);
+  box(z0.x, z0.y, z0.w, z0.h, '#0f6b3a', '0', 20);
+  box(z1.x, z1.y, z1.w, z1.h, '#0f6b3a', '00', 18);
+
+  // the numbers
+  for (var nn = 1; nn <= 36; nn++) {
+    var r = numRect(nn);
+    box(r.x, r.y, r.w, r.h, isRed(nn) ? '#a41f26' : '#16181c', String(nn), 18);
+  }
+  // and everything round the edge of them
+  for (var o = 0; o < OUTSIDE.length; o++) {
+    var b = OUTSIDE[o];
+    var fill = b.key === 'red' ? '#a41f26' : b.key === 'black' ? '#16181c' : 'rgba(0,0,0,0.18)';
+    box(b.x, b.y, b.w, b.h, fill, b.key === 'red' || b.key === 'black' ? '' : b.text, 15);
+    if (b.key === 'red' || b.key === 'black') {
+      // a diamond says it without a word, the way the felt does
+      fx.save();
+      fx.translate(b.x + b.w / 2, b.y + b.h / 2); fx.rotate(Math.PI / 4);
+      fx.fillStyle = b.key === 'red' ? '#d8323b' : '#0b0c0f';
+      fx.strokeStyle = '#e8e2d0'; fx.lineWidth = 2;
+      fx.fillRect(-13, -13, 26, 26); fx.strokeRect(-13, -13, 26, 26);
+      fx.restore();
+    }
+  }
+
+  // the chips that are down
+  for (var c = 0; c < S.bets.length; c++) drawChip(S.bets[c]);
+}
+
+var CHIPCOL = { 1: '#e8e8e8', 5: '#e0524d', 25: '#3fa45b', 100: '#2f6fd0' };
+function chipColour(v) {
+  if (v >= 100) return CHIPCOL[100];
+  if (v >= 25) return CHIPCOL[25];
+  if (v >= 5) return CHIPCOL[5];
+  return CHIPCOL[1];
+}
+function drawChip(b) {
+  fx.save();
+  fx.translate(b.ax, b.ay);
+  fx.beginPath(); fx.arc(0, 3, 15, 0, Math.PI * 2);
+  fx.fillStyle = 'rgba(0,0,0,0.45)'; fx.fill();
+  fx.beginPath(); fx.arc(0, 0, 15, 0, Math.PI * 2);
+  fx.fillStyle = chipColour(b.amt); fx.fill();
+  fx.lineWidth = 3; fx.setLineDash([5, 4]);
+  fx.strokeStyle = 'rgba(255,255,255,0.75)'; fx.stroke();
+  fx.setLineDash([]);
+  fx.fillStyle = b.amt >= 100 ? '#eaf4ff' : '#0a0f18';
+  fx.font = '900 ' + (b.amt > 999 ? 10 : b.amt > 99 ? 11 : 13) + 'px Trebuchet MS, Arial';
+  fx.textAlign = 'center'; fx.textBaseline = 'middle';
+  fx.fillText(String(b.amt), 0, 1);
+  fx.restore();
+}
+
+/* ---- the wheel ---------------------------------------------------------- */
+var wheel = document.getElementById('wheel');
+var wx = wheel.getContext('2d');
+var W = { rot: 0, ball: 0, br: 1, spinning: false, t: 0, dur: 0, from: 0, to: 0, pocket: 0 };
+
+function drawWheel() {
+  var w = wheel.width, h = wheel.height, k = Math.min(w, h);
+  wx.setTransform(1, 0, 0, 1, 0, 0);
+  wx.clearRect(0, 0, w, h);
+  wx.translate(w / 2, h / 2);
+  var R = k * 0.44;
+
+  // the bowl
+  wx.beginPath(); wx.arc(0, 0, R * 1.16, 0, Math.PI * 2);
+  var g = wx.createRadialGradient(0, -R * 0.4, R * 0.2, 0, 0, R * 1.2);
+  g.addColorStop(0, '#4a2d17'); g.addColorStop(1, '#160d06');
+  wx.fillStyle = g; wx.fill();
+  wx.lineWidth = 4; wx.strokeStyle = '#7a5a34'; wx.stroke();
+
+  wx.save();
+  wx.rotate(W.rot);
+  var step = Math.PI * 2 / N;
+  for (var i = 0; i < N; i++) {
+    var n = ORDER[i], a0 = i * step - step / 2, a1 = a0 + step;
+    wx.beginPath(); wx.moveTo(0, 0); wx.arc(0, 0, R, a0, a1); wx.closePath();
+    wx.fillStyle = (n === 0 || n === 37) ? '#0f6b3a' : (isRed(n) ? '#a41f26' : '#141518');
+    wx.fill();
+    wx.strokeStyle = 'rgba(220,200,160,0.55)'; wx.lineWidth = 1; wx.stroke();
+    // the number, standing up out of the rim
+    wx.save();
+    wx.rotate(a0 + step / 2);
+    wx.translate(R * 0.86, 0);
+    wx.rotate(Math.PI / 2);
+    wx.fillStyle = '#f2ead6';
+    wx.font = '700 ' + Math.round(k * 0.038) + 'px Trebuchet MS, Arial';
+    wx.textAlign = 'center'; wx.textBaseline = 'middle';
+    wx.fillText(label(n), 0, 0);
+    wx.restore();
+  }
+  // the cone in the middle
+  wx.beginPath(); wx.arc(0, 0, R * 0.52, 0, Math.PI * 2);
+  var g2 = wx.createRadialGradient(-R * 0.15, -R * 0.2, R * 0.05, 0, 0, R * 0.55);
+  g2.addColorStop(0, '#c9a86a'); g2.addColorStop(1, '#5d4420');
+  wx.fillStyle = g2; wx.fill();
+  wx.strokeStyle = '#3a2a12'; wx.lineWidth = 3; wx.stroke();
+  for (var s = 0; s < 8; s++) {                 // the deflectors
+    wx.save(); wx.rotate(s * Math.PI / 4);
+    wx.fillStyle = '#e2c98d';
+    wx.fillRect(R * 0.56, -3, R * 0.16, 6);
+    wx.restore();
+  }
+  wx.restore();
+
+  // and the ball, which runs the other way
+  var br = R * W.br;
+  var bx = Math.cos(W.ball) * br, by = Math.sin(W.ball) * br;
+  wx.beginPath(); wx.arc(bx, by, k * 0.022, 0, Math.PI * 2);
+  wx.fillStyle = '#f7f7f2'; wx.fill();
+  wx.strokeStyle = 'rgba(0,0,0,0.4)'; wx.lineWidth = 1.5; wx.stroke();
+
+  wx.setTransform(1, 0, 0, 1, 0, 0);
+}
+
+/* ---- a spin ------------------------------------------------------------- */
+function totalDown() {
+  var t = 0; for (var i = 0; i < S.bets.length; i++) t += S.bets[i].amt; return t;
+}
+
+function spin() {
+  if (S.spinning || !S.bets.length) return;
+  S.spinning = true;
+  S.last = S.bets.map(function (b) { return { key: b.key, nums: b.nums.slice(), pay: b.pay,
+                                              label: b.label, ax: b.ax, ay: b.ay, amt: b.amt }; });
+  setCall('no more bets');
+  sync();
+
+  /* THE NUMBER IS PICKED FIRST AND THE ANIMATION IS TOLD ABOUT IT. The other
+     way round — landing wherever the ball happens to stop — is a wheel whose
+     odds are whatever the easing function feels like today. */
+  var idx = Math.floor(Math.random() * N);
+  var n = ORDER[idx];
+  W.pocket = idx;
+  W.spinning = true;
+  W.t = 0;
+  W.dur = 260 + Math.floor(Math.random() * 40);
+  W.from = W.ball;
+  var step = Math.PI * 2 / N;
+  W.rotFrom = W.rot;
+  W.rotTo = W.rot + Math.PI * 2 * 2.2;
+  /* WHERE THE BALL HAS TO BE WHEN EVERYTHING STOPS. The pockets are drawn
+     rotated by the wheel, so pocket `idx` finishes at idx*step + the wheel's
+     final angle — and the ball has to arrive there going the other way round,
+     which is what the backwards loop is for. Solve this against the wheel's
+     angle at the START of the spin and the ball lands two pockets out. */
+  var target = idx * step + W.rotTo;
+  while (target > W.from - Math.PI * 2 * 5) target -= Math.PI * 2;
+  W.to = target;
+  W.result = n;
+  blip(300, 0.08, 'square', 0.04);
+}
+
+function settle(n) {
+  var won = 0, hit = [];
+  for (var i = 0; i < S.bets.length; i++) {
+    var b = S.bets[i];
+    if (b.nums.indexOf(n) >= 0) { won += b.amt * (b.pay + 1); hit.push(b.label); }
+  }
+  S.purse += won;
+  taught();               // you have done the whole loop; no more pointing
+  save();
+  S.bets = [];
+  S.result = n;
+  S.history.unshift(n);
+  if (S.history.length > 12) S.history.pop();
+
+  var el = document.getElementById('resultNum');
+  el.textContent = label(n);
+  el.style.background = (n === 0 || n === 37) ? '#0f6b3a' : (isRed(n) ? '#a41f26' : '#16181c');
+  document.getElementById('resultText').textContent =
+    (n === 0 || n === 37) ? 'the house number' :
+      (isRed(n) ? 'RED' : 'BLACK') + ' · ' + (n % 2 ? 'ODD' : 'EVEN') + ' · ' +
+      (n <= 18 ? '1-18' : '19-36');
+  document.getElementById('resultWin').textContent =
+    won ? '+' + won + '   (' + hit.slice(0, 3).join(', ') + (hit.length > 3 ? '…' : '') + ')' : '';
+  document.getElementById('resultWin').style.color = won ? '#ffd166' : '#7b8ea1';
+  if (won) { flash('+' + won); blip(660, 0.12, 'triangle', 0.06); setTimeout(function () { blip(990, 0.18, 'triangle', 0.05); }, 110); }
+  else { blip(160, 0.2, 'sawtooth', 0.03); }
+  setCall(won ? 'paid' : 'place your bets');
+  sync();
+}
+
+function flash(t) {
+  var el = document.getElementById('note');
+  el.textContent = t; el.style.opacity = '1';
+  setTimeout(function () { el.style.opacity = '0'; }, 900);
+}
+function setCall(t) { document.getElementById('callBox').textContent = t; }
+
+/* ---- the loop ----------------------------------------------------------- */
+function tick() {
+  if (W.spinning) {
+    W.t++;
+    var p = Math.min(1, W.t / W.dur);
+    var e = 1 - Math.pow(1 - p, 3);              // ease out, like a wheel slowing
+    W.rot = W.rotFrom + (W.rotTo - W.rotFrom) * e;
+    W.ball = W.from + (W.to - W.from) * e;
+    /* AND THE BALL COMES DOWN THE BOWL. It runs the rim for the first half and
+       then drops onto the numbers — a ball that is on the numbers the whole
+       time is a ball that never had to fall anywhere. */
+    W.br = p < 0.55 ? 1.06 : 1.06 - 0.29 * ((p - 0.55) / 0.45);
+    if (p >= 1) {
+      W.spinning = false; W.br = 0.77;
+      S.spinning = false;
+      settle(W.result);
+    } else if (W.t % 6 === 0 && p < 0.8) {
+      blip(1200 + Math.random() * 300, 0.012, 'square', 0.012);
+    }
+  }
+  drawWheel();
+  requestAnimationFrame(tick);
+}
+
+/* ---- putting a chip down ------------------------------------------------ */
+function place(hit) {
+  if (S.spinning || !hit) return;
+  if (S.purse < S.chip) { flash('NOT ENOUGH'); blip(120, 0.15, 'sawtooth', 0.04); return; }
+  var found = null;
+  for (var i = 0; i < S.bets.length; i++) if (S.bets[i].key === hit.key) found = S.bets[i];
+  if (found) found.amt += S.chip;
+  else S.bets.push({ key: hit.key, nums: hit.nums, pay: hit.pay, label: hit.label,
+                     ax: hit.ax, ay: hit.ay, amt: S.chip });
+  S.purse -= S.chip;
+  S.pickedChip = true;
+  save();
+  blip(520, 0.05, 'square', 0.035);
+  sync();
+}
+
+function undo() {
+  if (S.spinning || !S.bets.length) return;
+  var b = S.bets[S.bets.length - 1];
+  var back = Math.min(b.amt, S.chip);
+  b.amt -= back; S.purse += back;
+  if (b.amt <= 0) S.bets.pop();
+  save(); sync();
+}
+function clearBets() {
+  if (S.spinning) return;
+  S.purse += totalDown();
+  S.bets = [];
+  save(); sync();
+}
+function rebet() {
+  if (S.spinning || !S.last.length) return;
+  var need = 0, i;
+  for (i = 0; i < S.last.length; i++) need += S.last[i].amt;
+  if (need > S.purse) { flash('NOT ENOUGH'); return; }
+  clearBets();
+  S.bets = S.last.map(function (b) { return { key: b.key, nums: b.nums.slice(), pay: b.pay,
+                                              label: b.label, ax: b.ax, ay: b.ay, amt: b.amt }; });
+  S.purse -= need;
+  save(); sync();
+}
+
+/* ============================ THE THREE THINGS NOBODY IS BORN KNOWING =====
+   In order, one at a time, each pointing at the only thing there is to do next:
+
+       BET HOW MUCH?      the chips light up
+       PLACE YOUR CHIPS   the felt lights up
+       SPIN               the button pulses
+
+   The first two are a lesson and stop for good once you have been round the
+   loop; the pulse on SPIN is not a lesson, it is an affordance — there are
+   chips on the table and a wheel that has not been spun — so it stays for
+   ever. */
+function coach() {
+  var chipRow = document.getElementById('chipRow');
+  var feltWrap = document.getElementById('feltWrap');
+  var spinBtn = document.getElementById('spin');
+  var fh = document.getElementById('feltHint');
+  var bh = document.getElementById('barHint');
+
+  var step = 'none';
+  if (!S.spinning) {
+    if (S.bets.length) step = 'spin';
+    else if (!S.pickedChip && !S.taught) step = 'chip';
+    else if (!S.taught) step = 'place';
+  }
+
+  chipRow.classList.toggle('lit', step === 'chip');
+  feltWrap.classList.toggle('lit', step === 'place');
+  spinBtn.classList.toggle('pulse', step === 'spin');
+
+  var barWord = step === 'chip' ? 'BET HOW MUCH?'
+              : (step === 'spin' && !S.taught) ? 'NOW SPIN IT' : '';
+  bh.querySelector('span').textContent = barWord;
+  bh.classList.toggle('on', !!barWord);
+
+  var feltWord = step === 'place' ? 'PLACE YOUR CHIPS' : '';
+  fh.querySelector('span').textContent = feltWord;
+  fh.classList.toggle('on', !!feltWord);
+}
+
+function sync() {
+  /* AND THE HOUSE WILL ALWAYS FIND YOU A HUNDRED. A wheel you can be locked
+     out of by losing is a wheel with an ending, and no casino has ever wanted
+     one of those. */
+  if (S.purse <= 0 && !S.bets.length && !S.spinning) {
+    S.purse = 100; save();
+    flash('THE HOUSE STAKES YOU');
+    setCall('the house stakes you a hundred');
+  }
+  document.getElementById('purse').textContent = S.purse;
+  document.getElementById('down').textContent = totalDown();
+  document.getElementById('spin').disabled = S.spinning || !S.bets.length;
+  document.getElementById('undo').disabled = S.spinning || !S.bets.length;
+  document.getElementById('clear').disabled = S.spinning || !S.bets.length;
+  document.getElementById('rebet').disabled = S.spinning || !S.last.length;
+  var h = document.getElementById('history');
+  h.innerHTML = '';
+  for (var i = 0; i < S.history.length; i++) {
+    var n = S.history[i], d = document.createElement('div');
+    d.className = 'hchip';
+    d.textContent = label(n);
+    d.style.background = (n === 0 || n === 37) ? '#0f6b3a' : (isRed(n) ? '#a41f26' : '#16181c');
+    d.style.opacity = String(1 - i * 0.06);
+    h.appendChild(d);
+  }
+  drawFelt();
+  coach();
+}
+
+/* ---- wiring ------------------------------------------------------------- */
+function feltPoint(ev) {
+  var r = felt.getBoundingClientRect();
+  var t = (ev.touches && ev.touches[0]) || ev;
+  var F = feltFit();
+  var cx = (t.clientX - r.left) * (felt.width / r.width);
+  var cy = (t.clientY - r.top) * (felt.height / r.height);
+  return { x: (cx - F.ox) / F.k, y: (cy - F.oy) / F.k };
+}
+felt.addEventListener('click', function (ev) {
+  var p = feltPoint(ev);
+  place(feltHit(p.x, p.y));
+});
+felt.addEventListener('mousemove', function (ev) {
+  var p = feltPoint(ev);
+  felt.style.cursor = feltHit(p.x, p.y) ? 'pointer' : 'default';
+});
+
+var chips = document.querySelectorAll('.chip');
+for (var ci = 0; ci < chips.length; ci++) {
+  (function (el) {
+    el.addEventListener('click', function () {
+      S.chip = parseInt(el.getAttribute('data-v'), 10);
+      S.pickedChip = true;
+      for (var k = 0; k < chips.length; k++) chips[k].classList.remove('sel');
+      el.classList.add('sel');
+      blip(700, 0.04, 'square', 0.03);
+      coach();
+    });
+  })(chips[ci]);
+}
+document.querySelector('.chip[data-v="5"]').classList.add('sel');
+
+document.getElementById('spin').addEventListener('click', spin);
+document.getElementById('undo').addEventListener('click', undo);
+document.getElementById('clear').addEventListener('click', clearBets);
+document.getElementById('rebet').addEventListener('click', rebet);
+
+/* THE ONE MESSAGE THIS PAGE SENDS, and it sends nothing else. Same contract as
+   the other five games in this building. */
+function goBack(e) {
+  if (e) e.preventDefault();
+  try { parent.postMessage('backToCasino', '*'); } catch (err) {}
+}
+document.getElementById('back').addEventListener('click', goBack);
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') goBack();
+  if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); spin(); }
+});
+
+/* ---- fitting the room --------------------------------------------------- */
+function fit() {
+  var w = window.innerWidth, h = window.innerHeight;
+  var k = Math.min(w / 1180, h / 720);
+  var st = document.getElementById('stage');
+  st.style.transform = 'translate(-50%,-50%) scale(' + k + ')';
+  // the canvases are drawn at device resolution, not stretched to it
+  var dpr = Math.min(2, window.devicePixelRatio || 1);
+  var fw = felt.clientWidth, fh = felt.clientHeight;
+  felt.width = Math.round(fw * dpr); felt.height = Math.round(fh * dpr);
+  var ww = wheel.clientWidth, wh = wheel.clientHeight;
+  wheel.width = Math.round(ww * dpr); wheel.height = Math.round(wh * dpr);
+  drawFelt(); drawWheel();
+}
+window.addEventListener('resize', function () { setTimeout(fit, 60); });
+window.addEventListener('orientationchange', function () { setTimeout(fit, 300); });
+
+load();
+fit();
+sync();
+tick();
+
+/* the felt is 700x400 in its own units and the canvas is whatever it is on the
+   glass; everything above works in felt units and this is the only place that
+   knows the difference. */
+})();
+</script>
+</body>
+</html>

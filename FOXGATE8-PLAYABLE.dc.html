@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- s181: engine/mute-all.js removed (Ben: sound ON); the walk suspends its audio when the tab is hidden / closed -->
+<script src="./support.js"></script>
+<script src="./engine/touch-sim.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<script src="engine/mute.js?v=s722b"></script>   <!-- s728o muted again (Ben) -->
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none" data-screen-label="FOXGATE8 Playable">
+  <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+  <sc-if value="{{ bayOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;z-index:30" data-screen-label="Speedboat Bay in Meru"><dc-import name="Speedboat Bay" world="{{ bayW }}" on-exit="{{ bayExit }}" hint-size="100%,100%" style="position:absolute;inset:0"></dc-import></div></sc-if>
+  <sc-if value="{{ tankOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;z-index:30" data-screen-label="Tank Range in Meru"><dc-import name="Tank Range" world="{{ tankW }}" on-exit="{{ tankExit }}" hint-size="100%,100%" style="position:absolute;inset:0"></dc-import></div></sc-if>
+  <sc-if value="{{ skateOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;z-index:30" data-screen-label="Skate Park in Meru"><dc-import name="Skate Park" world="{{ skateW }}" on-exit="{{ skateExit }}" hint-size="100%,100%" style="position:absolute;inset:0"></dc-import></div></sc-if>
+  <sc-if value="{{ pearlOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;z-index:30" data-screen-label="Pearl Dive in Meru"><dc-import name="Meru Pearl Dive" world="{{ pearlW }}" on-exit="{{ pearlExit }}" hint-size="100%,100%" style="position:absolute;inset:0"></dc-import></div></sc-if>
+  <sc-if value="{{ tankLoadOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:31;background:#000;border:2px solid #ffd23a;padding:10px 14px;font:900 13px var(--font-heading);letter-spacing:0.1em;color:#ffd23a">{{ loadTxt }}</div></sc-if>
+  <sc-if value="{{ walkUiOn }}" hint-placeholder-val="{{ false }}">
+  <div data-hud-host="1" style="position:absolute;inset:0;pointer-events:none;z-index:4"><dc-import name="Game HUD" game="{{ walker }}" hud="{{ stdHud }}" started="{{ true }}" busy="{{ hireOpen }}" on-hud="{{ onHud }}" world="Meru" vehicle="{{ vehKey }}" keys="{{ keysList }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none" keep="{{ hudKeep }}"></dc-import></div>
+  <div style="position:absolute;left:50%;bottom:{{ navBot }};transform:translateX(-50%);z-index:6;pointer-events:none;display:flex;flex-direction:column;align-items:stretch;gap:0;width:max-content;max-width:{{ navMax }}">
+  <sc-if value="{{ navOn }}" hint-placeholder-val="{{ false }}">
+    <div style="background:#000;border:2px solid {{ navCol }};display:flex;align-items:center;gap:12px;padding:8px 14px 8px 10px;min-width:220px">
+      <div style="width:52px;height:52px;flex:none;display:flex;align-items:center;justify-content:center;background:{{ navCol }}"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3" stroke-linecap="square" style="transform:rotate({{ navRot }})"><path d="M12 20V5"></path><path d="M5 11l7-7 7 7"></path></svg></div>
+      <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:900 30px var(--font-heading);line-height:1;color:#fff;font-variant-numeric:tabular-nums">{{ navDist }}</span><span style="font:800 12px var(--font-heading);letter-spacing:0.08em;color:{{ navCol }};text-wrap:pretty">{{ navText }}</span><sc-if value="{{ navMissOn }}" hint-placeholder-val="{{ false }}"><span style="font:700 11px var(--font-body);color:#ff6b5a">{{ navMiss }}</span></sc-if></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ duetOn }}" hint-placeholder-val="{{ false }}">
+    <div style="margin-top:-2px;background:#f3f2f2;color:#201e1d;border:2px solid #000;padding:8px 12px;display:flex;flex-direction:column;gap:3px;max-width:{{ navMax }}"><span style="font:900 11px var(--font-heading);letter-spacing:0.1em;color:{{ duetCol }}">{{ duetWho }}</span><span style="font:800 15px/1.25 var(--font-body);text-wrap:pretty">{{ duetText }}</span></div>
+  </sc-if>
+  </div>
+  <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:{{ chipTop }};display:flex;flex-direction:column;gap:0;pointer-events:none;z-index:5;max-width:{{ chipMax }}">
+    <sc-if value="{{ voiceOn }}" hint-placeholder-val="{{ false }}"><div style="margin-top:-2px;background:#ec3013;border:2px solid #000;padding:5px 10px;font:900 12px var(--font-heading);letter-spacing:0.06em">VOICE · {{ voiceTxt }}</div></sc-if>
+    <sc-if value="{{ toastOn }}" hint-placeholder-val="{{ false }}"><div style="margin-top:-2px;background:#ffd23a;color:#000;border:2px solid #000;padding:5px 10px;font:900 12px var(--font-heading);letter-spacing:0.06em">{{ w.toast }}</div></sc-if>
+    <sc-if value="{{ jailOn }}" hint-placeholder-val="{{ false }}"><div style="margin-top:-2px;background:#ec3013;color:#fff;border:2px solid #000;padding:6px 10px;display:flex;flex-direction:column;gap:6px;pointer-events:auto"><span style="font:900 13px var(--font-heading);letter-spacing:0.06em">{{ jailTxt }}</span><span style="font:700 11px var(--font-body)">{{ jailSub }}</span><sc-if value="{{ bailOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ bailGo }}" style="align-self:flex-start;min-height:44px;padding:0 14px;border:2px solid #000;border-radius:0;background:#fff;color:#000;font:900 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left" style-hover="background:#ffd23a">{{ bailTxt }}</button></sc-if></div></sc-if>
+    <sc-if value="{{ trainOn }}" hint-placeholder-val="{{ false }}"><div style="margin-top:-2px;background:#201e1d;color:#fff;border:2px solid #ec3013;padding:5px 10px;font:900 11px var(--font-heading);letter-spacing:0.06em;text-wrap:pretty">{{ w.train }}</div></sc-if>
+  </div>
+  <sc-if value="{{ netOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:{{ netTop }};z-index:5;display:flex;flex-direction:column;width:{{ netW }};pointer-events:none">
+      <div style="display:flex;align-items:stretch;background:#000;border:2px solid #3a3836"><span style="flex:none;width:8px;background:{{ netCol }};display:block"></span><div style="flex:1;min-width:0;padding:4px 8px;display:flex;flex-direction:column"><span style="font:800 9px var(--font-heading);letter-spacing:0.12em;color:#cfcac4;white-space:nowrap">{{ netKick }}</span><span style="font:900 13px var(--font-heading);color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ netTxt }}</span></div><button onClick="{{ netInvite }}" style="pointer-events:auto;flex:none;min-height:44px;padding:0 10px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#ffd23a;color:#000;font:900 11px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">INVITE</button></div>
+      <sc-for list="{{ netPeers }}" as="p" hint-placeholder-count="0"><div style="display:flex;align-items:center;gap:6px;background:rgba(0,0,0,0.85);border:2px solid #3a3836;border-top:0;padding:3px 8px"><span style="flex:none;width:9px;height:9px;background:{{ p.col }};display:block"></span><span style="font:900 11px var(--font-heading);color:#fff;white-space:nowrap">{{ p.name }}</span><span style="margin-left:auto;font:800 10px var(--font-heading);letter-spacing:0.06em;color:#cfcac4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.what }}</span></div></sc-for>
+    </div>
+  </sc-if>
+  <sc-if value="{{ invOn }}" hint-placeholder-val="{{ false }}">
+    <div data-cab-modal="1" style="position:absolute;inset:0;z-index:45;background:rgba(0,0,0,0.78);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto;pointer-events:auto">
+      <div style="width:min(420px,100%);background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column;color:#fff">
+        <div style="padding:12px 16px;display:flex;flex-direction:column;gap:3px;border-bottom:2px solid #3a3836"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ invKick }}</span><span style="font:900 24px var(--font-heading);line-height:1.05">Invite friends</span><span style="font:600 13px/1.4 var(--font-body);color:#cfcac4;text-wrap:pretty">{{ invNote }}</span></div>
+        <div style="display:flex;gap:12px;padding:12px 16px;align-items:flex-start;border-bottom:2px solid #3a3836">
+          <div role="img" aria-label="QR code to join" style="flex:none;width:132px;height:132px;background-color:#fff;background-size:contain;background-repeat:no-repeat;background-position:center;border:2px solid #fff;background-image:{{ invQrBg }}"></div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">SCAN OR SEND THIS LINK</span><input readonly value="{{ invUrl }}" onFocus="{{ invSel }}" style="width:100%;box-sizing:border-box;min-height:40px;padding:6px 8px;border:2px solid #3a3836;border-radius:0;background:#141312;color:#fff;font:700 12px var(--font-body)"><span style="font:800 12px var(--font-heading);letter-spacing:0.08em;color:{{ invMsgCol }}">{{ invMsg }}</span></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+          <button onClick="{{ invCopy }}" style="min-height:52px;padding:0 14px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ffd23a;color:#000;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">COPY LINK</button>
+          <button onClick="{{ invShare }}" style="min-height:52px;padding:0 14px;border:0;border-radius:0;background:#2a2826;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">SHARE…</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:2px solid #3a3836">
+          <button onClick="{{ invPrivate }}" style="min-height:48px;padding:0 14px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">{{ invPrivTxt }}</button>
+          <button onClick="{{ invClose }}" style="min-height:48px;padding:0 14px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">CLOSE</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ pickOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:0;right:0;bottom:calc(16px + env(safe-area-inset-bottom));z-index:46;display:flex;justify-content:flex-start;padding:0 max(12px, env(safe-area-inset-left));pointer-events:none">
+      <div style="width:min(440px,100%);background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column;color:#fff;pointer-events:auto">
+        <div style="padding:12px 16px;display:flex;flex-direction:column;gap:3px;border-bottom:2px solid #3a3836"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ pickLabel }}</span><span style="font:900 22px var(--font-heading);line-height:1.05">How do you want to play?</span><span style="font:600 13px/1.4 var(--font-body);color:#cfcac4">PARTY PLAY sends an invite to the other foxes in Meru. You start in 10 s, with whoever accepts.</span></div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))"><button onClick="{{ pickSolo }}" style="pointer-events:auto;min-height:56px;padding:0 16px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#2a2826;color:#fff;font:900 15px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">1 PLAYER</button><button onClick="{{ pickParty }}" style="pointer-events:auto;min-height:56px;padding:0 16px;border:0;border-radius:0;background:#ffd23a;color:#000;font:900 15px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">PARTY PLAY</button></div><button onClick="{{ pickClose }}" style="min-height:44px;padding:0 16px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#cfcac4;font:800 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">NOT NOW</button>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ partyOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:0;right:0;bottom:calc(16px + env(safe-area-inset-bottom));z-index:46;display:flex;justify-content:flex-start;padding:0 max(12px, env(safe-area-inset-left));pointer-events:none">
+      <div style="width:min(440px,100%);background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column;color:#fff;pointer-events:auto">
+        <div style="padding:12px 16px;display:flex;flex-direction:column;gap:3px;border-bottom:2px solid #3a3836"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">PARTY PLAY · {{ partyLabel }}</span><span style="font:900 22px var(--font-heading);line-height:1.05">Waiting for friends · {{ partyLeft }} s</span><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px"><sc-for list="{{ partySeats }}" as="s" hint-placeholder-count="2"><span style="display:flex;align-items:center;gap:6px;border:2px solid {{ s.col }};padding:3px 8px;font:900 12px var(--font-heading);color:{{ s.fg }}"><span style="width:9px;height:9px;background:{{ s.col }};display:block"></span>{{ s.name }}</span></sc-for></div></div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))"><button onClick="{{ partyGo }}" style="pointer-events:auto;min-height:56px;padding:0 16px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ffd23a;color:#000;font:900 15px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">START NOW</button><button onClick="{{ partyStop }}" style="pointer-events:auto;min-height:56px;padding:0 16px;border:0;border-radius:0;background:#2a2826;color:#fff;font:900 15px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">CANCEL</button></div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ invOn2 }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:0;right:0;bottom:calc(16px + env(safe-area-inset-bottom));z-index:46;display:flex;justify-content:flex-start;padding:0 max(12px, env(safe-area-inset-left));pointer-events:none">
+      <div style="width:min(440px,100%);background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column;color:#fff;pointer-events:auto">
+        <div style="padding:12px 16px;display:flex;flex-direction:column;gap:3px;border-bottom:2px solid #3a3836"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">PARTY PLAY · INVITE</span><span style="font:900 22px var(--font-heading);line-height:1.05">{{ invFrom }} wants to play {{ invLabel }}</span><span style="font:700 13px/1.4 var(--font-body);color:{{ invStateCol }}">{{ invStateTxt }}</span></div>
+        <sc-if value="{{ invAsk }}" hint-placeholder-val="{{ false }}"><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))"><button onClick="{{ invYes }}" style="pointer-events:auto;min-height:56px;padding:0 16px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ffd23a;color:#000;font:900 15px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">ACCEPT · {{ invLeft }} S</button><button onClick="{{ invNo }}" style="pointer-events:auto;min-height:56px;padding:0 16px;border:0;border-radius:0;background:#2a2826;color:#fff;font:900 15px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">DECLINE</button></div></sc-if>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ hireOn }}" hint-placeholder-val="{{ false }}">
+    <button onClick="{{ hireGo }}" style="position:absolute;left:50%;bottom:{{ hireBottom }};transform:translateX(-50%);z-index:6;min-height:56px;padding:6px 18px;border:2px solid #000;border-radius:0;background:#16a34a;color:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:2px;pointer-events:auto" style-hover="background:#15803d"><span style="font:900 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ hireKicker }} · {{ hireLabel }}</span><span style="font:900 18px var(--font-heading);letter-spacing:0.06em">{{ hirePlayTxt }}</span><sc-if value="{{ hireFriendOn }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:6px;font:800 11px var(--font-heading);letter-spacing:0.08em;color:#fff"><span style="width:10px;height:10px;background:{{ hireFriendCol }};display:block"></span>{{ hireFriendTxt }}</span></sc-if></button>
+  </sc-if>
+  <sc-if value="{{ rideOn }}" hint-placeholder-val="{{ false }}">
+    <button onClick="{{ rideStop }}" style="position:absolute;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom));z-index:7;min-height:48px;padding:4px 18px;border:2px solid #38bdf8;border-radius:0;background:#000;color:#38bdf8;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:1px" style-hover="background:#1c1a19"><span style="font:900 14px var(--font-heading);letter-spacing:0.08em">TRAIN RIDE · DEMO</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;color:#f3f2f2">TAP TO STOP AND TAKE OVER</span></button>
+  </sc-if>
+  <div style="position:absolute;right:max(12px, env(safe-area-inset-right));top:{{ chipTop }};z-index:6;display:flex;flex-direction:{{ rbDir }};gap:6px;pointer-events:none">
+  <sc-if value="{{ taxiOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ taxiGo }}" style="width:{{ rbW }};min-height:44px;padding:0 10px;border:2px solid #000;border-radius:0;background:#ffd23a;color:#000;font:900 11px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;pointer-events:auto;white-space:nowrap" style-hover="background:#f2c200">TAXI</button></sc-if>
+  </div>
+  </sc-if>
+  <sc-if value="{{ hireOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:20;background:#000;display:flex;flex-direction:column;overflow:hidden;opacity:{{ hireOp }};transition:opacity 0.35s">
+      <div style="flex:none;display:flex;align-items:stretch;border-bottom:2px solid #ffd23a"><span style="flex:1;padding:10px 14px;font:900 14px var(--font-heading);letter-spacing:0.08em">{{ hireLabel }}{{ hireSuffix }}</span><button onClick="{{ hireClose }}" style="min-width:120px;min-height:44px;border:0;border-left:2px solid #ffd23a;border-radius:0;background:#ec3013;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;padding:0 14px" style-hover="background:#c82a10">BACK TO MERU</button></div>
+      <iframe ref="{{ hireFrame }}" src="{{ hireUrl }}" title="Job minigame" style="flex:1;width:100%;border:0;background:#000"></iframe>
+      <sc-if value="{{ ldCabOn }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;z-index:3;background:{{ cabBg }};color:#f3f2f2;overflow:auto;box-sizing:border-box;padding:max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));display:flex;flex-direction:column;justify-content:center">
+          <div style="width:100%;max-width:1100px;display:grid;grid-template-columns:repeat(auto-fit, minmax(min(100%, 340px), 1fr));border:2px solid #f3f2f2;background:#201e1d">
+            <div style="padding:14px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:10px;min-width:0">
+              <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span style="font:800 11px var(--font-heading);letter-spacing:0.16em;color:{{ cabAcc }}">ARCADE · MERU LANES</span><span style="font:900 11px var(--font-heading);letter-spacing:0.12em;background:{{ cabAcc }};color:#201e1d;padding:3px 8px">{{ cabShotLbl }}</span></div>
+              <div style="position:relative;width:100%;aspect-ratio:4 / 3;background:#000;border:4px solid {{ cabAcc }};box-sizing:border-box;overflow:hidden">
+                <canvas ref="{{ shotCv }}" aria-label="{{ cabName }} demo" style="position:absolute;inset:0;width:100%;height:100%;display:block;background:#000"></canvas>
+                <div style="position:absolute;inset:0;background:repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,0) 3px, rgba(0,0,0,0.16) 3px, rgba(0,0,0,0.16) 4px);pointer-events:none"></div>
+              </div>
+            </div>
+            <div style="padding:14px 16px;display:flex;flex-direction:column;gap:12px;min-width:0;border-left:2px solid #f3f2f2;margin-left:-2px">
+              <span style="font:900 clamp(34px, 6vw, 64px) var(--font-heading);line-height:0.9;letter-spacing:-0.02em;text-wrap:pretty">{{ cabName }}</span>
+              <span style="font:700 15px var(--font-body);color:#cfcac4;text-wrap:pretty">{{ cabLine }}</span>
+              <div style="display:flex;flex-direction:column;border-top:2px solid #f3f2f2">
+                <span style="font:800 11px var(--font-heading);letter-spacing:0.16em;color:{{ cabAcc }};padding:8px 0 4px">HOW TO PLAY</span>
+                <sc-for list="{{ cabTips }}" as="q" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:40px minmax(0,1fr);align-items:center;gap:10px;padding:7px 0;border-bottom:2px solid #3a3836"><span style="font:900 18px var(--font-heading);background:{{ cabAcc }};color:#201e1d;padding:4px 0 4px 8px">{{ q.n }}</span><span style="font:800 14px var(--font-heading);letter-spacing:0.02em;text-wrap:pretty">{{ q.t }}</span></div></sc-for>
+              </div>
+              <button onClick="{{ cabGo }}" aria-label="{{ cabGoAria }}" style="position:relative;width:100%;min-height:68px;padding:0 18px;border:2px solid #f3f2f2;border-radius:0;background:linear-gradient(to right, #ec3013 0%, #ec3013 {{ ldW }}, #5c1a0e {{ ldW }}, #5c1a0e 100%);color:#ffffff;cursor:{{ cabGoCur }};text-align:left;display:flex;align-items:center;justify-content:space-between;gap:12px" style-hover="filter:brightness(1.08)" style-active="filter:brightness(0.92)"><span style="font:900 clamp(20px, 3.4vw, 28px) var(--font-heading);letter-spacing:0.06em">{{ cabGoTxt }}</span><span style="font:900 14px var(--font-heading);letter-spacing:0.08em">{{ cabGoSub }}</span></button>
+              <button onClick="{{ hireClose }}" style="align-self:flex-start;min-height:44px;padding:0 16px;border:2px solid #f3f2f2;border-radius:0;background:transparent;color:#f3f2f2;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#3d3b3a">BACK TO THE CABINET</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ ldOn }}" hint-placeholder-val="{{ true }}">
+        <div style="position:absolute;inset:0;z-index:2;background:#201e1d;color:#f3f2f2;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;gap:12px;padding:max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) calc(36px + env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));box-sizing:border-box">
+          <span style="font:800 12px var(--font-heading);letter-spacing:0.16em;color:#ffd23a">{{ ldKick }}</span>
+          <span style="font:900 clamp(34px, 7vw, 76px) var(--font-heading);line-height:0.92;letter-spacing:-0.02em;max-width:100%;text-wrap:pretty">{{ hireLabel }}</span>
+          <div style="width:min(520px, 100%);height:16px;border:2px solid #f3f2f2;background:#000;box-sizing:border-box"><div style="height:100%;width:{{ ldW }};background:#ec3013"></div></div>
+          <div style="display:flex;gap:16px;align-items:baseline;width:min(520px, 100%);justify-content:space-between"><span style="font:900 13px var(--font-heading);letter-spacing:0.08em">{{ ldPct }}</span><span style="font:700 13px var(--font-body);color:#cfcac4">{{ ldTip }}</span></div>
+          <button onClick="{{ hireClose }}" style="min-height:48px;padding:0 18px;border:2px solid #f3f2f2;border-radius:0;background:transparent;color:#f3f2f2;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#3d3b3a">BACK TO MERU</button>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{ crOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none;font-family:var(--font-heading);color:#f3f2f2">
+      <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:max(12px, env(safe-area-inset-top));width:min(360px, calc(100% - 140px));display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;flex-direction:column;background:#201e1d;border:2px solid #f3f2f2">
+          <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+            <span style="width:8px;background:#22a35a;display:block;flex:none"></span>
+            <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a">GOLD</span><span style="font:900 24px var(--font-heading);line-height:1">{{ crGold }}</span></div>
+            <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#cfcac4">ON THE TABLE</span><span style="font:900 24px var(--font-heading);line-height:1">{{ crDown }}</span></div>
+            <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#cfcac4">POINT</span><span style="font:900 24px var(--font-heading);line-height:1;color:{{ crPointCol }}">{{ crPoint }}</span></div>
+          </div>
+          <div style="display:flex;gap:4px;flex-wrap:wrap;padding:6px 12px 0"><sc-for list="{{ crHist }}" as="hr" hint-placeholder-count="0"><span style="min-width:22px;padding:1px 4px;background:{{ hr.bg }};color:{{ hr.fg }};font:900 12px var(--font-heading)">{{ hr.n }}</span></sc-for></div>
+          <span style="padding:7px 12px;font:800 11px var(--font-heading);letter-spacing:0.06em;color:#cfcac4;text-wrap:pretty">{{ crHint }}</span>
+        </div>
+        <sc-if value="{{ crMsgOn }}" hint-placeholder-val="{{ false }}"><div style="align-self:flex-start;background:#201e1d;border:2px solid {{ crMsgCol }};padding:8px 14px;display:flex;flex-direction:column;gap:2px;max-width:100%;box-sizing:border-box"><span style="font:900 clamp(22px, 5vw, 34px) var(--font-heading);line-height:1;color:{{ crMsgCol }}">{{ crMsg }}</span><span style="font:800 12px var(--font-heading);letter-spacing:0.06em;text-wrap:pretty">{{ crMsgSub }}</span></div></sc-if>
+      </div>
+      <button onClick="{{ crLeave }}" style="position:absolute;right:max(12px, env(safe-area-inset-right));top:max(12px, env(safe-area-inset-top));pointer-events:auto;min-width:104px;min-height:52px;padding:0 16px;background:#ec3013;border:2px solid #201e1d;border-radius:0;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10" style-active="background:#a82410">BACK</button>
+      <div style="position:absolute;left:max(8px, env(safe-area-inset-left));right:max(8px, env(safe-area-inset-right));bottom:calc(10px + env(safe-area-inset-bottom));display:flex;flex-wrap:wrap;gap:8px;pointer-events:auto;max-width:640px">
+        <div style="display:flex;flex:1 1 230px;background:#201e1d;border:2px solid #f3f2f2">
+          <span style="padding:0 10px;display:flex;align-items:center;font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;border-right:2px solid #3a3836">CHIP</span>
+          <sc-for list="{{ crChips }}" as="ch" hint-placeholder-count="4"><button onClick="{{ ch.go }}" style="flex:1;min-height:52px;border:0;border-right:2px solid #3a3836;border-radius:0;background:{{ ch.bg }};color:{{ ch.fg }};font:900 18px var(--font-heading);cursor:pointer;text-align:left;padding:0 10px">{{ ch.v }}</button></sc-for>
+        </div>
+        <div style="display:flex;flex:1 1 260px;background:#201e1d;border:2px solid #f3f2f2;position:relative">
+          <sc-if value="{{ crNeedBet }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:-2px;bottom:calc(100% + 2px);background:#ec3013;color:#fff;border:2px solid #201e1d;padding:4px 10px;font:900 13px var(--font-heading);letter-spacing:0.08em;white-space:nowrap">CHOOSE ONE \u2193</span></sc-if>
+          <sc-for list="{{ crQuick }}" as="qb" hint-placeholder-count="4"><button onClick="{{ qb.go }}" style="flex:1;min-height:52px;border:0;border-right:2px solid #3a3836;border-radius:0;background:{{ qb.bg }};color:#fff;font:900 12px var(--font-heading);letter-spacing:0.03em;cursor:pointer;text-align:left;padding:0 8px">{{ qb.t }}</button></sc-for>
+        </div>
+        <div style="display:flex;flex:2 1 300px;gap:8px">
+          <button onClick="{{ crClear }}" style="flex:1;background:#000;border:2px solid #f3f2f2;border-radius:0;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;padding:0 12px;min-height:56px">TAKE DOWN</button>
+          <button onClick="{{ crRoll }}" style="flex:2;background:{{ crRollBg }};border:2px solid #f3f2f2;border-radius:0;color:#fff;font:900 20px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;padding:0 14px;min-height:56px">{{ crRollTxt }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ rlOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none;font-family:var(--font-heading);color:#f3f2f2">
+      <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:max(12px, env(safe-area-inset-top));width:min(360px, calc(100% - 140px));display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;flex-direction:column;background:#201e1d;border:2px solid #f3f2f2">
+          <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+            <span style="width:8px;background:#22a35a;display:block;flex:none"></span>
+            <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a">GOLD</span><span style="font:900 24px var(--font-heading);line-height:1">{{ rlGold }}</span></div>
+            <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#cfcac4">ON THE TABLE</span><span style="font:900 24px var(--font-heading);line-height:1">{{ rlDown }}</span></div>
+            <div style="padding:6px 10px;display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#cfcac4">LAST</span><div style="display:flex;gap:3px;flex-wrap:wrap"><sc-for list="{{ rlHist }}" as="hn" hint-placeholder-count="0"><span style="min-width:22px;padding:1px 3px;background:{{ hn.bg }};font:900 12px var(--font-heading);color:#fff">{{ hn.n }}</span></sc-for></div></div>
+          </div>
+          <span style="padding:7px 12px;font:800 11px var(--font-heading);letter-spacing:0.06em;color:#cfcac4;text-wrap:pretty">{{ rlHint }}</span>
+        </div>
+        <sc-if value="{{ rlMsgOn }}" hint-placeholder-val="{{ false }}"><div style="align-self:flex-start;background:#201e1d;border:2px solid {{ rlMsgCol }};padding:8px 14px;display:flex;flex-direction:column;gap:2px;max-width:100%;box-sizing:border-box"><span style="font:900 clamp(22px, 5vw, 34px) var(--font-heading);line-height:1;color:{{ rlMsgCol }}">{{ rlMsg }}</span><span style="font:800 12px var(--font-heading);letter-spacing:0.06em">{{ rlMsgSub }}</span></div></sc-if>
+      </div>
+      <button onClick="{{ rlLeave }}" style="position:absolute;right:max(12px, env(safe-area-inset-right));top:max(12px, env(safe-area-inset-top));pointer-events:auto;min-width:104px;min-height:52px;padding:0 16px;background:#ec3013;border:2px solid #201e1d;border-radius:0;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10" style-active="background:#a82410">BACK</button>
+      <div style="position:absolute;left:max(8px, env(safe-area-inset-left));right:max(8px, env(safe-area-inset-right));bottom:calc(10px + env(safe-area-inset-bottom));display:flex;flex-wrap:wrap;gap:8px;pointer-events:auto;max-width:640px">
+        <div style="display:flex;flex:1 1 230px;background:#201e1d;border:2px solid #f3f2f2">
+          <span style="padding:0 10px;display:flex;align-items:center;font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;border-right:2px solid #3a3836">CHIP</span>
+          <sc-for list="{{ rlChips }}" as="ch" hint-placeholder-count="4"><button onClick="{{ ch.go }}" style="flex:1;min-height:52px;border:0;border-right:2px solid #3a3836;border-radius:0;background:{{ ch.bg }};color:{{ ch.fg }};font:900 18px var(--font-heading);cursor:pointer;text-align:left;padding:0 10px">{{ ch.v }}</button></sc-for>
+        </div>
+        <div style="display:flex;flex:1 1 230px;background:#201e1d;border:2px solid #f3f2f2">
+          <sc-for list="{{ rlQuick }}" as="qb" hint-placeholder-count="4"><button onClick="{{ qb.go }}" style="flex:1;min-height:52px;border:0;border-right:2px solid #3a3836;border-radius:0;background:{{ qb.bg }};color:#fff;font:900 13px var(--font-heading);letter-spacing:0.04em;cursor:pointer;text-align:left;padding:0 8px">{{ qb.t }}</button></sc-for>
+        </div>
+        <div style="display:flex;flex:2 1 320px;gap:8px">
+          <button onClick="{{ rlClear }}" style="flex:1;background:#000;border:2px solid #f3f2f2;border-radius:0;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;padding:0 12px;min-height:56px">CLEAR</button>
+          <button onClick="{{ rlRebet }}" style="flex:1;background:{{ rlRebetBg }};border:2px solid #f3f2f2;border-radius:0;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;padding:0 12px;min-height:56px">REBET</button>
+          <button onClick="{{ rlSpin }}" style="flex:2;background:{{ rlSpinBg }};border:2px solid #f3f2f2;border-radius:0;color:#fff;font:900 20px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;padding:0 14px;min-height:56px">{{ rlSpinTxt }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ cocoOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none"><dc-import name="Carnival Coconut Shy" world="{{ walker }}" hint-size="100%,100%" style="position:absolute;inset:0"></dc-import></div>
+  </sc-if>
+  <sc-if value="{{ moleOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none"><dc-import name="Whack-a-Mole" world="{{ walker }}" hint-size="100%,100%" style="position:absolute;inset:0"></dc-import></div>
+  </sc-if>
+  <sc-if value="{{ shutOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none"><dc-import name="Shut the Box" world="{{ walker }}" hint-size="100%,100%" style="position:absolute;inset:0"></dc-import></div>
+  </sc-if>
+  <sc-if value="{{ liarsOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none"><dc-import name="Liars Dice" world="{{ walker }}" hint-size="100%,100%" style="position:absolute;inset:0"></dc-import></div>
+  </sc-if>
+  <sc-if value="{{ domOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none"><dc-import name="Dominoes Club" world="{{ walker }}" hint-size="100%,100%" style="position:absolute;inset:0"></dc-import></div>
+  </sc-if>
+  <sc-if value="{{ capOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none"><dc-import name="Capsule Corner" world="{{ walker }}" hint-size="100%,100%" style="position:absolute;inset:0"></dc-import></div>
+  </sc-if>
+  <sc-if value="{{ tetherOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none"><dc-import name="Tetherball Hall" world="{{ walker }}" hint-size="100%,100%" style="position:absolute;inset:0"></dc-import></div>
+  </sc-if>
+  <sc-if value="{{ pachiOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none"><dc-import name="Fox Gate Pachinko" world="{{ walker }}" hint-size="100%,100%" style="position:absolute;inset:0"></dc-import></div>
+  </sc-if>
+  <sc-if value="{{ balloonOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none"><dc-import name="Carnival Balloon Pop" world="{{ walker }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  </sc-if>
+  <sc-if value="{{ galleryOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none"><dc-import name="Shooting Gallery" world="{{ walker }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  </sc-if>
+  <sc-if value="{{ tugOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none"><dc-import name="Tug of War" world="{{ walker }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  </sc-if>
+  <sc-if value="{{ dunkOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none"><dc-import name="Meru Dunk Tank" world="{{ walker }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  </sc-if>
+  <sc-if value="{{ chessOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none"><dc-import name="Chess Club" world="{{ walker }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  </sc-if>
+  <sc-if value="{{ checkersOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none"><dc-import name="Checkers Club" world="{{ walker }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  </sc-if>
+  <sc-if value="{{ burgOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none"><dc-import name="Meru Burgers" world="{{ walker }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  </sc-if>
+  <sc-if value="{{ pkOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none;font-family:var(--font-heading);color:#f3f2f2">
+      <sc-for list="{{ pkSeats }}" as="se" hint-placeholder-count="0"><div style="position:absolute;left:{{ se.x }};top:{{ se.y }};transform:translate(-50%, -100%);background:#201e1d;border:2px solid {{ se.bd }};padding:3px 8px;display:flex;flex-direction:column;gap:0;white-space:nowrap"><span style="font:900 12px var(--font-heading);letter-spacing:0.06em;color:{{ se.col }}">{{ se.name }}</span><span style="font:800 11px var(--font-heading);color:#cfcac4">{{ se.chips }}</span></div></sc-for>
+      <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:max(12px, env(safe-area-inset-top));width:min(360px, calc(100% - 140px));display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;flex-direction:column;background:#201e1d;border:2px solid #f3f2f2">
+          <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+            <span style="width:8px;background:#ec3013;display:block;flex:none"></span>
+            <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a">POT</span><span style="font:900 24px var(--font-heading);line-height:1">{{ pkPot }}</span></div>
+            <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#cfcac4">CHIPS</span><span style="font:900 24px var(--font-heading);line-height:1">{{ pkChips }}</span></div>
+            <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#cfcac4">{{ pkGame }}</span><span style="font:900 16px var(--font-heading);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ pkStreet }}</span></div>
+          </div>
+          <span style="padding:7px 12px 2px;font:900 14px var(--font-heading);letter-spacing:0.04em">{{ pkHand }}</span>
+          <span style="padding:2px 12px 7px;font:800 11px var(--font-heading);letter-spacing:0.06em;color:#cfcac4;text-wrap:pretty">{{ pkPrompt }}</span>
+        </div>
+        <sc-if value="{{ pkSayOn }}" hint-placeholder-val="{{ false }}"><div style="align-self:flex-start;background:#f3f2f2;color:#201e1d;border:2px solid #201e1d;padding:6px 12px;font:800 13px var(--font-heading);letter-spacing:0.04em;max-width:100%;box-sizing:border-box;text-wrap:pretty">{{ pkSay }}</div></sc-if>
+      </div>
+      <button onClick="{{ pkLeave }}" style="position:absolute;right:max(12px, env(safe-area-inset-right));top:max(12px, env(safe-area-inset-top));pointer-events:auto;min-width:104px;min-height:52px;padding:0 16px;background:#ec3013;border:2px solid #201e1d;border-radius:0;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10" style-active="background:#a82410">BACK</button>
+      <div style="position:absolute;left:max(8px, env(safe-area-inset-left));right:max(8px, env(safe-area-inset-right));bottom:calc(10px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px;pointer-events:auto;max-width:560px">
+        <sc-if value="{{ pkActOn }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));border:2px solid #f3f2f2;background:#201e1d">
+            <button onClick="{{ pkFold }}" style="background:{{ pkFoldBg }};border:0;border-right:2px solid #3a3836;border-radius:0;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;padding:0 12px;min-height:64px">FOLD</button>
+            <button onClick="{{ pkCall }}" style="background:#000;border:0;border-right:2px solid #3a3836;border-radius:0;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;padding:0 12px;min-height:64px">{{ pkCallTxt }}</button>
+            <button onClick="{{ pkRaise }}" style="background:{{ pkRaiseBg }};border:0;border-radius:0;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;padding:0 12px;min-height:64px">{{ pkRaiseTxt }}</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ pkResOn }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;background:#201e1d;border:2px solid #f3f2f2">
+            <div style="padding:10px 14px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:3px"><span style="font:900 28px var(--font-heading);line-height:1.05;color:{{ pkResCol }}">{{ pkResTitle }}</span><span style="font:800 13px var(--font-heading);letter-spacing:0.04em;color:#cfcac4;text-wrap:pretty">{{ pkResSub }}</span></div>
+            <sc-for list="{{ pkResLines }}" as="rl" hint-placeholder-count="0"><div style="display:flex;gap:10px;padding:6px 14px;border-bottom:2px solid #3a3836"><span style="font:900 13px var(--font-heading);width:72px;flex:none;color:{{ rl.col }}">{{ rl.name }}</span><span style="font:800 13px var(--font-heading);color:#cfcac4;min-width:0">{{ rl.txt }}</span></div></sc-for>
+            <button onClick="{{ pkNext }}" style="background:#ec3013;border:0;border-radius:0;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;padding:0 14px;min-height:60px">{{ pkNextTxt }}</button>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ whOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none;font-family:var(--font-heading);color:#f3f2f2">
+      <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:max(12px, env(safe-area-inset-top));width:min(340px, calc(100% - 140px));display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;flex-direction:column;background:#201e1d;border:2px solid #f3f2f2">
+          <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+            <span style="width:8px;background:#ffd23a;display:block;flex:none"></span>
+            <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a">POT</span><span style="font:900 24px var(--font-heading);line-height:1">{{ whPot }}</span></div>
+            <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#cfcac4">SPINS</span><span style="font:900 24px var(--font-heading);line-height:1">{{ whSpins }}</span></div>
+            <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#cfcac4">{{ whGoldLbl }}</span><span style="font:900 24px var(--font-heading);line-height:1">{{ whGold }}</span></div>
+          </div>
+          <span style="padding:7px 12px;font:800 11px var(--font-heading);letter-spacing:0.06em;color:#cfcac4;text-wrap:pretty">{{ whHint }}</span>
+        </div>
+        <sc-if value="{{ whLogOn }}" hint-placeholder-val="{{ false }}"><div style="align-self:flex-start;background:#201e1d;border:2px solid {{ whLogCol }};padding:8px 14px;max-width:100%;box-sizing:border-box"><span style="font:900 clamp(18px, 4.4vw, 28px) var(--font-heading);line-height:1.05;color:{{ whLogCol }};text-wrap:pretty">{{ whLog }}</span></div></sc-if>
+      </div>
+      <button onClick="{{ whLeave }}" style="position:absolute;right:max(12px, env(safe-area-inset-right));top:max(12px, env(safe-area-inset-top));pointer-events:auto;min-width:104px;min-height:52px;padding:0 16px;background:#ec3013;border:2px solid #201e1d;border-radius:0;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10" style-active="background:#a82410">BACK</button>
+      <div style="position:absolute;left:max(8px, env(safe-area-inset-left));right:max(8px, env(safe-area-inset-right));bottom:calc(10px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px;pointer-events:auto;max-width:560px">
+        <sc-if value="{{ whPlayOn }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:0;border:2px solid #f3f2f2;background:#201e1d">
+            <div style="height:12px;background:#000;border-bottom:2px solid #3a3836"><div style="height:100%;width:{{ whPow }};background:#ffd23a"></div></div>
+            <div style="display:grid;grid-template-columns:minmax(0, 2fr) minmax(0, 1fr)">
+              <button onPointerDown="{{ whDown }}" onPointerUp="{{ whUp }}" onPointerLeave="{{ whUp }}" onPointerCancel="{{ whUp }}" style="background:{{ whSpinBg }};border:0;border-right:2px solid #3a3836;border-radius:0;color:#fff;font:900 20px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;padding:0 14px;min-height:64px;touch-action:none;user-select:none;-webkit-user-select:none">{{ whSpinTxt }}</button>
+              <button onClick="{{ whBank }}" style="background:{{ whBankBg }};border:0;border-radius:0;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;padding:0 14px;min-height:64px">{{ whBankTxt }}</button>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ whPickOn }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;border:2px solid #f3f2f2;background:#201e1d"><span style="padding:8px 14px;font:800 11px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;border-bottom:2px solid #3a3836">SHUTTLE BONUS · PICK A CARD</span>
+            <div style="display:grid;grid-template-columns:repeat(3, minmax(0, 1fr))"><sc-for list="{{ whCards }}" as="cd" hint-placeholder-count="3"><button onClick="{{ cd.go }}" style="background:#000;border:0;border-right:2px solid #3a3836;border-radius:0;color:#fff;font:900 16px var(--font-heading);cursor:pointer;text-align:left;padding:0 12px;min-height:64px">{{ cd.t }}</button></sc-for></div></div>
+        </sc-if>
+        <sc-if value="{{ whTurnOn }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:minmax(0, 2fr) minmax(0, 1fr);border:2px solid #f3f2f2"><button onClick="{{ whTurn }}" style="background:#ec3013;border:0;border-right:2px solid #3a3836;border-radius:0;color:#fff;font:900 18px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;padding:0 14px;min-height:64px">{{ whTurnTxt }}</button><button onClick="{{ whPractice }}" style="background:#000;border:0;border-radius:0;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;padding:0 14px;min-height:64px">{{ whPracTxt }}</button></div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ slotOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none;font-family:var(--font-heading);color:#f3f2f2">
+      <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:max(12px, env(safe-area-inset-top));width:min(340px, calc(100% - 140px));display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;flex-direction:column;background:#201e1d;border:2px solid #f3f2f2">
+          <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+            <span style="width:8px;background:#ffd23a;display:block;flex:none"></span>
+            <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px;border-right:2px solid #3a3836;min-width:0"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a">GOLD</span><span style="font:900 24px var(--font-heading);line-height:1">{{ slotGold }}</span></div>
+            <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#cfcac4">BET</span><span style="font:900 24px var(--font-heading);line-height:1">{{ slotBet }}</span></div>
+            <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#cfcac4">WIN</span><span style="font:900 24px var(--font-heading);line-height:1;color:{{ slotWinCol }}">{{ slotWin }}</span></div>
+          </div>
+          <span style="padding:7px 12px;font:800 11px var(--font-heading);letter-spacing:0.06em;color:#cfcac4;text-wrap:pretty">{{ slotHint }}</span>
+        </div>
+        <sc-if value="{{ slotMsgOn }}" hint-placeholder-val="{{ false }}"><div style="align-self:flex-start;background:#201e1d;border:2px solid {{ slotMsgCol }};padding:8px 14px;display:flex;flex-direction:column;gap:2px;max-width:100%;box-sizing:border-box"><span style="font:900 clamp(22px, 5vw, 34px) var(--font-heading);line-height:1;color:{{ slotMsgCol }}">{{ slotMsg }}</span><span style="font:800 12px var(--font-heading);letter-spacing:0.06em">{{ slotMsgSub }}</span></div></sc-if>
+      </div>
+      <button onClick="{{ slotLeave }}" style="position:absolute;right:max(12px, env(safe-area-inset-right));top:max(12px, env(safe-area-inset-top));pointer-events:auto;min-width:104px;min-height:52px;padding:0 16px;background:#ec3013;border:2px solid #201e1d;border-radius:0;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10" style-active="background:#a82410">BACK</button>
+      <div style="position:absolute;left:max(8px, env(safe-area-inset-left));right:max(8px, env(safe-area-inset-right));bottom:calc(10px + env(safe-area-inset-bottom));display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;pointer-events:auto">
+        <div style="display:flex;flex:1 1 220px;gap:0;background:#201e1d;border:2px solid #f3f2f2">
+          <span style="padding:0 10px;display:flex;align-items:center;font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;border-right:2px solid #3a3836">LINES</span>
+          <sc-for list="{{ slotLineBtns }}" as="lb" hint-placeholder-count="3"><button onClick="{{ lb.go }}" style="flex:1;min-height:52px;border:0;border-right:2px solid #3a3836;border-radius:0;background:{{ lb.bg }};color:#fff;font:900 18px var(--font-heading);cursor:pointer;text-align:left;padding:0 12px">{{ lb.n }}</button></sc-for>
+        </div>
+        <div style="display:flex;flex:1 1 200px;background:#201e1d;border:2px solid #f3f2f2">
+          <span style="padding:0 10px;display:flex;align-items:center;font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;border-right:2px solid #3a3836">BET</span>
+          <button onClick="{{ slotBetDn }}" style="flex:1;min-height:52px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 22px var(--font-heading);cursor:pointer;text-align:left;padding:0 12px">−</button>
+          <span style="flex:1;display:flex;align-items:center;padding:0 12px;font:900 20px var(--font-heading);border-right:2px solid #3a3836">{{ slotBetN }}</span>
+          <button onClick="{{ slotBetUp }}" style="flex:1;min-height:52px;border:0;border-radius:0;background:#000;color:#fff;font:900 22px var(--font-heading);cursor:pointer;text-align:left;padding:0 12px">+</button>
+        </div>
+        <div style="display:flex;flex:2 1 300px;gap:8px">
+          <button onClick="{{ slotMax }}" style="flex:1;background:#000;border:2px solid #f3f2f2;border-radius:0;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;padding:0 12px;min-height:52px">MAX</button>
+          <button onClick="{{ slotAuto }}" style="flex:1;background:{{ slotAutoBg }};border:2px solid #f3f2f2;border-radius:0;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;padding:0 12px;min-height:52px">{{ slotAutoTxt }}</button>
+          <button onClick="{{ slotSpin }}" style="flex:2;background:{{ slotSpinBg }};border:2px solid #f3f2f2;border-radius:0;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;padding:0 12px;min-height:52px;font-size:20px">{{ slotSpinTxt }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ bowlOnUi }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none;font-family:var(--font-heading);color:#f3f2f2">
+      <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:max(12px, env(safe-area-inset-top));width:min(300px, calc(100% - 140px));background:#201e1d;border:2px solid #f3f2f2;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+          <span style="width:8px;background:#ec3013;display:block;flex:none"></span>
+          <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a">FRAME</span><span style="font:900 24px var(--font-heading);line-height:1">{{ bowlFrame }}</span></div>
+          <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#cfcac4">SCORE</span><span style="font:900 24px var(--font-heading);line-height:1">{{ bowlTotal }}</span></div>
+          <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#cfcac4">BEST</span><span style="font:900 24px var(--font-heading);line-height:1">{{ bowlBest }}</span></div>
+        </div>
+        <span style="padding:7px 12px;font:800 11px var(--font-heading);letter-spacing:0.06em;color:#cfcac4;text-wrap:pretty">{{ bowlHint }}</span>
+      </div>
+      <button onClick="{{ bowlLeave }}" style="position:absolute;right:max(12px, env(safe-area-inset-right));top:max(12px, env(safe-area-inset-top));pointer-events:auto;min-width:104px;min-height:52px;padding:0 16px;background:#ec3013;border:2px solid #201e1d;border-radius:0;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10" style-active="background:#a82410">BACK</button>
+      <sc-if value="{{ bowlEndOn }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(16px + env(safe-area-inset-bottom));width:min(440px, calc(100% - 24px));background:#201e1d;border:2px solid #f3f2f2;display:flex;flex-direction:column;pointer-events:auto">
+          <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:4px"><span style="font:800 11px var(--font-heading);letter-spacing:0.16em;color:#ffd23a">TENPIN · LANE 4</span><span style="font:900 34px var(--font-heading);line-height:1.05">{{ bowlEndTitle }}</span><span style="font:800 13px var(--font-heading);letter-spacing:0.06em;color:#cfcac4;text-wrap:pretty">{{ bowlEndSub }}</span></div>
+          <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr))"><button onClick="{{ bowlAgain }}" style="min-height:56px;padding:0 14px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">PLAY AGAIN</button><button onClick="{{ bowlLeave }}" style="min-height:56px;padding:0 14px;border:0;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">BACK TO THE LANES</button></div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{ danceOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none;font-family:var(--font-heading);color:#f3f2f2">
+      <button onClick="{{ danceLeave }}" style="position:absolute;right:max(12px, env(safe-area-inset-right));top:max(12px, env(safe-area-inset-top));pointer-events:auto;min-width:104px;min-height:52px;padding:0 16px;background:#ec3013;border:2px solid #201e1d;border-radius:0;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10" style-active="background:#a82410">BACK</button>
+      <sc-if value="{{ dancePickOn }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(16px + env(safe-area-inset-bottom));width:min(440px, calc(100% - 24px));background:#201e1d;border:2px solid #f3f2f2;display:flex;flex-direction:column;pointer-events:auto">
+          <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:4px"><span style="font:800 11px var(--font-heading);letter-spacing:0.16em;color:#ffd23a">FOX DANCE · MERU MIX</span><span style="font:800 13px var(--font-heading);letter-spacing:0.04em;color:#cfcac4;text-wrap:pretty">{{ danceHow }}</span></div>
+          <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr))"><button onClick="{{ dance1 }}" style="min-height:60px;padding:0 14px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">1 PLAYER</button><button onClick="{{ dance2 }}" style="min-height:60px;padding:0 14px;border:0;border-radius:0;background:#000;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">2 PLAYERS</button></div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ dancePadsOn }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:max(8px, env(safe-area-inset-left));right:max(8px, env(safe-area-inset-right));bottom:calc(10px + env(safe-area-inset-bottom));display:flex;flex-wrap:wrap-reverse;gap:10px;justify-content:flex-start;pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none">
+          <sc-for list="{{ danceGroups }}" as="gp" hint-placeholder-count="1">
+            <div style="flex:1 1 300px;max-width:420px;display:flex;flex-direction:column;gap:4px">
+              <span style="font:800 11px var(--font-heading);letter-spacing:0.14em;color:{{ gp.col }}">{{ gp.label }}</span>
+              <div style="display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));gap:6px">
+                <sc-for list="{{ gp.lanes }}" as="ln" hint-placeholder-count="4"><button onPointerDown="{{ ln.down }}" style="min-height:76px;padding:0;border:2px solid #f3f2f2;border-radius:0;background:rgba(32,30,29,0.88);color:{{ ln.col }};font:900 34px var(--font-heading);cursor:pointer;touch-action:none" style-active="background:#3a3836">{{ ln.g }}</button></sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ danceKeysOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(16px + env(safe-area-inset-bottom));background:#201e1d;border:2px solid #f3f2f2;padding:8px 12px;font:800 12px var(--font-heading);letter-spacing:0.08em">{{ danceKeys }}</div></sc-if>
+      <sc-if value="{{ danceEndOn }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(16px + env(safe-area-inset-bottom));width:min(440px, calc(100% - 24px));background:#201e1d;border:2px solid #f3f2f2;display:flex;flex-direction:column;pointer-events:auto">
+          <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:4px"><span style="font:800 11px var(--font-heading);letter-spacing:0.16em;color:#ffd23a">FOX DANCE</span><span style="font:900 30px var(--font-heading);line-height:1.05">{{ danceEndTitle }}</span></div>
+          <sc-for list="{{ danceRows }}" as="r" hint-placeholder-count="0"><div style="display:flex;gap:10px;align-items:center;padding:8px 16px;border-bottom:2px solid #3a3836"><span style="width:10px;height:28px;flex:none;background:{{ r.col }}"></span><span style="font:900 28px var(--font-heading);width:28px">{{ r.grade }}</span><span style="font:900 14px var(--font-heading);flex:1;min-width:0">{{ r.name }}</span><span style="font:900 18px var(--font-heading)">{{ r.score }}</span></div></sc-for>
+          <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr))"><button onClick="{{ danceAgain }}" style="min-height:56px;padding:0 14px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">DANCE AGAIN</button><button onClick="{{ danceLeave }}" style="min-height:56px;padding:0 14px;border:0;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">BACK TO THE MACHINE</button></div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{ clawOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none;font-family:var(--font-heading);color:#f3f2f2">
+      <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:max(12px, env(safe-area-inset-top));width:min(320px, calc(100% - 140px));display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;flex-direction:column;background:#201e1d;border:2px solid #f3f2f2">
+          <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+            <span style="width:8px;background:#ffd23a;display:block;flex:none"></span>
+            <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px;border-right:2px solid #3a3836;min-width:0"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ clawTriesLbl }}</span><span style="font:900 24px var(--font-heading);line-height:1">{{ clawTries }}</span></div>
+            <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#cfcac4">POINTS</span><span style="font:900 24px var(--font-heading);line-height:1">{{ clawScore }}</span></div>
+          </div>
+          <div style="padding:8px 12px;display:flex;flex-direction:column;gap:5px;border-bottom:2px solid #3a3836">
+            <div style="display:flex;justify-content:space-between;gap:8px"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em">{{ clawTimeLbl }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a">{{ clawLucky }}</span></div>
+            <div style="height:10px;border:2px solid #f3f2f2;background:#000"><div style="height:100%;width:{{ clawTimeW }};background:#ec3013"></div></div>
+          </div>
+          <span style="padding:7px 12px;font:800 11px var(--font-heading);letter-spacing:0.06em;color:#cfcac4;text-wrap:pretty">{{ clawHint }}</span>
+        </div>
+        <sc-if value="{{ clawFlashOn }}" hint-placeholder-val="{{ false }}"><div style="align-self:flex-start;background:#201e1d;border:2px solid {{ clawFlashCol }};padding:8px 14px;max-width:100%;box-sizing:border-box"><span style="font:900 clamp(22px, 5vw, 34px) var(--font-heading);line-height:1;color:{{ clawFlashCol }}">{{ clawFlash }}</span></div></sc-if>
+        <sc-if value="{{ clawSayOn }}" hint-placeholder-val="{{ false }}"><div style="align-self:flex-start;background:#f3f2f2;color:#201e1d;border:2px solid #201e1d;padding:6px 12px;font:800 13px var(--font-heading);letter-spacing:0.04em;max-width:100%;box-sizing:border-box">{{ clawSay }}</div></sc-if>
+      </div>
+      <button onClick="{{ clawLeave }}" style="position:absolute;right:max(12px, env(safe-area-inset-right));top:max(12px, env(safe-area-inset-top));pointer-events:auto;min-width:104px;min-height:52px;padding:0 16px;background:#ec3013;border:2px solid #201e1d;border-radius:0;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10" style-active="background:#a82410">BACK</button>
+      <sc-if value="{{ clawTurnOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ clawNext }}" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(24px + env(safe-area-inset-bottom));pointer-events:auto;min-width:240px;min-height:60px;padding:0 18px;background:#ec3013;border:2px solid #201e1d;border-radius:0;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;font-size:18px">{{ clawTurnTxt }}</button></sc-if>
+      <sc-if value="{{ clawRevealOn }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(16px + env(safe-area-inset-bottom));width:min(440px, calc(100% - 24px));background:#201e1d;border:2px solid #f3f2f2;display:flex;flex-direction:column;pointer-events:auto">
+          <div style="display:flex;gap:12px;align-items:center;padding:12px 16px;border-bottom:2px solid #3a3836">
+            <div style="width:72px;height:72px;flex:none;background-color:#f3f2f2;background-image:{{ clawRvBg }};background-size:cover;background-position:center;border:2px solid {{ clawRvCol }}"></div>
+            <div style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font:800 11px var(--font-heading);letter-spacing:0.14em;color:{{ clawRvCol }}">{{ clawRvKick }}</span><span style="font:900 28px var(--font-heading);line-height:1">{{ clawRvName }}</span><span style="font:800 12px var(--font-heading);letter-spacing:0.06em;color:#ffd23a">{{ clawRvPts }}</span></div>
+          </div>
+          <span style="padding:10px 16px;font:700 14px var(--font-body);color:#cfcac4;text-wrap:pretty;border-bottom:2px solid #3a3836">{{ clawRvLine }}</span>
+          <button onClick="{{ clawNext }}" style="min-height:56px;padding:0 16px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">NICE! · NEXT</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ clawEndOn }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;background:rgba(32,30,29,0.6);display:flex;align-items:center;justify-content:flex-start;padding:16px;pointer-events:auto">
+          <div style="width:min(440px, 100%);background:#201e1d;border:2px solid #f3f2f2;display:flex;flex-direction:column">
+            <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:4px"><span style="font:800 11px var(--font-heading);letter-spacing:0.16em;color:#ffd23a">CLAW CRANE</span><span style="font:900 34px var(--font-heading);line-height:1.05">{{ clawEndTitle }}</span><span style="font:800 13px var(--font-heading);letter-spacing:0.06em;color:#cfcac4;text-wrap:pretty">{{ clawEndSub }}</span></div>
+            <sc-for list="{{ clawRows }}" as="r" hint-placeholder-count="0"><div style="display:flex;gap:10px;align-items:center;padding:8px 16px;border-bottom:2px solid #3a3836"><span style="width:10px;height:24px;flex:none;background:{{ r.col }}"></span><span style="font:900 14px var(--font-heading);flex:1;min-width:0">{{ r.name }}</span><span style="font:900 18px var(--font-heading)">{{ r.score }}</span></div></sc-for>
+            <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr))"><button onClick="{{ clawMain }}" style="min-height:56px;padding:0 14px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">{{ clawMainTxt }}</button><button onClick="{{ clawLeave }}" style="min-height:56px;padding:0 14px;border:0;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">BACK TO THE MACHINE</button></div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{ pinOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:12;pointer-events:none;font-family:var(--font-heading);color:#f3f2f2">
+      <div style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(16px + env(safe-area-inset-bottom));display:flex;align-items:stretch;background:#201e1d;border:2px solid #f3f2f2">
+        <span style="width:8px;background:#ff4fd8;display:block"></span>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ff4fd8">{{ pinWho }}</span><span style="font:900 26px var(--font-heading);line-height:1">{{ pinScore }}</span></div>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;gap:1px"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#cfcac4">BALL</span><span style="font:900 20px var(--font-heading);line-height:1.1">{{ pinBall }}</span></div>
+      </div>
+      <button onClick="{{ pinLeave }}" style="position:absolute;right:max(12px, env(safe-area-inset-right));bottom:calc(16px + env(safe-area-inset-bottom));pointer-events:auto;min-width:120px;min-height:52px;padding:0 16px;border:2px solid #201e1d;border-radius:0;background:#ec3013;color:#ffffff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10" style-active="background:#a82410">BACK</button>
+      <sc-if value="{{ pinMsgMid }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:34%;display:flex;flex-direction:column;align-items:flex-start;gap:4px;background:#201e1d;border:2px solid {{ pinMsgCol }};padding:10px 16px;max-width:calc(100% - 24px)"><span style="font:900 clamp(26px, 6vw, 46px) var(--font-heading);line-height:1;color:{{ pinMsgCol }}">{{ pinMsg }}</span><span style="font:800 13px var(--font-heading);letter-spacing:0.1em">{{ pinMsgSub }}</span></div></sc-if>
+      <sc-if value="{{ pinLaneOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:max(12px, env(safe-area-inset-top));width:min(380px, calc(100% - 24px));box-sizing:border-box;display:flex;flex-direction:column;gap:6px;background:#201e1d;border:2px solid #f3f2f2;padding:10px 14px"><span style="font:900 13px var(--font-heading);letter-spacing:0.08em">{{ pinLaneTxt }}</span><div style="height:12px;border:2px solid #f3f2f2;background:#000"><div style="height:100%;width:{{ pinPow }};background:#ec3013"></div></div></div></sc-if>
+      <sc-if value="{{ pinHelpOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;right:max(12px, env(safe-area-inset-right));top:max(12px, env(safe-area-inset-top));display:flex;flex-direction:column;gap:0;background:#201e1d;border:2px solid #f3f2f2;width:min(320px, calc(100% - 24px));box-sizing:border-box"><sc-if value="{{ pinMsgOn }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:2px;padding:8px 16px 8px 12px;border-bottom:2px solid #3a3836;background:#000"><span style="font:900 20px var(--font-heading);line-height:1.05;color:{{ pinMsgCol }};text-wrap:pretty">{{ pinMsg }}</span><span style="font:800 12px var(--font-heading);letter-spacing:0.06em;color:#f3f2f2">{{ pinMsgSub }}</span></div></sc-if><sc-for list="{{ pinHelp }}" as="k" hint-placeholder-count="3"><div style="display:flex;gap:10px;align-items:center;justify-content:space-between;padding:7px 16px 7px 12px;border-bottom:2px solid #3a3836"><span style="font:900 12px var(--font-heading);background:#ff4fd8;color:#201e1d;padding:3px 6px;white-space:nowrap">{{ k.k }}</span><span style="font:800 12px var(--font-heading);letter-spacing:0.04em;text-align:right">{{ k.t }}</span></div></sc-for></div></sc-if>
+      <sc-if value="{{ pinTiltOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:96px;background:#ec3013;color:#fff;border:2px solid #201e1d;padding:6px 12px;font:900 16px var(--font-heading);letter-spacing:0.1em">{{ pinTiltTxt }}</div></sc-if>
+      <sc-if value="{{ pinTurnOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ pinGo }}" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(96px + env(safe-area-inset-bottom));pointer-events:auto;min-width:220px;min-height:60px;padding:0 18px;border:2px solid #201e1d;border-radius:0;background:#ec3013;color:#fff;font:900 18px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">{{ pinTurnTxt }}</button></sc-if>
+      <sc-if value="{{ pinOverOn }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;background:rgba(32,30,29,0.6);display:flex;align-items:center;justify-content:flex-start;padding:16px;pointer-events:auto">
+          <div style="width:min(420px, 100%);background:#201e1d;border:2px solid #f3f2f2;display:flex;flex-direction:column">
+            <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:4px"><span style="font:800 11px var(--font-heading);letter-spacing:0.16em;color:#ff4fd8">PINBALL · GAME OVER</span><span style="font:900 40px var(--font-heading);line-height:1">{{ pinScore }}</span><span style="font:800 13px var(--font-heading);letter-spacing:0.08em;color:#ffd23a">{{ pinOverSub }}</span></div>
+            <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr))"><button onClick="{{ pinAgain }}" style="min-height:56px;padding:0 14px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">PLAY AGAIN</button><button onClick="{{ pinLeave }}" style="min-height:56px;padding:0 14px;border:0;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">BACK TO THE MACHINE</button></div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{ introTitle }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;inset:0;z-index:80;background:#000;color:#fff;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;gap:14px;padding:max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) calc(32px + env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));box-sizing:border-box">
+      <span style="font:800 12px var(--font-heading);letter-spacing:0.16em;color:#ffd23a">8 GATES · WORLD 1 · MERU</span>
+      <span style="font:900 clamp(56px, 15vw, 160px) var(--font-heading);line-height:0.88;letter-spacing:-0.03em">FOXGATE8</span>
+      <div style="width:min(520px, 100%);height:2px;background:#ec3013"></div>
+      <span style="font:700 15px var(--font-body);color:#cfcac4;text-wrap:pretty">Town Square, Meru. Sound is off for now.</span>
+      <button onClick="{{ introPlay }}" style="min-width:220px;min-height:56px;padding:0 20px;border:2px solid #ec3013;border-radius:0;background:#ec3013;color:#fff;font:900 18px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">PLAY</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ bootOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:55;background:#201e1d;display:flex;align-items:flex-end;justify-content:flex-start;padding:0 max(20px, env(safe-area-inset-left)) max(28px, env(safe-area-inset-bottom));font-family:Archivo,sans-serif">
+      <div style="width:min(520px,100%);display:flex;flex-direction:column;gap:8px"><div style="color:#f3f2f2;font-weight:900;font-size:clamp(22px,4vw,34px);letter-spacing:-0.01em;line-height:1">LOADING MERU</div><div style="color:#ffd23a;font-weight:800;font-size:13px;letter-spacing:0.12em">GETTING READY</div><div style="height:16px;border:2px solid #f3f2f2;background:#201e1d;box-sizing:border-box"><div style="height:100%;width:{{ bootW }};background:#ec3013"></div></div><div style="color:#f3f2f2;font-weight:900;font-size:13px">{{ bootPct }}</div></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ sndLock }}" hint-placeholder-val="{{ false }}">
+    <button onClick="{{ sndWake }}" aria-label="Turn sound on" style="position:absolute;left:50%;top:calc(110px + env(safe-area-inset-top));transform:translateX(-50%);z-index:90;min-height:48px;padding:0 18px;display:flex;align-items:center;gap:10px;background:#ec3013;color:#f3f2f2;border:2px solid #201e1d;border-radius:0;font:900 16px Archivo, Arial, sans-serif;letter-spacing:0.06em;cursor:pointer;text-align:left" style-hover="background:#c92a10">TAP FOR SOUND</button>
+  </sc-if>
+  <sc-if value="{{ introVideo }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:80;background:{{ vidBg }}">
+      <video ref="{{ vidRef }}" playsInline="{{ true }}" preload="auto" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:transparent"></video>
+      <button onClick="{{ vidDone }}" style="position:absolute;right:max(16px, env(safe-area-inset-right));bottom:calc(16px + env(safe-area-inset-bottom));min-width:96px;min-height:48px;padding:0 16px;border:2px solid #f3f2f2;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left">SKIP</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ panelOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:15;background:rgba(0,0,0,0.6);display:flex;justify-content:center;align-items:flex-start;overflow:auto;padding:max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) 10px max(10px, env(safe-area-inset-left))">
+      <div style="width:100%;max-width:{{ pnMax }};background:#f3f2f2;color:#201e1d;border:2px solid #201e1d;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:stretch;background:#201e1d;color:#fff">
+          <div style="flex:1;min-width:0;padding:10px 14px;display:flex;flex-direction:column;gap:2px"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a">{{ pKicker }}</span><span style="font:900 18px var(--font-heading);line-height:1.1">{{ pTitle }}</span></div>
+          <div style="padding:10px 12px;display:flex;flex-direction:column;justify-content:center;gap:2px"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">GOLD</span><span style="font:900 16px var(--font-heading)">{{ goldTxt }}</span></div>
+          <button onClick="{{ panelClose }}" style="min-width:72px;min-height:44px;border:0;border-left:2px solid #ffd23a;border-radius:0;background:#ec3013;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;padding:0 14px" style-hover="background:#c82a10">CLOSE</button>
+        </div>
+        <sc-if value="{{ pTrain }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:12px 14px;border-bottom:2px solid #201e1d;display:flex;flex-direction:column;gap:8px">
+            <span style="font:900 12px var(--font-heading);letter-spacing:0.08em">YOUR TICKET · {{ ticketTxt }}</span>
+            <div style="display:grid;grid-template-columns:repeat(3, minmax(0, 1fr))">
+              <sc-for list="{{ tickets }}" as="t" hint-placeholder-count="3">
+                <button onClick="{{ t.go }}" disabled="{{ t.off }}" style="min-height:56px;margin-right:-2px;padding:6px 10px;border:2px solid #201e1d;border-radius:0;background:{{ t.bg }};color:{{ t.fg }};cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px;opacity:{{ t.op }}" style-hover="filter:brightness(0.95)"><span style="font:900 15px var(--font-heading);letter-spacing:0.06em">{{ t.name }}</span><span style="font:700 12px var(--font-body)">{{ t.price }}</span></button>
+              </sc-for>
+            </div>
+            <span style="font:600 11px var(--font-body);color:#5c5a58">Draft prices until Ben sets them. Fast travel needs a ticket and a stop you have already ridden to.</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ pRental }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+            <span style="font:900 12px var(--font-heading);letter-spacing:0.08em">{{ rentStatus }}</span>
+            <button onClick="{{ rentGo }}" disabled="{{ rentOff }}" style="align-self:flex-start;min-width:200px;min-height:56px;padding:6px 14px;border:2px solid #201e1d;border-radius:0;background:#ec3013;color:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px;opacity:{{ rentOp }}" style-hover="background:#c82a10"><span style="font:900 15px var(--font-heading);letter-spacing:0.06em">RENT FOR A DAY</span><span style="font:700 12px var(--font-body)">{{ rentPrice }}</span></button>
+            <span style="font:600 12px var(--font-body);color:#5c5a58;text-wrap:pretty">Your car waits in the first bay of the lot next door. Drive on the roads; bring it back to the lot and get out to return it. Draft price until Ben sets it.</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ pPolice }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+            <span style="font:900 12px var(--font-heading);letter-spacing:0.08em">FINES OWED · {{ owedTxt }}</span>
+            <div style="display:flex;flex-direction:column;border-top:2px solid #201e1d">
+              <sc-for list="{{ fineRows }}" as="f" hint-placeholder-count="2"><div style="display:grid;grid-template-columns:minmax(0, 1fr) auto;gap:8px;padding:8px 0;border-bottom:2px solid #201e1d;font:700 13px var(--font-body)"><span>{{ f.why }}</span><span style="font-weight:900">{{ f.amt }}</span></div></sc-for>
+            </div>
+            <button onClick="{{ payGo }}" disabled="{{ payOff }}" style="align-self:flex-start;min-width:200px;min-height:56px;padding:6px 14px;border:2px solid #201e1d;border-radius:0;background:#ec3013;color:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px;opacity:{{ payOp }}" style-hover="background:#c82a10"><span style="font:900 15px var(--font-heading);letter-spacing:0.06em">PAY FINES</span><span style="font:700 12px var(--font-body)">From your gold first, then the bank</span></button>
+            <span style="font:600 12px var(--font-body);color:#5c5a58;text-wrap:pretty">Unpaid fines come out of the bank at the start of each new day. Draft amounts until Ben sets them.</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ pBank }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+            <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));border:2px solid #201e1d"><div style="padding:8px 12px;border-right:2px solid #201e1d;display:flex;flex-direction:column;gap:2px"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em">IN THE BANK</span><span style="font:900 22px var(--font-heading)">{{ bankTxt }}</span></div><div style="padding:8px 12px;display:flex;flex-direction:column;gap:2px"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em">INTEREST</span><span style="font:900 22px var(--font-heading)">{{ rateTxt }}</span></div></div>
+            <span style="font:900 12px var(--font-heading);letter-spacing:0.08em">DEPOSIT</span>
+            <div style="display:grid;grid-template-columns:repeat(3, minmax(0, 1fr))"><button onClick="{{ dep10 }}" style="min-height:52px;margin-right:-2px;padding:6px 10px;border:2px solid #201e1d;border-radius:0;background:#ffffff;color:#201e1d;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px" style-hover="background:#f4d6d0"><span style="font:900 14px var(--font-heading);letter-spacing:0.06em">10</span></button><button onClick="{{ dep50 }}" style="min-height:52px;margin-right:-2px;padding:6px 10px;border:2px solid #201e1d;border-radius:0;background:#ffffff;color:#201e1d;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px" style-hover="background:#f4d6d0"><span style="font:900 14px var(--font-heading);letter-spacing:0.06em">50</span></button><button onClick="{{ depAll }}" style="min-height:52px;margin-right:-2px;padding:6px 10px;border:2px solid #201e1d;border-radius:0;background:#ffffff;color:#201e1d;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px" style-hover="background:#f4d6d0"><span style="font:900 14px var(--font-heading);letter-spacing:0.06em">ALL</span></button></div>
+            <span style="font:900 12px var(--font-heading);letter-spacing:0.08em">WITHDRAW</span>
+            <div style="display:grid;grid-template-columns:repeat(3, minmax(0, 1fr))"><button onClick="{{ wd10 }}" style="min-height:52px;margin-right:-2px;padding:6px 10px;border:2px solid #201e1d;border-radius:0;background:#ffffff;color:#201e1d;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px" style-hover="background:#f4d6d0"><span style="font:900 14px var(--font-heading);letter-spacing:0.06em">10</span></button><button onClick="{{ wd50 }}" style="min-height:52px;margin-right:-2px;padding:6px 10px;border:2px solid #201e1d;border-radius:0;background:#ffffff;color:#201e1d;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px" style-hover="background:#f4d6d0"><span style="font:900 14px var(--font-heading);letter-spacing:0.06em">50</span></button><button onClick="{{ wdAll }}" style="min-height:52px;margin-right:-2px;padding:6px 10px;border:2px solid #201e1d;border-radius:0;background:#ffffff;color:#201e1d;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px" style-hover="background:#f4d6d0"><span style="font:900 14px var(--font-heading);letter-spacing:0.06em">ALL</span></button></div>
+            <span style="font:600 12px var(--font-body);color:#5c5a58;text-wrap:pretty">Gold in the bank is kept when you lose. Interest is paid at the start of each day (T in walk mode). The vault is behind the glass.</span>
+            <div style="display:flex;flex-direction:column;border-top:2px solid #201e1d"><sc-for list="{{ ledger }}" as="l" hint-placeholder-count="2"><span style="padding:6px 0;border-bottom:2px solid #201e1d;font:700 12px var(--font-body)">{{ l.t }}</span></sc-for></div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ pLocker }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr))">
+            <div style="padding:12px 14px;border-right:2px solid #201e1d;display:flex;flex-direction:column;gap:6px"><span style="font:900 12px var(--font-heading);letter-spacing:0.08em">IN YOUR BAG</span><sc-for list="{{ bagRows }}" as="r" hint-placeholder-count="3"><button onClick="{{ r.go }}" style="min-height:48px;padding:6px 10px;border:2px solid #201e1d;border-radius:0;background:#ffffff;color:#201e1d;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:2px" style-hover="background:#f4d6d0"><span style="font:900 13px var(--font-heading)">{{ r.label }} ×{{ r.n }}</span><span style="font:700 11px var(--font-body)">STORE 1 →</span></button></sc-for></div>
+            <div style="padding:12px 14px;display:flex;flex-direction:column;gap:6px"><span style="font:900 12px var(--font-heading);letter-spacing:0.08em">IN THE LOCKER</span><sc-for list="{{ lockRows }}" as="r" hint-placeholder-count="1"><button onClick="{{ r.go }}" style="min-height:48px;padding:6px 10px;border:2px solid #201e1d;border-radius:0;background:#ffffff;color:#201e1d;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:2px" style-hover="background:#f4d6d0"><span style="font:900 13px var(--font-heading)">{{ r.label }} ×{{ r.n }}</span><span style="font:700 11px var(--font-body)">← TAKE 1</span></button></sc-for></div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ pShop }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ shopRows }}" as="r" hint-placeholder-count="3">
+              <div style="display:grid;grid-template-columns:minmax(0, 1fr) auto;align-items:stretch;border-bottom:2px solid #201e1d">
+                <div style="padding:10px 14px;display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:900 14px var(--font-heading)">{{ r.label }}</span><span style="font:700 12px var(--font-body);color:#5c5a58">{{ r.sub }}</span></div>
+                <button onClick="{{ r.go }}" disabled="{{ r.off }}" style="min-width:110px;min-height:56px;border:0;border-left:2px solid #201e1d;border-radius:0;background:{{ r.bg }};color:{{ r.fg }};font:900 13px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;padding:0 14px;opacity:{{ r.op }}" style-hover="filter:brightness(0.95)">{{ r.action }}</button>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ pMap }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:{{ pmDir }};align-items:flex-start">
+        <div style="flex:none;width:{{ pmMapW }};box-sizing:border-box;padding:12px 14px;border-bottom:2px solid #201e1d;display:flex;justify-content:center">
+          <div style="position:relative;width:{{ pmMapSz }};aspect-ratio:1 / 1;background:#1d2a33;border:2px solid #201e1d">
+            <svg viewBox="-300 -360 760 760" style="position:absolute;inset:0;width:100%;height:100%"><rect x="-300" y="-360" width="760" height="760" fill="#3d5a3a"></rect><ellipse cx="0" cy="345" rx="320" ry="105" fill="#3c87b8"></ellipse><circle cx="200" cy="350" r="70" fill="#ead9a6"></circle><rect x="-160" y="-140" width="320" height="290" fill="none" stroke="#cfcac3" stroke-width="10"></rect><polygon points="{{ linePts }}" fill="none" stroke="#ec3013" stroke-width="9"></polygon></svg>
+            <sc-for list="{{ pStops }}" as="s" hint-placeholder-count="6">
+              <button onClick="{{ s.go }}" aria-label="{{ s.label }}" style="position:absolute;left:{{ s.left }};top:{{ s.top }};transform:translate(-50%, -50%);width:44px;height:44px;border:2px solid #201e1d;border-radius:0;background:{{ s.bg }};color:{{ s.fg }};font:900 16px var(--font-heading);cursor:pointer;text-align:left;padding:0 0 0 14px" style-hover="filter:brightness(1.1)">{{ s.n }}</button>
+            </sc-for>
+            <div style="position:absolute;left:{{ youLeft }};top:{{ youTop }};width:14px;height:14px;transform:translate(-50%, -50%);background:#ffd23a;border:2px solid #000;pointer-events:none"></div>
+          </div>
+        </div>
+        <div style="flex:1;min-width:0;width:100%;display:flex;flex-direction:column;border-left:{{ pmLine }}">
+          <sc-for list="{{ pStops }}" as="s" hint-placeholder-count="6">
+            <div style="display:grid;grid-template-columns:44px minmax(0, 1fr) auto;align-items:stretch;border-bottom:2px solid #201e1d">
+              <span style="display:flex;align-items:center;padding-left:14px;background:{{ s.bg }};color:{{ s.fg }};font:900 16px var(--font-heading)">{{ s.n }}</span>
+              <div style="padding:8px 12px;display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:900 14px var(--font-heading)">{{ s.label }}</span><span style="font:700 11px var(--font-body);color:#5c5a58">{{ s.status }}</span></div>
+              <button onClick="{{ s.go }}" disabled="{{ s.off }}" style="min-width:120px;min-height:52px;border:0;border-left:2px solid #201e1d;border-radius:0;background:{{ s.abg }};color:{{ s.afg }};font:900 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;padding:0 14px;opacity:{{ s.op }}" style-hover="filter:brightness(0.95)">{{ s.action }}</button>
+            </div>
+          </sc-for>
+        </div>
+        </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ lpOn }}" hint-placeholder-val="{{ false }}">
+    <div onPointerDown="{{ lpPress }}" style="position:absolute;inset:0;z-index:25;background:rgba(0,0,0,0.78);display:flex;flex-direction:column;justify-content:center;padding:24px max(16px, env(safe-area-inset-left));gap:14px;cursor:pointer">
+      <span style="font:800 11px var(--font-heading);letter-spacing:0.14em;color:#ffd23a">PICK THE LOCK · PIN {{ lpPin }}</span>
+      <span style="font:900 22px var(--font-heading);color:#fff;text-wrap:pretty">{{ lpMsg }}</span>
+      <div style="position:relative;width:100%;max-width:560px;height:56px;background:#3d3b3a;border:2px solid #fff">
+        <div style="position:absolute;top:0;bottom:0;left:{{ lpZoneL }};width:{{ lpZoneW }};background:#16a34a"></div>
+        <div style="position:absolute;top:-8px;bottom:-8px;left:{{ lpPos }};width:6px;margin-left:-3px;background:{{ lpPick }}"></div>
+      </div>
+      <span style="font:700 12px var(--font-body);color:#cfcac4">TAP ANYWHERE OR SPACE</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ fadeOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;z-index:30;background:#000;display:flex;align-items:flex-end;padding:24px"><span style="font:900 20px var(--font-heading);letter-spacing:0.08em;color:#ffd23a">{{ fadeTxt }}</span></div></sc-if>
+  <sc-if value="{{ errOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:12px;right:12px;top:40%;background:#000;border:2px solid #ec3013;padding:12px;font:700 13px var(--font-body);z-index:5">{{ err }}</div></sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { intro: 'boot', st: null, night: false, rings: true, labels: true, towers: true, zone: 'all', err: '', walk: false, w: null, hire: null, hi: { bar: 0, pad: false }, panel: null, fade: '', tour: null };
+  tourBar = React.createRef();
+  async tourStart(k = 0) { if (!this.g) return; if (!this.walker) await this.ensureWalker();   // the interiors (shops, lanes, casino) are built by the walk module
+    if (!this.tour) { const m = await import(new URL('worlds/meru2-tour.js', document.baseURI).href); this.tour = m.createTour(this.g, { onTick: dt => { if (this.walker && !this.state.walk && this.walker.ambient) this.walker.ambient(dt); }, onStop: q => this.setState({ tour: q }), onProgress: p => { const el = this.tourBar.current; if (el) el.style.width = (p * 100).toFixed(1) + '%'; }, onEnd: () => this.setState({ tour: null }) }); } this.tour.start(k); }
+  travel(key, mode, label) { this.setState({ panel: null, fade: (mode === 'train' ? 'TRAIN · ' : 'TAXI · ') + label.toUpperCase() }); setTimeout(() => { this.walker && this.walker.travel(key, mode); setTimeout(() => this.setState({ fade: '' }), 350); }, 550); }
+  onHud = hi => this.setState({ hi });
+  async walkStart() { if (!this.g) return; if (!this.walker && !(await this.ensureWalker())) return; this.walker.enter(this.state.night); this.setState({ walk: true }, () => { let n = 0; const wait = () => { if (++n < 45) { requestAnimationFrame(wait); return; } if (window.__m2LoadDone) window.__m2LoadDone(); window.__m2LoadDone = null; }; requestAnimationFrame(wait); }); }   /* s648i: the load screen's GO TO MERU only appears ~45 frames after the walk is on screen (test start applied, camera on the fox) */
+  enterArena() { try { sessionStorage.setItem('meru.arenaFrom', 'meru2'); } catch (e) {} location.href = encodeURI('Meru Arena.dc.html'); }
+  componentDidUpdate() { window.__m2sleep = !!this.state.hire; if (this.state.hire && this.state.hire.cab && this.state.ld != null && !this.demoRaf) this.demoRaf = requestAnimationFrame(() => this.demoTick());
+    if (this.state.hire && this.state.hireOp !== '1' && !this.opT) this.opT = setTimeout(() => { this.opT = null; this.setState({ hireOp: '1' }); }, 30); if (!this.state.hire && this.state.hireOp === '1') this.setState({ hireOp: '0' }); if (this.state.hire !== this.ldFor) { this.ldFor = this.state.hire; clearInterval(this.ldT); if (this.state.hire) { this.ldF = null; this.ldStart(); } else if (this.state.ld != null) this.setState({ ld: null }); } if (this.state.hire) this.ldHook();
+    { const w = this.state.w, b = w && w.hire && this.g ? this.g.K.L.BUILDINGS.find(x => x.label === w.hire.label) : null; if (b && b.hiring && b.hiring.url) this.prefetch(b.hiring.url); } const N = this.walker && this.walker.net; if (N && !this.goHooked) { this.goHooked = true; N.onGo = g => { const b = this.g && this.g.K.L.BUILDINGS.find(x => x.hiring && (x.hiring.url === g.url || x.label === g.label)); if (b) this.openGame(b, g.code, g.n); }; } }
+  // open a minigame panel: solo (code null) or a PARTY with the shared room code
+  openGame(b, code, n) { if (!this.walker) return; if (b && b.hiring && b.hiring.game === 'meruPearlDive' && !code && this.walker.pearlWorld && !/[?&]pearlpanel=1/.test(location.search)) { this.startPearl(b); return; } if (b && b.hiring && b.hiring.game === 'meruTankRange' && !code && this.walker.tankWorld && !/[?&]tankpanel=1/.test(location.search)) { this.startTank(); return; } this.walker.setPaused(true); const N = this.walker.net; if (N) N.playing({ url: b.hiring.url, label: b.label, x: b.door ? b.door[0] : 0, z: b.door ? b.door[1] : 0 }); this.setState({ hire: b, hireRoom: code, hireN: n || 1, pick: null }); }
+  seatsFor(b) { const u = (b.hiring && b.hiring.url) || ''; return b.hiring && b.hiring.players ? b.hiring.players : /duel|tennis|boxing|versus|1v1/i.test(u) ? 2 : 4; }
+  // s104: SPEEDBOAT BAY runs IN MERU (Speedboat Bay.dc.html world mode on Meru's renderer + scene); ?baypanel=1 = the old full-screen panel
+  startBay() { if (this.state.bay) return; this.setState({ bay: this.walker.bayWorld() }); }
+  // s104e: TANK RANGE runs IN MERU too (the course already stands in the range arm; Tank Range.dc.html world mode wakes it); ?tankpanel=1 = the old panel
+  async startTank() { if (this.state.tank || this.tankBusy) return; this.tankBusy = true; this.setState({ hire: null, tankLoading: true }); try { const tw = await this.walker.tankWorld(); this.setState({ tank: tw, tankLoading: false }); } catch (e) { console.warn('tank world failed', e); this.setState({ tankLoading: false }); this.walker.setPaused(false); } this.tankBusy = false; }
+  // s104f/s151: SKATE PARK IN WORLD (Tony's Park, in town north of the Ruins Path); ?skatepanel=1 = the old panel
+  async startSkate(free) { if (this.state.skate || this.skBusy) return; this.skBusy = true; this.setState({ hire: null, tankLoading: !(this.walker.skateReady && this.walker.skateReady()) }); /* s151: Tony's Park is prebuilt with the map → no load strip */ try { const sw = await this.walker.skateWorld(free); this.setState({ skate: sw, tankLoading: false }); } catch (e) { console.warn('skate world failed', e); this.setState({ tankLoading: false }); this.walker.setPaused(false); } this.skBusy = false; }
+  skateExit = () => { this.setState({ skate: null }); setTimeout(() => this.walker && this.walker.skateEnd(), 0); };
+  tankExit = () => { this.setState({ tank: null }); setTimeout(() => this.walker && this.walker.tankEnd(), 0); };
+  // s184: PEARL DIVE runs IN MERU (the dive map stands in Pearl Island's crater; Meru Pearl Dive.dc.html world mode wakes it); ?pearlpanel=1 = the old panel
+  async startPearl(b) { if (this.state.pearl || this.pearlBusy) return; this.pearlBusy = true; this.setState({ hire: null, tankLoading: !(this.walker.pearlReady && this.walker.pearlReady()), pearlFly: true }); try { const pw = await this.walker.pearlWorld(); this.setState({ pearl: pw, tankLoading: false, pearlFly: false }); } catch (e) { console.warn('pearl world failed', e); this.setState({ tankLoading: false, pearlFly: false }); if (b && b.hiring && b.hiring.url) { this.walker.setPaused(true); this.setState({ hire: { ...b, hiring: { ...b.hiring, game: null } }, hireRoom: null, hireN: 1, pick: null }); } else this.walker.setPaused(false); } this.pearlBusy = false; }   /* no valley / build failed: the old panel */
+  pearlExit = () => { this.setState({ pearl: null }); setTimeout(() => this.walker && this.walker.pearlEnd(), 0); };
+  bayExit = () => { this.setState({ bay: null }); setTimeout(() => this.walker && this.walker.bayEnd(), 0); };
+  ensureWalker() { if (this.walker) return Promise.resolve(true); return this.walkP || (this.walkP = this.ensureWalker0().finally(() => { this.walkP = null; })); }   // s179: one walk only (two calls at once used to build the town twice)
+  async ensureWalker0() { if (this.walker) return true; { try { const m = await import(new URL('worlds/meru2-walk.js?v=s729b', document.baseURI).href); this.walker = await m.createWalk(this.g, { onState: w => this.setState({ w }), onHire: b => (b && b.hiring && b.hiring.game === 'meruPearlDive' && this.walker && this.walker.pearlWorld && !/[?&]pearlpanel=1/.test(location.search)) ? this.startPearl(b) : (b && b.world === 'speedboatBay' && this.walker && this.walker.bayWorld && !/[?&]baypanel=1/.test(location.search)) ? this.startBay() : (b && b.hiring && /^Skate Park\.dc\.html/.test(b.hiring.url || '') && this.walker && this.walker.skateWorld && !/[?&]skatepanel=1/.test(location.search)) ? this.startSkate(/free=1/.test(b.hiring.url)) : this.setState({ hire: b }), onTicket: st => { this.walker.setPaused(true); this.setState({ panel: { mode: 'train', at: st.key } }); }, onRental: () => { this.walker.setPaused(true); this.setState({ panel: { mode: 'rental' } }); }, onCivic: k => k === 'arenaEnter' ? this.enterArena() : this.setState({ panel: k.startsWith('elev:') ? { mode: 'elev', k: k.split(':')[1], f: +k.split(':')[2] } : k.startsWith('shop:') ? { mode: 'shop', k: k.slice(5) } : { mode: { policeDesk: 'police', bankTeller: 'bank', bankLocker: 'locker' }[k] } }), onPick: () => this.lpStart() }); } catch (e) { console.warn('walk failed: ' + (e && e.stack || e)); this.setState({ err: String(e && e.message || e) }); return false; } } return true; }
+  stageRef = React.createRef();
+  vidRef = React.createRef();
+  hireFrame = React.createRef();
+  shotCv = React.createRef();
+  // the ATTRACT DEMO in the load screen's picture box: the real screenshot (slow pan) once captured, the animated title scene before that; drawn by worlds/meru2-cabmenu.js drawAttract (no extra load)
+  demoTick() { const cv = this.shotCv.current, cab = this.state.hire && this.state.hire.cab; if (!cv || !cab || this.state.ld == null) { this.demoRaf = null; return; } this.demoRaf = requestAnimationFrame(() => this.demoTick());
+    if (!this.cabMod) { if (!this.cabModP) this.cabModP = import(new URL('worlds/meru2-cabmenu.js', document.baseURI).href).then(m => { this.cabMod = m; }); return; }
+    const r = cv.getBoundingClientRect(), w = Math.max(160, Math.round(r.width * Math.min(2, devicePixelRatio || 1))), h = Math.round(w * 0.75); if (cv.width !== w) { cv.width = w; cv.height = h; }
+    if (this.demoFor !== cab.name) { this.demoFor = cab.name; const s = this.shotsAll()[cab.name]; this.demoImg = null; if (s) { const im = new Image(); im.src = s; this.demoImg = im; } }
+    this.cabMod.drawAttract(cv.getContext('2d'), w, h, cab, performance.now() / 1000, this.demoImg); }
+  // MINIGAME LOAD SCREEN: shows from the moment the panel opens until the game's page has loaded (+ a short beat), bar eases toward 90 % then fills
+  ldStart() { clearInterval(this.ldT); const t0 = performance.now(); this.ldDone = 0; this.setState({ ld: 0.02 });
+    this.ldT = setInterval(() => { const t = (performance.now() - t0) / 1000; if (this.ldDone) { const k = Math.min(1, (performance.now() - this.ldDone) / 350); this.setState({ ld: 0.9 + 0.1 * k }); if (k >= 1) { clearInterval(this.ldT); if (!(this.state.hire && this.state.hire.cab)) setTimeout(() => this.setState({ ld: null }), 150); } return; }
+      this.setState({ ld: Math.min(0.9, 0.9 * (1 - Math.exp(-t / 1.6))) }); if (t > 25) this.ldDone = performance.now(); }, 80); }
+  shotsAll() { try { return JSON.parse(localStorage.getItem('arcade.shots.v1') || '{}') || {}; } catch (e) { return {}; } }
+  shoot(f, name) { try { const iw = f.contentWindow, d = iw && iw.document; if (!d) return; const cs = [...d.querySelectorAll('canvas')].sort((a, b) => b.width * b.height - a.width * a.height), cv = cs[0]; if (!cv || cv.width < 80) return;
+      iw.requestAnimationFrame(() => { try { const o = document.createElement('canvas'), w = 560, h = Math.round(w * 0.75); o.width = w; o.height = h; const g = o.getContext('2d'), s = Math.max(w / cv.width, h / cv.height); g.drawImage(cv, (w - cv.width * s) / 2, (h - cv.height * s) / 2, cv.width * s, cv.height * s);
+        const px = g.getImageData(w / 2 | 0, h / 2 | 0, 1, 1).data; if (px[0] + px[1] + px[2] < 12) return; const all = this.shotsAll(); all[name] = o.toDataURL('image/jpeg', 0.72); localStorage.setItem('arcade.shots.v1', JSON.stringify(all)); } catch (e) {} }); } catch (e) {} }
+  cardRead(f, name) { try { const d = f.contentDocument; if (!d) return; const vis = b => { const r = b.getBoundingClientRect(); return r.width > 30 && r.height > 24 && r.bottom > 0 && r.top < (f.clientHeight || 2000) && getComputedStyle(b).visibility !== 'hidden'; };
+      const root = d.querySelector('[data-card]') || d.body, bs = [...root.querySelectorAll('button')].filter(vis).slice(0, 10), out = [];
+      for (const b of bs) { const lines = (b.innerText || '').split('\n').map(s => s.trim()).filter(Boolean); if (!lines.length || lines[0].length < 2 || /^(✕|×|←|BACK|MENU|MAP|I|M|J)$/.test(lines[0])) continue; const bg = getComputedStyle(b).backgroundColor; out.push({ t: lines[0].toUpperCase(), s: lines.slice(1).join(' ').slice(0, 40), p: /236,\s*48,\s*19/.test(bg) ? 1 : 0 }); }
+      if (out.length) { const all = JSON.parse(localStorage.getItem('arcade.cards.v1') || '{}'); all[name] = out; localStorage.setItem('arcade.cards.v1', JSON.stringify(all)); } return out; } catch (e) { return null; } }
+  autoPress(f, auto) { if (!auto) return; const t0 = performance.now(); const tryIt = () => { if (!this.state.hire || performance.now() - t0 > 20000) return; try { const d = f.contentDocument; if (d) { const bs = [...d.querySelectorAll('button')].filter(b => { const r = b.getBoundingClientRect(); return r.width > 20 && r.height > 20; });
+        const first = b => ((b.innerText || '').split('\n')[0] || '').trim().toUpperCase(); let hit = null;
+        if (auto.label) hit = bs.find(b => first(b) === auto.label) || bs.find(b => first(b).startsWith(auto.label));
+        else hit = bs.find(b => /236,\s*48,\s*19/.test(getComputedStyle(b).backgroundColor) && !/BACK|QUIT|EXIT/.test(first(b))) || bs.find(b => /^(PLAY|START|FIGHT|DIVE|PADDLE|GO\b|INSERT)/.test(first(b)));
+        if (hit) { hit.click(); return; } } } catch (e) {} setTimeout(tryIt, 300); }; setTimeout(tryIt, 500); }
+  ldHook() { const f = this.hireFrame.current; if (!f || f === this.ldF) return; this.ldF = f; const t0 = performance.now(), cab = this.state.hire && this.state.hire.cab; if (cab) { f.addEventListener('load', () => { setTimeout(() => { this.cardRead(f, cab.name); this.autoPress(f, cab.auto); }, 900); }, { once: true }); clearTimeout(this.shT1); clearTimeout(this.shT2); f.addEventListener('load', () => { this.shT1 = setTimeout(() => this.state.hire && this.shoot(f, cab.name), 7000); this.shT2 = setTimeout(() => this.state.hire && this.shoot(f, cab.name), 18000); }, { once: true }); }
+    f.addEventListener('load', () => { const wait = Math.max(0, 700 - (performance.now() - t0)); setTimeout(() => { if (!this.ldDone) this.ldDone = performance.now(); }, wait); }, { once: true }); }
+  // warm the browser cache with the game you are standing next to, so it opens faster
+  prefetch(url) { if (!url || (this.pf || (this.pf = new Set())).has(url)) return; this.pf.add(url); try { const l = document.createElement('link'); l.rel = 'prefetch'; l.href = url; document.head.appendChild(l); } catch (e) {} }
+  // FOXGATE8-PLAYABLE: title → intro film (the walk builds behind it) → straight into Town Square
+  introPlay(direct) { this.setState({ intro: direct ? null : 'video' }); { const t0 = performance.now(); clearInterval(this.bootT); this._ldrP = import(new URL('engine/meru-loader.js?v=s652e', document.baseURI).href).then(m => { if (!this.state.walk && !this.ldr) { this.ldr = m.meruLoader(); this.ldr.set(0.02); } }).catch(() => {}); this.bootT = setInterval(() => { if (this.state.walk) { clearInterval(this.bootT); return; } if (this.ldr) this.ldr.set(Math.min(0.24, 0.24 * (1 - Math.exp(-(performance.now() - t0) / 2500)))); this.setState({ boot: Math.min(0.06, 0.06 * (1 - Math.exp(-(performance.now() - t0) / 1500))) }); }, 120); } this.vidOk = false; if (!direct) setTimeout(() => { const v = this.vidRef.current; if (!v) { this.vidDone(); return; } v.addEventListener('ended', () => this.vidDone(), { once: true }); v.addEventListener('error', () => this.vidDone(), { once: true }); v.addEventListener('loadeddata', () => { this.vidOk = true; this.setState({ vidOk: true }); }, { once: true }); v.src = 'MERU/videos/MERU-TOWNSQUARE-NEW.mp4'; v.play().catch(() => { if (!this.vidOk) this.vidDone(); }); }, 60);
+    if (!direct) setTimeout(() => { if (this.state.intro === 'video' && !this.vidOk) this.vidDone(); }, 6000);
+    (async () => { while (!this.g) await new Promise(r => setTimeout(r, 200)); await this.ensureWalker(); this.ready = true; this.maybeEnter(); })(); }
+  vidDone() { if (this.state.intro !== 'video') return; const v = this.vidRef.current; if (v) try { v.pause(); } catch (e) {} this.setState({ intro: null }); this.maybeEnter(); }
+  maybeEnter() { if (this.ready && this.state.intro == null && !this.state.walk && !this.entered) { this.entered = true; this.walkStart().then(() => { const W = this.walker; return (new URLSearchParams(location.search).get('start') && W && W.lateReady) ? W.lateReady : null; }).then(() => this.testStart()); }   /* s653: the walk now finishes building AFTER GO TO MERU (api.lateReady); a ?start= test start waits for it */ }
+  // TESTING (Ben s101): start right in front of FOX DANCE (?start=claw = CLAW CRANE, ?start=pinball = PINBALL 1) (Meru Lanes; Dusty Gulch if missing) in Meru Lanes; ?start=square for the normal Town Square start
+  testStart() { if (new URLSearchParams(location.search).get('audit')) setTimeout(() => { try { const K = window.__meru2 && window.__meru2.K; if (K) import(new URL('worlds/meru2-audit.js?v=s728g', document.baseURI).href).then(m => m.runAudit({ THREE: K.THREE, scene: K.scene, L: K.L })); } catch (e) { console.warn('audit', e); } }, 8000);   /* s728d ?audit=1 = merged-aware interior detail panel */
+    const q = new URLSearchParams(location.search).get('start') || 'square';   /* s729 default = Town Square arrival (load-time pass: what every player gets) */   /* s728q in:tankRange = Tank Range (lighting pass) */   /* s728p in:barracks */   /* s728n in:stationTown */   /* s728m in:tankRange */   /* s728l in:tankWorks */   /* s728e in:stationArena */   /* s728c in:carRental2 */   /* s728b in:defense */   /* s728 in:tankRange */   /* s727h default = the walk between the Minimart and Tony's Park */   /* s727f default = behind Jon's Boatworks, by the landing */   /* s727 default = the sidewalk in front of Meru Hardware (complex moved 2.5 m north, wide paved front) */   /* s726 default = the foot of the grand Castle Road (flagstones + raised curbs) */   /* s725b default = inside the Barracks (own-shell buildings got the gold door) */   /* s725 default = inside the Minimart (gold frame on the inside of every door) */   /* s722 default = inside the Tavern (light plan: darts + bar spots) */   /* s720 default = inside Meru Lanes (indoor lighting pass) */   /* s717 default = in front of Meru Castle's gate (the Meru guards now wear Meru Royal Armor + M) */   /* s714 default = Fountain Plaza (town foxes + keepers side by side: same height check) */   /* s711 default = the free speedboat at the Fountain Pier (Runway sound test: boat, then the tank / skate / heli) */   /* s664 default = inside the Tavern (job gate test) */ /* s663e default = the Town Square arrival (Ben: see the new avatar in Meru; ?start=indoor = inside the Tavern) */ /* s648i: default = the normal Town Square arrival (this prompt = the load screen → into the world) */   /* s647: TEST START = the area being edited (now MERU NEWS on the Crestview flats' TVs: floor 1 by the lift; ?start=stud = the old casino start); change this default each prompt */ /* s103: default test start = SPEEDBOAT BAY jetty, boat 2 beside you (?start=dunk, tug, gallery, balloon, chess, checkers, burgers, craps, roulette, stud, holdem, wheel, slots, dance, claw, pinball, square) */ if (q === 'square') return; const W = this.walker; if (!W || !W.tp) return;
+    if (window.__m2Arrive) { [100, 700, 1800].forEach(ms => setTimeout(() => window.__m2Arrive && window.__m2Arrive(), ms)); return; }   // s339: beamed in from the Space Dock = start on the Castle Ridge telepad
+    if (q === 'indoor') { setTimeout(() => { try { const LL = window.__meru2 && window.__meru2.K.L, bd = LL && LL.BUILDINGS.find(b => b.key === 'tavern' || b.key === 'meruTavern'); if (!bd || !bd.door) return; const F = { N: [0, -1], S: [0, 1], E: [1, 0], W: [-1, 0] }[bd.face] || [0, 1]; W.tp(bd.door[0] - F[0] * 3, bd.door[1] - F[1] * 3, 0, Math.atan2(-F[0], -F[1])); } catch (e) {} }, 1500); return; }   // s663
+    if (/^in:/.test(q)) { const key = q.slice(3); setTimeout(() => { try { const LL = window.__meru2 && window.__meru2.K.L, bd = LL && LL.BUILDINGS.find(b => b.key === key); if (!bd || !bd.door) return; const F = { N: [0, -1], S: [0, 1], E: [1, 0], W: [-1, 0] }[bd.face] || [0, 1]; W.tp(bd.door[0] - F[0] * 3, bd.door[1] - F[1] * 3, 0, Math.atan2(-F[0], -F[1])); } catch (e) {} }, 1500); return; }   // s724 ?start=in:<building key> = just inside its door (Lighting Workshop)
+    if (q === 'martside') { setTimeout(() => W.tp(-190, -76, 0, Math.PI), 1500); return; }   // s727h
+    if (q === 'worksback') { setTimeout(() => W.tp(-112, 232.2, 0, -Math.PI / 2), 1500); return; }   // s727f
+    if (q === 'hwfront') { setTimeout(() => W.tp(22, -147.5, 0, Math.PI / 2), 1500); return; }   // s727
+    if (q === 'castleroad') { setTimeout(() => W.tp(-100, -382, 0, Math.atan2(-50, -18)), 1500); return; }   // s726
+    if (q === 'newstv') { setTimeout(() => { if (W.elevator) W.elevator('crest', 1); }, 1500); return; }   // s647
+    if (q === 'bay') { setTimeout(() => W.tp(76.5, 249, 0.9, Math.PI / 2), 600); return; }
+    if (q === 'baygame') { setTimeout(() => { if (W.bayWorld) this.startBay(); }, 900); return; }   // s104c: straight into Speedboat Bay in world (phone preview)
+    if (q === 'skategame' || q === 'skatefree') { setTimeout(() => { if (W.skateWorld) { W.tp(-237, -38, 0, Math.PI); this.startSkate(q === 'skatefree'); } }, 900); return; }   // s104f
+    if (q === 'sport') { setTimeout(() => { try { if (window.__outlets) window.__outlets.street(); } catch (e) {} W.tp(183, -299, 0, 0); }, 1500); return; }   // s151c: street marked won, outside SPORTING GOODS (walk in = the store fight)
+    if (q === 'tees') { setTimeout(() => { try { if (window.__outlets) window.__outlets.street(); } catch (e) {} W.tp(207, -321, 0, Math.PI); }, 1500); return; }   // s152: street marked won, outside FUNNY T-SHIRTS (unit 2, north side)
+    if (q === 'elec') { setTimeout(() => { try { if (window.__outlets) window.__outlets.street(); } catch (e) {} W.tp(255, -321, 0, Math.PI); }, 1500); return; }   // s152b: street marked won, outside ELECTRONICS (unit 4, north side)
+    if (q === 'furn') { setTimeout(() => { try { if (window.__outlets) window.__outlets.street(); } catch (e) {} W.tp(279, -299, 0, 0); }, 1500); return; }   // s153: street marked won, outside FURNITURE (unit 5, south side)
+    if (q === 'gelato') { setTimeout(() => { try { const O = window.__outlets; if (O) { O.street(); const pg = O.prog(); pg.keys = ['sport', 'tees', 'elec', 'furn']; ['sport', 'tees', 'elec', 'furn'].forEach(k => pg.cleared[k] = true); O.setProg(pg); } } catch (e) {} W.tp(231, -299, 0, 0); }, 1500); return; }   // s153b: all 4 keys, outside GELATO (Magpie's hideout)
+    if (q === 'sportopen') { setTimeout(() => { try { const O = window.__outlets; if (O) { O.street(); const pg = O.prog(); pg.keys = ['sport', 'tees', 'elec', 'furn']; pg.magpie = true; ['sport', 'tees', 'gelato', 'elec', 'furn'].forEach(k => { pg.cleared[k] = true; }); O.setProg(pg); } if (window.__open) window.__open.open('sport'); } catch (e) {} W.tp(183, -291, 0, 0); }, 1500); return; }   // s155: Sporting Goods fixed + open, at its front door
+    if (q === 'teesopen') { setTimeout(() => { try { const O = window.__outlets; if (O) { O.street(); const pg = O.prog(); pg.keys = ['sport', 'tees', 'elec', 'furn']; pg.magpie = true; ['sport', 'tees', 'gelato', 'elec', 'furn'].forEach(k => { pg.cleared[k] = true; }); O.setProg(pg); } if (window.__open) window.__open.open('tees'); } catch (e) {} W.tp(207, -321, 0, Math.PI); }, 1500); return; }   // s156: Funny T-Shirts fixed + open, at its front door
+    if (q === 'elecopen') { setTimeout(() => { try { const O = window.__outlets; if (O) { O.street(); const pg = O.prog(); pg.keys = ['sport', 'tees', 'elec', 'furn']; pg.magpie = true; ['sport', 'tees', 'gelato', 'elec', 'furn'].forEach(k => { pg.cleared[k] = true; }); O.setProg(pg); } if (window.__open) window.__open.open('elec'); } catch (e) {} W.tp(255, -321, 0, Math.PI); }, 1500); return; }   // s157: Electronics fixed + open, at its front door
+    if (q === 'furnopen') { setTimeout(() => { try { const O = window.__outlets; if (O) { O.street(); const pg = O.prog(); pg.keys = ['sport', 'tees', 'elec', 'furn']; pg.magpie = true; ['sport', 'tees', 'gelato', 'elec', 'furn'].forEach(k => { pg.cleared[k] = true; }); O.setProg(pg); } if (window.__open) window.__open.open('furn'); } catch (e) {} W.tp(279, -298, 0, 0); }, 1500); return; }   // s158: Furniture fixed + open, at its front door
+    if (q === 'gelatoopen') { setTimeout(() => { try { const O = window.__outlets; if (O) { O.street(); const pg = O.prog(); pg.keys = ['sport', 'tees', 'elec', 'furn']; pg.magpie = true; ['sport', 'tees', 'gelato', 'elec', 'furn'].forEach(k => { pg.cleared[k] = true; }); O.setProg(pg); } if (window.__open) window.__open.open('gelato'); } catch (e) {} W.tp(231, -299, 0, 0); }, 1500); return; }   // s159: Gelato fixed + open (Magpie scoops), at its front door
+    if (q === 'hardware') { setTimeout(() => W.tp(30, -147.5, 0, Math.PI), 1500); return; }   // s167: outside the Meru Hardware door (main ring road)
+    if (q === 'pasture') { setTimeout(() => W.tp(-6, -307, 0, -Math.PI / 2), 1500); return; }   // s170: Castle Path, at the Woolly Acres arch
+    if (q === 'cornfarm') { setTimeout(() => W.tp(6, -227, 0, Math.PI / 2), 1500); return; }   // s169: Castle Path, at the Cobb Farm arch
+    if (q === 'orchard') { setTimeout(() => W.tp(-6, -227, 0, -Math.PI / 2), 1500); return; }   // s168: Castle Path, at the Russet Orchard arch
+    if (q === 'gardencentre') { setTimeout(() => W.tp(54.2, -188, 0, -Math.PI / 2), 1500); return; }   // s167: outside the garden centre gate (hospital road)
+    if (q === 'lumberyard') { setTimeout(() => W.tp(12.2, -178.8, 0, Math.PI / 2), 1500); return; }   // s167: outside the lumber yard gate (castle path side)
+    if (q === 'hardwarecrew') { setTimeout(() => { try { const O = window.__outlets; if (O) { O.street(); const pg = O.prog(); pg.keys = ['sport', 'tees', 'elec', 'furn']; pg.magpie = true; ['sport', 'tees', 'gelato', 'elec', 'furn'].forEach(k => { pg.cleared[k] = true; }); O.setProg(pg); } } catch (e) {} W.tp(30, -157, 0, Math.PI); }, 1500); return; }   // s161: all 5 stores cleared, at Dozer's counter
+    if (q === 'crew') { setTimeout(() => { try { const O = window.__outlets; if (O) { O.street(); const pg = O.prog(); pg.keys = ['sport', 'tees', 'elec', 'furn']; pg.magpie = true; ['sport', 'tees', 'gelato', 'elec', 'furn'].forEach(k => { pg.cleared[k] = true; }); O.setProg(pg); } } catch (e) {} W.tp(164, -307.6, 0, Math.PI / 2); }, 1500); return; }   // s154: all 5 stores cleared, at Dozer's truck
+    if (q === 'voices') { setTimeout(() => { const C = window.__meru2City, B = C && (C.blds || []).map(q => q.b || q).find(b => b.key === 'police'), D = { N: [0, -1], S: [0, 1], E: [1, 0], W: [-1, 0] }[B && B.face] || [0, 1]; if (!B) return; const x = B.door[0] - D[0] * 2, z = B.door[1] - D[1] * 2; W.tp(x, z, 0, Math.atan2(-D[0], -D[1])); }, 900); return; }   /* s181: just inside the Police door (it moves with the town layout) */   // s181: inside the Police station (desk, evidence, jail guard, Scraps, Mutt, Grumble, Old Jack = voice pack 2)
+    if (q === 'tavern') { setTimeout(() => W.tp(32, -64, 0, Math.PI), 600); return; }
+    if (q === 'lanes') { setTimeout(() => W.tp(118, -14, 0, -Math.PI / 2), 600); return; }
+    if (q === 'castlegate') { setTimeout(() => { const C = W.castle || null; W.tp(-210, -430, 30, -Math.PI / 2); }, 600); return; }
+    if (q === 'plaza') { setTimeout(() => W.tp(10, 14, 0, Math.PI * 1.25), 600); return; }
+    if (q === 'boat') { setTimeout(() => W.tp(8.2, 295.6, 1.2, 0), 600); return; }   // s711: on the Fountain Pier beside the free speedboat
+    if (q === 'outlets') { setTimeout(() => W.tp(160, -310, 0, Math.PI / 2), 600); return; }   // s151: west end of the Outlets strip (walk east = ambush)
+    if (q === 'pearl') { setTimeout(() => import('./worlds/meru2-layout.js').then(m => { const p = m.LAKE.island && m.LAKE.island.trail; if (p && p.length > 1) { const [a, b] = p; W.tp(a[0], a[1], 0, Math.atan2(b[0] - a[0], b[1] - a[1])); } else { const r = W._raft && W._raft.state(); if (r) W.tp(r.x + 14.5, r.z, 9.6, -Math.PI / 2); } }), 900); return; }   // s185: start of the jetty path up to the valley   // s184: on the Pearl Valley beach by Marlo's jetty
+    if (q === 'tankgame') { setTimeout(() => { if (W.tankWorld) { W.tp(175, -398, 0, Math.PI); this.startTank(); } }, 900); return; }   // s104e: straight into Tank Range in world
+    setTimeout(() => { const S = (q === 'coconut' || q === 'whack' || q === 'shutbox' || q === 'liars' || q === 'dominoes' || q === 'pachinko' ? (W._spots || []).find(s => s.key === 'stall:game:' + q) : null) || (q === 'domplaza' ? (W._spots || []).find(s => s.key === 'plaza:dominoes') : null) || (q === 'tether' ? (W._spots || []).find(s => s.key === 'plaza:tetherball') : null) || (q === 'fish' || q === 'cheese' ? (W._spots || []).find(s => s.key === 'stall:capsule:' + q) : null) || (q === 'dunk' ? (W._spots || []).find(s => s.key === 'fest:DUNK TANK') : null) || (q === 'tug' ? (W._spots || []).find(s => s.key === 'fest:TUG OF WAR') : null) || (q === 'gallery' ? (W._spots || []).find(s => s.key === 'fest:SHOOTING GALLERY') : null) || (q === 'balloon' ? (W._spots || []).find(s => s.key === 'fest:BALLOON POP') : null) || (q === 'chess' || q === 'checkers' ? (W._spots || []).find(s => s.key === 'plaza:' + q) : null) || (q === 'burgers' ? (W._spots || []).find(s => s.key === 'burgersJob') : null) || (q === 'craps' ? (W._spots || []).find(s => s.key === 'CRAPS') : null) || (q === 'roulette' ? (W._spots || []).find(s => s.key === 'ROULETTE') : null) || (q === 'stud' || q === 'holdem' ? (W._spots || []).find(s => s.key === (q === 'stud' ? 'FIVE CARD STUD' : "TEXAS HOLD'EM")) : null) || (q === 'wheel' ? (W._spots || []).find(s => s.key === 'TREASURE WHEEL') : null) || (q === 'slots' ? (W._spots || []).find(s => s.key === 'LUCKY GATES SLOTS') : null) || (q === 'coconut' || q === 'dunk' || q === 'tug' || q === 'gallery' || q === 'balloon' || q === 'chess' || q === 'checkers' || q === 'burgers' || q === 'pinball' || q === 'claw' || q === 'wheel' || q === 'slots' || q === 'stud' || q === 'holdem' || q === 'roulette' || q === 'craps' ? null : (W._spots || []).find(s => s.key === 'FOX DANCE')) || (q === 'pinball' ? null : (W._spots || []).find(s => s.key === 'CLAW CRANE')) || (W._spots || []).find(s => s.key === 'PINBALL 1') || (W._spots || []).find(s => /DUSTY GULCH/.test(s.key || '')), RL = W._RL; let x = 147.6, z = -7.65, yaw = Math.PI / 2;
+      if (RL && RL.fwdAny) { const f = RL.fwdAny(x, z, yaw); if (f) { x = f[0]; z = f[1]; yaw = f[2]; } } if (S && S.fest) { x = S.x; z = S.z; yaw = Math.atan2(S.fest.x - x, S.fest.z - z); W.tp(x, z, 0, yaw); return; } if (S && S.board) { x = S.x; z = S.z; yaw = Math.atan2(S.board.x - x, S.board.z - z); W.tp(x, z, 0, yaw); return; } if (S) { x = S.x; z = S.z; const g = (S.burger && S.burger.K && ((S.burger.K.kids0 || []).find(c => c.parent && c.parent !== S.burger.K.root) || S.burger.K.root)) || (S.craps && S.craps.group) || (S.roul && S.roul.group) || (S.poker && S.poker.group) || (S.wheel && S.wheel.group) || (S.slot && S.slot.group) || (S.dance && S.dance.group) || (S.cab && ((S.cab.pb && S.cab.pb.group) || (S.cab.claw && S.cab.claw.group))); if (g && g.getWorldPosition) { const v = g.getWorldPosition(new g.position.constructor()); yaw = Math.atan2(v.x - x, v.z - z); } } W.tp(x, z, 0, yaw); }, 600); }
+  async componentDidMount() { if (this.state.intro === 'boot') this.introPlay(true); /* s652: the s651 walk prefetch at mount is gone (it ran ~100 modules before the load screen could start its video); the s100 prefetch at 3 s stays */   /* s648i: straight to the MERU load screen */
+    window.__m2page = this;
+    addEventListener('8g:pin', e => this.setState({ pin: e.detail || null }));
+    addEventListener('8g:claw', e => this.setState({ claw: e.detail || null }));
+    addEventListener('8g:dance', e => this.setState({ dance: e.detail || null }));
+    addEventListener('8g:bowl', e => this.setState({ bowlUi: e.detail || null }));
+    addEventListener('8g:slots', e => this.setState({ slots: e.detail || null }));
+    addEventListener('8g:wheel', e => this.setState({ wheel: e.detail || null }));
+    addEventListener('8g:poker', e => this.setState({ poker: e.detail || null }));
+    addEventListener('8g:fest', e => { const gm = e.detail ? e.detail.game : null; if (gm !== (this.state.fest || null)) this.setState({ fest: gm }); });   /* s102 ARENA PATH FESTIVAL in world */
+    addEventListener('8g:board', e => { const gm = e.detail ? e.detail.game : null; if (gm !== (this.state.board || null)) this.setState({ board: gm }); });   /* s102 CHESS / CHECKERS in world */
+    addEventListener('8g:burger', e => { const on = !!e.detail; if (on !== !!this.state.burger) this.setState({ burger: on }); });   /* s102 BURGERS in world: the Meru Burgers page mounts as the overlay UI and reads the event itself */
+    addEventListener('8g:roul', e => this.setState({ roul: e.detail || null }));
+    addEventListener('8g:craps', e => this.setState({ craps: e.detail || null }));
+    addEventListener('keydown', e => { if (this.state.craps && e.code === 'Escape') { e.preventDefault(); const Q = this.walker && this.walker._craps; Q && Q.end(); } }, true);
+    addEventListener('keydown', e => { if (this.state.roul && e.code === 'Escape') { e.preventDefault(); const Q = this.walker && this.walker._roul; Q && Q.end(); } }, true);
+    addEventListener('keydown', e => { if (this.state.poker && e.code === 'Escape') { e.preventDefault(); const Q = this.walker && this.walker._poker; Q && Q.end(); } }, true);
+    addEventListener('keydown', e => { if (this.state.wheel && e.code === 'Escape') { e.preventDefault(); const Q = this.walker && this.walker._wheel; Q && Q.end(); } }, true);
+    addEventListener('keydown', e => { if (this.state.slots && e.code === 'Escape') { e.preventDefault(); const Q = this.walker && this.walker._slots; Q && Q.end(); } }, true);
+    addEventListener('keydown', e => { if (this.state.bowlUi && e.code === 'Escape') { e.preventDefault(); const B = this.walker && this.walker._bowl; B && B.quit(); } }, true);
+    addEventListener('keydown', e => { if (this.state.dance && e.code === 'Escape') { e.preventDefault(); const D = this.walker && this.walker._dance; D && D.end(); } }, true);
+    addEventListener('keydown', e => { if (this.state.claw && e.code === 'Escape') { e.preventDefault(); const C = this.walker && this.walker._claw; C && C.end(); } }, true);
+    addEventListener('keydown', e => { if (this.state.pin && e.code === 'Escape') { e.preventDefault(); const P = this.walker && this.walker._pin; P && P.end(); } }, true);
+    addEventListener('keydown', e => { if (this.state.hire && this.state.hire.cab && (this.state.ld || 0) >= 1 && (e.code === 'Enter' || e.code === 'KeyE' || e.code === 'Space')) { e.preventDefault(); this.setState({ ld: null }); } }, true);
+    addEventListener('8g:cab-multi', () => { const n = this.walker && this.walker.netHud && this.walker.netHud(); this.setState({ inv: { code: (n && n.code) || '' } }); });
+    addEventListener('message', e => { const d = e.data; if (d && (d.type === '8gates:minigame-back' || d.type === 'minigame:back' || (d.type === '8gates:minigame' && d.action === 'back') || (d.type === '8g:minigame' && d.action === 'close') || (d.type === '8gates-minigame' && d.action === 'back') || (d.type === '8gates:minigame' && d.action === 'close')) && this.state.hire) { this.walker && this.walker.setPaused(false); this.setState({ hire: null }); } });   // a minigame's own BACK button (vending machine, claw crane)
+    if (new URLSearchParams(location.search).get('phone') === '1' && !window.__fakePhone) { window.__fakePhone = true; const mm = matchMedia.bind(window); window.matchMedia = q => /pointer:\s*coarse|hover:\s*none/.test(q) ? { matches: true, media: q, addEventListener() {}, removeEventListener() {}, addListener() {}, removeListener() {} } : mm(q); }   // phone-budget test in a desktop browser (Meru 2 Phone Check)
+    import(new URL('worlds/meru2-tour.js', document.baseURI).href).then(m => { this.tourN = m.TOUR.length; this.forceUpdate(); }).catch(() => {});
+    addEventListener('resize', this.onResize); this.onResize();
+    { const WALK = 'worlds/meru2-walk.js?v=s729b', KEY = 'meru.preload.v1', base = document.baseURI.replace(/[?#].*$/, '').replace(/[^/]*$/, '');   /* s729 LOAD TIME: every Meru code file is asked for AT ONCE (modulepreload), instead of the browser finding them 7 levels deep one level at a time; the list = what the last visit really loaded (learned), else the shipped worlds/meru2-preload.json */
+      try { performance.setResourceTimingBufferSize(4000); } catch (e) {}
+      const pre = list => { const have = new Set([...document.querySelectorAll('link[rel=modulepreload]')].map(l => l.href)); let n = 0; for (const f of list) { const u = new URL(f, base).href; if (have.has(u)) continue; const l = document.createElement('link'); l.rel = 'modulepreload'; l.href = u; document.head.appendChild(l); n++; } window.__preloadN = n; };
+      const go = async () => { let D = null; try { D = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {} if (!D || !Array.isArray(D.list) || !D.list.includes(WALK)) { try { D = await (await fetch(new URL('worlds/meru2-preload.json', base).href)).json(); window.__preloadFrom = 'shipped'; } catch (e) { D = null; } } else window.__preloadFrom = 'learned'; if (D && D.list) pre(D.list); };
+      if (!/[?&]nopreload=1/.test(location.search)) { const t0 = performance.now(), wait = () => (window.__newsPlaying || performance.now() - t0 > 1500) ? go() : setTimeout(wait, 100); wait(); }   /* waits for the news video to start (max 1.5 s) so the film gets its bandwidth first */
+      const learn = () => { if (!window.__m2LateDone) { setTimeout(learn, 3000); return; } try { const list = [...new Set(performance.getEntriesByType('resource').map(e => e.name).filter(u => u.startsWith(base) && /\.js(\?|$)/.test(u)).map(u => u.slice(base.length)))].filter(f => !/^(support\.js|_ds\/|engine\/mute\.js|engine\/touch-sim\.js)/.test(f)); if (list.length > 60 && list.includes(WALK)) localStorage.setItem(KEY, JSON.stringify({ t: Date.now(), list })); } catch (e) {} };
+      setTimeout(learn, 15000); }
+    setTimeout(() => { for (const f of ['worlds/meru2-walk.js?v=s729b', 'worlds/meru.js', 'engine/combat.js']) import(new URL(f, document.baseURI).href).catch(() => {}); }, 3000);   // s100: fetch the walk code in the background so WALK IT starts sooner
+    if (this._ldrP) { await this._ldrP; const tw = performance.now(); while (!window.__newsPlaying && performance.now() - tw < 5000) await new Promise(r => setTimeout(r, 100)); await new Promise(r => setTimeout(r, 300)); }   /* s652e: the town's heavy build waits until the news video is actually playing (max 5 s), so it can't starve the video */   /* s652c: the load screen + its video start BEFORE the town's heavy code runs */
+    try { const m = await import(new URL('worlds/meru2-blockout.js?v=s729', document.baseURI).href); this.g = await m.createBlockout({ container: this.stageRef.current, onState: st => this.setState({ st }) }); window.__meru2 = this.g; try { const sm = await import(new URL('engine/save.js', document.baseURI).href); this.save = sm.save; this.save.on(() => this.forceUpdate()); } catch (e) {} this.forceUpdate();
+      { const on = () => { try { const M = window.__meru2Walk || this.walker; if (M && M.soundOn) M.soundOn(); } catch (e) {} }; if (!/[?&]sound=0/.test(location.search)) { on(); const once = () => { on(); }; for (const ev of ['pointerdown', 'keydown', 'touchstart']) addEventListener(ev, once, true); } }   /* s181 Ben: game UNMUTED */
+      this._sndT = setInterval(() => { const M = window.__meru2Walk, s = M && M.audioState ? M.audioState() : 'none', lk = !!M && s !== 'running' && s !== 'off'; if (lk !== !!this.state.sndLock) this.setState({ sndLock: lk }); }, 800);
+      const q = new URLSearchParams(location.search); /* s648i (Ben): NO title, NO film, NO boot screen: the page opens straight on the MERU load screen (introPlay(true) runs at mount) */
+      if (q.get('night') === '1' && !this.state.night) this.setState({ night: true }); if (q.has('tour')) this.tourStart(+q.get('tour') || 0); else if (q.get('bowl') === '1') setTimeout(async () => { await this.walkStart(); let n = 0; const go = () => { const w = this.walker; if (w && w.bowlGo) w.bowlGo(); if (++n < 8) setTimeout(go, 700); }; setTimeout(go, 1200); }, 800); else if (q.get('walk') === '1' || q.has('robdemo')) setTimeout(async () => { if (!this.state.walk) await this.walkStart(); if ((q.get('spawn') === 'arena' || q.has('robdemo')) && this.walker) this.walker.tp(362, 0, 0, -Math.PI / 2); const SP = { fountain: [0, 14, Math.PI], market: [-104, 41, -Math.PI / 2], burgers: [72, 48, -Math.PI / 2], tavern: [32, -64, Math.PI], castle: [-212, -427, -Math.PI / 2], road: [-60, -366, -Math.PI / 2], bridge: [-221, 248, 0], aviary: [182, 114, Math.PI / 2], desert: [-395, 20, -Math.PI / 2], ferry: [156, 246, 0], boats: [76, 244, 0], tailor: [-23.5, -154.6, Math.PI], barber: [-47, -154, Math.PI], shoes: [40, -153.6, Math.PI], pie: [-173.6, -122, -Math.PI / 2], mart: [-173.4, -92, -Math.PI / 2], skate: [-200, 59.6, 0], hobby: [-150.6, 126, Math.PI / 2], bait: [-12.6, 209, -Math.PI / 2], jetty: [-21, 255.6, 0], rock: [-226, 59.2, 0], rockout: [-221.5, 56.2, 0], golf: [338, 59.8, 0], post: [64, -319.6, Math.PI], postin: [63, -333.8, Math.PI], museum: [169.6, -118, Math.PI / 2], museumin: [176.4, -119.6, Math.PI / 2], hospital: [89, -147.6, Math.PI], hospin: [89, -162.5, Math.PI], gas: [373.6, 74, Math.PI / 2], gasin: [381, 74, Math.PI / 2], motel: [129, -167.4, Math.PI], motelin: [129, -178, Math.PI], club: [307, 57.6, 0], clubin: [307, 66, 0], clubback: [307, 86, 0], chiro: [-180, 57.6, 0], chiroin: [-180, 66, 0], nature: [168.4, 71, Math.PI / 2], naturein: [175.2, 71, Math.PI / 2], marketin: [-101, 46.5, -Math.PI / 2], armoryin: [-103, 77, -Math.PI / 2], bankin: [-39, 104, 0], policein: [-102.5, -42.5, -Math.PI / 2], firein: [-41.5, 200.5, -Math.PI / 2], newsroom: [286, -1592.8, Math.PI, -150], daily: [-440, -204, Math.PI / 2], fire: [-31, 200.5, -Math.PI / 2], casinoin: [46.5, -87, Math.PI], boathousein: [75, 206.6, 0], barracksin: [0, -403, Math.PI], castlein: [-255, -404, Math.PI, -60], staffdoor: [-251.4, -421, -Math.PI / 2, 26], castleyard: [-238, -431, -Math.PI / 2, 26], police: [-94.5, -42.5, -Math.PI / 2], evidence: [-118, -38, -Math.PI / 2], bank: [-39, 93, 0], bankback: [-18.5, 137.5, Math.PI], armory: [-97, 77, -Math.PI / 2], market: [-95, 46.5, -Math.PI / 2], carts: [-95.2, 30.1, -Math.PI / 2], flowerin: [174.0, -40, Math.PI / 2], flowers: [169.0, -40, Math.PI / 2], chocin: [20, -153.8, Math.PI], chocs: [20, -149, Math.PI], tailorin: [-25, -153.8, Math.PI], tailors: [-25, -149, Math.PI], barberin: [-47, -153.8, Math.PI], barbers: [-47, -149, Math.PI], shoesin: [40, -153.8, Math.PI], shoesout: [40, -149, Math.PI], piein: [-173.6, -122, -Math.PI / 2], pieout: [-169, -122, -Math.PI / 2], martin: [-173.6, -92, -Math.PI / 2], martout: [-169, -92, -Math.PI / 2], bmartin: [46.4, -291, -Math.PI / 2], bmartout: [51, -291, -Math.PI / 2], bgasin: [79.6, -286, Math.PI / 2], bgas: [73, -286, Math.PI / 2], skatein: [-200, 62.6, 0], skateout: [-200, 57.4, 0], hobbyin: [-146.6, 126, Math.PI / 2], hobbyout: [-151, 126, Math.PI / 2], baitin: [-16.2, 209, -Math.PI / 2], baitout: [-12.6, 209, -Math.PI / 2], rockin: [-226, 62.6, 0], rockout: [-226, 57.6, 0], golfin: [338, 63.2, 0], golfout: [338, 58.0, 0], trail: [190, 61.2, Math.PI / 2], crest: [-106, -111, -Math.PI / 2], crestin: [-117, -111, -Math.PI / 2], lake: [81, 73, 0], lakein: [81, 84, 0] }[q.get('spawn')]; if (SP && this.walker) setTimeout(() => this.walker.tp(SP[0], SP[1], SP[3] || 0, SP[2]), 600); { const rf = { crestroof: 'crest', lakeroof: 'lake' }[q.get('spawn')]; if (rf && this.walker) setTimeout(() => this.walker.elevator(rf, 3), 700); } }, 800); }
+    catch (e) { console.warn('blockout failed: ' + (e && e.stack || e)); this.setState({ err: String(e && e.message || e) }); }
+  }
+  onResize = () => this.setState({ vw: innerWidth, vh: innerHeight });
+  componentWillUnmount() { removeEventListener('resize', this.onResize); this.tour && this.tour.stop(); this.componentWillUnmountLp(); this.walker && this.walker.destroy(); this.g && this.g.destroy(); }
+  lpStart() { const L = { pins: 3, set: 0, pos: 0.06, dir: 1, speed: 0.0072 * 60, zone: 0.42, center: 0.5, arm: 0.33, wobble: 0, popped: 0, msg: 'PRESS when the pick is in the GREEN.' }; this.setState({ lp: L }); let last = performance.now();
+    const step = now => { const P = this.state.lp; if (!P) return; const dt = Math.min(0.05, (now - last) / 1000); last = now; const L2 = { ...P }; if (L2.arm > 0) L2.arm -= dt; if (L2.wobble > 0) L2.wobble -= dt;
+      if (L2.popped > 0) { L2.popped -= dt; if (L2.popped <= 0) { this.setState({ lp: null }); this.walker && this.walker.pickDone(true); removeEventListener('keydown', this.lpKey, true); return; } }
+      else { L2.pos += L2.dir * L2.speed * dt; if (L2.pos >= 1) { L2.pos = 1; L2.dir = -1; } if (L2.pos <= 0) { L2.pos = 0; L2.dir = 1; } }
+      this.setState({ lp: L2 }); this.lpRaf = requestAnimationFrame(step); };
+    if (this.lpKey) removeEventListener('keydown', this.lpKey, true); this.lpKey = e => { if (this.state.lp && (e.code === 'Space' || e.code === 'Enter')) { e.preventDefault(); e.stopPropagation(); this.lpPress(); } }; addEventListener('keydown', this.lpKey, true); this.lpRaf = requestAnimationFrame(step); }
+  lpPress() { const L = this.state.lp; if (!L || L.arm > 0 || L.popped > 0) return; const L2 = { ...L };
+    if (Math.abs(L.pos - L.center) <= L.zone / 2) { L2.set++; if (L2.set >= L2.pins) { L2.popped = 1.1; L2.msg = 'CLICK. The lock is open.'; } else { L2.center = 0.42 + Math.random() * 0.16; L2.speed += 0.0009 * 60; L2.msg = L2.set === 1 ? 'ONE DOWN. Two to go.' : 'TWO DOWN. Last pin \u2014 steady.'; } }
+    else { L2.wobble = 0.27; L2.msg = 'The pick slipped. No harm \u2014 try again.'; } this.setState({ lp: L2 }); }
+  componentWillUnmountLp() { cancelAnimationFrame(this.lpRaf); removeEventListener('keydown', this.lpKey, true); }
+  panelVals(S, blur) {
+    const P = S.panel, g = this.g, sv = this.save, T = g && g.train, LY = g && g.K.L;
+    if (!P || !T || !sv) return { panelOn: false, fadeOn: !!S.fade, fadeTxt: S.fade, pStops: [], tickets: [], linePts: '' };
+    const close0 = () => { this.walker && this.walker.setPaused(false); this.setState({ panel: null }); };
+    const LW = this.walker && this.walker.law, base = { panelOn: true, fadeOn: !!S.fade, fadeTxt: S.fade, pTrain: false, pMap: false, pRental: false, goldTxt: String(sv.data.gold), panelClose: e => { blur(e); close0(); }, pStops: [], tickets: [], linePts: '' };
+    const NAMES = { ownBoard: 'Your Skateboard', stickerPack: 'Sticker Pack', snackPack: 'Snack Pack', energyDrink: 'Energy Drink', loyaltyCard: 'Loyalty Card', hotPie: 'Hot Pie', goldenPieTin: 'Golden Pie Tin', erToGo: 'ER to GO Health Pills', energyPod: 'Energy Fill Pod', chocolates: 'Box of Chocolates', repairKit: 'Repair Kit', splint: 'Field Splint', amber: 'Meru Amber', healingCharges: 'Healing Charge' }, nm = id => NAMES[id] || id;
+    if (P.mode === 'elev' && this.walker) { const go = f => e => { blur(e); this.setState({ panel: null, fade: f === 3 ? 'ROOF' : f ? 'FLOOR ' + f : 'LOBBY' }); setTimeout(() => { this.walker.elevator(P.k, f); setTimeout(() => this.setState({ fade: '' }), 300); }, 450); };
+      return { ...base, pShop: true, pKicker: 'ELEVATOR', pTitle: P.k === 'crest' ? 'Crestview House' : 'Lakeside Tower', shopRows: [[3, 'Roof', 'Roof garden \u00b7 laundry room'], [2, 'Floor 2', 'Rooms 201 to 205 \u00b7 the penthouse is 204'], [1, 'Floor 1', 'Rooms 101 to 105'], [0, 'Lobby', 'Street door, realtor']].map(([f, label, sub]) => ({ label, sub, action: f === P.f ? 'HERE' : 'GO', off: f === P.f, op: f === P.f ? 0.45 : 1, bg: f === P.f ? '#e6e3df' : '#ec3013', fg: f === P.f ? '#201e1d' : '#ffffff', go: go(f) })) }; }
+    if (P.mode === 'shop' && this.walker) { const SH = this.walker.shop, lines = SH.STOCK[P.k] || [];
+      return { ...base, pShop: true, pKicker: P.k === 'kia' ? 'ITEM SHOP \u00b7 KIA' : 'ARMORY \u00b7 BRAM', pTitle: 'Buy', shopRows: lines.map(l => { const owned = l.kind === 'gear' && sv.flag('gear.' + l.key), pr = SH.price ? SH.price(P.k, l) : l.price, can = !owned && sv.data.gold >= pr;
+        return { label: l.label, sub: pr + ' gold' + (pr < l.price ? ' \u00b7 staff price' : '') + (l.kind === 'item' ? ' \u00b7 in your bag: ' + sv.count(l.key) : ''), action: owned ? 'OWNED' : 'BUY', off: !can, op: can ? 1 : 0.45, bg: can ? '#ec3013' : '#e6e3df', fg: can ? '#ffffff' : '#201e1d', go: e => { blur(e); if (can) SH.buy(P.k, l.key); } }; }) }; }
+    if (LW && P.mode === 'police') { const f = LW.fines(), o = LW.owed(); return { ...base, pPolice: true, pKicker: 'POLICE DEPARTMENT', pTitle: 'Front desk', owedTxt: o + ' gold', fineRows: f.length ? f.map(x => ({ why: x.why === 'balance' ? 'Unpaid balance' : (LW.why ? '' : '') + ({ fare: 'Riding the train without a ticket', path: 'Driving on a foot path', assault: 'Hitting a townsfolk', theft: 'Stealing from a shop', escape: 'Breaking out of jail' }[x.why] || x.why) + ' \u00b7 day ' + x.day, amt: x.amt + ' gold' })) : [{ why: 'No fines', amt: '' }], payOff: !o, payOp: o ? 1 : 0.45, payGo: e => { blur(e); LW.payFines(); this.forceUpdate(); } }; }
+    if (LW && P.mode === 'bank') { const D = n => e => { blur(e); LW.deposit(n === 'all' ? sv.data.gold : n); }, Wd = n => e => { blur(e); LW.withdraw(n === 'all' ? LW.bank() : n); };
+      return { ...base, pBank: true, pKicker: 'BANK OF MERU', pTitle: 'Teller', bankTxt: LW.bank() + ' gold', rateTxt: (LW.rate ? Math.round(LW.rate() * 100) : 2) + '% a day' + (sv.stat('bkRate', false) ? ' \u00b7 staff rate' : ''), dep10: D(10), dep50: D(50), depAll: D('all'), wd10: Wd(10), wd50: Wd(50), wdAll: Wd('all'), ledger: LW.ledger().length ? LW.ledger().map(t => ({ t })) : [{ t: 'No transactions yet' }] }; }
+    if (LW && P.mode === 'locker') { const bag = Object.entries(sv.data.items).filter(([, n]) => n > 0), lk = Object.entries(LW.locker());
+      return { ...base, pLocker: true, pKicker: 'BANK OF MERU', pTitle: 'Storage locker' + (LW.slots ? ' \u00b7 ' + Object.keys(LW.locker()).length + ' / ' + LW.slots() + ' slots' : ''), bagRows: bag.length ? bag.map(([id, n]) => ({ label: nm(id), n, go: e => { blur(e); LW.store(id, 1); } })) : [], lockRows: lk.map(([id, n]) => ({ label: nm(id), n, go: e => { blur(e); LW.takeOut(id, 1); } })) }; }
+    if (P.mode === 'rental') { const r = sv.stat('meru2Rental', null), d0 = sv.stat('meru2Day', 1), has = !!r && r.until >= d0, price = LY.CAR_RENTAL.day, can = !has && sv.data.gold >= price;
+      return { panelOn: true, fadeOn: !!S.fade, fadeTxt: S.fade, pTrain: false, pMap: false, pRental: true, pKicker: 'CAR RENTAL', pTitle: 'Rent a car', goldTxt: String(sv.data.gold), panelClose: e => { blur(e); close0(); }, rentStatus: has ? 'RENTED · until the end of day ' + r.until : 'NO CAR RENTED', rentPrice: price + ' gold', rentOff: !can, rentOp: can ? 1 : 0.45, rentGo: e => { blur(e); if (can && this.walker && this.walker.rent()) close0(); }, pStops: [], tickets: [], linePts: '' }; }
+    const train = P.mode === 'train', gold = sv.data.gold, day = sv.stat('meru2Day', 1), tk = sv.stat('meru2Ticket', null), ok = !!tk && tk.until >= day;
+    const pos = this.walker ? this.walker.pos() : { x: 0, z: 0 }, pr = LY.TRAIN.prices, dd = LY.TRAIN.days, pcx = v => ((v + 300) / 7.6).toFixed(2) + '%', pcz = v => ((v + 360) / 7.6).toFixed(2) + '%';
+    const close = () => { this.walker && this.walker.setPaused(false); this.setState({ panel: null }); };
+    const pStops = T.stops.map((st, i) => { const here = train ? st.key === P.at : Math.hypot(pos.x - st.c[0], pos.z - st.c[1]) < 60, seen = sv.flag('meru2Stop_' + st.key);
+      const q = T.placeAt(st.key, 'taxi'), fare = Math.round(LY.TAXI.base + Math.hypot(pos.x - q.x, pos.z - q.z) * LY.TAXI.perM);
+      const can = here ? false : train ? (seen && ok) : gold >= fare;
+      const status = here ? 'YOU ARE HERE' : train ? (seen ? (ok ? 'VISITED · fast travel' : 'VISITED · needs a ticket') : 'NOT VISITED · ride the train there first') : (gold >= fare ? 'Drops you at the station door' : 'Not enough gold');
+      const go = e => { blur(e); if (!can) return; if (!train && !sv.spend(fare)) return; this.travel(st.key, P.mode, st.label); };
+      return { n: String(i + 1), label: st.label, left: pcx(st.c[0]), top: pcz(st.c[1]), bg: here ? '#ffd23a' : seen ? '#ec3013' : '#f3f2f2', fg: here ? '#000000' : seen ? '#ffffff' : '#201e1d', status, action: here ? 'HERE' : train ? 'FAST TRAVEL' : 'GO · ' + fare + ' GOLD', off: !can, op: can ? 1 : 0.45, abg: can ? '#ec3013' : '#e6e3df', afg: can ? '#ffffff' : '#201e1d', go }; });
+    const tickets = ['day', 'week', 'month'].map(k => { const can = gold >= pr[k]; return { name: k.toUpperCase(), price: pr[k] + ' gold · ' + dd[k] + (dd[k] > 1 ? ' days' : ' day'), off: !can, op: can ? 1 : 0.45, bg: tk && tk.kind === k && ok ? '#201e1d' : '#ffffff', fg: tk && tk.kind === k && ok ? '#ffffff' : '#201e1d', go: e => { blur(e); if (sv.spend(pr[k])) sv.setStat('meru2Ticket', { kind: k, until: Math.max(ok ? tk.until : 0, day + dd[k] - 1) }); } }; });
+    const at = train ? T.stops.find(s => s.key === P.at) : null;
+    return { panelOn: true, fadeOn: !!S.fade, fadeTxt: S.fade, pTrain: train, pMap: true, pRental: false, pKicker: train ? 'TRAIN · TICKETS + FAST TRAVEL' : 'TAXI · TAP A STOP', pTitle: at ? at.label : 'Where to?', goldTxt: String(gold), panelClose: e => { blur(e); close(); },
+      ticketTxt: ok ? tk.kind.toUpperCase() + ' · valid to day ' + tk.until + ' (today: day ' + day + ')' : 'NONE', tickets, pStops, linePts: LY.TRAIN.line.map(p => p.join(',')).join(' '), youLeft: pcx(pos.x), youTop: pcz(pos.z) };
+  }
+  renderVals() {
+    const S = this.state, g = this.g, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur(), c = S.st && S.st.counts;
+    const T = (id, name, fn) => ({ name, pressed: S[id] ? 'true' : 'false', bg: S[id] ? '#ffd23a' : '#000000', fg: S[id] ? '#000000' : '#ffffff', go: e => { blur(e); const v = !S[id]; this.setState({ [id]: v }); g && fn(v); } });
+    const land = S.vw > S.vh && S.vh < 520, rbN = 2 + (S.w && S.w.outdoors && !S.panel ? 1 : 0) + (S.w && S.w.outdoors && !S.w.jail && !S.panel ? 1 : 0);
+    const zs = [{ key: 'all', label: 'WHOLE MAP' }, ...(g ? g.zones : [])];
+    const w = S.w || { place: 'Meru', surface: 'stone', music: '', toast: '', voice: null, hire: null }, bar = S.hi.bar || 0, sv = (() => { try { return JSON.parse(localStorage.getItem('8gates.save.v1') || 'null'); } catch (e) { return null; } })();
+    const stdHud = { hp: w.hp ?? 100, hpMax: w.hpMax ?? 100, en: 100, breath: S.walk ? (w.breath ?? null) : null, gold: sv ? sv.gold : 0, hour: S.walk && w.hour != null ? w.hour : ((S.walk ? w.night : S.night) ? 22 : 16), day: 1, items: [], place: w.place, quest: { text: w.robQuest || 'MERU 2.0 blockout · walk the map' }, prompt: w.prompt || null, toast: null, muted: (() => { try { const M = window.__meru2Walk; return !!(M && M.isMuted && M.isMuted()); } catch (e) { return false; } })(), weather: 'Clear', boat: !!w.swim, inCave: false, weapons: [], dialog: S.walk ? (w.dialog || null) : null, vehicles: [], vehAmmo: [] };
+    return {
+      sndLock: !!S.sndLock, sndWake: () => { try { const M = window.__meru2Walk; if (M && M.soundOn) M.soundOn(); } catch (e) {} setTimeout(() => { const M = window.__meru2Walk; if (M && M.audioState && M.audioState() === 'running') this.setState({ sndLock: false }); }, 300); },
+      ...(() => { const cab = S.hire && S.hire.cab, on = !!cab && S.ld != null; if (!on) return { ldCabOn: false, cabTips: [], cabCoins: [] }; const shot = this.shotsAll()[cab.name], dk = c => c || '#201e1d', n = Math.round((S.ld || 0) * 10);
+        return { ldCabOn: true, cabBg: dk(cab.body), cabAcc: cab.acc || '#ffd23a', cabName: cab.name, cabLine: cab.line || 'Get ready.', shotCv: this.shotCv, cabShotLbl: shot ? 'SCREENSHOT' : 'ATTRACT MODE', cabTips: (cab.tips || []).map((t, i) => ({ n: '0' + (i + 1), t })),
+          cabCoins: [], cabGoTxt: (S.ld || 0) >= 1 ? 'CONTINUE \u25b6' : 'LOADING\u2026', cabGoSub: (S.ld || 0) >= 1 ? 'READY · PLAYER 1' : Math.round((S.ld || 0) * 100) + ' %', cabGoCur: (S.ld || 0) >= 1 ? 'pointer' : 'wait', cabGoAria: (S.ld || 0) >= 1 ? 'Continue to the game' : 'Loading the game',
+          cabGo: () => { if ((this.state.ld || 0) >= 1) this.setState({ ld: null }); } }; })(),
+      hireFrame: this.hireFrame, ldOn: !!S.hire && S.ld != null && !(S.hire && S.hire.cab), ldW: Math.round((S.ld || 0) * 100) + '%', ldPct: Math.round((S.ld || 0) * 100) + ' %', ldKick: S.hire && S.hire.hiring && S.hire.hiring.game === 'pearlSailTower' ? 'BATTLE · LOADING' : (S.hire && S.hire.play ? 'MINIGAME · LOADING' : 'NOW HIRING · LOADING'), ldTip: (S.ld || 0) < 0.45 ? 'Opening the doors' : (S.ld || 0) < 0.9 ? 'Setting up the game' : 'Ready',
+      bootOn: false, bootW: Math.max(2, Math.round((S.boot || 0) * 100)) + '%', bootPct: Math.max(2, Math.round((S.boot || 0) * 100)) + ' %', vidBg: S.vidOk ? '#000' : 'transparent',
+      hireOp: S.hireOp || '0', burgOn: !!S.burger, balloonOn: S.fest === 'balloon', cocoOn: S.fest === 'coconut', moleOn: S.fest === 'whack', shutOn: S.fest === 'shutbox', liarsOn: S.fest === 'liars', domOn: S.fest === 'dominoes' || S.fest === 'dominoesPlaza', pachiOn: S.fest === 'pachinko', tetherOn: S.fest === 'tetherball', capOn: /^capsule_/.test(S.fest || ''), galleryOn: S.fest === 'gallery', tugOn: S.fest === 'tug', dunkOn: S.fest === 'dunk', chessOn: S.board === 'chess', checkersOn: S.board === 'checkers', hudKeep: S.pin || S.dance || S.bowlUi || S.slots || S.wheel || S.poker || S.roul || S.craps || S.burger || S.board || S.fest ? 'none' : S.claw ? 'pad' : this.walker && this.walker._cab && this.walker._cab.on() ? 'pad talk' : 'all',
+      ...(() => { const h = S.pin, P = this.walker && this.walker._pin; if (!h) return { pinOn: false }; const c = h.cur || {}, m = h.msg;
+        return { pinOn: true, pinWho: (c.name || 'YOU') + (c.mult > 1 ? ' · ×' + c.mult : ''), pinScore: c.score || '0', pinBall: (c.ball || 1) + ' / ' + (c.balls || 3) + (h.multi ? ' · MULTI' : ''),
+          pinMsgOn: !!m, pinMsgMid: !!m && !(h.phase === 'play' || h.phase === 'turn'), pinMsg: m ? m.t : '', pinMsgSub: m ? m.sub || '' : '', pinMsgCol: m ? m.col || '#ffd23a' : '#ffd23a',
+          pinLaneOn: !!h.lane, pinLaneTxt: h.touch ? 'HOLD THE RIGHT SIDE · LET GO TO LAUNCH' : 'HOLD SPACE · LET GO TO LAUNCH', pinPow: Math.round((h.pow || 0) * 100) + '%',
+          pinHelpOn: h.phase === 'play' || h.phase === 'turn', pinHelp: h.touch ? [{ k: 'LEFT SIDE', t: 'LEFT FLIPPER' }, { k: 'RIGHT SIDE', t: 'RIGHT FLIPPER' }, { k: 'HOLD RIGHT', t: 'PULL + LAUNCH' }] : [{ k: 'Z / \u2190', t: 'LEFT FLIPPER' }, { k: 'M / \u2192', t: 'RIGHT FLIPPER' }, { k: 'SPACE', t: 'HOLD + LET GO TO LAUNCH' }, { k: '\u2191', t: 'NUDGE' }],
+          pinTiltOn: !!(h.tilt || h.tilted), pinTiltTxt: h.tilted ? 'TILT' : 'TILT WARNING', pinTurnOn: h.phase === 'turn', pinTurnTxt: 'PLAY BALL ' + (c.ball || 1) + (h.mode === 'local' ? ' · ' + (c.name || '') : ''),
+          pinOverOn: h.phase === 'over', pinOverSub: (h.newBest ? 'NEW BEST · ' : 'BEST ' + (h.best || 0) + ' · ') + '+' + (h.gold || 0) + ' GOLD',
+          pinLeave: e => { e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur(); P && P.end(); }, pinAgain: () => P && P.again(), pinGo: () => P && P.go() }; })(),
+      ...(() => { const h = S.craps, Q = this.walker && this.walker._craps, g = () => Q && Q.g(); if (!h) return { crOn: false }; const touch = matchMedia('(pointer: coarse)').matches, m = h.msg, blur = e => { e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur(); }, CC = { 1: ['#f3f2f2', '#201e1d'], 5: ['#ec3013', '#fff'], 10: ['#2e6bd8', '#fff'], 25: ['#22a35a', '#fff'] };
+        return { crOn: true, crGold: Math.round(h.gold).toLocaleString(), crDown: String(h.down), crPoint: h.point ? String(h.point) : 'OFF', crPointCol: h.point ? '#ffd23a' : '#cfcac4',
+          crHist: h.hist.map(x => ({ n: x.n, bg: x.n === '7' ? '#ec3013' : x.hard ? '#ffd23a' : '#000', fg: x.hard && x.n !== '7' ? '#201e1d' : '#fff' })),
+          crHint: (touch ? 'TAP THE FELT TO BET' : 'CLICK THE FELT TO BET \u00b7 1-4 CHIP \u00b7 P PASS \u00b7 D DON\u2019T \u00b7 F FIELD \u00b7 SPACE ROLL') + ' \u00b7 ' + (h.point ? 'MAKE THE ' + h.point + ' BEFORE A 7' : 'COME-OUT: 7 OR 11 WINS, 2 3 12 LOSES'),
+          crMsgOn: !!m || h.first, crMsg: m ? m.t : 'HOW TO START', crMsgSub: m ? m.sub : '1 \u00b7 CHOOSE A BET: TAP THE FELT OR A BUTTON BELOW (PASS IS THE CLASSIC) \u00b7 2 \u00b7 ROLL THE DICE', crMsgCol: m ? m.col : '#ffd23a', crNeedBet: !!h.needBet,
+          crChips: h.chips.map(v => ({ v: String(v), bg: h.chip === v ? CC[v][0] : '#000', fg: h.chip === v ? CC[v][1] : '#fff', go: e => { blur(e); g() && g().chip(v); } })),
+          crQuick: [['PASS', 'pass', '#22a35a'], ["DON'T", 'dont', '#000'], ['FIELD', 'field', '#000'], ['ANY 7', 'any7', '#ec3013']].map(([t, k, bg]) => ({ t, bg, go: e => { blur(e); g() && g().bet(k); } })),
+          crClear: e => { blur(e); g() && g().clear(); }, crRoll: e => { blur(e); g() && g().roll(); }, crRollTxt: h.phase === 'roll' ? 'ROLLING\u2026' : h.down ? 'ROLL THE DICE' : 'PLACE A BET', crRollBg: h.canRoll ? '#ec3013' : '#3a3836',
+          crLeave: e => { blur(e); Q && Q.end(); } }; })(),
+      ...(() => { const h = S.roul, Q = this.walker && this.walker._roul, g = () => Q && Q.g(); if (!h) return { rlOn: false }; const touch = matchMedia('(pointer: coarse)').matches, m = h.msg, blur = e => { e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur(); }, CC = { 1: ['#f3f2f2', '#201e1d'], 5: ['#ec3013', '#fff'], 10: ['#2e6bd8', '#fff'], 25: ['#22a35a', '#fff'] };
+        return { rlOn: true, rlGold: Math.round(h.gold).toLocaleString(), rlDown: String(h.down), rlHist: h.hist.map(x => ({ n: x.n, bg: x.col === 'RED' ? '#c42d3c' : x.col === 'GREEN' ? '#16a34a' : '#000' })),
+          rlHint: (touch ? 'TAP THE FELT TO BET' : 'CLICK THE FELT TO BET \u00b7 1-4 CHIP \u00b7 SPACE SPIN \u00b7 C CLEAR \u00b7 R REBET') + ' \u00b7 NUMBER 35:1 \u00b7 DOZEN 2:1 \u00b7 RED/BLACK 1:1',
+          rlMsgOn: !!m, rlMsg: m ? m.t : '', rlMsgSub: m ? m.sub : '', rlMsgCol: m ? m.col : '#ffd23a',
+          rlChips: h.chips.map(v => ({ v: String(v), bg: h.chip === v ? CC[v][0] : '#000', fg: h.chip === v ? CC[v][1] : '#fff', go: e => { blur(e); g() && g().chip(v); } })),
+          rlQuick: [['RED', 'red', '#c42d3c'], ['BLACK', 'black', '#000'], ['ODD', 'odd', '#000'], ['EVEN', 'even', '#000']].map(([t, k, bg]) => ({ t, bg, go: e => { blur(e); g() && g().bet(k); } })),
+          rlClear: e => { blur(e); g() && g().clear(); }, rlRebet: e => { blur(e); g() && g().rebet(); }, rlRebetBg: h.canRebet ? '#000' : '#3a3836',
+          rlSpin: e => { blur(e); g() && g().spin(); }, rlSpinTxt: h.phase === 'spin' ? 'NO MORE BETS\u2026' : h.phase === 'result' ? 'PAYING\u2026' : h.down ? 'SPIN \u00b7 ' + h.down : 'PLACE A BET', rlSpinBg: h.canSpin ? '#ec3013' : '#3a3836',
+          rlLeave: e => { blur(e); Q && Q.end(); } }; })(),
+      ...(() => { const h = S.poker, Q = this.walker && this.walker._poker; if (!h) return { pkOn: false }; const touch = matchMedia('(pointer: coarse)').matches, L = h.legal, me = h.me || {}, r = h.result, blur = e => { e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur(); }, sy = h.say;
+        const sayTxt = !sy ? '' : typeof sy === 'string' ? sy : ((sy.who || sy.name || '') + (sy.who || sy.name ? ' \u00b7 ' : '') + (sy.text || sy.t || sy.line || '')), owe = (h.prompt || '').match(/^(\d+) TO CALL/);
+        return { pkOn: true, pkPot: String(h.pot || 0), pkChips: String(me.chips != null ? me.chips : '\u2014'), pkGame: h.game === 'holdem' ? "TEXAS HOLD'EM" : 'FIVE CARD STUD', pkStreet: h.street || 'DEALING',
+          pkHand: me.folded ? 'YOU FOLDED' : (me.cards ? me.cards : '') + (me.hand ? ' \u00b7 ' + me.hand.toUpperCase() : ''), pkPrompt: (h.prompt || (h.mode === 'play' ? '' : 'SITTING DOWN\u2026')) + (touch ? '' : ' \u00b7 F FOLD \u00b7 C CALL \u00b7 R RAISE \u00b7 ESC LEAVE'),
+          pkSayOn: !!sayTxt, pkSay: sayTxt,
+          pkSeats: (h.seats || []).map(s => ({ name: s.name, chips: s.folded ? 'FOLDED' : s.out ? 'OUT' : String(s.chips), x: Math.max(56, Math.min(innerWidth - 56, s.x)) + 'px', y: Math.max(touch ? 170 : 140, Math.min(innerHeight - 110, s.y)) + 'px', bd: s.turn ? '#ffd23a' : '#f3f2f2', col: s.turn ? '#ffd23a' : '#f3f2f2' })),
+          pkActOn: !!(h.myTurn && L && !r), pkFold: e => { blur(e); Q && Q.act('fold'); }, pkFoldBg: L && L.fold ? '#000' : '#3a3836',
+          pkCall: e => { blur(e); Q && Q.act('call'); }, pkCallTxt: L && L.check ? 'CHECK' : 'CALL' + (owe ? ' ' + owe[1] : ''),
+          pkRaise: e => { blur(e); Q && Q.act('raise'); }, pkRaiseTxt: L && L.raise ? (L.open ? 'BET' : 'RAISE') + (L.raiseTo ? ' ' + L.raiseTo : '') : 'RAISE', pkRaiseBg: L && L.raise ? '#ec3013' : '#3a3836',
+          pkResOn: !!(r || h.bust), pkResTitle: h.bust && !r ? 'OUT OF CHIPS' : r ? r.title + (r.amt ? ' \u00b7 ' + r.amt : '') : '', pkResCol: r && r.mine ? '#ffd23a' : '#f3f2f2', pkResSub: r ? r.hand || '' : 'BUY BACK IN WITH YOUR GOLD',
+          pkResLines: r ? (r.lines || []).map(x => ({ name: x.name, txt: x.txt, col: x.win ? '#ffd23a' : '#f3f2f2' })) : [], pkNext: e => { blur(e); Q && Q.act('next'); }, pkNextTxt: h.bust ? 'BUY BACK IN' : 'NEXT HAND',
+          pkLeave: e => { blur(e); Q && Q.end(); } }; })(),
+      ...(() => { const h = S.wheel, Q = this.walker && this.walker._wheel, g = () => Q && Q.g(); if (!h) return { whOn: false }; const touch = matchMedia('(pointer: coarse)').matches, f = n => Math.round(n || 0).toLocaleString(), blur = e => { e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur(); }, r = h.result;
+        const ph = h.phase, solo = h.mode === 'solo', turnOver = solo && (ph === 'done' || ph === 'turnEnd' && !r), col = r ? (r.kind === 'bust' ? '#ff5a4a' : r.kind === 'jack' || r.kind === 'bank' ? '#ffd23a' : '#7cff6b') : '#ffd23a';
+        return { whOn: true, whPot: f(h.pot), whSpins: h.used + '/' + h.spinsMax, whGoldLbl: h.practice ? 'PRACTICE' : 'GOLD', whGold: h.practice ? 'FREE' : f(h.gold),
+          whHint: 'JACKPOT ' + f(h.jackpot) + ' \u00b7 ' + (touch ? 'HOLD SPIN, LET GO AT THE TOP' : 'HOLD SPACE, LET GO AT THE TOP \u00b7 ENTER = QUICK SPIN \u00b7 B = BANK'),
+          whLogOn: !!(h.say || h.log), whLog: h.say || h.log || '', whLogCol: col,
+          whPlayOn: ph === 'ready' || ph === 'spinning', whPow: Math.round((h.charging ? h.power : 0) * 100) + '%', whSpinTxt: ph === 'spinning' ? 'SPINNING\u2026' : h.charging ? 'LET GO!' : h.canSpin ? 'HOLD TO SPIN' : 'SPIN', whSpinBg: h.canSpin || h.charging ? '#ec3013' : '#3a3836',
+          whDown: e => { e.preventDefault(); Q && Q.act('down'); }, whUp: () => Q && Q.act('up'), whBank: e => { blur(e); Q && Q.act('bank'); }, whBankTxt: h.canBank ? 'BANK ' + f(h.pot) : 'BANK', whBankBg: h.canBank ? '#000' : '#3a3836',
+          whPickOn: ph === 'bonus' && h.canPick, whCards: ['NOBLE', 'HOPE', 'KING MIGHT'].map((t, i) => ({ t, go: e => { blur(e); g() && g().pick(i); } })),
+          whTurnOn: turnOver || ph === 'menu', whTurnTxt: h.practice ? 'NEW PRACTICE TURN' : 'NEW TURN \u00b7 ' + h.cost + ' GOLD', whTurn: e => { blur(e); Q && Q.act('turn'); }, whPracTxt: h.practice ? 'PLAY FOR GOLD' : 'PRACTICE', whPractice: e => { blur(e); const G = g(); if (!G) return; if (h.practice) G.startSolo(); else G.startSolo({ practice: true }); },
+          whLeave: e => { blur(e); Q && Q.end(); } }; })(),
+      ...(() => { const h = S.slots, Q = this.walker && this.walker._slots, g = () => Q && Q.g(); if (!h) return { slotOn: false }; const touch = matchMedia('(pointer: coarse)').matches, f = n => Math.round(n || 0).toLocaleString(), m = h.msg, blur = e => { e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur(); };
+        const why = h.can === 'nogold' ? 'NOT ENOUGH GOLD' : h.can === 'limit' ? 'DAILY LIMIT' : h.can === 'lower' ? 'LOWER BET' : '';
+        return { slotOn: true, slotGold: f(h.gold), slotBet: h.bet + '\u00d7' + h.lines + ' = ' + h.total, slotWin: f(h.winOn ? h.win : 0), slotWinCol: h.winOn ? '#ffd23a' : '#f3f2f2',
+          slotHint: (touch ? 'JACKPOT ' + f(h.pot) + ' \u00b7 888 AT MAX BET' : 'SPACE = SPIN \u00b7 \u2191\u2193 = BET \u00b7 1 2 3 = LINES \u00b7 M = MAX \u00b7 A = AUTO \u00b7 JACKPOT ' + f(h.pot)) + ' \u00b7 ' + h.lossLeft + ' GOLD LEFT TODAY',
+          slotMsgOn: !!m, slotMsg: m ? m.t : '', slotMsgSub: m ? m.sub : '', slotMsgCol: m ? m.col : '#ffd23a',
+          slotLineBtns: [1, 2, 3].map(n => ({ n: String(n), bg: h.lines === n ? '#ec3013' : '#000', go: e => { blur(e); g() && g().setLines(n); } })), slotBetN: String(h.bet),
+          slotBetDn: e => { blur(e); g() && g().setBet(h.bet - 1); }, slotBetUp: e => { blur(e); g() && g().setBet(h.bet + 1); }, slotMax: e => { blur(e); g() && g().maxBet(); },
+          slotAuto: e => { blur(e); g() && g().toggleAuto(); }, slotAutoTxt: h.auto ? 'STOP' : 'AUTO', slotAutoBg: h.auto ? '#ec3013' : '#000',
+          slotSpin: e => { blur(e); g() && g().spin(); }, slotSpinTxt: h.spinning ? 'SPINNING\u2026' : why || 'SPIN \u00b7 ' + h.total, slotSpinBg: h.spinning || why ? '#3a3836' : '#ec3013',
+          slotLeave: e => { blur(e); Q && Q.end(); } }; })(),
+      ...(() => { const h = S.bowlUi, B = this.walker && this.walker._bowl; if (!h) return { bowlOnUi: false }; const touch = matchMedia('(pointer: coarse)').matches, r = h.res;
+        return { bowlOnUi: true, bowlFrame: h.f + '/10', bowlTotal: String(h.total), bowlBest: String(h.best), bowlHint: h.phase === 'aim' ? 'BALL ' + h.b + ' \u00b7 ' + (touch ? 'TOUCH THE LANE, DRAG UP, LET GO' : 'DRAG UP ON THE LANE \u00b7 E = STRAIGHT ROLL') : 'BEAT ROOK ' + h.rook + ' \u00b7 NERA ' + h.nera,
+          bowlEndOn: h.phase === 'done' && !!r && h.ready, bowlEndTitle: r ? (r.newBest ? 'NEW BEST! ' + r.total : 'GAME \u00b7 ' + r.total) : '', bowlEndSub: r ? [r.beat, 'BEST ' + Math.max(r.was, r.total), r.gold > 0 ? '+' + r.gold + ' GOLD' : ''].filter(Boolean).join(' \u00b7 ') : '',
+          bowlAgain: e => { e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur(); B && B.again(); }, bowlLeave: e => { e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur(); B && B.quit(); } }; })(),
+      ...(() => { const h = S.dance, D = this.walker && this.walker._dance; if (!h) return { danceOn: false }; const touch = matchMedia('(pointer: coarse)').matches, G = ['\u2190', '\u2193', '\u2191', '\u2192'], AC = ['#ff3d9a', '#2ee6ff', '#ffd23a', '#7cff6b'];
+        const grp = p => ({ label: h.players > 1 ? (p ? 'P2 \u00b7 HOPE' : 'P1 \u00b7 YOU') : 'TAP AS EACH ARROW HITS ITS OUTLINE', col: p ? '#2ee6ff' : '#ff3d9a', lanes: G.map((g, l) => ({ g, col: AC[l], down: e => { e.preventDefault(); D && D.hit(p, l); } })) });
+        const r = h.res || [];
+        return { danceOn: true, dancePickOn: h.phase === 'pick', danceHow: touch ? 'TAP THE ARROW BUTTONS AS EACH ARROW HITS ITS OUTLINE. 2 PLAYERS SHARE THE PHONE.' : 'P1 \u2190 \u2193 \u2191 \u2192 \u00b7 P2 D F J K \u00b7 HIT EACH ARROW AS IT REACHES ITS OUTLINE',
+          dancePadsOn: touch && h.phase === 'play', danceGroups: h.players > 1 ? [grp(0), grp(1)] : [grp(0)], danceKeysOn: !touch && h.phase === 'play', danceKeys: h.players > 1 ? 'P1 \u2190 \u2193 \u2191 \u2192 \u00b7 P2 D F J K \u00b7 ESC = LEAVE' : '\u2190 \u2193 \u2191 \u2192 OR D F J K \u00b7 ESC = LEAVE',
+          danceEndOn: h.phase === 'done', danceEndTitle: h.newBest ? 'NEW BEST!' : r.length > 1 ? (r[0].score === r[1].score ? 'A TIE!' : (r[0].score > r[1].score ? 'P1' : 'P2') + ' WINS!') : 'NICE MOVES!',
+          danceRows: r.map(x => ({ name: x.name, col: x.col, grade: x.grade, score: x.score.toLocaleString() })),
+          dance1: () => D && D.pick(1), dance2: () => D && D.pick(2), danceAgain: () => D && D.again(), danceLeave: e => { e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur(); D && D.end(); } }; })(),
+      ...(() => { const h = S.claw, C = this.walker && this.walker._claw; if (!h) return { clawOn: false }; const touch = matchMedia('(pointer: coarse)').matches, rv = h.reveal, dn = h.done, pt = h.party, nm = id => ((h.shelf || []).find(s => s.id === id) || {}).name || id;
+        const out = h.phase === 'out', fin = h.phase === 'done' && !!dn, wins = dn && dn.wins && dn.wins.length ? dn.wins.map(nm).join(', ') : '';
+        return { clawOn: true, clawTriesLbl: h.mode === 'play' ? 'TRIES' : pt ? pt.name + ' · TRIES' : h.mode === 'demo' ? 'DEMO' : 'PRACTICE', clawTries: h.mode === 'play' ? String(h.credits) : pt ? String(pt.left) : '\u221e', clawScore: String(h.score || 0),
+          clawTimeLbl: h.phase === 'aim' ? 'TIME ' + h.aimLeft : h.power ? 'POWER CLAW' : 'CLAW', clawTimeW: h.phase === 'aim' ? Math.round((h.aimFrac || 0) * 100) + '%' : '0%', clawLucky: 'LUCKY ' + Math.round((h.lucky || 0) * 100) + '%',
+          clawHint: touch ? 'STICK = MOVE · 1 = DROP' : 'WASD / ARROWS = MOVE · SPACE = DROP · V = VIEW', clawFlashOn: !!h.flash, clawFlash: h.flash ? h.flash.txt : '', clawFlashCol: h.flash ? h.flash.col : '#ffd23a', clawSayOn: !!h.say, clawSay: h.say || '',
+          clawTurnOn: h.phase === 'turn', clawTurnTxt: (pt ? pt.name + ' · ' : '') + 'YOUR TURN · GO',
+          clawRevealOn: h.phase === 'reveal' && !!rv, clawRvKick: rv ? rv.kind + ' · ' + rv.rarity : '', clawRvName: rv ? rv.name : '', clawRvLine: rv ? rv.line : '', clawRvCol: rv ? rv.col : '#ffd23a', clawRvPts: rv ? '+' + rv.pts + ' POINTS' + (rv.isNew ? ' · NEW!' : rv.keep ? ' · \u00d7' + rv.count + ' ON YOUR SHELF' : '') : '', clawRvBg: rv && rv.thumb ? 'url(' + rv.thumb + ')' : 'none',
+          clawEndOn: out || fin, clawEndTitle: out ? (dn ? dn.title : 'OUT OF TRIES') : dn ? dn.title : '', clawEndSub: out ? (wins ? 'YOU WON ' + wins + ' · ' : '') + 'YOU HAVE ' + h.gold + ' GOLD' : fin && wins ? 'YOU WON ' + wins : '',
+          clawRows: fin ? (dn.rows || []).map(r => ({ name: r.name, col: r.col, score: String(r.score) })) : [], clawMainTxt: out ? 'BUY ' + h.packTries + ' TRIES · ' + h.packCost + ' GOLD' : 'PLAY AGAIN',
+          clawLeave: e => { e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur(); C && C.end(); }, clawNext: () => C && C.act(), clawMain: () => C && (out ? C.buy() : C.again()) }; })(),
+      introTitle: S.intro === 'title', introVideo: S.intro === 'video', vidRef: this.vidRef, introPlay: e => { blur(e); this.introPlay(); }, vidDone: e => { blur(e); this.vidDone(); },
+      walkOn: S.walk, walkUiOn: S.walk && !S.bay && !S.tank && !S.skate && !S.pearl && !S.pearlFly, pearlOn: !!S.pearl, pearlW: S.pearl, pearlExit: this.pearlExit, skateOn: !!S.skate, skateW: S.skate, skateExit: this.skateExit, bayOn: !!S.bay, bayW: S.bay, bayExit: this.bayExit, tankOn: !!S.tank, tankW: S.tank, tankExit: this.tankExit, tankLoadOn: !!S.tankLoading, loadTxt: this.skBusy ? "TONY'S PARK · DROPPING IN" : this.pearlBusy ? 'PEARL VALLEY · DIVING IN' : 'TANK RANGE · ROLLING OUT', flyOn: !S.walk, walker: this.walker, stdHud, onHud: this.onHud, w, keysList: [['WASD', 'walk'], ['Space', 'jump · dive · nitro'], ['E', 'sit · tickets · drive · get out'], ['T', '+1 hour']],
+      pmDir: land ? 'row' : 'column', pmMapW: land ? Math.max(180, (S.vh || 390) - 90) + 'px' : '100%', pmMapSz: land ? '100%' : 'min(100%, 48vh)', pmLine: land ? '2px solid #201e1d' : '0', pnMax: land ? '820px' : '560px',
+      chipTop: (bar + 50) + 'px', rbDir: land ? 'row' : 'column', rbW: land ? '96px' : '112px', chipMax: land ? 'min(320px, calc(100% - 24px - ' + (rbN * 102) + 'px))' : 'min(320px, calc(100% - 146px))', surfTxt: (w.surface || '').toUpperCase(), musicTxt: ((w.music || '—') + (w.audioRoom ? ' · ROOM ' + w.audioRoom : '') + (w.leak ? ' · LEAK ' + w.leak : '')).toUpperCase(), voiceOn: !!w.voice, voiceTxt: w.voice ? w.voice.key + ' (' + w.voice.tier + (w.voice.fresh ? ', new avatar' : '') + ')' : '', toastOn: !!w.toast, ...(() => { const d = S.walk && w.robDuet, phone0 = Math.min(innerWidth, innerHeight) < 520, land0 = phone0 && innerWidth > innerHeight; return { duetOn: !!d, duetWho: d ? d.who : '', duetText: d ? d.text : '', duetCol: d && d.who === 'ROB' ? '#c8250e' : d && d.who === 'ROBOT' ? '#5a5f67' : '#201e1d', navTop: land0 ? '64px' : phone0 ? '118px' : '76px', navBot: land0 ? 'calc(10px + env(safe-area-inset-bottom))' : phone0 ? 'calc(196px + env(safe-area-inset-bottom))' : '70px', navMax: land0 ? 'min(400px, calc(100vw - 360px))' : 'min(440px, calc(100vw - 24px))' }; })(),   /* s321 (Ben): arrow + captions over the road under the car */
+      ...(() => { const n = S.walk && w.robNav; if (!n) return { navOn: false }; const phone = Math.min(innerWidth, innerHeight) < 520, land = phone && innerWidth > innerHeight; const rot = { left: '-90deg', right: '90deg', straight: '0deg', park: '0deg', rob: '0deg' }[n.dir] || '0deg', col = n.dir === 'rob' ? '#7df9ff' : n.miss || n.off > 4 ? '#ff9b2a' : n.dir === 'park' ? '#7cff9b' : '#ffd23a';
+        return { navOn: true, navTop: land ? '64px' : phone ? '118px' : '76px', navRot: rot, navCol: col, navDist: n.dist + ' M', navText: n.text, navMissOn: !!(n.miss || n.off > 4), navMiss: (n.miss ? 'MISSED ' + n.miss + ' / 2' : '') + (n.off > 4 ? (n.miss ? ' · ' : '') + 'OFF ROUTE ' + n.off + ' / 15 S' : '') + ' · THEN ROB DRIVES' }; })(),
+      ...(() => { const n = this.walker && this.walker.netHud && this.walker.netHud(); if (!n || n.status === 'off') return { netOn: false }; const on = n.status === 'online' || n.status === 'local', code = n.code;
+        return { netOn: false && !S.hire && !S.panel && !(this.walker.shopBusy && this.walker.shopBusy()), netTop: 'calc(' + ((S.hi && S.hi.bar) || 0) + 'px + ' + ((innerWidth < innerHeight ? 118 : 104) + 34 * ((w && w.toast ? 1 : 0) + (w && w.voice ? 1 : 0) + (w && w.train ? 1 : 0) + (w && w.jail ? 2 : 0))) + 'px)', netW: innerWidth < 520 ? 'min(230px, calc(100vw - 150px))' : '260px', netCol: n.col,
+          netKick: n.status === 'connecting' ? 'CONNECTING…' : !on ? 'OFFLINE · SOLO' : n.full ? 'MERU IS FULL (4/4)' : code ? 'ROOM ' + code : 'MERU · OPEN WORLD', netTxt: !on ? 'Just you' : n.n > 1 ? n.n + '/4 FOXES · YOU ' + n.me : 'Just you · invite a friend',
+          netPeers: on ? n.peers : [], netInvite: () => this.setState({ inv: { code: code || '' } }) }; })(),
+...(() => { const I = S.inv; if (!I) return { invOn: false }; const url = location.origin + location.pathname + '?' + ('walk=1' + (new URLSearchParams(location.search).get('net') === 'local' ? '&net=local' : '&net=on') ? 'walk=1' + (new URLSearchParams(location.search).get('net') === 'local' ? '&net=local' : '&net=on') + '&' : '') + (I.code ? 'room=' + I.code : '').replace(/&$/, '');
+        return { invOn: true, invUrl: url.replace(/[?&]$/, ''), invQrBg: 'url(https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=8&data=' + encodeURIComponent(url.replace(/[?&]$/, '')) + ')', invKick: I.code ? 'PRIVATE ROOM ' + I.code : 'OPEN WORLD · NO CODE NEEDED',
+          invNote: I.code ? 'Only people with this link or code join you.' : 'Anyone who opens this link meets you here automatically (up to 4 foxes).', invMsg: I.msg || '', invMsgCol: I.ok ? '#7cff9b' : '#ff9b2a', invSel: e => e.target.select(),
+          invCopy: async () => { const u = url.replace(/[?&]$/, ''); let ok = false; try { await navigator.clipboard.writeText(u); ok = true; } catch (e) { try { const t = document.createElement('textarea'); t.value = u; document.body.appendChild(t); t.select(); ok = document.execCommand('copy'); t.remove(); } catch (er) {} } this.setState({ inv: { ...I, msg: ok ? 'COPIED · PASTE IT IN A MESSAGE' : 'COPY BLOCKED HERE · HOLD THE LINK TO COPY', ok } }); },
+          invShare: async () => { const u = url.replace(/[?&]$/, ''); if (navigator.share) { try { await navigator.share({ title: 'FOX GATE 8', text: 'Play with me!', url: u }); return; } catch (e) { if (e && e.name === 'AbortError') return; } } this.setState({ inv: { ...I, msg: 'SHARING NOT AVAILABLE HERE · USE COPY LINK', ok: false } }); },
+          invPrivTxt: I.code ? 'BACK TO OPEN WORLD' : 'MAKE A PRIVATE ROOM', invPrivate: () => { const q = new URLSearchParams(location.search); if (I.code) q.delete('room'); else q.set('room', Array.from({ length: 4 }, () => 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'[Math.random() * 31 | 0]).join('')); location.search = '?' + q.toString(); },
+          invClose: () => this.setState({ inv: null }) }; })(),
+      ...(() => { const n = (this.walker && this.walker.netHud && this.walker.netHud()) || {}, N = this.walker && this.walker.net, P0 = n.party, I = n.invite;
+        return { pickOn: !!S.pick && !S.hire, pickLabel: S.pick ? String(S.pick.label).toUpperCase() + ' · UP TO ' + this.seatsFor(S.pick) + ' PLAYERS' : '',
+          pickSolo: () => { const b = S.pick; this.setState({ pick: null }); this.openGame(b, null, 1); }, pickParty: () => { const b = S.pick; this.setState({ pick: null }); this.walker.setPaused(true); N.partyStart({ url: b.hiring.url, label: b.label }, this.seatsFor(b)); }, pickClose: () => this.setState({ pick: null }),
+          partyOn: !!P0 && !S.hire, partyLabel: P0 ? String(P0.label).toUpperCase() : '', partyLeft: P0 ? P0.left : 0,
+          partySeats: P0 ? [P0.me, ...P0.acc, ...Array.from({ length: Math.max(0, P0.seats - 1 - P0.acc.length) }, () => ({ name: 'OPEN SEAT', col: '#3a3836' }))].map(s => ({ name: s.name, col: s.col, fg: s.name === 'OPEN SEAT' ? '#8a847e' : '#fff' })) : [],
+          partyGo: () => N && N.partyNow(), partyStop: () => { N && N.partyCancel(); this.walker && this.walker.setPaused(false); },
+          invOn2: !!I && !S.hire, invFrom: I ? I.from : '', invLabel: I ? String(I.label).toUpperCase() : '', invLeft: I ? I.left : 0, invAsk: !!I && I.state === 'ask',
+          invStateTxt: !I ? '' : I.state === 'ask' ? 'Up to ' + I.seats + ' players · first to accept get the seats' : I.state === 'sent' ? 'Asking for a seat…' : I.state === 'in' ? 'You got seat ' + I.seat + '! Starting soon…' : 'Sorry, the seats filled up.', invStateCol: I && I.state === 'full' ? '#ff9b2a' : I && I.state === 'in' ? '#7cff9b' : '#cfcac4',
+          invYes: () => N && N.partyAnswer(true), invNo: () => N && N.partyAnswer(false) }; })(),
+      hireOn: !!w.hire && !S.hire, hireKicker: w.hire && w.hire.game === 'pearlSailTower' ? 'BATTLE' : 'NOW HIRING', hireLabel: (S.hire || w.hire || {}).label ? ((S.hire || w.hire).label || '').toUpperCase() : '', hireBottom: S.hi.pad ? 'calc(150px + env(safe-area-inset-bottom))' : 'calc(24px + env(safe-area-inset-bottom))',
+      hireGo: e => { blur(e); const b = this.g && this.walker && w.hire ? (this.g.K.L.BUILDINGS.find(x => x.label === w.hire.label) || null) : null; if (!b) return; const N = this.walker.net; if (N && N.multi() && b.hiring) { this.setState({ pick: b }); return; } this.openGame(b, null, 1); },
+      hireSuffix: S.hire && S.hire.play ? '' : ' · JOB', hireOpen: !!S.hire, hireUrl: S.hire ? S.hire.hiring.url + (S.hireRoom ? (S.hire.hiring.url.includes('?') ? '&' : '?') + 'room=' + S.hireRoom + '&players=' + (S.hireN || 1) + '&party=1' : '') : 'about:blank', hireClose: e => { blur(e); this.walker && this.walker.setPaused(false); this.walker && this.walker.net && this.walker.net.playing(null); this.setState({ hire: null, hireRoom: null, hireN: 1 }); },
+      ...(() => { const b = w.hire && this.g ? this.g.K.L.BUILDINGS.find(x => x.label === w.hire.label) : null, N = this.walker && this.walker.net, fr = N && b && b.hiring ? N.friendAt({ url: b.hiring.url }) : null, multi = N && N.multi();
+        return { hireFriendOn: !!fr || !!multi, hireFriendCol: fr ? fr.col : '#ffd23a', hireFriendTxt: fr ? fr.name + ' IS PLAYING · TAKE SEAT ' + fr.seat : 'FRIENDS ONLINE · THEY CAN JOIN YOUR GAME', hirePlayTxt: fr ? 'JOIN · TAP OR E' : 'PLAY · TAP OR E' }; })(),
+      walkNight: e => { blur(e); this.walker && this.walker.skipTime(); }, nightTxt: '+1 HR · ' + String(w.hour ?? 16).padStart(2, '0') + ':00', trainOn: !!w.train,
+      vehKey: w.vehicle || '', taxiOn: !!w.outdoors && !S.panel && !S.fest, taxiGo: e => { blur(e); if (!this.walker) return; this.walker.setPaused(true); this.setState({ panel: { mode: 'taxi' } }); },
+      pPolice: false, pBank: false, pLocker: false, pRental: false, pShop: false, ...this.panelVals(S, blur),
+      jailOn: !!w.jail, jailTxt: w.jail ? (w.jail.escaping ? 'ESCAPING \u00b7 STAY OUT OF THE RED CONE' : 'IN JAIL \u00b7 ' + w.jail.left + ' S LEFT') : '', jailSub: w.jail ? (w.jail.escaping ? 'Get through the gate into the lobby.' : (land ? 'Wait, pay bail or pick the cell lock.' : 'Wait it out, pay bail, or walk to the cell door and pick the lock.')) : '',
+      bailOn: !!w.jail && !w.jail.escaping, bailTxt: w.jail ? 'PAY BAIL \u00b7 ' + w.jail.bail + ' GOLD' : '', bailGo: e => { blur(e); this.walker && this.walker.bailOut(); },
+      testOn: !!w.outdoors && !w.jail && !S.panel, testArrest: e => { blur(e); this.walker && this.walker.arrest('assault'); },
+      lpOn: !!S.lp, lpPress: e => { e && e.preventDefault && e.preventDefault(); this.lpPress(); }, lpPin: S.lp ? (S.lp.set + 1) + ' OF ' + S.lp.pins : '', lpMsg: S.lp ? S.lp.msg : '', lpZoneL: S.lp ? ((S.lp.center - S.lp.zone / 2) * 100).toFixed(1) + '%' : '0%', lpZoneW: S.lp ? (S.lp.zone * 100).toFixed(1) + '%' : '0%', lpPos: S.lp ? ((S.lp.pos + (S.lp.wobble > 0 ? Math.sin(S.lp.wobble * 60) * 0.01 : 0)) * 100).toFixed(1) + '%' : '0%', lpPick: S.lp && S.lp.wobble > 0 ? '#ec3013' : '#ffffff',
+      tourOn: !!S.tour, tourOff: !S.tour, tourCount: this.tour ? this.tour.stops.length : (this.tourN || 29), tourNum: S.tour ? S.tour.i + 1 : 1, tourLabel: S.tour ? S.tour.label : '', tourCap: S.tour ? S.tour.cap : '', tourBar: this.tourBar,
+      tourPauseLabel: S.tour && S.tour.paused ? 'PLAY' : 'PAUSE', tourGo: e => { blur(e); this.tourStart(0); }, tourPrev: e => { blur(e); this.tour && this.tour.prev(); }, tourNext: e => { blur(e); this.tour && this.tour.next(); },
+      tourPause: e => { blur(e); this.tour && this.tour.pause(); }, tourExit: e => { blur(e); this.tour && this.tour.stop(); this.setState({ tour: null }); },
+      tourStops: (this.tour ? this.tour.stops : []).map((label, k) => { const sel = S.tour && S.tour.i === k; return { label: label.toUpperCase(), bg: sel ? '#ffd23a' : '#000000', fg: sel ? '#000000' : '#ffffff', go: e => { blur(e); this.tour && this.tour.go(k); } }; }),
+      bowlGo: async e => { blur(e); this.tour && this.tour.stop(); this.setState({ tour: null }); await this.walkStart(); setTimeout(() => { this.tour && this.tour.stop(); if (this.state.tour) this.setState({ tour: null }); this.walker && this.walker.bowlGo(); }, 1500); },
+      rideGo: async e => { blur(e); this.tour && this.tour.stop(); this.setState({ tour: null }); await this.walkStart(); this.walker && this.walker.rideStart(); },
+      rideOn: !!(S.walk && w && w.ride), rideStop: e => { blur(e); this.walker && this.walker.rideStop(); },
+      walkGo: e => { blur(e); this.tour && this.tour.stop(); this.setState({ tour: null }); this.walkStart(); }, walkExit: e => { blur(e); this.walker && this.walker.exit(); this.setState({ walk: false, hire: null, panel: null, night: !!w.night }); },
+      stageRef: this.stageRef, errOn: !!S.err, err: 'Could not build the map: ' + S.err,
+      countsTxt: c ? c.buildings + ' buildings · ' + c.doors + ' sliding doors · ' + c.hiring + ' NOW HIRING · ' + c.lamps + ' lamps · ' + c.trees + ' trees · ' + c.cars + ' cars' : 'Building the map…',
+      toggles: [T('night', 'NIGHT', v => g.setNight(v)), T('rings', 'VOICE RINGS', v => g.show('rings', v)), T('labels', 'ZONE NAMES', v => g.show('labels', v)), T('towers', 'SKYLINE', v => g.show('towers', v))],
+      zones: zs.map(z => { const sel = S.zone === z.key; return { label: z.label.toUpperCase(), bg: sel ? '#ffd23a' : '#000000', fg: sel ? '#000000' : '#ffffff', go: e => { blur(e); this.setState({ zone: z.key }); g && g.flyTo(z.key); } }; }),
+    };
+  }
+}
+</script>
+</body>
+</html>

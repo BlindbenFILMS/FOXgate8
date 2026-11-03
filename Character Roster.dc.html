@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;background:var(--color-bg)}a{color:var(--color-accent-700)}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="min-height:100vh;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);padding:24px 16px 48px;box-sizing:border-box;display:flex;flex-direction:column;gap:20px;max-width:1100px" data-screen-label="Character Roster">
+  <div style="display:flex;flex-direction:column;gap:6px;border-bottom:2px solid var(--color-text);padding-bottom:14px">
+    <div style="font:800 12px var(--font-heading);letter-spacing:0.12em;color:var(--color-accent-700)">8 GATES · MERU · CHARACTER ROSTER</div>
+    <div style="font:900 clamp(30px,6vw,48px) var(--font-heading);letter-spacing:-0.02em;line-height:1">Every fox, by location</div>
+    <div style="font:600 15px var(--font-body);line-height:1.45;max-width:720px;text-wrap:pretty">Counted live from the game: the page loads Meru below and lists every fox standing in it. Lines come from the 2D Meru files; DRAFT means lines written during the 3D build that need your OK.</div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border:2px solid var(--color-text)">
+    <sc-for list="{{ stats }}" as="s" hint-placeholder-count="5">
+      <div style="padding:12px 14px;display:flex;flex-direction:column;gap:2px;border-right:2px solid var(--color-text);margin-right:-2px">
+        <span style="font:800 11px var(--font-heading);letter-spacing:0.1em;color:{{ s.c }}">{{ s.k }}</span>
+        <span style="font:900 30px var(--font-heading);font-variant-numeric:tabular-nums">{{ s.v }}</span>
+      </div>
+    </sc-for>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:0;align-items:stretch">
+    <button onClick="{{ refresh }}" style="min-height:48px;padding:0 18px;border:2px solid var(--color-accent);border-radius:0;background:var(--color-accent);color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:var(--color-accent-600)">{{ refreshLbl }}</button>
+    <button onClick="{{ toggleMissing }}" style="min-height:48px;padding:0 18px;border:2px solid var(--color-text);border-left:0;border-radius:0;background:{{ missBg }};color:{{ missFg }};font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">NO LINES ONLY</button>
+    <button onClick="{{ copy }}" style="min-height:48px;padding:0 18px;border:2px solid var(--color-text);border-left:0;border-radius:0;background:transparent;color:var(--color-text);font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:var(--color-neutral-200)">{{ copyLbl }}</button>
+  </div>
+  <div style="font:700 13px var(--font-body);color:var(--color-neutral-700)">{{ status }}</div>
+  <sc-for list="{{ groups }}" as="g" hint-placeholder-count="4">
+    <div style="display:flex;flex-direction:column;border-top:2px solid var(--color-text)">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:12px 0 8px">
+        <span style="font:900 22px var(--font-heading);letter-spacing:-0.01em">{{ g.loc }}</span>
+        <span style="font:800 12px var(--font-heading);letter-spacing:0.08em;color:var(--color-neutral-700);white-space:nowrap">{{ g.count }}</span>
+      </div>
+      <sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="3">
+        <div style="display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) auto;gap:12px;align-items:center;padding:9px 0;border-top:1px solid var(--color-neutral-300)">
+          <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
+            <span style="font:800 16px var(--font-heading)">{{ r.name }}</span>
+            <span style="font:600 12px var(--font-body);color:var(--color-neutral-700);overflow-wrap:anywhere">{{ r.sub }}</span>
+          </div>
+          <span style="font:600 13px var(--font-body);color:var(--color-neutral-800);text-wrap:pretty">{{ r.note }}</span>
+          <span style="font:900 11px var(--font-heading);letter-spacing:0.08em;padding:5px 8px;background:{{ r.tagBg }};color:{{ r.tagFg }};white-space:nowrap">{{ r.tag }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </sc-for>
+  <div style="display:flex;flex-direction:column;gap:8px;border-top:2px solid var(--color-text);padding-top:12px">
+    <span style="font:800 12px var(--font-heading);letter-spacing:0.1em">LIVE CENSUS · MERU LOADING HERE (1–2 MIN)</span>
+    <iframe ref="{{ fr }}" src="{{ frSrc }}" title="Meru census" style="width:min(480px,100%);height:270px;border:2px solid var(--color-text);display:block;background:#000"></iframe>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { roster: null, at: null, busy: false, onlyMissing: false, copied: false, data: null, src: 'about:blank', err: '' };
+  fr = React.createRef();
+  async componentDidMount() {
+    try { const c = JSON.parse(localStorage.getItem('meru2.roster.v1') || 'null'); if (c && c.list) this.setState({ roster: c.list, at: c.at }); } catch (e) {}
+    try {
+      const B = document.baseURI, [M, Lm, Cs, Df] = await Promise.all([import(new URL('worlds/meru.js', B).href), import(new URL('worlds/meru2-layout.js', B).href), import(new URL('worlds/meru2-casino.js', B).href).catch(() => ({})), import(new URL('worlds/meru-defense.js', B).href).catch(() => ({}))]);
+      const J = async f => { try { return await (await fetch(new URL(f, B).href)).json(); } catch (e) { return {}; } };
+      const [lanes, apd, ora] = await Promise.all([J('worlds/meru-lanes-dialogue.json'), J('worlds/meru-arenapath-dialogue.json'), J('worlds/meru-ora.json')]);
+      let RU = {}; try { RU = await import(new URL('worlds/meru-ruins.js', B).href); } catch (e) {}
+      const lines = {}, names = {}, add = (k, n, src) => { if (!k || !n) return; if (!lines[k] || lines[k].n < n) lines[k] = { n, src }; };
+      for (const [k, v] of Object.entries(M.DIALOGUE || {})) add(k, Array.isArray(v) ? v.length : 1, '2D');
+      for (const [k, v] of Object.entries((M.AP && M.AP.DIALOGUE) || {})) add(k, Array.isArray(v) ? v.length : 1, '2D');
+      for (const [k, v] of Object.entries(lanes || {})) add(k, Array.isArray(v) ? v.length : (v && v.lines ? v.lines.length : 1), '2D');
+      for (const [k, v] of Object.entries(apd || {})) add(k, Array.isArray(v) ? v.length : 1, '2D');
+      if (ora && Object.keys(ora).length) add('ora', Object.keys(ora).length, '2D');
+      for (const k of Object.keys(RU.DYN || {})) add(k, 1, '2D'); add('monk', 1, '2D sermon');
+      for (const k of Object.keys((M.BG && M.BG.DYN) || {})) add(k, 1, '2D');
+      if (M.FT && M.FT.ORA) add('ora', 1, '2D');
+      for (const p of (Df.PEOPLE || [])) if (p.line) add(p.key, 1, '2D');
+      for (const b of ((M.APT && M.APT.BUILDINGS) || [])) if (b.realtor && b.realtor.line) { add(b.realtor.key, 1, '2D'); names[b.realtor.key] = b.realtor.name; }
+      for (const [k, v] of Object.entries(Cs.CASINO_TALK || {})) { add(k, (v.lines || []).length, '2D'); names[k] = v.name; }
+      for (const f of [...(M.FOXES || []), ...((M.IN && M.IN.PEOPLE) || []), ...(Df.PEOPLE || []), ...((M.LN && M.LN.PEOPLE) || [])]) if (f && f.key) names[f.key] = names[f.key] || (f.name ? f.name + (f.role ? ' · ' + f.role : '') : '');
+      for (const [k, v] of Object.entries(Cs.PEOPLE_NAME || {})) names[k] = names[k] || v;
+      this.setState({ data: { lines, names, L: Lm } });
+    } catch (e) { this.setState({ err: 'Could not read the line tables: ' + (e && e.message || e) }); }
+  }
+  componentWillUnmount() { clearInterval(this.poll); }
+  refresh = () => { if (this.state.busy) return; this.setState({ busy: true, src: 'FOXGATE8-PLAYABLE.dc.html?start=square&roster=1&noskate=1&notank=1' }); const t0 = Date.now(); clearInterval(this.poll);
+    this.poll = setInterval(() => { let w = null; try { w = this.fr.current && this.fr.current.contentWindow; } catch (e) {} const W = w && w.__meru2Walk;
+      if (W && W.roster && Date.now() - t0 > 8000) { if (!this.firstSeen) this.firstSeen = Date.now(); if (Date.now() - this.firstSeen > 6000) { clearInterval(this.poll); this.firstSeen = 0; let list = []; try { list = W.roster(); } catch (e) {} const at = new Date().toISOString(); try { localStorage.setItem('meru2.roster.v1', JSON.stringify({ at, list })); } catch (e) {} this.setState({ roster: list, at, busy: false, src: 'about:blank' }); } }
+      if (Date.now() - t0 > 300000) { clearInterval(this.poll); this.setState({ busy: false, err: 'Meru did not finish loading in 5 minutes. Try again.' }); } }, 1500); };
+  locOf(x, y, z) { const L = this.state.data && this.state.data.L; if (!L) return 'Unknown'; if (y < -20) return 'Underground rooms (castle keep, cellars)';
+    const b = (L.BUILDINGS || []).filter(q => q.f && x > q.f[0] - 1.5 && x < q.f[1] + 1.5 && z > q.f[2] - 1.5 && z < q.f[3] + 1.5).sort((p, q) => (p.f[1] - p.f[0]) * (p.f[3] - p.f[2]) - (q.f[1] - q.f[0]) * (q.f[3] - q.f[2]))[0];
+    if (b) return b.label;
+    const zs = (L.ZONES || []).filter(Z => Z.r ? x >= Z.r[0] && x <= Z.r[1] && z >= Z.r[2] && z <= Z.r[3] : Z.c ? Math.hypot(x - Z.c[0], z - Z.c[1]) <= Z.c[2] : false).map(Z => ({ Z, a: Z.r ? (Z.r[1] - Z.r[0]) * (Z.r[3] - Z.r[2]) : Math.PI * Z.c[2] * Z.c[2] })).sort((p, q) => p.a - q.a);
+    return zs.length ? zs[0].Z.label : (Math.abs(x) > 540 || Math.abs(z) > 540 ? 'Off-map rooms (interiors built away from town)' : 'Between zones'); }
+  build() { const S = this.state, D = S.data, R = S.roster; if (!D || !R) return { groups: [], text: '', st: null };
+    const SP = D.L.SPEAKERS || [], spk = Object.fromEntries(SP.map(s => [s.key, s])), seen = new Set(), by = new Map(), crowd = new Map();
+    const REV = { aptDoormancrest: 'aptDoorCrest', aptDoormanlake: 'aptDoorLake', bramKeeper: 'bram', csCash: 'casinoCashier' };
+    const tagOf = (key, live) => { const l = D.lines[key] || D.lines[REV[key]]; if (l) return { tag: '2D LINES · ' + l.n, kind: 'ok' }; if (live && live.talk) return { tag: 'DRAFT · ' + live.talkLines, kind: 'draft' }; if (live && live.keeper) return { tag: 'JOB MENU · DRAFT', kind: 'draft' }; return { tag: 'NO LINES', kind: 'none' }; };
+    const CROWD = /Browse\d|^cust\d|Cust\d|Guest\d|^walker\d|carCrowd|Fan\d|Seat\d|Player\d|csSus|^tvBar|Regular$|^bandFan|^juno$|^pip$|^tobi$|^mae$|^rio$/;
+    for (const f of R) { const loc = this.locOf(f.x, f.y, f.z); if (!f.key || f.crowd || (CROWD.test(f.key) && !D.lines[f.key] && !f.keeper)) { crowd.set(loc, (crowd.get(loc) || 0) + 1); continue; }
+      const k = f.key + '@' + loc; if (seen.has(k)) continue; seen.add(k); const t = tagOf(f.key, f), s = spk[f.key];
+      if (!by.has(loc)) by.set(loc, []); by.get(loc).push({ key: f.key, name: f.talkName || f.name || (D.names[f.key] || '').split(' · ')[0] || f.key, role: (D.names[f.key] || '').split(' · ')[1] || (f.keeper ? 'keeper' + (f.shop ? ' · ' + f.shop : '') : '') || (s && s.note) || '', talk: f.talk || f.keeper, ...t, planned: !!s, isNew: !!(s && s.newAvatar) }); }
+    const ALIAS = { aptDoorCrest: 'aptDoormancrest', aptDoorLake: 'aptDoormanlake', bram: 'bramKeeper', casinoCashier: 'csCash' };
+    const liveKeys = new Set(R.map(f => f.key)); for (const [a, b] of Object.entries(ALIAS)) if (liveKeys.has(b)) liveKeys.add(a);
+    const missingPlanned = SP.filter(s => s.tier < 3 && !liveKeys.has(s.key)).map(s => ({ key: s.key, name: (D.names[s.key] || '').split(' · ')[0] || s.key, role: s.note || '', talk: false, ...tagOf(s.key, null), planned: true, isNew: !!s.newAvatar, notStanding: true }));
+    if (missingPlanned.length) by.set('PLANNED BUT NOT STANDING', missingPlanned);
+    const COL = { ok: ['var(--color-text)', '#fff'], draft: ['#ffd23a', 'var(--color-text)'], none: ['var(--color-accent)', '#fff'] };
+    let nOk = 0, nDraft = 0, nNone = 0, nNamed = 0;
+    const groups = [...by.entries()].sort((a, b) => a[0] === 'PLANNED BUT NOT STANDING' ? -1 : b[0] === 'PLANNED BUT NOT STANDING' ? 1 : a[0].localeCompare(b[0])).map(([loc, rows]) => {
+      rows.sort((a, b) => a.name.localeCompare(b.name)); for (const r of rows) { nNamed++; if (r.kind === 'ok') nOk++; else if (r.kind === 'draft') nDraft++; else nNone++; }
+      const vis = S.onlyMissing ? rows.filter(r => r.kind !== 'ok') : rows, c = crowd.get(loc) || 0;
+      return { loc, count: rows.length + ' named' + (c ? ' · ' + c + ' crowd' : ''), rows: vis.map(r => ({ name: r.name, sub: r.key + (r.isNew ? ' · new avatar' : '') + (r.notStanding ? ' · not standing yet' : ''), note: [r.role, r.talk ? 'talks in Meru 2' : r.kind === 'ok' ? 'lines exist, not talkable in Meru 2 yet' : ''].filter(Boolean).join(' · '), tag: r.tag, tagBg: COL[r.kind][0], tagFg: COL[r.kind][1] })) }; }).filter(g => g.rows.length);
+    for (const [loc, c] of crowd) if (!by.has(loc) && !S.onlyMissing) groups.push({ loc, count: c + ' crowd', rows: [{ name: 'Crowd · ' + c, sub: 'townsfolk, walkers, customers', note: 'no voice (crowd tier)', tag: 'CROWD', tagBg: 'var(--color-neutral-300)', tagFg: 'var(--color-text)' }] });
+    const text = ['MERU CHARACTER ROSTER · ' + (S.at || ''), ...groups.flatMap(g => ['', '## ' + g.loc + ' (' + g.count + ')', ...g.rows.map(r => '- ' + r.name + ' [' + r.sub + '] · ' + r.tag + (r.note ? ' · ' + r.note : ''))])].join('\n');
+    const nCrowd = [...crowd.values()].reduce((a, b) => a + b, 0);
+    return { groups, text, st: [{ k: 'NAMED FOXES', v: nNamed, c: 'var(--color-text)' }, { k: 'WITH 2D LINES', v: nOk, c: 'var(--color-text)' }, { k: 'DRAFT LINES', v: nDraft, c: '#9a7a00' }, { k: 'NO LINES', v: nNone, c: 'var(--color-accent-700)' }, { k: 'CROWD (NO VOICE)', v: nCrowd, c: 'var(--color-neutral-700)' }] }; }
+  renderVals() { const S = this.state, b = this.build();
+    return { stats: b.st || [{ k: 'NAMED FOXES', v: '–', c: 'var(--color-text)' }], groups: b.groups, fr: this.fr, frSrc: S.src,
+      refresh: this.refresh, refreshLbl: S.busy ? 'COUNTING… (MERU IS LOADING)' : S.roster ? 'RECOUNT FROM THE GAME' : 'COUNT THE FOXES IN MERU',
+      toggleMissing: () => this.setState({ onlyMissing: !S.onlyMissing }), missBg: S.onlyMissing ? 'var(--color-text)' : 'transparent', missFg: S.onlyMissing ? '#fff' : 'var(--color-text)',
+      copy: () => { try { navigator.clipboard.writeText(b.text); this.setState({ copied: true }); setTimeout(() => this.setState({ copied: false }), 1800); } catch (e) {} }, copyLbl: S.copied ? 'COPIED' : 'COPY FOR CLAUDE',
+      status: S.err || (S.busy ? 'Loading Meru in the frame below, then reading every fox in it.' : S.roster ? 'Last count: ' + new Date(S.at).toLocaleString() + ' · ' + S.roster.length + ' foxes in the world.' : 'No count yet. Press COUNT THE FOXES IN MERU.') }; }
+}
+</script>
+</body>
+</html>

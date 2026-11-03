@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>
+html, body { margin: 0; background: #201e1d; color: #f3f2f2; font-family: Archivo, sans-serif; }
+a { color: #f3f2f2; } a:hover { color: #ec3013; }
+button, input { font-family: Archivo, sans-serif; }
+button:focus-visible, input:focus-visible { outline: 2px solid #ec3013; outline-offset: 2px; }
+input[type=range] { accent-color: #ec3013; height: 28px; width: 100%; }
+input[type=color] { -webkit-appearance: none; appearance: none; padding: 0; border: 2px solid #f3f2f2; background: none; width: 44px; height: 44px; border-radius: 0; cursor: pointer; }
+input[type=color]::-webkit-color-swatch-wrapper { padding: 0; } input[type=color]::-webkit-color-swatch { border: 0; border-radius: 0; }
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-wrap:wrap;background:#201e1d;color:#f3f2f2" data-screen-label="Armor Workshop">
+  <div style="flex:1 1 520px;min-height:70vh;position:relative;border-right:2px solid #f3f2f2;border-bottom:2px solid #f3f2f2">
+    <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+    <div style="position:absolute;left:14px;top:12px;display:flex;flex-direction:column;gap:2px;pointer-events:none">
+      <span style="font-size:22px;font-weight:900">{{ titleA }}</span>
+      <span style="font-size:15px;font-weight:800;white-space:nowrap">{{ statsA }}</span>
+    </div>
+    <sc-if value="{{ hasB }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;right:14px;top:12px;display:flex;flex-direction:column;align-items:flex-end;gap:2px;pointer-events:none;text-align:right">
+        <span style="font-size:22px;font-weight:900">{{ titleB }}</span>
+        <span style="font-size:15px;font-weight:800;white-space:nowrap">{{ statsB }}</span>
+      </div>
+    </sc-if>
+    <div style="position:absolute;left:14px;bottom:12px;display:flex;gap:6px">
+      <button onClick="{{ toggleSpin }}" style="min-height:44px;padding:0 12px;background:{{ spinBg }};color:#f3f2f2;border:2px solid {{ spinBd }};border-radius:0;font-size:13px;font-weight:900;text-align:left;cursor:pointer">{{ spinLabel }}</button>
+      <sc-for list="{{ views }}" as="v" hint-placeholder-count="3">
+        <button onClick="{{ v.pick }}" style="min-height:44px;padding:0 12px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:13px;font-weight:900;text-align:left;cursor:pointer" style-hover="background:#4a1a10" style-active="background:#7a2410">{{ v.label }}</button>
+      </sc-for>
+    </div>
+    <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;padding-left:14px;font-size:16px;font-weight:800">Loading…</div>
+    </sc-if>
+  </div>
+  <div style="flex:1 1 380px;max-width:520px;display:flex;flex-direction:column;max-height:100vh;overflow-y:auto">
+    <div style="padding:14px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:4px">
+      <div style="display:flex;align-items:center;gap:10px"><span style="width:8px;height:28px;background:#ec3013"></span><span style="font-size:26px;font-weight:900">ARMOR WORKSHOP</span></div>
+      <div style="font-size:14px;font-weight:700">Live: every change saves into the game.</div>
+    </div>
+    <div style="padding:12px 14px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:12px;font-weight:900;letter-spacing:0.06em">WHO</div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px">
+        <sc-for list="{{ whos }}" as="w" hint-placeholder-count="3">
+          <button onClick="{{ w.pick }}" style="min-height:44px;padding:0 10px;background:{{ w.bg }};color:#f3f2f2;border:2px solid {{ w.bd }};border-radius:0;font-size:14px;font-weight:900;text-align:left;cursor:pointer">{{ w.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="padding:12px 14px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:12px;font-weight:900;letter-spacing:0.06em">SET</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <sc-for list="{{ setBtns }}" as="s" hint-placeholder-count="2">
+          <button onClick="{{ s.pick }}" style="min-height:44px;padding:0 12px;background:{{ s.bg }};color:#f3f2f2;border:2px solid {{ s.bd }};border-radius:0;font-size:14px;font-weight:900;text-align:left;cursor:pointer">{{ s.label }}</button>
+        </sc-for>
+        <sc-if value="{{ isFox }}" hint-placeholder-val="{{ true }}"><button onClick="{{ newSet }}" style="min-height:44px;padding:0 12px;background:#201e1d;color:#f3f2f2;border:2px dashed #f3f2f2;border-radius:0;font-size:14px;font-weight:900;text-align:left;cursor:pointer" style-hover="background:#4a1a10">+ COPY AS NEW SET</button></sc-if>
+      </div>
+      <sc-if value="{{ isHuman }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:13px;font-weight:700;line-height:1.4;border:2px solid #e6b45a;padding:8px 10px">{{ humanNote }}</div>
+        <div style="font-size:12px;font-weight:900;letter-spacing:0.06em;margin-top:4px">LOOK UNDER THE ARMOUR · FROM THE HUMAN WORKSHOP</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <sc-for list="{{ looks }}" as="s" hint-placeholder-count="3">
+            <button onClick="{{ s.pick }}" style="min-height:44px;padding:0 12px;background:{{ s.bg }};color:#f3f2f2;border:2px solid {{ s.bd }};border-radius:0;font-size:14px;font-weight:900;text-align:left;cursor:pointer">{{ s.label }}</button>
+          </sc-for>
+        </div>
+      </sc-if>
+      <div style="font-size:12px;font-weight:900;letter-spacing:0.06em;margin-top:4px">COMPARE WITH</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <sc-for list="{{ cmpBtns }}" as="s" hint-placeholder-count="2">
+          <button onClick="{{ s.pick }}" style="min-height:44px;padding:0 12px;background:{{ s.bg }};color:#f3f2f2;border:2px solid {{ s.bd }};border-radius:0;font-size:14px;font-weight:900;text-align:left;cursor:pointer">{{ s.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="padding:12px 14px;border-bottom:2px solid #f3f2f2;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px">
+      <label style="grid-column:1 / -1;display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:900;letter-spacing:0.06em">NAME
+        <input value="{{ name }}" onChange="{{ setName }}" style="height:44px;padding:0 10px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:17px;font-weight:800"></label>
+      <label style="grid-column:1 / -1;display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:900;letter-spacing:0.06em">WHERE YOU GET IT
+        <input value="{{ from }}" onChange="{{ setFrom }}" style="height:44px;padding:0 10px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:15px;font-weight:600"></label>
+      <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:900;letter-spacing:0.06em">ARMOUR
+        <input type="number" min="0" value="{{ armor }}" onChange="{{ setArmor }}" style="height:44px;padding:0 10px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:18px;font-weight:900"></label>
+      <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:900;letter-spacing:0.06em">WEIGHT KG
+        <input type="number" min="0" value="{{ kg }}" onChange="{{ setKg }}" style="height:44px;padding:0 10px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:18px;font-weight:900"></label>
+      <div style="grid-column:1 / -1;font-size:13px;font-weight:700;line-height:1.4">{{ costLine }}</div>
+    </div>
+    <div style="padding:12px 14px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:12px;font-weight:900;letter-spacing:0.06em">{{ colLabel }}</div>
+      <div style="display:flex;gap:8px">
+        <sc-for list="{{ torso }}" as="c" hint-placeholder-count="3">
+          <input type="color" value="{{ c.v }}" onChange="{{ c.set }}" aria-label="{{ c.label }}">
+        </sc-for>
+      </div>
+    </div>
+    <sc-for list="{{ parts }}" as="p" hint-placeholder-count="4">
+      <div style="padding:10px 14px 12px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="flex:1;font-size:16px;font-weight:900">{{ p.label }}</span>
+          <button onClick="{{ p.toggle }}" style="min-width:72px;min-height:44px;padding:0 12px;background:{{ p.bg }};color:#f3f2f2;border:2px solid {{ p.bd }};border-radius:0;font-size:14px;font-weight:900;text-align:left;cursor:pointer">{{ p.onLabel }}</button>
+        </div>
+        <sc-if value="{{ p.hasStyles }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <sc-for list="{{ p.styles }}" as="st" hint-placeholder-count="2">
+              <button onClick="{{ st.pick }}" style="min-height:44px;padding:0 12px;background:{{ st.bg }};color:#f3f2f2;border:2px solid {{ st.bd }};border-radius:0;font-size:13px;font-weight:900;text-align:left;cursor:pointer">{{ st.label }}</button>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ p.showCtl }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px;align-items:start">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <input type="color" value="{{ p.col }}" onInput="{{ p.setCol }}" aria-label="Colour">
+              <sc-if value="{{ p.hasCol2 }}" hint-placeholder-val="{{ false }}"><input type="color" value="{{ p.col2 }}" onInput="{{ p.setCol2 }}" aria-label="Lens colour"><span style="font-size:10px;font-weight:900">{{ p.col2Label }}</span></sc-if>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <sc-for list="{{ p.sliders }}" as="s" hint-placeholder-count="3">
+                <label style="display:grid;grid-template-columns:78px minmax(0,1fr) 44px;align-items:center;gap:8px;font-size:12px;font-weight:900;letter-spacing:0.04em">{{ s.label }}
+                  <input type="range" min="{{ s.min }}" max="{{ s.max }}" step="{{ s.step }}" value="{{ s.v }}" onInput="{{ s.set }}">
+                  <span style="font-size:13px;font-weight:800">{{ s.show }}</span></label>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-for>
+    <div style="padding:14px;display:flex;gap:8px;flex-wrap:wrap">
+      <sc-if value="{{ isCopyFox }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ deleteSet }}" style="min-height:44px;padding:0 14px;background:#201e1d;color:#f3f2f2;border:2px solid #ec3013;border-radius:0;font-size:14px;font-weight:900;text-align:left;cursor:pointer" style-hover="background:#4a1a10">{{ deleteLabel }}</button>
+      </sc-if>
+      <button onClick="{{ resetSet }}" style="min-height:44px;padding:0 14px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:14px;font-weight:900;text-align:left;cursor:pointer" style-hover="background:#4a1a10">{{ resetLabel }}</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { sets: null, cur: 'a8', cmp: '', who: 'player', loading: true, spin: false, hsets: null, hcur: 'kyoto', hcmp: '', hlook: 'bensumoClothes1' };
+  stageRef = React.createRef();
+  async componentDidMount() {
+    try { this.A = await import('./engine/armor-sets.js'); this.setState({ sets: this.A.loadArmorSets(), hsets: this.A.loadHumanArmor() });
+      const m = await import('./engine/armor-stage.js'); this.st = await m.startArmorStage(this.stageRef.current); window.__armor = this.st; this.show(); } catch (e) { console.error(e); }
+    this.setState({ loading: false });
+  }
+  componentWillUnmount() { this.st && this.st.destroy(); }
+  show(S = this.state) { if (!this.st || !S.sets) return; if (S.who === 'bensumo') { this.st.show('bensumo', S.hsets[S.hcur], S.hcmp ? S.hsets[S.hcmp] : null, S.hlook); return; } this.st.show(S.who, S.sets[S.cur], S.cmp ? S.sets[S.cmp] : null); }
+  editH(fn) { const hs = JSON.parse(JSON.stringify(this.state.hsets)); fn(hs[this.state.hcur]); this.A.saveHumanArmor(hs); this.setState({ hsets: hs }, () => { clearTimeout(this._hT); this._hT = setTimeout(() => this.show(), 90); }); }
+  humanVals(base, pick, go) { const S = this.state, hs = S.hsets, cur = hs[S.hcur], B = S.hcmp ? hs[S.hcmp] : null, OK = cur.yoroi ? 'yoroi' : cur.vegas ? 'vegas' : null, Y = OK ? cur[OK] : null, PL = OK === 'yoroi' ? this.A.YOROI_PARTS : this.A.VEGAS_PARTS.filter(p => !Y.list || Y.list.includes(p[0])), CL = OK === 'yoroi' ? [['lacquer', 'LACQUER'], ['lace', 'LACING'], ['cloth', 'CLOTH']] : Y.suit != null ? [['gold', 'GOLD'], ['shirt', 'SHIRT']] : [['gold', 'GOLD'], ['trim', 'TRIM']], cost = s => s.armor + ' ARMOUR · ' + s.kg + ' KG';
+    return { ...base, isHuman: true, isFox: false, isCopyFox: false, titleA: cur.name, statsA: cost(cur), hasB: !!B, titleB: B ? B.name : '', statsB: B ? cost(B) : '',
+      setBtns: Object.values(hs).map(s => ({ label: s.name, ...pick(S.hcur === s.id), pick: () => go({ hcur: s.id, hcmp: S.hcmp === s.id ? '' : S.hcmp }) })),
+      cmpBtns: [{ id: '', name: 'OFF' }, ...Object.values(hs).filter(s => s.id !== S.hcur)].map(s => ({ label: s.name, ...pick(S.hcmp === s.id), pick: () => go({ hcmp: s.id }) })),
+      looks: this.A.HUMAN_LOOKS.map(([k, l]) => ({ label: l, ...pick(S.hlook === k), pick: () => go({ hlook: k }) })),
+      name: cur.name, from: cur.from || '', armor: cur.armor, kg: cur.kg, humanNote: cur.earthOnly ? 'EARTH ONLY: Ben in human form on the Strip. This gear and its EARTH GEMS stay on Earth.' : 'KYOTO ONLY: this armour and its KYOTO GEMS stay in Kyoto. Ben arrives in his sumo street clothes.',
+      costLine: cur.earthOnly ? 'Bought piece by piece on the Strip. Each piece has a WORLD slot (EARTH GEM) and an ANY slot.' : 'Bought piece by piece at the Kyoto Armourer. Each piece has a WORLD slot (KYOTO GEM) and an ANY slot.',
+      setName: e => this.editH(s => { s.name = (e.target.value || '').trim().toUpperCase() || s.name; }), setFrom: e => this.editH(s => { s.from = e.target.value.trim(); }),
+      setArmor: e => this.editH(s => { s.armor = Math.max(0, Math.round(+e.target.value) || 0); }), setKg: e => this.editH(s => { s.kg = Math.max(0, Math.round(+e.target.value) || 0); }),
+      colLabel: Y ? 'COLOURS · ' + CL.map(c => c[1]).join(' · ') : 'NO ARMOUR ON THIS SET',
+      torso: Y ? CL.map(([k, l]) => ({ label: l, v: Y[k], set: e => this.editH(s => { s[OK][k] = e.target.value; }) })) : [],
+      parts: Y ? PL.map(([k, label]) => { const V = OK === 'vegas', f = ((Y.fit || {})[k]) || {}, fitOf = s => { s.vegas.fit = s.vegas.fit || {}; return (s.vegas.fit[k] = s.vegas.fit[k] || {}); };
+        const sl = (lab, key, min, max, step, fmt) => { const v = f[key] ?? (key === 's' ? 1 : 0); return { label: lab, min, max, step, v, show: fmt(v), set: e => this.editH(s => { fitOf(s)[key] = +e.target.value; }) }; };
+        const STY = V ? (this.A.VEGAS_STYLES[k] || []) : [], cs = f.style || (STY[0] && STY[0][0]);
+        return { label, onLabel: Y[k] ? 'ON' : 'OFF', ...pick(!!Y[k]), toggle: () => this.editH(s => { s[OK][k] = !s[OK][k]; }),
+          showCtl: V && !!Y[k], col: f.col || (this.A.VEGAS_COLS[k] || '#ffffff'), setCol: e => this.editH(s => { fitOf(s).col = e.target.value; }),
+          hasCol2: V && !!Y[k] && (k === 'shades' || k === 'suit'), col2Label: k === 'suit' ? 'LAPEL' : 'LENS', col2: f.col2 || (k === 'suit' ? '#0c0c12' : '#2a2a3a'), setCol2: e => this.editH(s => { fitOf(s).col2 = e.target.value; }),
+          hasStyles: V && !!Y[k] && STY.length > 1, styles: STY.map(([sk, l2]) => ({ label: l2, ...pick(cs === sk), pick: () => this.editH(s => { fitOf(s).style = sk; }) })),
+          sliders: V ? [sl('SIZE', 's', 0.6, 1.8, 0.05, v => Math.round(v * 100) + '%'), sl('UP / DOWN', 'y', -0.15, 0.15, 0.005, v => (v > 0 ? '+' : '') + v.toFixed(3)), sl('FWD / BACK', 'z', -0.15, 0.15, 0.005, v => (v > 0 ? '+' : '') + v.toFixed(3))] : [] }; }) : [],
+      resetLabel: 'RESET ' + cur.name + ' TO DEFAULT', resetSet: () => { const D = this.A.HUMAN_DEFAULTS_ARMOR[S.hcur]; if (D) this.editH(s => { Object.assign(s, JSON.parse(JSON.stringify(D))); }); } }; }
+  edit(fn, rebuild) { const sets = JSON.parse(JSON.stringify(this.state.sets)); fn(sets[this.state.cur]); this.A.saveArmorSets(sets);
+    this.setState({ sets }, () => { if (rebuild) this.show(); else this.st && this.st.dress(sets[this.state.cur], this.state.cmp ? sets[this.state.cmp] : null); }); }
+  renderVals() {
+    const S = this.state, sets = S.sets;
+    if (!sets) return { humanNote: '', isHuman: false, isFox: true, isCopyFox: false, looks: [], colLabel: '', loading: true, stageRef: this.stageRef, parts: [], torso: [], setBtns: [], cmpBtns: [], whos: [], views: [], hasB: false, isCopy: false, deleteLabel: '', spinLabel: 'SPIN', spinBg: '#201e1d', spinBd: '#f3f2f2', titleA: '', statsA: '', titleB: '', statsB: '', costLine: '', resetLabel: 'RESET', name: '', from: '', armor: '', kg: '' };
+    const cur = sets[S.cur], B = S.cmp ? sets[S.cmp] : null, PARTS = this.A.PARTS;
+    const pick = (on) => ({ bg: on ? '#ec3013' : '#201e1d', bd: on ? '#ec3013' : '#f3f2f2' });
+    const go = patch => this.setState(patch, () => this.show());
+    const cost = s => s.armor + ' ARMOUR · ' + s.kg + ' KG';
+    const slow = Math.round(Math.max(0, cur.kg - 8) * 1.5);
+    const base = {
+      stageRef: this.stageRef, loading: S.loading,
+      jointLabel: S.joint ? 'JOINTED FOX ✕' : '+ JOINTED FOX', ...(o => ({ jointBg: o.bg, jointBd: o.bd }))(pick(S.joint)), toggleJoint: () => { const on = !S.joint; this.setState({ joint: on }); this.st && this.st.jointed(on).catch(e => console.error(e)); },
+      spinLabel: S.spin ? 'PAUSE' : 'SPIN', ...(o => ({ spinBg: o.bg, spinBd: o.bd }))(pick(S.spin)), toggleSpin: () => { const on = !S.spin; this.setState({ spin: on }); this.st && this.st.spin(on); },
+      titleA: cur.name, statsA: cost(cur), hasB: !!B, titleB: B ? B.name : '', statsB: B ? cost(B) : '',
+      views: [['front', 'FRONT'], ['side', 'SIDE'], ['back', 'BACK']].map(([k, l]) => ({ label: l, pick: () => this.st && this.st.view(k) })),
+      whos: [['player', 'YOU'], ['hope', 'HOPE'], ['noble', 'NOBLE'], ['bensumo', 'BEN · SUMO (KYOTO)']].map(([k, l]) => ({ label: l, ...pick(S.who === k), pick: () => go({ who: k }) })),
+      isHuman: false, isFox: true, looks: [], humanNote: '', colLabel: 'BASE ARMOUR COLOURS · LIGHT · MID · DARK',
+      setBtns: Object.values(sets).map(s => ({ label: s.name, ...pick(S.cur === s.id), pick: () => go({ cur: s.id, cmp: S.cmp === s.id ? '' : S.cmp, confirmDel: false }) })),
+      cmpBtns: [{ id: '', name: 'OFF' }, ...Object.values(sets).filter(s => s.id !== S.cur)].map(s => ({ label: s.name, ...pick(S.cmp === s.id), pick: () => go({ cmp: s.id }) })),
+      newSet: () => { const sets2 = JSON.parse(JSON.stringify(sets)); let id = 'set' + Date.now().toString(36); sets2[id] = { ...JSON.parse(JSON.stringify(cur)), id, name: cur.name + ' COPY', custom: true }; this.A.saveArmorSets(sets2); this.setState({ sets: sets2, cur: id }, () => this.show()); },
+      name: cur.name, from: cur.from || '', armor: cur.armor, kg: cur.kg,
+      costLine: 'Heavier armour walks slower and leaves less room in the bag. This set: about ' + slow + ' % slower, ' + cur.kg + ' kg of the bag.',
+      setName: e => this.edit(s => { s.name = (e.target.value || '').trim().toUpperCase() || s.name; }),
+      setFrom: e => this.edit(s => { s.from = e.target.value.trim(); }),
+      setArmor: e => this.edit(s => { s.armor = Math.max(0, Math.round(+e.target.value) || 0); }),
+      setKg: e => this.edit(s => { s.kg = Math.max(0, Math.round(+e.target.value) || 0); }),
+      torso: ['LIGHT', 'MID', 'DARK'].map((l, i) => ({ label: l, v: cur.torso[i], set: e => this.edit(s => { s.torso[i] = e.target.value; }, true) })),
+      parts: PARTS.map(([k, label]) => { const p = cur.parts[k], crest = k === 'crest';
+        const sl = (lab, key, min, max, step, fmt) => ({ label: lab, min, max, step, v: p[key] ?? (key === 's' ? 1 : 0), show: fmt(p[key] ?? (key === 's' ? 1 : 0)), set: e => this.edit(s => { s.parts[k][key] = +e.target.value; }) });
+        const STY = this.A.STYLES[k] || [], cs = p.style || (STY[0] && STY[0][0]);
+        return { label, onLabel: p.on ? 'ON' : 'OFF', ...pick(p.on), showCtl: p.on && !crest, col: p.col, hasStyles: p.on && STY.length > 1,
+          styles: STY.map(([sk, sl2]) => ({ label: sl2, ...pick(cs === sk), pick: () => this.edit(s => { s.parts[k].style = sk; }, k === 'helmet') })),
+          toggle: () => this.edit(s => { s.parts[k].on = !s.parts[k].on; }, k === 'helmet'), setCol: e => this.edit(s => { s.parts[k].col = e.target.value; }), hasCol2: false, col2: '#000000', setCol2: null, col2Label: '',
+          sliders: [sl('SIZE', 's', 0.6, 1.8, 0.05, v => Math.round(v * 100) + '%'), sl('UP / DOWN', 'y', -0.2, 0.2, 0.01, v => (v > 0 ? '+' : '') + v.toFixed(2)), sl('FWD / BACK', 'z', -0.15, 0.15, 0.01, v => (v > 0 ? '+' : '') + v.toFixed(2))] }; }),
+      isCopyFox: !!cur.custom, deleteLabel: S.confirmDel ? 'TAP AGAIN TO DELETE ' + cur.name : 'DELETE THIS COPY',
+      deleteSet: () => { if (!S.confirmDel) { this.setState({ confirmDel: true }); return; } const sets2 = JSON.parse(JSON.stringify(sets)); delete sets2[S.cur]; this.A.saveArmorSets(sets2); this.setState({ sets: sets2, cur: 'a8', cmp: S.cmp === S.cur ? '' : S.cmp, confirmDel: false }, () => this.show()); },
+      resetLabel: cur.custom ? 'RESET TO WHAT IT WAS COPIED FROM' : 'RESET ' + cur.name + ' TO DEFAULT',
+      resetSet: () => { const D = this.A.ARMOR_DEFAULTS[S.cur]; if (!D) return; this.edit(s => { Object.assign(s, JSON.parse(JSON.stringify(D))); }, true); },
+    };
+    return S.who === 'bensumo' && S.hsets ? this.humanVals(base, pick, go) : base;
+  }
+}
+</script>
+</body>
+</html>

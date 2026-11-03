@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Meru School for the Blind</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="styles.css">
+
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid #ffd23a;outline-offset:2px}button{-webkit-tap-highlight-color:transparent;touch-action:none}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Meru School for the Blind">
+  <div ref="{{ stageRef }}" style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0;overflow:hidden"></div>
+  <div data-hud-host="1" style="position:absolute;inset:0;pointer-events:none"><dc-import name="GameHUD" game="{{ engine }}" hud="{{ stdHud }}" started="{{ hudStarted }}" busy="{{ hudBusy }}" on-hud="{{ onHud }}" world="Meru" vehicle="school" keys="{{ keysList }}" skip-keys="{{ skipKeys }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+
+  <!-- ============ LESSON TOP BAR ============ -->
+  <sc-if value="{{ lessonOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="top" style="position:absolute;left:0;right:0;top:0;z-index:5;pointer-events:none;background:#000;border-bottom:2px solid #ffd23a;padding:env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left);display:flex;align-items:stretch">
+      <div style="flex:1;min-width:0;padding:6px 12px;display:flex;flex-direction:column;justify-content:center;gap:1px;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ barKicker }}</span><span style="font:900 clamp(17px,4.6vw,22px) var(--font-heading);line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ barTitle }}</span></div>
+      <sc-for list="{{ barStatsV }}" as="s" hint-placeholder-count="2"><div style="flex:none;padding:6px 10px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836"><span style="font:800 9px var(--font-heading);letter-spacing:0.1em;color:#cfcac4;white-space:nowrap">{{ s.k }}</span><span style="font:900 17px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap;color:{{ s.c }}">{{ s.v }}</span></div></sc-for>
+      <button onClick="{{ musicTog }}" aria-label="{{ musicAria }}" style="pointer-events:auto;flex:none;width:{{ barBtnW }};border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:{{ musicCol }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:0" style-hover="background:#2a2826"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="17" cy="16" r="3"></circle></svg><span style="font:800 8px var(--font-heading);letter-spacing:0.08em">MUSIC</span></button>
+      <button onClick="{{ voiceTog }}" aria-label="{{ voiceAria }}" style="pointer-events:auto;flex:none;width:{{ barBtnW }};border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:{{ voiceCol }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:0" style-hover="background:#2a2826"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"></path><sc-if value="{{ voiceOnV }}" hint-placeholder-val="{{ true }}"><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"></path></sc-if><sc-if value="{{ voiceOffV }}" hint-placeholder-val="{{ false }}"><path d="M17 9l5 6M22 9l-5 6"></path></sc-if></svg><span style="font:800 8px var(--font-heading);letter-spacing:0.08em">VOICE</span></button>
+      <button onClick="{{ helpToggle }}" aria-label="How the lessons work" style="pointer-events:auto;flex:none;width:{{ barBtnW }};border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 20px var(--font-heading);cursor:pointer" style-hover="background:#2a2826">?</button>
+      <button onClick="{{ leave }}" aria-label="Leave the lesson" style="pointer-events:auto;flex:none;width:{{ barBtnW }};border:0;border-radius:0;background:#ec3013;color:#fff;font:900 20px var(--font-heading);cursor:pointer" style-hover="background:#c82a10">✕</button>
+    </div>
+  </sc-if>
+
+  <!-- Hope's caption (landscape: top right, under the bar) -->
+  <sc-if value="{{ capTopOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;right:max(10px, env(safe-area-inset-right));top:calc(58px + env(safe-area-inset-top));z-index:6;pointer-events:none;width:min(380px, 46%);background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column"><div style="padding:4px 10px;border-bottom:2px solid #3a3836;display:flex;gap:8px;align-items:baseline"><span style="font:900 12px var(--font-heading);letter-spacing:0.1em;color:#ffd23a">{{ capName }}</span><span style="font:700 11px var(--font-body);color:#cfcac4">{{ capRole }}</span></div><div style="padding:6px 10px;font:700 14px var(--font-body);line-height:1.35;text-wrap:pretty">{{ capText }}</div></div>
+  </sc-if>
+  <sc-if value="{{ kidOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(10px, env(safe-area-inset-left));top:{{ kidTop }};z-index:6;pointer-events:none;max-width:min(320px, calc(100% - 20px));background:rgba(0,0,0,0.88);border:2px solid #3a3836;padding:6px 10px;font:700 13px var(--font-body);line-height:1.3"><b style="color:#ffd23a;font-family:var(--font-heading);letter-spacing:0.06em">{{ kidName }}</b> · {{ kidText }}</div>
+  </sc-if>
+  <sc-if value="{{ flashOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ flashTop }};transform:translateX(-50%);z-index:7;pointer-events:none;max-width:calc(100% - 24px);background:rgba(0,0,0,0.9);border:2px solid {{ flashCol }};display:flex;align-items:stretch"><span style="flex:none;width:10px;background:{{ flashCol }};display:block"></span><span style="padding:8px 16px;font:900 clamp(18px,5vw,28px) var(--font-heading);letter-spacing:0.04em;white-space:nowrap">{{ flashTxt }}</span></div>
+  </sc-if>
+
+  <!-- ============ BOTTOM STACK (caption + the lesson's controls) ============ -->
+  <sc-if value="{{ bottomOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="bottom" style="position:absolute;left:0;right:0;bottom:0;z-index:5;display:flex;flex-direction:column;align-items:stretch;pointer-events:none">
+      <sc-if value="{{ capBotOn }}" hint-placeholder-val="{{ true }}">
+        <div style="margin:0 max(10px, env(safe-area-inset-left)) 8px;align-self:flex-start;max-width:min(560px, calc(100% - 20px));background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column"><div style="padding:4px 10px;border-bottom:2px solid #3a3836;display:flex;gap:8px;align-items:baseline"><span style="font:900 12px var(--font-heading);letter-spacing:0.1em;color:#ffd23a">{{ capName }}</span><span style="font:700 11px var(--font-body);color:#cfcac4">{{ capRole }}</span></div><div style="padding:6px 10px;font:700 15px var(--font-body);line-height:1.35;text-wrap:pretty">{{ capText }}</div></div>
+      </sc-if>
+
+      <!-- BRAILLE: the Perkins brailler -->
+      <sc-if value="{{ brOn }}" hint-placeholder-val="{{ false }}">
+        <div style="pointer-events:auto;background:#000;border-top:2px solid #ffd23a;padding:8px max(10px, env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:stretch;gap:8px;min-height:62px">
+            <div style="flex:1;min-width:0;display:flex;gap:4px;overflow:hidden">
+              <sc-for list="{{ brLetters }}" as="t" hint-placeholder-count="3"><div style="flex:none;width:{{ tileW }};border:2px solid {{ t.bd }};background:{{ t.bg }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:3px 0"><span style="font:900 20px var(--font-heading);line-height:1;color:{{ t.fg }}">{{ t.ch }}</span><div style="display:grid;grid-template-columns:repeat(2, 7px);gap:2px"><sc-for list="{{ t.cells }}" as="c" hint-placeholder-count="6"><span style="width:7px;height:7px;border-radius:50%;background:{{ c.col }};display:block"></span></sc-for></div></div></sc-for>
+            </div>
+            <div style="flex:none;display:flex;align-items:center;gap:8px;padding:0 10px;border:2px solid #3a3836">
+              <div style="display:grid;grid-template-columns:repeat(2, 14px);grid-auto-flow:column;grid-template-rows:repeat(3, 14px);gap:4px"><sc-for list="{{ brCell }}" as="c" hint-placeholder-count="6"><span style="width:14px;height:14px;border-radius:50%;background:{{ c.col }};border:2px solid {{ c.bd }};box-sizing:border-box;display:block"></span></sc-for></div>
+              <div style="display:flex;flex-direction:column;min-width:34px"><span style="font:800 9px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">MAKES</span><span style="font:900 26px var(--font-heading);line-height:1;color:{{ brCurCol }}">{{ brCurTxt }}</span></div>
+            </div>
+            
+          </div>
+          <div style="display:grid;grid-template-columns:{{ brCols }};gap:6px">
+            <sc-for list="{{ brKeys }}" as="k" hint-placeholder-count="9">
+              <button onPointerDown="{{ k.down }}" onPointerUp="{{ k.up }}" onPointerCancel="{{ k.up }}" onClick="{{ k.click }}" onContextMenu="{{ noMenu }}" aria-label="{{ k.aria }}" style="grid-column:{{ k.col }};min-height:{{ brKeyH }};padding:0;border:2px solid {{ k.bd }};border-radius:0;background:{{ k.bg }};color:{{ k.fg }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;touch-action:none"><span style="font:900 {{ k.fs }} var(--font-heading);line-height:1;letter-spacing:0.04em">{{ k.label }}</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;color:{{ k.sub }}">{{ k.small }}</span></button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- CANE WALK -->
+      <sc-if value="{{ caneOn }}" hint-placeholder-val="{{ false }}">
+        <div style="pointer-events:auto;background:#000;border-top:2px solid #ffd23a;padding:8px max(10px, env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));display:grid;grid-template-columns:minmax(64px,0.6fr) minmax(0,2fr) minmax(64px,0.6fr);gap:6px">
+          <button onClick="{{ stepL }}" aria-label="Step left" style="min-height:76px;border:2px solid {{ stepBd }};border-radius:0;background:{{ stepBg }};color:{{ stepFg }};font:900 14px var(--font-heading);letter-spacing:0.06em;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><span style="font-size:22px">◀</span>STEP</button>
+          <div onPointerDown="{{ padDown }}" onPointerUp="{{ padUp }}" onPointerCancel="{{ padCancel }}" style="min-height:76px;border:2px dashed #ffd23a;background:#0f0e0d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;touch-action:none;cursor:ew-resize;padding:4px 8px">
+            <span style="font:900 clamp(13px,3.6vw,16px) var(--font-heading);letter-spacing:0.06em;color:#ffd23a;text-align:center">{{ caneMsg }}</span>
+            <div style="width:100%;max-width:240px;height:10px;background:#2a2826;position:relative"><div style="position:absolute;top:0;bottom:0;left:{{ arcL }};width:{{ arcW }};background:{{ arcCol }}"></div><div style="position:absolute;top:-3px;bottom:-3px;left:20%;width:2px;background:#cfcac4"></div><div style="position:absolute;top:-3px;bottom:-3px;right:20%;width:2px;background:#cfcac4"></div></div>
+            <span style="font:800 10px var(--font-heading);letter-spacing:0.08em;color:#cfcac4">{{ arcTxt }}</span>
+          </div>
+          <button onClick="{{ stepR }}" aria-label="Step right" style="min-height:76px;border:2px solid {{ stepBd }};border-radius:0;background:{{ stepBg }};color:{{ stepFg }};font:900 14px var(--font-heading);letter-spacing:0.06em;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><span style="font-size:22px">▶</span>STEP</button>
+        </div>
+      </sc-if>
+
+      <!-- GOALBALL -->
+      <sc-if value="{{ goalOn }}" hint-placeholder-val="{{ false }}">
+        <div style="pointer-events:auto;background:#000;border-top:2px solid #ffd23a;padding:6px max(10px, env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));display:flex;flex-direction:column;gap:6px">
+          <div style="font:900 clamp(12px,3.4vw,15px) var(--font-heading);letter-spacing:0.05em;color:{{ goalCueCol }};min-height:18px;text-wrap:pretty">{{ goalCue }}</div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px">
+            <sc-for list="{{ goalBtns }}" as="b" hint-placeholder-count="3"><button onPointerDown="{{ b.go }}" onClick="{{ b.click }}" aria-label="{{ b.label }}" style="min-height:{{ goalBtnH }};border:2px solid {{ b.bd }};border-radius:0;background:{{ b.bg }};color:{{ b.fg }};opacity:{{ b.op }};font:900 15px var(--font-heading);letter-spacing:0.06em;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;touch-action:none"><span style="font-size:20px;line-height:1">{{ b.icon }}</span>{{ b.label }}</button></sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- ============ TOUCH ART: the swell paper ============ -->
+  <sc-if value="{{ artOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:0;right:0;top:{{ artTop }};bottom:0;z-index:4;display:flex;flex-direction:{{ artDir }};align-items:center;justify-content:center;gap:10px;padding:8px max(10px, env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));box-sizing:border-box;background:rgba(10,8,6,0.55);pointer-events:none">
+      <div style="flex:none;display:flex;flex-direction:column;gap:4px;pointer-events:auto">
+        <div ref="{{ artRef }}" style="position:relative;width:{{ artSize }};height:{{ artSize }};border:2px solid #ffd23a;background:#efe8d8;box-sizing:content-box"></div>
+        <div style="display:flex;align-items:center;gap:8px;background:#000;border:2px solid #3a3836;padding:4px 8px"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4;white-space:nowrap">YOU HAVE FELT</span><div style="flex:1;height:8px;background:#2a2826"><div style="height:100%;width:{{ feltW }};background:#ffd23a"></div></div><span style="font:900 13px var(--font-heading);font-variant-numeric:tabular-nums">{{ feltTxt }}</span></div>
+      </div>
+      <div style="flex:none;width:{{ artColW }};max-height:100%;overflow:auto;display:flex;flex-direction:column;gap:{{ artGap }};pointer-events:auto">
+        <sc-if value="{{ artCapOn }}" hint-placeholder-val="{{ true }}"><div style="background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column"><div style="padding:4px 10px;border-bottom:2px solid #3a3836;font:900 12px var(--font-heading);letter-spacing:0.1em;color:#ffd23a">{{ capName }}</div><div style="padding:6px 10px;font:700 14px var(--font-body);line-height:1.35;text-wrap:pretty">{{ capText }}</div></div></sc-if>
+        <div style="font:800 11px var(--font-heading);letter-spacing:0.1em;color:#ffd23a;background:#000;padding:4px 8px;align-self:flex-start">WHAT IS THE PICTURE?</div>
+        <div style="display:grid;grid-template-columns:{{ artChoiceCols }};gap:6px">
+          <sc-for list="{{ artChoices }}" as="c" hint-placeholder-count="4"><button onClick="{{ c.go }}" disabled="{{ c.off }}" style="min-height:{{ artBtnH }};padding:0 12px;border:2px solid {{ c.bd }};border-radius:0;background:{{ c.bg }};color:{{ c.fg }};font:900 15px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;text-decoration:{{ c.dec }}" style-hover="filter:brightness(1.15)">{{ c.name }}</button></sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ BETWEEN PERIODS ============ -->
+  <sc-if value="{{ betweenOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);z-index:8;width:min(420px, calc(100% - 24px));background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column;pointer-events:none">
+      <div style="padding:10px 16px;border-bottom:2px solid #3a3836;display:flex;justify-content:space-between;align-items:center;gap:10px"><div style="display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ betKicker }}</span><span style="font:900 24px var(--font-heading)">{{ betName }}</span></div><span style="font:900 26px var(--font-heading);color:#ffd23a;letter-spacing:0.04em">{{ betStars }}</span></div>
+      <div style="padding:8px 16px;font:800 13px var(--font-heading);letter-spacing:0.06em;color:#cfcac4">{{ betNext }}</div>
+    </div>
+  </sc-if>
+
+  <!-- ============ PRACTICE RESULT ============ -->
+  <sc-if value="{{ resultOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:9;background:rgba(0,0,0,0.72);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #3a3836;width:min(440px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836"><div style="padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">PRACTICE · {{ resKicker }}</span><span style="font:900 26px var(--font-heading);line-height:1.05">{{ resTitle }}</span><span style="font:700 12px var(--font-body);color:#cfcac2">{{ resBest }}</span></div><div style="width:96px;display:flex;align-items:center;justify-content:center;background:#ffd23a;color:#000;font:900 24px var(--font-heading);letter-spacing:0.02em">{{ resStars }}</div></div>
+        <sc-for list="{{ resRows }}" as="r" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:7px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;text-align:right">{{ r.v }}</span></div></sc-for>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))"><button onClick="{{ resAgain }}" style="min-height:54px;padding:0 16px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10">PLAY AGAIN</button><button onClick="{{ resDone }}" style="min-height:54px;padding:0 16px;border:0;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">BACK TO THE HALLS</button></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ REPORT CARD (end of the school day) ============ -->
+  <sc-if value="{{ reportOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="intro" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:9;width:min(440px, calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836"><div style="padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ repKicker }}</span><span style="font:900 26px var(--font-heading);line-height:1.05">Report card</span><span style="font:700 12px var(--font-body);color:#cfcac2">{{ repSub }}</span></div><div style="width:92px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#ec3013"><span style="font:900 28px var(--font-heading)">+{{ repGold }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em">GOLD</span></div></div>
+      <sc-for list="{{ repRows }}" as="r" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:7px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font:900 18px var(--font-heading);color:#ffd23a;letter-spacing:0.04em">{{ r.v }}</span></div></sc-for>
+      <div style="padding:8px 16px;border-bottom:2px solid #2a2826;display:flex;gap:8px;align-items:baseline"><span style="font:900 12px var(--font-heading);letter-spacing:0.1em;color:#ffd23a;flex:none">HOPE</span><span style="font:700 13px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">“{{ repLine }}”</span></div>
+      <sc-for list="{{ repUnlock }}" as="u" hint-placeholder-count="1"><div style="padding:6px 16px;border-bottom:2px solid #2a2826;font:800 12px var(--font-heading);letter-spacing:0.04em;color:#22c55e">UNLOCKED · {{ u.t }}</div></sc-for>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))"><button onClick="{{ repNext }}" style="min-height:54px;padding:0 16px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10">NEXT SCHOOL DAY</button><button onClick="{{ repDone }}" style="min-height:54px;padding:0 16px;border:0;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WALK AROUND</button></div>
+    </div>
+  </sc-if>
+
+  <!-- ============ WELCOME CARD (the 3D-game standard) ============ -->
+  <sc-if value="{{ introOn }}" hint-placeholder-val="{{ true }}">
+    <div data-safe="intro" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:10;width:min(420px, calc(100% - 24px));max-height:calc(100% - 24px - env(safe-area-inset-top));display:flex;flex-direction:column;pointer-events:auto">
+      <div style="flex:1 1 auto;min-height:0;display:flex"><dc-import name="WelcomeCard" kicker="{{ wcKicker }}" title="Hope's Class" text="{{ wcText }}" rows="{{ wcRows }}" play-label="START THE SCHOOL DAY" on-play="{{ wcGo }}" on-tutorial="{{ wcTut }}" on-demo="{{ wcDemo }}" hint-size="100%,380px" style="width:100%"></dc-import></div>
+      <sc-if value="{{ exploreInCard }}" hint-placeholder-val="{{ true }}"><button onClick="{{ explore }}" style="flex:none;min-height:48px;padding:0 18px;border:2px solid #3a3836;border-top:0;border-radius:0;background:#1a1816;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between" style-hover="background:#2a2826"><span>{{ exploreLabel }}</span><span style="color:#ffd23a">▶</span></button></sc-if>
+    </div>
+    <sc-if value="{{ exploreFloat }}" hint-placeholder-val="{{ false }}"><button onClick="{{ explore }}" style="position:absolute;right:max(12px, env(safe-area-inset-right));top:calc(12px + env(safe-area-inset-top));z-index:10;min-height:48px;padding:0 16px;border:2px solid #ffd23a;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;display:flex;align-items:center;gap:10px" style-hover="background:#2a2826">{{ exploreLabel }}<span style="color:#ffd23a">▶</span></button></sc-if>
+  </sc-if>
+
+  <!-- ============ HELP ============ -->
+  <sc-if value="{{ helpOn }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ helpToggle }}" style="position:absolute;inset:0;z-index:12;background:rgba(0,0,0,0.84);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #ffd23a;width:min(480px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="padding:10px 14px;border-bottom:2px solid #3a3836;font:900 16px var(--font-heading);letter-spacing:0.06em;color:#ffd23a">HOW HOPE'S CLASS WORKS</div>
+        <sc-for list="{{ helpRows }}" as="r" hint-placeholder-count="6"><div style="display:grid;grid-template-columns:92px minmax(0,1fr);gap:10px;padding:7px 14px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body);line-height:1.35"><span style="font:900 11px var(--font-heading);letter-spacing:0.08em;color:#e6b45a">{{ r.k }}</span><span style="text-wrap:pretty">{{ r.v }}</span></div></sc-for>
+        <div style="padding:10px 14px;font:700 12px var(--font-body);color:#cfcac2">Tap anywhere to close</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ DEMO ============ -->
+  <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:10;pointer-events:auto;background:transparent"></div>
+    <div style="position:absolute;left:max(10px, env(safe-area-inset-left));top:{{ demoTop }};z-index:11;pointer-events:none;width:min(460px, calc(100% - 112px));background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 12px;border-bottom:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;background:#ec3013;display:block"></span>DEMO</span><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">{{ demoN }}</span></div>
+      <div style="display:flex;align-items:stretch"><sc-if value="{{ demoKeyOn }}" hint-placeholder-val="{{ false }}"><div style="flex:none;min-width:64px;display:flex;align-items:center;justify-content:center;padding:0 10px;background:#ec3013;color:#fff;font:900 15px var(--font-heading);border-right:2px solid #3a3836">{{ demoKey }}</div></sc-if><div style="padding:9px 12px;font:900 clamp(14px,3.8vw,18px) var(--font-heading);letter-spacing:0.03em;line-height:1.2;text-wrap:pretty">{{ demoCap }}</div></div>
+    </div>
+    <button onClick="{{ demoExit }}" aria-label="Exit the demo" style="position:absolute;right:max(10px, env(safe-area-inset-right));top:{{ demoTop }};z-index:12;min-width:64px;min-height:48px;padding:0 14px;border:2px solid #ec3013;border-radius:0;background:#ec3013;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">EXIT DEMO</button>
+  </sc-if>
+
+  <sc-if value="{{ loadingOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:20;background:#000;display:flex;align-items:center;justify-content:center;font:900 14px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ loadTxt }}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  state = { h: null, help: false, vw: 390, vh: 844, hi: { pad: false, menu: false, split: false, bar: 0 }, err: null };
+  stageRef = React.createRef();
+  artEl = null;
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs(); try { this.ro = new ResizeObserver(this.onRs); this.stageRef.current && this.ro.observe(this.stageRef.current.parentElement); } catch (e) {}
+    try { const m = await import(new URL('blind-school.js', document.baseURI).href); if (this.dead) return; this.g = await m.createBlindSchool({ container: this.stageRef.current, onState: h => this.setState({ h }) }); window.__schoolPage = this; this.keepIv = setInterval(() => { if (this.g && this.g.attach && this.stageRef.current) this.g.attach(this.stageRef.current); }, 500); if (/[?&]demo=1/.test(location.search)) setTimeout(() => this.g.demoStart(), 600); if (this.artEl) this.g.setArtHost(this.artEl); this.forceUpdate(); }
+    catch (e) { console.warn('school failed: ' + (e && e.stack || String(e))); this.setState({ err: String(e && e.message || e) }); }
+  }
+  componentDidUpdate() { if (this.g && this.g.attach && this.stageRef.current) this.g.attach(this.stageRef.current); const root = this.stageRef.current && this.stageRef.current.parentElement; if (!root || !this.g) return; const rb = root.getBoundingClientRect(); let top = 0, bot = 0, left = 0;
+    root.querySelectorAll('[data-safe]').forEach(el => { const r = el.getBoundingClientRect(); if (!r.height) return; if (el.dataset.safe === 'top') top = Math.max(top, r.bottom - rb.top); else if (el.dataset.safe === 'intro' && rb.width > rb.height) left = Math.max(left, r.right - rb.left); else bot = Math.max(bot, rb.bottom - r.top); });
+    const H = rb.height, h = this.state.h || {}; this.g.setSafe(Math.round(Math.min(top, H * 0.34)), Math.round(Math.min(bot, H * (h.mode === 'intro' || h.mode === 'report' ? 0.62 : 0.6))), Math.round(Math.min(left, rb.width * 0.6))); }
+  componentWillUnmount() { this.dead = true; clearInterval(this.keepIv); removeEventListener('resize', this.onRs); this.ro && this.ro.disconnect(); this.g && this.g.destroy(); }
+  onRs = () => { const el = this.stageRef.current, r = el && el.parentElement ? el.parentElement.getBoundingClientRect() : null; this.setState({ vw: r && r.width ? r.width : innerWidth, vh: r && r.height ? r.height : innerHeight }); };
+  artRef = el => { this.artEl = el; if (this.g) this.g.setArtHost(el); };
+  onHud = hi => this.setState({ hi });
+  renderVals() {
+    const S = this.state, g = this.g, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur(), call = f => e => { blur(e); f && f(); };
+    const h = S.h || { mode: 'intro', day: 1, gold: 0, best: {}, voice: true, lesson: null };
+    const L = h.lesson, lid = L ? L.id : null, land = S.vw > S.vh && S.vh < 560, port = S.vh >= S.vw, phone = Math.min(S.vw, S.vh) < 560, starsOf = n => '★'.repeat(n || 0) + '☆'.repeat(3 - (n || 0));
+    const free = h.mode === 'free', lessonOn = h.mode === 'lesson' && !!L, bar = S.hi.bar || 0;
+    // the standard HUD (free roam)
+    let items = []; try { const sv = window.__8G_SAVE && window.__8G_SAVE.data; if (sv) items = Object.entries(sv.items || {}).filter(([, n]) => n > 0).map(([id, n]) => ({ id, n, label: String(id).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, c => c.toUpperCase()) })); } catch (e) {}
+    const stdHud = { hp: 100, hpMax: 100, en: 100, gold: h.gold || 0, hour: 9, day: h.day || 1, items, place: h.place || 'Meru · School', quest: h.quest || { text: '' }, prompt: h.prompt || null, toast: h.toast || null, muted: !!h.muted, weather: 'Clear', inCave: true, boat: false, weapons: [], dialog: h.dialog ? { ...h.dialog, required: false } : null };
+    // captions
+    const sayV = h.say, capOn = !!sayV && (lessonOn || h.mode === 'report'), capText = sayV ? sayV.text : '', capName = sayV ? sayV.name : '', capRole = sayV ? sayV.role : '';
+    const bottomOn = lessonOn && (lid === 'braille' || lid === 'cane' || lid === 'goal') && !L.over;
+    const v = {
+      stageRef: this.stageRef, engine: g, stdHud, hudStarted: free && !!g, hudBusy: false, onHud: this.onHud, stageTop: free ? bar + 'px' : '0px',
+      keysList: [['WASD', 'walk'], ['E', 'talk'], ['1', 'listen'], ['2', 'hello'], ['Space', 'jump'], ['Drag', 'look'], ['M', 'map'], ['I', 'menu']], skipKeys: ['KeyT', 'KeyN', 'KeyO', 'KeyH', 'KeyC'],
+      loadingOn: !g, loadTxt: S.err ? 'COULD NOT START 3D · ' + S.err : 'OPENING THE SCHOOL…',
+      lessonOn, bottomOn, capBotOn: capOn && !land && bottomOn, capTopOn: capOn && land && lessonOn && lid !== 'art', capText, capName, capRole,
+      kidOn: !!h.kid && lessonOn, kidName: h.kid ? h.kid.name : '', kidText: h.kid ? h.kid.text : '', kidTop: 'calc(' + (land ? 58 : 62) + 'px + env(safe-area-inset-top))',
+      flashOn: !!h.flash, flashTxt: h.flash ? h.flash.txt : '', flashCol: h.flash ? h.flash.col : '#ffd23a', flashTop: lid === 'goal' ? '44%' : '30%',
+      helpOn: S.help, helpToggle: e => { blur(e); this.setState({ help: !S.help }); }, noMenu: e => e.preventDefault(),
+      musicTog: call(() => g && g.musicToggle()), musicCol: h.music !== false ? '#ffd23a' : '#8a847e', musicAria: h.music !== false ? 'Turn the music off' : 'Turn the music on', voiceTog: call(() => g && g.voiceToggle()), voiceCol: h.voice ? '#ffd23a' : '#8a847e', voiceAria: h.voice ? 'Turn Hope\'s voice off' : 'Turn Hope\'s voice on', voiceOnV: !!h.voice, voiceOffV: !h.voice,
+      leave: call(() => g && g.leaveLesson()),
+    };
+    // top bar per lesson
+    const runTxt = h.run ? 'PERIOD ' + (h.run.i + 1) + ' OF ' + h.run.of : 'PRACTICE';
+    v.barKicker = L ? runTxt + ' · ' + (L.name || '').toUpperCase() : ''; v.barStats = []; v.barTitle = '';
+    if (lid === 'braille') { v.barTitle = L.word || 'Braille'; v.barStats = [{ k: 'WORD', v: L.n + '/' + L.of, c: '#fff' }, { k: 'MISSES', v: String(L.mistakes), c: L.mistakes ? '#ff9a8a' : '#fff' }]; }
+    if (lid === 'art') { v.barTitle = 'Feel the picture'; v.barStats = [{ k: 'PICTURE', v: L.n + '/' + L.of, c: '#fff' }]; }
+    if (lid === 'cane') { v.barTitle = 'Gym door · ' + L.meters + ' m'; v.barStats = [{ k: 'FOUND', v: String(L.finds), c: '#22c55e' }, { k: 'BUMPS', v: String(L.bumps), c: L.bumps ? '#ff9a8a' : '#fff' }]; }
+    if (lid === 'goal') { v.barTitle = 'Us ' + L.us + ' · Owls ' + L.them; v.barStats = [{ k: 'ROUND', v: Math.max(1, L.round) + '/' + L.of, c: '#fff' }]; }
+    v.barStatsV = S.vw < 520 ? v.barStats.slice(-1) : v.barStats; v.barBtnW = S.vw < 420 ? '42px' : '52px';
+    // BRAILLE
+    v.brOn = lid === 'braille' && !L.over;
+    if (v.brOn) { const cellOf = (dots, on, off) => [1, 2, 3, 4, 5, 6].map(n => ({ col: dots.includes(n) ? on : off }));
+      v.brLetters = (L.letters || []).map(t => ({ ch: t.ch, bd: t.st === 'now' ? '#ffd23a' : t.st === 'done' ? '#22c55e' : '#3a3836', bg: t.st === 'now' ? '#1f1d1b' : '#000', fg: t.st === 'done' ? '#22c55e' : '#fff', cells: cellOf(t.st === 'done' || (L.hint && t.st === 'now') ? t.dots : [], t.st === 'done' ? '#22c55e' : '#ffd23a', '#2a2826') }));
+      v.brCell = [1, 2, 3, 4, 5, 6].map(n => ({ col: L.cur.includes(n) ? '#ffd23a' : 'transparent', bd: L.cur.includes(n) ? '#ffd23a' : '#5a554f' }));
+      v.tileW = (L.letters || []).length > 4 || S.vw < 380 ? '34px' : '40px'; v.brCurTxt = L.curLetter || '–'; v.brCurCol = L.curLetter && L.curLetter !== '?' ? (L.curLetter === L.want ? '#22c55e' : '#ffd23a') : '#8a847e';
+      v.brHintOn = !!L.hint; v.brHintCell = [1, 2, 3, 4, 5, 6].map(n => ({ col: L.hint && L.hint.includes(n) ? '#000' : '#ffd23a' })); v.brHintTxt = L.hint ? L.want + ' = ' + L.hint.join(' ') : '';
+      const keyBtn = n => { const held = L.held.includes(n), lat = L.latched.includes(n), dn = held || lat; return { label: String(n), small: n <= 3 ? 'LEFT' : 'RIGHT', aria: 'Dot ' + n, fs: '24px', bg: held ? '#ffd23a' : lat ? '#3a2f10' : '#1a1816', fg: held ? '#000' : '#fff', bd: dn ? '#ffd23a' : '#5a554f', sub: held ? '#000' : '#8a847e',
+        down: e => { e.preventDefault(); try { e.currentTarget.setPointerCapture(e.pointerId); } catch (er) {} g && g.brDown(n); }, up: e => { g && g.brUp(n); }, click: e => blur(e) }; };
+      const act = (label, small, fn, bg, fg, bd) => ({ label, small, aria: label, fs: '14px', bg, fg, bd, sub: fg === '#000' ? '#000' : '#cfcac4', down: e => { e.preventDefault(); }, up: () => {}, click: e => { blur(e); fn(); } });
+      const em = act('EMBOSS', 'SPACE', () => g && g.brEmboss(), '#ec3013', '#fff', '#ec3013'), er = act('ERASE', 'BKSP', () => g && g.brErase(), '#000', '#fff', '#3a3836'), hn = act('HINT', 'H', () => g && g.brHint(), L.hint ? '#ffd23a' : '#000', L.hint ? '#000' : '#ffd23a', '#ffd23a');
+      if (land) { v.brCols = 'repeat(9, minmax(0,1fr))'; v.brKeys = [er, keyBtn(3), keyBtn(2), keyBtn(1), em, keyBtn(4), keyBtn(5), keyBtn(6), hn].map((k, i) => ({ ...k, col: 'auto' })); v.brKeyH = '56px'; }
+      else { v.brCols = 'repeat(6, minmax(0,1fr))'; v.brKeys = [...[3, 2, 1, 4, 5, 6].map(n => ({ ...keyBtn(n), col: 'auto' })), { ...er, col: 'span 2' }, { ...em, col: 'span 2' }, { ...hn, col: 'span 2' }]; v.brKeyH = phone ? '64px' : '58px'; } }
+    // ART
+    v.artOn = lid === 'art' && !L.over && lessonOn; const barH = land ? 54 : 58;
+    if (v.artOn) { const colW = land ? Math.min(300, S.vw * 0.42) : Math.min(S.vw - 24, 520); const size = land ? Math.max(160, Math.min(S.vh - barH - 60, S.vw - colW - 50)) : Math.max(180, Math.min(S.vw - 28, S.vh - barH - 300, 520));
+      v.artTop = 'calc(' + barH + 'px + env(safe-area-inset-top))'; v.artDir = land ? 'row' : 'column'; v.artSize = Math.round(size) + 'px'; v.artColW = Math.round(land ? colW : size) + 'px'; v.artChoiceCols = 'repeat(2, minmax(0,1fr))'; v.artBtnH = land ? '46px' : '54px'; v.artGap = land ? '6px' : '8px'; v.artCapOn = capOn;
+      v.feltW = (L.felt || 0) + '%'; v.feltTxt = (L.felt || 0) + '%';
+      v.artChoices = (L.choices || []).map(c => ({ name: c.name, off: c.wrong || L.phase !== 'feel', bg: c.right ? '#22c55e' : c.wrong ? '#000' : '#1a1816', fg: c.right ? '#000' : c.wrong ? '#5a554f' : '#fff', bd: c.right ? '#22c55e' : c.wrong ? '#2a2826' : '#ffd23a', dec: c.wrong ? 'line-through' : 'none', go: call(() => g && g.artPick(c.name)) })); }
+    v.artRef = this.artRef;
+    // CANE
+    v.caneOn = lid === 'cane' && !L.over;
+    if (v.caneOn) { const a = L.arc || 0, w = Math.round(a * 60); v.arcW = w + '%'; v.arcL = (L.arcDir || 1) > 0 ? (50 - w / 2) + '%' : (50 - w / 2) + '%'; v.arcCol = a >= 0.66 ? '#22c55e' : a > 0 ? '#ffd23a' : '#3a3836';
+      v.arcTxt = a ? 'LAST ARC ' + Math.round(a * 100) + '% · ' + (a >= 0.66 ? 'COVERS YOUR SHOULDERS' : 'TOO SHORT') : 'SWIPE ALL THE WAY ACROSS';
+      v.caneMsg = !L.ready ? 'LISTEN TO HOPE…' : L.blocked ? 'SOMETHING THERE · STEP AROUND IT' : '⟵  SWIPE ACROSS TO SWEEP + STEP  ⟶';
+      v.stepBg = L.blocked ? '#ffd23a' : '#1a1816'; v.stepFg = L.blocked ? '#000' : '#fff'; v.stepBd = L.blocked ? '#ffd23a' : '#5a554f';
+      v.stepL = call(() => g && g.caneSide(-1)); v.stepR = call(() => g && g.caneSide(1));
+      v.padDown = e => { e.preventDefault(); try { e.currentTarget.setPointerCapture(e.pointerId); } catch (er) {} this.pad = { x: e.clientX, y: e.clientY, w: e.currentTarget.getBoundingClientRect().width }; };
+      v.padUp = e => { const p = this.pad; this.pad = null; if (!p || !g) return; const dx = e.clientX - p.x, dy = e.clientY - p.y; if (Math.abs(dx) > 16 && Math.abs(dx) > Math.abs(dy) * 0.7) g.caneSweep(Math.sign(dx), Math.min(1, Math.max(0.2, Math.abs(dx) / (p.w * 0.72)))); };
+      v.padCancel = () => { this.pad = null; }; }
+    // GOAL
+    v.goalOn = lid === 'goal' && !L.over;
+    if (v.goalOn) { const att = !!L.attack, live = att || L.defend; v.goalCue = L.cue || (L.phase === 'held' ? 'GOT IT!' : L.phase === 'done' ? 'FULL TIME' : ' '); v.goalCueCol = att ? '#ffd23a' : '#fff'; v.goalBtnH = phone ? '68px' : '60px';
+      v.goalBtns = (att ? [['◀', 'THROW LEFT', 0], ['▲', 'THROW MIDDLE', 1], ['▶', 'THROW RIGHT', 2]] : [['◀', 'DIVE LEFT', 0], ['■', 'BLOCK MIDDLE', 1], ['▶', 'DIVE RIGHT', 2]]).map(([icon, label, lane]) => ({ icon, label, bg: att ? '#ec3013' : '#1a1816', fg: '#fff', bd: att ? '#ec3013' : '#ffd23a', op: live ? 1 : 0.45, go: e => { e.preventDefault(); g && (att ? g.goalThrow(lane) : g.goalDive(lane)); }, click: e => blur(e) })); }
+    // BETWEEN periods
+    const B = h.between; v.betweenOn = !!B; v.betKicker = B ? 'PERIOD ' + B.n + ' DONE' : ''; v.betName = B ? B.name : ''; v.betStars = B ? starsOf(B.stars) : ''; v.betNext = B ? (B.next ? 'NEXT · ' + B.next.toUpperCase() : 'LAST BELL · REPORT CARD') : '';
+    // PRACTICE RESULT
+    const Rz = h.result; v.resultOn = !!Rz && !h.demo; v.resKicker = Rz ? Rz.name.toUpperCase() : ''; v.resTitle = Rz ? (Rz.stars >= 3 ? 'Top marks' : Rz.stars === 2 ? 'Nice work' : 'Keep practising') : ''; v.resStars = Rz ? starsOf(Rz.stars) : ''; v.resBest = Rz ? 'Best ' + starsOf(Rz.best) : ''; v.resRows = Rz ? Rz.lines.map(([k, val]) => ({ k, v: val })) : [];
+    v.resAgain = call(() => g && g.resultAgain()); v.resDone = call(() => g && g.resultDone());
+    // REPORT CARD
+    const Rp = h.report; v.reportOn = !!Rp && h.mode === 'report'; v.repKicker = Rp ? 'MERU SCHOOL FOR THE BLIND · DAY ' + Rp.day : ''; v.repSub = Rp ? Rp.total + ' of ' + Rp.of + ' stars' + (Rp.up ? ' · Day ' + (Rp.day + 1) + ' tomorrow' : ' · 2 stars average moves you up a day') : ''; v.repGold = Rp ? Rp.gold : 0;
+    v.repRows = Rp ? Rp.rows.map(r => ({ k: r.k, v: starsOf(r.stars) })) : []; v.repLine = Rp ? Rp.line : ''; v.repUnlock = Rp ? Rp.unlock.map(t => ({ t })) : []; v.repNext = call(() => g && g.nextDay()); v.repDone = call(() => g && g.reportDone());
+    // WELCOME CARD
+    v.introOn = h.mode === 'intro' && !h.demo && !!g; const best = h.best || {};
+    v.wcKicker = 'MERU · SCHOOL FOR THE BLIND · DAY ' + (h.day || 1); v.wcText = "Mr. Alder is out, so Hope is subbing. Four lessons with your hands and ears: braille, a picture you feel, a cane walk, then goalball. Tap a lesson to practise it alone.";
+    const shortCard = S.vh < 520; v.wcRows = [['braille', '1 · BRAILLE'], ['art', '2 · TOUCH ART'], ['cane', '3 · CANE WALK'], ['goal', '4 · GOALBALL']].map(([id, k]) => ({ k, v: (best[id] ? starsOf(best[id]) : 'NEW') + '  ·  PRACTISE ▸', c: best[id] ? '#ffd23a' : '#cfcac4', go: () => g && g.practice(id) })).concat([{ k: 'MUSIC', v: (h.music !== false ? 'ON' : 'OFF') + '  ·  TAP ▸', c: h.music !== false ? '#22c55e' : '#8a847e', go: () => g && g.musicToggle() }]).concat(shortCard ? [] : [{ k: 'GOLD', v: (h.gold || 0) + 'g', c: '#e6b45a' }]);
+    if (shortCard) v.wcText = 'Hope is subbing today. Tap a lesson to practise it.'; v.exploreInCard = !shortCard; v.exploreFloat = shortCard && v.introOn;
+    v.wcGo = () => g && g.startDay(); v.wcTut = () => this.setState({ help: true }); v.wcDemo = () => g && g.demoStart();
+    v.explore = call(() => g && g.explore()); v.exploreLabel = h.introFrom === 'hope' ? 'NOT YET · KEEP EXPLORING' : 'EXPLORE THE SCHOOL';
+    // DEMO
+    const D = h.demo; v.demoOn = !!D; v.demoCap = D ? D.cap : ''; v.demoKey = D ? D.key : ''; v.demoKeyOn = !!(D && D.key); v.demoN = D ? 'LESSON ' + D.n + ' / ' + D.of : ''; v.demoTop = 'calc(10px + env(safe-area-inset-top))'; v.demoExit = call(() => g && g.demoStop());
+    v.helpRows = [['WALK', 'Joystick (or WASD) to walk. 1 LISTEN shows every sound and where it is. 2 HELLO greets whoever is near. E or TALK to chat. Hope is at the front of the classroom.'], ['BRAILLE', 'Six keys: 3 2 1 on the left, 4 5 6 on the right, like a real Perkins brailler. Press the dots for a letter TOGETHER (two or more fingers) and it punches the letter. One dot? Tap it, then EMBOSS. Keyboard: F D S + J K L, Space = emboss.'], ['TOUCH ART', 'The picture is raised, not printed. Drag a finger over the paper: on a line it hums and buzzes. Follow the lines all the way round, then pick what it is. Wrong guess = a clue from Hope.'], ['CANE WALK', 'Sleepshades on. Swipe ACROSS (left, then right, then left) to sweep the cane and take a step. A short swipe = a short arc that can miss things. Found something? STEP left or right around it. Follow Hope\'s clapping. Keys: hold A/D or arrows, Q/E to step.'], ['GOALBALL', 'Eyeshades on. The ball has bells. Watch the yellow sound ripples (and listen): dive LEFT, block MIDDLE or dive RIGHT where the bells END UP, just before they reach you. Your throw: two Owls tap the floor; throw at the quiet lane. Swipe or use the buttons.'], ['VOICE', 'Hope reads her lines aloud. Turn it off with VOICE in the top bar. Every line is also written on screen.']].map(([k, val]) => ({ k, v: val }));
+    return v;
+  }
+}
+</script>
+</body>
+</html>

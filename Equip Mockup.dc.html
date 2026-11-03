@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>
+body { margin: 0; background: #f3f2f2; font-family: Archivo, sans-serif; }
+a { color: #201e1d; } a:hover { color: #ec3013; }
+button { font-family: Archivo, sans-serif; }
+button:focus-visible { outline: 2px solid #ec3013; outline-offset: 2px; }
+</style>
+</helmet>
+<div style="min-height:100vh;background:#f3f2f2;display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:16px;box-sizing:border-box">
+  <div style="font-size:15px;font-weight:800;color:#201e1d;white-space:nowrap">EQUIPABLE MOCK-UP · PHONE PORTRAIT 390 × 844</div>
+  <div style="width:390px;height:844px;background:#201e1d;color:#f3f2f2;border:2px solid #201e1d;display:flex;flex-direction:column;overflow:hidden;position:relative;box-sizing:border-box">
+    <div style="padding:14px 14px 12px;border-bottom:2px solid #f3f2f2;display:flex;align-items:center;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px;flex:1"><span style="width:8px;height:28px;background:#ec3013"></span><span style="font-size:30px;font-weight:900;letter-spacing:0.01em">EQUIPABLE</span></div>
+      <button aria-label="Close" style="width:44px;height:44px;background:#ec3013;color:#f3f2f2;border:2px solid #ec3013;border-radius:0;font-size:22px;font-weight:900;cursor:pointer" style-hover="background:#c42a10" style-active="background:#9a2210">×</button>
+    </div>
+    <div style="position:relative;height:340px;flex:none;border-bottom:2px solid #f3f2f2">
+      <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+                  <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+        <div style="position:absolute;inset:0;display:flex;align-items:center;padding-left:14px;font-size:15px;font-weight:800">Loading your fox…</div>
+      </sc-if>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-bottom:2px solid #f3f2f2;flex:none">
+      <sc-for list="{{ cats }}" as="c" hint-placeholder-count="4">
+        <button onClick="{{ c.pick }}" aria-pressed="{{ c.on }}" style="min-height:76px;padding:10px 4px 8px;background:{{ c.bg }};color:{{ c.fg }};border:0;border-right:2px solid #f3f2f2;border-radius:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:900;letter-spacing:0.05em;text-align:center;cursor:pointer" style-hover="background:{{ c.hov }}">
+          <span style="width:40px;height:40px;border:2px solid {{ c.col }};display:flex;align-items:center;justify-content:center;box-sizing:border-box">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="{{ c.fg }}" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter"><path d="{{ c.icon }}"></path></svg>
+          </span>
+          <span>{{ c.label }}</span>
+        </button>
+      </sc-for>
+    </div>
+    <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column">
+      <sc-if value="{{ isWeapon }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:12px 14px;border-bottom:2px solid #f3f2f2">
+          <sc-for list="{{ wsubs }}" as="w" hint-placeholder-count="2">
+            <button onClick="{{ w.pick }}" style="min-height:52px;padding:6px 10px;background:{{ w.bg }};color:{{ w.fg }};border:2px solid {{ w.bd }};border-radius:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;text-align:left;cursor:pointer" style-hover="background:#2e2a28">
+              <span style="font-size:15px;font-weight:900;letter-spacing:0.04em">{{ w.label }}</span><span style="font-size:12px;font-weight:700">{{ w.cur }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isCharms }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:12px 14px;border-bottom:2px solid #f3f2f2">
+          <sc-for list="{{ slots }}" as="s" hint-placeholder-count="4">
+            <button onClick="{{ s.pick }}" style="min-height:84px;padding:6px;background:{{ s.bg }};color:{{ s.fg }};border:2px solid {{ s.bd }};border-radius:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:4px;text-align:left;cursor:pointer">
+              <span style="font-size:11px;font-weight:900;letter-spacing:0.04em">{{ s.top }}</span>
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="{{ s.ic }}" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><path d="{{ s.icon }}"></path></svg>
+              <span style="font-size:11px;font-weight:800;line-height:1.15">{{ s.name }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ picking }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ backPick }}" style="min-height:48px;padding:0 14px;background:#201e1d;color:#f3f2f2;border:0;border-bottom:2px solid #f3f2f2;border-radius:0;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:900;letter-spacing:0.04em;text-align:left;cursor:pointer" style-hover="background:#2e2a28">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f3f2f2" stroke-width="2.4" stroke-linecap="square"><path d="M15 5l-7 7 7 7"></path></svg>{{ backLabel }}</button>
+      </sc-if>
+      <div style="padding:10px 14px;font-size:14px;font-weight:700;line-height:1.4;border-bottom:2px solid #f3f2f2;text-wrap:pretty">{{ hint }}</div>
+      <sc-for list="{{ opts }}" as="o" hint-placeholder-count="3">
+        <div style="display:flex;flex-direction:column">
+        <button onClick="{{ o.pick }}" style="min-height:68px;padding:10px 14px 10px 8px;background:{{ o.bg }};color:#f3f2f2;border:0;border-bottom:2px solid #3a3633;border-left:6px solid {{ o.col }};border-radius:0;display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:12px;text-align:left;cursor:pointer" style-hover="background:#2e2a28">
+          <span style="width:44px;height:44px;border:2px solid {{ o.col }};display:flex;align-items:center;justify-content:center;box-sizing:border-box"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="{{ o.ic }}" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter"><path d="{{ o.icon }}"></path></svg></span>
+          <span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:17px;font-weight:800;line-height:1.15">{{ o.name }}</span><span style="font-size:13px;font-weight:600;line-height:1.3">{{ o.sub }}</span></span>
+          <span style="padding:4px 8px;font-size:12px;font-weight:900;letter-spacing:0.04em;background:{{ o.tagBg }};color:{{ o.tagFg }};border:2px solid {{ o.tagBd }}">{{ o.tag }}</span>
+        </button>
+        <sc-if value="{{ o.gemBtn }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:10px 14px 12px 14px;background:#2e2a28;border-left:6px solid {{ o.col }};border-bottom:2px solid #3a3633;display:flex;flex-direction:column;gap:8px">
+            <button onClick="{{ o.gToggle }}" aria-expanded="{{ o.gOpen }}" style="min-height:48px;padding:0 14px;background:#ffd23a;color:#201e1d;border:2px solid #ffd23a;border-radius:0;display:flex;align-items:center;gap:10px;font-size:12px;font-weight:900;letter-spacing:0.05em;text-align:left;cursor:pointer" style-hover="background:#f0c020" style-active="background:#d9a910">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#201e1d" stroke-width="2" stroke-linejoin="miter"><path d="M6 3h12l3 6-9 12L3 9zM3 9h18M9 3l3 6 3-6"></path></svg>
+              <span style="flex:1">{{ o.gLabel }}</span><span style="font-size:16px">{{ o.gChev }}</span>
+            </button>
+            <sc-if value="{{ o.gOpenW }}" hint-placeholder-val="{{ false }}">
+              <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px">
+                  <sc-for list="{{ o.gSlots }}" as="s" hint-placeholder-count="2">
+                    <button onClick="{{ s.pick }}" style="min-height:62px;padding:6px 8px;background:#201e1d;color:#f3f2f2;border:2px {{ s.line }} {{ s.bd }};border-radius:0;display:grid;grid-template-columns:24px minmax(0,1fr);align-items:center;gap:8px;text-align:left;cursor:pointer" style-hover="background:#2e2a28">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="{{ s.fill }}" stroke="{{ s.ic }}" stroke-width="1.8" stroke-linejoin="miter"><path d="M6 3h12l3 6-9 12L3 9zM3 9h18M9 3l3 6 3-6"></path></svg>
+                      <span style="display:flex;flex-direction:column;gap:1px;min-width:0">
+                        <span style="font-size:10px;font-weight:900;letter-spacing:0.06em">{{ s.top }}</span>
+                        <span style="font-size:13px;font-weight:900;line-height:1.15">{{ s.name }}</span>
+                        <span style="font-size:12px;font-weight:700;line-height:1.2">{{ s.bonus }}</span>
+                      </span>
+                    </button>
+                  </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ o.gOpenA }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:13px;font-weight:800">{{ o.gPrice }}</div>
+              <sc-for list="{{ o.gPieces }}" as="p" hint-placeholder-count="5">
+                <div style="display:flex;flex-direction:column;gap:6px;padding-top:6px;border-top:2px solid #3a3633">
+                  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px"><span style="font-size:15px;font-weight:900">{{ p.name }}</span><span style="font-size:13px;font-weight:800">{{ p.price }}</span></div>
+                  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px">
+                  <sc-for list="{{ p.slots }}" as="s" hint-placeholder-count="2">
+                    <button onClick="{{ s.pick }}" style="min-height:62px;padding:6px 8px;background:#201e1d;color:#f3f2f2;border:2px {{ s.line }} {{ s.bd }};border-radius:0;display:grid;grid-template-columns:24px minmax(0,1fr);align-items:center;gap:8px;text-align:left;cursor:pointer" style-hover="background:#2e2a28">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="{{ s.fill }}" stroke="{{ s.ic }}" stroke-width="1.8" stroke-linejoin="miter"><path d="M6 3h12l3 6-9 12L3 9zM3 9h18M9 3l3 6 3-6"></path></svg>
+                      <span style="display:flex;flex-direction:column;gap:1px;min-width:0">
+                        <span style="font-size:10px;font-weight:900;letter-spacing:0.06em">{{ s.top }}</span>
+                        <span style="font-size:13px;font-weight:900;line-height:1.15">{{ s.name }}</span>
+                        <span style="font-size:12px;font-weight:700;line-height:1.2">{{ s.bonus }}</span>
+                      </span>
+                    </button>
+                  </sc-for>
+                  </div>
+                </div>
+              </sc-for>
+            </sc-if>
+          </div>
+        </sc-if>
+        </div>
+      </sc-for>
+      <sc-if value="{{ showPieces }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:14px;display:flex;flex-direction:column;gap:8px;border-top:2px solid #f3f2f2">
+          <span style="font-size:18px;font-weight:900">YOUR BONUSES</span>
+          <sc-for list="{{ totalsList }}" as="t" hint-placeholder-count="4">
+            <div style="display:flex;justify-content:space-between;gap:10px;font-size:15px;font-weight:800;border-bottom:2px solid #3a3633;padding-bottom:6px"><span>{{ t.name }}</span><span style="color:{{ t.col }}">{{ t.val }}</span></div>
+          </sc-for>
+          <span style="font-size:13px;font-weight:700;line-height:1.4">{{ totalsNote }}</span>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:440,&quot;height&quot;:920}}">
+const ARMOUR = ['#ffffff', '#e7edf4', '#6b7d93'];
+const CAT = [['weapon', 'WEAPON', '#ff6a4f', 'M14 3h7v7L9 22l-3-3zM5 14l5 5M3 21l3-3M10 15l-3-3'], ['armor', 'ARMOR', '#4aa3d8', 'M12 2l8 3v6c0 5-4 9-8 11-4-2-8-6-8-11V5zM12 7v10M8 11h8'], ['clothes', 'CLOTHES', '#e07aa0', 'M8 3l4 2 4-2 5 4-3 4-2-1v11H8V10l-2 1-3-4z'], ['charms', 'CHARMS', '#d9b24a', 'M12 21l-7-8a4 4 0 0 1 7-5 4 4 0 0 1 7 5zM12 3v2']];
+const COL = Object.fromEntries(CAT.map(c => [c[0], c[2]]));
+// the Back Weapons Lab lists (engine/back-weapons.js BACK_WEAPONS / RANGED_WEAPONS) are loaded in componentDidMount; icons per key
+const W_IC = { sword: 'M14 3h7v7L9 22l-3-3zM5 14l5 5M3 21l3-3', racket: 'M10 2a6 7 0 1 0 .01 0M10 15l-4 7M5 7h10M4 10h12', gloves: 'M7 9a5 5 0 0 1 10 0v5a4 4 0 0 1-4 4h-2a4 4 0 0 1-4-4zM7 13h10M9 18v3h6v-3', spear: 'M4 20L17 7M14 3h7v7z', maul: 'M3 4h10v7H3zM8 11l11 11', halberd: 'M12 2v20M12 4c4 0 6 2 6 5h-6M12 4c-3 1-4 3-4 4h4', bat: 'M4 20l2 2 13-14a3 3 0 0 0-4-4z', net: 'M15 3a6 6 0 1 0 .01 0M10 13L3 21M11 5l8 8M15 3v12M9 9h12', flail: 'M3 21l5-5M9 15h.01M11 13h.01M13 11h.01M17 7a3 3 0 1 0 .01 0', whip: 'M5 21v-7M5 14c0-6 14-6 14 0s-8 4-8 0', none: 'M6 10V6h3v4M9 9V5h3v4M12 9V5h3v5M15 10V7h3v6a6 6 0 0 1-12 0v-3z',
+  laser: 'M2 10h12v4H2zM14 11h7M5 14l-1 5h3l1-5', staffR: 'M5 21L16 10M17 9a3 3 0 1 0 .01 0', scatter: 'M2 11h10v3H2zM12 11l8-5M12 12h9M12 14l8 4', rocket: 'M2 10h15l5 2-5 2H2zM6 14v5', crossbow: 'M3 12h18M12 4c-5 2-5 14 0 16M12 4v16', rifle: 'M2 11h18v3H2zM6 14l-1 5h3l1-5M13 8h5', flame: 'M12 22c-4 0-6-3-6-6 0-4 4-6 4-10 2 2 3 4 3 6 1-1 2-2 2-4 2 2 3 5 3 8 0 3-2 6-6 6z', freeze: 'M12 2v20M3 7l18 10M21 7L3 17', fog: 'M3 10h13a3 3 0 0 0 0-6M3 14h18M3 18h11a3 3 0 0 1 0 6', nothing: 'M5 5h14v14H5z' };
+const OUTFITS = {
+  armor: [
+    { k: 'a8', name: '8 ARMOUR', sub: 'Worn by Ben, Hope and Noble', o: { outfit: 'armor', torso: ARMOUR }, icon: 'M12 2l8 3v6c0 5-4 9-8 11-4-2-8-6-8-11V5zM9 9h6M12 9v8' },
+    { k: 'reinf', name: 'REINFORCED ARMOR', sub: 'Heavier plate · from Bram, Armory', o: { outfit: 'armor', torso: ['#9aa6b4', '#5f6b7a', '#3a434f'] }, icon: 'M12 2l8 3v6c0 5-4 9-8 11-4-2-8-6-8-11V5zM12 7v10M8 11h8' }],
+  clothes: [
+    { k: 'robe', name: 'VELVET LOUNGE ROBE', sub: 'From Barnaby Buttons', o: { outfit: 'robe', torso: ['#6a3a5a', '#d9b24a', '#3e2236'] }, icon: 'M8 3h8l3 18H5zM12 3v18M9 9h6' },
+    { k: 'suit', name: 'MAGPIE\u2019S WHITE SUIT', sub: 'From Magpie, gelato', o: { outfit: 'suit', torso: ['#e8e6e1', '#1d1d22', '#ec3013'] }, icon: 'M8 3l4 5 4-5 4 3v15H4V6zM12 8v13M12 12h.01' },
+    { k: 'vest', name: 'PRESS VEST', sub: 'From the Meru News', o: { outfit: 'vest', torso: ['#3b4a5c', '#d9d4c8', '#1f2833'] }, icon: 'M8 3l4 3 4-3 3 3v15H5V6zM9 12h2M13 12h2' },
+    { k: 'coat', name: 'TRAVEL COAT', sub: 'Warm for Shasta', o: { outfit: 'coat', torso: ['#7a5a3a', '#d9c7a8', '#3e2e1e'] }, icon: 'M8 3l4 3 4-3 4 4v14H4V7zM12 6v15M9 14h.01M9 17h.01' }] };
+const JEWELS = [['#ec3013', 'RUBY'], ['#38bdf8', 'SAPPHIRE'], ['#22c55e', 'EMERALD'], ['#ffd23a', 'TOPAZ'], ['#c084fc', 'AMETHYST']];
+const GEM = 'M6 3h12l3 6-9 12L3 9zM3 9h18M9 3l3 6 3-6';
+// always-on items that have a body version (engine/equip-stage.js CHARM)
+const CHARMS = [
+  { id: 'luckyGolfBall', name: 'LUCKY GOLF BALL', sub: '+25% gold at Birdie\u2019s · hangs off your belt', icon: 'M12 3a7 7 0 1 0 .01 0M10 8h.01M14 8h.01M12 11h.01M9 12h.01M15 12h.01' },
+  { id: 'loyaltyCard', name: 'LOYALTY CARD', sub: '+25% gold at the Minimart · clipped on your belt', icon: 'M2 6h20v12H2zM2 10h20M6 15h4' },
+  { id: 'cocoaCharm', name: 'COCOA CHARM', sub: 'Lucky: more golden capsules, better dice', icon: 'M12 21l-7-8a4 4 0 0 1 7-5 4 4 0 0 1 7 5z' },
+  { id: 'luckyThread', name: 'LUCKY THREAD', sub: '+5% walk speed in an outfit · a red band', icon: 'M4 12a8 4 0 1 0 16 0 8 4 0 1 0-16 0M12 8v8' },
+  { id: 'stickerPack', name: 'STICKER PACK', sub: '+25% gold at the Skate Shop · a sticker badge', icon: 'M12 3a9 9 0 1 0 .01 0M9 10h.01M15 10h.01M8 14c2 2 6 2 8 0' }];
+const CH = Object.fromEntries(CHARMS.map(c => [c.id, c]));
+const EMPTY = 'M5 5h14v14H5z';
+class Component extends DCLogic {
+  state = { cat: 'armor', wsub: 'melee', melee: 'sword', ranged: 'laser', lists: null, outfit: 'meru', gemPick: null,
+    owned: { meruGem: 5, luxorGem: 5, gayaGem: 5, urGem: 5, zionGem: 5, neboGem: 5, kufaGem: 5, shastaGem: 5, jiddaGem: 5, dsfGem: 5, heartGem: 1, shieldGem: 1, cloverGem: 1, silverGem: 1, voiceGem: 1 },
+    wkits: {}, wGems: false, aGems: false, kits: { eva: { helmet: { world: 'dsfGem', any: null }, chest: { world: 'dsfGem', any: null }, shoulders: { world: 'dsfGem', any: null }, gloves: { world: 'dsfGem', any: null }, boots: { world: 'dsfGem', any: null } }, jidda: { helmet: { world: 'jiddaGem', any: null }, chest: { world: 'jiddaGem', any: null }, shoulders: { world: 'jiddaGem', any: null }, gloves: { world: 'jiddaGem', any: null }, boots: { world: 'jiddaGem', any: null } }, shasta: { helmet: { world: 'shastaGem', any: null }, chest: { world: 'shastaGem', any: null }, shoulders: { world: 'shastaGem', any: null }, gloves: { world: 'shastaGem', any: null }, boots: { world: 'shastaGem', any: null } }, kufa: { helmet: { world: 'kufaGem', any: null }, chest: { world: 'kufaGem', any: null }, shoulders: { world: 'kufaGem', any: null }, gloves: { world: 'kufaGem', any: null }, boots: { world: 'kufaGem', any: null } }, nebo: { helmet: { world: 'neboGem', any: null }, chest: { world: 'neboGem', any: null }, shoulders: { world: 'neboGem', any: null }, gloves: { world: 'neboGem', any: null }, boots: { world: 'neboGem', any: null } }, zion: { helmet: { world: 'zionGem', any: null }, chest: { world: 'zionGem', any: null }, shoulders: { world: 'zionGem', any: null }, gloves: { world: 'zionGem', any: null }, boots: { world: 'zionGem', any: null } }, ur: { helmet: { world: 'urGem', any: null }, chest: { world: 'urGem', any: null }, shoulders: { world: 'urGem', any: null }, gloves: { world: 'urGem', any: null }, boots: { world: 'urGem', any: null } }, gaya: { helmet: { world: 'gayaGem', any: null }, chest: { world: 'gayaGem', any: null }, shoulders: { world: 'gayaGem', any: null }, gloves: { world: 'gayaGem', any: null }, boots: { world: 'gayaGem', any: null } }, luxor: { helmet: { world: 'luxorGem', any: null }, chest: { world: 'luxorGem', any: null }, shoulders: { world: 'luxorGem', any: null }, gloves: { world: 'luxorGem', any: null }, boots: { world: 'luxorGem', any: null } }, meru: { helmet: { world: 'meruGem', any: 'heartGem' }, chest: { world: 'meruGem', any: 'shieldGem' }, shoulders: { world: 'meruGem', any: null }, gloves: { world: 'meruGem', any: null }, boots: { world: 'meruGem', any: null } } }, charms: { 2: 'luckyGolfBall', 3: 'loyaltyCard', 4: null }, slot: 2, loading: true };
+  stageRef = React.createRef();
+  async componentDidMount() {
+    try { this.GM = await import('./engine/gems.js'); } catch (e) { console.error(e); }
+    try { const am = await import('./engine/armor-sets.js'); const sets = am.loadArmorSets(); this.SETS = sets; OUTFITS.armor = Object.values(sets).map(s => ({ k: s.id, name: s.name, sub: s.from + ' · ' + s.armor + ' armour · ' + s.kg + ' kg', o: { ...am.armorOutfit(s), set: s }, icon: s.parts.helmet.on ? 'M12 2l8 3v6c0 5-4 9-8 11-4-2-8-6-8-11V5zM12 7v10M8 11h8' : 'M12 2l8 3v6c0 5-4 9-8 11-4-2-8-6-8-11V5zM9 9h6M12 9v8' })); this.forceUpdate(); } catch (e) { console.error(e); }
+    try { const bw = await import('./engine/back-weapons.js?v=s339z2'); this.setState({ lists: { melee: [...bw.BACK_WEAPONS, { key: 'none', name: 'FISTS', from: 'Nothing on your back' }], ranged: [...bw.RANGED_WEAPONS, { key: 'none', name: 'NONE', from: 'Empty holster' }] } }); } catch (e) { console.error(e); }
+    try { const m = await import('./engine/equip-stage.js'); this.st = await m.startEquipStage(this.stageRef.current); window.__equip = this.st;
+      const S = this.state; const o0 = this.outfitOf(S.outfit); if (o0 && o0.o.set) this.st.setOutfit(o0.o); this.st.setJewel(null); for (const k of [2, 3, 4]) this.st.setCharm(k, S.charms[k]); } catch (e) { console.error(e); }
+    this.setState({ loading: false });
+  }
+  componentWillUnmount() { this.st && this.st.destroy(); }
+  outfitOf(k) { return [...OUTFITS.armor, ...OUTFITS.clothes].find(o => o.k === k); }
+  renderVals() {
+    const S = this.state, st = this.st, onOff = on => on ? { tag: 'EQUIPPED', tagBg: '#f3f2f2', tagFg: '#201e1d', tagBd: '#f3f2f2', bg: '#2e2a28', ic: '#f3f2f2' } : { tag: 'EQUIP', tagBg: '#201e1d', tagFg: '#f3f2f2', tagBd: '#f3f2f2', bg: '#201e1d', ic: '#f3f2f2' };
+    let opts = [], hint = '';
+    const L = S.lists || { melee: [], ranged: [] }, nm = (md, k) => ((L[md].find(w => w.key === k) || {}).name || k).toUpperCase();
+    if (S.cat === 'weapon') { const md = S.wsub; hint = md === 'melee' ? 'MELEE weapons ride on your back. Button 1 swings it.' : 'RANGED weapons sit on your hip or back. Button 2 fires it.';
+      opts = L[md].map(w => ({ name: w.name, sub: w.from, icon: W_IC[w.key] || W_IC.nothing, col: COL.weapon, ...onOff(S[md] === w.key), pick: () => { this.setState({ [md]: w.key }); st && (md === 'melee' ? st.setMelee(w.key) : st.setRanged(w.key)); } })); }
+    const GM = this.GM, set = S.cat === 'armor' && this.SETS && this.SETS[S.outfit], G = GM ? GM.allGems() : {}, kit = (set && S.kits[set.id]) || {};
+    const used = {}; for (const s of [...Object.values(S.kits).flatMap(k => Object.values(k)), ...Object.values(S.wkits)]) for (const id of [s && s.world, s && s.any]) if (id) used[id] = (used[id] || 0) + 1;
+    const wKey = md => md + ':' + S[md], wEq = { melee: S.wkits[wKey('melee')] || {}, ranged: S.wkits[wKey('ranged')] || {} };
+    const setW = (key, slot, id) => this.setState({ wkits: { ...S.wkits, [key]: { world: null, any: null, ...(S.wkits[key] || {}), [slot]: id } }, gemPick: null });
+    const holder = (id, slot, skip) => { for (const [sid, k] of Object.entries(S.kits)) for (const [pc, s] of Object.entries(k)) if (s && s[slot] === id && skip !== sid + '/' + pc) return { t: 'a', sid, pc, label: (GM ? Object.fromEntries(GM.PIECES)[pc] : pc) };
+      for (const [wk, s] of Object.entries(S.wkits)) if (s && s[slot] === id && skip !== 'w/' + wk) return { t: 'w', wk, label: nm(wk.split(':')[0], wk.split(':')[1]) }; return null; };
+    const freeFrom = (h2, slot) => { if (h2.t === 'a') { const kits = JSON.parse(JSON.stringify(S.kits)); kits[h2.sid][h2.pc][slot] = null; return { kits }; } return { wkits: { ...S.wkits, [h2.wk]: { ...S.wkits[h2.wk], [slot]: null } } }; };
+    const putGem = (piece, slot, id) => { const kits = JSON.parse(JSON.stringify(S.kits)); kits[set.id] = kits[set.id] || {}; kits[set.id][piece] = { world: null, any: null, ...(kits[set.id][piece] || {}), [slot]: id }; this.setState({ kits, gemPick: null }); };
+    let pieces = [], totalsList = [], totalsNote = '', setPrice = '';
+    if (S.cat === 'weapon' && GM && S.gemPick && S.gemPick.weapon) { const { piece: md, slot } = S.gemPick, key = wKey(md), cur = (S.wkits[key] || {})[slot];
+      hint = nm(md, S[md]) + ' · ' + (slot === 'world' ? 'WORLD SLOT: only the MERU GEM fits here.' : 'ANY SLOT: any power-up gem.') + ' You can only change gems at an armory.';
+      const cands = Object.values(G).filter(g => slot === 'world' ? g.kind === 'world' && g.world === 'meru' : g.kind === 'any');
+      opts = cands.map(g => { const own = S.owned[g.id] || 0, free = own - (used[g.id] || 0), b = GM.gemBonus(g, md), here = cur === g.id, other = here ? null : holder(g.id, slot, 'w/' + key);
+        const st3 = here || free > 0 ? {} : own && other ? { tag: 'MOVE HERE', tagBg: '#201e1d', tagFg: '#f3f2f2', tagBd: '#d9b24a' } : { tag: 'NOT FOUND', tagBg: '#201e1d', tagFg: '#8a8380', tagBd: '#5a5450' };
+        const sub2 = !own ? 'Not found yet' + (g.where ? ' · ' + g.where : '') : here ? 'In this slot' : free > 0 ? free + ' free' : other ? 'In the ' + other.label : 'In use';
+        return { name: g.name, sub: GM.fmt(b[0], b[1]) + ' here · ' + sub2, icon: GEM, col: g.col, ic: g.col, ...onOff(here), ...st3,
+          pick: () => { if (here) return; if (free > 0) return setW(key, slot, g.id); if (own && other) { const p = freeFrom(other, slot), wk2 = { ...(p.wkits || S.wkits) }; wk2[key] = { world: null, any: null, ...(wk2[key] || {}), [slot]: g.id }; this.setState({ ...p, wkits: wk2, gemPick: null }); } } }; });
+      opts.push({ name: 'TAKE IT OUT', sub: 'Leave this slot empty', icon: EMPTY, col: '#6b6460', ...onOff(!cur), pick: () => setW(key, slot, null) }); }
+    else if (S.cat === 'weapon') { /* weapon list built above */ } else if (set && GM && S.gemPick) { const { piece, slot } = S.gemPick, cur = (kit[piece] || {})[slot], wg = GM.WORLD_GEMS[set.world];
+      const pl = GM.PIECES.find(p => p[0] === piece)[1];
+      hint = pl + ' · ' + (slot === 'world' ? 'WORLD SLOT: only the ' + (wg ? wg.name : 'world gem') + ' fits here.' : 'ANY SLOT: any power-up gem.') + ' You can only change gems at an armory.';
+      const cands = Object.values(G).filter(g => slot === 'world' ? g.kind === 'world' && g.world === set.world : g.kind === 'any');
+      const PN = Object.fromEntries(GM.PIECES), whereIn = id => { for (const [pc, s] of Object.entries(kit)) if (pc !== piece && s && s[slot] === id) return pc; return null; };
+      opts = cands.map(g => { const own = S.owned[g.id] || 0, free = own - (used[g.id] || 0), b = GM.gemBonus(g, piece), other = whereIn(g.id), here = cur === g.id;
+        const st3 = here ? {} : free > 0 ? {} : own && other ? { tag: 'MOVE HERE', tagBg: '#201e1d', tagFg: '#f3f2f2', tagBd: '#d9b24a' } : { tag: own ? 'IN USE' : 'NOT FOUND', tagBg: '#201e1d', tagFg: '#8a8380', tagBd: '#5a5450' };
+        const sub2 = !own ? 'Not found yet' + (g.where ? ' · ' + g.where : '') : free > 0 || here ? (free > 0 ? free + ' free' : 'In this slot') : other ? 'In the ' + PN[other] : 'In another set';
+        return { name: g.name, sub: GM.fmt(b[0], b[1]) + ' here · ' + sub2, icon: GEM, col: g.col, ic: g.col, ...onOff(here), ...st3,
+          pick: () => { if (here) return; if (free > 0) return putGem(piece, slot, g.id); if (own && other) { const kits = JSON.parse(JSON.stringify(S.kits)); kits[set.id][other][slot] = null; kits[set.id][piece] = { world: null, any: null, ...(kits[set.id][piece] || {}), [slot]: g.id }; this.setState({ kits, gemPick: null }); } } }; });
+      opts.push({ name: 'TAKE IT OUT', sub: 'Leave this slot empty', icon: EMPTY, col: '#6b6460', ...onOff(!cur), pick: () => putGem(piece, slot, null) }); }
+    else if (S.cat === 'armor' || S.cat === 'clothes') { hint = S.cat === 'armor' ? 'Pick a set. Each piece is sold on its own and has 2 gem slots. Gems are hidden inside: they never show on your fox.' : 'Armour or clothes: you wear one at a time. Picking one takes the other off.';
+      if (set && GM) { const wg = GM.WORLD_GEMS[set.world];
+        setPrice = set.price ? 'FULL SET ' + Object.values(set.price).reduce((a, b) => a + b, 0) + ' G' : '';
+        pieces = GM.ARMOR_PIECES.map(pc => { const s = kit[pc] || {}, nm2 = GM.PIECES.find(p => p[0] === pc)[1];
+          return { name: nm2, price: set.price ? set.price[pc] + ' G' : '', slots: ['world', 'any'].map(sl => { const g = G[s[sl]], b = g && GM.gemBonus(g, pc);
+            return { top: sl === 'world' ? 'WORLD · ' + (wg ? wg.name : '') : 'ANY GEM', name: g ? g.name : 'EMPTY', bonus: g ? GM.fmt(b[0], b[1]) : (sl === 'world' ? 'Win or find it' : 'Tap to add'),
+              bd: g ? g.col : '#6b6460', line: g ? 'solid' : 'dashed', ic: g ? g.col : '#6b6460', fill: g ? g.col : 'none', pick: () => this.setState({ gemPick: { piece: pc, slot: sl } }) }; }) }; });
+        const allWorld = GM.ARMOR_PIECES.every(pc => (kit[pc] || {}).world), sb = GM.SET_BONUS[set.world], extras = sb && allWorld ? [sb] : [], sum = GM.totals({ ...kit, ...wEq }, extras);
+        totalsList = Object.entries(sum).sort((a, b) => b[1] - a[1]).map(([st2, v]) => ({ name: GM.STATS[st2][0], val: GM.fmt(st2, v).split(' ')[0] + (GM.STATS[st2][1] === 'flat' ? '' : ' %'), col: '#f3f2f2' }));
+        for (const [pn, ks] of GM.PAIRS) { const v = ks.reduce((a, k) => a + (sum[k] || 0), 0), n = ks.filter(k => sum[k]).length; if (n >= 2) totalsList.push({ name: pn + ' (' + ks.map(k => GM.STATS[k][0]).join(' + ') + ')', val: '+' + v + ' %', col: '#d9b24a' }); }
+        if (!totalsList.length) totalsList = [{ name: 'No gems yet', val: '—', col: '#8a8380' }];
+        totalsNote = (sb ? (allWorld ? 'FULL SET BONUS on: all 5 ' + wg.name + 'S in place, ' + GM.fmt(sb[0], sb[1]) + '. ' : 'Fill all 5 world slots for the full set bonus (' + GM.fmt(sb[0], sb[1]) + '). ') : '') + 'Weapons, charms and your crest add to these.'; }
+      opts = OUTFITS[S.cat].map(o => ({ name: o.name, sub: o.sub, icon: o.icon, col: COL[S.cat], ...onOff(S.outfit === o.k), pick: () => { this.setState({ outfit: o.k }); st && st.setOutfit(o.o); } })); }
+    else { const sl = S.slot, cur = S.charms[sl]; hint = 'Slot ' + (sl - 1) + ': pick an ALWAYS ON item. It shows on your fox and its bonus works while it is equipped.';
+      opts = [...CHARMS.map(c => { const elsewhere = [2, 3, 4].find(k => k !== sl && S.charms[k] === c.id);
+        return { name: c.name, sub: elsewhere ? 'In slot ' + (elsewhere - 1) + ' · tap to move it here' : c.sub, icon: c.icon, col: COL.charms, ...onOff(cur === c.id),
+          pick: () => { const ch = { ...S.charms }; if (elsewhere) { ch[elsewhere] = null; st && st.setCharm(elsewhere, null); } ch[sl] = cur === c.id ? null : c.id; this.setState({ charms: ch }); st && st.setCharm(sl, ch[sl]); } }; }),
+        { name: 'EMPTY', sub: 'Leave slot ' + (sl - 1) + ' empty', icon: EMPTY, col: '#6b6460', ...onOff(!cur), pick: () => { this.setState({ charms: { ...S.charms, [sl]: null } }); st && st.setCharm(sl, null); } }]; }
+    const slots = [2, 3, 4].map(k => { const on = S.slot === k, id = S.charms[k];
+      return { top: String(k - 1), name: id ? CH[id].name : 'EMPTY', icon: id ? CH[id].icon : EMPTY, ic: id ? '#d9b24a' : '#6b6460',
+        bg: on ? '#2e2a28' : '#201e1d', fg: '#f3f2f2', bd: on ? '#d9b24a' : '#f3f2f2', pick: () => this.setState({ slot: k }) }; });
+    
+    const out = {
+      ...(() => { const md = S.wsub, k = S[md], key = wKey(md), s = S.wkits[key] || {};
+        return { showWGemBtn: S.cat === 'weapon' && !S.gemPick && !!GM && !!k && k !== 'none', wGemsOpen: !!S.wGems, wGemChev: S.wGems ? '−' : '+', toggleWGems: () => this.setState({ wGems: !S.wGems }),
+          wGemFor: S.lists ? nm(md, k) + ' · ' + (md === 'melee' ? 'MELEE' : 'RANGED') : '',
+          wSlots: GM ? ['world', 'any'].map(sl => { const g = G[s[sl]], b = g && GM.gemBonus(g, md);
+            return { top: sl === 'world' ? 'WORLD · MERU GEM' : 'ANY GEM', name: g ? g.name : 'EMPTY', bonus: g ? GM.fmt(b[0], b[1]) : (sl === 'world' ? 'Win or find it' : 'Tap to add'), bd: g ? g.col : '#6b6460', line: g ? 'solid' : 'dashed', ic: g ? g.col : '#6b6460', fill: g ? g.col : 'none',
+              pick: () => this.setState({ gemPick: { piece: md, slot: sl, weapon: true } }) }; }) : [] }; })(),
+      picking: !!S.gemPick, backLabel: S.gemPick && S.gemPick.weapon ? 'BACK TO THE WEAPON' : 'BACK TO THE PIECES', backPick: () => this.setState({ gemPick: null }), showPieces: !!(set && GM && !S.gemPick), pieces, totalsList, totalsNote, setPrice,
+      stageRef: this.stageRef, loading: S.loading, isCharms: S.cat === 'charms', isWeapon: S.cat === 'weapon', hint, opts, slots,
+      wsubs: ['melee', 'ranged'].map(md => { const on = S.wsub === md; return { label: md === 'melee' ? 'MELEE' : 'RANGED', cur: S.lists ? nm(md, S[md]) : '', bg: on ? '#ec3013' : '#201e1d', fg: '#f3f2f2', bd: on ? '#ec3013' : '#f3f2f2', pick: () => this.setState({ wsub: md, gemPick: null }) }; }),
+      cats: CAT.map(([k, l, col, icon]) => { const on = S.cat === k; return { label: l, col, icon, on, bg: on ? '#f3f2f2' : '#201e1d', fg: on ? '#201e1d' : '#f3f2f2', hov: on ? '#f3f2f2' : '#2e2a28', pick: () => this.setState({ cat: k, gemPick: null }) }; }),
+    };
+    const none = { gemBtn: false, gOpen: false, gOpenW: false, gOpenA: false, gSlots: [], gPieces: [], gLabel: '', gChev: '', gPrice: '', gToggle: null };
+    out.opts = (out.opts || []).map(o => {
+      if (S.gemPick || o.tag !== 'EQUIPPED' || !GM) return { ...o, ...none };
+      if (S.cat === 'weapon' && S[S.wsub] && S[S.wsub] !== 'none') return { ...o, ...none, gemBtn: true, gLabel: 'ASSIGN GEMS TO WEAPON', gOpen: !!S.wGems, gOpenW: !!S.wGems, gChev: S.wGems ? '−' : '+', gToggle: () => this.setState({ wGems: !S.wGems }), gSlots: out.wSlots || [] };
+      if (S.cat === 'armor' && set) return { ...o, ...none, gemBtn: true, gLabel: 'ASSIGN GEMS TO ARMOR', gOpen: !!S.aGems, gOpenA: !!S.aGems, gChev: S.aGems ? '−' : '+', gToggle: () => this.setState({ aGems: !S.aGems }), gPieces: pieces, gPrice: setPrice };
+      return { ...o, ...none }; });
+    return out;
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Card Workshop · Five Card Stud</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;800;900&amp;display=swap">
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#12060c}a{color:#ffd23a}a:hover{color:#ec3013}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #ffd23a;outline-offset:2px}input[type=color]{-webkit-appearance:none;appearance:none;padding:0;border:2px solid #ffffff;border-radius:0;width:56px;height:40px;background:none;cursor:pointer}input[type=color]::-webkit-color-swatch-wrapper{padding:0}input[type=color]::-webkit-color-swatch{border:0;border-radius:0}input[type=range]{accent-color:#ffd23a}</style>
+</helmet>
+<div ref="{{ rootRef }}" style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#12060c;color:#ffffff;font-family:Archivo, Arial, sans-serif;display:flex;flex-direction:column" data-screen-label="Card Workshop">
+  <div style="flex:none;display:flex;align-items:center;gap:8px;padding:max(8px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) 8px max(10px, env(safe-area-inset-left));border-bottom:2px solid #3a3836;background:#000000">
+    <a href="{{ gameHref }}" style="min-height:44px;display:flex;align-items:center;padding:0 12px;border:2px solid #ffffff;color:#ffffff;text-decoration:none;font:900 12px Archivo, sans-serif;letter-spacing:0.1em">&#8592; GAME</a>
+    <div style="display:flex;flex-direction:column;min-width:0;border-left:4px solid #ffd23a;padding-left:10px">
+      <span style="font:900 15px Archivo, sans-serif;letter-spacing:0.06em;white-space:nowrap">CARD WORKSHOP</span>
+      <span style="font:800 11px Archivo, sans-serif;letter-spacing:0.1em;color:#ffd23a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">FIVE CARD STUD · MERU CASINO</span>
+    </div>
+    <div style="flex:1"></div>
+    <button onClick="{{ doSave }}" disabled="{{ notReady }}" style="min-height:44px;padding:0 14px;border:0;border-radius:0;background:{{ saveBg }};color:#ffffff;font:900 13px Archivo, sans-serif;letter-spacing:0.1em;cursor:pointer;white-space:nowrap" style-hover="filter:brightness(1.12)">{{ saveTxt }}</button>
+  </div>
+
+  <div style="flex:1;min-height:0;display:flex;flex-direction:{{ dir }}">
+    <div style="flex:{{ prevFlex }};min-height:0;min-width:0;display:flex;flex-direction:column;background:#1c0a12;border-bottom:{{ prevBorderB }};border-right:{{ prevBorderR }}">
+      <div ref="{{ stageRef }}" aria-label="Card previews" style="flex:1;min-height:0;display:flex;align-items:center;gap:12px;padding:12px;overflow-x:auto;overflow-y:hidden;flex-wrap:{{ wrap }};justify-content:{{ justify }};align-content:center"></div>
+      <div role="group" aria-label="Play an animation" style="flex:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border-top:2px solid #3a3836">
+        <sc-for list="{{ plays }}" as="p" hint-placeholder-count="5"><button onClick="{{ p.on }}" aria-pressed="{{ p.pressed }}" style="min-height:46px;border:0;border-right:{{ p.sep }};border-radius:0;background:{{ p.bg }};color:{{ p.fg }};font:900 11px Archivo, sans-serif;letter-spacing:0.08em;cursor:pointer" style-hover="filter:brightness(1.2)">{{ p.label }}</button></sc-for>
+      </div>
+    </div>
+
+    <div style="flex:{{ ctrlFlex }};min-height:0;min-width:0;display:flex;flex-direction:column;background:#000000">
+      <div role="tablist" aria-label="What to edit" style="flex:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border-bottom:2px solid #3a3836">
+        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5"><button role="tab" aria-selected="{{ t.on }}" onClick="{{ t.go }}" style="min-height:46px;border:0;border-right:{{ t.sep }};border-radius:0;background:{{ t.bg }};color:{{ t.fg }};font:900 11px Archivo, sans-serif;letter-spacing:0.08em;cursor:pointer">{{ t.label }}</button></sc-for>
+      </div>
+      <div style="flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch">
+        <sc-for list="{{ rows }}" as="r" hint-placeholder-count="8">
+          <sc-if value="{{ r.head }}" hint-placeholder-val="{{ false }}"><div style="padding:12px 12px 6px;font:900 11px Archivo, sans-serif;letter-spacing:0.14em;color:#ffd23a;border-bottom:2px solid #3a3836">{{ r.label }}</div></sc-if>
+          <sc-if value="{{ r.isColor }}" hint-placeholder-val="{{ true }}"><label style="display:flex;align-items:center;gap:10px;padding:6px 12px;border-bottom:1px solid #2a2826;min-height:52px"><span style="flex:1;font:800 13px Archivo, sans-serif">{{ r.label }}</span><span style="font:700 11px Archivo, sans-serif;color:#9b958f;letter-spacing:0.06em;text-transform:uppercase">{{ r.val }}</span><input type="color" value="{{ r.val }}" onChange="{{ r.on }}" aria-label="{{ r.label }}"></label></sc-if>
+          <sc-if value="{{ r.isText }}" hint-placeholder-val="{{ false }}"><label style="display:flex;flex-direction:column;gap:4px;padding:8px 12px;border-bottom:1px solid #2a2826"><span style="font:800 13px Archivo, sans-serif">{{ r.label }}</span><input value="{{ r.val }}" onChange="{{ r.on }}" onKeyDown="{{ stopKey }}" maxlength="28" spellcheck="false" style="min-height:44px;padding:0 10px;border:2px solid #3a3836;border-radius:0;background:#1a1918;color:#ffffff;font:900 15px Archivo, sans-serif;letter-spacing:0.06em;outline:none;box-sizing:border-box"></label></sc-if>
+          <sc-if value="{{ r.isToggle }}" hint-placeholder-val="{{ false }}"><button onClick="{{ r.on }}" aria-pressed="{{ r.pressed }}" style="width:100%;display:flex;align-items:center;gap:10px;min-height:52px;padding:6px 12px;border:0;border-bottom:1px solid #2a2826;border-radius:0;background:#000000;color:#ffffff;cursor:pointer;text-align:left" style-hover="background:#1a1918"><span style="flex:1;font:800 13px Archivo, sans-serif">{{ r.label }}</span><span style="min-width:52px;padding:6px 8px;background:{{ r.chipBg }};color:{{ r.chipFg }};font:900 11px Archivo, sans-serif;letter-spacing:0.1em;text-align:center">{{ r.chip }}</span></button></sc-if>
+          <sc-if value="{{ r.isRange }}" hint-placeholder-val="{{ false }}"><label style="display:flex;align-items:center;gap:10px;padding:6px 12px;border-bottom:1px solid #2a2826;min-height:52px"><span style="flex:1;font:800 13px Archivo, sans-serif">{{ r.label }}</span><input type="range" min="{{ r.min }}" max="{{ r.max }}" step="{{ r.step }}" value="{{ r.val }}" onChange="{{ r.on }}" aria-label="{{ r.label }}" style="width:42%"><span style="width:36px;text-align:right;font:900 13px Archivo, sans-serif;color:#ffd23a">{{ r.val }}</span></label></sc-if>
+        </sc-for>
+      </div>
+      <sc-if value="{{ impOn }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:none;border-top:2px solid #ffd23a;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
+          <span style="font:900 11px Archivo, sans-serif;letter-spacing:0.12em;color:#ffd23a">PASTE A STYLE FILE (stud-cards.json)</span>
+          <textarea value="{{ impText }}" onChange="{{ impType }}" onKeyDown="{{ stopKey }}" rows="4" spellcheck="false" aria-label="Style JSON" style="width:100%;box-sizing:border-box;border:2px solid #3a3836;border-radius:0;background:#1a1918;color:#ffffff;font:700 12px ui-monospace, monospace;padding:8px;resize:vertical"></textarea>
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)"><button onClick="{{ impApply }}" style="min-height:44px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#ffffff;font:900 12px Archivo, sans-serif;letter-spacing:0.1em;cursor:pointer">APPLY</button><button onClick="{{ impClose }}" style="min-height:44px;border:0;border-radius:0;background:#2a2826;color:#ffffff;font:900 12px Archivo, sans-serif;letter-spacing:0.1em;cursor:pointer">CANCEL</button></div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ msgOn }}" hint-placeholder-val="{{ false }}"><div role="status" style="flex:none;padding:8px 12px;border-top:2px solid #3a3836;font:700 12px Archivo, sans-serif;line-height:1.4;color:{{ msgCol }}">{{ msg }}</div></sc-if>
+      <div style="flex:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:2px solid #3a3836;padding-bottom:env(safe-area-inset-bottom)">
+        <button onClick="{{ doExport }}" disabled="{{ notReady }}" style="min-height:50px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000000;color:#ffffff;font:900 11px Archivo, sans-serif;letter-spacing:0.08em;cursor:pointer" style-hover="background:#2a2826">EXPORT FILE</button>
+        <button onClick="{{ doImport }}" disabled="{{ notReady }}" style="min-height:50px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000000;color:#ffffff;font:900 11px Archivo, sans-serif;letter-spacing:0.08em;cursor:pointer" style-hover="background:#2a2826">IMPORT</button>
+        <button onClick="{{ doReset }}" disabled="{{ notReady }}" style="min-height:50px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000000;color:#ffffff;font:900 11px Archivo, sans-serif;letter-spacing:0.08em;cursor:pointer" style-hover="background:#2a2826">RESET</button>
+        <button onClick="{{ doClear }}" disabled="{{ notReady }}" style="min-height:50px;border:0;border-radius:0;background:#000000;color:#ffffff;font:900 11px Archivo, sans-serif;letter-spacing:0.08em;cursor:pointer" style-hover="background:#2a2826">UNSAVE</button>
+      </div>
+    </div>
+  </div>
+
+  <sc-if value="{{ loadOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:30;display:flex;align-items:flex-end;padding:16px;box-sizing:border-box;background:#12060c">
+      <div style="display:flex;flex-direction:column;gap:6px;max-width:440px">
+        <div style="font:900 11px Archivo, sans-serif;letter-spacing:0.14em;color:#ffd23a">CARD WORKSHOP</div>
+        <div style="font:900 26px Archivo, sans-serif;line-height:1">{{ loadHead }}</div>
+        <div style="font:700 13px Archivo, sans-serif;line-height:1.4;color:#e7e2dc">{{ loadTxt }}</div>
+        <sc-if value="{{ errOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ retry }}" style="align-self:flex-start;min-height:48px;padding:0 16px;border:0;border-radius:0;background:#ec3013;color:#ffffff;font:900 13px Archivo, sans-serif;letter-spacing:0.1em;cursor:pointer">TRY AGAIN</button></sc-if>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+// Same loader as the game: finds each code file by its own full address (repo, Design canvas or a world panel).
+async function studLoad(path) {
+  const cands = [], add = u => { try { const h = new URL(u, location.href).href; if (/^(https?|blob):/.test(h) && !cands.includes(h)) cands.push(h); } catch (e) {} };
+  try { if (window.STUD_PATHS && window.STUD_PATHS[path]) add(window.STUD_PATHS[path]); } catch (e) {}
+  try { add(new URL(path, document.baseURI).href); } catch (e) {}
+  try { add(new URL(path, location.href).href); } catch (e) {}
+  const origins = []; try { let w = window; for (let i = 0; i < 4 && w; i++) { try { if (w.location.origin && w.location.origin !== 'null') origins.push(w.location.origin); } catch (e) {} if (w === w.parent) break; w = w.parent; } } catch (e) {}
+  try { if (document.referrer) origins.push(new URL(document.referrer).origin); } catch (e) {}
+  for (const o of origins) { add(o + '/project/' + path); add(o + '/' + path); }
+  let last; for (const u of cands) { try { return await import(u); } catch (e) { last = e; } }
+  throw new Error('Could not find ' + path + (last ? ' (' + (last.message || last) + ')' : ''));
+}
+const PREVIEW = [[0, ''], [11, 's'], [11, 'h'], [12, 'c'], [12, 'd'], [13, 's'], [13, 'h'], [14, 's'], [14, 'h'], [10, 'h'], [7, 'c']];
+const C = (path, label) => ({ path, label, type: 'color' }), T = (path, label) => ({ path, label, type: 'text' }), B = (path, label) => ({ path, label, type: 'toggle' }), H = label => ({ head: true, label }), RG = (path, label, min, max, step) => ({ path, label, type: 'range', min, max, step });
+const SUITSET = (k, name) => [H(name + ' · RED SUITS ♥ ♦'), C('faces.' + k + '.red.top', 'Top / chest'), C('faces.' + k + '.red.main', 'Main colour'), C('faces.' + k + '.red.trim', k === 'J' ? 'Sleeves + armour trim' : 'Sleeves / dark trim'),
+  H(name + ' · BLACK SUITS ♠ ♣'), C('faces.' + k + '.black.top', 'Top / chest'), C('faces.' + k + '.black.main', 'Main colour'), C('faces.' + k + '.black.trim', k === 'J' ? 'Sleeves + armour trim' : 'Sleeves / dark trim')];
+const TABS = {
+  back: { label: 'BACK', rows: [H('BACKGROUND'), C('back.top', 'Top-left blue'), C('back.mid', 'Middle blue'), C('back.bottom', 'Bottom-right blue'), C('back.edge', 'Card edge'),
+    B('back.pattern', 'Diamond pattern'), B('back.rays', 'Rays from the centre'), B('back.sheen', 'Glossy sheen'), B('back.sparkles', 'Sparkles'), B('back.suits', 'Suits around the medallion'),
+    H('GOLD + RIBBONS'), C('back.gold', 'Gold'), C('back.goldLight', 'Light gold'), C('back.jewel', 'Corner jewels'), C('back.ribbonText', 'Ribbon lettering'), T('back.topText', 'Top ribbon'), T('back.bottomText', 'Bottom ribbon'),
+    H('MEDALLION'), C('back.medallion', 'Medallion'), C('back.medallionLight', 'Medallion glow'), C('back.halo', 'Halo + rays'),
+    H('FOX ICON'), RG('back.foxSize', 'Fox size', 24, 56, 1), C('back.fox.fur', 'Fur'), C('back.fox.shade', 'Shaded side'), C('back.fox.light', 'Lit brow'), C('back.fox.muzzle', 'Muzzle'), C('back.fox.ink', 'Eyes, ears, nose'), C('back.fox.outline', 'Outline')] },
+  faces: { label: 'FACES', rows: [H('NAMES'), T('faces.names.J', 'Jack'), T('faces.names.Q', 'Queen'), T('faces.names.K', 'King'),
+    H('PORTRAIT'), C('faces.fur', 'Fox fur'), C('faces.redBg', 'Background · red suits'), C('faces.blackBg', 'Background · black suits'), C('faces.bar', 'Name bar + frame'), C('faces.barText', 'Name lettering'), B('faces.crest', 'Suit crest on the chest'),
+    ...SUITSET('J', 'FOX KNAVE'), ...SUITSET('Q', 'FOX QUEEN'), ...SUITSET('K', 'FOX KING')] },
+  paper: { label: 'PAPER', rows: [H('CARD FRONT'), C('paper.top', 'Paper (top)'), C('paper.bottom', 'Paper (bottom)'), C('paper.red', 'Red ink ♥ ♦'), C('paper.black', 'Black ink ♠ ♣'), C('paper.edge', 'Card edge'), B('paper.tint', 'Tint behind the pips')] },
+  shuttle: { label: 'SHUTTLE', rows: [H('SKY'), C('shuttle.sky', 'Sky (top)'), C('shuttle.sky2', 'Sky (bottom)'), B('shuttle.stars', 'Stars'),
+    H('SHUTTLE'), C('shuttle.body', 'Body'), C('shuttle.wing', 'Wings + fin'), C('shuttle.nose', 'Nose + outline'), C('shuttle.stripe', 'Stripe'), C('shuttle.window', 'Windows'), C('shuttle.flame', 'Flame'),
+    H('LABEL'), T('shuttle.label', 'Label'), C('shuttle.labelColor', 'Label colour')] },
+  moves: { label: 'MOVES', rows: [H('FACE CARDS ON THE TABLE'), B('anim.wave', 'Wave'), B('anim.wink', 'Wink'), B('anim.grin', 'Grin'), H('ACES'), B('anim.hop', 'Shuttle thruster hop'), H('TIMING'), RG('anim.every', 'Seconds between moves', 2, 12, 1)] },
+};
+const getP = (o, p) => p.split('.').reduce((a, k) => a == null ? a : a[k], o);
+const setP = (o, p, v) => { const ks = p.split('.'); let a = o; for (let i = 0; i < ks.length - 1; i++) a = a[ks[i]]; a[ks[ks.length - 1]] = v; };
+const ease = t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+class Component extends DCLogic {
+  state = { ready: false, err: '', tab: 'back', style: null, msg: '', msgCol: '#cfcac4', saved: true, imp: false, impText: '', play: 'auto', vw: 390, vh: 844 };
+  stageRef = React.createRef(); rootRef = React.createRef();
+  async componentDidMount() { addEventListener('resize', this.onRs); this.onRs(); this.boot(); }
+  componentWillUnmount() { removeEventListener('resize', this.onRs); cancelAnimationFrame(this.raf); this.art && this.art.dispose(); }
+  onRs = () => { const r = this.rootRef.current ? this.rootRef.current.getBoundingClientRect() : null; this.setState({ vw: r && r.width ? r.width : innerWidth, vh: r && r.height ? r.height : innerHeight }); setTimeout(() => this.sizeCards(), 0); };
+  async boot() {
+    this.setState({ err: '' });
+    try {
+      const [THREE, FK, CA] = await Promise.all([studLoad('vendor/three/three.module.js'), studLoad('fox-kit.js'), studLoad('minigames/meru/stud-cards.js')]);
+      try { await Promise.race([document.fonts.load('900 64px Archivo'), new Promise(r => setTimeout(r, 1500))]); } catch (e) {}
+      this.CA = CA; const style = await CA.loadCardStyle();
+      this.art = CA.createCardArt({ THREE, FK, style, RES: 2 });
+      this.cards = PREVIEW.map(([r, s]) => { const c = this.art.newCanvas(); c.setAttribute('role', 'img'); c.setAttribute('aria-label', r ? (r === 14 ? 'Shuttle ace' : r >= 11 ? ['Jack', 'Queen', 'King'][r - 11] : String(r)) + ' of ' + { s: 'spades', h: 'hearts', d: 'diamonds', c: 'clubs' }[s] : 'Card back'); c.style.cssText = 'flex:none;display:block;filter:drop-shadow(0 6px 10px rgba(0,0,0,0.45))'; return { r, s, c, animT: -1, at: 0.5 + Math.random() * 2, kind: '', f: 0 }; });
+      const st = this.stageRef.current; this.cards.forEach(k => st.appendChild(k.c));
+      this.setState({ ready: true, style: CA.cloneStyle(this.art.style), saved: !!CA.readSavedStyle() || true }); this.paintAll(); this.sizeCards();
+      let last = performance.now(); const loop = t => { this.raf = requestAnimationFrame(loop); const dt = Math.max(0, Math.min(0.05, (t - last) / 1000)); last = t; this.animate(dt); }; this.raf = requestAnimationFrame(loop);
+    } catch (e) { console.warn('workshop failed: ' + (e && e.stack || e)); this.setState({ err: String(e && e.message || e) }); }
+  }
+  sizeCards() { const st = this.stageRef.current; if (!st || !this.cards) return; const land = this.state.vw > this.state.vh * 1.1, r = st.getBoundingClientRect(), N = this.cards.length;
+    let h; if (!land) h = Math.min(r.height - 28, 250);
+    else { h = 0; for (let rows = 1; rows <= 4; rows++) { const per = Math.ceil(N / rows), byW = ((r.width - 24) / per - 12) * 1.4, byH = (r.height - 24) / rows - 12; h = Math.max(h, Math.min(byW, byH)); } }
+    h = Math.max(70, Math.floor(h)); this.cards.forEach(k => { k.c.style.height = h + 'px'; k.c.style.width = Math.round(h * 200 / 280) + 'px'; }); }
+  paint(k, opt = {}) { if (k.r) this.art.paintCard(k.c, k.r, k.s, opt); else this.art.paintBack(k.c); }
+  paintAll() { this.cards && this.cards.forEach(k => this.paint(k)); }
+  // the same little performances the cards give on the table
+  animate(dt) { if (!this.cards) return; const A = this.state.style ? this.state.style.anim : {}, now = (this.t = (this.t || 0) + dt);
+    for (const k of this.cards) { if (k.r < 11) continue;
+      if (k.animT < 0) { if (this.state.play !== 'auto' || now < k.at) continue; const pool = [A.wave && 'wave', A.wink && 'wink', A.grin && 'grin'].filter(Boolean); if (k.r === 14 ? !A.hop : !pool.length) { k.at = now + 3; continue; } this.start(k, k.r === 14 ? 'fly' : pool[Math.floor(Math.random() * pool.length)]); }
+      k.animT += dt; const dur = k.kind === 'fly' ? 1.9 : k.kind === 'wave' ? 1.5 : k.kind === 'wink' ? 0.7 : 1.1, done = k.animT >= dur;
+      if (k.kind === 'fly') { if (done || now - (k.painted || 0) > 0.033) { k.painted = now; this.paint(k, { t: done ? 0 : k.animT / dur }); } }
+      else { const f = done ? 0 : k.kind === 'wave' ? (k.animT < dur - 0.2 ? 3 + (Math.floor(k.animT / 0.2) % 2) : 0) : k.animT < dur * 0.8 ? (k.kind === 'wink' ? 1 : 2) : 0; if (f !== k.f) { k.f = f; this.paint(k, { f }); } }
+      if (done) { k.animT = -1; const ev = Math.max(1, +A.every || 5); k.at = now + ev * (0.6 + Math.random() * 0.9); } } }
+  start(k, kind) { k.kind = kind; k.animT = 0; k.f = -1; k.painted = 0; }
+  playNow(kind) { this.setState({ play: kind === 'auto' ? 'auto' : 'manual' }); if (kind === 'auto') return; for (const k of this.cards || []) { if (kind === 'fly' ? k.r === 14 : k.r >= 11 && k.r <= 13) this.start(k, kind); } }
+  setVal(path, v) { const style = this.CA.cloneStyle(this.state.style); setP(style, path, v); this.setState({ style, saved: false, msg: '' }); clearTimeout(this.tm); const heavy = /^faces\.(J|Q|K|fur|crest|redBg|blackBg|bar)|^paper\.(red|black)/.test(path);
+    if (heavy) this.setState({ msg: 'Re-drawing the fox portraits…', msgCol: '#ffd23a' });
+    this.tm = setTimeout(() => { this.art.setStyle(this.state.style); this.paintAll(); const ok = this.CA.saveStyle(this.state.style); this.setState({ saved: ok, msg: heavy ? '' : this.state.msg }); }, heavy ? 450 : 60); }
+  apply(style, msg) { const s = this.CA.mergeStyle(this.CA.DEFAULT_CARD_STYLE, style); const ok = this.CA.saveStyle(s); this.setState({ style: s, msg, msgCol: '#86efac', saved: ok }); this.art.setStyle(s); this.paintAll(); }
+  renderVals() {
+    const S = this.state, st = S.style, land = S.vw > S.vh * 1.1, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const tabKeys = Object.keys(TABS), rows = !st ? [] : TABS[S.tab].rows.map((d, i) => { if (d.head) return { k: 'h' + i, head: true, label: d.label };
+      const val = getP(st, d.path); const base = { k: d.path, label: d.label, head: false, isColor: d.type === 'color', isText: d.type === 'text', isToggle: d.type === 'toggle', isRange: d.type === 'range' };
+      if (d.type === 'color') return { ...base, val: String(val || '#000000'), on: e => this.setVal(d.path, e.target.value) };
+      if (d.type === 'text') return { ...base, val: String(val ?? ''), on: e => this.setVal(d.path, String(e.target.value || '').toUpperCase().slice(0, 28)) };
+      if (d.type === 'range') return { ...base, val: +val, min: d.min, max: d.max, step: d.step, on: e => this.setVal(d.path, +e.target.value) };
+      return { ...base, pressed: !!val, chip: val ? 'ON' : 'OFF', chipBg: val ? '#ffd23a' : '#2a2826', chipFg: val ? '#000000' : '#cfcac4', on: e => { blur(e); this.setVal(d.path, !val); } }; });
+    const plays = [['auto', 'AUTO'], ['wave', 'WAVE'], ['wink', 'WINK'], ['grin', 'GRIN'], ['fly', 'LAUNCH']].map(([k, label], i) => ({ k, label, pressed: k === 'auto' ? S.play === 'auto' : false, bg: k === 'auto' && S.play === 'auto' ? '#ffd23a' : '#000000', fg: k === 'auto' && S.play === 'auto' ? '#000000' : '#ffffff', sep: i < 4 ? '2px solid #3a3836' : '0', on: e => { blur(e); this.playNow(k); } }));
+    return {
+      rootRef: this.rootRef, stageRef: this.stageRef, dir: land ? 'row' : 'column', prevFlex: land ? '1 1 58%' : '0 0 42%', ctrlFlex: land ? '0 0 min(420px, 42%)' : '1 1 auto',
+      prevBorderB: land ? '0' : '2px solid #3a3836', prevBorderR: land ? '2px solid #3a3836' : '0', wrap: land ? 'wrap' : 'nowrap', justify: land ? 'center' : 'flex-start',
+      gameHref: 'Meru Five Card Stud.dc.html', plays, rows, stopKey: e => e.stopPropagation(),
+      tabs: tabKeys.map((k, i) => ({ k, label: TABS[k].label, on: S.tab === k, bg: S.tab === k ? '#ffd23a' : '#000000', fg: S.tab === k ? '#000000' : '#ffffff', sep: i < tabKeys.length - 1 ? '2px solid #3a3836' : '0', go: e => { blur(e); this.setState({ tab: k }); } })),
+      notReady: !S.ready, saveBg: S.saved ? '#2a2826' : '#ec3013', saveTxt: S.saved ? 'IN GAME ✓' : 'SAVE',
+      doSave: e => { blur(e); const ok = this.CA.saveStyle(S.style); this.setState({ saved: ok, msg: ok ? 'These cards are in the game on this device. An open poker table changes over within a couple of seconds. Use EXPORT FILE to give them to every player.' : 'This browser would not let me save. Use EXPORT FILE instead.', msgCol: ok ? '#86efac' : '#ff9a8a' }); },
+      doExport: async e => { blur(e); const txt = JSON.stringify(S.style, null, 2); let copied = false; try { await navigator.clipboard.writeText(txt); copied = true; } catch (er) {}
+        try { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'application/json' })); a.download = 'stud-cards.json'; document.body.appendChild(a); a.click(); a.remove(); } catch (er) {}
+        this.setState({ msg: 'stud-cards.json ' + (copied ? 'downloaded and copied. ' : 'downloaded. ') + 'Put it in minigames/meru/ in the game folder and every player gets these cards.', msgCol: '#86efac' }); },
+      doImport: e => { blur(e); this.setState({ imp: true, impText: '' }); }, impOn: S.imp, impText: S.impText, impType: e => this.setState({ impText: e.target.value }),
+      impApply: e => { blur(e); try { const o = JSON.parse(S.impText); this.setState({ imp: false }); this.apply(o, 'Style loaded and sent to the game on this device.'); } catch (er) { this.setState({ msg: 'That is not a style file. Paste the whole stud-cards.json text.', msgCol: '#ff9a8a' }); } },
+      impClose: e => { blur(e); this.setState({ imp: false }); },
+      doReset: e => { blur(e); this.apply(this.CA.DEFAULT_CARD_STYLE, 'Back to the original cards, in the game too.'); },
+      doClear: e => { blur(e); this.CA.clearSavedStyle(); this.setState({ msg: 'Unsaved. The table goes back to stud-cards.json, or the original cards if there is no file. Your next edit saves again.', msgCol: '#cfcac4', saved: false }); },
+      msgOn: !!S.msg, msg: S.msg, msgCol: S.msgCol,
+      loadOn: !S.ready, loadHead: S.err ? 'The workshop did not load' : 'Laying out the deck…', loadTxt: S.err ? S.err + '. Check that vendor/three, fox-kit.js and minigames/meru/stud-cards.js sit beside this page.' : 'Kane is photographing the fox portraits.', errOn: !!S.err,
+      retry: e => { blur(e); this.boot(); },
+    };
+  }
+}
+</script>
+</body>
+</html>

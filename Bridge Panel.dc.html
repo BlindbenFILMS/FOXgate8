@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+</helmet>
+<div ref="{{ rootRef }}" style="position:relative;width:100%;height:100%;overflow:hidden;background:#201e1d;color:#f3f2f2;font-family:var(--font-body)">
+  <sc-if value="{{ bg }}" hint-placeholder-val="{{ false }}">
+    <div ref="{{ holoRef }}" style="position:absolute;inset:0;touch-action:none;cursor:grab;overflow:hidden;background:radial-gradient(ellipse at 50% 55%, #10131c 0%, #201e1d 70%)"><div style="position:absolute;inset:0;pointer-events:none;z-index:1;background:repeating-linear-gradient(rgba(127,208,255,0.035) 0 1px, transparent 1px 4px)"></div></div>
+  </sc-if>
+  <div style="position:absolute;left:{{ wrapL }};right:0;top:{{ wrapT }};bottom:0;max-height:{{ wrapMax }};overflow:auto;background:{{ wrapBg }};border-top:{{ wrapBd }};border-left:{{ wrapBdL }};box-sizing:border-box;opacity:{{ cOp }};transform:translateY({{ cTy }});transition:{{ cTr }}">
+
+    <sc-if value="{{ isStar }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:{{ flow }};height:{{ starH }}">
+        <sc-if value="{{ inlineHolo }}" hint-placeholder-val="{{ true }}">
+          <div style="position:relative;flex:1 1 auto;min-height:0;min-width:0">
+            <div ref="{{ holoRef }}" style="position:absolute;inset:0;touch-action:none;cursor:grab;overflow:hidden;background:radial-gradient(ellipse at 50% 55%, #10131c 0%, #201e1d 70%)"><div style="position:absolute;inset:0;pointer-events:none;z-index:1;background:repeating-linear-gradient(rgba(127,208,255,0.035) 0 1px, transparent 1px 4px)"></div></div>
+            <div style="position:absolute;left:16px;top:14px;z-index:2;font-size:12px;font-weight:700;letter-spacing:0.14em;color:#a8a29e;pointer-events:none">DRAG · PINCH · TAP A WORLD</div>
+          </div>
+        </sc-if>
+        <div style="flex:0 0 auto;width:{{ cardW }};box-sizing:border-box;border-top:{{ cbT }};border-left:{{ cbL }};padding:16px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;gap:10px"><div style="width:34px;height:34px;flex:0 0 auto;background-image:{{ sw.crest }};background-size:contain;background-repeat:no-repeat"></div><span style="font:800 30px var(--font-heading);letter-spacing:-0.02em;line-height:1">{{ sw.n }}</span></div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:2px solid #f3f2f2;border-bottom:2px solid #f3f2f2">
+            <div style="padding:8px 10px 8px 0;display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;font-weight:700;letter-spacing:0.14em;color:#a8a29e">DISTANCE</span><span style="font:800 17px var(--font-heading)">{{ sw.dist }}</span></div>
+            <div style="padding:8px 10px;border-left:2px solid #f3f2f2;display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;font-weight:700;letter-spacing:0.14em;color:#a8a29e">ETA</span><span style="font:800 17px var(--font-heading)">{{ sw.eta }}</span></div>
+            <div style="padding:8px 10px;border-left:2px solid #f3f2f2;display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;font-weight:700;letter-spacing:0.14em;color:#a8a29e">TREATY</span><span style="font:800 17px var(--font-heading);color:{{ sw.mc }}">{{ sw.mood }}</span></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <button onClick="{{ toggleCourse }}" style="min-height:52px;padding:0 14px;background:{{ crsBg }};color:#f3f2f2;border:2px solid #2f7fd0;border-radius:0;font:800 15px var(--font-heading);letter-spacing:0.04em;text-align:center;cursor:pointer;transition:background .15s, color .15s, box-shadow .15s" style-active="background:#1f5f9f">{{ crsLabel }}</button>
+            <button onClick="{{ toggleAuto }}" style="min-height:52px;padding:0 14px;background:{{ autoBg }};color:#f3f2f2;border:2px solid #2f7fd0;border-radius:0;font:800 15px var(--font-heading);letter-spacing:0.04em;text-align:center;cursor:pointer;transition:background .15s, color .15s, box-shadow .15s" style-active="background:#1f5f9f">{{ autoLabel }}</button>
+          </div>
+          <sc-if value="{{ autoOn }}" hint-placeholder-val="{{ false }}"><div style="font-size:15px;line-height:1.35;color:#7fd0ff">Menu closes. Touch the stick to take over.</div></sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isScan }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:{{ flow }};gap:0;min-height:100%">
+        <div style="position:relative;flex:0 0 auto;width:{{ radW }};height:{{ radH }};border-bottom:{{ cbT }};border-right:{{ cbL }};background:radial-gradient(circle at 50% 52%, #14181f 0%, #201e1d 75%)">
+          <canvas ref="{{ radarRef }}" style="position:absolute;inset:0;width:100%;height:100%;display:block"></canvas>
+          <div style="position:absolute;left:16px;top:14px;font-size:12px;font-weight:700;letter-spacing:0.14em;color:#a8a29e">RANGE 140u</div>
+        </div>
+        <div style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;padding:4px 16px">
+          <div style="display:flex;justify-content:space-between;align-items:center;min-height:40px;border-bottom:2px solid #f3f2f2;font-size:12px;font-weight:800;letter-spacing:0.14em"><span>{{ scanCount }}</span><span style="color:#ff4a2e">{{ hostiles }}</span></div>
+          <sc-for list="{{ contacts }}" as="c" hint-placeholder-count="6">
+            <button onClick="{{ c.pick }}" style="display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:2px 12px;align-items:center;min-height:64px;padding:8px 8px;margin:0 -8px;background:{{ c.bg }};color:#f3f2f2;border:0;border-bottom:1px solid #5b5753;border-radius:0;text-align:left;cursor:pointer;font-family:inherit;transition:background .15s" style-hover="background:#2c2a29" style-active="background:var(--color-accent-700)">
+              <div style="grid-row:span 2;width:40px;height:40px;border-radius:50%;box-sizing:border-box;border:2px solid {{ c.ring }};padding:2px;display:flex"><img src="{{ c.img }}" alt="" style="width:100%;height:100%;display:block"></div>
+              <span style="font:800 16px var(--font-heading);min-width:0">{{ c.n }}</span>
+              <span style="font:800 16px var(--font-heading);text-align:right;white-space:nowrap">{{ c.d }}</span>
+              <span style="font-size:11px;font-weight:700;letter-spacing:0.12em;color:{{ c.col }};min-width:0;text-wrap:pretty">{{ c.sub }}</span>
+              <span style="font-size:11px;font-weight:700;letter-spacing:0.12em;color:#a8a29e;text-align:right;white-space:nowrap;align-self:start">{{ c.b }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ sigList }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;padding:4px 16px">
+        <sc-for list="{{ signals }}" as="s" hint-placeholder-count="6">
+          <button onClick="{{ s.pick }}" style="display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:2px 12px;align-items:center;min-height:64px;padding:8px;margin:0 -8px;background:transparent;color:#f3f2f2;border:0;border-bottom:1px solid #5b5753;border-radius:0;text-align:left;cursor:pointer;font-family:inherit;transition:background .15s" style-hover="background:#2c2a29" style-active="background:var(--color-accent-700)">
+            <div style="grid-row:span 2;width:40px;height:40px;display:flex"><img src="{{ s.img }}" alt="" style="width:100%;height:100%;display:block"></div>
+            <span style="font:800 16px var(--font-heading);min-width:0">{{ s.n }}</span>
+            <span style="font:800 16px var(--font-heading);text-align:right;white-space:nowrap">{{ s.d }}</span>
+            <span style="font-size:11px;font-weight:700;letter-spacing:0.12em;color:#a8a29e;min-width:0">{{ s.k }}</span>
+            <span style="font-size:11px;font-weight:700;letter-spacing:0.12em;color:#a8a29e;text-align:right;white-space:nowrap">BRG {{ s.b }}</span>
+          </button>
+        </sc-for>
+      </div>
+    </sc-if>
+    <sc-if value="{{ sigDetail }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;height:100%">
+        <div style="flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:8px 12px 8px 8px;border-bottom:2px solid #f3f2f2">
+          <button onClick="{{ sigBack }}" style="flex:0 0 auto;min-height:44px;padding:0 14px;background:transparent;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font:800 14px var(--font-heading);letter-spacing:0.08em;text-align:center;cursor:pointer;transition:background .15s" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">← BACK</button>
+          <img src="{{ sd.img }}" alt="" style="width:36px;height:36px;flex:0 0 auto;display:block">
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:800 18px var(--font-heading);line-height:1.05">{{ sd.n }}</span><span style="font-size:11px;font-weight:700;letter-spacing:0.12em;color:#a8a29e;line-height:1.3">{{ sd.k }}</span><span style="font-size:11px;font-weight:700;letter-spacing:0.12em;color:#f3f2f2;white-space:nowrap">{{ sd.d }} · BRG {{ sd.b }}</span></div>
+        </div>
+        <div style="flex:1 1 auto;min-height:0;display:flex;flex-direction:{{ flow }}">
+          <div ref="{{ shipRef }}" onPointerDown="{{ sDown }}" onPointerMove="{{ sMove }}" onPointerUp="{{ sUp }}" onPointerCancel="{{ sUp }}" style="position:relative;flex:1 1 auto;min-height:180px;min-width:0;background:#0b0a0a;touch-action:none;cursor:grab;overflow:hidden">
+            <sc-if value="{{ shipLoading }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;left:16px;bottom:14px;font-size:12px;font-weight:700;letter-spacing:0.14em;color:#77716b;z-index:2">LOADING…</span></sc-if>
+          </div>
+          <div style="flex:0 0 auto;width:{{ sdSideW }};display:flex;flex-direction:column;border-top:{{ cbT }};border-left:{{ cbL }}">
+            <div style="flex:0 0 auto;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px">
+              <button onClick="{{ sigCourse }}" style="min-height:52px;padding:0 10px;background:{{ sgCrsBg }};color:#f3f2f2;border:2px solid #2f7fd0;border-radius:0;font:800 14px var(--font-heading);letter-spacing:0.04em;text-align:center;cursor:pointer;transition:background .15s" style-active="background:#1f5f9f">{{ sgCrsLabel }}</button>
+              <button onClick="{{ sigAuto }}" style="min-height:52px;padding:0 10px;background:{{ sgAutoBg }};color:#f3f2f2;border:2px solid #2f7fd0;border-radius:0;font:800 14px var(--font-heading);letter-spacing:0.04em;text-align:center;cursor:pointer;transition:background .15s" style-active="background:#1f5f9f">{{ sgAutoLabel }}</button>
+            </div>
+            <div style="flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;padding:0 12px;min-height:36px;border-top:2px solid #f3f2f2;font-size:12px;font-weight:800;letter-spacing:0.14em"><span>ACTIVE QUESTS HERE</span><span style="color:#a8a29e">{{ sdQn }}</span></div>
+            <div style="flex:1 1 auto;max-height:{{ sdQMax }};overflow-y:auto;padding:0 12px 8px">
+              <sc-for list="{{ sdQuests }}" as="q" hint-placeholder-count="1">
+                <div style="display:flex;flex-direction:column;gap:4px;padding:10px 0;border-bottom:1px solid #5b5753">
+                  <div style="display:flex;align-items:center;gap:8px"><span style="font-size:10px;font-weight:800;letter-spacing:0.14em;padding:2px 5px;background:{{ q.kb }};color:#201e1d">{{ q.kind }}</span><span style="font:800 15px var(--font-heading)">{{ q.n }}</span></div>
+                  <span style="font-size:14px;color:#d6d3d1">{{ q.step }}</span>
+                </div>
+              </sc-for>
+              <sc-if value="{{ sdNoQ }}" hint-placeholder-val="{{ false }}"><div style="padding:12px 0;font-size:14px;color:#a8a29e">None here.</div></sc-if>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isStatus }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;height:100%">
+        <div ref="{{ shipRef }}" onPointerDown="{{ sDown }}" onPointerMove="{{ sMove }}" onPointerUp="{{ sUp }}" onPointerCancel="{{ sUp }}" style="position:relative;flex:1 1 auto;min-height:0;background:#0b0a0a;touch-action:none;cursor:grab;overflow:hidden">
+          <div style="position:absolute;left:16px;right:16px;top:14px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;z-index:2;pointer-events:none">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <span style="font:800 30px var(--font-heading);letter-spacing:-0.02em;line-height:1">{{ shipName }}</span>
+              <span style="font-size:12px;font-weight:700;letter-spacing:0.14em;color:#a8a29e">PILOT · <span style="color:#f3f2f2">BEN</span></span>
+            </div>
+            <button onClick="{{ swapShip }}" onPointerDown="{{ stop }}" style="pointer-events:auto;min-height:44px;padding:0 14px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font:800 14px var(--font-heading);letter-spacing:0.08em;text-align:center;cursor:pointer;transition:background .15s, color .15s, box-shadow .15s" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">SWAP ›</button>
+          </div>
+          <sc-if value="{{ shipLoading }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;left:16px;bottom:14px;font-size:12px;font-weight:700;letter-spacing:0.14em;color:#77716b;z-index:2">LOADING SHIP…</span></sc-if>
+        </div>
+        <button onClick="{{ upToggle }}" style="flex:0 0 52px;display:flex;justify-content:center;align-items:center;padding:0 12px;background:{{ upBg }};color:{{ upFg }};border:0;border-top:2px solid #f3f2f2;border-radius:0;font:800 14px var(--font-heading);letter-spacing:0.06em;text-align:center;cursor:pointer;gap:8px;white-space:nowrap;transition:background .15s, color .15s, box-shadow .15s"><span>UPGRADES EQUIPPED</span><span>{{ upArrow }}</span></button>
+        <sc-if value="{{ upOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="flex:0 0 auto;max-height:50%;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px 16px;padding:14px 16px;border-top:2px solid #f3f2f2">
+            <sc-for list="{{ ups }}" as="u" hint-placeholder-count="5">
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <span style="font-size:12px;font-weight:700;letter-spacing:0.14em">{{ u.n }}</span>
+                <div style="display:flex;gap:4px"><sc-for list="{{ u.boxes }}" as="x" hint-placeholder-count="3"><div style="width:24px;height:10px;background:{{ x.bg }};border:2px solid #f3f2f2"></div></sc-for></div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isCargo }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:16px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:12px;font-weight:700;letter-spacing:0.14em">HOLD</span><span style="font:800 17px var(--font-heading)">{{ holdTxt }}</span></div>
+        <div style="display:flex;gap:4px"><sc-for list="{{ hold }}" as="x" hint-placeholder-count="10"><div style="flex:1;height:22px;background:{{ x.bg }};border:2px solid #f3f2f2"></div></sc-for></div>
+        <div style="display:flex;flex-direction:column;border-top:2px solid #f3f2f2">
+          <sc-if value="{{ cargoNone }}" hint-placeholder-val="{{ false }}"><div style="padding:16px 0;font-size:15px;color:#a8a29e">Hold empty. Buy goods at any dock.</div></sc-if>
+          <sc-for list="{{ cargo }}" as="g" hint-placeholder-count="3">
+            <div style="display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:2px 12px;align-items:center;min-height:60px;padding:8px 0;border-bottom:1px solid #5b5753">
+              <div style="grid-row:span 2;width:40px;height:40px;box-sizing:border-box;border:2px solid #3a3836;background-image:{{ g.ic }};background-size:26px 26px;background-repeat:no-repeat;background-position:center"></div>
+              <span style="font:800 17px var(--font-heading)">{{ g.n }}</span><span style="font:800 17px var(--font-heading)">× {{ g.q }}</span>
+              <span style="font-size:12px;font-weight:700;letter-spacing:0.12em;color:#6ee7b7">BEST · {{ g.best }}</span><span></span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isItems }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:16px;display:flex;flex-direction:column;gap:8px">
+        <sc-if value="{{ itemsNone }}" hint-placeholder-val="{{ false }}"><div style="padding:16px 0;font-size:15px;color:#a8a29e">No items aboard.</div></sc-if>
+        <div style="font-size:12px;font-weight:800;letter-spacing:0.14em;color:#a8a29e">TAP TO PIN TO THE ITEM BUTTON</div>
+        <sc-for list="{{ items }}" as="it" hint-placeholder-count="4">
+          <div onClick="{{ it.pick }}" style="display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:2px 12px;align-items:center;min-height:68px;padding:8px 10px;border:2px solid {{ it.bd }};cursor:pointer;transition:background .15s" style-hover="background:var(--color-accent-900)">
+            <img src="{{ it.icon }}" alt="" style="grid-row:span 2;width:32px;height:32px;display:block;justify-self:center;opacity:{{ it.op }}">
+            <div style="display:flex;align-items:baseline;gap:8px;min-width:0"><span style="font:800 16px var(--font-heading)">{{ it.n }}</span><span style="font:800 16px var(--font-heading)">× {{ it.q }}</span><span style="font-size:11px;font-weight:800;letter-spacing:0.14em;color:#ffd23a">{{ it.tag }}</span></div>
+            <div style="grid-row:span 2;display:flex;gap:6px">
+              <sc-if value="{{ it.buyOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ it.buy }}" style="display:flex;align-items:center;justify-content:center;min-height:44px;padding:0 10px;background:transparent;color:#ffd23a;border:2px solid #ffd23a;border-radius:0;font:800 13px var(--font-heading);letter-spacing:0.06em;cursor:pointer;white-space:nowrap" style-active="background:var(--color-accent-700)">{{ it.buyTxt }}</button></sc-if>
+              <button onClick="{{ it.use }}" disabled="{{ it.useDis }}" style="display:flex;align-items:center;justify-content:center;min-width:64px;min-height:44px;padding:0 10px;background:#f3f2f2;color:#201e1d;border:2px solid #f3f2f2;border-radius:0;font:800 13px var(--font-heading);letter-spacing:0.06em;cursor:pointer;opacity:{{ it.op }}" style-active="background:var(--color-accent-700);color:#f3f2f2">{{ it.useTxt }}</button>
+            </div>
+            <span style="font-size:14px;color:#d6d3d1">{{ it.d }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isWeapons }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:16px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:grid;grid-template-columns:72px minmax(0,1fr);gap:6px 14px;align-items:start;padding-bottom:14px;border-bottom:2px solid #f3f2f2">
+          <div style="grid-row:span 3;width:72px;height:72px;box-sizing:border-box;border:2px solid {{ wv.bd }};background:{{ wv.bg }};display:flex;align-items:center;justify-content:center"><img src="{{ wv.icon }}" alt="" style="width:44px;height:44px;display:block"></div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:11px;font-weight:800;letter-spacing:0.14em;padding:3px 6px;background:#f3f2f2;color:#201e1d">BUTTON {{ wv.btn }}</span><span style="font-size:11px;font-weight:800;letter-spacing:0.14em;color:{{ wv.stCol }}">{{ wv.st }}</span></div>
+          <span style="font:800 24px var(--font-heading);letter-spacing:-0.01em;line-height:1">{{ wv.n }}</span>
+          <span style="font-size:16px;line-height:1.35;color:#e7e5e4;text-wrap:pretty">{{ wv.d }}</span>
+        </div>
+        <button onClick="{{ laserPick }}" style="display:flex;align-items:center;justify-content:flex-start;gap:12px;min-height:56px;padding:0 12px;background:{{ laserBg }};color:{{ laserFg }};border:2px solid #f3f2f2;border-radius:0;cursor:pointer;font-family:inherit;transition:background .15s, color .15s" style-active="background:var(--color-accent-700);color:#f3f2f2"><img src="{{ laserIcon }}" alt="" style="width:28px;height:28px;display:block"><span style="font:800 15px var(--font-heading);letter-spacing:0.06em">TWIN LASER</span><span style="margin-left:auto;font-size:11px;font-weight:800;letter-spacing:0.14em;opacity:0.7">1</span></button>
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:800;letter-spacing:0.14em"><span>SPECIAL · BUTTON 2</span><span style="color:#a8a29e">{{ specOwned }}</span></div>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+          <sc-for list="{{ specs }}" as="s" hint-placeholder-count="9">
+            <button onClick="{{ s.pick }}" style="position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:84px;padding:8px 4px;background:{{ s.bg }};color:{{ s.fg }};border:2px solid {{ s.bd }};border-radius:0;cursor:pointer;font-family:inherit;transition:background .15s, color .15s" style-active="background:var(--color-accent-700);color:#f3f2f2">
+              <img src="{{ s.icon }}" alt="" style="width:30px;height:30px;display:block;opacity:{{ s.op }}">
+              <span style="font:800 13px var(--font-heading);letter-spacing:0.06em">{{ s.n }}</span>
+              <span style="position:absolute;right:5px;top:4px;font-size:10px;font-weight:800;letter-spacing:0.1em;color:{{ s.tagCol }}">{{ s.tag }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isMarket }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column">
+        <sc-if value="{{ mkLive }}" hint-placeholder-val="{{ false }}"><div style="margin:12px 16px 0;display:flex;flex-direction:column;gap:2px;padding:8px 10px;border:2px solid #ffd23a"><span style="font-size:11px;font-weight:800;letter-spacing:0.14em;color:#ffd23a">MARKET NEWS · {{ mkLeft }} MIN LEFT</span><span style="font:800 15px var(--font-heading);line-height:1.25">{{ mkEvent }}</span><span style="font-size:12px;font-weight:700;color:#a8a29e;padding-top:4px">BEST PRICE YOU HAVE SEEN FOR EACH GOOD</span></div></sc-if>
+        <div style="display:flex;gap:6px;overflow-x:auto;padding:12px 16px;border-bottom:2px solid #f3f2f2">
+          <sc-for list="{{ goods }}" as="g" hint-placeholder-count="5">
+            <button onClick="{{ g.pick }}" style="flex:0 0 auto;min-height:44px;padding:0 12px;background:{{ g.bg }};color:{{ g.fg }};border:2px solid #f3f2f2;border-radius:0;font:800 13px var(--font-heading);letter-spacing:0.06em;text-align:center;cursor:pointer;white-space:nowrap;transition:background .15s, color .15s, box-shadow .15s;display:flex;align-items:center;gap:8px" style-active="background:var(--color-accent-700);color:#f3f2f2"><span style="width:22px;height:22px;flex:0 0 auto;background-image:{{ g.ic }};background-size:contain;background-repeat:no-repeat"></span>{{ g.n }}</button>
+          </sc-for>
+        </div>
+        <div style="display:flex;flex-direction:column;padding:4px 16px 12px">
+          <sc-for list="{{ prices }}" as="p" hint-placeholder-count="9">
+            <div style="display:grid;grid-template-columns:28px minmax(80px,40%) minmax(0,1fr) 56px;gap:10px;align-items:center;min-height:40px;border-bottom:1px solid #3a3836">
+              <div style="width:28px;height:28px;background-image:{{ p.ic }};background-size:contain;background-repeat:no-repeat;background-position:center"></div><span style="font:800 14px var(--font-heading)">{{ p.n }}</span>
+              <div style="display:flex;align-items:center;gap:8px;min-width:0"><div style="height:12px;width:{{ p.w }};background:{{ p.c }}"></div><span style="font-size:11px;font-weight:700;letter-spacing:0.12em;color:{{ p.c }};white-space:nowrap">{{ p.tag }}</span></div>
+              <span style="font:800 15px var(--font-heading);text-align:right">{{ p.v }} G</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isFleets }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;padding:4px 16px">
+        <sc-for list="{{ fleets }}" as="f" hint-placeholder-count="9">
+          <div style="display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:12px;align-items:center;min-height:50px;border-bottom:1px solid #5b5753">
+            <div style="width:32px;height:32px;background-image:{{ f.crest }};background-size:contain;background-repeat:no-repeat"></div>
+            <span style="font:800 16px var(--font-heading)">{{ f.n }}</span>
+            <span style="font:800 14px var(--font-heading);letter-spacing:0.08em;color:{{ f.mc }}">{{ f.m }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isComms }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;padding:4px 16px">
+        <sc-if value="{{ commsNone }}" hint-placeholder-val="{{ false }}"><div style="padding:16px 0;font-size:15px;color:#a8a29e">No messages yet.</div></sc-if>
+          <sc-for list="{{ comms }}" as="m" hint-placeholder-count="3">
+          <div style="display:flex;flex-direction:column;gap:4px;padding:14px 0;border-bottom:1px solid #5b5753">
+            <div style="display:flex;justify-content:space-between;gap:12px"><span style="font-size:12px;font-weight:700;letter-spacing:0.14em;color:{{ m.c }}">{{ m.who }}</span><span style="font-size:12px;font-weight:700;color:#a8a29e">{{ m.t }}</span></div>
+            <span style="font:700 18px var(--font-heading);line-height:1.3;text-wrap:pretty">{{ m.line }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isQuests }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;padding:16px;gap:20px">
+        <sc-if value="{{ questsNone }}" hint-placeholder-val="{{ false }}"><div style="padding:16px 0;font-size:15px;color:#a8a29e">Nothing active. Take a contract at any dock.</div></sc-if>
+          <sc-for list="{{ quests }}" as="q" hint-placeholder-count="2">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;gap:10px"><span style="font-size:11px;font-weight:800;letter-spacing:0.14em;padding:3px 6px;background:{{ q.kb }};color:#201e1d">{{ q.kind }}</span><span style="font:800 20px var(--font-heading)">{{ q.n }}</span></div>
+            <div style="display:flex;flex-direction:column;border-top:2px solid #f3f2f2">
+              <sc-for list="{{ q.steps }}" as="s" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;gap:12px;min-height:46px;border-bottom:1px solid #5b5753"><div style="width:16px;height:16px;flex:0 0 auto;border:2px solid #f3f2f2;background:{{ s.bg }}"></div><span style="font-size:16px;color:{{ s.fg }}">{{ s.t }}</span></div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isJournal }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:16px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:800 30px var(--font-heading);letter-spacing:-0.02em">BEN</span><span style="font:800 17px var(--font-heading)">{{ jLv }}</span></div>
+        <div style="height:10px;background:#000;border:1px solid #5b5753"><div style="height:100%;width:{{ jXp }};background:#ffd23a"></div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;border-top:2px solid #f3f2f2;border-bottom:2px solid #f3f2f2">
+          <div style="padding:10px 10px 10px 0;display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;font-weight:700;letter-spacing:0.14em;color:#a8a29e">GOLD</span><span style="font:800 18px var(--font-heading);color:#ffd23a">{{ jGold }}</span></div>
+          <div style="padding:10px;border-left:2px solid #f3f2f2;display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;font-weight:700;letter-spacing:0.14em;color:#a8a29e">MERU</span><span style="font:800 18px var(--font-heading)">KNOWN</span></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button onClick="{{ tap }}" style="min-height:52px;padding:0 14px;background:transparent;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font:800 15px var(--font-heading);letter-spacing:0.08em;text-align:center;cursor:pointer;transition:background .15s, color .15s, box-shadow .15s" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">SAVE</button>
+          <button onClick="{{ tap }}" style="min-height:52px;padding:0 14px;background:transparent;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font:800 15px var(--font-heading);letter-spacing:0.08em;text-align:center;cursor:pointer;transition:background .15s, color .15s, box-shadow .15s" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">LOAD</button>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:660},&quot;tab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;star&quot;,&quot;options&quot;:[&quot;scan&quot;,&quot;star&quot;,&quot;signals&quot;,&quot;status&quot;,&quot;cargo&quot;,&quot;items&quot;,&quot;weapons&quot;,&quot;market&quot;,&quot;fleets&quot;,&quot;comms&quot;,&quot;quests&quot;,&quot;journal&quot;],&quot;tsType&quot;:&quot;string&quot;},&quot;land&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;bg&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+const WD = [
+  { k: 'shasta', n: 'SHASTA', x: -1, z: -1, c: '#e8eef7', g: 'foundry_steel', m: 'FRIENDLY' },
+  { k: 'luxor', n: 'LUXOR', x: 0, z: -1, c: '#e0574a', g: 'prism_glass', m: 'WARY' },
+  { k: 'ur', n: 'UR', x: 1, z: -1, c: '#e8963a', g: 'ur_amber', m: 'FRIENDLY' },
+  { k: 'gaya', n: 'GAYA', x: -1, z: 0, c: '#a97bdd', g: 'gaya_grain', m: 'ALLIED' },
+  { k: 'meru', n: 'MERU', x: 0, z: 0, c: '#b9bec7', g: 'meru_incense', m: 'HOME' },
+  { k: 'zion', n: 'ZION', x: 1, z: 0, c: '#e8cf4a', g: 'zion_salt', m: 'FRIENDLY' },
+  { k: 'nebo', n: 'NEBO', x: -1, z: 1, c: '#5aa6e8', g: 'nebo_ink', m: 'WARY' },
+  { k: 'kufa', n: 'KUFA', x: 0, z: 1, c: '#b08355', g: 'kufa_copper', m: 'FRIENDLY' },
+  { k: 'jidda', n: 'JIDDA', x: 1, z: 1, c: '#5ec97e', g: 'jidda_spice', m: 'AT WAR' },
+  { k: 'p1', n: 'EPHRAIM', x: 0, z: -2, c: '#7fd0d8', p: 1, m: 'YOURS' },
+  { k: 'myard', n: 'MACHINE YARD', x: 0.5, z: -0.5, c: '#ff8a6a', yard: 1, m: 'HACKED' }
+];
+const GOODS = [['zion_salt', 'ZION SALT'], ['gaya_grain', 'GAYA GRAIN'], ['foundry_steel', 'FOUNDRY STEEL'], ['kufa_copper', 'KUFA COPPER'], ['nebo_ink', 'NEBO INK'], ['prism_glass', 'PRISM GLASS'], ['jidda_spice', 'JIDDA SPICE'], ['ur_amber', 'UR AMBER'], ['meru_incense', 'MERU INCENSE'], ['gaya_timber', 'GAYA TIMBER'], ['meru_stone', 'MERU STONE'], ['zion_metal', 'ZION METAL']];
+const HOME2 = { gaya_timber: 'gaya', meru_stone: 'meru', zion_metal: 'zion' };
+const MC = { HOME: '#f3f2f2', ALLIED: '#6ee7b7', FRIENDLY: '#f3f2f2', WARY: '#ffd23a', 'AT WAR': '#ff6a4d', YOURS: '#7fd0d8', HACKED: '#ff8a6a' };
+const YOU = { x: 0.3, z: 0.42 };
+const ST = { hostile: ['HOSTILE', '#ff4a2e'], friend: ['FRIENDLY', '#6ee7b7'], allied: ['ALLIED', '#6ee7b7'], hacked: ['HACKED', '#ff8ad8'], beast: ['CREATURE', '#f0abfc'], rock: ['MINEABLE', '#a8a29e'] };
+const CONTACTS = [
+  { k: 'mer', n: 'MERU PATROL', sub: 'SCOUT · ESCORTING', d: 35, a: 2.4, st: 'friend', crest: 'meru' },
+  { k: 'ps', n: 'PIRATE SCOUT', sub: 'CLOSING FAST', d: 48, a: 0.6, st: 'hostile', crest: 'pirate' },
+  { k: 'pc', n: 'PIRATE CRUISER', sub: 'TURRET ARMED', d: 71, a: 1.0, st: 'hostile', crest: 'pirate' },
+  { k: 'rk', n: 'ASTEROIDS × 6', sub: 'TOW TO A MINE', d: 90, a: 5.2, st: 'rock' },
+  { k: 'ms', n: 'MACHINE SCOUT', sub: 'SIGNAL NOT ITS OWN', d: 96, a: 4.3, st: 'hacked', crest: 'machine' },
+  { k: 'vm', n: 'VOID MOTH', sub: 'CIRCLING', d: 118, a: 3.9, st: 'beast' },
+  { k: 'gc', n: 'GAYA CRUISER', sub: 'PATROL', d: 132, a: 3.15, st: 'allied', crest: 'gaya' }];
+const SIG = [
+  { k: 'myard', n: 'MACHINE YARD', kind: 'HACKED FLEET', d: 190, b: '045', crest: 'machine', model: 'machineYard', q: [['MAIN', 'THE MACHINE YARD', 'Find the voice inside'], ['MAIN', 'FREE THE FLEET', 'Reach the yard core']] },
+  { k: 'fuel', n: 'FUEL DEPOT', kind: 'DEPOT', d: 620, b: '120', crest: 'fuel', model: 'fuel', q: [] },
+  { k: 'krass', n: 'KRASS', kind: 'PIRATE PORT', d: 3430, b: '062', crest: 'pirate', model: 'pirBase', q: [['BOUNTY', 'BREAK THE RAID', 'Sink 3 raiders near Krass']] },
+  { k: 'lantern', n: 'THE LANTERN HOUSE', kind: 'NEST · VOID MOTHS', d: 3500, b: '255', crest: 'beast', model: 'voidMoth', q: [['SIDE', 'LANTERN LIGHT', 'Tow a glowing rock home']] },
+  { k: 'beta1', n: 'IONA', kind: 'NEW WORLD', d: 4180, b: '200', crest: 'beta1', model: 'planet:beta1', q: [['SIDE', 'PLANT A BEACON', 'Land on Iona']] },
+  { k: 'buoy', n: 'NAV BUOY 3', kind: 'BUOY', d: 4400, b: '310', crest: 'buoy', model: 'buoy', q: [] }];
+const QK = { MAIN: '#ffd23a', SIDE: '#a8a29e', BOUNTY: '#ff4a2e' };
+const CR = {};
+function crest(kind) {
+  if (CR[kind]) return CR[kind]; const N = 128, c = document.createElement('canvas'); c.width = c.height = N; const g = c.getContext('2d'), h = N / 2, TAU = Math.PI * 2;
+  if (kind === 'pirate') { const W = '#f3f2f2', K = '#0c0a0a';
+    g.fillStyle = K; g.beginPath(); g.arc(h, h, h * 0.96, 0, TAU); g.fill(); g.lineWidth = N * 0.05; g.strokeStyle = '#ff2a3a'; g.stroke();
+    g.strokeStyle = W; g.fillStyle = W; g.lineCap = 'round'; g.lineWidth = N * 0.075;
+    for (const s2 of [-1, 1]) { const x0 = h - s2 * N * 0.3, y0 = h + N * 0.32, x1 = h + s2 * N * 0.3, y1 = h - N * 0.02; g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke();
+      for (const [x, y, dx, dy] of [[x0, y0, s2, 1], [x1, y1, -s2, -1]]) for (const k of [-1, 1]) { g.beginPath(); g.arc(x + dx * N * 0.02 + k * N * 0.035, y + dy * N * 0.02 + k * s2 * N * 0.035, N * 0.045, 0, TAU); g.fill(); } }
+    g.beginPath(); g.arc(h, h - N * 0.08, N * 0.24, 0, TAU); g.fill(); g.fillRect(h - N * 0.14, h + N * 0.04, N * 0.28, N * 0.18);
+    g.fillStyle = K; for (const s2 of [-1, 1]) { g.beginPath(); g.ellipse(h + s2 * N * 0.1, h - N * 0.08, N * 0.07, N * 0.08, s2 * 0.3, 0, TAU); g.fill(); }
+    g.fillStyle = '#ff2a3a'; for (const s2 of [-1, 1]) { g.beginPath(); g.arc(h + s2 * N * 0.1, h - N * 0.07, N * 0.025, 0, TAU); g.fill(); }
+    g.fillStyle = K; g.beginPath(); g.moveTo(h, h); g.lineTo(h - N * 0.035, h + N * 0.07); g.lineTo(h + N * 0.035, h + N * 0.07); g.closePath(); g.fill();
+    for (let k = -2; k <= 2; k++) g.fillRect(h + k * N * 0.05 - N * 0.008, h + N * 0.12, N * 0.016, N * 0.1);
+  } else if (kind === 'fuel' || kind === 'buoy') {
+    const fuel = kind === 'fuel', rg = g.createRadialGradient(h * 0.9, h * 0.76, 2, h, h, h * 0.92); rg.addColorStop(0, fuel ? '#4fbf8a' : '#5a8fd0'); rg.addColorStop(0.62, fuel ? '#1d6a48' : '#24497c'); rg.addColorStop(1, fuel ? '#0b2c1e' : '#0e1f38');
+    g.beginPath(); g.arc(h, h, h * 0.92, 0, TAU); g.fillStyle = rg; g.fill(); g.lineWidth = N * 0.04; g.strokeStyle = '#231d3c'; g.stroke(); g.fillStyle = '#f3f2f2'; g.strokeStyle = '#f3f2f2'; g.lineCap = 'round';
+    if (fuel) { g.beginPath(); g.moveTo(h, h - N * 0.3); g.bezierCurveTo(h + N * 0.26, h - N * 0.02, h + N * 0.24, h + N * 0.3, h, h + N * 0.3); g.bezierCurveTo(h - N * 0.24, h + N * 0.3, h - N * 0.26, h - N * 0.02, h, h - N * 0.3); g.fill(); }
+    else { g.lineWidth = N * 0.06; for (const r of [0.16, 0.3]) { g.beginPath(); g.arc(h, h + N * 0.12, N * r, -Math.PI * 0.8, -Math.PI * 0.2); g.stroke(); } g.beginPath(); g.arc(h, h + N * 0.12, N * 0.06, 0, TAU); g.fill(); }
+  } else if (kind === 'beast' || kind === 'rock') {
+    g.fillStyle = kind === 'beast' ? '#2a1430' : '#2a2826'; g.beginPath(); g.arc(h, h, h * 0.92, 0, TAU); g.fill(); g.lineWidth = N * 0.04; g.strokeStyle = kind === 'beast' ? '#f0abfc' : '#8a847e'; g.stroke();
+    g.fillStyle = kind === 'beast' ? '#f0abfc' : '#a8a29e';
+    if (kind === 'beast') { for (const s2 of [-1, 1]) { g.beginPath(); g.moveTo(h, h); g.quadraticCurveTo(h + s2 * N * 0.42, h - N * 0.36, h + s2 * N * 0.34, h + N * 0.04); g.quadraticCurveTo(h + s2 * N * 0.3, h + N * 0.3, h, h + N * 0.06); g.fill(); } g.fillStyle = '#2a1430'; g.fillRect(h - N * 0.02, h - N * 0.16, N * 0.04, N * 0.34); }
+    else { for (const [x, y, r] of [[0.42, 0.44, 0.17], [0.62, 0.58, 0.12], [0.38, 0.66, 0.09]]) { g.beginPath(); g.arc(N * x, N * y, N * r, 0, TAU); g.fill(); } }
+  } else {
+    const WC = { shasta: [['#6d92bb', '#2c4c74', '#13233a'], 'S', '#e8f6ff'], luxor: [['#a0463a', '#5e1f18', '#2c0d0a'], 'L', '#ffd9a0'], ur: [['#a46a3a', '#5c3414', '#2a1608'], 'U', '#ffe0b0'], gaya: [['#7f62b0', '#3e2770', '#1c1036'], 'G', '#f0e2ff'], zion: [['#54545c', '#2a2a30', '#121216'], 'Z', '#ffe23a'], nebo: [['#3f86a6', '#1a4a66', '#0a2232'], 'N', '#d8fff9'], kufa: [['#9a6a40', '#563416', '#281608'], 'K', '#ffd8a8'], jidda: [['#4f9a68', '#1f5a34', '#0c2a18'], 'J', '#e0ffe8'], meru: [['#3a4f86', '#1c2a5a', '#0c1430'], 'M', '#ffd23a'], p1: [['#8fa8c8', '#44618c', '#1c2a42'], '8', '#ffffff'] };
+    const FL = { beta2: ['#9a8a7a', '#4a3a2a', '#1a140e', 'Q'], beta3: ['#e0806a', '#8a2a1a', '#3a0e08', 'E'], beta4: ['#f0e07a', '#a08a1a', '#3a320a', 'C'], earth: ['#8ae0a0', '#2a8a4a', '#0e3a1e', 'E'] };
+    const P = { ...Object.fromEntries(Object.entries(WC).map(([k, v]) => ['w:' + k, v])), ...Object.fromEntries(Object.entries(FL).map(([k, v]) => [k, [[v[0], v[1], v[2]], v[3], '#ffffff']])), meru: [['#3a4f86', '#1c2a5a', '#0c1430'], 'M', '#ffd23a'], machine: [['#ff9ae2', '#b0307f', '#4a0c36'], 'F', '#ffe3f6'], machine8: [['#ff9ae2', '#b0307f', '#4a0c36'], '8', '#ffffff'], gaya: [['#7f62b0', '#3e2770', '#1c1036'], 'G', '#f0e2ff'], beta1: [['#8fc4f0', '#2f6aa8', '#10284a'], 'I', '#e8f6ff'], player: [['#8fa8c8', '#44618c', '#1c2a42'], '8', '#ffffff'] }[kind] || [['#8fa8c8', '#44618c', '#1c2a42'], '?', '#fff'];
+    const rg = g.createRadialGradient(h * 0.9, h * 0.76, 2, h, h, h * 0.92); rg.addColorStop(0, P[0][0]); rg.addColorStop(0.62, P[0][1]); rg.addColorStop(1, P[0][2]);
+    g.beginPath(); g.arc(h, h, h * 0.92, 0, TAU); g.fillStyle = rg; g.fill(); g.lineWidth = N * 0.04; g.strokeStyle = '#231d3c'; g.stroke();
+    g.font = '900 ' + Math.round(N * 0.7) + 'px Archivo, Arial Black, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round'; g.lineWidth = N * 0.07; g.strokeStyle = '#141a2c'; g.strokeText(P[1], h, h * 1.07); g.fillStyle = P[2]; g.fillText(P[1], h, h * 1.07);
+  }
+  const url = c.toDataURL(), bin = atob(url.split(',')[1]), arr = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  CR[kind] = { c, url, css: 'url(' + URL.createObjectURL(new Blob([arr], { type: 'image/png' })) + ')' }; return CR[kind];
+}
+const SPECS = ['TORPEDO', 'MISSILE', 'LANCE', 'RAIL', 'FLAK', 'MINES', 'WEB', 'ARC', 'EMP'];
+const WDESC = { LASER: 'Both guns fire straight ahead.', TORPEDO: 'Two heavy rounds, one from each outer gun.', MISSILE: 'Homes on the nearest target.', LANCE: 'A long red burn along your nose.', RAIL: 'Pierces everything in the line.', FLAK: 'A close cone of shot. Best up close.', MINES: 'Drops 3 mines behind you.', WEB: 'Holds what it hits for 4 seconds.', ARC: 'Lightning that leaps to 4 targets.', EMP: 'A pulse ring. Stalls everything near you.' };
+const WICON = { LASER: '<path d="M3 9h13M3 15h13"/><circle cx="19" cy="9" r="1.6"/><circle cx="19" cy="15" r="1.6"/>', TORPEDO: '<rect x="6" y="9" width="11" height="6" rx="3"/><path d="M6 10.5 3 8v8l3-2.5M17 12h4"/>', MISSILE: '<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>', LANCE: '<path d="M2 12h17"/><path d="M2 8.5h5M2 15.5h5"/><path d="m17 8 4 4-4 4"/>', RAIL: '<path d="M2 12h19M17 8l4 4-4 4"/><path d="M8 5v14M13 5v14"/>', FLAK: '<path d="M3 12h3M6.5 7.5 8.5 9.5M6.5 16.5l2-2"/><circle cx="14" cy="7" r="1.6"/><circle cx="17" cy="12" r="1.6"/><circle cx="14" cy="17" r="1.6"/><circle cx="20.5" cy="8.5" r="1.1"/><circle cx="20.5" cy="15.5" r="1.1"/>', MINES: '<circle cx="12" cy="12" r="5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>', WEB: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4"/>', ARC: '<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>', EMP: '<circle cx="12" cy="12" r="2"/><path d="M16.2 7.8a6 6 0 0 1 0 8.4M7.8 16.2a6 6 0 0 1 0-8.4M19.1 4.9a10 10 0 0 1 0 14.2M4.9 19.1a10 10 0 0 1 0-14.2"/>' };
+const IICON = { repair: '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/>', fuel: '<path d="M4 21V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v16M3 21h13M15 10h2a2 2 0 0 1 2 2v4a1.5 1.5 0 0 0 3 0V8l-3-3M7 8h5"/>', shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>', cell: '<rect x="3" y="7" width="16" height="10"/><path d="M22 11v2M11 9l-2 3h4l-2 3"/>' };
+const IIC = {}; const iIcon = k => IIC[k] || (IIC[k] = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#f3f2f2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (IICON[k] || '<circle cx="12" cy="12" r="8"/>') + '</svg>'));
+const WIC = {}; const wIcon = (k, c) => WIC[k + c] || (WIC[k + c] = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="' + c + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + WICON[k] + '</svg>'));
+const SHIPS = ['SCOUT', 'SHUTTLE', 'CRUISER', 'GUNNER', 'FLAGSHIP'];
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+class Component extends DCLogic {
+  state = { wView: 'MISSILE', sigSel: null, sigCrs: 'off', scanSel: 'ps', sel: 'kufa', course: 'off', ship: 0, spec: 'MISSILE', good: 'gaya_grain', pin: 'repair', fade: true };
+  holoRef = React.createRef(); radarRef = React.createRef();
+  V = { yaw: -0.35, pitch: 0.95, drag: null, t: 0 };
+  ic(k, col) { const M = this.TI; if (!M) return 'none'; const key = k + '|' + (col || ''); this._ib = this._ib || {}; return 'url(' + (this._ib[key] || (this._ib[key] = URL.createObjectURL(new Blob([M.iconSVG(k, col)], { type: 'image/svg+xml' })))) + ')'; }
+  shipRef = React.createRef(); rootRef = React.createRef(); vis = true;
+  componentDidMount() { import(new URL('worlds/trade-icons.js?v=s599c', document.baseURI).href).then(M => { this.TI = M; this.forceUpdate(); }).catch(() => {}); let last = 0; const loop = ts => { this.raf = requestAnimationFrame(loop); const dt = Math.min(0.05, last ? (ts - last) / 1000 : 0.016); last = ts; this.V.t = ts / 1000; if (!this.vis || document.hidden) { if (this.H) { this.H.h.dispose(); this.H = null; } this.kill3D(); return; } this.tickHolo(dt); this.drawRadar(); this.tickShip(dt); }; this.raf = requestAnimationFrame(loop); try { this.io = new IntersectionObserver(es => { this.vis = es[0].isIntersecting; }, { rootMargin: '100px' }); this.rootRef.current && this.io.observe(this.rootRef.current); } catch (e) {} this._eta = setInterval(() => { if (this.state.course !== 'off' && this.state.etaLeft > 0) this.setState(s => ({ etaLeft: s.etaLeft - (s.course === 'auto' ? 2 : 1) })); }, 1000); this.resetEta(); }
+  resetEta() { const w = WD.find(x => x.k === this.state.sel) || WD[7], Y = this.you(); this.setState({ etaLeft: Math.round(Math.hypot(w.x - Y.x, w.z - Y.z) * 493 / 9) }); }
+  tickHolo(dt) { const el = this.holoRef.current; if (this.H && this.H.el !== el) { this.H.h.dispose(); this.H = null; } if (!el) return; if (!this.H) { if (this._hl) return; this._hl = true; import(new URL('worlds/bridge-holo.js?v=s599h', document.baseURI).href).then(M => { this._hl = false; const e2 = this.holoRef.current; if (!e2 || this.H) return; this.H = { el: e2, h: M.createHolo(e2, { you: YOU, onPick: k => { this.blip(); this.setState(s => ({ sel: k, course: s.sel === k ? s.course : 'off' })); } }) }; }).catch(e => { this._hl = false; console.warn('holo', e); }); return; } const S = this.state, sec = Math.max(0, S.etaLeft || 0); this.H.h.set({ you: this.you(), sel: S.sel, course: this.props.live ? (this.props.live.course && this.props.live.course.name === (WD.find(x => x.k === S.sel) || {}).n ? (this.props.live.course.auto ? 'auto' : 'line') : 'off') : S.course, eta: 'ETA ' + Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0') }); this.H.h.tick(dt); }
+  componentWillUnmount() { cancelAnimationFrame(this.raf); clearTimeout(this._ft); clearInterval(this._eta); this.io && this.io.disconnect(); this.kill3D(); if (this.H) { this.H.h.dispose(); this.H = null; } }
+  load3D() { const b = document.baseURI; if (!window.__bridge3D) window.__bridge3D = Promise.all([import(new URL('vendor/three/three.module.js', b).href), import(new URL('worlds/space-installs.js?v=s596a', b).href), import(new URL('worlds/bridge-holo.js?v=s599h', b).href)]).then(([T, K, BH]) => ({ T, K, BH, kit: K.installKit(T, { low: true, outlines: true }), looks: K.loadLooks() })); return window.__bridge3D; }
+  kill3D() { const V = this.V3; if (!V) return; this.V3 = null; try { if (V.inst) { V.S.remove(V.inst.group); V.inst.dispose && V.inst.dispose(); } try { V.R.forceContextLoss(); } catch (e) {} V.R.dispose(); V.R.domElement.remove(); } catch (e) {} }
+  tickShip(dt) {
+    const el = this.shipRef.current; if (this.V3 && this.V3.el !== el) this.kill3D(); if (!el) return;
+    if (!this.V3) { if (this._ld) return; this._ld = true; this.load3D().then(M => { this._ld = false; const e2 = this.shipRef.current; if (!e2 || this.V3) return; const { T } = M, R = new T.WebGLRenderer({ antialias: true, alpha: true }); R.setPixelRatio(Math.min(window.devicePixelRatio || 1, matchMedia('(pointer: coarse)').matches ? 1.5 : 2)); R.outputColorSpace = T.SRGBColorSpace; R.setClearColor(0x000000, 0); Object.assign(R.domElement.style, { position: 'absolute', inset: '0', width: '100%', height: '100%', display: 'block' }); e2.prepend(R.domElement);
+      const S = new T.Scene(); S.add(new T.HemisphereLight(0xbcd4ff, 0x1a1530, 1.0)); const sun = new T.DirectionalLight(0xffffff, 1.7); sun.position.set(-0.55, 1, 0.45); S.add(sun); const rim = new T.DirectionalLight(0x7fd0ff, 0.6); rim.position.set(0.6, 0.3, -1); S.add(rim); const sky = M.BH.makeSky(900, R.getPixelRatio(), matchMedia('(pointer: coarse)').matches, 3.2); S.add(sky);
+      this.V3 = { M, T, R, S, el: e2, cam: new T.PerspectiveCamera(32, 1, 0.1, 3000), sky, t: 0, yaw: 0.7, pitch: 0.32, type: null, w: 0, h: 0 }; this.forceUpdate(); }).catch(e => { this._ld = false; console.warn('bridge ship', e); }); return; }
+    const V = this.V3, T = V.T, sg = this.props.tab === 'signals' && this.sigs().find(x => x.k === this.state.sigSel), type = sg ? sg.model : (this.props.live && this.props.live.hull) || ['ship', 'hullShuttle', 'hullCorvette', 'hullGunship', 'hullFlagWalk'][this.state.ship];
+    if (V.type !== type) { if (V.inst) { V.S.remove(V.inst.group); try { V.inst.dispose(); } catch (e) {} } V.type = type; try { V.inst = type.startsWith('planet:') ? V.M.BH.makePlanet(type.slice(7)) : V.M.kit.build(type, V.M.looks[type], {}); V.inst.group.userData.noFloat = true; V.S.add(V.inst.group); V.inst.group.updateMatrixWorld(true); const sp = new T.Box3().setFromObject(V.inst.group).getBoundingSphere(new T.Sphere()); V.c = sp.center; V.r = sp.radius || 5; } catch (e) { console.warn('bridge ship build', e); V.inst = null; } }
+    const w = el.clientWidth || 1, h = el.clientHeight || 1; if (w !== V.w || h !== V.h) { V.w = w; V.h = h; V.R.setSize(w, h, false); V.cam.aspect = w / h; V.cam.updateProjectionMatrix(); }
+    if (!V.drag) V.yaw += dt * 0.35; const half = V.cam.fov * Math.PI / 360, fitA = Math.min(Math.tan(half), Math.tan(half) * V.cam.aspect), dist = (V.r || 5) / Math.sin(Math.atan(fitA)) * 0.78, c = V.c || new T.Vector3();
+    V.cam.position.set(c.x + Math.sin(V.yaw) * Math.cos(V.pitch) * dist, c.y + Math.sin(V.pitch) * dist, c.z + Math.cos(V.yaw) * Math.cos(V.pitch) * dist); V.cam.lookAt(c);
+    if (V.inst && V.inst.tick) { try { V.inst.tick(dt, (h * 0.5) / Math.tan(half)); } catch (e) {} } V.t += dt; V.sky.position.copy(V.cam.position); V.sky.userData.tick(V.t); V.R.render(V.S, V.cam);
+  }
+  sDown = e => { const V = this.V3; if (!V) return; try { e.currentTarget.setPointerCapture(e.pointerId); } catch (er) {} V.drag = { x: e.clientX, y: e.clientY, yaw: V.yaw, pitch: V.pitch }; };
+  sMove = e => { const V = this.V3, D = V && V.drag; if (!D) return; const r = e.currentTarget.getBoundingClientRect(), k = e.currentTarget.clientWidth / (r.width || 1); V.yaw = D.yaw - (e.clientX - D.x) * k * 0.01; V.pitch = clamp(D.pitch + (e.clientY - D.y) * k * 0.006, -0.4, 1.2); };
+  sUp = () => { if (this.V3) this.V3.drag = null; };
+  componentDidUpdate(p, ps) { if (ps && (ps.sel !== this.state.sel || (ps.course === 'off') !== (this.state.course === 'off'))) this.resetEta(); if (p.tab !== this.props.tab) { this.setState({ fade: false }); clearTimeout(this._ft); this._ft = setTimeout(() => this.setState({ fade: true }), 40); } }
+  blip() { window.__bridgeBlip && window.__bridgeBlip(); }
+  fit(c) { const W = c.clientWidth, H = c.clientHeight, d = Math.min(2, window.devicePixelRatio || 1); const w = Math.round(W * d), h = Math.round(H * d); if (c.width !== w || c.height !== h) { c.width = w; c.height = h; } return { W, H, d }; }
+  drawRadar() {
+    const c = this.radarRef.current; if (!c || !c.clientWidth) return; const { W, H, d } = this.fit(c), g = c.getContext('2d'), t = this.V.t;
+    g.setTransform(d, 0, 0, d, 0, 0); g.clearRect(0, 0, W, H); const R = Math.min(W, H) / 2 - 18, cx = W / 2, cy = H / 2 + 8, TAU = Math.PI * 2, a = (t * 1.2) % TAU;
+    const bgG = g.createRadialGradient(cx, cy, 0, cx, cy, R); bgG.addColorStop(0, 'rgba(127,208,255,0.10)'); bgG.addColorStop(1, 'rgba(127,208,255,0.02)'); g.fillStyle = bgG; g.beginPath(); g.arc(cx, cy, R, 0, TAU); g.fill();
+    g.lineWidth = 1; for (let i = 1; i <= 4; i++) { g.strokeStyle = i === 4 ? 'rgba(243,242,242,0.45)' : 'rgba(127,208,255,0.18)'; g.lineWidth = i === 4 ? 2 : 1; g.beginPath(); g.arc(cx, cy, R * i / 4, 0, TAU); g.stroke(); }
+    g.strokeStyle = 'rgba(127,208,255,0.14)'; g.lineWidth = 1; for (let k = 0; k < 12; k++) { const aa = k / 12 * TAU, r0 = k % 3 ? R * 0.94 : R * 0.86; g.beginPath(); g.moveTo(cx + Math.cos(aa) * r0, cy + Math.sin(aa) * r0); g.lineTo(cx + Math.cos(aa) * R, cy + Math.sin(aa) * R); g.stroke(); }
+    g.beginPath(); g.moveTo(cx - R, cy); g.lineTo(cx + R, cy); g.moveTo(cx, cy - R); g.lineTo(cx, cy + R); g.stroke();
+    g.font = '700 10px Archivo, sans-serif'; g.fillStyle = 'rgba(243,242,242,0.55)'; for (let i = 1; i <= 3; i++) g.fillText(Math.round(140 * i / 4) + 'u', cx + 4, cy - R * i / 4 - 3);
+    g.save(); g.beginPath(); g.moveTo(cx, cy); g.arc(cx, cy, R, a - 0.7, a); g.closePath(); const sw = g.createRadialGradient(cx, cy, 0, cx, cy, R); sw.addColorStop(0, 'rgba(127,208,255,0.02)'); sw.addColorStop(1, 'rgba(127,208,255,0.16)'); g.fillStyle = sw; g.fill(); g.restore();
+    g.strokeStyle = 'rgba(190,235,255,0.85)'; g.lineWidth = 2; g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R); g.stroke();
+    const sel = this.state.scanSel, S0 = Math.max(18, Math.min(26, R * 0.16));
+    for (const o of ((this.props.live && this.props.live.contacts) || CONTACTS)) { const age = ((a - o.a) % TAU + TAU) % TAU, al = Math.max(0.45, 1 - age / TAU * 0.9), rr = o.d / 140 * R, x = cx + Math.cos(o.a) * rr, y = cy + Math.sin(o.a) * rr, col = ST[o.st][1], on = sel === o.k;
+      const kind = o.crest === 'machine' && Math.sin(t * 7.3) > 0.93 ? 'machine8' : (o.crest || o.st), im = crest(kind).c, sz = S0 * (on ? 1.25 : 1) * (age < 0.25 ? 1.12 : 1);
+      g.globalAlpha = al; g.drawImage(im, x - sz / 2, y - sz / 2, sz, sz); g.lineWidth = 2; g.strokeStyle = col; g.beginPath(); g.arc(x, y, sz / 2 + 2, 0, TAU); g.stroke();
+      if (on) { g.globalAlpha = 1; const pr = sz / 2 + 8 + 3 * Math.sin(t * 5); g.lineWidth = 2; g.strokeStyle = '#ffffff'; g.beginPath(); g.arc(x, y, pr, 0, TAU); g.stroke(); g.font = '800 12px Archivo, sans-serif'; g.fillStyle = '#ffffff'; const tw = g.measureText(o.n).width, lx = x + pr + 6 + tw > W - 4 ? x - pr - 6 - tw : x + pr + 6; g.fillText(o.n, lx, y + 4); } }
+    g.globalAlpha = 1; g.fillStyle = '#ff5a3c'; g.beginPath(); g.moveTo(cx, cy - 9); g.lineTo(cx + 7, cy + 6); g.lineTo(cx - 7, cy + 6); g.closePath(); g.fill();
+  }
+  sigs() { const L = this.props.live; return L && L.signals ? L.signals.map(o => ({ ...o, q: o.q || [], crest: o.crest || 'buoy', model: o.model || 'buoy' })) : SIG; }
+  you() { const L = this.props.live; return (L && L.you) || YOU; }
+  renderVals() { const out = this.baseVals(), L = this.props.live; return L ? { ...out, ...this.liveVals(L, out) } : out; }
+  liveVals(L, out) { const S = this.state, w = WD.find(x => x.k === S.sel) || WD[7], Y = this.you(), CS = L.course;
+    const SHN = { ship: 'SCOUT', hullShuttle: 'SHUTTLE', hullCorvette: 'CRUISER', hullGunship: 'GUNNER', hullFlagWalk: 'FLAGSHIP' };
+    const qs = [...(L.quest ? [{ kind: 'MAIN', kb: '#ffd23a', n: L.quest, steps: [] }] : []), ...(L.contracts || []).map(c => ({ kind: 'CONTRACT', kb: '#6ee7b7', n: c.n + ' ' + c.name + ' → ' + c.to, steps: [['Load ' + c.n + ' crates · you have ' + c.have, c.have >= c.n], ['Dock at ' + c.to + ' · ' + c.left + ' min left · ' + c.pay + ' G', 0]] })), ...(CS ? [{ kind: 'COURSE', kb: '#7fd0ff', n: CS.name, steps: [[CS.auto ? 'Autopilot is flying you there' : 'Steer to it', 0]] }] : [])];
+    const mk = (L.market || []).filter(g => g.best || g.lux), mx = Math.max(1, ...mk.map(g => g.best ? g.best.p : 0));
+    return {
+      crsLabel: CS && !CS.auto && CS.name === w.n ? 'COURSE ✓' : 'SET COURSE', crsBg: CS && CS.name === w.n ? '#2f7fd0' : 'transparent', autoLabel: CS && CS.auto && CS.name === w.n ? 'AUTOPILOT ✓' : 'AUTOPILOT', autoBg: CS && CS.auto && CS.name === w.n ? '#2f7fd0' : 'transparent', autoOn: false,
+      toggleCourse: () => { this.blip(); L.onCourse(CS && CS.name === w.n ? null : { x: w.x, z: w.z, name: w.n }, false); }, toggleAuto: () => { this.blip(1); L.onCourse({ x: w.x, z: w.z, name: w.n }, true); },
+      sgCrsLabel: 'SET COURSE', sgCrsBg: 'transparent', sgAutoLabel: 'ENGAGE AUTOPILOT', sgAutoBg: 'transparent',
+      sigCourse: () => { const o = this.sigs().find(x => x.k === S.sigSel); if (o) { this.blip(); L.onCourse({ x: o.x / 493, z: o.z / 493, name: o.n }, false); } }, sigAuto: () => { const o = this.sigs().find(x => x.k === S.sigSel); if (o) { this.blip(1); L.onCourse({ x: o.x / 493, z: o.z / 493, name: o.n }, true); } },
+      shipName: SHN[L.hull] || 'SCOUT', swapShip: () => { this.blip(); L.onSwap && L.onSwap(); },
+      hold: Array.from({ length: L.cap || 10 }, (_, i) => ({ bg: i < (L.holdN || 0) ? '#f3f2f2' : 'transparent' })), holdTxt: (L.holdN || 0) + ' / ' + (L.cap || 10),
+      cargo: (L.hold || []).map(h => ({ n: h.n, q: h.q, best: h.best || (h.paid != null ? 'PAID ' + h.paid + ' G' : '—'), ic: this.ic(h.k) })), cargoNone: !(L.hold || []).length,
+      items: (L.items || []).map(it => ({ n: it.n, q: it.q, d: it.d, tag: it.pin ? 'PINNED' : '', bd: it.pin ? '#ffd23a' : '#5b5753', op: it.q ? '1' : '0.5', icon: iIcon(it.k), useTxt: it.q ? 'USE' : 'NONE LEFT', useDis: !it.q, buyOn: !!it.buy, buyTxt: 'BUY · ' + it.buy + ' G',
+        pick: () => { this.blip(); L.onPin && L.onPin(it.k); }, use: e => { e && e.stopPropagation && e.stopPropagation(); this.blip(1); L.onItem && L.onItem(it.k); }, buy: e => { e && e.stopPropagation && e.stopPropagation(); this.blip(1); L.onBuyItem && L.onBuyItem(it.k); } })), itemsNone: !(L.items || []).length,
+      ...(L.specials && L.specials.length ? (() => { const SPK = { PLASMA_TORPEDO: 'TORPEDO', RED_CANNON: 'LANCE' }, nm = k => SPK[k] || k, cur = L.specials.find(x => x.on) || L.specials[0], v = S.wView === 'LASER' ? 'LASER' : ((S.wPicked && L.specials.find(x => nm(x.k) === S.wView)) || cur).k, isL = v === 'LASER', vv = isL ? null : L.specials.find(x => x.k === v);
+        return { wv: { n: isL ? 'TWIN LASER' : nm(v), d: isL ? WDESC.LASER : (WDESC[nm(v)] || (vv && vv.d) || ''), btn: isL ? '1' : '2', st: isL || (vv && vv.on) ? 'EQUIPPED' : 'TAP TO EQUIP', stCol: isL || (vv && vv.on) ? '#6ee7b7' : '#ffd23a', icon: wIcon(isL ? 'LASER' : nm(v), '#f3f2f2'), bd: isL || (vv && vv.on) ? '#6ee7b7' : '#f3f2f2', bg: '#161514' }, specName: nm(cur.k), specOwned: L.specials.length + ' FITTED',
+          specs: L.specials.map(x => { const n = nm(x.k), on = !isL && v === x.k; return { n, icon: wIcon(n, on ? '#201e1d' : '#f3f2f2'), op: '1', bg: on ? '#f3f2f2' : 'transparent', fg: on ? '#201e1d' : '#f3f2f2', bd: x.on ? '#6ee7b7' : '#f3f2f2', tag: x.on ? 'ON' : '', tagCol: on ? '#1f9d55' : '#6ee7b7', pick: () => { this.blip(1); this.setState({ wView: n, wPicked: true }); if (!x.on) L.onEquip && L.onEquip(x.k); } }; }) }; })() : {}),
+      goods: [], prices: mk.map(g => ({ ic: this.ic(g.k), n: g.n, v: g.best ? g.best.p : '?', w: (g.best ? Math.round(g.best.p / mx * 70) : 4) + '%', c: g.best ? '#6ee7b7' : '#5b5753', tag: g.best ? g.best.port + (g.best.age > 30 ? ' · OLD' : '') : 'NOT SEEN YET' })), mkEvent: L.event || '', mkLeft: L.eventLeft || 0, mkLive: true,
+      fleets: [...(L.fleets || []).map(f => ({ ...f, crest: crest('w:' + f.k).css })), { n: 'MACHINE FLEET', c: '#ff8a6a', m: 'HACKED', mc: MC.HACKED, crest: crest('machine').css }],
+      comms: (L.comms || []).map(c => ({ who: c.who, line: c.line, t: c.t, c: c.c || '#f3f2f2' })), commsNone: !(L.comms || []).length,
+      quests: qs.map(q => ({ ...q, steps: q.steps.map(([t, d]) => ({ t, bg: d ? '#f3f2f2' : 'transparent', fg: d ? '#a8a29e' : '#f3f2f2' })) })), questsNone: !qs.length,
+      jGold: (L.gold || 0).toLocaleString() + ' G', jLv: 'LV ' + (() => { let l = 1; while ((L.xp || 0) >= 50 * l * (l + 1)) l++; return l; })(), jXp: (() => { const x = L.xp || 0; let l = 1; while (x >= 50 * l * (l + 1)) l++; const a = 50 * (l - 1) * l, b = 50 * l * (l + 1); return Math.round((x - a) / (b - a) * 100) + '%'; })() }; }
+  baseVals() {
+    const S = this.state, tab = this.props.tab || 'star', land = !!this.props.land, bg = !!this.props.bg, tap = () => this.blip();
+    const w = WD.find(x => x.k === S.sel) || WD[7], dist = Math.round(Math.hypot(w.x - this.you().x, w.z - this.you().z) * 493), sec = Math.max(0, S.etaLeft ?? Math.round(dist / 9));
+    const gi = GOODS.findIndex(g => g[0] === S.good), nine = WD.slice(0, 9), pr = nine.map((x, wi) => x.g === S.good || HOME2[S.good] === x.k ? 8 : 11 + ((gi * 7 + wi * 5) % 16)), mx = Math.max(...pr);
+    return {
+      bg, tap, holoRef: this.holoRef, radarRef: this.radarRef, holdTxt: '6 / 10', cargoNone: false, itemsNone: false, mkEvent: '', mkLeft: 0, mkLive: false, commsNone: false, questsNone: false, jGold: '1,240 G', jLv: 'LV 4', jXp: '62%',
+      isStar: tab === 'star', isScan: tab === 'scan', isSignals: tab === 'signals', isStatus: tab === 'status', isCargo: tab === 'cargo', isItems: tab === 'items', isWeapons: tab === 'weapons', isMarket: tab === 'market', isFleets: tab === 'fleets', isComms: tab === 'comms', isQuests: tab === 'quests', isJournal: tab === 'journal',
+      inlineHolo: !bg, flow: land ? 'row' : 'column', starH: bg ? 'auto' : '100%', cardW: land && !bg ? '330px' : 'auto',
+      cbT: land || bg ? '0' : '2px solid #f3f2f2', cbL: land && !bg ? '2px solid #f3f2f2' : '0',
+      radW: land ? '42%' : 'auto', radH: land ? 'auto' : '290px', modH: land ? 'auto' : '200px',
+      wrapL: bg && land ? '48%' : '0', wrapT: bg ? 'auto' : '0', wrapMax: bg ? (land ? '100%' : '58%') : 'none', wrapBg: bg ? 'rgba(32,30,29,0.95)' : '#201e1d', wrapBd: bg && !land ? '2px solid #f3f2f2' : '0', wrapBdL: bg && land ? '2px solid #f3f2f2' : '0',
+      cOp: S.fade ? '1' : '0', cTy: S.fade ? '0px' : '12px', cTr: S.fade ? 'opacity .22s ease-out, transform .22s ease-out' : 'none',
+      sw: { crest: crest(w.yard ? 'machine' : 'w:' + w.k).css, n: w.n, c: w.c, dist: dist.toLocaleString() + 'u', eta: Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0'), mood: w.m, mc: MC[w.m] },
+      crsLabel: S.course === 'off' ? 'SET COURSE' : 'COURSE ✓', crsBg: S.course === 'off' ? 'transparent' : '#2f7fd0',
+      autoLabel: S.course === 'auto' ? 'AUTOPILOT ✓' : 'AUTOPILOT', autoBg: S.course === 'auto' ? '#2f7fd0' : 'transparent', autoOn: S.course === 'auto',
+      toggleCourse: () => { this.blip(); this.setState(s => ({ course: s.course === 'off' ? 'line' : 'off' })); },
+      toggleAuto: () => { this.blip(); this.setState(s => ({ course: s.course === 'auto' ? 'line' : 'auto' })); },
+      contacts: [...((this.props.live && this.props.live.contacts) || CONTACTS)].sort((p, q) => p.d - q.d).map(o => { const on = S.scanSel === o.k, [stn, col] = ST[o.st]; return { n: o.n, sub: stn + ' · ' + o.sub, d: o.d + 'u', b: 'BRG ' + String(Math.round(((o.a * 180 / Math.PI + 90) % 360 + 360) % 360)).padStart(3, '0'), col, img: crest(o.crest || o.st).url, bg: on ? '#3a3735' : 'transparent', ring: on ? '#ffffff' : col, pick: () => { this.blip(); this.setState({ scanSel: o.k }); } }; }),
+      scanCount: ((this.props.live && this.props.live.contacts) || CONTACTS).length + ' CONTACTS', hostiles: ((this.props.live && this.props.live.contacts) || CONTACTS).filter(o => o.st === 'hostile').length + ' HOSTILE',
+      signals: this.sigs().map(o => ({ n: o.n, k: o.kind, b: o.b, d: o.d.toLocaleString() + 'u', img: crest(o.crest).url, pick: () => { this.blip(); this.setState({ sigSel: o.k, sigCrs: 'off' }); } })),
+      ...(() => { const o = this.sigs().find(x => x.k === S.sigSel); return { sigList: tab === 'signals' && !o, sigDetail: tab === 'signals' && !!o, sd: o ? { n: o.n, k: o.kind, b: o.b, d: o.d.toLocaleString() + 'u', img: crest(o.crest).url } : { n: '', k: '', b: '', d: '', img: '' },
+        sdQuests: o ? o.q.map(([kind, n, step]) => ({ kind, n, step, kb: QK[kind] })) : [], sdNoQ: !!o && !o.q.length, sdQn: o ? String(o.q.length) : '0', sdSideW: land ? '300px' : 'auto', sdQMax: land ? 'none' : '170px',
+        sigBack: () => { this.blip(); this.setState({ sigSel: null }); }, sgCrsLabel: S.sigCrs === 'off' ? 'SET COURSE' : 'COURSE SET ✓', sgCrsBg: S.sigCrs === 'off' ? 'transparent' : '#2f7fd0', sgAutoLabel: S.sigCrs === 'auto' ? 'AUTOPILOT ✓' : 'ENGAGE AUTOPILOT', sgAutoBg: S.sigCrs === 'auto' ? '#2f7fd0' : 'transparent',
+        sigCourse: () => { this.blip(); this.setState(s2 => ({ sigCrs: s2.sigCrs === 'off' ? 'line' : 'off' })); }, sigAuto: () => { this.blip(1); this.setState(s2 => ({ sigCrs: s2.sigCrs === 'auto' ? 'line' : 'auto' })); } }; })(),
+      shipName: SHIPS[S.ship], swapShip: () => { this.blip(); this.setState(s => ({ ship: (s.ship + 1) % SHIPS.length })); },
+      shipRef: this.shipRef, rootRef: this.rootRef, sDown: this.sDown, sMove: this.sMove, sUp: this.sUp, stop: e => e.stopPropagation(), shipLoading: !this.V3,
+      upOpen: !!S.upOpen, upArrow: S.upOpen ? '▾' : '▸', upBg: S.upOpen ? '#f3f2f2' : '#201e1d', upFg: S.upOpen ? '#201e1d' : '#f3f2f2', upToggle: () => { this.blip(); this.setState(s => ({ upOpen: !s.upOpen })); },
+      ups: [['ENGINES', 2], ['HULL', 1], ['CARGO', 2], ['SCANNER', 1], ['SPECIAL', 3]].map(([n, t]) => ({ n, boxes: [0, 1, 2].map(i => ({ bg: i < t ? '#f3f2f2' : 'transparent' })) })),
+      hold: Array.from({ length: 10 }, (_, i) => ({ bg: i < 6 ? '#f3f2f2' : 'transparent' })),
+      cargo: [['gaya_grain', 'GAYA GRAIN', 3, 'KUFA 24 G'], ['zion_salt', 'ZION SALT', 2, 'UR 22 G'], ['ur_amber', 'UR AMBER', 1, 'MERU 26 G']].map(([k, n, q, best]) => ({ n, q, best, ic: this.ic(k) })),
+      items: [['repair', 'REPAIR KIT', 2], ['fuel', 'FUEL CELL', 1], ['shield', 'SHIELD CELL', 3], ['flare', 'FLARE', 4]].map(([k, n, q]) => ({ n, q, tag: S.pin === k ? 'PINNED' : '', bd: S.pin === k ? '#ffd23a' : '#5b5753', pick: () => { this.blip(); this.setState({ pin: k }); } })),
+      ...(() => { const own = n => SPECS.indexOf(n) < 5, v = S.wView, isL = v === 'LASER', eq = isL || v === S.spec; return {
+        wv: { n: isL ? 'TWIN LASER' : v, d: WDESC[v], btn: isL ? '1' : '2', st: eq ? 'EQUIPPED' : own(v) ? 'TAP TO EQUIP' : 'LOCKED · FIND IT OUT THERE', stCol: eq ? '#6ee7b7' : own(v) ? '#ffd23a' : '#a8a29e', icon: wIcon(v, '#f3f2f2'), bd: eq ? '#6ee7b7' : '#f3f2f2', bg: '#161514' },
+        laserIcon: wIcon('LASER', isL ? '#201e1d' : '#f3f2f2'), laserBg: isL ? '#f3f2f2' : 'transparent', laserFg: isL ? '#201e1d' : '#f3f2f2', laserPick: () => { this.blip(); this.setState({ wView: 'LASER', wPicked: true }); },
+        specOwned: '5 / 9 FOUND',
+        specs: SPECS.map(n => { const o = own(n), on = v === n, e = S.spec === n; return { n, icon: wIcon(n, on ? '#201e1d' : o ? '#f3f2f2' : '#8a847e'), op: o ? '1' : '0.7', bg: on ? '#f3f2f2' : 'transparent', fg: on ? '#201e1d' : o ? '#f3f2f2' : '#8a847e', bd: e ? '#6ee7b7' : o ? '#f3f2f2' : '#4a4643', tag: e ? 'ON' : o ? '' : 'LOCK', tagCol: e ? (on ? '#1f9d55' : '#6ee7b7') : '#8a847e',
+          pick: () => { this.blip(o ? 1 : 0); if (o && v === n && S.spec !== n) this.setState({ spec: n }); else if (o && S.spec !== n) this.setState({ wView: n, spec: n }); else this.setState({ wView: n }); } }; }) }; })(),
+      goods: GOODS.map(([k, n]) => ({ n, ic: this.ic(k, S.good === k ? '#201e1d' : null), bg: S.good === k ? '#f3f2f2' : 'transparent', fg: S.good === k ? '#201e1d' : '#f3f2f2', pick: () => { this.blip(); this.setState({ good: k }); } })),
+      prices: nine.map((x, i) => { const home = x.g === S.good || HOME2[S.good] === x.k, best = pr[i] === mx; return { ic: crest('w:' + x.k).css, n: x.n, v: pr[i], w: Math.round(pr[i] / mx * 100) * 0.7 + '%', c: best ? '#6ee7b7' : home ? '#7fd0ff' : '#5b5753', tag: best ? 'BEST' : home ? 'MADE HERE' : '' }; }),
+      fleets: [...WD.slice(0, 9).map(x => ({ n: x.n, c: x.c, m: x.m, mc: MC[x.m], crest: crest('w:' + x.k).css })), { n: 'MACHINE FLEET', c: '#ff8a6a', m: 'HACKED', mc: MC.HACKED, crest: crest('machine').css }],
+      comms: [['MERU CONTROL', 'Pirates near the Machine Yard.', '2m', '#f3f2f2'], ['HOPE', 'Those machines… someone else is talking.', '5m', '#7fd0ff'], ['NOBLE', 'Kufa sells fuel cheap.', '9m', '#ffd23a']].map(([who, line, t, c]) => ({ who, line, t, c })),
+      quests: [{ kind: 'MAIN', kb: '#ffd23a', n: 'THE MACHINE YARD', steps: [['Reach the yard', 1], ['Scan a machine', 1], ['Find the voice inside', 0]] }, { kind: 'SIDE', kb: '#a8a29e', n: 'GRAIN RUN', steps: [['Buy 3 Gaya grain', 1], ['Sell at Kufa', 0]] }].map(q => ({ ...q, steps: q.steps.map(([t, d]) => ({ t, bg: d ? '#f3f2f2' : 'transparent', fg: d ? '#a8a29e' : '#f3f2f2' })) }))
+    };
+  }
+}
+</script>
+</body>
+</html>

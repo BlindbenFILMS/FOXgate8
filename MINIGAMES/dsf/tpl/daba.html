@@ -1,0 +1,1818 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="bc41ab45-bb6f-4371-b55a-4315ca980639"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+
+<style>/* Modernist — design-system tokens and component classes. This file is the source of truth for the system's look; retune it here and see readme.md. */
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("f1610802-b825-4732-99b4-455c3a6f9635") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("77b64d3a-7587-4c48-8f2b-b1c57339d8b9") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("ff79c8b3-fe47-4731-b97a-eecfdaf74cf4") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("f1610802-b825-4732-99b4-455c3a6f9635") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("77b64d3a-7587-4c48-8f2b-b1c57339d8b9") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("ff79c8b3-fe47-4731-b97a-eecfdaf74cf4") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("f1610802-b825-4732-99b4-455c3a6f9635") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("77b64d3a-7587-4c48-8f2b-b1c57339d8b9") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("ff79c8b3-fe47-4731-b97a-eecfdaf74cf4") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+
+:root {
+  --color-bg: #f3f2f2;
+  --color-surface: #eae9e9;
+  --color-text: #201e1d;
+  --color-accent: #ec3013;
+  --color-accent-2: #e15b47;
+  --color-divider: color-mix(in srgb, #201e1d 40%, transparent);
+
+  /* Tonal ramps — generated in OKLCH on one shared lightness scale, so the
+     same step of any role matches the others in visual value. */
+  --color-neutral-100: #f8f4f4;
+  --color-neutral-200: #eae7e7;
+  --color-neutral-300: #d7d3d3;
+  --color-neutral-400: #bab6b6;
+  --color-neutral-500: #9b9797;
+  --color-neutral-600: #7d7979;
+  --color-neutral-700: #605d5d;
+  --color-neutral-800: #444141;
+  --color-neutral-900: #2d2b2b;
+
+  --color-accent-100: #fff2ef;
+  --color-accent-200: #ffe0d9;
+  --color-accent-300: #ffc4b8;
+  --color-accent-400: #ff9783;
+  --color-accent-500: #ff563c;
+  --color-accent-600: #dd2b0f;
+  --color-accent-700: #ae1800;
+  --color-accent-800: #7c1405;
+  --color-accent-900: #4d170e;
+
+  --color-accent-2-100: #fff2ef;
+  --color-accent-2-200: #ffe0da;
+  --color-accent-2-300: #ffc4b9;
+  --color-accent-2-400: #ff9784;
+  --color-accent-2-500: #ef6853;
+  --color-accent-2-600: #c94b39;
+  --color-accent-2-700: #9e3526;
+  --color-accent-2-800: #71261b;
+  --color-accent-2-900: #471d16;
+
+  --font-heading: "Archivo", system-ui, sans-serif;
+  --font-heading-weight: 800;
+  --font-body: "Archivo", system-ui, sans-serif;
+
+  --space-1: 4.0px;
+  --space-2: 8.0px;
+  --space-3: 12.0px;
+  --space-4: 16.0px;
+  --space-6: 24.0px;
+  --space-8: 32.0px;
+
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+
+  /* Elevation — derived from the ground: soft ink-tinted shadows on a
+     light theme, a hairline edge + ambient darkness on a dark one. */
+  --shadow-sm: 0 1px 2px color-mix(in srgb, #2d2b2b 14%, transparent);
+  --shadow-md: 0 3px 10px color-mix(in srgb, #2d2b2b 16%, transparent);
+  --shadow-lg: 0 12px 32px color-mix(in srgb, #2d2b2b 22%, transparent);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: var(--font-heading-weight); }
+
+.grayscale{filter:grayscale(1) contrast(1.08)}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Components — built with the tokens above. Plain CSS
+   on plain HTML: no JavaScript, no build step. Each class is documented in
+   readme.md and demonstrated in foundations/ and components/.
+   ══════════════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-size: 15px; line-height: 1.55; font-weight: 400; }
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 var(--space-2);
+}
+h1 { font-size: 42px; }
+h2 { font-size: 32px; }
+h3 { font-size: 25px; }
+h4 { font-size: 20px; }
+h5 { font-size: 16px; }
+h6 { font-size: 13px; }
+h6 { letter-spacing: 0.08em; text-transform: uppercase; }
+p { margin: 0 0 var(--space-3); }
+a { color: var(--color-accent); text-underline-offset: 3px; }
+img { display: block; max-width: 100%; }
+figure { margin: 0; }
+figcaption {
+  font-size: 11px; margin-top: var(--space-1);
+  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+}
+.text-muted { color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
+
+/* — rules — */
+.hr {
+  height: 2px; border: 0; margin: var(--space-4) 0;
+  background: var(--color-divider);
+}
+
+/* — buttons — */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  cursor: pointer; text-decoration: none;
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 14px; line-height: 1.2; color: var(--color-text); /* matches the .input's 14px —
+     the pair sits side by side in sign-up rows */
+  background: transparent; border: 1px solid transparent;
+  padding: var(--space-2) calc(var(--space-3) * 1.2);
+  border-radius: var(--radius-md);
+}
+.btn svg { display: block; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-primary { background: var(--color-accent); color: var(--color-bg); }
+.btn-primary:hover { background: var(--color-accent-600); }
+.btn-primary:active { background: var(--color-accent-700); }
+.btn-secondary { border-color: var(--color-divider); }
+.btn-secondary:hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.btn-secondary:active { background: color-mix(in srgb, var(--color-text) 14%, transparent); }
+.btn-ghost { color: var(--color-accent); padding-inline: var(--space-1); }
+.btn-ghost:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+.btn-ghost:active { background: color-mix(in srgb, var(--color-accent) 18%, transparent); }
+.btn-icon { width: 36px; height: 36px; padding: 0; }
+.btn-block { width: 100%; margin-top: var(--space-2); justify-content: flex-start; text-align: left; }
+
+/* — forms — */
+.field > label {
+  display: block; font-size: 12px; margin-bottom: 5px;
+  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+}
+.input {
+  width: 100%; min-height: 36px; padding: 6px 10px; font: inherit;
+  font-size: 14px; color: var(--color-text); caret-color: var(--color-accent);
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+}
+.input:hover { border-color: color-mix(in srgb, var(--color-text) 45%, transparent); }
+.input:focus-visible { border-color: var(--color-accent); outline-offset: 0; }
+textarea.input { min-height: 90px; resize: vertical; }
+.radio { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
+.radio input, .seg-opt input {
+  position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;
+}
+.radio .dot {
+  width: 16px; height: 16px; flex: none; border-radius: 50%;
+  border: 1.5px solid var(--color-divider);
+}
+.radio:hover .dot { border-color: var(--color-accent); }
+.radio input:checked + .dot {
+  border-color: var(--color-accent); background: var(--color-accent);
+  box-shadow: inset 0 0 0 4px var(--color-bg);
+}
+.radio input:focus-visible + .dot { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.seg {
+  display: inline-flex; overflow: hidden;
+  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+}
+.seg-opt {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 12px; font-size: 13px; cursor: pointer;
+}
+.seg-opt + .seg-opt { border-left: 1px solid var(--color-divider); }
+.seg-opt:has(input:checked) { background: var(--color-accent); color: var(--color-bg); }
+.seg-opt:not(:has(input:checked)):hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.seg-opt:has(input:focus-visible) { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+
+/* — cards — */
+.card {
+  display: flex; flex-direction: column; gap: var(--space-2);
+  padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-surface);
+}
+.card-kicker { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent); }
+.card-title {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 17px; line-height: 1.2;
+}
+.card-body { margin: 0; font-size: 13px; opacity: 0.8; flex: 1; }
+.card-meta {
+  display: flex; align-items: center; gap: 6px; font-size: 11px;
+  color: color-mix(in srgb, var(--color-text) 50%, transparent);
+}
+.elev-sm { box-shadow: var(--shadow-sm); }
+.elev-md { box-shadow: var(--shadow-md); }
+.elev-lg { box-shadow: var(--shadow-lg); }
+
+/* — tags — */
+.tag {
+  display: inline-flex; align-items: center; font-size: 11px;
+  letter-spacing: 0.02em; padding: 3px 10px;
+  border-radius: calc(var(--radius-md) * 0.75);
+}
+.tag-accent { background: var(--color-accent-100); color: var(--color-accent-800); }
+.tag-accent-2 { background: var(--color-accent-2-100); color: var(--color-accent-2-800); }
+.tag-neutral { background: var(--color-neutral-100); color: var(--color-neutral-800); }
+.tag-outline { border: 1px solid var(--color-accent); color: var(--color-accent); }
+
+/* — navigation — */
+.nav {
+  display: flex; align-items: center; gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 2px solid var(--color-divider);
+}
+.nav-brand {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 18px; margin-right: auto;
+}
+.nav a { color: inherit; text-decoration: none; font-size: 14px; }
+.nav a:hover, .nav a[aria-current='page'] { color: var(--color-accent); }
+
+/* — tables — */
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table th {
+  text-align: left; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  padding: var(--space-2); border-bottom: 2px solid var(--color-divider);
+}
+.table td {
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--color-divider);
+}
+.table tbody tr:hover { background: color-mix(in srgb, var(--color-text) 4%, transparent); }
+
+/* — dialog — */
+.dialog-backdrop {
+  position: fixed; inset: 0; display: grid; place-items: center;
+  padding: var(--space-4);
+  background: color-mix(in srgb, var(--color-neutral-900) 50%, transparent);
+}
+.dialog {
+  width: min(440px, 100%); display: flex; flex-direction: column; gap: var(--space-3);
+  padding: var(--space-4); border-radius: var(--radius-lg);
+  background: var(--color-surface); box-shadow: var(--shadow-lg);
+}
+.dialog-title {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 20px;
+}
+.dialog-body { font-size: 14px; opacity: 0.85; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-2); }
+
+</style>
+<script src="289a3672-087d-4285-8144-03756f97f467"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("f1610802-b825-4732-99b4-455c3a6f9635") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("77b64d3a-7587-4c48-8f2b-b1c57339d8b9") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("ff79c8b3-fe47-4731-b97a-eecfdaf74cf4") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("f1610802-b825-4732-99b4-455c3a6f9635") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("77b64d3a-7587-4c48-8f2b-b1c57339d8b9") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("ff79c8b3-fe47-4731-b97a-eecfdaf74cf4") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("f1610802-b825-4732-99b4-455c3a6f9635") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("77b64d3a-7587-4c48-8f2b-b1c57339d8b9") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("ff79c8b3-fe47-4731-b97a-eecfdaf74cf4") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("f1610802-b825-4732-99b4-455c3a6f9635") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("77b64d3a-7587-4c48-8f2b-b1c57339d8b9") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("ff79c8b3-fe47-4731-b97a-eecfdaf74cf4") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+<style>
+  html, body { margin: 0; height: 100%; background: #241a26; overflow: hidden; }
+  * { box-sizing: border-box; }
+  a { color: #ec3013; }
+  a:hover { color: #b8250e; }
+  @keyframes dbIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes dbTitle { 0% { opacity: 0; transform: scale(.94); } 16% { opacity: 1; transform: scale(1); } 78% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes dbPop { 0% { transform: scale(.4); opacity: 0; } 55% { transform: scale(1.16); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes dbRing { 0%, 100% { opacity: .4; transform: scale(1); } 50% { opacity: 1; transform: scale(1.08); } }
+  @keyframes dbGlow { 0%, 100% { opacity: .18; } 50% { opacity: .4; } }
+  @keyframes dbStar { 0%, 100% { opacity: .3; } 50% { opacity: 1; } }
+  @keyframes dbUrgent { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+  @keyframes dbShout { 0% { transform: scale(.6) rotate(-6deg); opacity: 0; } 45% { transform: scale(1.14) rotate(3deg); opacity: 1; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
+</style>
+</helmet>
+
+<div style="position:absolute; inset:0; display:flex; flex-direction:column; background:#241a26; font-family:var(--font-body), Archivo, sans-serif; color:#201e1d; user-select:none; -webkit-user-select:none">
+
+  <div style="display:flex; flex-wrap:wrap; align-items:stretch; background:#f3f2f2; border-bottom:2px solid #201e1d; flex:0 0 auto; z-index:4">
+    <div style="padding:9px 14px; display:flex; flex-direction:column; gap:1px; flex:0 0 auto">
+      <span style="font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:#ec3013; font-weight:700; white-space:nowrap">{{ hudKicker }}</span>
+      <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:15px; font-weight:800; letter-spacing:-.01em; text-transform:uppercase; line-height:1.1; white-space:nowrap; width:max-content">Daba</span>
+    </div>
+    <div style="border-left:2px solid #201e1d; padding:9px 14px; display:flex; flex-direction:column; gap:1px; justify-content:center; flex:1 1 auto; min-width:0">
+      <span style="font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:#6b6864; font-weight:700">{{ callLabel }}</span>
+      <span style="font-size:10px; font-weight:700; line-height:1.3; overflow-wrap:break-word">{{ callText }}</span>
+    </div>
+    <div style="border-left:2px solid #201e1d; padding:9px 13px; display:flex; align-items:center; gap:12px; flex:0 0 auto">
+      <div style="display:flex; flex-direction:column; gap:1px">
+        <span style="font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:#6b6864; font-weight:700">Bank</span>
+        <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:17px; font-weight:800; line-height:1; color:{{ bankColour }}; font-variant-numeric:tabular-nums">{{ bankText }}</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:1px">
+        <span style="font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:#6b6864; font-weight:700">Spins</span>
+        <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:17px; font-weight:800; line-height:1; color:{{ spinColour }}; font-variant-numeric:tabular-nums">{{ spinText }}</span>
+      </div>
+    </div>
+    <div style="display:flex; align-items:stretch; flex:0 0 auto">
+      <button sc-camel-on-click="{{ toggleMusic }}" style="padding:0 12px; border:0; border-left:2px solid #201e1d; background:#f3f2f2; color:{{ musicColor }}; font-family:var(--font-body), Archivo, sans-serif; font-size:9px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; white-space:nowrap" style-hover="background:#e6e4dd">{{ musicLabel }}</button>
+      <button sc-camel-on-click="{{ toggleSound }}" style="padding:0 12px; border:0; border-left:2px solid #201e1d; background:#f3f2f2; color:{{ soundColor }}; font-family:var(--font-body), Archivo, sans-serif; font-size:9px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; white-space:nowrap" style-hover="background:#e6e4dd">{{ soundLabel }}</button>
+    </div>
+  </div>
+
+  <div data-screen-label="{{ stageLabel }}" style="position:relative; flex:1 1 auto; min-height:0; overflow:hidden; background:#241a26">
+
+    <svg sc-camel-view-box="0 0 200 140" sc-camel-preserve-aspect-ratio="xMidYMid slice" style="position:absolute; inset:0; width:100%; height:100%; display:block">
+      <rect x="0" y="0" width="200" height="140" fill="#2b1f2e"></rect>
+      <rect x="0" y="0" width="200" height="18" fill="#352640"></rect>
+      <g fill="#f6f4ef">
+        <circle cx="26" cy="7" r="0.7" style="animation:dbStar 3s ease-in-out infinite"></circle>
+        <circle cx="88" cy="5" r="0.6" style="animation:dbStar 2.6s ease-in-out .5s infinite"></circle>
+        <circle cx="158" cy="9" r="0.6" style="animation:dbStar 3.4s ease-in-out 1.1s infinite"></circle>
+      </g>
+      <g>
+        <ellipse cx="62" cy="70" rx="56" ry="52" fill="#d9a84e" opacity="0.08" style="animation:dbGlow 4.4s ease-in-out infinite"></ellipse>
+      </g>
+      <rect x="0" y="128" width="200" height="12" fill="#1d1520"></rect>
+    </svg>
+
+    <svg data-daba-wheel="1" sc-camel-view-box="0 0 200 140" sc-camel-preserve-aspect-ratio="xMidYMid meet" style="position:absolute; inset:0; width:100%; height:100%; display:block; z-index:1">
+
+      <g transform="translate(62 70)">
+        <circle cx="0" cy="0" r="54" fill="#3a2b42" stroke="#1d1520" stroke-width="2"></circle>
+        <circle cx="0" cy="0" r="50" fill="none" stroke="#c79a42" stroke-width="3"></circle>
+        <circle cx="0" cy="0" r="50" fill="none" stroke="#f0d08a" stroke-width="0.9"></circle>
+
+        <g transform="{{ outerT }}" opacity="{{ outerFade }}" style="transition:opacity .28s ease">
+          <sc-for list="{{ outerSegs }}" as="og" hint-placeholder-count="6">
+            <g>
+              <path d="{{ og.d }}" fill="{{ og.fill }}" stroke="#1d1520" stroke-width="1.4"></path>
+              <path d="{{ og.gloss }}" fill="#ffffff" opacity="0.14"></path>
+              <g transform="{{ og.pipT }}">
+                <sc-for list="{{ og.pips }}" as="pp" hint-placeholder-count="0">
+                  <circle cx="{{ pp.x }}" cy="0" r="1.7" fill="#1d1520" opacity="0.7"></circle>
+                </sc-for>
+              </g>
+              <sc-if value="{{ og.win }}" hint-placeholder-val="{{ false }}">
+                <path d="{{ og.d }}" fill="none" stroke="#f3f2f2" stroke-width="2.6" style="transform-box:fill-box; transform-origin:center; animation:dbRing 1s ease-in-out infinite"></path>
+              </sc-if>
+            </g>
+          </sc-for>
+        </g>
+
+        <!-- THE CHIPS ON THE OUTER RING, IN A GROUP THAT NEVER FADES. Same
+             rotation, drawn after: when the ring underneath is taken away so
+             the inner one is the only thing left to aim at, the bet you
+             already placed stays exactly where you put it. -->
+        <g transform="{{ outerT }}">
+          <sc-for list="{{ outerSegs }}" as="og" hint-placeholder-count="6">
+            <sc-if value="{{ og.hasChips }}" hint-placeholder-val="{{ false }}">
+              <g transform="{{ og.chipT }}">
+                <circle cx="0" cy="0" r="4.4" fill="#f3f2f2" stroke="#ec3013" stroke-width="1.5"></circle>
+                <circle cx="0" cy="0" r="4.4" fill="none" stroke="#201e1d" stroke-width="0.7"></circle>
+                <foreignObject x="-6" y="-2.8" width="12" height="6" style="overflow:hidden">
+                  <div xmlns="http://www.w3.org/1999/xhtml" style="width:12px; display:flex; justify-content:center">
+                    <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:4.6px; font-weight:800; color:#201e1d; white-space:nowrap">{{ og.n }}</span>
+                  </div>
+                </foreignObject>
+              </g>
+            </sc-if>
+          </sc-for>
+        </g>
+
+        <circle cx="0" cy="0" r="31" fill="none" stroke="#c79a42" stroke-width="2.4"></circle>
+
+        <g transform="{{ innerT }}">
+          <sc-for list="{{ innerSegs }}" as="ig" hint-placeholder-count="6">
+            <g>
+              <path d="{{ ig.d }}" fill="{{ ig.fill }}" stroke="#1d1520" stroke-width="1.4"></path>
+              <path d="{{ ig.gloss }}" fill="#ffffff" opacity="0.14"></path>
+              <g transform="{{ ig.pipT }}">
+                <path d="{{ ig.mark }}" fill="#1d1520" opacity="0.72"></path>
+              </g>
+              <sc-if value="{{ ig.win }}" hint-placeholder-val="{{ false }}">
+                <path d="{{ ig.d }}" fill="none" stroke="#f3f2f2" stroke-width="2.4" style="transform-box:fill-box; transform-origin:center; animation:dbRing 1s ease-in-out infinite"></path>
+              </sc-if>
+              <sc-if value="{{ ig.hasChips }}" hint-placeholder-val="{{ false }}">
+                <g transform="{{ ig.chipT }}">
+                  <circle cx="0" cy="0" r="4" fill="#f3f2f2" stroke="#ec3013" stroke-width="1.5"></circle>
+                  <circle cx="0" cy="0" r="4" fill="none" stroke="#201e1d" stroke-width="0.7"></circle>
+                  <foreignObject x="-6" y="-2.8" width="12" height="6" style="overflow:hidden">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="width:12px; display:flex; justify-content:center">
+                      <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:4.4px; font-weight:800; color:#201e1d; white-space:nowrap">{{ ig.n }}</span>
+                    </div>
+                  </foreignObject>
+                </g>
+              </sc-if>
+            </g>
+          </sc-for>
+        </g>
+
+        <!-- DARK, NOT HIDDEN. The inner ring still has to be there — you can
+             see it is next — but it is plainly not the one being asked for.
+             A single thick stroke down the middle of the annulus at r=21.5
+             covers the band from 13 to 30 exactly, so the tint is even and no
+             segment edge shows through it darker than its neighbour. -->
+        <sc-if value="{{ dimInner }}" hint-placeholder-val="{{ false }}">
+          <circle cx="0" cy="0" r="21.5" fill="none" stroke="#100a14" stroke-width="17" opacity="0.72"></circle>
+        </sc-if>
+
+        <sc-if value="{{ litOuter }}" hint-placeholder-val="{{ false }}">
+          <circle cx="0" cy="0" r="49.4" fill="none" stroke="#f0c040" stroke-width="2.2" opacity="0.95"></circle>
+          <circle cx="0" cy="0" r="31" fill="none" stroke="#f0c040" stroke-width="2.2" opacity="0.95"></circle>
+          <circle cx="0" cy="0" r="46" fill="none" stroke="#fff4cf" stroke-width="1" stroke-dasharray="3 5" opacity="0.75" style="animation:dbGlow 1.5s ease-in-out infinite"></circle>
+        </sc-if>
+        <sc-if value="{{ litInner }}" hint-placeholder-val="{{ false }}">
+          <circle cx="0" cy="0" r="30" fill="none" stroke="#8fd6bf" stroke-width="2.2" opacity="0.95"></circle>
+          <circle cx="0" cy="0" r="13" fill="none" stroke="#8fd6bf" stroke-width="2.2" opacity="0.95"></circle>
+          <circle cx="0" cy="0" r="27" fill="none" stroke="#e8fff6" stroke-width="1" stroke-dasharray="3 5" opacity="0.75" style="animation:dbGlow 1.5s ease-in-out infinite"></circle>
+        </sc-if>
+
+        <circle cx="0" cy="0" r="13" fill="#2b1f2e" stroke="#c79a42" stroke-width="2.2"></circle>
+        <circle cx="0" cy="0" r="8" fill="#3a2b42" stroke="#8f6b28" stroke-width="1.2"></circle>
+        <circle cx="0" cy="0" r="3.6" fill="#ec3013" stroke="#8f2b1e" stroke-width="1"></circle>
+        <circle cx="-1.2" cy="-1.2" r="1.1" fill="#ff9a80" opacity="0.8"></circle>
+
+        <g>
+          <path d="M 0 -46 L 5.4 -56 L -5.4 -56 Z" fill="#1d1520"></path>
+          <path d="M 0 -47 L 4.2 -54.4 L -4.2 -54.4 Z" fill="#f0c040"></path>
+          <!-- AND ITS MIRROR, INSIDE THE HUB. Apex at 12.3 so it stops a
+               whisker short of the inner ring's edge at 13, base at 5.2 so it
+               clears the red boss at 3.6 — the triangle has to live in the
+               eight units of dark between them and be read at a glance, so it
+               is the top one scaled down rather than a new shape. -->
+          <path d="M 0 -12.3 L 3.8 -5.2 L -3.8 -5.2 Z" fill="#1d1520"></path>
+          <path d="M 0 -11.6 L 2.9 -6.3 L -2.9 -6.3 Z" fill="#f0c040"></path>
+        </g>
+      </g>
+
+      <sc-if value="{{ dragging }}" hint-placeholder-val="{{ false }}">
+        <g transform="{{ dragT }}" style="pointer-events:none">
+          <circle cx="0" cy="0" r="7.6" fill="#000000" opacity="0.28"></circle>
+          <circle cx="0" cy="-1" r="6.6" fill="#f0c040" stroke="#201e1d" stroke-width="1.4"></circle>
+          <circle cx="0" cy="-1" r="4.6" fill="none" stroke="#201e1d" stroke-width="0.6" stroke-dasharray="1.6 1.6"></circle>
+          <foreignObject x="-8" y="-4.2" width="16" height="7" style="overflow:hidden">
+            <div xmlns="http://www.w3.org/1999/xhtml" style="width:16px; display:flex; justify-content:center">
+              <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:5.2px; font-weight:800; color:#201e1d; white-space:nowrap">{{ dragN }}</span>
+            </div>
+          </foreignObject>
+        </g>
+      </sc-if>
+
+      <g>
+        <rect x="118" y="22" width="76" height="84" fill="#1f3a2c" stroke="#12261c" stroke-width="1.6"></rect>
+        <rect x="118" y="22" width="76" height="2" fill="#2f5a42"></rect>
+                <foreignObject x="120" y="24" width="72" height="{{ noteH }}" style="overflow:hidden">
+          <div xmlns="http://www.w3.org/1999/xhtml" style="width:72px">
+            <div style="font-family:var(--font-heading), Archivo, sans-serif; font-size:{{ noteFont }}; font-weight:800; letter-spacing:.06em; color:{{ noteInk }}; line-height:1.2; overflow-wrap:break-word">{{ noteText }}</div>
+            <div style="font-size:3.4px; font-weight:600; color:#9fb8a8; line-height:1.2; margin-top:1px; overflow-wrap:break-word">{{ noteSub }}</div>
+          </div>
+        </foreignObject>
+
+        <sc-if value="{{ meterShow }}" hint-placeholder-val="{{ false }}">
+          <g>
+            <sc-for list="{{ meterBands }}" as="mb" hint-placeholder-count="7">
+              <g>
+                <rect x="{{ mb.x }}" y="53.5" width="{{ mb.w }}" height="8" fill="{{ mb.fill }}" stroke="#12261c" stroke-width="0.5"></rect>
+                <sc-if value="{{ mb.lit }}" hint-placeholder-val="{{ false }}">
+                  <rect x="{{ mb.x }}" y="53.5" width="{{ mb.w }}" height="8" fill="none" stroke="#f3f2f2" stroke-width="1.2" style="transform-box:fill-box; transform-origin:center; animation:dbRing 1s ease-in-out infinite"></rect>
+                </sc-if>
+                <foreignObject x="{{ mb.cx }}" y="54.9" width="0.1" height="6" style="overflow:visible">
+                  <div xmlns="http://www.w3.org/1999/xhtml" style="width:0.1px; display:flex; justify-content:center">
+                    <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:4px; font-weight:800; color:{{ mb.ink }}; white-space:nowrap">{{ mb.n }}</span>
+                  </div>
+                </foreignObject>
+              </g>
+            </sc-for>
+            <g transform="{{ meterT }}">
+              <path d="M 0 53.3 L 2.2 50.1 L -2.2 50.1 Z" fill="#f3f2f2"></path>
+              <rect x="-0.45" y="53.5" width="0.9" height="8" fill="#f3f2f2" opacity="0.95"></rect>
+            </g>
+            <foreignObject x="120" y="45.8" width="72" height="5.4" style="overflow:hidden">
+              <div xmlns="http://www.w3.org/1999/xhtml" style="width:72px; display:flex; justify-content:space-between; align-items:center">
+                <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:3.8px; font-weight:800; letter-spacing:.12em; color:#8fd6ae; white-space:nowrap">MULTIPLIER</span>
+                <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:4.6px; font-weight:800; letter-spacing:.06em; color:{{ meterInk }}; white-space:nowrap">{{ meterLabel }}</span>
+              </div>
+            </foreignObject>
+          </g>
+        </sc-if>
+
+        <foreignObject x="120" y="62.5" width="72" height="7" style="overflow:hidden">
+          <div xmlns="http://www.w3.org/1999/xhtml" style="width:72px; display:flex; justify-content:space-between; align-items:center">
+            <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:4px; font-weight:800; letter-spacing:.1em; color:#8fd6ae; white-space:nowrap">YOUR CHIPS</span>
+            <span style="font-size:3.8px; font-weight:700; letter-spacing:.06em; color:#f0c040; white-space:nowrap">{{ creditText }} CR</span>
+          </div>
+        </foreignObject>
+
+        <sc-for list="{{ rack }}" as="ch" hint-placeholder-count="5">
+          <g transform="{{ ch.t }}" sc-camel-on-pointer-down="{{ ch.onDown }}" sc-camel-on-click="{{ ch.onTap }}" style="cursor:grab; touch-action:none">
+            <circle cx="0" cy="0" r="{{ ch.r }}" fill="{{ ch.face }}" stroke="{{ ch.edge }}" stroke-width="{{ ch.sw }}"></circle>
+            <circle cx="0" cy="0" r="4.1" fill="none" stroke="{{ ch.edge }}" stroke-width="0.6" stroke-dasharray="1.6 1.6" opacity="0.9"></circle>
+            <foreignObject x="-7" y="-3" width="14" height="7" style="overflow:hidden">
+              <div xmlns="http://www.w3.org/1999/xhtml" style="width:14px; display:flex; justify-content:center">
+                <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:4.8px; font-weight:800; color:{{ ch.ink }}; white-space:nowrap">{{ ch.n }}</span>
+              </div>
+            </foreignObject>
+          </g>
+        </sc-for>
+
+        <g sc-camel-on-click="{{ onClear }}" style="{{ clearCursor }}">
+          <rect x="120" y="90" width="22" height="13" fill="#3a2b42" stroke="#201e1d" stroke-width="1.6"></rect>
+          <foreignObject x="120" y="93.6" width="22" height="8" style="overflow:hidden">
+            <div xmlns="http://www.w3.org/1999/xhtml" style="width:22px; display:flex; justify-content:center">
+              <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:4.6px; font-weight:800; letter-spacing:.06em; color:{{ clearInk }}; white-space:nowrap">CLEAR</span>
+            </div>
+          </foreignObject>
+        </g>
+        <g sc-camel-on-click="{{ onSpin }}" style="{{ spinCursor }}">
+          <rect x="146" y="90" width="44" height="13" fill="{{ spinFill }}" stroke="#201e1d" stroke-width="1.6"></rect>
+          <foreignObject x="146" y="93.2" width="44" height="9" style="overflow:hidden">
+            <div xmlns="http://www.w3.org/1999/xhtml" style="width:44px; display:flex; justify-content:center">
+              <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:{{ spinFont }}; font-weight:800; letter-spacing:{{ spinTrack }}; text-transform:uppercase; color:{{ spinInk }}; white-space:nowrap">{{ spinLabel }}</span>
+            </div>
+          </foreignObject>
+        </g>
+      </g>
+
+      <sc-if value="{{ showResult }}" hint-placeholder-val="{{ false }}">
+        <g style="pointer-events:none; transform-box:fill-box; transform-origin:center; animation:dbPop .32s ease-out">
+          <rect x="10" y="108" width="104" height="20" fill="#f3f2f2" stroke="#201e1d" stroke-width="2"></rect>
+          <foreignObject x="12" y="112" width="100" height="14" style="overflow:hidden">
+            <div xmlns="http://www.w3.org/1999/xhtml" style="width:100px; display:flex; justify-content:center; align-items:center; gap:4px">
+              <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:7.4px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; color:{{ resultInk }}; white-space:nowrap">{{ resultText }}</span>
+            </div>
+          </foreignObject>
+        </g>
+      </sc-if>
+
+      <sc-if value="{{ showDaba }}" hint-placeholder-val="{{ false }}">
+        <g style="pointer-events:none; transform-box:fill-box; transform-origin:center; animation:dbShout .5s ease-out">
+          <rect x="18" y="48" width="88" height="30" fill="#ec3013" stroke="#201e1d" stroke-width="2.4"></rect>
+          <foreignObject x="20" y="53" width="84" height="22" style="overflow:hidden">
+            <div xmlns="http://www.w3.org/1999/xhtml" style="width:84px; display:flex; justify-content:center">
+              <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:17px; font-weight:800; letter-spacing:.06em; color:#f3f2f2; white-space:nowrap">DABA!</span>
+            </div>
+          </foreignObject>
+        </g>
+      </sc-if>
+    </svg>
+
+    <sc-if value="{{ showHint }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute; left:0; right:0; bottom:0; z-index:2; background:#201e1d; padding:9px 14px; display:flex; align-items:center; gap:9px">
+        <span style="flex:0 0 auto; width:2px; align-self:stretch; background:#ec3013"></span>
+        <span style="flex:1 1 auto; min-width:0; font-size:12px; font-weight:700; color:#f3f2f2; line-height:1.35; overflow-wrap:break-word">{{ hintText }}</span>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showTitleCard }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute; inset:0; z-index:5; display:flex; align-items:center; justify-content:center; pointer-events:none; animation:dbTitle 1.7s ease-out forwards">
+        <div style="background:#f3f2f2; border:2px solid #201e1d; padding:16px 26px; max-width:78%">
+          <div style="font-family:var(--font-heading), Archivo, sans-serif; font-size:clamp(24px, 6vw, 42px); font-weight:800; line-height:.98; letter-spacing:-.02em; text-transform:uppercase">{{ cardTitle }}</div>
+          <div style="height:2px; background:#ec3013; width:56px; margin:9px 0"></div>
+          <div style="font-size:13px; color:#201e1d; line-height:1.4">{{ cardHint }}</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showIntro }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute; inset:0; z-index:6; background:rgba(26,18,28,.9); display:flex; flex-direction:column; padding:22px; overflow:auto">
+        <div style="margin:auto 0; flex:0 0 auto; display:flex; flex-wrap:wrap-reverse; align-items:center; gap:26px">
+          <svg sc-camel-view-box="0 0 220 200" sc-camel-preserve-aspect-ratio="xMidYMid meet" style="flex:0 1 min(44%, 420px); min-width:0; aspect-ratio:220 / 200; max-height:min(420px, 68vh); order:2; pointer-events:none">
+            <circle cx="110" cy="100" r="90" fill="#d9a84e" opacity="0.08"></circle>
+            <circle cx="110" cy="100" r="82" fill="#3a2b42" stroke="#1d1520" stroke-width="4"></circle>
+            <circle cx="110" cy="100" r="76" fill="none" stroke="#c79a42" stroke-width="5"></circle>
+            <g>
+              <path d="M 110 100 L 110 28 A 72 72 0 0 1 172 64 Z" fill="#d9a84e" stroke="#1d1520" stroke-width="2.6"></path>
+              <path d="M 110 100 L 172 64 A 72 72 0 0 1 172 136 Z" fill="#d9628a" stroke="#1d1520" stroke-width="2.6"></path>
+              <path d="M 110 100 L 172 136 A 72 72 0 0 1 110 172 Z" fill="#2fbfae" stroke="#1d1520" stroke-width="2.6"></path>
+              <path d="M 110 100 L 110 172 A 72 72 0 0 1 48 136 Z" fill="#8a6ad9" stroke="#1d1520" stroke-width="2.6"></path>
+              <path d="M 110 100 L 48 136 A 72 72 0 0 1 48 64 Z" fill="#6f9d4a" stroke="#1d1520" stroke-width="2.6"></path>
+              <path d="M 110 100 L 48 64 A 72 72 0 0 1 110 28 Z" fill="#4f8fd6" stroke="#1d1520" stroke-width="2.6"></path>
+            </g>
+            <circle cx="110" cy="100" r="48" fill="#2b1f2e" stroke="#c79a42" stroke-width="4"></circle>
+            <g>
+              <path d="M 110 100 L 110 56 A 44 44 0 0 1 148 78 Z" fill="#e8913a" stroke="#1d1520" stroke-width="2.2"></path>
+              <path d="M 110 100 L 148 78 A 44 44 0 0 1 148 122 Z" fill="#2fd6c0" stroke="#1d1520" stroke-width="2.2"></path>
+              <path d="M 110 100 L 148 122 A 44 44 0 0 1 110 144 Z" fill="#cfc63f" stroke="#1d1520" stroke-width="2.2"></path>
+              <path d="M 110 100 L 110 144 A 44 44 0 0 1 72 122 Z" fill="#b02334" stroke="#1d1520" stroke-width="2.2"></path>
+              <path d="M 110 100 L 72 122 A 44 44 0 0 1 72 78 Z" fill="#5a3fa0" stroke="#1d1520" stroke-width="2.2"></path>
+              <path d="M 110 100 L 72 78 A 44 44 0 0 1 110 56 Z" fill="#dfe7ec" stroke="#1d1520" stroke-width="2.2"></path>
+            </g>
+            <circle cx="110" cy="100" r="20" fill="#2b1f2e" stroke="#c79a42" stroke-width="3.4"></circle>
+            <circle cx="110" cy="100" r="11" fill="#3a2b42" stroke="#8f6b28" stroke-width="2"></circle>
+            <circle cx="110" cy="100" r="5.4" fill="#ec3013" stroke="#8f2b1e" stroke-width="1.6"></circle>
+            <g>
+              <path d="M 110 8 L 120 26 L 100 26 Z" fill="#1d1520"></path>
+              <path d="M 110 12 L 117 25 L 103 25 Z" fill="#f0c040"></path>
+            </g>
+            <g>
+              <circle cx="40" cy="176" r="10" fill="#f3f2f2" stroke="#201e1d" stroke-width="2.6"></circle>
+              <circle cx="40" cy="176" r="4.6" fill="#ec3013"></circle>
+              <circle cx="62" cy="180" r="10" fill="#f3f2f2" stroke="#201e1d" stroke-width="2.6"></circle>
+              <circle cx="62" cy="180" r="4.6" fill="#ec3013"></circle>
+              <circle cx="84" cy="176" r="10" fill="#f3f2f2" stroke="#201e1d" stroke-width="2.6"></circle>
+              <circle cx="84" cy="176" r="4.6" fill="#ec3013"></circle>
+            </g>
+          </svg>
+          <div style="flex:1 1 320px; min-width:0; order:1; display:flex; flex-direction:column; gap:12px; max-width:560px">
+            <div style="display:flex; flex-direction:column">
+              <span style="font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#f0c040; font-weight:700">Quirk's Bar · the wheel</span>
+              <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:clamp(38px, 9vw, 68px); font-weight:800; line-height:.92; letter-spacing:-.03em; text-transform:uppercase; color:#f3f2f2">Daba</span>
+            </div>
+            <div style="height:2px; background:#ec3013; width:116px"></div>
+            <p style="margin:0; font-size:16px; font-weight:700; line-height:1.4; color:#f3f2f2; text-wrap:pretty">Take a chip off the rack and drag it onto the ring the note asks for.</p>
+            <div style="display:grid; grid-template-columns:max-content 1fr; column-gap:10px; row-gap:6px; align-items:start">
+              <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:12px; font-weight:800; line-height:1.45; color:#f2643f; white-space:nowrap">TWO&nbsp;RINGS</span>
+              <span style="font-size:12.5px; line-height:1.45; color:#f3f2f2">They turn opposite ways. The two pointers at the top face each other, and the winning colour of each ring stops between them.</span>
+              <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:12px; font-weight:800; line-height:1.45; color:#f2643f; white-space:nowrap">PAYS</span>
+              <span style="font-size:12.5px; line-height:1.45; color:#f3f2f2">One bet on the outer ring, one on the inner. Then STOP THE WHEEL — the meter under it is sweeping, and wherever you freeze it multiplies what you win. x5 is the narrow one in the middle, with an x1 on either side of it.</span>
+              <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:12px; font-weight:800; line-height:1.45; color:#f2643f; white-space:nowrap">DABA</span>
+              <span style="font-size:12.5px; line-height:1.45; color:#f3f2f2">Hit both rings on the same spin and the whole payout doubles.</span>
+            </div>
+            <p style="margin:0; font-size:13px; line-height:1.45; color:#f0c040">Reach the table's target before the spins run out.</p>
+            <button sc-camel-on-click="{{ begin }}" style="align-self:flex-start; margin-top:2px; padding:16px 26px; border:0; background:#ec3013; color:#f3f2f2; font-family:var(--font-heading), Archivo, sans-serif; font-size:18px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; text-align:left; cursor:pointer" style-hover="background:#b8250e">Take a seat</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showCard }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute; inset:0; z-index:6; background:rgba(20,14,22,.86); display:flex; align-items:center; justify-content:center; padding:18px">
+        <div style="width:100%; max-width:390px; max-height:100%; min-height:0; display:flex; flex-direction:column; background:#f3f2f2; border:2px solid #201e1d; padding:20px; animation:dbIn .18s ease-out">
+          <div style="flex:0 0 auto">
+            <div style="font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:#ec3013; font-weight:700">{{ cardKicker }}</div>
+            <div style="font-family:var(--font-heading), Archivo, sans-serif; font-size:30px; font-weight:800; line-height:1; letter-spacing:-.02em; margin:7px 0 4px">{{ cardScore }}</div>
+            <div style="font-size:12px; margin-bottom:14px">{{ cardMood }}</div>
+            <div style="height:2px; background:#201e1d; margin-bottom:13px"></div>
+          </div>
+          <div style="flex:1 1 auto; min-height:0; overflow:auto">
+            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px">
+              <sc-for list="{{ cardRows }}" as="r" hint-placeholder-count="0">
+                <div style="display:flex; align-items:center; gap:9px">
+                  <span style="flex:0 0 92px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em">{{ r.name }}</span>
+                  <div style="flex:1 1 auto; height:8px; background:#dedcd6; border:1px solid #201e1d">
+                    <div style="height:100%; width:{{ r.pct }}%; background:{{ r.color }}"></div>
+                  </div>
+                  <span style="flex:0 0 40px; text-align:right; font-size:12px; font-weight:700; font-variant-numeric:tabular-nums">{{ r.val }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ hasNotes }}" hint-placeholder-val="{{ false }}">
+              <div style="border-top:2px solid #201e1d; padding-top:12px; margin-bottom:16px; display:flex; flex-direction:column; gap:6px">
+                <sc-for list="{{ cardNotes }}" as="nt" hint-placeholder-count="0">
+                  <div style="display:flex; gap:8px; font-size:11px; line-height:1.35">
+                    <span style="color:#ec3013; font-weight:800">—</span>
+                    <span>{{ nt.text }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+          <button sc-camel-on-click="{{ cardAction }}" style="flex:0 0 auto; width:100%; padding:14px 16px; border:0; background:#ec3013; color:#f3f2f2; font-family:var(--font-heading), Archivo, sans-serif; font-size:15px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; text-align:left; cursor:pointer" style-hover="background:#b8250e">{{ cardCta }}</button>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;sound&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Audio&quot;},&quot;music&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Audio&quot;}}">
+const n = v => Math.round(v * 1000) / 1000;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const TAU = Math.PI * 2;
+
+const SEGS = 6;
+const STEP = 360 / SEGS;
+/* CHIP is no longer a price — every chip is worth its own face value now —
+   but the constant is left standing because the wheel's own art and the
+   intro copy are written around a ten-credit table. PAYS is the number that
+   had to move: at six segments a fair return is six times the stake, and
+   three was generous for a free chip and a fifty per cent edge for a bought
+   one. Five leaves the house 2.8%, DABA doubling included. */
+const CHIP = 10;
+/* PAYS WAS 5, WHICH WAS BREAK-EVEN ON ITS OWN. Every return is now multiplied
+   by the meter as well, and a random stop averages 2.21 — so leaving PAYS at 5
+   would return better than twice the stake and the wheel would be a cash
+   machine. Two is the number that makes the METER the thing being played:
+
+       RTP = PAYS x E[mult] x 7/36
+
+       careless (random stop, E 2.21)   2 x 2.21 x 7/36 = 86%
+       decent   (mostly x2 and x3, 2.8) 2 x 2.80 x 7/36 = 109%
+       sharp    (x3 with x5s in it, 3.4) 2 x 3.40 x 7/36 = 132%
+
+   Which is the shape this wants: sloppy loses, good play beats the house, and
+   the difference between those two is entirely in your thumb. */
+const PAYS = 2;
+/* The rack. Five denominations, and the spread matters more than the values:
+   1 is for finding out, 50 is for the last spin when you are behind, and 5,
+   10 and 25 are the three you will actually live in. */
+const CHIPS = [1, 5, 10, 25, 50];
+
+/* ---- THE X METER ------------------------------------------------------
+   Seven bands across the track, in Ben's order, and the shape of them IS the
+   game: x5 is worth two and a half times its neighbours and is less than half
+   their width, and it is walled in on both sides by the x1 — the one band
+   that gives you nothing. You cannot drift onto the big one. You have to go
+   through the punishment to reach it.
+
+   The widths add to 100 so a band's width is also its chance at a random
+   stop, which makes the expected multiplier readable straight off the table:
+
+       (15.5 x (2+3+1+1+3+2) + 7 x 5) / 100 = 2.21
+
+   That number is why PAYS comes down to 2 below. */
+const METER = [
+  { m: 2, w: 15.5, fill: "#5a7fa8", ink: "#eaf2fa" },
+  { m: 3, w: 15.5, fill: "#2f7d3a", ink: "#e9f5ec" },
+  { m: 1, w: 15.5, fill: "#6b3330", ink: "#e8bcb4" },
+  { m: 5, w: 7.0,  fill: "#f0c040", ink: "#231a08" },
+  { m: 1, w: 15.5, fill: "#6b3330", ink: "#e8bcb4" },
+  { m: 3, w: 15.5, fill: "#2f7d3a", ink: "#e9f5ec" },
+  { m: 2, w: 15.5, fill: "#5a7fa8", ink: "#eaf2fa" }
+];
+const METER_X0 = 121, METER_W = 70;     // the track, in the panel's own units
+/* A FULL ROUND TRIP IN 1.6 SECONDS. The x3 bands are 15.5% of the track, so
+   the marker is inside one for about 124 ms a pass — hittable with a little
+   practice. The x5 is 7%, which is 56 ms, and that is meant to be hard. */
+const METER_MS = 1600;
+/* THE INDEX, NOT THE VALUE. Two of the seven bands say x1 and two say x3 and
+   two say x2 — so highlighting "the band that matches the multiplier" lights
+   up both of them, and the player cannot tell which one they actually hit.
+   The index is the answer to "where did it stop"; the value is only what that
+   place is worth. */
+function meterIdx(p) {
+  let acc = 0;
+  const at = clamp(p, 0, 1) * 100;
+  for (let i = 0; i < METER.length; i++) { acc += METER[i].w; if (at <= acc) return i; }
+  return METER.length - 1;
+}
+function meterMult(p) { return METER[meterIdx(p)].m; }
+/* THE MARKER'S POSITION IS DERIVED FROM THE CLOCK, not stepped frame by
+   frame. A marker that advances by a delta each frame drifts at a different
+   speed on a slow machine, which would make the whole challenge a function of
+   the player's hardware. */
+function meterPos(elapsed) {
+  const t = (elapsed % METER_MS) / METER_MS;
+  return t < 0.5 ? t * 2 : 2 - t * 2;
+}
+
+// the outer ring is read by colour, the inner by its mark as well
+const OUTER = [
+  { fill: "#d9a84e", name: "Gold" },
+  { fill: "#d9628a", name: "Rose" },
+  { fill: "#2fbfae", name: "Teal" },
+  { fill: "#8a6ad9", name: "Violet" },
+  { fill: "#6f9d4a", name: "Green" },
+  { fill: "#4f8fd6", name: "Blue" }
+];
+const MARKS = [
+  "M -4.4 0 L 0 -4.4 L 4.4 0 L 0 4.4 Z",
+  "M -4.2 -4.2 L 4.2 -4.2 L 4.2 4.2 L -4.2 4.2 Z",
+  "M 0 -4.8 L 4.4 3 L -4.4 3 Z",
+  "M -4.8 0 a 4.8 4.8 0 1 0 9.6 0 a 4.8 4.8 0 1 0 -9.6 0 Z M -1.9 0 a 1.9 1.9 0 1 1 3.8 0 a 1.9 1.9 0 1 1 -3.8 0 Z",
+  "M 0 -5 L 1.5 -1.5 L 5 -1.5 L 2 1 L 3.2 4.8 L 0 2.4 L -3.2 4.8 L -2 1 L -5 -1.5 L -1.5 -1.5 Z",
+  "M -5 -1.7 L -1.7 -1.7 L -1.7 -5 L 1.7 -5 L 1.7 -1.7 L 5 -1.7 L 5 1.7 L 1.7 1.7 L 1.7 5 L -1.7 5 L -1.7 1.7 L -5 1.7 Z"
+];
+const INNER = [
+  { fill: "#e8913a", name: "Amber" },
+  { fill: "#2fd6c0", name: "Aqua" },
+  { fill: "#cfc63f", name: "Citron" },
+  { fill: "#b02334", name: "Crimson" },
+  { fill: "#5a3fa0", name: "Indigo" },
+  { fill: "#dfe7ec", name: "Pearl" }
+];
+
+/* THE TARGET IS NOW A NET, NOT A TOTAL. Free chips could only ever add, so a
+   target of 100 meant "collect 100". A staked chip can lose, so the same
+   number now means "finish 100 UP on the night" — which is a harder thing to
+   ask and a much better one, because it can go the other way while you watch.
+   `hand` is gone with the free chips: a spin is one bet on each ring. */
+const TABLES = [
+  { name: "The quiet table", target: 60, spins: 8 },
+  { name: "Evening crowd", target: 110, spins: 9 },
+  { name: "The high table", target: 180, spins: 10 },
+  { name: "Quirk's own table", target: 260, spins: 11 }
+];
+
+// an annular sector, drawn from the top and going clockwise
+function sector(r0, r1, i) {
+  const a0 = (i * STEP - 90 - STEP / 2) * Math.PI / 180;
+  const a1 = ((i + 1) * STEP - 90 - STEP / 2) * Math.PI / 180;
+  const p = (r, a) => n(Math.cos(a) * r) + " " + n(Math.sin(a) * r);
+  return "M " + p(r1, a0) + " A " + r1 + " " + r1 + " 0 0 1 " + p(r1, a1)
+    + " L " + p(r0, a1) + " A " + r0 + " " + r0 + " 0 0 0 " + p(r0, a0) + " Z";
+}
+function midAngle(i) { return i * STEP - 90; }
+function polar(r, i) {
+  const a = midAngle(i) * Math.PI / 180;
+  return { x: n(Math.cos(a) * r), y: n(Math.sin(a) * r) };
+}
+
+const MUSIC = (() => {
+  const notes = [];
+  // a lounge vamp with a little casino sparkle
+  const bass = [45, 45, 52, 52, 43, 43, 50, 50];
+  bass.forEach((m, i) => notes.push({ b: i * 4, m: m - 12, d: 3.4, v: "bass" }));
+  [[1, 76], [2.5, 79], [4, 81], [6.5, 79], [9, 76], [11, 72], [13, 74],
+   [17, 79], [18.5, 83], [21, 84], [23.5, 81], [25, 79], [27.5, 76], [30, 72]
+  ].forEach(p => notes.push({ b: p[0], m: p[1], d: 1.6, v: "vibe" }));
+  for (let b = 0; b < 32; b += 2) notes.push({ b: b + 1, m: 93, d: 0.08, v: "tick" });
+  return { notes, beats: 32, spb: 0.42 };
+})();
+const midiHz = m => 440 * Math.pow(2, (m - 69) / 12);
+
+/* ======================================================== THE PURSE =======
+   The chips are bought with the STATION'S credits — the same purse that pays
+   GAROK for a coat — and this game cannot see them. It runs in an iframe on a
+   blob: URL with its own opaque origin, which is exactly the isolation that
+   lets it be embedded without its stylesheet touching the station's; the
+   price of that is that `window.game` is not a thing in here.
+
+   So the two talk by postMessage, and the STATION IS THE ONE THAT COUNTS.
+   This side never decides a balance: it asks for a stake, it asks to be paid,
+   and it displays whatever number comes back. A message that goes missing can
+   then cost a spin but can never mint a credit, which is the right way round
+   for the failure to fall.
+
+   AND IT STILL WORKS ON ITS OWN. Opened as a file with no station around it,
+   `parent === window`, nothing answers, and the purse falls back to a local
+   thousand — so the uploaded page is still a working page by itself, which is
+   how it was tested and how it should stay. */
+const PURSE = (() => {
+  const standalone = (typeof window === 'undefined') || window.parent === window;
+  let credits = 1000;
+  let onChange = null;
+  let seq = 0;
+  const pending = {};
+  if (!standalone) {
+    window.addEventListener('message', (e) => {
+      const d = e.data;
+      if (!d || d.dsfPurse !== 'is' || typeof d.credits !== 'number') return;
+      credits = Math.max(0, Math.round(d.credits));
+      const cb = pending[d.id]; delete pending[d.id];
+      if (cb) cb(credits, !!d.ok);
+      if (onChange) onChange(credits);
+    });
+    try { window.parent.postMessage({ dsfPurse: 'get' }, '*'); } catch (err) {}
+  }
+  const ask = (op, amount, cb) => {
+    if (standalone) {
+      /* The same arithmetic the station would do, so the standalone page
+         behaves identically rather than merely not crashing. */
+      if (op === 'stake') {
+        if (credits < amount) { if (cb) cb(credits, false); return; }
+        credits -= amount;
+      } else credits += amount;
+      if (cb) cb(credits, true);
+      if (onChange) onChange(credits);
+      return;
+    }
+    const id = ++seq;
+    if (cb) pending[id] = cb;
+    try { window.parent.postMessage({ dsfPurse: op, amount, id }, '*'); }
+    catch (err) { if (cb) { delete pending[id]; cb(credits, false); } }
+  };
+  return {
+    get: () => credits,
+    stake: (amount, cb) => ask('stake', amount, cb),
+    pay: (amount, cb) => ask('pay', amount, cb),
+    watch: (fn) => { onChange = fn; },
+  };
+})();
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = Object.assign({ overlay: "intro", muted: false, musicOff: false }, this.freshTable(0));
+  }
+
+  freshTable(round) {
+    const cfg = TABLES[round % TABLES.length];
+    return {
+      round, cfg,
+      bank: 0, spinsLeft: cfg.spins,
+      outerBets: [0, 0, 0, 0, 0, 0], innerBets: [0, 0, 0, 0, 0, 0],
+      placed: 0,
+      /* THE BETS STAY AS SIX-LONG ARRAYS even though only one of the six can
+         be non-zero now. Keeping the shape means the wheel's own chip markers
+         and settle()'s lookup of the winning segment go on working untouched
+         — the change is that a segment now holds a STAKE rather than a count
+         of chips, and the number drawn on it is already the array value. */
+      chip: 5,              // which denomination is in your paw
+      drag: null,           // { amt, x, y } while one is being carried
+      credits: PURSE.get(),
+      staked: 0,            // what is on the cloth this spin, for the report
+      lastNet: null,        // + or - , for the note above the chips
+      outerRot: 0, innerRot: 0,
+      spinning: false, spinAt: 0, from: [0, 0], to: [0, 0],
+      result: null, dabaAt: 0, best: 0, dabas: 0, hits: 0,
+      done: false,
+      titleCard: [cfg.name, "Reach " + cfg.target + " in " + cfg.spins + " spins"],
+      cardAt: Date.now()
+    };
+  }
+
+  componentDidMount() {
+    window.__dabaTarget = this;
+    this.started = false;
+    this.killMusic();
+    setTimeout(() => this.loop(), 0);
+  }
+
+  componentWillUnmount() {
+    if (this.raf) cancelAnimationFrame(this.raf);
+    this.raf = null;
+    this.killMusic();
+  }
+
+  muted() { return this.state.muted || (this.props.sound ?? true) === false; }
+  musicOn() { return !this.muted() && (this.props.music ?? true) !== false && !this.state.musicOff; }
+
+  audio() {
+    if (this.muted() || !this.started) return null;
+    if (!window.__dabaAC) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      window.__dabaAC = new AC();
+      const b = window.__dabaAC.createBuffer(1, window.__dabaAC.sampleRate * 1.2, window.__dabaAC.sampleRate);
+      const d = b.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      window.__dabaNoise = b;
+      window.addEventListener("pagehide", () => { try { window.__dabaAC.close(); } catch (e) {} });
+    }
+    this.actx = window.__dabaAC;
+    this.noise = window.__dabaNoise;
+    if (this.actx.state === "suspended") this.actx.resume();
+    return this.actx;
+  }
+
+  tone(freq, dur, gain, type, to) {
+    const ac = this.audio();
+    if (!ac) return;
+    const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime;
+    o.type = type || "sine";
+    o.frequency.setValueAtTime(freq, t);
+    if (to) o.frequency.exponentialRampToValueAtTime(Math.max(20, to), t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(gain, t + 0.014);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(ac.destination);
+    o.start(t); o.stop(t + dur + 0.03);
+  }
+
+  burst(o) {
+    const ac = this.audio();
+    if (!ac) return;
+    const src = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain(), t = ac.currentTime;
+    src.buffer = this.noise; src.loop = true;
+    f.type = o.type || "bandpass";
+    f.Q.value = o.q == null ? 1 : o.q;
+    f.frequency.setValueAtTime(o.f0, t);
+    f.frequency.exponentialRampToValueAtTime(Math.max(60, o.f1), t + o.dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(o.gain, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + o.dur);
+    src.connect(f); f.connect(g); g.connect(ac.destination);
+    src.start(t); src.stop(t + o.dur + 0.05);
+  }
+
+  sfx(kind) {
+    if (!this.audio()) return;
+    if (kind === "chip") this.tone(1100, 0.05, 0.035, "triangle", 1500);
+    else if (kind === "clear") this.tone(420, 0.07, 0.03, "sine", 260);
+    else if (kind === "tick") this.tone(1800, 0.02, 0.02, "square");
+    else if (kind === "spin") this.burst({ f0: 600, f1: 2200, dur: 0.5, gain: 0.035, type: "bandpass", q: 0.8 });
+    else if (kind === "stop") this.tone(520, 0.1, 0.045, "triangle", 320);
+    else if (kind === "win") [0, 4, 7].forEach((s, i) => setTimeout(() => this.tone(midiHz(76 + s), 0.16, 0.05, "triangle"), i * 60));
+    else if (kind === "miss") this.tone(190, 0.22, 0.05, "square", 120);
+    else if (kind === "daba") [0, 4, 7, 12, 16, 19].forEach((s, i) => setTimeout(() => this.tone(midiHz(72 + s), 0.24, 0.055, "triangle"), i * 90));
+    else if (kind === "close") [0, 5, 9, 12].forEach((s, i) => setTimeout(() => this.tone(midiHz(72 + s), 0.26, 0.05, "triangle"), i * 110));
+  }
+
+  voice(nt, at) {
+    const ac = this.actx, g = ac.createGain(), o = ac.createOscillator();
+    const dur = nt.d * MUSIC.spb;
+    let peak = 0.02;
+    if (nt.v === "bass") { o.type = "triangle"; peak = 0.044; }
+    else if (nt.v === "vibe") { o.type = "sine"; peak = 0.034; }
+    else { o.type = "square"; peak = 0.008; }
+    o.frequency.setValueAtTime(midiHz(nt.m), at);
+    g.gain.setValueAtTime(0.0001, at);
+    g.gain.exponentialRampToValueAtTime(peak, at + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+    o.connect(g); g.connect(window.__dabaMusicBus);
+    o.start(at); o.stop(at + dur + 0.03);
+  }
+
+  scheduleMusic() {
+    const ac = this.actx;
+    if (!ac || !this.musicOn()) return;
+    if (!window.__dabaMusicBus) {
+      const bus = ac.createGain();
+      bus.gain.value = 0.5;
+      bus.connect(ac.destination);
+      window.__dabaMusicBus = bus;
+      this.musicStart = ac.currentTime + 0.12;
+      this.musicBar = 0;
+    }
+    const barLen = MUSIC.beats * MUSIC.spb;
+    while (this.musicStart + this.musicBar * barLen < ac.currentTime + 0.9) {
+      const base = this.musicStart + this.musicBar * barLen;
+      MUSIC.notes.forEach(nt => {
+        const at = base + nt.b * MUSIC.spb;
+        if (at > ac.currentTime - 0.05) this.voice(nt, at);
+      });
+      this.musicBar++;
+    }
+  }
+
+  killMusic() {
+    const bus = window.__dabaMusicBus;
+    if (bus) { try { bus.gain.value = 0; bus.disconnect(); } catch (e) {} }
+    window.__dabaMusicBus = null;
+    this.musicBar = 0;
+  }
+
+  /* ---- PUTTING A CHIP DOWN --------------------------------------------
+     One bet on each ring, in that order, and the money is gone the moment it
+     lands. The stake is asked of the station BEFORE the board changes and the
+     board only changes if the station says yes — the other way round and a
+     refused stake would leave a chip drawn on a segment that nobody had paid
+     for. */
+  place = (ring, i) => {
+    const s = this.state;
+    if (s.spinning || s.result) return;
+    const done = ring === "outer" ? s.outerBets.some(x => x > 0) : s.innerBets.some(x => x > 0);
+    if (done) { this.sfx("clear"); return; }
+    const amt = s.chip;
+    PURSE.stake(amt, (credits, ok) => {
+      if (!ok) { this.sfx("miss"); this.setState({ credits }); this.flash("shortAt"); return; }
+      const key = ring === "outer" ? "outerBets" : "innerBets";
+      const arr = this.state[key].slice();
+      arr[i] = amt;
+      this.sfx("chip");
+      this.setState({ [key]: arr, placed: this.state.placed + 1,
+                      staked: this.state.staked + amt, credits,
+                      result: null, lastNet: null });
+    });
+  };
+
+  /* ---- A FLASH THAT PUTS ITSELF OUT ----------------------------------
+     The note's two telling-off messages — wrong ring, not enough credits —
+     are written to fade after a second and a half, and the note works that
+     out from Date.now() at render time. WHICH NEVER COMES ROUND AGAIN. The
+     wheel re-renders on every frame while it is spinning and not once while
+     it is sitting still, so a message posted at rest would have stayed on
+     that strip until the player did something else — and "the game is still
+     telling me off for a mistake I made a minute ago" is exactly the sort of
+     wrong that gets lived with rather than reported.
+
+     So a flash schedules its own clear. Timing expressed in state that only
+     something else can refresh is a bug waiting for a quiet moment. */
+  flash = (key) => {
+    this.setState({ [key]: Date.now() });
+    clearTimeout(this._flashT);
+    this._flashT = setTimeout(() => this.setState({ wrongAt: 0, shortAt: 0 }), 1600);
+  };
+
+  pickChip = (amt) => {
+    if (this.state.spinning) return;
+    this.sfx("chip");
+    this.setState({ chip: amt });
+  };
+
+  /* ---- DRAGGING IT THERE ----------------------------------------------
+     The chip is picked up in the rack and let go over a ring, and the ring is
+     part of an SVG that is scaled to whatever the window happens to be. So
+     the drop has to be converted out of screen pixels and into the wheel's own
+     units before anything can be worked out about it, and `getScreenCTM()` is
+     the one function that knows that mapping — it is the SVG's own answer to
+     "where is this point really".
+
+     The move and the release are listened for on the WINDOW, not on the ring.
+     A drag that has to stay inside the element it started over is not a drag,
+     it is a very fussy click: the pointer leaves the rack immediately and the
+     whole gesture happens somewhere else. */
+  svgPoint = (ev) => {
+    const svg = this.dragSvg;
+    if (!svg || !svg.getScreenCTM) return null;
+    const m = svg.getScreenCTM();
+    if (!m) return null;
+    const inv = m.inverse();
+    const p = svg.createSVGPoint();
+    p.x = ev.clientX; p.y = ev.clientY;
+    const q = p.matrixTransform(inv);
+    return { x: q.x, y: q.y };
+  };
+
+  /* WHERE THE DROP LANDED. The wheel is centred at (62,70) in the viewBox;
+     the outer ring runs from r=31 to r=49 and the inner from r=13 to r=30,
+     and each is turned by its own rotation. Un-turn the angle, and the
+     segment is whichever sixth of the circle it falls in — measured from the
+     TOP, because sector() draws segment 0 centred on -90 degrees. */
+  ringAt = (pt) => {
+    if (!pt) return null;
+    const s = this.state;
+    const dx = pt.x - 62, dy = pt.y - 70;
+    const rr = Math.sqrt(dx * dx + dy * dy);
+    const ring = (rr >= 30.5 && rr <= 49.5) ? "outer" : (rr >= 12.5 && rr <= 30.5) ? "inner" : null;
+    if (!ring) return null;
+    const rot = ring === "outer" ? s.outerRot : s.innerRot;
+    let a = Math.atan2(dy, dx) * 180 / Math.PI - rot + 90 + STEP / 2;
+    a = ((a % 360) + 360) % 360;
+    return { ring, i: Math.floor(a / STEP) % SEGS };
+  };
+
+  onChipDown = (amt) => (ev) => {
+    const s = this.state;
+    if (s.spinning || s.result) return;
+    if (ev && ev.preventDefault) ev.preventDefault();
+    this.dragSvg = document.querySelector("svg[data-daba-wheel]") ||
+                   document.querySelectorAll("svg")[1] || document.querySelector("svg");
+    this.setState({ chip: amt, drag: { amt, x: 62, y: 70 } }, () => {
+      const pt = this.svgPoint(ev);
+      if (pt) this.setState({ drag: { amt, x: pt.x, y: pt.y } });
+    });
+    const move = (e) => {
+      const p = this.svgPoint(e);
+      if (p) this.setState({ drag: { amt, x: p.x, y: p.y } });
+    };
+    const up = (e) => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", up);
+      const hit = this.ringAt(this.svgPoint(e));
+      this.setState({ drag: null });
+      if (!hit) { this.sfx("miss"); return; }
+      /* THE RING YOU ARE BEING ASKED FOR, and no other. Dropping an outer
+         chip on the inner ring is not a mistake worth punishing with a
+         silent no-op, so it says so in the note. */
+      const want = this.state.outerBets.some(x => x > 0) ? "inner" : "outer";
+      if (hit.ring !== want) { this.sfx("miss"); this.flash("wrongAt"); return; }
+      this.place(hit.ring, hit.i);
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+    window.addEventListener("pointercancel", up);
+  };
+
+  /* TAP IS A DRAG WITH NO DISTANCE. Every pointer that can drag can also
+     tap, and a player who taps a chip and then taps the ring has said the
+     same thing — so the rings take a click as well, and the chip in hand is
+     whichever one was last touched. */
+  onRingTap = (ring, i) => () => {
+    const want = this.state.outerBets.some(x => x > 0) ? "inner" : "outer";
+    if (ring !== want) { this.sfx("miss"); this.flash("wrongAt"); return; }
+    this.place(ring, i);
+  };
+
+  clearBets = () => {
+    const s = this.state;
+    if (s.spinning || s.placed === 0) return;
+    /* AND THE MONEY COMES BACK. A clear that kept the stake would be a
+       charge for changing your mind. */
+    const back = s.outerBets.reduce((a, b) => a + b, 0) + s.innerBets.reduce((a, b) => a + b, 0);
+    this.sfx("clear");
+    PURSE.pay(back, (credits) => {
+      this.setState({ outerBets: [0, 0, 0, 0, 0, 0], innerBets: [0, 0, 0, 0, 0, 0],
+                      placed: 0, staked: 0, credits });
+    });
+  };
+
+  onSpin = () => {
+    const s = this.state;
+    /* ONE BUTTON, THREE JOBS, and this line is the whole of the second one.
+       While the wheels are running free the button says STOP WHEEL, and the
+       guard below — which exists to stop a second SPIN landing on a spin
+       already in flight — would have swallowed the press. The dispatch has to
+       come before the guard, not after it. */
+    if (s.spinPhase === "free") { this.stopWheel(false); return; }
+    if (s.overlay || s.done || s.spinning) return;
+    this.audio();
+    if (s.result) { this.sfx("clear"); this.setState({ result: null, dabaAt: 0 }); return; }
+    if (s.placed === 0) { this.sfx("miss"); return; }
+
+    const oi = Math.floor(Math.random() * SEGS);
+    const ii = Math.floor(Math.random() * SEGS);
+    // land the chosen segment's middle under the pointer at the top
+    // segment i sits under the pointer when the ring's rotation is -i*STEP (mod 360)
+    const oDelta = ((((-oi * STEP) - s.outerRot) % 360) + 360) % 360;
+    const iDelta = (((s.innerRot + ii * STEP) % 360) + 360) % 360;
+    const oTarget = s.outerRot + 360 * 3 + oDelta;
+    const iTarget = s.innerRot - 360 * 4 - iDelta;
+
+    this.sfx("spin");
+    /* NOT DECIDED YET. The uploaded game picked the landing segments here,
+       three seconds before anybody saw them; the wheels now run free until the
+       player stops them, so the landing is chosen at the STOP. Nothing is
+       fairer or less fair about it — the outcome is random either way — but a
+       result that exists before the press makes the press a formality, and
+       this game is now about the press. */
+    this.setState({
+      spinning: true, spinPhase: "free", spinAt: Date.now(),
+      freeFrom: [s.outerRot, s.innerRot],
+      mult: null, meterP: 0,
+      result: null
+    });
+  };
+
+  /* ---- STOPPING IT ----------------------------------------------------
+     One press does two things and only one of them is yours. The wheels take
+     the segment they are given; the METER freezes exactly where your thumb
+     caught it, and that is the multiplier on whatever the wheels pay. */
+  stopWheel = (auto) => {
+    const s = this.state;
+    if (!s.spinning || s.spinPhase !== "free") return;
+    const oi = Math.floor(Math.random() * SEGS);
+    const ii = Math.floor(Math.random() * SEGS);
+    const oDelta = ((((-oi * STEP) - s.outerRot) % 360) + 360) % 360;
+    const iDelta = (((s.innerRot + ii * STEP) % 360) + 360) % 360;
+    const mIdx = meterIdx(s.meterP);
+    const mult = METER[mIdx].m;
+    this.spinResult = { oi, ii };
+    this.sfx(mult >= 5 ? "daba" : mult > 1 ? "chip" : "miss");
+    this.setState({
+      spinPhase: "brake", spinAt: Date.now(),
+      from: [s.outerRot, s.innerRot],
+      /* WHOLE TURNS, AND THIS IS NOT A DETAIL. oDelta is the angle that puts
+         the winning tile dead under the pointer, so whatever is added on top
+         of it to make the brake feel like a brake has to be a multiple of a
+         full circle or it lands somewhere else entirely. 1.4 turns is 144
+         degrees of somewhere else — not even a whole tile — which is how the
+         wheel came to stop with a dividing line under the triangle and name a
+         colour nowhere near it. Two turns each, and the arithmetic that
+         chooses the tile is the arithmetic that shows it. */
+      to: [s.outerRot + 720 + oDelta, s.innerRot - 720 - iDelta],
+      mult: mult, mIdx: mIdx, autoStopped: !!auto
+    });
+  };
+
+  settle() {
+    const s = this.state;
+    const { oi, ii } = this.spinResult;
+    const oHit = s.outerBets[oi], iHit = s.innerBets[ii];
+    const daba = oHit > 0 && iHit > 0;
+    /* THE STAKE IS ALREADY GONE — it was taken when the chip landed — so
+       this only ever pays. `win` is the RETURN, and the net for the note
+       above the chips is that return minus what was on the cloth. */
+    const mult = s.mult || 1;
+    let win = (oHit + iHit) * PAYS * mult;
+    if (daba) win *= 2;
+    const net = win - s.staked;
+    const bank = s.bank + net;
+    if (win > 0) PURSE.pay(win, (credits) => this.setState({ credits }));
+
+    if (daba) this.sfx("daba");
+    else if (win > 0) this.sfx("win");
+    else this.sfx("miss");
+
+    const spinsLeft = s.spinsLeft - 1;
+    const finished = spinsLeft <= 0 || bank >= s.cfg.target;
+    this.setState({
+      spinning: false, spinPhase: null, outerRot: s.to[0], innerRot: s.to[1],
+      result: { oi, ii, win, daba, net, staked: s.staked, mult: mult, mIdx: s.mIdx },
+      dabaAt: daba ? Date.now() : 0,
+      bank, best: Math.max(s.best, net), spinsLeft,
+      dabas: s.dabas + (daba ? 1 : 0),
+      hits: s.hits + (win > 0 ? 1 : 0),
+      lastNet: net, staked: 0,
+      outerBets: [0, 0, 0, 0, 0, 0], innerBets: [0, 0, 0, 0, 0, 0], placed: 0
+    }, () => {
+      if (finished) {
+        this.sfx("close");
+        this.setState({ done: true });
+        setTimeout(() => this.setState({ overlay: "card" }), 1500);
+      }
+    });
+  }
+
+  loop = () => {
+    this.raf = requestAnimationFrame(this.loop);
+    const now = Date.now();
+    const s = this.state;
+    if (this.started && window.__dabaTarget === this && window.__dabaAC) {
+      if (this.musicOn()) this.scheduleMusic();
+      else if (window.__dabaMusicBus) this.killMusic();
+    }
+    if (s.overlay) return;
+    if (s.titleCard && now - s.cardAt > 1700) this.setState({ titleCard: null });
+    if (!s.spinning) return;
+
+    /* ---- THE FREE RUN ---------------------------------------------------
+       Constant speed, and the meter sweeping under it, until the player hits
+       STOP WHEEL. A press that never comes stops itself after eight seconds:
+       a wheel that spins for ever is not tension, it is a hung game, and the
+       auto-stop takes whatever the meter happened to be on rather than
+       punishing the player with a x1 for hesitating. */
+    if (s.spinPhase === "free") {
+      const el = now - s.spinAt;
+      const meterP = meterPos(el);
+      const outerRot0 = s.freeFrom[0] + el * 0.62;
+      const innerRot0 = s.freeFrom[1] - el * 0.78;
+      const crossed0 = Math.floor(Math.abs(outerRot0) / STEP);
+      if (this.lastClick !== crossed0) { this.lastClick = crossed0; this.sfx("tick"); }
+      this.setState({ outerRot: outerRot0, innerRot: innerRot0, meterP });
+      if (el > 8000) this.stopWheel(true);
+      return;
+    }
+
+    const T = 1500;
+    const t = clamp((now - s.spinAt) / T, 0, 1);
+    const e = 1 - Math.pow(1 - t, 3);
+    const outerRot = s.from[0] + (s.to[0] - s.from[0]) * e;
+    const innerRot = s.from[1] + (s.to[1] - s.from[1]) * e;
+
+    // a click as each divider passes the pointer
+    const crossed = Math.floor(Math.abs(outerRot) / STEP);
+    if (this.lastClick !== crossed && t < 0.98) { this.lastClick = crossed; this.sfx("tick"); }
+
+    if (t >= 1) { this.sfx("stop"); this.settle(); return; }
+    this.setState({ outerRot, innerRot });
+  };
+
+  begin = () => { this.started = true; this.audio(); this.setState({ overlay: null }); };
+
+  cardAction = () => {
+    this.setState(s => Object.assign(
+      this.freshTable(s.bank >= s.cfg.target ? s.round + 1 : s.round),
+      { overlay: null, muted: s.muted, musicOff: s.musicOff }));
+  };
+
+  toggleSound = () => {
+    if (!this.state.muted) this.killMusic();
+    this.setState(s => ({ muted: !s.muted }));
+  };
+
+  toggleMusic = () => {
+    this.audio();
+    if (this.musicOn()) this.killMusic();
+    this.setState(s => ({ musicOff: !s.musicOff }));
+  };
+
+  renderVals() {
+    const s = this.state, cfg = s.cfg;
+    const r = s.result;
+    const now = Date.now();
+    /* THE WHOLE INTERACTION IN THREE LINES. Which ring you are being asked
+       for is not a mode anybody has to set — it is simply which one is still
+       empty, in order. */
+    const oDown = s.outerBets.some(x => x > 0);
+    const iDown = s.innerBets.some(x => x > 0);
+    const want = !oDown ? "outer" : !iDown ? "inner" : null;
+    const staked = s.outerBets.reduce((a, b) => a + b, 0) + s.innerBets.reduce((a, b) => a + b, 0);
+    const now2 = Date.now();
+
+
+    const outerSegs = OUTER.map((o, i) => {
+      const pipN = i + 1;
+      const pips = [];
+      for (let k = 0; k < pipN; k++) pips.push({ x: n((k - (pipN - 1) / 2) * 4.2) });
+      const p = polar(40, i);
+      const cp = polar(34.6, i);
+      return {
+        d: sector(31, 49, i), fill: o.fill,
+        gloss: sector(44, 49, i),
+        pipT: "translate(" + p.x + " " + p.y + ") rotate(" + n(midAngle(i) + 90) + ")",
+        pips,
+        hasChips: s.outerBets[i] > 0, n: s.outerBets[i] + "",
+        chipT: "translate(" + cp.x + " " + cp.y + ") rotate(" + n(-s.outerRot) + ")",
+        win: !!r && !s.spinning && r.oi === i,
+        onTap: this.onRingTap("outer", i)
+      };
+    });
+
+    const innerSegs = INNER.map((o, i) => {
+      const p = polar(24.4, i);
+      const cp = polar(17.4, i);
+      return {
+        d: sector(13, 30, i), fill: o.fill,
+        gloss: sector(26, 30, i),
+        pipT: "translate(" + p.x + " " + p.y + ") rotate(" + n(midAngle(i) + 90) + ") scale(0.78)",
+        mark: MARKS[i],
+        hasChips: s.innerBets[i] > 0, n: s.innerBets[i] + "",
+        chipT: "translate(" + cp.x + " " + cp.y + ") rotate(" + n(-s.innerRot) + ")",
+        win: !!r && !s.spinning && r.ii === i,
+        onTap: this.onRingTap("inner", i)
+      };
+    });
+
+    /* ---- THE RACK -------------------------------------------------------
+       Five chips, drawn as chips: a disc, a rim of alternating dashes the way
+       a real one is edged, and its own face value. The one in your paw stands
+       a little taller and keeps its rim lit, because a rack where you cannot
+       see which chip is selected is a rack you have to remember. */
+    const CHIP_INK = {
+      1:  { face: "#f3f2f2", edge: "#8d8a84", ink: "#201e1d" },
+      5:  { face: "#c2210f", edge: "#7c1409", ink: "#f7e9e6" },
+      10: { face: "#2f6fb0", edge: "#1b4270", ink: "#eaf2fa" },
+      25: { face: "#2f7d3a", edge: "#1a4a22", ink: "#e9f5ec" },
+      50: { face: "#3a2b42", edge: "#f0c040", ink: "#f0c040" }
+    };
+    const rack = CHIPS.map((amt, i) => {
+      const ink = CHIP_INK[amt];
+      const on = s.chip === amt;
+      const afford = s.credits >= amt;
+      return {
+        t: "translate(" + n(128 + i * 13.2) + " " + (on ? 74.5 : 76) + ")",
+        face: afford ? ink.face : "#4a4550",
+        edge: on ? "#f0c040" : (afford ? ink.edge : "#332f38"),
+        sw: on ? 1.8 : 1.1,
+        ink: afford ? ink.ink : "#8d8a94",
+        n: amt + "",
+        r: on ? 6.4 : 5.6,
+        onDown: this.onChipDown(amt),
+        onTap: () => this.pickChip(amt)
+      };
+    });
+
+    const reached = s.bank >= cfg.target;
+    const pct = Math.round(clamp(s.bank / cfg.target, 0, 1) * 100);
+
+    const notes = [];
+    if (s.dabas) notes.push({ text: s.dabas + " DABA" + (s.dabas > 1 ? "s" : "") + " on the night." });
+    if (s.best) notes.push({ text: "Best single spin: " + s.best + " credits." });
+    if (!s.hits) notes.push({ text: "Not one chip came home." });
+    if (!reached) notes.push({ text: "The table wanted " + cfg.target + " up. You finished " +
+      (s.bank < 0 ? Math.abs(s.bank) + " down." : s.bank + " up.") });
+
+    return {
+      hudKicker: "Table " + ((s.round % 4) + 1) + " of 4",
+      stageLabel: cfg.name,
+      callLabel: s.spinning ? "Spinning" : r ? "Last spin" : "Target",
+      callText: s.spinning ? "Wheels turning…"
+        : r ? (OUTER[r.oi].name + " / " + INNER[r.ii].name +
+               (r.net > 0 ? " — " + r.net + " up" : r.net < 0 ? " — " + (-r.net) + " down" : " — even"))
+        : cfg.target + " up in " + cfg.spins + " spins",
+      bankText: (s.bank > 0 ? "+" : "") + s.bank + "/" + cfg.target,
+      bankColour: reached ? "#2f7d3a" : s.bank < 0 ? "#c2210f" : "#201e1d",
+      spinText: s.spinsLeft + "",
+      spinColour: s.spinsLeft <= 2 ? "#c2210f" : "#201e1d",
+      musicLabel: this.musicOn() ? "Music on" : "Music off",
+      musicColor: this.musicOn() ? "#201e1d" : "#a8a6a0",
+      soundLabel: this.muted() ? "Sound off" : "Sound on",
+      soundColor: this.muted() ? "#a8a6a0" : "#201e1d",
+      toggleMusic: this.toggleMusic, toggleSound: this.toggleSound,
+
+      outerT: "rotate(" + n(s.outerRot) + ")",
+      innerT: "rotate(" + n(s.innerRot) + ")",
+      outerSegs, innerSegs, rack,
+
+      /* THE RING THAT IS BEING ASKED FOR IS LIT and the other is not. A thick
+         translucent stroke laid along the middle of the annulus tints the
+         whole ring without hiding a single segment, which is what a
+         highlight has to do here — the colours ARE the game. The first pass
+         washed them at 0.20, the second at 0.12, and BOTH were wrong for the
+         same reason: a tint over six colours you are choosing between makes
+         them six shades of the tint. There is no wash left. The lit ring is
+         marked by two bright rims and a running dashed line, and the contrast
+         that actually tells you which ring is wanted comes from the OTHER one
+         going dark or going away. */
+      litOuter: want === "outer" && !s.spinning && !r,
+      litInner: want === "inner" && !s.spinning && !r,
+
+      /* AND THE RING THAT IS NOT BEING ASKED FOR GETS OUT OF THE WAY. Lighting
+         one of two things is a comparison; the eye still has to make it. So
+         while the outer bet is wanted the inner ring goes DARK, and once it is
+         down the outer ring goes away altogether — at which point there is
+         exactly one thing on the wheel you can drop a chip on and no reading
+         required. The chips already on the cloth are drawn in a group of their
+         own so they survive the fade: the bet you have placed is the one thing
+         that must not vanish when the ring under it does. */
+      dimInner: want === "outer" && !s.spinning && !r,
+      outerFade: (want === "inner" && !s.spinning && !r) ? "0" : "1",
+
+      dragging: !!s.drag,
+      dragT: s.drag ? "translate(" + n(s.drag.x) + " " + n(s.drag.y) + ")" : "translate(0 0)",
+      dragN: s.drag ? s.drag.amt + "" : "",
+
+      handText: staked > 0 ? staked + " ON" : "NOTHING DOWN",
+      onSpin: this.onSpin,
+      onClear: this.clearBets,
+      clearInk: s.placed && !s.spinning ? "#e6d8ef" : "#8d7c99",
+      clearCursor: s.placed && !s.spinning ? "cursor:pointer" : "cursor:default",
+      spinLabel: s.spinPhase === "free" ? "STOP WHEEL"
+        : s.spinning ? "…" : r ? "Reset wheel" : "Spin",
+      spinFont: (s.spinPhase === "free" || (r && !s.spinning)) ? "4.6px" : "6.4px",
+      spinTrack: (s.spinPhase === "free" || (r && !s.spinning)) ? ".03em" : ".08em",
+      spinFill: s.spinPhase === "free" ? "#f0c040"
+        : s.spinning ? "#6b5039" : (r || s.placed) ? "#ec3013" : "#3a2b42",
+      stakeText: staked > 0 ? staked + "" : "—",
+      spinInk: s.spinPhase === "free" ? "#231a08"
+        : (r || s.placed) && !s.spinning ? "#f3f2f2" : "#c6b8cf",
+      spinCursor: (s.spinPhase === "free" || ((r || s.placed) && !s.spinning))
+        ? "cursor:pointer" : "cursor:default",
+
+      /* ---- THE METER, AS SEVEN RECTANGLES AND A NEEDLE ------------------
+         Laid out by running total rather than by index, because the x5 is a
+         different width from the rest and an index-times-width layout would
+         put every band after it in the wrong place. */
+      meterBands: (() => {
+        let x = METER_X0;
+        return METER.map((b, i) => {
+          const w = METER_W * b.w / 100;
+          const t = { x: n(x), w: n(w), fill: b.fill, ink: b.ink, n: b.m + "",
+                      cx: n(x + w / 2), small: b.w < 10,
+                      lit: !!r && r.mIdx === i && !s.spinning };
+          x += w;
+          return t;
+        });
+      })(),
+      meterShow: s.spinning || !!r,
+      meterT: "translate(" + n(METER_X0 + METER_W * (r && !s.spinning
+        ? (s.meterP || 0) : (s.meterP || 0))) + " 0)",
+      /* BLANK WHILE IT RUNS. This label sits above the right-hand end of the
+         track, which is exactly where the needle is every time it gets there —
+         and the button two rows down already says STOP WHEEL. */
+      meterLabel: r && !s.spinning ? "x" + r.mult : s.mult ? "x" + s.mult : "",
+      meterInk: r && !s.spinning ? (r.mult >= 5 ? "#f0c040" : r.mult === 1 ? "#ec6a52" : "#8fd6ae")
+        : "#f3f2f2",
+
+      showResult: !!r && !s.spinning,
+      resultText: r ? (r.daba ? "DABA x" + r.mult + "! " + r.net + " UP"
+        : r.net > 0 ? "+" + r.net + " credits"
+        : r.net < 0 ? (-r.net) + " to the house" : "Even") : "",
+      resultInk: r && r.net > 0 ? "#2f7d3a" : "#c2210f",
+      showDaba: !!s.dabaAt && now - s.dabaAt < 1400,
+
+      /* ---- THE NOTE -------------------------------------------------------
+         One line of text above the rack, doing three jobs in turn: tell you
+         which ring to drag to, then tell you what the spin did to you. It is
+         the same strip every time, which is the whole reason it works — there
+         is one place on this panel where the game talks to you, and you learn
+         where it is in the first ten seconds. */
+      /* AND IT IS AS BIG AS THE ROOM ALLOWS. The meter only exists once the
+         wheels are moving, so the instruction and the multiplier never share
+         the panel — which means the note can have the whole top of it while
+         you are betting and give half of it back afterwards. Two sizes, and
+         the box that clips them moves with them. */
+      noteH: (s.spinning || r) ? "21.5" : "28",
+      noteFont: (s.spinning || r) ? "5.4px" : "6.2px",
+      noteText: s.spinPhase === "free" ? "STOP THE WHEEL"
+        : s.spinning ? "BOTH RINGS TURNING…"
+        : r ? (r.net > 0 ? "YOU WIN " + r.net + " CREDITS" : r.net < 0 ? "YOU LOSE " + (-r.net) + " CREDITS" : "NOTHING IN, NOTHING OUT")
+        : (now2 - (s.wrongAt || 0) < 1500) ? (want === "outer" ? "THAT IS THE INNER RING — OUTER FIRST" : "OUTER IS DOWN — THE INNER RING NOW")
+        : (now2 - (s.shortAt || 0) < 1500) ? "NOT ENOUGH CREDITS FOR THAT CHIP"
+        : want === "outer" ? "DRAG YOUR BET TO THE OUTER RING"
+        : want === "inner" ? "DRAG YOUR BET TO THE INNER RING"
+        : "BOTH BETS DOWN — HIT SPIN",
+      noteInk: r ? (r.net > 0 ? "#8fd6ae" : r.net < 0 ? "#ec6a52" : "#d9d5cf")
+        : (now2 - (s.wrongAt || 0) < 1500 || now2 - (s.shortAt || 0) < 1500) ? "#ec6a52"
+        : want === "outer" ? "#d9a84e" : want === "inner" ? "#8fd6bf" : "#f0c040",
+      noteSub: s.spinPhase === "free" ? "Freeze the meter — x5 is narrow."
+        /* THE MULTIPLIER IS ONLY NEWS IF THERE WAS SOMETHING TO MULTIPLY.
+           "Violet / Crimson came up at x5" on a losing spin is a sentence
+           that reads like a win and is not one — the meter did its job
+           perfectly and there was nothing on the table for it. Say THAT
+           instead, because a wasted x5 is the most memorable thing that can
+           happen at this wheel and the game should notice it. */
+        /* AND IT HAS TO FIT. The box above the meter holds a bold line and
+           two small ones and no more; a sentence that runs to a third is cut
+           off mid-word, which is how "an x5 with nothing to multiply" became
+           "an x5 with". The DABA case says the least here because the flash
+           across the wheel is already shouting it. */
+        : r ? ((r.daba ? "DABA — both rings. " : "") +
+                    OUTER[r.oi].name + " / " + INNER[r.ii].name +
+                    (r.win > 0
+                      ? (r.mult > 1 ? (r.daba ? " at x" + r.mult + "." : " — the meter paid x" + r.mult + ".")
+                                    : " — but the meter gave you x1.")
+                      : (r.mult >= 5 ? " — neither one. An x5 with nothing to multiply."
+                                     : " — neither one.")))
+        : want ? "Pick a chip, then drag it onto the lit ring."
+        : "CLEAR takes both bets back.",
+      creditText: s.credits + "",
+
+      showHint: !s.overlay && !s.titleCard,
+      hintText: s.spinning ? "Both rings are turning — the pointer at the top decides."
+        : r ? "The winning colours are ringed on the wheel. Hit RESET WHEEL to bet again."
+        : s.spinPhase === "free" ? "STOP WHEEL freezes the meter where your thumb catches it. x5 is narrow and the x1s are right beside it."
+        : !want ? "Both bets are down. Hit SPIN — or CLEAR to take them back."
+        : want === "inner" ? "Now the INNER ring. Drag a chip onto a colour — it is lit."
+        : "Take a chip off the rack and drag it onto the OUTER ring. A colour that comes up pays five to one; both rings pays double.",
+
+      showTitleCard: !!s.titleCard && !s.overlay,
+      cardTitle: s.titleCard ? s.titleCard[0] : "",
+      cardHint: s.titleCard ? s.titleCard[1] : "",
+
+      showIntro: s.overlay === "intro",
+      begin: this.begin,
+
+      showCard: s.overlay === "card",
+      cardKicker: reached ? cfg.name + " · cleared" : cfg.name + " · short",
+      cardScore: (s.bank > 0 ? "+" : "") + s.bank + " credits on the night",
+      cardMood: !reached ? "Quirk keeps the chips. Have another go."
+        : s.dabas ? "A DABA night. The bar drank to you."
+        : "Table cleared. Quirk looked almost disappointed.",
+      cardRows: [
+        { name: "Target", val: pct + "%", pct, color: pct >= 100 ? "#2f7d3a" : pct >= 60 ? "#b07d00" : "#c2210f" },
+        { name: "Spins won", val: s.hits + "/" + cfg.spins, pct: Math.round((s.hits / cfg.spins) * 100),
+          color: s.hits >= cfg.spins * 0.5 ? "#2f7d3a" : "#b07d00" }
+      ],
+      cardNotes: notes, hasNotes: notes.length > 0,
+      cardCta: !reached ? "Play the table again"
+        : s.round + 1 >= 4 ? "Back to the quiet table" : "Next table",
+      cardAction: this.cardAction
+    };
+  }
+}
+</script>
+
+
+</body></html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<script src="engine/mute-all.js"></script>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Ore Shaft">
+  <div ref="{{ stageRef }}" style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0;overflow:hidden"></div>
+  <div style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0;pointer-events:none;background:radial-gradient(ellipse at 50% 55%, rgba(0,0,0,0) 55%, rgba(6,8,12,0.45) 100%);z-index:1"></div>
+  <div style="position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 120px 30px #ec3013;opacity:{{ hurtOp }};z-index:1"></div>
+  <div data-hud-host="1" style="position:absolute;left:0;right:0;top:0;bottom:0;pointer-events:none"><dc-import name="Game HUD" keep="top strip keys compass pad view talk nobag" game="{{ engine }}" hud="{{ stdHud }}" started="{{ started }}" busy="{{ hudBusy }}" on-hud="{{ onHud }}" world="Deep Space Fox" keys="{{ keysList }}" skip-keys="{{ skipKeys }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+
+  <sc-if value="{{ chipOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:{{ chipTop }};z-index:3;display:flex;flex-direction:column;pointer-events:none;background:#000;border:2px solid #3a3836;max-width:calc(100% - 24px)">
+      <div style="display:flex;align-items:stretch">
+        <div style="padding:4px 10px;display:flex;flex-direction:column;border-right:2px solid #3a3836"><span style="font:800 9px var(--font-heading);letter-spacing:0.12em;color:#cfcac4;white-space:nowrap">UNHACKER</span><span style="font:900 13px var(--font-heading);color:{{ toolCol }};white-space:nowrap">{{ toolTxt }}</span></div>
+        <div style="padding:4px 10px;display:flex;flex-direction:column"><span style="font:800 9px var(--font-heading);letter-spacing:0.12em;color:#cfcac4;white-space:nowrap">FREED HERE</span><span style="font:900 13px var(--font-heading);color:#5fe3ff;font-variant-numeric:tabular-nums;white-space:nowrap">{{ freedTxt }}</span></div>
+      </div>
+      <div style="display:flex;gap:4px;padding:4px 10px;border-top:2px solid #3a3836">
+        <sc-for list="{{ partDots }}" as="d" hint-placeholder-count="3"><span style="width:12px;height:12px;background:{{ d.c }};border:2px solid {{ d.b }};display:block;box-sizing:border-box"></span></sc-for>
+        <span style="font:800 9px var(--font-heading);letter-spacing:0.12em;color:#cfcac4;margin-left:4px;white-space:nowrap">PARTS</span>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ bossOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:{{ chipTop }};z-index:3;pointer-events:none;width:min(380px, calc(100% - 24px));background:#000;border:2px solid {{ bossCol }};display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:4px 10px 2px"><span style="font:900 15px var(--font-heading);letter-spacing:0.06em;color:#fff;white-space:nowrap">{{ bossName }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#cfcac4;white-space:nowrap">BOSS {{ bossPhase }}</span></div>
+      <div style="height:12px;background:#2a2725;margin:0 10px;position:relative"><div style="position:absolute;left:0;top:0;bottom:0;width:{{ bossW }};background:{{ bossCol }}"></div></div>
+      <span style="font:800 11px var(--font-heading);letter-spacing:0.1em;color:{{ bossCol }};padding:3px 10px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ bossSub }}</span>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ unOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:0;right:0;top:{{ unTop }};display:flex;justify-content:center;pointer-events:none;z-index:3;padding:0 12px">
+      <div style="width:min(360px,100%);background:#000;border:2px solid #5fe3ff;display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;gap:8px;padding:4px 10px"><span style="font:900 13px var(--font-heading);letter-spacing:0.08em;color:#5fe3ff;white-space:nowrap">UNHACKING · {{ unName }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em;color:#fff;white-space:nowrap">STAY CLOSE</span></div>
+        <div style="height:12px;background:#1a2a30;margin:0 10px 6px;position:relative"><div style="position:absolute;left:0;top:0;bottom:0;width:{{ unW }};background:#5fe3ff"></div></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ voiceOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:{{ voiceBot }};z-index:3;pointer-events:none;max-width:min(420px, calc(100% - 24px));background:#000;border:2px solid #5fe3ff;padding:6px 12px;display:flex;flex-direction:column;gap:2px">
+      <span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#5fe3ff">FREED · {{ voiceName }} · ITS OWN VOICE</span>
+      <span style="font:800 16px var(--font-heading);line-height:1.25;color:#fff;text-wrap:pretty">{{ voiceText }}</span>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ hasBanner }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:0;right:0;top:{{ bannerTop }};display:flex;padding:0 max(16px, env(safe-area-inset-left));pointer-events:none;z-index:3"><div style="background:#ec3013;color:#fff;padding:8px 16px;font:900 clamp(16px,min(5vw,4.6vh),32px) var(--font-heading);line-height:1.05;border:2px solid #000;max-width:{{ bannerMax }};box-sizing:border-box;text-wrap:pretty">{{ banner }}</div></div>
+  </sc-if>
+  <div style="position:absolute;inset:0;background:#000;opacity:{{ fadeOp }};pointer-events:none;z-index:4"></div>
+
+  <sc-if value="{{ winOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:9;display:flex;align-items:flex-end;padding:{{ winPadTop }} max(12px, env(safe-area-inset-left)) calc(12px + env(safe-area-inset-bottom));box-sizing:border-box;pointer-events:none">
+      <div style="width:min(440px,100%);max-height:100%;overflow:auto;background:var(--color-text);color:var(--color-bg);border:2px solid var(--color-bg);display:flex;flex-direction:column;pointer-events:auto">
+        <div style="padding:12px 16px 10px;border-bottom:2px solid var(--color-bg);display:flex;flex-direction:column;gap:4px">
+          <span style="font:800 11px var(--font-heading);letter-spacing:0.14em;color:#5fe3ff">DEEP SPACE FOX · ORE SHAFT · THE DEEP</span>
+          <span style="font:900 clamp(26px,7vw,36px) var(--font-heading);line-height:1">Shaft clear</span>
+          <span style="font:600 15px var(--font-body);line-height:1.35;text-wrap:pretty">The relay is wrecked and the Drill Rig is free. The signal to Meru is gone.</span>
+        </div>
+        <div style="display:flex;flex-direction:column">
+          <div style="display:flex;justify-content:space-between;gap:12px;padding:8px 16px;border-bottom:2px solid #3a3836"><span style="font:800 14px var(--font-heading)">POWER-SOURCE CLUE</span><span style="font:800 14px var(--font-heading);color:#5fe3ff;text-align:right">cyan crystal</span></div>
+          <div style="display:flex;justify-content:space-between;gap:12px;padding:8px 16px;border-bottom:2px solid #3a3836"><span style="font:800 14px var(--font-heading)">OVERCLOCKED LASER</span><span style="font:800 14px var(--font-heading);color:#ffd23a;text-align:right">laser 9 → 14</span></div>
+          <div style="display:flex;justify-content:space-between;gap:12px;padding:8px 16px;border-bottom:2px solid var(--color-bg)"><span style="font:800 14px var(--font-heading)">REWARD</span><span style="font:800 14px var(--font-heading);text-align:right">+250 XP · +150 GOLD</span></div>
+        </div>
+        <button onClick="{{ winClose }}" style="appearance:none;border:0;margin:0;min-height:52px;padding:0 16px;background:var(--color-accent);color:#fff;font:900 16px var(--font-heading);letter-spacing:0.06em;text-align:left;cursor:pointer" style-hover="background:var(--color-accent-700)" style-active="background:var(--color-accent-900)">KEEP EXPLORING</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ wcOn }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:10;width:min(440px, calc(100% - 24px));max-height:calc(100% - 24px);display:flex;pointer-events:none"><dc-import name="Welcome Card" kicker="DEEP SPACE FOX · UNDER ENGINEERING" title="The Ore Shaft" text="Chief O'Brain unsealed the hatch. The old mine's machines are hacked. Free them, find the 3 unhacker parts, and get to the bottom with R-8." rows="{{ wcRows }}" play-label="GO DOWN THE HATCH" on-play="{{ wcGo }}" on-tutorial="{{ wcTut }}" hint-size="100%,360px" style="width:100%"></dc-import></div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { vw: 1200, vh: 800, hud: { state: 'ready', hp: 100, en: 100 }, hi: { pad: false, menu: false, split: false, bar: 0 }, startLv: 0 };
+  stageRef = React.createRef();
+  onHud = hi => this.setState({ hi });
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs();
+    const m = /[?&]level=(\d)/.exec(location.search), lv = m ? Math.max(0, Math.min(2, +m[1] - 1)) : 0; this.setState({ startLv: lv });
+    try { const mod = await import(new URL('worlds/ore-shaft.js?v=s367', document.baseURI).href);
+      this.lab = await mod.createOreShaft({ container: this.stageRef.current, onState: hud => this.setState({ hud }), startLevel: lv });
+      this.engine = this.lab; window.__ore = this.lab; this.forceUpdate(); if (/[?&]autostart=1/.test(location.search)) this.lab.start();
+    } catch (e) { console.warn('ore shaft failed: ' + (e && e.stack || String(e))); }
+  }
+  componentWillUnmount() { this.lab && this.lab.destroy(); removeEventListener('resize', this.onRs); }
+  onRs = () => this.setState({ vw: innerWidth, vh: innerHeight });
+  renderVals() {
+    const S = this.state, h = S.hud, { vw, vh } = S, phone = Math.min(vw, vh) < 520, land = phone && vw > vh, bar = S.hi.bar || 0, play = h.state === 'run';
+    const stdHud = { hp: h.hp, hpMax: 100, en: h.en ?? 100, gold: h.gold || 0, hour: 12, day: 1, items: [], place: h.place || 'Deep Space Fox · Ore Shaft', quest: h.quest || { text: 'Follow the lamps' }, prompt: h.prompt || null, toast: null, muted: true, weather: 'Clear', inCave: true, weapons: [], dialog: h.dialog || null };
+    const LV = [['1', 'ROBOT WORKS', 'machines + conveyors'], ['2', 'ASTEROID HALL', 'flooded · R-8 gets hacked'], ['3', 'THE DEEP', 'ice, rubble · BOSS: relay + rig']];
+    const top = bar + (phone ? (land ? 105 : 110) : 70);   // s367 phone pass: chip / boss bar under the compass, banner under that, unhack bar under the banner
+    return {
+      stageRef: this.stageRef, engine: this.engine, stdHud, started: !!this.lab && h.state !== 'ready', hudBusy: !play, onHud: this.onHud,
+      stageTop: S.hi.split ? 'calc(' + bar + 'px + (100% - ' + bar + 'px) / 2)' : bar + 'px',
+      keysList: [['WASD', 'move'], ['Space', 'jump · again = double'], ['1 / J', 'sword · hold = power swing'], ['2 / K', 'laser (aims itself)'], ['E', 'unhack · lift · talk'], ['Drag', 'turn the camera'], ['Wheel', 'zoom']],
+      skipKeys: ['KeyJ', 'KeyK', 'KeyE', 'Digit1', 'Digit2', 'Space', 'KeyT', 'KeyN', 'KeyV', 'KeyC', 'KeyO', 'KeyH', 'Enter'],
+      hurtOp: h.ko ? 0.7 : h.hp < 30 && play ? 0.35 : 0, fadeOp: h.fade || 0,
+      chipOn: play && !S.hi.menu && !h.boss, bossOn: play && !S.hi.menu && !!h.boss, bossName: h.boss ? h.boss.name : '', bossSub: h.boss ? h.boss.sub : '', bossCol: h.boss ? h.boss.col : '#ec3013', bossW: h.boss ? Math.round(h.boss.k * 100) + '%' : '0%', bossPhase: h.boss ? h.boss.phase : '',
+      winOn: !!h.win, winClose: () => this.lab && this.lab.closeWin(), chipTop: 'calc(' + (bar + (phone ? 40 : 10)) + 'px)', toolTxt: h.tool || 'NONE YET', toolCol: h.tool ? '#5fe3ff' : '#ff6b5a', freedTxt: (h.freed || 0) + ' / ' + (h.total || 0),
+      partDots: [0, 1, 2].map(i => ({ c: i < (h.parts || 0) ? '#ffd23a' : '#000', b: i < (h.parts || 0) ? '#ffd23a' : '#6a6460' })),
+      unOn: play && h.un != null, unW: Math.round((h.un || 0) * 100) + '%', unName: h.unName || '', unTop: 'calc(' + (bar + (phone && !land ? 180 : land ? 150 : 140)) + 'px)',
+      voiceOn: play && !!h.voice && !h.dialog, voiceName: h.voice ? h.voice.name : '', voiceText: h.voice ? h.voice.text : '', voiceBot: phone && !land ? 'calc(230px + env(safe-area-inset-bottom))' : 'calc(140px + env(safe-area-inset-bottom))',
+      hasBanner: !!h.banner && !S.hi.menu && !h.dialog, banner: h.banner, bannerTop: top + 'px', bannerMax: land ? 'calc(100% - 200px)' : '100%', winPadTop: (bar + 8) + 'px',
+      wcOn: h.state === 'ready',
+      wcRows: [...LV.map(([n, nm, v], i) => ({ k: 'Start on level ' + n + ' · ' + nm, v, c: S.startLv === i ? '#ffd23a' : '#cfcac4', sel: S.startLv === i, go: () => { this.setState({ startLv: i }); this.lab && this.lab.goLevel(i); } })),
+        { k: 'Machines', v: 'hacked, not evil · at 0 HP they are STUNNED, never wrecked', c: '#5fe3ff' }, { k: 'Unhack', v: 'stand close to a stunned machine + E · stay near while the ring fills', c: '#5fe3ff' }, { k: 'Walkway', v: 'machines never step on it · the lamps lead the way', c: '#ffd23a' }],
+      wcGo: () => this.lab && this.lab.start(),
+      wcTut: () => this.lab && this.lab.start(true),
+    };
+  }
+}
+</script>
+</body>
+</html>

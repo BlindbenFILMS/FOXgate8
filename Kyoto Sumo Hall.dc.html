@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Kyoto Sumo Hall">
+  <div ref="{{ stageRef }}" style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0;overflow:hidden"></div>
+  <div data-hud-host="1" style="position:absolute;inset:0;pointer-events:none"><dc-import name="Game HUD" game="{{ engine }}" hud="{{ stdHud }}" started="{{ started }}" busy="{{ busy }}" on-hud="{{ onHud }}" world="Kyoto" vehicle="sumo" keys="{{ keysList }}" skip-keys="{{ skipKeys }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  <sc-if value="{{ oppOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;right:max(12px, env(safe-area-inset-right));top:{{ cardTop }};z-index:2;pointer-events:none;width:{{ oppW }};background:#000;border:2px solid #ec3013;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:4px 10px 0"><span style="font:800 9px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap">{{ h.opp.rank }}</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;color:#cfcac4;white-space:nowrap">{{ oppSize }}</span></div>
+      <div style="padding:0 10px 4px;font:900 16px var(--font-heading);letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ h.opp.name }}</div>
+      <div style="display:grid;grid-template-columns:28px minmax(0,1fr);gap:6px;align-items:center;padding:0 10px 4px"><span style="font:800 8px var(--font-heading);letter-spacing:0.08em;color:#cfcac4">BAL</span><div style="height:8px;background:#3a3836;position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ oppBalW }};background:{{ oppBalC }};display:block"></span></div></div>
+      <div style="display:grid;grid-template-columns:28px minmax(0,1fr);gap:6px;align-items:center;padding:0 10px 6px"><span style="font:800 8px var(--font-heading);letter-spacing:0.08em;color:#cfcac4">STA</span><div style="height:5px;background:#3a3836;position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ oppStW }};background:#38bdf8;display:block"></span></div></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ streakOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:{{ cardTop }};z-index:2;pointer-events:none;background:#000;border:2px solid #3a3836;display:flex;align-items:stretch">
+      <div style="padding:5px 10px;display:flex;flex-direction:column;justify-content:center;gap:1px;min-width:62px"><span style="font:800 9px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">STREAK</span><span style="font:900 26px var(--font-heading);line-height:1;font-variant-numeric:tabular-nums">{{ h.streak }}</span><span style="font:800 9px var(--font-heading);letter-spacing:0.06em;color:#8a847e;white-space:nowrap">BEST {{ h.best }}</span></div>
+      <div style="width:64px;height:64px;position:relative;border-left:2px solid #3a3836;background:#2a1a12;flex:none">
+        <span style="position:absolute;left:7px;top:7px;width:46px;height:46px;border:2px solid {{ ringCol }};border-radius:50%;display:block;background:#c9a06c"></span>
+        <span style="position:absolute;left:{{ dotBL }};top:{{ dotBT }};width:10px;height:10px;margin:-5px 0 0 -5px;background:#38bdf8;border:2px solid #000;border-radius:50%;display:block"></span>
+        <span style="position:absolute;left:{{ dotOL }};top:{{ dotOT }};width:10px;height:10px;margin:-5px 0 0 -5px;background:#ec3013;border:2px solid #000;border-radius:50%;display:block"></span>
+      </div>
+    </div>
+  </sc-if>
+  <div style="position:absolute;left:{{ stackL }};top:{{ stackTop }};transform:{{ stackTf }};width:{{ stackW }};z-index:5;pointer-events:none;display:flex;flex-direction:{{ stackDir }};flex-wrap:wrap;align-items:flex-start;gap:6px">
+    <sc-if value="{{ callOn }}" hint-placeholder-val="{{ false }}">
+      <div style="max-width:100%;background:#000;border:2px solid #5a2a7a;display:flex;flex-direction:column">
+        <span style="padding:3px 10px;background:#5a2a7a;font:900 11px var(--font-heading);letter-spacing:0.14em;color:#fff;white-space:nowrap">GYOJI</span>
+        <span style="padding:5px 14px 7px;font:900 {{ callFs }} var(--font-heading);letter-spacing:0.02em;line-height:1.15;color:#fff;white-space:{{ callWs }}">{{ h.call }}</span>
+      </div>
+    </sc-if>
+    <sc-if value="{{ flashOn }}" hint-placeholder-val="{{ false }}">
+      <div style="max-width:100%;background:rgba(0,0,0,0.88);border:2px solid {{ flashCol }};display:flex;flex-direction:column">
+        <div style="display:flex;align-items:stretch"><span style="flex:none;width:12px;background:{{ flashCol }};display:block"></span><span style="padding:6px 16px;font:900 {{ flashFs }} var(--font-heading);letter-spacing:0.02em;line-height:1.1;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ flashTxt }}</span></div>
+        <sc-if value="{{ kimOn }}" hint-placeholder-val="{{ false }}"><span style="padding:3px 16px 6px 28px;font:800 12px var(--font-heading);letter-spacing:0.1em;color:{{ flashCol }}">{{ kimSub }}</span></sc-if>
+      </div>
+    </sc-if>
+  </div>
+  <sc-if value="{{ promptOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:{{ promptL }};bottom:{{ promptB }};transform:{{ promptTf }};z-index:4;pointer-events:none;width:max-content;max-width:calc(100% - 24px);background:#000;border:2px solid {{ promptCol }};display:flex;align-items:stretch">
+      <span style="flex:none;padding:0 10px;display:flex;align-items:center;background:{{ promptCol }};color:{{ promptInk }};font:900 12px var(--font-heading);letter-spacing:0.08em;white-space:nowrap">{{ promptKey }}</span>
+      <span style="padding:7px 12px;font:900 13px var(--font-heading);letter-spacing:0.04em;line-height:1.25;color:#fff;white-space:nowrap">{{ promptTxt }}</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ skipOn }}" hint-placeholder-val="{{ false }}">
+    <button onClick="{{ goSkip }}" style="position:absolute;right:max(12px, env(safe-area-inset-right));top:{{ skipTop }};z-index:6;min-width:96px;min-height:48px;padding:0 14px;border:2px solid #fff;border-radius:0;background:#000;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left;pointer-events:auto" style-hover="background:#2a2826">SKIP →</button>
+  </sc-if>
+  <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(200px + env(safe-area-inset-bottom));z-index:7;pointer-events:none;width:{{ demoW }};background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="padding:5px 12px;border-bottom:2px solid #3a3836;font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;background:#ec3013;display:block"></span>DEMO · NOTHING IS SAVED</div>
+      <div style="display:flex;align-items:stretch"><sc-if value="{{ demoKeyOn }}" hint-placeholder-val="{{ false }}"><div style="flex:none;min-width:56px;display:flex;align-items:center;justify-content:center;padding:0 8px;background:#ec3013;color:#fff;font:900 14px var(--font-heading);border-right:2px solid #3a3836">{{ demoKey }}</div></sc-if><div style="padding:9px 12px;font:900 clamp(13px,3.6vw,16px) var(--font-heading);letter-spacing:0.03em;line-height:1.25;color:#fff;text-wrap:pretty">{{ demoCap }}</div></div>
+    </div>
+    <button onClick="{{ demoExit }}" aria-label="Exit the demo" style="position:absolute;right:max(12px, env(safe-area-inset-right));bottom:calc(200px + env(safe-area-inset-bottom));z-index:7;min-width:96px;min-height:48px;padding:0 14px;border:2px solid #ec3013;border-radius:0;background:#ec3013;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">EXIT DEMO</button>
+  </sc-if>
+  <sc-if value="{{ introOn }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:6;width:min(420px, calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column">
+      <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:3px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">KYOTO · SUMO HALL · kyotoSumoHall</span><span style="font:900 28px var(--font-heading);line-height:1">Sumo Streak</span><span style="font:700 13px var(--font-body);line-height:1.4;color:#cfcac2;text-wrap:pretty">Win bout after bout. Every rikishi is bigger than the last, and one loss ends the streak. Push him over the straw, slap him out, carry him by the belt or throw him down.</span></div>
+      <sc-for list="{{ introRows }}" as="r" hint-placeholder-count="5"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:6px 16px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;color:{{ r.c }};white-space:nowrap">{{ r.v }}</span></div></sc-for>
+      <button onClick="{{ goStart }}" style="min-height:56px;padding:0 18px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10">START A STREAK</button>
+      <button onClick="{{ goDemo }}" style="min-height:48px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WATCH THE DEMO</button>
+      <sc-if value="{{ backOn }}" hint-placeholder-val="{{ false }}"><a href="{{ backHref }}" style="min-height:48px;padding:0 18px;border-top:2px solid #3a3836;display:flex;align-items:center;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;text-decoration:none" style-hover="background:#2a2826">← BACK TO KYOTO</a></sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:8;background:rgba(0,0,0,0.6);display:flex;align-items:flex-end;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #3a3836;width:min(440px,100%);display:flex;flex-direction:column">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+          <div style="padding:12px 16px;flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ doneKicker }}</span><span style="font:900 26px var(--font-heading);line-height:1.05">{{ doneTitle }}</span><span style="font:700 13px var(--font-body);color:#cfcac2;text-wrap:pretty">{{ doneSub }}</span></div>
+          <div style="min-width:88px;padding:0 10px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;background:{{ doneCol }}"><span style="font:900 30px var(--font-heading);line-height:1">{{ doneBig }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em">STREAK</span></div>
+        </div>
+        <sc-for list="{{ doneRows }}" as="r" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:8px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;color:{{ r.c }}">{{ r.v }}</span></div></sc-for>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+          <button onClick="{{ doneMain }}" style="min-height:54px;padding:0 16px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10">{{ doneMainTxt }}</button>
+          <button onClick="{{ toIntro }}" style="min-height:54px;padding:0 16px;border:0;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">{{ doneBackTxt }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;difficulty&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Easy fun&quot;,&quot;Normal&quot;],&quot;default&quot;:&quot;Easy fun&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Game&quot;},&quot;apronInBout&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Look&quot;}}">
+class Component extends DCLogic {
+  state = { h: null, vw: 1200, vh: 800, hi: { pad: false, menu: false, split: false, bar: 0 } };
+  stageRef = React.createRef();
+  onHud = hi => this.setState({ hi });
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs();
+    try { const m = await import(new URL('minigames/kyoto/sumo-hall.js', document.baseURI).href); this.g = await m.createSumo({ container: this.stageRef.current, onState: h => this.setState({ h }), opts: this.opts() }); window.__sumo = this.g; this.forceUpdate(); if (/[?&]demo=1/.test(location.search)) setTimeout(() => this.g.demoStart(), 400); }
+    catch (e) { console.warn('sumo failed: ' + (e && e.stack || String(e))); }
+  }
+  opts() { return { apronInBout: !!this.props.apronInBout, normal: (this.props.difficulty ?? 'Easy fun') === 'Normal' }; }
+  componentDidUpdate() { if (this.g && this.safe) { const k = this.safe.top + ',' + this.safe.bottom; if (k !== this.lastSafe) { this.lastSafe = k; this.g.setSafe(this.safe); } } const o = JSON.stringify(this.opts()); if (this.g && o !== this.lastO) { this.lastO = o; this.g.setOpts(this.opts()); } }
+  componentWillUnmount() { removeEventListener('resize', this.onRs); this.g && this.g.destroy(); }
+  onRs = () => this.setState({ vw: innerWidth, vh: innerHeight });
+  renderVals() {
+    const S = this.state, g = this.g, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const h = S.h || { mode: 'intro', ph: 'idle', quest: 'SUMO STREAK', flash: null, call: '', prompt: '', done: null, streak: 0, best: 0, wins: 0, bouts: 0, trophy: false, hp: 100, st: 100, opp: null, ring: null, swap: null, canSkip: false, demo: null, gold: 0, stomps: 0, next: { name: '', rank: '' } };
+    const { vw, vh } = S, phone = Math.min(vw, vh) < 520, land = phone && vw > vh, bar = S.hi.bar || 0, inB = h.mode === 'bout', d = h.done || {};
+    let sv = null; try { sv = JSON.parse(localStorage.getItem('8gates.save.v1') || 'null'); } catch (e) {}
+    const stdHud = { hp: h.hp, hpMax: 100, en: h.st, gold: h.gold, hour: 15, day: sv && sv.stats ? sv.stats.worldDay || 1 : 1, items: sv ? Object.entries(sv.items || {}).filter(([, n]) => n > 0).map(([id, n]) => ({ id, n, label: id })) : [], place: 'Kyoto · Sumo Hall', quest: { text: h.quest }, prompt: null, toast: null, muted: false, weather: 'Clear', boat: false, inCave: false, weapons: [], dialog: null, vehicles: [], vehAmmo: [], vehSwap: h.swap || null };
+    const top = bar + 42, menu = !!S.hi.menu, live = inB && !menu, portrait = phone && !land, stackTop = portrait ? top + 84 : top;
+    this.safe = { top: stackTop - bar + (portrait ? 150 : land ? 76 : 132), bottom: portrait ? 250 : land ? 44 : 96 };
+    const P = { shiko: ['1 · 2 · 3', 'SHIKO · STOMP · ' + Math.min(2, h.stomps) + ' / 2', '#ffd23a'], wait: ['WAIT', 'CROUCH · WAIT FOR HAKKEYOI!', '#ffffff'], go: ['GO!', 'TAP A BUTTON · CHARGE!', '#22c55e'], grip: ['GRIP', '1 DRIVE · 2 LET GO · 3 THROW', '#22c55e'], gripped: ['HELD', '3 THROW · 2 LET GO · 1 DRIVE', '#ec3013'], edge: ['EDGE', 'PUSH BACK OR CIRCLE AWAY', '#ec3013'], stumble: ['NOW', 'OFF BALANCE · PUSH OR THROW', '#22c55e'] }[h.prompt];
+    const kim = h.flash && /^(OSHIDASHI|TSUKIDASHI|YORIKIRI|UWATENAGE|SHITATENAGE|TSUKITAOSHI|HATAKIKOMI|ISAMIASHI)$/.test(h.flash.txt);
+    const KT = { OSHIDASHI: 'PUSHED OUT', TSUKIDASHI: 'SLAPPED OUT', YORIKIRI: 'CARRIED OUT BY THE BELT', UWATENAGE: 'OVERARM BELT THROW', SHITATENAGE: 'UNDERARM BELT THROW', TSUKITAOSHI: 'SHOVED DOWN', HATAKIKOMI: 'SLAPPED DOWN', ISAMIASHI: 'STEPPED OUT' };
+    const backM = /[?&]back=([^&]+)/.exec(location.search), o = h.opp, rg = h.ring;
+    return {
+      stageRef: this.stageRef, engine: g, stdHud, started: !!g && inB, busy: !inB || h.ph === 'enter' || h.ph === 'salt' || h.ph === 'result', onHud: this.onHud, h,
+      stageTop: bar + 'px', cardTop: top + 'px',
+      keysList: [['WASD', 'move · circle'], ['1 / J', 'push · drive'], ['2 / K', 'slap · let go'], ['3 / L', 'grab · throw'], ['4 / Q', 'throw'], ['I', 'menu']], skipKeys: ['KeyJ', 'KeyK', 'KeyL', 'KeyQ', 'KeyT', 'KeyN', 'KeyV', 'KeyC', 'KeyO', 'KeyH', 'KeyE', 'Space', 'Digit4'],
+      oppOn: live && !!o && h.ph !== 'enter', oppW: phone && !land ? '150px' : '210px', oppSize: o ? o.h + ' M · ' + o.kg + ' KG' : '', oppBalW: o ? (o.bal * 100).toFixed(0) + '%' : '0%', oppBalC: o && o.bal < 0.35 ? '#22c55e' : '#ec3013', oppStW: o ? (o.st * 100).toFixed(0) + '%' : '0%',
+      streakOn: live && !!rg, ringCol: rg && (rg.warnB || rg.warnO) ? '#ec3013' : '#d8bf7a', dotBL: rg ? rg.b[0].toFixed(1) + '%' : '30%', dotBT: rg ? rg.b[1].toFixed(1) + '%' : '50%', dotOL: rg ? rg.o[0].toFixed(1) + '%' : '70%', dotOT: rg ? rg.o[1].toFixed(1) + '%' : '50%',
+      callOn: !menu && (inB || h.mode === 'done') && !!h.call, stackTop: stackTop + 'px', stackL: portrait ? 'max(12px, env(safe-area-inset-left))' : '50%', stackTf: portrait ? 'none' : 'translateX(-50%)', stackDir: land ? 'row' : 'column', stackW: portrait ? 'calc(100% - 24px)' : land ? 'min(460px, calc(100% - 400px))' : 'min(420px, calc(100% - 440px))', flashFs: portrait ? 'clamp(22px,6.4vw,30px)' : land ? '20px' : '28px', callWs: phone && !land ? 'normal' : 'nowrap', callFs: phone && !land ? 'clamp(16px,4.6vw,22px)' : land ? '13px' : '15px',
+      flashOn: !menu && !!h.flash && h.mode !== 'intro', flashTxt: h.flash ? h.flash.txt : '', flashCol: h.flash ? h.flash.col : '#ffd23a', kimOn: !!kim, kimSub: kim ? KT[h.flash.txt] : '',
+      promptOn: live && !!P && !h.demo, promptKey: P ? P[0] : '', promptTxt: P ? P[1] : '', promptCol: P ? P[2] : '#fff', promptInk: P && P[2] === '#ec3013' ? '#ffffff' : '#000000',
+      promptB: land ? 'calc(10px + env(safe-area-inset-bottom))' : phone ? 'calc(196px + env(safe-area-inset-bottom))' : 'calc(48px + env(safe-area-inset-bottom))', promptL: portrait ? 'max(12px, env(safe-area-inset-left))' : '50%', promptTf: portrait ? 'none' : 'translateX(-50%)',
+      skipOn: !menu && h.canSkip && !h.demo, skipTop: (top + (o && h.ph !== 'enter' ? 84 : 0)) + 'px', goSkip: e => { blur(e); g && g.skip(); },
+      demoOn: !!h.demo, demoW: phone && !land ? 'calc(100% - 24px - 108px)' : 'min(340px, calc(100% - 140px))', demoKeyOn: !!(h.demo && h.demo[0]), demoKey: h.demo ? h.demo[0] : '', demoCap: h.demo ? h.demo[1] : '', demoExit: e => { blur(e); g && g.demoStop(); },
+      introOn: h.mode === 'intro',
+      introRows: [['Best streak', String(h.best), h.best ? '#ffd23a' : '#8a847e'], ['Bouts won', String(h.wins), '#ffffff'], ['First up', h.next ? h.next.name + ' · ' + h.next.rank : '', '#ffffff'], ['5 in a row', h.trophy ? 'SUMO TROPHY ✓' : 'SUMO TROPHY + SKY MAWASHI', h.trophy ? '#22c55e' : '#8a847e']].map(([k, v, c]) => ({ k, v, c })),
+      goStart: e => { blur(e); g && g.startStreak(); }, goDemo: e => { blur(e); g && g.demoStart(); }, backOn: !!backM, backHref: backM ? decodeURIComponent(backM[1]) : '#',
+      doneOn: h.mode === 'done' && !!h.done && !h.demo, doneKicker: 'BOUT ' + (d.bout || '') + ' · VS ' + (d.opp || '') + ' · ' + (d.rank || ''), doneTitle: d.win ? d.kim : 'Streak over', doneSub: d.win ? (d.kimTxt || '') + (d.next ? '. Next: ' + d.next.name + ', ' + d.next.rank.toLowerCase() + '.' : '') : (d.opp || '') + ' won by ' + (d.kim || '').toLowerCase() + ' (' + (d.kimTxt || '').toLowerCase() + ').',
+      doneCol: d.win ? '#22c55e' : '#ec3013', doneBig: String(d.streak || 0),
+      doneRows: [...(d.win ? [['Prize', '+' + d.gold + 'g', '#e6b45a']] : []), ['Best streak', String(d.best || 0) + (d.newBest ? ' · NEW' : ''), d.newBest ? '#ffd23a' : '#ffffff'], ...(d.upset ? [['Zabuton!', 'UPSET WIN +10g', '#ffd23a']] : []), ...(d.relic ? [['Relic', 'SUMO TROPHY', '#ffd23a'], ['Unlocked', 'SKY BLUE MAWASHI', '#7dd3fc']] : [])].map(([k, v, c]) => ({ k, v, c })),
+      doneMainTxt: d.win ? 'NEXT BOUT' : 'NEW STREAK', doneMain: e => { blur(e); g && g.nextBout(); }, doneBackTxt: d.win ? 'STOP HERE' : 'BACK', toIntro: e => { blur(e); g && g.toIntro(); },
+    };
+  }
+}
+</script>
+</body>
+</html>

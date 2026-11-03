@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<style>
+html, body { margin: 0; background: #201e1d; color: #f3f2f2; font-family: Archivo, sans-serif; }
+a { color: #f3f2f2; } a:hover { color: #ec3013; }
+input[type=range] { accent-color: #ec3013; }
+</style>
+</helmet>
+<div style="min-height:100vh;background:var(--color-text);color:var(--color-bg);font-family:var(--font-body);padding:20px 16px 120px;box-sizing:border-box;max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;flex-direction:column;gap:6px;border-bottom:2px solid var(--color-bg);padding-bottom:14px">
+    <div style="font-size:13px;font-weight:700;letter-spacing:0.12em;color:var(--color-accent)">8 GATES · MERU</div>
+    <div style="font-size:34px;font-weight:900;line-height:1;letter-spacing:-0.01em">LOFI MUSIC WORKSHOP</div>
+    <div style="font-size:16px;line-height:1.4;text-wrap:pretty">Pick a song, press PLAY, change anything. Every change is saved and plays in the game next time that song starts.</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0;border:2px solid var(--color-bg)">
+    <sc-for list="{{ songs }}" as="s" hint-placeholder-count="3">
+      <sc-if value="{{ s.on }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ s.pick }}" style="all:unset;cursor:pointer;display:flex;flex-direction:column;gap:4px;padding:14px 16px;min-height:72px;box-sizing:border-box;background:var(--color-accent);color:#fff;outline:2px solid var(--color-bg)">
+          <span style="font-size:20px;font-weight:900">{{ s.title }}</span>
+          <span style="font-size:14px;font-weight:600">{{ s.where }}</span>
+        </button>
+      </sc-if>
+      <sc-if value="{{ s.off }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ s.pick }}" style="all:unset;cursor:pointer;display:flex;flex-direction:column;gap:4px;padding:14px 16px;min-height:72px;box-sizing:border-box;outline:2px solid var(--color-bg)" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">
+          <span style="font-size:20px;font-weight:900">{{ s.title }}</span>
+          <span style="font-size:14px;font-weight:600">{{ s.where }}</span>
+        </button>
+      </sc-if>
+    </sc-for>
+  </div>
+
+  <div style="position:sticky;top:0;z-index:5;background:var(--color-text);display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:10px 0;border-bottom:2px solid var(--color-bg)">
+    <button onClick="{{ toggle }}" style="all:unset;cursor:pointer;min-width:140px;min-height:56px;padding:0 20px;box-sizing:border-box;display:flex;align-items:center;background:var(--color-accent);color:#fff;font-size:20px;font-weight:900" style-hover="background:var(--color-accent-600)" style-active="background:var(--color-accent-700)">{{ playLabel }}</button>
+    <div style="display:flex;border:2px solid var(--color-bg)">
+      <sc-for list="{{ starts }}" as="st" hint-placeholder-count="3">
+        <sc-if value="{{ st.on }}" hint-placeholder-val="{{ false }}"><button onClick="{{ st.pick }}" style="all:unset;cursor:pointer;min-height:52px;padding:0 14px;display:flex;align-items:center;font-size:15px;font-weight:800;background:var(--color-bg);color:var(--color-text)">{{ st.label }}</button></sc-if>
+        <sc-if value="{{ st.off }}" hint-placeholder-val="{{ true }}"><button onClick="{{ st.pick }}" style="all:unset;cursor:pointer;min-height:52px;padding:0 14px;display:flex;align-items:center;font-size:15px;font-weight:800" style-hover="background:var(--color-accent-900)">{{ st.label }}</button></sc-if>
+      </sc-for>
+    </div>
+    <div style="font-size:16px;font-weight:700;display:flex;flex-direction:column;gap:2px;min-width:0">
+      <span>{{ status }}</span>
+      <span style="font-size:14px;font-weight:600">{{ edited }}</span>
+    </div>
+  </div>
+
+  <sc-for list="{{ groups }}" as="gr" hint-placeholder-count="5">
+    <div style="display:flex;flex-direction:column;gap:0">
+      <div style="display:flex;flex-direction:column;gap:4px;padding-bottom:10px;border-bottom:2px solid var(--color-bg)">
+        <div style="font-size:24px;font-weight:900">{{ gr.title }}</div>
+        <div style="font-size:15px;line-height:1.4">{{ gr.hint }}</div>
+      </div>
+      <sc-for list="{{ gr.choices }}" as="ch" hint-placeholder-count="0">
+        <div style="display:flex;flex-direction:column;gap:10px;padding:14px 0;border-bottom:2px solid var(--color-bg)">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:baseline">
+            <span style="font-size:17px;font-weight:900;white-space:nowrap">{{ ch.label }}</span>
+            <span style="font-size:14px;font-weight:600">{{ ch.desc }}</span>
+            <sc-if value="{{ ch.changed }}" hint-placeholder-val="{{ false }}"><button onClick="{{ ch.undo }}" style="all:unset;cursor:pointer;font-size:13px;font-weight:800;color:var(--color-accent);padding:6px 0" style-hover="color:#fff">CHANGED · BACK TO ORIGINAL</button></sc-if>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:0;border:2px solid var(--color-bg);align-self:flex-start;max-width:100%">
+            <sc-for list="{{ ch.opts }}" as="o" hint-placeholder-count="3">
+              <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}"><button onClick="{{ o.pick }}" style="all:unset;cursor:pointer;min-height:48px;min-width:64px;padding:10px 14px;box-sizing:border-box;display:flex;align-items:center;font-size:15px;font-weight:800;line-height:1.2;white-space:nowrap;background:var(--color-accent);color:#fff;outline:1px solid var(--color-bg)">{{ o.label }}</button></sc-if>
+              <sc-if value="{{ o.off }}" hint-placeholder-val="{{ true }}"><button onClick="{{ o.pick }}" style="all:unset;cursor:pointer;min-height:48px;min-width:64px;padding:10px 14px;box-sizing:border-box;display:flex;align-items:center;font-size:15px;font-weight:800;line-height:1.2;white-space:nowrap;outline:1px solid var(--color-bg)" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">{{ o.label }}</button></sc-if>
+            </sc-for>
+          </div>
+          <div style="font-size:14px;line-height:1.35;min-height:19px">{{ ch.pickedHint }}</div>
+        </div>
+      </sc-for>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));column-gap:24px">
+        <sc-for list="{{ gr.sliders }}" as="sl" hint-placeholder-count="0">
+          <label style="display:flex;flex-direction:column;gap:6px;padding:14px 0;border-bottom:2px solid var(--color-bg)">
+            <span style="display:flex;justify-content:space-between;gap:8px;font-size:16px;font-weight:900"><span>{{ sl.label }}</span><span style="color:var(--color-accent)">{{ sl.shown }}</span></span>
+            <input type="range" min="{{ sl.min }}" max="{{ sl.max }}" step="{{ sl.step }}" value="{{ sl.val }}" onChange="{{ sl.set }}" style="width:100%;height:44px;margin:0">
+            <span style="display:flex;justify-content:space-between;gap:8px;font-size:14px;line-height:1.35"><span>{{ sl.hint }}</span>
+              <sc-if value="{{ sl.changed }}" hint-placeholder-val="{{ false }}"><button onClick="{{ sl.undo }}" style="all:unset;cursor:pointer;font-size:13px;font-weight:800;color:var(--color-accent);white-space:nowrap" style-hover="color:#fff">BACK</button></sc-if>
+            </span>
+          </label>
+        </sc-for>
+      </div>
+    </div>
+  </sc-for>
+
+  <div style="display:flex;flex-wrap:wrap;gap:12px">
+    <button onClick="{{ newTune }}" style="all:unset;cursor:pointer;min-height:52px;padding:0 18px;display:flex;align-items:center;background:var(--color-accent);color:#fff;font-size:16px;font-weight:900" style-hover="background:var(--color-accent-600)" style-active="background:var(--color-accent-700)">NEW MELODY</button>
+    <button onClick="{{ oldTune }}" style="all:unset;cursor:pointer;min-height:52px;padding:0 18px;display:flex;align-items:center;border:2px solid var(--color-bg);font-size:16px;font-weight:800" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">BACK ONE MELODY</button>
+    <button onClick="{{ surprise }}" style="all:unset;cursor:pointer;min-height:52px;padding:0 18px;display:flex;align-items:center;border:2px solid var(--color-bg);font-size:16px;font-weight:800" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">SURPRISE ME</button>
+    <button onClick="{{ loadOrig }}" style="all:unset;cursor:pointer;min-height:52px;padding:0 18px;display:flex;align-items:center;border:2px solid var(--color-bg);font-size:16px;font-weight:800" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">LOAD ORIGINAL</button>
+    <button onClick="{{ allOff }}" style="all:unset;cursor:pointer;min-height:52px;padding:0 18px;display:flex;align-items:center;border:2px solid var(--color-bg);font-size:16px;font-weight:800" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">ALL PARTS OFF</button>
+    <button onClick="{{ reset }}" style="all:unset;cursor:pointer;min-height:52px;padding:0 18px;display:flex;align-items:center;border:2px solid var(--color-bg);font-size:16px;font-weight:800" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">CLEAR (GAME PLAYS ORIGINAL)</button>
+  </div>
+  <div style="font-size:14px;line-height:1.4">Saved in this browser (meru.cafe.v1). In the game: Fountain Plaza outdoors, the Casino and Meru Lanes inside.</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { key: 'fountain', playing: false, start: 4, ov: {}, ready: false, hist: [] };
+  componentDidMount() {
+    try { this.setState({ ov: JSON.parse(localStorage.getItem('meru.cafe.v1') || '{}') || {} }); } catch (e) {}
+    import('./worlds/meru2-cafe.js?v=s660').then(M => { this.M = M; this.setState({ ready: true }); });
+  }
+  componentWillUnmount() { this.stopSong(); }
+  save(ov) { try { localStorage.setItem('meru.cafe.v1', JSON.stringify(ov)); } catch (e) {} this.setState({ ov }, () => { if (this.state.playing) this.startSong(); }); }
+  patch(o) { const ov = { ...this.state.ov }, k = this.state.key, cur = { ...(ov[k] || (this.M ? this.M.BLANK : {})) };   /* s659: the first part you assign starts the song from BLANK (everything else off) */ for (const [id, v] of Object.entries(o)) { if (v === undefined) delete cur[id]; else cur[id] = v; } if (Object.keys(cur).length) ov[k] = cur; else delete ov[k]; this.save(ov); }
+  ensureCtx() { if (this.c) return; const AC = window.AudioContext || window.webkitAudioContext; this.c = new AC(); const n = this.c.createBuffer(1, this.c.sampleRate * 2, this.c.sampleRate), d = n.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; this.noise = n; this.comp = this.c.createDynamicsCompressor(); this.comp.connect(this.c.destination); }
+  stopSong() { const P = this.P; this.P = null; if (!P) return; const t = this.c.currentTime; P.g.gain.cancelScheduledValues(t); P.g.gain.setValueAtTime(P.g.gain.value, t); P.g.gain.linearRampToValueAtTime(0, t + 0.25); setTimeout(() => { P.h && P.h.stop(); P.g.disconnect(); }, 400); }
+  startSong() { if (!this.M) return; this.ensureCtx(); this.c.resume(); this.stopSong(); const g = this.c.createGain(); g.gain.value = 0.9; g.connect(this.comp); this.P = { g, h: this.M.cafeSong(this.c, g, this.state.key, this.noise, this.state.start, this.state.ov[this.state.key] ? null : this.M.BLANK) }; }
+  renderVals() {
+    const M = this.M, k = this.state.key, ov = this.state.ov[k] || {}, saved = !!this.state.ov[k], cur = M ? Object.assign(M.songCfg(k), saved ? {} : M.BLANK) : null, base = M ? Object.assign({}, M.DEFAULTS, M.SONGS[k]) : {};
+    const T = M ? M.CAFE_TITLE : { fountain: 'FOUNTAIN MORNINGS', casino: 'VELVET CHIPS', bowling: 'LANE SEVEN' };
+    const WHERE = { fountain: 'Fountain Plaza · outside', casino: 'Casino · inside', bowling: 'Meru Lanes · inside' };
+    const replay = () => { if (this.state.playing) this.startSong(); };
+    const songs = Object.keys(T).map(s => ({ title: T[s], where: WHERE[s] || '', on: s === k, off: s !== k, pick: () => this.setState({ key: s, hist: [] }, replay) }));
+    const KEYN = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    const home = M ? M.SONGS[k].chords[0][0] : 0;
+    const LBL = {
+      prog: { song: ['ORIGINAL', 'The chords this song was written with.'], dreamy: ['DREAMY', 'Floaty major-seven chords, a sunny afternoon.'], jazzy: ['JAZZY', 'A classic two-five-one jazz turn.'], blue: ['BLUE', 'Minor and moody, a rainy evening.'], soul: ['SOUL', 'Neo-soul turnaround, warm and hopeful.'], bossa: ['BOSSA', 'Minor bossa nova, beach café at dusk.'], mystic: ['MYSTIC', 'Old-temple Phrygian, the Gates feeling.'] },
+      lead: { none: ['OFF', 'No melody.'], nylon: ['NYLON GUITAR', 'Soft plucked café guitar.'], trumpet: ['MUTED TRUMPET', 'Late-night jazz horn with a little vibrato.'], vibes: ['VIBES', 'Shimmering vibraphone with tremolo.'], flute: ['FLUTE', 'Breathy wooden flute.'], kalimba: ['KALIMBA', 'Thumb piano, short and bell-like.'], whistle: ['WHISTLE', 'Someone whistling along, sliding between notes.'], sax: ['TENOR SAX', 'Breathy smoky sax that scoops into notes.'], musicbox: ['MUSIC BOX', 'Tiny wind-up box, an octave up.'], harmonica: ['HARMONICA', 'Reedy porch harmonica.'], synth: ['SOFT SYNTH', 'Two warm detuned squares, retro game feel.'] },
+      keys: { none: ['OFF', 'No chords.'], rhodes: ['ELECTRIC PIANO', 'Warm, bell-ish lofi chords.'], piano: ['FELT PIANO', 'Soft muted piano, broken chords.'], guitar: ['JAZZ GUITAR', 'Strummed chords on the off-beat.'], organ: ['ORGAN + GUITAR', 'Drawbar organ through a spinning Leslie, with funk guitar.'], wurli: ['WURLITZER', 'Barky tremolo electric piano, pushes on beats 1 and 3.'], pad: ['STRING PAD', 'Slow warm strings holding each chord.'], harp: ['HARP', 'Rolled harp arpeggios, sparkly.'] },
+      bass: { none: ['OFF', 'No bass.'], two: ['UPRIGHT 2-FEEL', 'Double bass on beats 1 and 3.'], walk: ['WALKING', 'Double bass walking every beat, jazz-club style.'], funk: ['FINGER FUNK', 'Bouncy electric bass line.'], sub: ['DEEP SUB', 'Low, round, hip-hop sub bass.'], fretless: ['FRETLESS', 'Singing bass that slides between notes.'], moog: ['SYNTH BASS', 'Squelchy analog synth bass.'] },
+      perc: { shaker: ['SHAKER', 'Soft 16th-note shaker.'], tamb: ['TAMBOURINE', 'Jingly tambourine on the 8ths.'], snaps: ['FINGER SNAPS', 'Snaps on 2 and 4.'], conga: ['CONGAS', 'Low and high congas with a slap.'], clave: ['CLAVE', 'Wood clave, 3-2 son pattern.'], none: ['OFF', 'No percussion.'] },
+      parts: { on: ['ON', ''], off: ['OFF', ''] },
+      drums: { brush: ['BRUSHES', 'Swishing brushes and a soft rim click.'], ride: ['JAZZ RIDE', 'Ride cymbal swing, quiet kick.'], boom: ['BOOM-BAP', 'Punchy kick, snare and hats.'], lazy: ['LAZY BEAT', 'Laid-back kick, late rim, shaker.'], bossa: ['BOSSA', 'Bossa nova rim pattern and soft hats.'], half: ['HALF-TIME', 'Slow heavy snare on 3, rolling 16th hats.'], none: ['OFF', 'No drum kit.'] },
+      extra: { drops: ['WATER DROPS', 'Fountain drops in the echo.'], chips: ['CHIPS + BELL', 'Casino chips and a far-off slot bell.'], pins: ['BOWLING STRIKE', 'A ball rolls and the pins fall every 8 bars.'], rain: ['RAIN ON GLASS', 'Soft rain and a few drops.'], birds: ['BIRDS', 'Little birds chirping now and then.'], cafe: ['CAFÉ CHATTER', 'A murmur of people and cup clinks.'], chimes: ['WIND CHIMES', 'Chimes in the breeze, in key.'], crickets: ['CRICKETS', 'Night crickets.'], train: ['FAR TRAIN', 'A train horn far off every 16 bars.'], typewriter: ['TYPEWRITER', 'Someone typing, a ding at each line.'], none: ['OFF', 'No world sound.'] },
+    };
+    const choice = (id, label, desc) => { if (!M || !cur) return null; const opts = M.CAFE_OPTS[id], v = opts.includes(cur[id]) ? cur[id] : opts[opts.length - 1];
+      return { label, desc, changed: cur[id] !== base[id], undo: () => this.patch({ [id]: base[id] }), pickedHint: (LBL[id][v] || [])[1] || '', opts: opts.map(o => ({ label: LBL[id][o] ? LBL[id][o][0] : o.toUpperCase(), on: o === v, off: o !== v, pick: () => this.patch({ [id]: o }) })) }; };
+    const toggle = (id, label, desc) => { if (!cur) return null; const on = !!cur[id]; return { label, desc, changed: false, undo: null, pickedHint: '', opts: [{ label: 'ON', on, off: !on, pick: () => this.patch({ [id]: 1 }) }, { label: 'OFF', on: !on, off: on, pick: () => this.patch({ [id]: 0 }) }] }; };
+    const slider = (id, label, min, max, step, fmt, hint) => { if (!cur) return null; const val = cur[id] ?? 0; return { label, min, max, step, val, shown: fmt(val), hint, changed: cur[id] !== base[id], undo: () => this.patch({ [id]: base[id] }), set: e => this.patch({ [id]: +e.target.value }) }; };
+    const pct = v => Math.round(v * 100) + ' %';
+    const groups = !cur ? [] : [
+      { title: 'BAND', hint: 'Who plays the song.', choices: [choice('lead', 'MELODY', 'plays the tune'), choice('keys', 'CHORDS', 'plays the harmony'), choice('bass', 'BASS', ''), choice('drums', 'DRUM KIT', 'the beat style'), toggle('dk', 'KICK', 'part of the drum kit'), toggle('ds', 'SNARE + RIM', 'part of the drum kit'), toggle('dh', 'HATS + CYMBALS', 'hats, ride, brushes, lazy-beat shaker'), toggle('fills', 'DRUM FILLS', 'a little fill before each new section'), choice('perc', 'PERCUSSION', 'its own part, works with any kit or none')], sliders: [] },
+      { title: 'SONG', hint: 'What the song is.', choices: [choice('prog', 'CHORD PROGRESSION', '8 bars, repeating')], sliders: [
+        slider('key', 'KEY', -6, 6, 1, v => KEYN[(((home + v) % 12) + 12) % 12] + (v ? ' (' + (v > 0 ? '+' : '') + v + ')' : ''), 'Move the whole song up or down.'),
+        slider('loct', 'MELODY OCTAVE', -1, 1, 1, v => v < 0 ? 'LOW' : v > 0 ? 'HIGH' : 'NORMAL', 'Move only the tune up or down.'),
+        slider('busy', 'MELODY AMOUNT', 0, 1, 0.05, v => v < 0.3 ? 'SPARSE' : v < 0.7 ? 'NORMAL' : 'BUSY', 'How many notes the tune plays. Press NEW MELODY to hear it change.'),
+      ] },
+      { title: 'FEEL', hint: 'How it moves.', choices: [], sliders: [
+        slider('bpm', 'TEMPO', 56, 110, 1, v => v + ' BPM', 'Coffee-shop lofi sits around 70 to 90.'),
+        slider('sw', 'SWING', 0, 0.33, 0.01, pct, 'How lazy the off-beats feel.'),
+        slider('hum', 'HUMAN FEEL', 0, 1, 0.05, v => v < 0.15 ? 'ROBOT' : v < 0.5 ? 'TIGHT BAND' : v < 0.8 ? 'LOOSE' : 'SLEEPY', 'Tiny timing and loudness changes, like real players.'),
+        slider('pump', 'PUMP', 0, 0.8, 0.05, pct, 'Chords dip when the kick hits.'),
+      ] },
+      { title: 'TONE', hint: 'The tape and the room it was recorded in.', choices: [choice('extra', 'WORLD SOUND', 'little sounds of the place')], sliders: [
+        slider('tape', 'TAPE TONE', 1800, 7000, 100, v => (v < 3000 ? 'WARM' : v < 4800 ? 'MELLOW' : 'BRIGHT'), 'Lower = darker, older tape.'),
+        slider('wow', 'TAPE WOBBLE', 0, 25, 1, v => v < 4 ? 'STEADY' : v < 12 ? 'GENTLE' : 'WARPED', 'How much the old tape bends the pitch.'),
+        slider('echo', 'ECHO', 0, 0.7, 0.01, pct, 'Echo on the melody.'),
+        slider('drive', 'WARMTH', 0, 1, 0.05, v => v < 0.15 ? 'CLEAN' : v < 0.5 ? 'WARM' : v < 0.8 ? 'DRIVEN' : 'CRUNCHY', 'Tape saturation, rounds every sound off.'),
+        slider('width', 'STEREO WIDTH', 0, 1, 0.05, v => v < 0.1 ? 'MONO' : v < 0.6 ? 'NORMAL' : 'WIDE', 'How far the parts spread left and right.'),
+        slider('room', 'ROOM', 0, 0.7, 0.01, v => v < 0.1 ? 'DRY' : v < 0.3 ? 'CAFÉ' : v < 0.5 ? 'HALL' : 'CATHEDRAL', 'How big the space sounds.'),
+      ] },
+      { title: 'MIX', hint: 'How loud each part is.', choices: [], sliders: [
+        slider('gain', 'SONG VOLUME', 0.4, 2, 0.05, pct, 'This song against the other songs.'),
+        slider('lv', 'MELODY', 0, 2, 0.05, pct, ''), slider('kv', 'CHORDS', 0, 2, 0.05, pct, ''),
+        slider('bv', 'BASS', 0, 2, 0.05, pct, ''), slider('dv', 'DRUMS', 0, 2, 0.05, pct, ''), slider('pv', 'PERCUSSION', 0, 2, 0.05, pct, ''), slider('xv', 'WORLD SOUND', 0, 2, 0.05, pct, ''),
+      ] },
+    ];
+    const starts = [['INTRO', 0], ['VERSE', 4], ['BRIDGE', 12]].map(([label, b]) => ({ label, on: this.state.start === b, off: this.state.start !== b, pick: () => this.setState({ start: b }, replay) }));
+    const nEd = Object.keys(ov).length;
+    const rnd = a => a[(Math.random() * a.length) | 0];
+    return {
+      songs, groups, starts,
+      playLabel: this.state.playing ? 'STOP' : 'PLAY',
+      status: !this.state.ready ? 'LOADING…' : (this.state.playing ? 'PLAYING · ' : '') + T[k],
+      edited: saved ? 'Your version · the game plays this' : 'Blank · assign a part to start. The game plays the original until you do.',
+      toggle: () => { if (this.state.playing) { this.stopSong(); this.setState({ playing: false }); } else { this.setState({ playing: true }, () => this.startSong()); } },
+      newTune: () => { if (!cur) return; this.setState({ hist: [...this.state.hist, cur.seed] }); this.patch({ seed: (Math.random() * 1e6) | 0 }); },
+      oldTune: () => { const h = this.state.hist.slice(); if (!h.length) return; const s = h.pop(); this.setState({ hist: h }); this.patch({ seed: s }); },
+      surprise: () => { if (!M || !cur) return; const O = M.CAFE_OPTS; this.setState({ hist: [...this.state.hist, cur.seed] }); this.patch({ lead: rnd(O.lead.slice(0, -1)), keys: rnd(O.keys.slice(0, -1)), bass: rnd(O.bass.slice(0, -1)), drums: rnd(O.drums.slice(0, -1)), dk: 1, ds: 1, dh: 1, prog: rnd(O.prog), seed: (Math.random() * 1e6) | 0 }); },
+      reset: () => { const ov2 = { ...this.state.ov }; delete ov2[k]; this.save(ov2); },
+      loadOrig: () => { if (!M) return; const o = {}; for (const id of Object.keys(M.BLANK)) o[id] = base[id]; const ov2 = { ...this.state.ov, [k]: o }; this.save(ov2); },
+      allOff: () => { if (!M) return; this.patch({ ...M.BLANK }); },
+    };
+  }
+}
+</script>
+</body>
+</html>

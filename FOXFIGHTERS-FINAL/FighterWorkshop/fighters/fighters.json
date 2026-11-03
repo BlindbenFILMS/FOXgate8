@@ -1,0 +1,922 @@
+{
+ "game": "Fox Fighters (8 Gates)",
+ "exported": "2026-10-19",
+ "source": "Fox Fighters engine build s114 (minigames/kyoto/duel-foxes.js + sword-duel.js)",
+ "units": "game units, feet at y=0, facing +Z",
+ "fighters": [
+  {
+   "id": "ben",
+   "name": "BEN",
+   "sub": "THE HERO · FOX BEAM",
+   "style": "The all-rounder. FOX BEAM, WHIRLWIND KICK and the RISING FOX.",
+   "stats": [
+    3,
+    3,
+    3
+   ],
+   "hp": 172,
+   "speed": 1,
+   "dmg": 1.16,
+   "group": "fox",
+   "colour": "#ec3013",
+   "changes": [
+    [
+     "s79",
+     "Gloves set low enough that his face shows through his guard."
+    ],
+    [
+     "s82",
+     "SUPER BURST: a full bar turns the next special, sword or laser super."
+    ],
+    [
+     "s112",
+     "FOX FLURRY now needs DOWN held while tapping PUNCH 5 times."
+    ],
+    [
+     "gear",
+     "Sword on his back, laser pistol on his hip."
+    ]
+   ],
+   "files": [
+    {
+     "glb": "ben.glb",
+     "bytes": 1351444,
+     "height": 2.69,
+     "meshes": 136,
+     "swatch": "#ec3013",
+     "gltf": "ben.gltf",
+     "web": "ben.gltf.json",
+     "gltfBytes": 1588684
+    },
+    {
+     "glb": "ben_alt1.glb",
+     "bytes": 1426300,
+     "height": 2.68,
+     "meshes": 136,
+     "swatch": "#2b8fd9",
+     "gltf": "ben_alt1.gltf",
+     "web": "ben_alt1.gltf.json",
+     "gltfBytes": 1663486
+    },
+    {
+     "glb": "ben_alt2.glb",
+     "bytes": 1423984,
+     "height": 2.68,
+     "meshes": 136,
+     "swatch": "#9a4ad6",
+     "gltf": "ben_alt2.gltf",
+     "web": "ben_alt2.gltf.json",
+     "gltfBytes": 1661008
+    }
+   ]
+  },
+  {
+   "id": "hope",
+   "name": "HOPE",
+   "sub": "THE CANE · POLE VAULT",
+   "style": "Her cane is a vaulting pole. VAULT DIVE from above and the CANE FLIP. Nobody trips her.",
+   "stats": [
+    3,
+    5,
+    3
+   ],
+   "hp": 178,
+   "speed": 1.1,
+   "dmg": 1.15,
+   "group": "fox",
+   "colour": "#e7edf4",
+   "changes": [
+    [
+     "s81",
+     "Now carries a sword on her back like the other foxes."
+    ],
+    [
+     "s91",
+     "Holds the cane in her far hand, so her near hand is free to draw the laser."
+    ],
+    [
+     "gear",
+     "Cane for VAULT DIVE and CANE FLIP, sword, laser."
+    ]
+   ],
+   "files": [
+    {
+     "glb": "hope.glb",
+     "bytes": 1464916,
+     "height": 2.69,
+     "meshes": 159,
+     "swatch": "#e7edf4",
+     "gltf": "hope.gltf",
+     "web": "hope.gltf.json",
+     "gltfBytes": 1713778
+    },
+    {
+     "glb": "hope_alt1.glb",
+     "bytes": 1557636,
+     "height": 2.64,
+     "meshes": 159,
+     "swatch": "#2b8fd9",
+     "gltf": "hope_alt1.gltf",
+     "web": "hope_alt1.gltf.json",
+     "gltfBytes": 1806496
+    },
+    {
+     "glb": "hope_alt2.glb",
+     "bytes": 1557632,
+     "height": 2.67,
+     "meshes": 159,
+     "swatch": "#9a4ad6",
+     "gltf": "hope_alt2.gltf",
+     "web": "hope_alt2.gltf.json",
+     "gltfBytes": 1806495
+    }
+   ]
+  },
+  {
+   "id": "noble",
+   "name": "NOBLE",
+   "sub": "THE CHAIR · THUNDER WHEELS",
+   "style": "Electric wheels. The ROLLING CHAIR charge, WHEELIE KICKS and the SHOEMERANG.",
+   "stats": [
+    4,
+    3,
+    4
+   ],
+   "hp": 158,
+   "speed": 0.88,
+   "dmg": 0.98,
+   "group": "fox",
+   "colour": "#ffd23a",
+   "changes": [
+    [
+     "s108",
+     "DRAW CUT: pulls the sword from the sheath on his chair and cuts across the legs. Crouching gives a rising upward cut."
+    ],
+    [
+     "s109",
+     "The draw cut hits LOW, so it must be blocked crouching."
+    ],
+    [
+     "gear",
+     "Electric wheelchair with spiked wheels, backrest horn, sword sheathed on the chair back, the SHOEMERANG boot."
+    ]
+   ],
+   "files": [
+    {
+     "glb": "noble.glb",
+     "bytes": 2028196,
+     "height": 3.15,
+     "meshes": 201,
+     "swatch": "#ffd23a",
+     "gltf": "noble.gltf",
+     "web": "noble.gltf.json",
+     "gltfBytes": 2333517
+    },
+    {
+     "glb": "noble_alt1.glb",
+     "bytes": 2177420,
+     "height": 3.15,
+     "meshes": 201,
+     "swatch": "#2b8fd9",
+     "gltf": "noble_alt1.gltf",
+     "web": "noble_alt1.gltf.json",
+     "gltfBytes": 2482737
+    },
+    {
+     "glb": "noble_alt2.glb",
+     "bytes": 2177384,
+     "height": 3.15,
+     "meshes": 201,
+     "swatch": "#9a4ad6",
+     "gltf": "noble_alt2.gltf",
+     "web": "noble_alt2.gltf.json",
+     "gltfBytes": 2482705
+    }
+   ]
+  },
+  {
+   "id": "might",
+   "name": "KING MIGHT",
+   "sub": "THE KING OF MERU",
+   "style": "The old master. ROYAL CRUSHER flies at you, KNEE PRESS, and the CROWN STOMP from above.",
+   "stats": [
+    5,
+    3,
+    4
+   ],
+   "hp": 175,
+   "speed": 0.95,
+   "dmg": 1.08,
+   "group": "fox",
+   "colour": "#8b5cf6",
+   "changes": [
+    [
+     "s79",
+     "Gloves lowered so his face and crown stay visible."
+    ],
+    [
+     "gear",
+     "Crown, royal armour, sword and laser."
+    ]
+   ],
+   "files": [
+    {
+     "glb": "might.glb",
+     "bytes": 1268948,
+     "height": 2.84,
+     "meshes": 160,
+     "swatch": "#8b5cf6",
+     "gltf": "might.gltf",
+     "web": "might.gltf.json",
+     "gltfBytes": 1493434
+    },
+    {
+     "glb": "might_alt1.glb",
+     "bytes": 1366392,
+     "height": 2.83,
+     "meshes": 160,
+     "swatch": "#2b8fd9",
+     "gltf": "might_alt1.gltf",
+     "web": "might_alt1.gltf.json",
+     "gltfBytes": 1590874
+    },
+    {
+     "glb": "might_alt2.glb",
+     "bytes": 1366692,
+     "height": 2.85,
+     "meshes": 160,
+     "swatch": "#9a4ad6",
+     "gltf": "might_alt2.gltf",
+     "web": "might_alt2.gltf.json",
+     "gltfBytes": 1591174
+    }
+   ]
+  },
+  {
+   "id": "michelle",
+   "name": "MICHELLE",
+   "sub": "THE PRINCESS OF MERU",
+   "style": "The fastest feet on the roof. Long, quick kicks, the SPINNING CRANE KICK and the PALM BLAST.",
+   "stats": [
+    2,
+    5,
+    3
+   ],
+   "hp": 162,
+   "speed": 1.2,
+   "dmg": 0.98,
+   "group": "fox",
+   "colour": "#3b82f6",
+   "changes": [
+    [
+     "s88",
+     "Her flurry is five fast KICKS (LIGHTNING KICKS)."
+    ],
+    [
+     "gear",
+     "Princess armour, sword and laser."
+    ]
+   ],
+   "files": [
+    {
+     "glb": "michelle.glb",
+     "bytes": 1435744,
+     "height": 2.65,
+     "meshes": 157,
+     "swatch": "#3b82f6",
+     "gltf": "michelle.gltf",
+     "web": "michelle.gltf.json",
+     "gltfBytes": 1686027
+    },
+    {
+     "glb": "michelle_alt1.glb",
+     "bytes": 1524556,
+     "height": 2.64,
+     "meshes": 157,
+     "swatch": "#2b8fd9",
+     "gltf": "michelle_alt1.gltf",
+     "web": "michelle_alt1.gltf.json",
+     "gltfBytes": 1774835
+    },
+    {
+     "glb": "michelle_alt2.glb",
+     "bytes": 1524564,
+     "height": 2.65,
+     "meshes": 157,
+     "swatch": "#9a4ad6",
+     "gltf": "michelle_alt2.gltf",
+     "web": "michelle_alt2.gltf.json",
+     "gltfBytes": 1774845
+    }
+   ]
+  },
+  {
+   "id": "sumo",
+   "name": "OYAKATA",
+   "sub": "THE SUMO · KYOTO",
+   "style": "Huge and hard to move. The SUMO TORPEDO and the BELLY SPLASH.",
+   "stats": [
+    5,
+    1,
+    3
+   ],
+   "hp": 180,
+   "speed": 0.8,
+   "dmg": 1.11,
+   "group": "fox",
+   "colour": "#1d4ed8",
+   "changes": [
+    [
+     "s86",
+     "Bigger mitts for the HUNDRED PALM."
+    ],
+    [
+     "s87",
+     "Mitts recoloured blue to match his shorts and made shorter."
+    ],
+    [
+     "gear",
+     "Mawashi, blue mitts, sword and laser."
+    ]
+   ],
+   "files": [
+    {
+     "glb": "sumo.glb",
+     "bytes": 1619036,
+     "height": 3.39,
+     "meshes": 174,
+     "swatch": "#1d4ed8",
+     "gltf": "sumo.gltf",
+     "web": "sumo.gltf.json",
+     "gltfBytes": 1965380
+    },
+    {
+     "glb": "sumo_alt1.glb",
+     "bytes": 1703380,
+     "height": 3.41,
+     "meshes": 174,
+     "swatch": "#2b8fd9",
+     "gltf": "sumo_alt1.gltf",
+     "web": "sumo_alt1.gltf.json",
+     "gltfBytes": 2049724
+    },
+    {
+     "glb": "sumo_alt2.glb",
+     "bytes": 1703424,
+     "height": 3.39,
+     "meshes": 174,
+     "swatch": "#9a4ad6",
+     "gltf": "sumo_alt2.gltf",
+     "web": "sumo_alt2.gltf.json",
+     "gltfBytes": 2049768
+    }
+   ]
+  },
+  {
+   "id": "barnacle",
+   "name": "BARNACLE",
+   "sub": "BANDIT · SALT BUILDING",
+   "style": "Forklift muscle. The FORKLIFT SLAM grab and the CRATE TOSS.",
+   "stats": [
+    5,
+    2,
+    3
+   ],
+   "hp": 176,
+   "speed": 0.86,
+   "dmg": 1.12,
+   "group": "fox",
+   "colour": "#a16207",
+   "changes": [
+    [
+     "s80",
+     "Guard checked so his face reads."
+    ],
+    [
+     "gear",
+     "Bandit gear, sword and laser."
+    ]
+   ],
+   "files": [
+    {
+     "glb": "barnacle.glb",
+     "bytes": 1022292,
+     "height": 3.44,
+     "meshes": 103,
+     "swatch": "#a16207",
+     "gltf": "barnacle.gltf",
+     "web": "barnacle.gltf.json",
+     "gltfBytes": 1201966
+    },
+    {
+     "glb": "barnacle_alt1.glb",
+     "bytes": 1081704,
+     "height": 3.46,
+     "meshes": 103,
+     "swatch": "#2b8fd9",
+     "gltf": "barnacle_alt1.gltf",
+     "web": "barnacle_alt1.gltf.json",
+     "gltfBytes": 1261379
+    },
+    {
+     "glb": "barnacle_alt2.glb",
+     "bytes": 1081688,
+     "height": 3.51,
+     "meshes": 103,
+     "swatch": "#9a4ad6",
+     "gltf": "barnacle_alt2.gltf",
+     "web": "barnacle_alt2.gltf.json",
+     "gltfBytes": 1261364
+    }
+   ]
+  },
+  {
+   "id": "jack",
+   "name": "JALAPEÑO JACK",
+   "sub": "BANDIT · PEPPER BUILDING",
+   "style": "Sits back and waits. The PEPPER BOOM projectile and the CHILLI FLIP kick.",
+   "stats": [
+    3,
+    3,
+    5
+   ],
+   "hp": 160,
+   "speed": 1.02,
+   "dmg": 1.12,
+   "group": "fox",
+   "colour": "#22c55e",
+   "changes": [
+    [
+     "s80",
+     "Guard lowered (per-fighter guard drop)."
+    ],
+    [
+     "gear",
+     "Pepper bandit gear, sword and laser."
+    ]
+   ],
+   "files": [
+    {
+     "glb": "jack.glb",
+     "bytes": 1138860,
+     "height": 2.98,
+     "meshes": 129,
+     "swatch": "#22c55e",
+     "gltf": "jack.gltf",
+     "web": "jack.gltf.json",
+     "gltfBytes": 1347811
+    },
+    {
+     "glb": "jack_alt1.glb",
+     "bytes": 1207300,
+     "height": 3.01,
+     "meshes": 129,
+     "swatch": "#2b8fd9",
+     "gltf": "jack_alt1.gltf",
+     "web": "jack_alt1.gltf.json",
+     "gltfBytes": 1416253
+    },
+    {
+     "glb": "jack_alt2.glb",
+     "bytes": 1203200,
+     "height": 2.99,
+     "meshes": 129,
+     "swatch": "#9a4ad6",
+     "gltf": "jack_alt2.gltf",
+     "web": "jack_alt2.gltf.json",
+     "gltfBytes": 1411767
+    }
+   ]
+  },
+  {
+   "id": "rook",
+   "name": "ROOK",
+   "sub": "BANDIT BOSS · RUINS CAVE",
+   "style": "Long-range trouble. The SNIPER BEAM and the DUSTER DASH.",
+   "stats": [
+    3,
+    3,
+    5
+   ],
+   "hp": 170,
+   "speed": 1,
+   "dmg": 1.17,
+   "group": "fox",
+   "colour": "#84cc16",
+   "changes": [
+    [
+     "s80",
+     "Guard lowered (per-fighter guard drop)."
+    ],
+    [
+     "gear",
+     "Duster coat, rifle-style laser, sword."
+    ]
+   ],
+   "files": [
+    {
+     "glb": "rook.glb",
+     "bytes": 1090004,
+     "height": 2.95,
+     "meshes": 135,
+     "swatch": "#84cc16",
+     "gltf": "rook.gltf",
+     "web": "rook.gltf.json",
+     "gltfBytes": 1297760
+    },
+    {
+     "glb": "rook_alt1.glb",
+     "bytes": 1158940,
+     "height": 2.99,
+     "meshes": 135,
+     "swatch": "#2b8fd9",
+     "gltf": "rook_alt1.gltf",
+     "web": "rook_alt1.gltf.json",
+     "gltfBytes": 1366696
+    },
+    {
+     "glb": "rook_alt2.glb",
+     "bytes": 1158904,
+     "height": 2.99,
+     "meshes": 135,
+     "swatch": "#9a4ad6",
+     "gltf": "rook_alt2.gltf",
+     "web": "rook_alt2.gltf.json",
+     "gltfBytes": 1366661
+    }
+   ]
+  },
+  {
+   "id": "lox",
+   "name": "LOX",
+   "sub": "LEADER OF LUXOR · BOXER",
+   "style": "A heavyweight boxer. KICK throws a 3-punch combo: BODY BLOW, CROSS, HAYMAKER. DASH STRAIGHT, DASH UPPER and the TURN PUNCH.",
+   "stats": [
+    5,
+    3,
+    2
+   ],
+   "hp": 170,
+   "speed": 0.98,
+   "dmg": 1.07,
+   "group": "fox",
+   "colour": "#dc2626",
+   "changes": [
+    [
+     "s89",
+     "Smaller boxing gloves so his big chest shows."
+    ],
+    [
+     "s90",
+     "Gets a sword and a laser. KICK is now a 3-punch string: BODY BLOW, CROSS, HAYMAKER."
+    ],
+    [
+     "s91",
+     "Sword fits his back the same way it fits Ben."
+    ],
+    [
+     "gear",
+     "Boxing gloves, sword on his back, laser."
+    ]
+   ],
+   "files": [
+    {
+     "glb": "lox.glb",
+     "bytes": 1405792,
+     "height": 3.0,
+     "meshes": 163,
+     "swatch": "#dc2626",
+     "gltf": "lox.gltf",
+     "web": "lox.gltf.json",
+     "gltfBytes": 1653711
+    },
+    {
+     "glb": "lox_alt1.glb",
+     "bytes": 1486920,
+     "height": 3.01,
+     "meshes": 163,
+     "swatch": "#2b8fd9",
+     "gltf": "lox_alt1.gltf",
+     "web": "lox_alt1.gltf.json",
+     "gltfBytes": 1734838
+    },
+    {
+     "glb": "lox_alt2.glb",
+     "bytes": 1486984,
+     "height": 3.05,
+     "meshes": 163,
+     "swatch": "#9a4ad6",
+     "gltf": "lox_alt2.gltf",
+     "web": "lox_alt2.gltf.json",
+     "gltfBytes": 1734903
+    }
+   ]
+  },
+  {
+   "id": "warden",
+   "name": "IRON WARDEN",
+   "sub": "ROBOT · MERU ARENA",
+   "style": "A walking fortress. ROCKET PUNCH and the STOMP shockwave.",
+   "stats": [
+    5,
+    1,
+    4
+   ],
+   "hp": 192,
+   "speed": 0.78,
+   "dmg": 1.16,
+   "group": "boss",
+   "colour": "#f97316",
+   "changes": [
+    [
+     "s85",
+     "Big red boxing gloves and ears like Maker Prime."
+    ],
+    [
+     "s85",
+     "Laser from his eyes and from the laser at his hip."
+    ],
+    [
+     "s86",
+     "Double-sided AXE on his back, swung instead of a sword."
+    ]
+   ],
+   "files": [
+    {
+     "glb": "warden.glb",
+     "bytes": 1449032,
+     "height": 2.57,
+     "meshes": 191,
+     "swatch": "#f97316",
+     "gltf": "warden.gltf",
+     "web": "warden.gltf.json",
+     "gltfBytes": 1663061
+    },
+    {
+     "glb": "warden_alt1.glb",
+     "bytes": 1646768,
+     "height": 2.6,
+     "meshes": 191,
+     "swatch": "#2b8fd9",
+     "gltf": "warden_alt1.gltf",
+     "web": "warden_alt1.gltf.json",
+     "gltfBytes": 1860798
+    },
+    {
+     "glb": "warden_alt2.glb",
+     "bytes": 1647568,
+     "height": 2.56,
+     "meshes": 191,
+     "swatch": "#9a4ad6",
+     "gltf": "warden_alt2.gltf",
+     "web": "warden_alt2.gltf.json",
+     "gltfBytes": 1861596
+    }
+   ]
+  },
+  {
+   "id": "prime",
+   "name": "MAKER PRIME",
+   "sub": "ROBOT · THE FACTORY",
+   "style": "Claw, drill and a red laser eye. LASER EYE and the DRILL SPIN.",
+   "stats": [
+    5,
+    1,
+    5
+   ],
+   "hp": 180,
+   "speed": 0.72,
+   "dmg": 1.18,
+   "group": "boss",
+   "colour": "#14b8a6",
+   "changes": [
+    [
+     "s83",
+     "SWORD becomes a drill thrust: the drill arm spins up and pulses."
+    ],
+    [
+     "s83",
+     "Idle hands pulled in so punches extend."
+    ],
+    [
+     "gear",
+     "Claw, drill arm, red laser eye."
+    ]
+   ],
+   "files": [
+    {
+     "glb": "prime.glb",
+     "bytes": 3331600,
+     "height": 2.73,
+     "meshes": 181,
+     "swatch": "#14b8a6",
+     "gltf": "prime.gltf",
+     "web": "prime.gltf.json",
+     "gltfBytes": 3616449
+    },
+    {
+     "glb": "prime_alt1.glb",
+     "bytes": 3502468,
+     "height": 2.73,
+     "meshes": 181,
+     "swatch": "#2b8fd9",
+     "gltf": "prime_alt1.gltf",
+     "web": "prime_alt1.gltf.json",
+     "gltfBytes": 3787462
+    },
+    {
+     "glb": "prime_alt2.glb",
+     "bytes": 3502812,
+     "height": 2.74,
+     "meshes": 181,
+     "swatch": "#9a4ad6",
+     "gltf": "prime_alt2.gltf",
+     "web": "prime_alt2.gltf.json",
+     "gltfBytes": 3787805
+    }
+   ]
+  },
+  {
+   "id": "suds",
+   "name": "SUDS-9",
+   "sub": "ROBOT · WINDOW CLEANER",
+   "style": "The roof boss, now yours. RINSE CYCLE from the hose hand and the SPIN CYCLE.",
+   "stats": [
+    4,
+    2,
+    4
+   ],
+   "hp": 212,
+   "speed": 0.9,
+   "dmg": 1.27,
+   "group": "boss",
+   "colour": "#38bdf8",
+   "changes": [
+    [
+     "s83",
+     "KICK fires a burst of water from the hose hand."
+    ],
+    [
+     "s83",
+     "SWORD spins the squeegee round his arm."
+    ],
+    [
+     "s84",
+     "Holds the squeegee in its block pose by default."
+    ]
+   ],
+   "files": [
+    {
+     "glb": "suds.glb",
+     "bytes": 939592,
+     "height": 3.02,
+     "meshes": 109,
+     "swatch": "#38bdf8",
+     "gltf": "suds.gltf",
+     "web": "suds.gltf.json",
+     "gltfBytes": 1081256
+    },
+    {
+     "glb": "suds_alt1.glb",
+     "bytes": 1039388,
+     "height": 3.02,
+     "meshes": 109,
+     "swatch": "#2b8fd9",
+     "gltf": "suds_alt1.gltf",
+     "web": "suds_alt1.gltf.json",
+     "gltfBytes": 1181054
+    },
+    {
+     "glb": "suds_alt2.glb",
+     "bytes": 1037608,
+     "height": 3.05,
+     "meshes": 109,
+     "swatch": "#9a4ad6",
+     "gltf": "suds_alt2.gltf",
+     "web": "suds_alt2.gltf.json",
+     "gltfBytes": 1179169
+    }
+   ]
+  },
+  {
+   "id": "slag",
+   "name": "SLAGBACK",
+   "sub": "LAVA BEAST · LUXOR",
+   "style": "Molten under the crust. LAVA LOB and the MAGMA SLAM. Its crust cracks off as it gets hurt.",
+   "stats": [
+    4,
+    2,
+    3
+   ],
+   "hp": 200,
+   "speed": 0.84,
+   "dmg": 1.2,
+   "group": "boss",
+   "colour": "#ff6a1a",
+   "changes": [
+    [
+     "s94",
+     "Dripping lava gloves, a bigger raised head and a lava mouth."
+    ],
+    [
+     "s95",
+     "LAVA AXE. Hold KICK to dig lava out of his chest and throw it."
+    ],
+    [
+     "s96",
+     "The thrown lava is a pulsing fireball that explodes on impact. Bright red eyes."
+    ]
+   ],
+   "files": [
+    {
+     "glb": "slag.glb",
+     "bytes": 590680,
+     "height": 3.14,
+     "meshes": 83,
+     "swatch": "#ff6a1a",
+     "gltf": "slag.gltf",
+     "web": "slag.gltf.json",
+     "gltfBytes": 681251
+    },
+    {
+     "glb": "slag_alt1.glb",
+     "bytes": 652416,
+     "height": 3.15,
+     "meshes": 83,
+     "swatch": "#2b8fd9",
+     "gltf": "slag_alt1.gltf",
+     "web": "slag_alt1.gltf.json",
+     "gltfBytes": 742990
+    },
+    {
+     "glb": "slag_alt2.glb",
+     "bytes": 652852,
+     "height": 3.1,
+     "meshes": 83,
+     "swatch": "#9a4ad6",
+     "gltf": "slag_alt2.gltf",
+     "web": "slag_alt2.gltf.json",
+     "gltfBytes": 743425
+    }
+   ]
+  },
+  {
+   "id": "crystal",
+   "name": "CRYSTAL WARDEN",
+   "sub": "GOLEM · THE CRYSTAL CAVES",
+   "style": "A living crystal brawler. CRYSTAL SHARD fireball, GEM CYCLONE, the CRYSTAL RISE uppercut, PRISM PUNCHES and the PRISM STORM.",
+   "stats": [
+    4,
+    2,
+    4
+   ],
+   "hp": 190,
+   "speed": 0.9,
+   "dmg": 1.12,
+   "group": "boss",
+   "colour": "#a78bfa",
+   "changes": [
+    [
+     "s98",
+     "Replaces Shadow Ben. Built from the Creature Workshop Deep Warden, restyled as a Street Fighter brawler."
+    ],
+    [
+     "s99",
+     "Crystal greatsword, CHEST BLAST laser from his core, contrast plates on the body and a gold belt."
+    ]
+   ],
+   "files": [
+    {
+     "glb": "crystal.glb",
+     "bytes": 464772,
+     "height": 2.99,
+     "meshes": 73,
+     "swatch": "#a78bfa",
+     "gltf": "crystal.gltf",
+     "web": "crystal.gltf.json",
+     "gltfBytes": 525087
+    },
+    {
+     "glb": "crystal_alt1.glb",
+     "bytes": 530960,
+     "height": 2.98,
+     "meshes": 73,
+     "swatch": "#2b8fd9",
+     "gltf": "crystal_alt1.gltf",
+     "web": "crystal_alt1.gltf.json",
+     "gltfBytes": 591278
+    },
+    {
+     "glb": "crystal_alt2.glb",
+     "bytes": 530768,
+     "height": 3.0,
+     "meshes": 73,
+     "swatch": "#9a4ad6",
+     "gltf": "crystal_alt2.gltf",
+     "web": "crystal_alt2.gltf.json",
+     "gltfBytes": 591086
+    }
+   ]
+  }
+ ]
+}

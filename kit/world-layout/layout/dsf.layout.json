@@ -1,0 +1,3349 @@
+{
+ "meta": {
+  "world": "dsf",
+  "version": 2,
+  "date": "2026-10-22",
+  "from": "uploads/deep_space_fox_012.html (2D station, build DSF 001) via worlds/dsf-2d-summary.json",
+  "notes": "DRAFT by Claude (s349) for Ben. DEEP SPACE FOX = the MAIN STATION, in orbit ABOVE MERU, its own destination on the 3D space map near Meru (every other station is smaller). Ben s349: the MAIN RING is TWO LEVELS (shops below, an upper BALCONY walkway above the shopfronts with its own spots: THE EMBED games screens, a lookout, the shrine KNEEL alcove); up by 2 stairs + the lift. The LIFT is a REAL RIDE (doors close, the shaft and decks pass by) to OPERATIONS (top), LIVING QUARTERS A + B. WINDOWS: Meru below, turning slowly as the station rotates; stars + a nebula; ships docking + leaving; the gate opening now and then. DOCKING: big ships at the 3 curved PYLONS above + below the docking ring (dsfSpacedock = Upper Pylon One), small shuttles fly into CARGO BAY FOUR. AMBUSH: hacked loader robots in Cargo Bay Four. Build order: map → outsides → Main Ring + Quirk's Bar fully polished → interiors; MINIGAMES ARE BUILT AFTER THE MAP (Ben s349). DECK PLATES: Ops, Quarters A and Quarters B are drawn on this sheet beside the station (north strip); in 3D they are separate floors joined by the lift (see decks). The checker floods each deck from its lift. Every other-world role (castle = the Captain's Office on Ops, fire = Engineering damage control, car rental = Cargo Bay shuttle hire …) is mapped onto a station room; DRAFT = names for Ben to change. Ben s349: KUFA STATION IS OFF THIS MAP; this map is SPACE STATION 8 only.",
+  "rooms": {
+   "dsfPromenade": "zone (MAIN RING, start; spawn on the hub transport pad)",
+   "dsfQuirks": "building",
+   "dsfTailor": "building",
+   "dsfInfirmary": "building",
+   "dsfTemple": "building",
+   "dsfCargo": "building",
+   "dsfEngineering": "building",
+   "dsfSecurity": "building",
+   "dsfShip": "building (airlock → Runabout Vole)",
+   "dsfLockInner": "airlock inner door, in dsfShip",
+   "dsfLockOuter": "airlock outer door, in dsfShip",
+   "dsfOps": "deck zone (lift)",
+   "dsfOffice": "building on Ops (castle role)",
+   "dsfQuartersA": "deck zone (lift)",
+   "dsfQuartersB": "deck zone (lift)",
+   "dsfCabinYou": "building, home",
+   "dsfSpoke0": "path (catwalk)",
+   "dsfSpoke90": "path (catwalk)",
+   "dsfSpoke180": "path (catwalk)",
+   "dsfSpoke270": "path (catwalk)"
+  },
+  "cut": [
+   {
+    "key": "dsfOutKu",
+    "why": "Ben s349: Kufa Station is off this map. This map is SPACE STATION 8 only. Its rooms are saved in worlds/dsf-kufa-station.json for later."
+   }
+  ]
+ },
+ "map": {
+  "half": 340,
+  "spawn": [
+   0,
+   20
+  ],
+  "spawnFace": "N"
+ },
+ "palette": {
+  "path": "#5a5650",
+  "wall": "#3a3e44",
+  "roof": "#2a2e34",
+  "trim": "#e0a13c",
+  "accent": "#7fe3ff",
+  "notes": "Lived-in station: warm amber bar lights, gunmetal + bronze walls, each room its own trim from the 2D (Quirk amber, Garok purple, Infirmary cyan, Temple candle gold, Cargo brass, Engineering green, Security red)."
+ },
+ "decks": [
+  {
+   "key": "dsfOps",
+   "label": "OPERATIONS",
+   "level": 3,
+   "r": [
+    -45,
+    45,
+    -338,
+    -250
+   ],
+   "lift": [
+    0,
+    -270
+   ]
+  },
+  {
+   "key": "dsfQuartersA",
+   "label": "LIVING QUARTERS A",
+   "level": 1,
+   "r": [
+    -325,
+    -199,
+    -330,
+    -270
+   ],
+   "lift": [
+    -262,
+    -292
+   ]
+  },
+  {
+   "key": "dsfQuartersB",
+   "label": "LIVING QUARTERS B",
+   "level": 0,
+   "r": [
+    220,
+    322,
+    -330,
+    -270
+   ],
+   "lift": [
+    271,
+    -292
+   ]
+  }
+ ],
+ "balcony": {
+  "ring": [
+   92,
+   104
+  ],
+  "level": "upper",
+  "height": 7,
+  "reach": "2 stairs (east at 64°, west at 206°) + the lift",
+  "spots": [
+   "dsfEmbed",
+   "dsfLookout",
+   "dsfKneel"
+  ],
+  "note": "An upper walkway running all the way round above the outer shopfronts, rail on the ring side, big windows behind it where there is no shop. Quirk's upper floor opens onto it."
+ },
+ "pylons": [
+  {
+   "key": "dsfPylonOne",
+   "at": [
+    164.5,
+    -68.1
+   ],
+   "use": "big ships: the player ship (dsfSpacedock)"
+  },
+  {
+   "key": "dsfPylonTwo",
+   "at": [
+    -68.1,
+    164.5
+   ],
+   "use": "freighters (Capt. Moss)"
+  },
+  {
+   "key": "dsfPylonThree",
+   "at": [
+    -125.9,
+    -125.9
+   ],
+   "use": "battle: hacked Machine Fleet ship"
+  }
+ ],
+ "zones": [
+  {
+   "key": "dsfDockingRing",
+   "label": "Docking Ring",
+   "c": [
+    0,
+    0,
+    200
+   ],
+   "music": "station",
+   "depth": 400,
+   "new": true
+  },
+  {
+   "key": "dsfPromenade",
+   "label": "Main Ring",
+   "c": [
+    0,
+    0,
+    128
+   ],
+   "music": "promenade",
+   "depth": 256,
+   "from2d": true
+  },
+  {
+   "key": "dsfHub",
+   "label": "The Hub",
+   "c": [
+    0,
+    0,
+    30
+   ],
+   "music": "promenade",
+   "depth": 60,
+   "new": true
+  },
+  {
+   "key": "dsfOps",
+   "label": "Operations",
+   "r": [
+    -45,
+    45,
+    -338,
+    -250
+   ],
+   "music": "ops",
+   "depth": 88,
+   "from2d": true,
+   "deck": true
+  },
+  {
+   "key": "dsfQuartersA",
+   "label": "Living Quarters A",
+   "r": [
+    -325,
+    -199,
+    -330,
+    -270
+   ],
+   "music": "quarters",
+   "depth": 60,
+   "from2d": true,
+   "deck": true
+  },
+  {
+   "key": "dsfQuartersB",
+   "label": "Living Quarters B",
+   "r": [
+    220,
+    322,
+    -330,
+    -270
+   ],
+   "music": "quarters",
+   "depth": 60,
+   "from2d": true,
+   "deck": true
+  }
+ ],
+ "surfaces": [
+  {
+   "s": "metal",
+   "r": [
+    -24,
+    24,
+    -24,
+    24
+   ]
+  }
+ ],
+ "water": [
+  {
+   "e": [
+    0,
+    0,
+    51,
+    51
+   ],
+   "void": true,
+   "note": "THE DROP: an open well between the hub and the ring (look down to the lower levels, rails all round). Not water: paint as a deep lit shaft."
+  }
+ ],
+ "roads": [],
+ "paths": [
+  {
+   "key": "dsfRing",
+   "label": "Promenade (main ring)",
+   "w": 14,
+   "p": [
+    [
+     0,
+     -85
+    ],
+    [
+     8.3,
+     -84.6
+    ],
+    [
+     16.6,
+     -83.4
+    ],
+    [
+     24.7,
+     -81.3
+    ],
+    [
+     32.5,
+     -78.5
+    ],
+    [
+     40.1,
+     -75
+    ],
+    [
+     47.2,
+     -70.7
+    ],
+    [
+     53.9,
+     -65.7
+    ],
+    [
+     60.1,
+     -60.1
+    ],
+    [
+     65.7,
+     -53.9
+    ],
+    [
+     70.7,
+     -47.2
+    ],
+    [
+     75,
+     -40.1
+    ],
+    [
+     78.5,
+     -32.5
+    ],
+    [
+     81.3,
+     -24.7
+    ],
+    [
+     83.4,
+     -16.6
+    ],
+    [
+     84.6,
+     -8.3
+    ],
+    [
+     85,
+     0
+    ],
+    [
+     84.6,
+     8.3
+    ],
+    [
+     83.4,
+     16.6
+    ],
+    [
+     81.3,
+     24.7
+    ],
+    [
+     78.5,
+     32.5
+    ],
+    [
+     75,
+     40.1
+    ],
+    [
+     70.7,
+     47.2
+    ],
+    [
+     65.7,
+     53.9
+    ],
+    [
+     60.1,
+     60.1
+    ],
+    [
+     53.9,
+     65.7
+    ],
+    [
+     47.2,
+     70.7
+    ],
+    [
+     40.1,
+     75
+    ],
+    [
+     32.5,
+     78.5
+    ],
+    [
+     24.7,
+     81.3
+    ],
+    [
+     16.6,
+     83.4
+    ],
+    [
+     8.3,
+     84.6
+    ],
+    [
+     0,
+     85
+    ],
+    [
+     -8.3,
+     84.6
+    ],
+    [
+     -16.6,
+     83.4
+    ],
+    [
+     -24.7,
+     81.3
+    ],
+    [
+     -32.5,
+     78.5
+    ],
+    [
+     -40.1,
+     75
+    ],
+    [
+     -47.2,
+     70.7
+    ],
+    [
+     -53.9,
+     65.7
+    ],
+    [
+     -60.1,
+     60.1
+    ],
+    [
+     -65.7,
+     53.9
+    ],
+    [
+     -70.7,
+     47.2
+    ],
+    [
+     -75,
+     40.1
+    ],
+    [
+     -78.5,
+     32.5
+    ],
+    [
+     -81.3,
+     24.7
+    ],
+    [
+     -83.4,
+     16.6
+    ],
+    [
+     -84.6,
+     8.3
+    ],
+    [
+     -85,
+     0
+    ],
+    [
+     -84.6,
+     -8.3
+    ],
+    [
+     -83.4,
+     -16.6
+    ],
+    [
+     -81.3,
+     -24.7
+    ],
+    [
+     -78.5,
+     -32.5
+    ],
+    [
+     -75,
+     -40.1
+    ],
+    [
+     -70.7,
+     -47.2
+    ],
+    [
+     -65.7,
+     -53.9
+    ],
+    [
+     -60.1,
+     -60.1
+    ],
+    [
+     -53.9,
+     -65.7
+    ],
+    [
+     -47.2,
+     -70.7
+    ],
+    [
+     -40.1,
+     -75
+    ],
+    [
+     -32.5,
+     -78.5
+    ],
+    [
+     -24.7,
+     -81.3
+    ],
+    [
+     -16.6,
+     -83.4
+    ],
+    [
+     -8.3,
+     -84.6
+    ],
+    [
+     0,
+     -85
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20,
+   "note": "The MAIN RING: two levels. Lower deck = shops; upper BALCONY walkway above the outer shopfronts (see balcony block). Light poles + floor light strips."
+  },
+  {
+   "key": "dsfQuirksWalk",
+   "label": "Quirk's Bar walk",
+   "w": 6,
+   "p": [
+    [
+     0,
+     -95
+    ],
+    [
+     0,
+     -85
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfHolosuitesWalk",
+   "label": "Quirk's Holosuites walk",
+   "w": 6,
+   "p": [
+    [
+     41.7,
+     -90.7
+    ],
+    [
+     35.5,
+     -77.2
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfTailorWalk",
+   "label": "Garok's walk",
+   "w": 6,
+   "p": [
+    [
+     77.4,
+     -68.4
+    ],
+    [
+     63.7,
+     -56.3
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfInfirmaryWalk",
+   "label": "Infirmary walk",
+   "w": 6,
+   "p": [
+    [
+     95,
+     0
+    ],
+    [
+     85,
+     0
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfBankWalk",
+   "label": "Latinum Vault walk",
+   "w": 6,
+   "p": [
+    [
+     90.3,
+     41.1
+    ],
+    [
+     77.4,
+     35.2
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfTempleWalk",
+   "label": "Temple of Gaya walk",
+   "w": 6,
+   "p": [
+    [
+     80.3,
+     68.3
+    ],
+    [
+     64.7,
+     55.1
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfPostWalk",
+   "label": "Meru Embassy · Galactic Post walk",
+   "w": 6,
+   "p": [
+    [
+     41.1,
+     90.3
+    ],
+    [
+     35.2,
+     77.4
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfCargoWalk",
+   "label": "Cargo Bay Four walk",
+   "w": 6,
+   "p": [
+    [
+     0,
+     95
+    ],
+    [
+     0,
+     85
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfEngineeringWalk",
+   "label": "Engineering walk",
+   "w": 6,
+   "p": [
+    [
+     -81.3,
+     69.3
+    ],
+    [
+     -64.7,
+     55.1
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfArmoryWalk",
+   "label": "Station Armory walk",
+   "w": 6,
+   "p": [
+    [
+     -90.4,
+     40.8
+    ],
+    [
+     -77.5,
+     35
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfSecurityWalk",
+   "label": "Security walk",
+   "w": 6,
+   "p": [
+    [
+     -95,
+     0
+    ],
+    [
+     -85,
+     0
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfBarracksWalk",
+   "label": "Militia Bunkroom walk",
+   "w": 6,
+   "p": [
+    [
+     -90.8,
+     -41.3
+    ],
+    [
+     -77.4,
+     -35.2
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfHydroWalk",
+   "label": "Hydroponics Bay walk",
+   "w": 6,
+   "p": [
+    [
+     -42.3,
+     -91.1
+    ],
+    [
+     -35.8,
+     -77.1
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfPavsWalk",
+   "label": "Pav's Honeyroot walk",
+   "w": 6,
+   "p": [
+    [
+     44.5,
+     -50.5
+    ],
+    [
+     56.2,
+     -63.8
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfNewsWalk",
+   "label": "Station 8 News walk",
+   "w": 6,
+   "p": [
+    [
+     44.5,
+     50.5
+    ],
+    [
+     56.2,
+     63.8
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfVorKioskWalk",
+   "label": "Vor's Exchange walk",
+   "w": 6,
+   "p": [
+    [
+     -44.5,
+     50.5
+    ],
+    [
+     -56.2,
+     63.8
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfSparkBoltWalk",
+   "label": "Spark & Bolt walk",
+   "w": 6,
+   "p": [
+    [
+     -65.4,
+     8.4
+    ],
+    [
+     -84.3,
+     10.8
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfCuriosWalk",
+   "label": "Gayan Curios walk",
+   "w": 6,
+   "p": [
+    [
+     -44.2,
+     -50.2
+    ],
+    [
+     -56.2,
+     -63.8
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfHubRing",
+   "label": "Hub catwalk",
+   "w": 8,
+   "p": [
+    [
+     0,
+     -16
+    ],
+    [
+     4.1,
+     -15.5
+    ],
+    [
+     8,
+     -13.9
+    ],
+    [
+     11.3,
+     -11.3
+    ],
+    [
+     13.9,
+     -8
+    ],
+    [
+     15.5,
+     -4.1
+    ],
+    [
+     16,
+     0
+    ],
+    [
+     15.5,
+     4.1
+    ],
+    [
+     13.9,
+     8
+    ],
+    [
+     11.3,
+     11.3
+    ],
+    [
+     8,
+     13.9
+    ],
+    [
+     4.1,
+     15.5
+    ],
+    [
+     0,
+     16
+    ],
+    [
+     -4.1,
+     15.5
+    ],
+    [
+     -8,
+     13.9
+    ],
+    [
+     -11.3,
+     11.3
+    ],
+    [
+     -13.9,
+     8
+    ],
+    [
+     -15.5,
+     4.1
+    ],
+    [
+     -16,
+     0
+    ],
+    [
+     -15.5,
+     -4.1
+    ],
+    [
+     -13.9,
+     -8
+    ],
+    [
+     -11.3,
+     -11.3
+    ],
+    [
+     -8,
+     -13.9
+    ],
+    [
+     -4.1,
+     -15.5
+    ],
+    [
+     0,
+     -16
+    ]
+   ],
+   "lining": "lamps",
+   "every": 14
+  },
+  {
+   "key": "dsfSpoke0",
+   "label": "Catwalk",
+   "w": 6,
+   "p": [
+    [
+     16,
+     0
+    ],
+    [
+     85,
+     0
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20,
+   "from2d": true,
+   "note": "2D gate dsfSpoke0 (CATWALK) over the drop to the hub"
+  },
+  {
+   "key": "dsfSpoke90",
+   "label": "Catwalk",
+   "w": 6,
+   "p": [
+    [
+     0,
+     16
+    ],
+    [
+     0,
+     85
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20,
+   "from2d": true,
+   "note": "2D gate dsfSpoke90 (CATWALK) over the drop to the hub"
+  },
+  {
+   "key": "dsfSpoke180",
+   "label": "Catwalk",
+   "w": 6,
+   "p": [
+    [
+     -16,
+     0
+    ],
+    [
+     -85,
+     0
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20,
+   "from2d": true,
+   "note": "2D gate dsfSpoke180 (CATWALK) over the drop to the hub"
+  },
+  {
+   "key": "dsfSpoke270",
+   "label": "Catwalk",
+   "w": 6,
+   "p": [
+    [
+     0,
+     -16
+    ],
+    [
+     0,
+     -85
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20,
+   "from2d": true,
+   "note": "2D gate dsfSpoke270 (CATWALK) over the drop to the hub"
+  },
+  {
+   "key": "dsfDockRing",
+   "label": "Docking ring",
+   "w": 8,
+   "p": [
+    [
+     0,
+     -150
+    ],
+    [
+     13.1,
+     -149.4
+    ],
+    [
+     26,
+     -147.7
+    ],
+    [
+     38.8,
+     -144.9
+    ],
+    [
+     51.3,
+     -141
+    ],
+    [
+     63.4,
+     -135.9
+    ],
+    [
+     75,
+     -129.9
+    ],
+    [
+     86,
+     -122.9
+    ],
+    [
+     96.4,
+     -114.9
+    ],
+    [
+     106.1,
+     -106.1
+    ],
+    [
+     114.9,
+     -96.4
+    ],
+    [
+     122.9,
+     -86
+    ],
+    [
+     129.9,
+     -75
+    ],
+    [
+     135.9,
+     -63.4
+    ],
+    [
+     141,
+     -51.3
+    ],
+    [
+     144.9,
+     -38.8
+    ],
+    [
+     147.7,
+     -26
+    ],
+    [
+     149.4,
+     -13.1
+    ],
+    [
+     150,
+     0
+    ],
+    [
+     149.4,
+     13.1
+    ],
+    [
+     147.7,
+     26
+    ],
+    [
+     144.9,
+     38.8
+    ],
+    [
+     141,
+     51.3
+    ],
+    [
+     135.9,
+     63.4
+    ],
+    [
+     129.9,
+     75
+    ],
+    [
+     122.9,
+     86
+    ],
+    [
+     114.9,
+     96.4
+    ],
+    [
+     106.1,
+     106.1
+    ],
+    [
+     96.4,
+     114.9
+    ],
+    [
+     86,
+     122.9
+    ],
+    [
+     75,
+     129.9
+    ],
+    [
+     63.4,
+     135.9
+    ],
+    [
+     51.3,
+     141
+    ],
+    [
+     38.8,
+     144.9
+    ],
+    [
+     26,
+     147.7
+    ],
+    [
+     13.1,
+     149.4
+    ],
+    [
+     0,
+     150
+    ],
+    [
+     -13.1,
+     149.4
+    ],
+    [
+     -26,
+     147.7
+    ],
+    [
+     -38.8,
+     144.9
+    ],
+    [
+     -51.3,
+     141
+    ],
+    [
+     -63.4,
+     135.9
+    ],
+    [
+     -75,
+     129.9
+    ],
+    [
+     -86,
+     122.9
+    ],
+    [
+     -96.4,
+     114.9
+    ],
+    [
+     -106.1,
+     106.1
+    ],
+    [
+     -114.9,
+     96.4
+    ],
+    [
+     -122.9,
+     86
+    ],
+    [
+     -129.9,
+     75
+    ],
+    [
+     -135.9,
+     63.4
+    ],
+    [
+     -141,
+     51.3
+    ],
+    [
+     -144.9,
+     38.8
+    ],
+    [
+     -147.7,
+     26
+    ],
+    [
+     -149.4,
+     13.1
+    ],
+    [
+     -150,
+     0
+    ],
+    [
+     -149.4,
+     -13.1
+    ],
+    [
+     -147.7,
+     -26
+    ],
+    [
+     -144.9,
+     -38.8
+    ],
+    [
+     -141,
+     -51.3
+    ],
+    [
+     -135.9,
+     -63.4
+    ],
+    [
+     -129.9,
+     -75
+    ],
+    [
+     -122.9,
+     -86
+    ],
+    [
+     -114.9,
+     -96.4
+    ],
+    [
+     -106.1,
+     -106.1
+    ],
+    [
+     -96.4,
+     -114.9
+    ],
+    [
+     -86,
+     -122.9
+    ],
+    [
+     -75,
+     -129.9
+    ],
+    [
+     -63.4,
+     -135.9
+    ],
+    [
+     -51.3,
+     -141
+    ],
+    [
+     -38.8,
+     -144.9
+    ],
+    [
+     -26,
+     -147.7
+    ],
+    [
+     -13.1,
+     -149.4
+    ],
+    [
+     0,
+     -150
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20,
+   "note": "The outer docking ring: airlocks, berths, the 3 pylon bases."
+  },
+  {
+   "key": "dsfBridgeOne",
+   "label": "Pylon One bridge",
+   "w": 8,
+   "p": [
+    [
+     78.5,
+     -32.5
+    ],
+    [
+     138.6,
+     -57.4
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfBridgeTwo",
+   "label": "Pylon Two bridge",
+   "w": 8,
+   "p": [
+    [
+     -32.5,
+     78.5
+    ],
+    [
+     -57.4,
+     138.6
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfBridgeThree",
+   "label": "Pylon Three bridge",
+   "w": 8,
+   "p": [
+    [
+     -60.1,
+     -60.1
+    ],
+    [
+     -106.1,
+     -106.1
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfPylonOneWalk",
+   "label": "Pylon One base",
+   "w": 8,
+   "p": [
+    [
+     138.6,
+     -57.4
+    ],
+    [
+     164.5,
+     -68.1
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfPylonTwoWalk",
+   "label": "Pylon Two base",
+   "w": 8,
+   "p": [
+    [
+     -57.4,
+     138.6
+    ],
+    [
+     -68.1,
+     164.5
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfPylonThreeWalk",
+   "label": "Pylon Three base",
+   "w": 8,
+   "p": [
+    [
+     -106.1,
+     -106.1
+    ],
+    [
+     -125.9,
+     -125.9
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfShipWalk",
+   "label": "Airlock walk",
+   "w": 6,
+   "p": [
+    [
+     65.1,
+     150.1
+    ],
+    [
+     59.7,
+     137.6
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfOpsFloor",
+   "label": "Ops floor",
+   "w": 10,
+   "p": [
+    [
+     0,
+     -264
+    ],
+    [
+     0,
+     -300
+    ],
+    [
+     25,
+     -300
+    ],
+    [
+     25,
+     -316
+    ]
+   ],
+   "lining": "lamps",
+   "every": 10
+  },
+  {
+   "key": "dsfOpsPadWalk",
+   "label": "Ops pad walk",
+   "w": 6,
+   "p": [
+    [
+     0,
+     -300
+    ],
+    [
+     -28,
+     -300
+    ],
+    [
+     -28,
+     -318
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfQuartersACorridor",
+   "label": "Living Quarters A corridor",
+   "w": 6,
+   "p": [
+    [
+     -322,
+     -300
+    ],
+    [
+     -202,
+     -300
+    ]
+   ],
+   "lining": "lamps",
+   "every": 10
+  },
+  {
+   "key": "dsfCabKorraWalk",
+   "label": "door",
+   "w": 4,
+   "p": [
+    [
+     -310,
+     -312
+    ],
+    [
+     -310,
+     -300
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfCabDacksWalk",
+   "label": "door",
+   "w": 4,
+   "p": [
+    [
+     -286,
+     -312
+    ],
+    [
+     -286,
+     -300
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfCabinYouWalk",
+   "label": "door",
+   "w": 4,
+   "p": [
+    [
+     -262,
+     -312
+    ],
+    [
+     -262,
+     -300
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfCabObrainWalk",
+   "label": "door",
+   "w": 4,
+   "p": [
+    [
+     -238,
+     -312
+    ],
+    [
+     -238,
+     -300
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfCabBashadWalk",
+   "label": "door",
+   "w": 4,
+   "p": [
+    [
+     -214,
+     -312
+    ],
+    [
+     -214,
+     -300
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfCabWarfWalk",
+   "label": "door",
+   "w": 4,
+   "p": [
+    [
+     -307,
+     -288
+    ],
+    [
+     -307,
+     -300
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfCabJackWalk",
+   "label": "door",
+   "w": 4,
+   "p": [
+    [
+     -217,
+     -288
+    ],
+    [
+     -217,
+     -300
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfQuartersBCorridor",
+   "label": "Living Quarters B corridor",
+   "w": 6,
+   "p": [
+    [
+     223,
+     -300
+    ],
+    [
+     319,
+     -300
+    ]
+   ],
+   "lining": "lamps",
+   "every": 10
+  },
+  {
+   "key": "dsfCabVorWalk",
+   "label": "door",
+   "w": 4,
+   "p": [
+    [
+     235,
+     -312
+    ],
+    [
+     235,
+     -300
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfCabPellsWalk",
+   "label": "door",
+   "w": 4,
+   "p": [
+    [
+     259,
+     -312
+    ],
+    [
+     259,
+     -300
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfCabSethWalk",
+   "label": "door",
+   "w": 4,
+   "p": [
+    [
+     283,
+     -312
+    ],
+    [
+     283,
+     -300
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfCabGrellWalk",
+   "label": "door",
+   "w": 4,
+   "p": [
+    [
+     307,
+     -312
+    ],
+    [
+     307,
+     -300
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfCabNagWalk",
+   "label": "door",
+   "w": 4,
+   "p": [
+    [
+     235,
+     -288
+    ],
+    [
+     235,
+     -300
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfCabPavWalk",
+   "label": "door",
+   "w": 4,
+   "p": [
+    [
+     307,
+     -288
+    ],
+    [
+     307,
+     -300
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfQuartersALiftWalk",
+   "label": "lift",
+   "w": 6,
+   "p": [
+    [
+     -262,
+     -286
+    ],
+    [
+     -262,
+     -300
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "dsfQuartersBLiftWalk",
+   "label": "lift",
+   "w": 6,
+   "p": [
+    [
+     271,
+     -286
+    ],
+    [
+     271,
+     -300
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  }
+ ],
+ "buildings": [
+  {
+   "key": "dsfQuirks",
+   "label": "Quirk's Bar",
+   "role": "tavern",
+   "h": 14,
+   "color": "#6a4a20",
+   "interior": true,
+   "note": "[dsfQuirks] 2D: QUIRK'S BAR, PROMENADE, NORTH. Two-level bar (upper floor opens onto the balcony): long bar (Quirk, nephew Nag), the DABA WHEEL (unique tavern game, from the 2D: DABA), MIND THE BAR game, holosuite stairs, patrons Brel, Sanna Vosk, Teek, Marn. Amber bar lights. Minigames are built AFTER the map (Ben s349).",
+   "outside": "The widest front on the ring: a two-storey amber glass wall, the bar's upper floor showing through it, a giant spinning DABA WHEEL sign over the door, warm amber light spilling onto the promenade, stools visible at the window.",
+   "sign": {
+    "roof": "QUIRK'S",
+    "door": "QUIRK'S BAR · DABA · DRINKS"
+   },
+   "trim": "#e0a13c",
+   "from2d": "dsfQuirks",
+   "games": [
+    "DABA (2D)",
+    "MIND THE BAR (2D)"
+   ],
+   "f": [
+    -20,
+    20,
+    -121,
+    -95
+   ],
+   "door": [
+    0,
+    -95
+   ],
+   "face": "S"
+  },
+  {
+   "key": "dsfHolosuites",
+   "label": "Quirk's Holosuites",
+   "role": "sport",
+   "h": 12,
+   "color": "#3a2a4a",
+   "interior": true,
+   "note": "DRAFT (Ben to name): the sport venue. Quirk's holosuites (2D: 'the holosuites are booked out until second shift'). A holo-arena: any sport room (tennis, baseball, boxing) runs here as a program.",
+   "outside": "Sealed black hexagon-tiled front, no windows, a grid of glowing orange holo lines running over it, one round porthole door with a BOOKED / FREE light above it.",
+   "sign": {
+    "roof": "HOLOSUITES",
+    "door": "HOLOSUITES · BOOK A PROGRAM"
+   },
+   "draft": true,
+   "trim": "#e0a13c",
+   "f": [
+    28.7,
+    54.7,
+    -110.7,
+    -90.7
+   ],
+   "door": [
+    41.7,
+    -90.7
+   ],
+   "face": "S"
+  },
+  {
+   "key": "dsfTailor",
+   "label": "Garok's",
+   "role": "specialty",
+   "h": 10,
+   "color": "#3a2a46",
+   "interior": true,
+   "note": "[dsfTailor] 2D: GAROK'S, TAILOR (Garok: 'Tailor. Plain and simple.'). FOXY TAILORS job (shift job, like Jon's Boatworks): hiring sign + Garok's counter. Outfits.",
+   "outside": "Narrow, neat shopfront with purple trim, a tall display window with three fox mannequins in station suits, a hanging brass needle-and-thread sign, a bolt of purple cloth draped over the lintel.",
+   "sign": {
+    "roof": "GAROK'S",
+    "door": "GAROK'S · TAILOR · FOXY TAILORS"
+   },
+   "trim": "#b98ad8",
+   "from2d": "dsfTailor",
+   "jobs": [
+    "FOXY TAILORS"
+   ],
+   "f": [
+    66.4,
+    88.4,
+    -86.4,
+    -68.4
+   ],
+   "door": [
+    77.4,
+    -68.4
+   ],
+   "face": "S"
+  },
+  {
+   "key": "dsfInfirmary",
+   "label": "Infirmary",
+   "role": "hospital",
+   "h": 12,
+   "color": "#1e3a44",
+   "interior": true,
+   "note": "[dsfInfirmary] 2D: INFIRMARY, SICKBAY. Dr Bashad. BONE SET job (shift job). Biobeds, a surgery bay, cyan light.",
+   "outside": "Clean white curved front with cyan light strips, a wide glass double door that slides open, a big cyan cross sign, a biobed visible through the window, a medic's cart parked outside.",
+   "sign": {
+    "roof": "INFIRMARY",
+    "door": "INFIRMARY · SICKBAY · BONE SET"
+   },
+   "trim": "#5fe3ff",
+   "from2d": "dsfInfirmary",
+   "jobs": [
+    "BONE SET"
+   ],
+   "f": [
+    95,
+    121,
+    -16,
+    16
+   ],
+   "door": [
+    95,
+    0
+   ],
+   "face": "W"
+  },
+  {
+   "key": "dsfBank",
+   "label": "Latinum Vault",
+   "role": "bank",
+   "h": 10,
+   "color": "#2a2a2a",
+   "interior": true,
+   "note": "DRAFT name: the station bank. Latinum chips (2D loot) change hands here: deposit gold, a vault door at the back.",
+   "outside": "A black steel front with a round vault door set into the wall as the entrance, gold bars stacked in a lit niche beside it, a ticker strip of exchange rates scrolling over the door.",
+   "sign": {
+    "roof": "LATINUM VAULT",
+    "door": "BANK · LATINUM VAULT"
+   },
+   "draft": true,
+   "trim": "#f2c94c",
+   "f": [
+    90.3,
+    108.3,
+    30.1,
+    52.1
+   ],
+   "door": [
+    90.3,
+    41.1
+   ],
+   "face": "W"
+  },
+  {
+   "key": "dsfTemple",
+   "label": "Temple of Gaya",
+   "role": "other",
+   "h": 13,
+   "color": "#3a2a18",
+   "interior": true,
+   "note": "[dsfTemple] 2D: TEMPLE OF GAYA, SHRINE. Keeper Opa (cleric 'vedek'), the flame that has never gone out, the KNEEL spot by the flame (2D), pilgrims. Candle-lit. The balcony has a kneel alcove above it.",
+   "outside": "A carved golden arch the full height of both levels, rows of candles in wall niches either side of the door, warm flame light flickering on the floor, a hanging prayer gong, soft gold glow from deep inside.",
+   "sign": {
+    "roof": "TEMPLE OF GAYA",
+    "door": "TEMPLE OF GAYA · SHRINE"
+   },
+   "trim": "#f2d98b",
+   "from2d": "dsfTemple",
+   "f": [
+    66.3,
+    94.3,
+    68.3,
+    92.3
+   ],
+   "door": [
+    80.3,
+    68.3
+   ],
+   "face": "N"
+  },
+  {
+   "key": "dsfPost",
+   "label": "Meru Embassy · Galactic Post",
+   "role": "post",
+   "h": 10,
+   "color": "#2a3440",
+   "interior": true,
+   "note": "DRAFT: the Galactic Post Office (Meru Embassy). The station sits above MERU (Ben s349), so this is Meru's own embassy office: mail, parcels, permits.",
+   "outside": "A tall blue-grey front with the Meru crest in brass over the door, a wall of numbered parcel lockers lit from inside, a pneumatic mail tube running up into the ceiling.",
+   "sign": {
+    "roof": "MERU EMBASSY",
+    "door": "GALACTIC POST · MERU EMBASSY"
+   },
+   "draft": true,
+   "trim": "#7fb8de",
+   "f": [
+    30.1,
+    52.1,
+    90.3,
+    108.3
+   ],
+   "door": [
+    41.1,
+    90.3
+   ],
+   "face": "N"
+  },
+  {
+   "key": "dsfCargo",
+   "label": "Cargo Bay Four",
+   "role": "carRental",
+   "h": 16,
+   "color": "#3a3226",
+   "interior": true,
+   "note": "[dsfCargo] 2D: CARGO BAY FOUR, DOCKING. SMALL SHUTTLES land here (Ben s349): the hangar's outer wall is a force-field door onto space. SHUTTLE HIRE (the car rental). Shuttle pad inside. THE AMBUSH: hacked Machine Fleet LOADER ROBOTS (Ben s349) through the loading doors at the back (gate dsfCargoAmbush). Crates, a crane gantry, Tessa Vor's stock.",
+   "outside": "The biggest door on the ring: a huge yellow-and-black striped blast door half raised, a crane gantry arm over it, stacked cargo crates and a forklift outside, a red warning beacon turning above.",
+   "sign": {
+    "roof": "CARGO BAY FOUR",
+    "door": "CARGO BAY 4 · SHUTTLE HIRE"
+   },
+   "trim": "#c9b07a",
+   "from2d": "dsfCargo",
+   "f": [
+    -20,
+    20,
+    95,
+    127
+   ],
+   "door": [
+    0,
+    95
+   ],
+   "face": "N"
+  },
+  {
+   "key": "dsfEngineering",
+   "label": "Engineering",
+   "role": "fire",
+   "h": 14,
+   "color": "#1e3420",
+   "interior": true,
+   "note": "[dsfEngineering] 2D: ENGINEERING, MAIN CORE. Chief O'Brain + Tech Voss. Also the station's DAMAGE CONTROL / fire crews (the fire-station role). The main reactor core glows green behind glass. The old ORE SHAFT hatch is nearby (cave).",
+   "outside": "Heavy bulkhead front with exposed green-lit conduits running up the walls, a round window onto the pulsing green core, a rack of fire suppression suits beside the door, a big red DAMAGE CONTROL alarm light.",
+   "sign": {
+    "roof": "ENGINEERING",
+    "door": "ENGINEERING · MAIN CORE · DAMAGE CONTROL"
+   },
+   "trim": "#8fe38f",
+   "from2d": "dsfEngineering",
+   "f": [
+    -97.3,
+    -65.3,
+    69.3,
+    93.3
+   ],
+   "door": [
+    -81.3,
+    69.3
+   ],
+   "face": "N"
+  },
+  {
+   "key": "dsfArmory",
+   "label": "Station Armory",
+   "role": "armory",
+   "h": 9,
+   "color": "#2e2a2a",
+   "interior": true,
+   "note": "DRAFT: armory beside Security. Armour, shields, the sword + laser upgrades (Fighter Gear).",
+   "outside": "Squat grey front with a steel shutter door, a lit rack of laser rifles behind a mesh window, an 8-armour breastplate on a stand outside, yellow hazard stripe along the floor.",
+   "sign": {
+    "roof": "ARMORY",
+    "door": "ARMORY · GEAR"
+   },
+   "draft": true,
+   "trim": "#ff8a6a",
+   "f": [
+    -106.4,
+    -90.4,
+    30.8,
+    50.8
+   ],
+   "door": [
+    -90.4,
+    40.8
+   ],
+   "face": "E"
+  },
+  {
+   "key": "dsfSecurity",
+   "label": "Security",
+   "role": "police",
+   "h": 11,
+   "color": "#3a1e1a",
+   "interior": true,
+   "note": "[dsfSecurity] 2D: SECURITY, BRIG. Co-heads of Security Odd the O and Warf; the brig with Rosk ('Guest of the Constable'); Deputy Kal patrols the outer lane.",
+   "outside": "A hard angular front in dark red with a wide window onto the security office, a glowing force-field cell visible at the back, a big wall screen of station cameras, the Constable's bucket on a shelf in the window.",
+   "sign": {
+    "roof": "SECURITY",
+    "door": "SECURITY · BRIG"
+   },
+   "trim": "#ff8a6a",
+   "from2d": "dsfSecurity",
+   "f": [
+    -119,
+    -95,
+    -15,
+    15
+   ],
+   "door": [
+    -95,
+    0
+   ],
+   "face": "E"
+  },
+  {
+   "key": "dsfBarracks",
+   "label": "Militia Bunkroom",
+   "role": "barracks",
+   "h": 10,
+   "color": "#2a2e34",
+   "interior": true,
+   "note": "DRAFT: the barracks. The station militia's bunkroom + drill floor, run by Security. Guards rest here between shifts.",
+   "outside": "Plain grey front with a row of small bunk-lit portholes, a duty roster board by the door, two guard lockers outside, a militia banner hanging above.",
+   "sign": {
+    "roof": "MILITIA",
+    "door": "MILITIA BUNKROOM · BARRACKS"
+   },
+   "draft": true,
+   "trim": "#ff8a6a",
+   "f": [
+    -108.8,
+    -90.8,
+    -54.3,
+    -28.3
+   ],
+   "door": [
+    -90.8,
+    -41.3
+   ],
+   "face": "E"
+  },
+  {
+   "key": "dsfHydro",
+   "label": "Hydroponics Bay",
+   "role": "farm",
+   "h": 12,
+   "color": "#1e3a24",
+   "interior": true,
+   "note": "DRAFT: the station farm. Racks of glowing crops under grow-lights feed the whole station; Crewman Bek's environmental systems run it.",
+   "outside": "A glass greenhouse front, two storeys of green crop racks under pink-purple grow-lights, water dripping in channels, vines spilling over the doorframe.",
+   "sign": {
+    "roof": "HYDROPONICS",
+    "door": "HYDROPONICS BAY · FARM"
+   },
+   "draft": true,
+   "trim": "#8fe38f",
+   "f": [
+    -57.3,
+    -27.3,
+    -113.1,
+    -91.1
+   ],
+   "door": [
+    -42.3,
+    -91.1
+   ],
+   "face": "S"
+  },
+  {
+   "key": "dsfPavs",
+   "label": "Pav's Honeyroot",
+   "role": "restaurant",
+   "h": 6,
+   "color": "#4a3018",
+   "interior": true,
+   "note": "DRAFT name: the restaurant. Old Pav sells honeyroot, hot (2D walker 'Honeyroot, hot'). A food counter with stools facing the promenade.",
+   "outside": "An open food kiosk with a curved copper counter, steam rising from three pots, a hanging honeyroot bundle sign, red stools along the front.",
+   "sign": {
+    "roof": "PAV'S",
+    "door": "PAV'S HONEYROOT · HOT FOOD"
+   },
+   "draft": true,
+   "trim": "#e0a13c",
+   "f": [
+    36.5,
+    52.5,
+    -50.5,
+    -38.5
+   ],
+   "door": [
+    44.5,
+    -50.5
+   ],
+   "face": "N"
+  },
+  {
+   "key": "dsfNews",
+   "label": "Station 8 News",
+   "role": "news",
+   "h": 8,
+   "color": "#20202a",
+   "interior": true,
+   "note": "DRAFT: the news station. A small broadcast booth with a big screen wall facing the promenade (station news, Machine Fleet sightings, ship arrivals).",
+   "outside": "A booth wrapped in a wall of glowing news screens on all sides, a red ON AIR light on a pole, a tall antenna mast sticking up toward the balcony.",
+   "sign": {
+    "roof": "STATION 8 NEWS",
+    "door": "NEWS · ON AIR"
+   },
+   "draft": true,
+   "trim": "#ec3013",
+   "f": [
+    36.5,
+    52.5,
+    38.5,
+    50.5
+   ],
+   "door": [
+    44.5,
+    50.5
+   ],
+   "face": "S"
+  },
+  {
+   "key": "dsfVorKiosk",
+   "label": "Vor's Exchange",
+   "role": "itemshop",
+   "h": 7,
+   "color": "#3a3020",
+   "interior": true,
+   "note": "DRAFT name: the item shop. Tessa Vor, kiosk trader (2D ringMerchant). Potions, tools, items.",
+   "outside": "A round market kiosk under a striped awning, shelves of bottles and gadgets on every side, a hand-painted price board, hanging lanterns.",
+   "sign": {
+    "roof": "VOR'S",
+    "door": "VOR'S EXCHANGE · ITEMS"
+   },
+   "draft": true,
+   "trim": "#c9b07a",
+   "f": [
+    -52.5,
+    -36.5,
+    38.5,
+    50.5
+   ],
+   "door": [
+    -44.5,
+    50.5
+   ],
+   "face": "S"
+  },
+  {
+   "key": "dsfSparkBolt",
+   "label": "Spark & Bolt",
+   "role": "weapons",
+   "h": 7,
+   "color": "#2a1a1a",
+   "interior": true,
+   "note": "DRAFT name: special weapons (8 ranged + melee), next to the Armory across the ring.",
+   "outside": "A narrow black kiosk with red light slits, a glass case of exotic blades and blasters, a target-practice hologram flickering above the counter.",
+   "sign": {
+    "roof": "SPARK & BOLT",
+    "door": "SPECIAL WEAPONS"
+   },
+   "draft": true,
+   "trim": "#ec3013",
+   "f": [
+    -65.4,
+    -53.4,
+    1.4,
+    15.4
+   ],
+   "door": [
+    -65.4,
+    8.4
+   ],
+   "face": "W"
+  },
+  {
+   "key": "dsfCurios",
+   "label": "Gayan Curios",
+   "role": "relicShop",
+   "h": 7,
+   "color": "#3a2e1a",
+   "interior": true,
+   "note": "DRAFT: the relic shop (the famous relic to BUY: Ben to pick). Old Gayan pieces, star charts, an orb under glass.",
+   "outside": "A small dark-wood kiosk with brass corners, one glowing relic on a pedestal in a glass dome on top, old maps pinned round the counter.",
+   "sign": {
+    "roof": "GAYAN CURIOS",
+    "door": "RELICS · CURIOS"
+   },
+   "draft": true,
+   "trim": "#f2d98b",
+   "f": [
+    -51.2,
+    -37.2,
+    -50.2,
+    -38.2
+   ],
+   "door": [
+    -44.2,
+    -50.2
+   ],
+   "face": "N"
+  },
+  {
+   "key": "dsfLiftCore",
+   "label": "The Lift",
+   "role": "other",
+   "h": 40,
+   "color": "#2a2e34",
+   "interior": false,
+   "note": "[dsfPromenade hub] 2D: the LIFT + transport pad at the hub. A REAL LIFT RIDE (Ben s349): doors close, you see the shaft and the decks pass by: OPERATIONS (top) · MAIN RING · LIVING QUARTERS A · LIVING QUARTERS B. Also stops at the BALCONY (Ben: balcony by stairs + lift). Four catwalks (dsfSpoke0/90/180/270) cross the drop to it.",
+   "outside": "A tall round glass lift tube rising out of the floor up through the balcony and the ceiling, lit cyan rings sliding up and down it, the deck names glowing on a band round the top.",
+   "sign": {
+    "roof": "LIFT",
+    "door": "LIFT · OPS · BALCONY · QUARTERS"
+   },
+   "f": [
+    -9,
+    9,
+    -9,
+    9
+   ],
+   "door": [
+    0,
+    9
+   ],
+   "face": "S",
+   "trim": "#7fe3ff"
+  },
+  {
+   "key": "dsfShip",
+   "label": "Runabout Vole",
+   "role": "other",
+   "h": 6,
+   "color": "#3a3e44",
+   "interior": true,
+   "note": "[dsfShip] 2D: RUNABOUT VOLE, NCC-72451. Docked at an airlock on the docking ring: [dsfLockInner] → [dsfLockOuter] (the airlock cycle) → aboard. THE KUFA STATION TRIP (Ben s349): through the airlocks into the docked shuttle, she flies to Kufa Station (dsfOutKu).",
+   "outside": "A round airlock door in the docking ring wall with a yellow cog-wheel frame that rolls aside, an amber lamp over it, the runabout's nose visible through a long window beside it.",
+   "sign": {
+    "roof": "AIRLOCK 3 · VOLE",
+    "door": "AIRLOCK · RUNABOUT VOLE"
+   },
+   "trim": "#c9b07a",
+   "from2d": "dsfShip",
+   "f": [
+    54.1,
+    76.1,
+    150.1,
+    164.1
+   ],
+   "door": [
+    65.1,
+    150.1
+   ],
+   "face": "N"
+  },
+  {
+   "key": "dsfOpsLift",
+   "label": "Lift (Ops)",
+   "role": "other",
+   "h": 8,
+   "color": "#2a2e34",
+   "interior": false,
+   "note": "Lift doors on the Ops deck.",
+   "outside": "The top of the glass lift tube rising into the middle of Ops, cyan rings.",
+   "sign": {
+    "roof": "LIFT",
+    "door": "LIFT · OPS"
+   },
+   "f": [
+    -6,
+    6,
+    -264,
+    -252
+   ],
+   "door": [
+    0,
+    -264
+   ],
+   "face": "N",
+   "trim": "#7fe3ff"
+  },
+  {
+   "key": "dsfOffice",
+   "label": "The Captain's Office",
+   "role": "castle",
+   "h": 8,
+   "color": "#1e2a34",
+   "interior": true,
+   "note": "[dsfOffice] 2D: THE CAPTAIN'S OFFICE, DECK ONE. Capt. Benny, Commanding Officer, SPACE STATION 8. The station's 'castle': command. Desk, a baseball on a stand, a window onto Meru.",
+   "outside": "Raised up a short stair above the Ops floor behind a wall of glass, the station crest on the door, a curved window behind the desk with Meru turning outside.",
+   "sign": {
+    "roof": "CAPTAIN'S OFFICE",
+    "door": "CAPTAIN'S OFFICE · CAPT. BENNY"
+   },
+   "f": [
+    10,
+    40,
+    -336,
+    -316
+   ],
+   "door": [
+    25,
+    -316
+   ],
+   "face": "S",
+   "trim": "#7fe3ff",
+   "from2d": "dsfOffice"
+  },
+  {
+   "key": "dsfCabKorra",
+   "label": "Korra's Quarters",
+   "role": "housing",
+   "h": 4,
+   "color": "#2a2e34",
+   "interior": true,
+   "note": "[dsfCabKorra] 2D cabin 2-A CDR. KORRA. Knock: \"Nothing. The First Officer is on OPS and everybody on this deck knows it.\" Inside: A shrine, a shelf of paper books, and a bunk made so tightly it could be inspected.",
+   "outside": "A crisp door with a small shrine flame lamp beside the nameplate.",
+   "sign": {
+    "roof": "2-A",
+    "door": "Korra's Quarters · 2-A"
+   },
+   "from2d": "dsfCabKorra",
+   "f": [
+    -320,
+    -300,
+    -328,
+    -312
+   ],
+   "door": [
+    -310,
+    -312
+   ],
+   "face": "S"
+  },
+  {
+   "key": "dsfCabDacks",
+   "label": "Dacks' Quarters",
+   "role": "housing",
+   "h": 4,
+   "color": "#2a2e34",
+   "interior": true,
+   "note": "[dsfCabDacks] 2D cabin 4-A LT. DACKS. Knock: \"No answer. There is music playing in there, though, and nobody in to hear it.\" Inside: Books to the ceiling and a GAYAN lute on a stand, tuned.",
+   "outside": "Faint lute music through the door, a book tucked in the door frame.",
+   "sign": {
+    "roof": "4-A",
+    "door": "Dacks' Quarters · 4-A"
+   },
+   "from2d": "dsfCabDacks",
+   "f": [
+    -296,
+    -276,
+    -328,
+    -312
+   ],
+   "door": [
+    -286,
+    -312
+   ],
+   "face": "S"
+  },
+  {
+   "key": "dsfCabinYou",
+   "label": "Your Quarters",
+   "role": "home",
+   "h": 4,
+   "color": "#3a3020",
+   "interior": true,
+   "note": "[dsfCabinYou] 2D cabin 1-A YOUR QUARTERS (MINE: rent / buy, the player home). Knock: \"No answer.\"",
+   "outside": "Your own door: a warm amber nameplate 1-A, a doormat, a small plant by the frame, the door light green (unlocked).",
+   "sign": {
+    "roof": "1-A",
+    "door": "Your Quarters · 1-A"
+   },
+   "from2d": "dsfCabinYou",
+   "f": [
+    -272,
+    -252,
+    -328,
+    -312
+   ],
+   "door": [
+    -262,
+    -312
+   ],
+   "face": "S"
+  },
+  {
+   "key": "dsfCabObrain",
+   "label": "O'Brain's Quarters",
+   "role": "housing",
+   "h": 4,
+   "color": "#2a2e34",
+   "interior": true,
+   "note": "[dsfCabObrain] 2D cabin 6-A CHIEF O'BRAIN. Knock: \"No answer, and a note on the door in engineering shorthand that means BACK NEVER.\" Inside: A workbench, a tool rack, and something half-built he has not named yet.",
+   "outside": "An engineering-shorthand note taped to the door ('BACK NEVER'), a tool belt on a hook.",
+   "sign": {
+    "roof": "6-A",
+    "door": "O'Brain's Quarters · 6-A"
+   },
+   "from2d": "dsfCabObrain",
+   "f": [
+    -248,
+    -228,
+    -328,
+    -312
+   ],
+   "door": [
+    -238,
+    -312
+   ],
+   "face": "S"
+  },
+  {
+   "key": "dsfCabBashad",
+   "label": "Bashad's Quarters",
+   "role": "housing",
+   "h": 4,
+   "color": "#2a2e34",
+   "interior": true,
+   "note": "[dsfCabBashad] 2D cabin 8-A DR. BASHAD. Knock: \"Nothing. The Infirmary never closes and neither, apparently, does he.\" Inside: A hydroponic tray under a grow-light, and a medical library nobody else could read.",
+   "outside": "A cyan medical-cross sticker on the door, a stack of padds by the frame.",
+   "sign": {
+    "roof": "8-A",
+    "door": "Bashad's Quarters · 8-A"
+   },
+   "from2d": "dsfCabBashad",
+   "f": [
+    -224,
+    -204,
+    -328,
+    -312
+   ],
+   "door": [
+    -214,
+    -312
+   ],
+   "face": "S"
+  },
+  {
+   "key": "dsfQuartersALift",
+   "label": "Lift (Living Quarters A)",
+   "role": "other",
+   "h": 5,
+   "color": "#2a2e34",
+   "interior": false,
+   "note": "Lift doors on Living Quarters A.",
+   "outside": "The glass lift tube on this deck, cyan rings, the deck name over the doors.",
+   "sign": {
+    "roof": "LIFT",
+    "door": "LIFT · Living Quarters A"
+   },
+   "f": [
+    -268,
+    -256,
+    -286,
+    -274
+   ],
+   "door": [
+    -262,
+    -286
+   ],
+   "face": "N",
+   "trim": "#7fe3ff"
+  },
+  {
+   "key": "dsfCabWarf",
+   "label": "Warf's Quarters",
+   "role": "housing",
+   "h": 4,
+   "color": "#2a2e34",
+   "interior": true,
+   "note": "[dsfCabWarf] 2D cabin 10-A LT. WARF. Knock: \"Three seconds of nothing, and then: \"IT IS OPEN.\" It was not open.\" Inside: A punchbag, a rack of things with edges, and a bunk with no blanket on it.",
+   "outside": "A heavy door with a crossed-blades crest and a battle banner.",
+   "sign": {
+    "roof": "10-A",
+    "door": "Warf's Quarters · 10-A"
+   },
+   "from2d": "dsfCabWarf",
+   "f": [
+    -317,
+    -297,
+    -288,
+    -272
+   ],
+   "door": [
+    -307,
+    -288
+   ],
+   "face": "N"
+  },
+  {
+   "key": "dsfCabJack",
+   "label": "Jack's Quarters",
+   "role": "housing",
+   "h": 4,
+   "color": "#2a2e34",
+   "interior": true,
+   "note": "[dsfCabJack] 2D cabin 12-A JACK. Knock: \"Nothing. He is on the ring. He is always on the ring.\" Inside: Six crates of stock he has not mentioned to anybody, and an open ledger.",
+   "outside": "A ball and a baseball glove left outside the door, crates stacked next to it.",
+   "sign": {
+    "roof": "12-A",
+    "door": "Jack's Quarters · 12-A"
+   },
+   "from2d": "dsfCabJack",
+   "f": [
+    -227,
+    -207,
+    -288,
+    -272
+   ],
+   "door": [
+    -217,
+    -288
+   ],
+   "face": "N"
+  },
+  {
+   "key": "dsfCabVor",
+   "label": "Vor's Quarters",
+   "role": "housing",
+   "h": 4,
+   "color": "#2a2e34",
+   "interior": true,
+   "note": "[dsfCabVor] 2D cabin 2-B T. VOR. Knock: \"No answer. She keeps a pitch on the ring and she keeps it long hours.\" Inside: Stock she has not put out yet, and a tray of something she is growing herself.",
+   "outside": "A trader's door with a little brass price bell.",
+   "sign": {
+    "roof": "2-B",
+    "door": "Vor's Quarters · 2-B"
+   },
+   "from2d": "dsfCabVor",
+   "f": [
+    225,
+    245,
+    -328,
+    -312
+   ],
+   "door": [
+    235,
+    -312
+   ],
+   "face": "S"
+  },
+  {
+   "key": "dsfCabPells",
+   "label": "The Pells' Quarters",
+   "role": "housing",
+   "h": 4,
+   "color": "#2a2e34",
+   "interior": true,
+   "note": "[dsfCabPells] 2D cabin 4-B THE PELLS. Knock: \"A woman’s voice, unhurried: \"It is open, if you can get the door to agree.\"\" Inside: A cot beside the bunk, a line of washing across the corner, and a board game left out.",
+   "outside": "A family door with a child's drawing stuck on it and two pairs of boots.",
+   "sign": {
+    "roof": "4-B",
+    "door": "The Pells' Quarters · 4-B"
+   },
+   "from2d": "dsfCabPells",
+   "f": [
+    249,
+    269,
+    -328,
+    -312
+   ],
+   "door": [
+    259,
+    -312
+   ],
+   "face": "S"
+  },
+  {
+   "key": "dsfCabSeth",
+   "label": "Seth's Quarters",
+   "role": "housing",
+   "h": 4,
+   "color": "#2a2e34",
+   "interior": true,
+   "note": "[dsfCabSeth] 2D cabin 6-B P. SETH. Knock: \"Nothing, but there is a candle burning in there, which is against about four regulations.\" Inside: A shrine with the candles lit, washing on a line, and a tray of herbs.",
+   "outside": "A plain monk's door with a hanging prayer bead string.",
+   "sign": {
+    "roof": "6-B",
+    "door": "Seth's Quarters · 6-B"
+   },
+   "from2d": "dsfCabSeth",
+   "f": [
+    273,
+    293,
+    -328,
+    -312
+   ],
+   "door": [
+    283,
+    -312
+   ],
+   "face": "S"
+  },
+  {
+   "key": "dsfCabGrell",
+   "label": "Grell's Quarters",
+   "role": "housing",
+   "h": 4,
+   "color": "#2a2e34",
+   "interior": true,
+   "note": "[dsfCabGrell] 2D cabin 8-B GRELL. Knock: \"No answer. GRELL walks the ring all day and does not say why.\" Inside: A bench covered in salvage, sorted by something that is not size or value.",
+   "outside": "A dented door with travel stickers from many stations.",
+   "sign": {
+    "roof": "8-B",
+    "door": "Grell's Quarters · 8-B"
+   },
+   "from2d": "dsfCabGrell",
+   "f": [
+    297,
+    317,
+    -328,
+    -312
+   ],
+   "door": [
+    307,
+    -312
+   ],
+   "face": "S"
+  },
+  {
+   "key": "dsfQuartersBLift",
+   "label": "Lift (Living Quarters B)",
+   "role": "other",
+   "h": 5,
+   "color": "#2a2e34",
+   "interior": false,
+   "note": "Lift doors on Living Quarters B.",
+   "outside": "The glass lift tube on this deck, cyan rings, the deck name over the doors.",
+   "sign": {
+    "roof": "LIFT",
+    "door": "LIFT · Living Quarters B"
+   },
+   "f": [
+    265,
+    277,
+    -286,
+    -274
+   ],
+   "door": [
+    271,
+    -286
+   ],
+   "face": "N",
+   "trim": "#7fe3ff"
+  },
+  {
+   "key": "dsfCabNag",
+   "label": "Nag's Quarters",
+   "role": "housing",
+   "h": 4,
+   "color": "#2a2e34",
+   "interior": true,
+   "note": "[dsfCabNag] 2D cabin 10-B NAG. Knock: \"Nothing, and a small sign: PREMISES ALARMED. It is not alarmed.\" Inside: Shelves of stock with the prices showing, and a strongbox under the bunk.",
+   "outside": "A door with a DABA chip glued to it as a doorknob (Quirk's nephew).",
+   "sign": {
+    "roof": "10-B",
+    "door": "Nag's Quarters · 10-B"
+   },
+   "from2d": "dsfCabNag",
+   "f": [
+    225,
+    245,
+    -288,
+    -272
+   ],
+   "door": [
+    235,
+    -288
+   ],
+   "face": "N"
+  },
+  {
+   "key": "dsfCabPav",
+   "label": "Old Pav's Quarters",
+   "role": "housing",
+   "h": 4,
+   "color": "#2a2e34",
+   "interior": true,
+   "note": "[dsfCabPav] 2D cabin 12-B OLD PAV. Knock: \"\"Come in, STEWARD. It is not locked.\" It is locked. He has forgotten again.\" Inside: A shrine, a games board, and eighty years of paper.",
+   "outside": "An old door with a honeyroot wreath and a creaky bench beside it.",
+   "sign": {
+    "roof": "12-B",
+    "door": "Old Pav's Quarters · 12-B"
+   },
+   "from2d": "dsfCabPav",
+   "f": [
+    297,
+    317,
+    -288,
+    -272
+   ],
+   "door": [
+    307,
+    -288
+   ],
+   "face": "N"
+  }
+ ],
+ "spots": [
+  {
+   "key": "dsfTransportPad",
+   "at": [
+    0,
+    22
+   ],
+   "kind": "telepad",
+   "note": "2D transportPad at the hub (spawn). Beams to the Ops deck pad.",
+   "from2d": true
+  },
+  {
+   "key": "quirk",
+   "at": [
+    0,
+    -104
+   ],
+   "kind": "keeper",
+   "note": "QUIRK, Proprietor (behind the bar)",
+   "from2d": true
+  },
+  {
+   "key": "nag",
+   "at": [
+    -8,
+    -102
+   ],
+   "kind": "npc",
+   "note": "NAG, Quirk's nephew",
+   "from2d": true
+  },
+  {
+   "key": "dsfBarPatrons",
+   "at": [
+    8,
+    -108
+   ],
+   "kind": "crowd",
+   "note": "Brel, Sanna Vosk, Teek, Marn (barBrel, barSanna, barTeek, barMarn)"
+  },
+  {
+   "key": "garok",
+   "at": [
+    77.4,
+    -77.4
+   ],
+   "kind": "keeper",
+   "note": "GAROK, tailor",
+   "from2d": true
+  },
+  {
+   "key": "dsfFoxyTailorsHiring",
+   "at": [
+    81.4,
+    -65.4
+   ],
+   "kind": "hiring",
+   "note": "NOW HIRING: FOXY TAILORS (walk up + TALK starts the job)"
+  },
+  {
+   "key": "bashad",
+   "at": [
+    108,
+    0
+   ],
+   "kind": "keeper",
+   "note": "DR. BASHAD, Chief Medical Officer",
+   "from2d": true
+  },
+  {
+   "key": "dsfBoneSetHiring",
+   "at": [
+    92,
+    5
+   ],
+   "kind": "hiring",
+   "note": "NOW HIRING: BONE SET (walk up + TALK starts the job)"
+  },
+  {
+   "key": "vedek",
+   "at": [
+    80.3,
+    80.3
+   ],
+   "kind": "keeper",
+   "note": "KEEPER OPA, Keeper of the Shrine (2D cleric key vedek). The flame + the KNEEL spot.",
+   "from2d": true
+  },
+  {
+   "key": "ringPilgrim",
+   "at": [
+    75.3,
+    65.3
+   ],
+   "kind": "npc",
+   "note": "A PILGRIM, come for the temple",
+   "from2d": true
+  },
+  {
+   "key": "obrain",
+   "at": [
+    -81.3,
+    81.3
+   ],
+   "kind": "keeper",
+   "note": "O'BRAIN, Chief of Operations",
+   "from2d": true
+  },
+  {
+   "key": "oddo",
+   "at": [
+    -107,
+    -4
+   ],
+   "kind": "keeper",
+   "note": "ODD the O, Co-Head of Security",
+   "from2d": true
+  },
+  {
+   "key": "warf",
+   "at": [
+    -107,
+    4
+   ],
+   "kind": "npc",
+   "note": "WARF, Co-Head of Security",
+   "from2d": true
+  },
+  {
+   "key": "brigRosk",
+   "at": [
+    -115,
+    0
+   ],
+   "kind": "npc",
+   "note": "ROSK, in the brig",
+   "from2d": true
+  },
+  {
+   "key": "ringMerchant",
+   "at": [
+    -44.5,
+    53.5
+   ],
+   "kind": "keeper",
+   "note": "TESSA VOR, kiosk trader",
+   "from2d": true
+  },
+  {
+   "key": "jack",
+   "at": [
+    42.5,
+    73.6
+   ],
+   "kind": "npc",
+   "note": "JACK, the Captain's son ('always on the ring')",
+   "from2d": true
+  },
+  {
+   "key": "ringEnsign",
+   "at": [
+    29.1,
+    -79.9
+   ],
+   "kind": "npc",
+   "note": "ENS. PELL, gamma shift",
+   "from2d": true
+  },
+  {
+   "key": "dsfWalkers",
+   "at": [
+    -73.6,
+    -42.5
+   ],
+   "kind": "crowd",
+   "note": "Ring walkers (2D walk*): Deputy Rynn, Crewman Bode, Capt. Moss, Prylar Seth, Mira, Grell, Tech Voss, Hanna Vels + Torvin, Sister Anu, Old Pav, Const. Dep. Kal, Ens. Talb, Mol. Busier in the afternoon."
+  },
+  {
+   "key": "dsfCargoShuttlePad",
+   "at": [
+    0,
+    117
+   ],
+   "kind": "helipad",
+   "note": "SHUTTLE PAD inside Cargo Bay Four (Ben s349): small shuttles fly in through the force-field door. Shuttle hire here."
+  },
+  {
+   "key": "dsfVole",
+   "at": [
+    65.8,
+    158.9
+   ],
+   "kind": "vehicle",
+   "note": "RUNABOUT VOLE (NCC-72451): the special vehicle, docked behind the airlock (dsfShip)."
+  },
+  {
+   "key": "dsfEmbed",
+   "at": [
+    89.6,
+    37.1
+   ],
+   "kind": "game",
+   "note": "BALCONY: THE EMBED (2D): Ben's eight finished games, played as they are, on a row of screens up on the balcony. Built AFTER the map.",
+   "level": "upper"
+  },
+  {
+   "key": "dsfLookout",
+   "at": [
+    37.1,
+    -89.6
+   ],
+   "kind": "crowd",
+   "note": "BALCONY LOOKOUT: the big window. Meru below turning slowly, ships docking at the pylons, the gate opening now and then. A few foxes watching.",
+   "level": "upper"
+  },
+  {
+   "key": "dsfKneel",
+   "at": [
+    68.6,
+    68.6
+   ],
+   "kind": "game",
+   "note": "BALCONY SHRINE ALCOVE: the KNEEL spot (2D) above the Temple, looking down on the flame.",
+   "level": "upper"
+  },
+  {
+   "key": "dsfFreighterBerth",
+   "at": [
+    -68.1,
+    164.5
+   ],
+   "kind": "crowd",
+   "note": "UPPER PYLON TWO: Capt. Moss's freighter berth (dockers, Mol of upper pylon three)."
+  },
+  {
+   "key": "dsfTearOfGaya",
+   "at": [
+    -17.1,
+    63.8
+   ],
+   "kind": "relicFind",
+   "note": "DRAFT: the legendary relic to FIND, deep in the Ore Shaft (Ben to pick).",
+   "draft": true
+  },
+  {
+   "key": "dsfOpsTable",
+   "at": [
+    0,
+    -290
+   ],
+   "kind": "game",
+   "note": "THE OPS TABLE (centre of Ops): station map, ships in range, the gate."
+  },
+  {
+   "key": "korra",
+   "at": [
+    -10,
+    -290
+   ],
+   "kind": "npc",
+   "note": "CDR. KORRA, First Officer",
+   "from2d": true
+  },
+  {
+   "key": "dacks",
+   "at": [
+    10,
+    -290
+   ],
+   "kind": "npc",
+   "note": "LT. DACKS, Chief Science Officer",
+   "from2d": true
+  },
+  {
+   "key": "benny",
+   "at": [
+    25,
+    -328
+   ],
+   "kind": "keeper",
+   "note": "CAPT. BENNY, Commanding Officer",
+   "from2d": true
+  },
+  {
+   "key": "dsfOpsTransportPad",
+   "at": [
+    -28,
+    -300
+   ],
+   "kind": "telepad",
+   "note": "ROYAL TELEPORT PAD (Ops transport pad, 2D): beams to the hub pad, the Cargo Bay and the Pylon One dock."
+  },
+  {
+   "key": "dsfOpsShuttlePad",
+   "at": [
+    -28,
+    -326
+   ],
+   "kind": "helipad",
+   "note": "ROYAL SHUTTLE PAD: on top of the station above Ops, behind a force field. The Captain's shuttle."
+  },
+  {
+   "key": "resTarr",
+   "at": [
+    -262,
+    -300
+   ],
+   "kind": "npc",
+   "note": "ENS. TARR, off watch",
+   "from2d": true
+  },
+  {
+   "key": "resBek",
+   "at": [
+    -300,
+    -300
+   ],
+   "kind": "npc",
+   "note": "CREWMAN BEK, environmental systems",
+   "from2d": true
+  },
+  {
+   "key": "resPav",
+   "at": [
+    245,
+    -300
+   ],
+   "kind": "npc",
+   "note": "OLD PAV, Twelve-B",
+   "from2d": true
+  },
+  {
+   "key": "resMeela",
+   "at": [
+    285,
+    -300
+   ],
+   "kind": "npc",
+   "note": "MEELA PELL, Four-B",
+   "from2d": true
+  }
+ ],
+ "dock": {
+  "key": "dsfSpacedock",
+  "pad": [
+   164.5,
+   -68.1
+  ],
+  "r": 14,
+  "face": "W",
+  "note": "UPPER PYLON ONE: BIG SHIPS dock here (Ben s349), the player's ship arrives from the 3D SPACE MAP (Deep Space Fox is its own destination near Meru). The 3 curved pylons rise above + below the docking ring. MAIN STATION: every other station is smaller."
+ },
+ "gates": [
+  {
+   "key": "dsfCargoAmbush",
+   "at": [
+    0,
+    158
+   ],
+   "r": 6,
+   "kind": "battle",
+   "note": "THE AMBUSH (2D) in Cargo Bay Four's loading deck: HACKED Machine Fleet LOADER ROBOTS (Ben s349). Free them, don't scrap them: flickers of the real robot, voices not their own."
+  },
+  {
+   "key": "dsfHullBreach",
+   "at": [
+    157.4,
+    13.8
+   ],
+   "r": 6,
+   "kind": "battle",
+   "note": "DRAFT battle: EVA on the outer hull. Hacked Machine Fleet drones clamp onto the hull; magnetic boots, stars + Meru all round.",
+   "draft": true
+  },
+  {
+   "key": "dsfPylonThree",
+   "at": [
+    -125.9,
+    -125.9
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "DRAFT battle: UPPER PYLON THREE. A hacked Machine Fleet ship docks and its crew of robots walks off it. Fight to the pylon controls, cut the hack signal.",
+   "draft": true
+  },
+  {
+   "key": "dsfOreLevels",
+   "at": [
+    -146,
+    60.5
+   ],
+   "r": 6,
+   "kind": "battle",
+   "note": "DRAFT battle: the OLD ORE-PROCESSING LEVELS under the ring (the station used to be an ore refinery). Monsters nest in the dark machinery.",
+   "draft": true
+  },
+  {
+   "key": "dsfOreShaft",
+   "at": [
+    -17.1,
+    63.8
+   ],
+   "r": 5,
+   "kind": "cave",
+   "note": "DRAFT cave: a floor hatch on the ring drops into the OLD ORE SHAFT (the station cave): dark, steam, old rails.",
+   "draft": true
+  }
+ ],
+ "wild": [
+  {
+   "key": "dsfHullWild",
+   "r": [
+    205,
+    335,
+    -170,
+    30
+   ],
+   "for": "dsfHullBreach",
+   "creatures": [
+    "robots"
+   ],
+   "note": "outer hull, EVA"
+  },
+  {
+   "key": "dsfLoaderWild",
+   "r": [
+    90,
+    335,
+    195,
+    335
+   ],
+   "for": "dsfCargoAmbush",
+   "creatures": [
+    "robots"
+   ],
+   "note": "cargo loading decks + outer cargo pods"
+  },
+  {
+   "key": "dsfPylonWild",
+   "r": [
+    -335,
+    -200,
+    -200,
+    -70
+   ],
+   "for": "dsfPylonThree",
+   "creatures": [
+    "robots"
+   ],
+   "note": "pylon three gantries"
+  },
+  {
+   "key": "dsfOreWild",
+   "r": [
+    -335,
+    -205,
+    60,
+    190
+   ],
+   "for": "dsfOreLevels",
+   "creatures": [
+    "monsters"
+   ],
+   "note": "the ore-processing levels"
+  },
+  {
+   "key": "dsfVentWild",
+   "r": [
+    -335,
+    -75,
+    215,
+    335
+   ],
+   "creatures": [
+    "creatures"
+   ],
+   "note": "DRAFT: the air vents + hydroponics crawlspaces: small furry creatures breed in there (cute, harmless, everywhere).",
+   "draft": true
+  }
+ ],
+ "props": [
+  {
+   "k": "sign",
+   "at": [
+    82.7,
+    -40.3
+   ],
+   "note": "STAIRS UP TO THE BALCONY (east)"
+  },
+  {
+   "k": "sign",
+   "at": [
+    -40.3,
+    82.7
+   ],
+   "note": "STAIRS UP TO THE BALCONY (west)"
+  },
+  {
+   "k": "bench",
+   "at": [
+    45,
+    -77.9
+   ]
+  },
+  {
+   "k": "bench",
+   "at": [
+    77.9,
+    45
+   ]
+  },
+  {
+   "k": "bench",
+   "at": [
+    -77.9,
+    45
+   ]
+  },
+  {
+   "k": "bench",
+   "at": [
+    -45,
+    -77.9
+   ]
+  },
+  {
+   "k": "planter",
+   "at": [
+    77.3,
+    -20.7
+   ]
+  },
+  {
+   "k": "planter",
+   "at": [
+    20.7,
+    77.3
+   ]
+  },
+  {
+   "k": "planter",
+   "at": [
+    -20.7,
+    77.3
+   ]
+  },
+  {
+   "k": "planter",
+   "at": [
+    -77.3,
+    -20.7
+   ]
+  }
+ ],
+ "look": {
+  "sky": [
+   "#03040a",
+   "#0e1430"
+  ],
+  "fog": "#0a0e1c",
+  "sun": "#fff2d8",
+  "light": "#ffd9a0",
+  "grass": "#4a4640",
+  "ground": "#2e2c2a",
+  "water": "#05070e",
+  "lamps": "#ffb454",
+  "space": {
+   "planet": "MERU below, filling the lower windows, turning slowly as the station rotates",
+   "stars": true,
+   "nebula": "#4a2a6a",
+   "ships": "ships dock + leave at the pylons and Cargo Bay Four",
+   "gate": "the gate / wormhole swirls open now and then (blue-white bloom)"
+  },
+  "notes": "No sky: every window looks out on space. Deck floor (grass) = worn gunmetal with amber floor light strips; lamps = station light poles. Warm amber everywhere on the ring, purple at Garok's, cyan at the Infirmary + Ops, candle gold at the Temple, green Engineering. DELUXE POLISH (Ben)."
+ },
+ "terrain": {
+  "notes": "A space station: everything flat deck plating. The DROP round the hub is an open well to the lower levels."
+ },
+ "islands": [
+  {
+   "key": "dsfHubCore",
+   "r": [
+    -14,
+    14,
+    -14,
+    14
+   ],
+   "round": true,
+   "note": "the hub floor round the lift core (the drop is all round it)"
+  }
+ ]
+}

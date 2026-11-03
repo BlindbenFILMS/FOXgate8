@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Luxor Foxy Boxing">
+  <div ref="{{ stageRef }}" style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0;overflow:hidden"></div>
+  <div data-hud-host="1" style="position:absolute;inset:0;pointer-events:none"><dc-import name="Game HUD" game="{{ engine }}" hud="{{ stdHud }}" started="{{ started }}" busy="{{ busy }}" on-hud="{{ onHud }}" world="Luxor" vehicle="boxing" keys="{{ keysList }}" skip-keys="{{ skipKeys }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  <sc-if value="{{ rivalOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;right:max(12px, env(safe-area-inset-right));top:{{ cardTop }};z-index:2;pointer-events:none;width:{{ rivalW }};background:#000;border:2px solid #ec3013;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:5px 10px 3px"><span style="font:900 16px var(--font-heading);letter-spacing:0.02em;white-space:nowrap">{{ h.rival.name }}</span><span style="font:800 9px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap">{{ h.rival.nick }}</span></div>
+      <div style="height:10px;margin:0 10px;background:#3a3836;position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ rivalHpW }};background:#ec3013;display:block"></span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 10px 6px"><span style="font:800 9px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">KNOCKDOWNS</span><span style="display:flex;gap:4px"><sc-for list="{{ kdPips }}" as="k" hint-placeholder-count="3"><span style="width:14px;height:14px;border:2px solid #ffd23a;background:{{ k.c }};display:block"></span></sc-for></span></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ crowdOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:{{ crowdTop }};z-index:2;pointer-events:none;width:{{ crowdW }};background:#000;border:2px solid {{ crowdBd }};display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:4px 10px 3px"><span style="font:800 9px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap">CROWD</span><span style="font:900 10px var(--font-heading);letter-spacing:0.06em;color:{{ crowdTxtC }};white-space:nowrap">{{ crowdTxt }}</span></div>
+      <div style="height:8px;margin:0 10px 6px;background:#3a3836;position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ crowdFill }};background:#ffd23a;display:block"></span></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ lessonOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:{{ lessonTop }};width:{{ colW }};z-index:2;pointer-events:none;background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:6px 10px;border-bottom:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap">{{ lessonKick }}</span><span style="font:900 16px var(--font-heading);font-variant-numeric:tabular-nums">{{ lessonCount }}</span></div>
+      <div style="padding:6px 10px 8px;display:flex;flex-direction:column;gap:3px"><span style="font:900 18px var(--font-heading);line-height:1">{{ h.lesson.title }}</span><span style="font:700 13px var(--font-body);line-height:1.35;color:#e8e4de;text-wrap:pretty">{{ h.lesson.text }}</span></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ callOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ callTop }};transform:{{ annTf }};z-index:3;pointer-events:none;width:max-content;max-width:{{ annW }};background:#000;border:2px solid #a82c26;display:flex;flex-direction:column">
+      <span style="padding:3px 10px;background:#a82c26;font:900 11px var(--font-heading);letter-spacing:0.14em;color:#fff;white-space:nowrap">ANNOUNCER</span>
+      <span style="padding:6px 14px 8px;font:900 {{ annFs }} var(--font-heading);letter-spacing:0.02em;line-height:1.15;color:#fff;text-wrap:balance">{{ h.call }}</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ powerOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ midTop }};transform:translate(-50%,-50%);z-index:4;pointer-events:none;width:min(280px, calc(100% - 24px));background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:5px 12px"><span style="font:900 15px var(--font-heading)">{{ powerTxt }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#ffd23a;white-space:nowrap">LET GO TO THROW</span></div>
+      <div style="height:12px;margin:0 12px 8px;background:#3a3836;position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ powerW }};background:{{ powerCol }};display:block"></span></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ flashOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ midTop }};transform:translate(-50%,-100%);z-index:5;pointer-events:none;max-width:calc(100% - 24px);background:rgba(0,0,0,0.88);border:2px solid {{ flashCol }};display:flex;align-items:stretch">
+      <span style="flex:none;width:12px;background:{{ flashCol }};display:block"></span><span style="padding:6px 16px;font:900 clamp(22px,6.4vw,34px) var(--font-heading);letter-spacing:0.02em;line-height:1.1;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:calc(100vw - 60px)">{{ flashTxt }}</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(200px + env(safe-area-inset-bottom));z-index:7;pointer-events:none;width:{{ demoW }};background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="padding:5px 12px;border-bottom:2px solid #3a3836;font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;background:#ec3013;display:block"></span>DEMO · NOTHING IS SAVED</div>
+      <div style="display:flex;align-items:stretch"><sc-if value="{{ demoKeyOn }}" hint-placeholder-val="{{ false }}"><div style="flex:none;min-width:56px;display:flex;align-items:center;justify-content:center;padding:0 8px;background:#ec3013;color:#fff;font:900 14px var(--font-heading);border-right:2px solid #3a3836">{{ demoKey }}</div></sc-if><div style="padding:9px 12px;font:900 clamp(13px,3.6vw,16px) var(--font-heading);letter-spacing:0.03em;line-height:1.25;color:#fff;text-wrap:pretty">{{ demoCap }}</div></div>
+    </div>
+    <button onClick="{{ demoExit }}" aria-label="Exit the demo" style="position:absolute;right:max(12px, env(safe-area-inset-right));bottom:calc(200px + env(safe-area-inset-bottom));z-index:7;min-width:96px;min-height:48px;padding:0 14px;border:2px solid #ec3013;border-radius:0;background:#ec3013;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">EXIT DEMO</button>
+  </sc-if>
+  <sc-if value="{{ introOn }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:6;width:min(420px, calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column">
+      <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:3px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">LUXOR · THE FIGHTING PIT · luxorFightingPit</span><span style="font:900 28px var(--font-heading);line-height:1">Foxy Boxing</span><span style="font:700 13px var(--font-body);line-height:1.4;color:#cfcac2;text-wrap:pretty">Fight the card in the Pit for the Iron Belt. New to boxing? Take the tutorial with Coach Bruno first. Knock them down 3 times. Punch on the green ring to counter.</span></div>
+      <sc-for list="{{ introRows }}" as="r" hint-placeholder-count="6"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:6px 16px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;color:{{ r.c }};white-space:nowrap">{{ r.v }}</span></div></sc-for>
+      <button onClick="{{ goReplay }}" style="min-height:48px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">TUTORIAL</button>
+      <button onClick="{{ goMain }}" style="min-height:56px;padding:0 18px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10">{{ mainBtn }}</button>
+      <button onClick="{{ goDemo }}" style="min-height:48px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WATCH THE DEMO</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:8;background:rgba(0,0,0,0.74);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #3a3836;width:min(440px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+          <div style="padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ doneKicker }}</span><span style="font:900 26px var(--font-heading);line-height:1.05">{{ doneTitle }}</span><span style="font:700 13px var(--font-body);color:#cfcac2;text-wrap:pretty">{{ doneSub }}</span></div>
+          <div style="min-width:88px;padding:0 10px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;background:{{ doneCol }}"><span style="font:900 30px var(--font-heading);line-height:1">{{ doneBig }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em">{{ doneSmall }}</span></div>
+        </div>
+        <sc-for list="{{ doneRows }}" as="r" hint-placeholder-count="2"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:8px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;color:{{ r.c }}">{{ r.v }}</span></div></sc-for>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+          <button onClick="{{ doneMain }}" style="min-height:54px;padding:0 16px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10">{{ doneMainTxt }}</button>
+          <button onClick="{{ toIntro }}" style="min-height:54px;padding:0 16px;border:0;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">BACK</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;camera&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Classic arcade (see-through Ben)&quot;,&quot;Side-on on phones, arcade on desktop&quot;,&quot;Arcade (low, behind Ben)&quot;,&quot;High, behind Ben&quot;,&quot;Side-on TV&quot;],&quot;default&quot;:&quot;Classic arcade (see-through Ben)&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Camera&quot;}}">
+class Component extends DCLogic {
+  state = { h: null, vw: 1200, vh: 800, hi: { pad: false, menu: false, split: false, bar: 0 } };
+  stageRef = React.createRef();
+  onHud = hi => this.setState({ hi });
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs();
+    try { const m = await import(new URL('minigames/luxor/foxy-boxing.js', document.baseURI).href); this.g = await m.createBoxing({ container: this.stageRef.current, onState: h => this.setState({ h }) }); window.__boxing = this.g; this.syncCam(); this.forceUpdate(); if (/[?&]demo=1/.test(location.search)) setTimeout(() => this.g.demoStart(), 400); }
+    catch (e) { console.warn('boxing failed: ' + (e && e.stack || String(e))); }
+  }
+  syncCam() { const v = this.props.camera ?? 'Classic arcade (see-through Ben)'; if (v === this.lastCam) return; this.lastCam = v; this.g && this.g.setCamView(({ 'Classic arcade (see-through Ben)': 'classic', 'Side-on on phones, arcade on desktop': 'auto', 'Arcade (low, behind Ben)': 'arcade', 'High, behind Ben': 'high', 'Side-on TV': 'side' })[v]); }
+  componentDidUpdate() { this.syncCam(); }
+  componentWillUnmount() { removeEventListener('resize', this.onRs); this.g && this.g.destroy(); }
+  onRs = () => this.setState({ vw: innerWidth, vh: innerHeight });
+  renderVals() {
+    const S = this.state, g = this.g, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const h = S.h || { mode: 'intro', ph: 'idle', quest: 'THE FIGHTING PIT', flash: null, call: '', done: null, hp: 100, st: 100, crowd: 0, power: null, rival: null, lesson: null, demo: null, prog: { lesson: 0, lessons: 6, round: 0, unlocked: false, champ: false }, rivals: [{ name: 'PODD', nick: 'THE BOULDER', gold: 20 }, { name: 'VEK', nick: 'THE TRICKSTER', gold: 30 }, { name: 'SURA', nick: 'THE STORM', gold: 40 }, { name: 'FERRO', nick: 'THE ANVIL', gold: 60 }, { name: 'LYRA', nick: 'THE CHAMPION', gold: 150 }], gold: 0 };
+    const { vw, vh } = S, phone = Math.min(vw, vh) < 520, land = phone && vw > vh, bar = S.hi.bar || 0, play = h.mode === 'lesson' || h.mode === 'match', d = h.done || {}, pr = h.prog, nR = h.rivals.length, nextR = Math.min(pr.round, nR - 1), op = h.rivals[nextR];
+    let sv = null; try { sv = JSON.parse(localStorage.getItem('8gates.save.v1') || 'null'); } catch (e) {}
+    const stdHud = { hp: h.hp, hpMax: 100, en: h.st, gold: h.gold, hour: 19, day: sv && sv.stats ? sv.stats.worldDay || 1 : 1, items: sv ? Object.entries(sv.items || {}).filter(([, n]) => n > 0).map(([id, n]) => ({ id, n, label: id })) : [], place: 'Luxor · The Fighting Pit', quest: { text: h.quest }, prompt: null, toast: null, muted: false, weather: 'Clear', boat: false, inCave: false, weapons: [], dialog: null, vehicles: [], vehAmmo: [] };
+    const top = bar + 42, rivalW = phone && !land ? '150px' : '220px', crowdW = phone && !land ? 'calc(100% - 24px - 162px)' : '220px';
+    const mainBtn = pr.champ ? 'DEFEND THE BELT · VS LYRA' : 'FIGHT ' + (nextR + 1) + ' · VS ' + op.name;
+    const goMain = e => { blur(e); if (!g) return; g.startMatch(pr.champ ? nR - 1 : nextR); };
+    const pw = h.power != null ? h.power : 0;
+    return {
+      stageRef: this.stageRef, engine: g, stdHud, started: !!g && play, busy: !play || !!h.ceremony, onHud: this.onHud, h,
+      stageTop: bar + 'px', cardTop: top + 'px', crowdTop: top + 'px', lessonTop: (top + (phone && !land ? 74 : 52)) + 'px', colW: phone ? (land ? '260px' : 'min(300px, calc(100% - 24px))') : '320px', callTop: (() => { const hy = 'calc(' + bar + 'px + (100% - ' + bar + 'px) * ' + (h.headY != null ? h.headY : 0.3).toFixed(3) + ' - ' + (h.flash ? 50 : 6) + 'px)'; if (land) return top + 'px'; return 'max(' + (phone ? top + (h.lesson ? 290 : 178) : bar + (h.lesson ? 210 : 100)) + 'px, ' + hy + ')'; })(), annTf: land ? 'translateX(-50%)' : 'translate(-50%,-100%)', annFs: land ? '16px' : 'clamp(17px,4.8vw,26px)', annW: phone && land ? 'min(360px, calc(100% - 24px))' : 'min(430px, calc(100% - 24px))',
+      midTop: 'max(' + (phone && !land ? top + (h.lesson ? 330 : 205) : bar + (h.lesson ? 250 : 120)) + 'px, calc(' + bar + 'px + (100% - ' + bar + 'px) * ' + (h.headY != null ? h.headY : 0.3).toFixed(3) + ' - 6px))',
+      keysList: [['A / D', 'lean'], ['S', 'duck'], ['1 / J', 'left · hold = uppercut'], ['2 / K', 'right · hold = uppercut'], ['3 / Space', 'hold = block'], ['1 + 2', 'haymaker'], ['I', 'menu']], skipKeys: ['KeyJ', 'KeyT', 'KeyN', 'KeyV', 'KeyC', 'KeyO', 'KeyH', 'KeyL', 'KeyK'],
+      rivalOn: play && !!h.rival && !S.hi.menu && !h.ceremony, rivalW, rivalHpW: h.rival ? (h.rival.hp * 100).toFixed(0) + '%' : '0%', kdPips: h.rival ? [0, 1, 2].map(i => ({ c: i < h.rival.kd[1] ? '#ffd23a' : '#000000' })) : [],
+      crowdOn: play && !S.hi.menu && !h.ceremony, crowdW, crowdFill: (h.crowd * 100).toFixed(0) + '%', crowdBd: h.crowd >= 1 ? '#ffd23a' : '#3a3836', crowdTxt: h.crowd >= 1 ? '1 + 2 · HAYMAKER!' : 'BOX WELL TO FILL IT', crowdTxtC: h.crowd >= 1 ? '#ffd23a' : '#8a847e',
+      lessonOn: play && !h.demo && !!h.lesson && !S.hi.menu, lessonKick: h.lesson ? 'LESSON ' + h.lesson.n + ' / ' + h.lesson.of + ' · COACH BRUNO' : '', lessonCount: h.lesson ? h.lesson.c + ' / ' + h.lesson.goal : '',
+      callOn: (play || h.ceremony) && !!h.call && !S.hi.menu && !(land && (h.flash || (h.power != null && h.power > 0.2))),
+      powerOn: play && h.power != null && h.power > 0.2, powerW: (pw * 100).toFixed(0) + '%', powerCol: pw >= 1 ? '#ec3013' : '#ffd23a', powerTxt: pw >= 1 ? 'FULL POWER · LET GO' : 'CHARGING UPPERCUT',
+      flashOn: play && !!h.flash && !(h.power != null && h.power > 0.2), flashTxt: h.flash ? h.flash.txt : '', flashCol: h.flash ? h.flash.col : '#ffd23a',
+      demoOn: !!h.demo, demoW: phone && !land ? 'calc(100% - 24px - 108px)' : 'min(340px, calc(100% - 140px))', demoKeyOn: !!(h.demo && h.demo[0]), demoKey: h.demo ? h.demo[0] : '', demoCap: h.demo ? h.demo[1] : '', demoExit: e => { blur(e); g && g.demoStop(); },
+      introOn: h.mode === 'intro',
+      introRows: [['Tutorial (optional)', Math.min(pr.lesson, pr.lessons) + ' / ' + pr.lessons, pr.unlocked ? '#22c55e' : '#8a847e'], ...h.rivals.map((o, i) => [(i + 1) + ' · ' + o.name + ' · ' + o.nick, pr.round > i ? 'BEATEN' : i === nextR ? 'NEXT · ' + o.gold + 'g' : 'LOCKED', pr.round > i ? '#22c55e' : i === nextR ? '#ffd23a' : '#8a847e'])].map(([k, v, c]) => ({ k, v, c })),
+      mainBtn, goMain, goDemo: e => { blur(e); g && g.demoStart(); }, replayOn: true, goReplay: e => { blur(e); g && g.startLesson(pr.lesson && pr.lesson < pr.lessons ? pr.lesson : 0); },
+      doneOn: h.mode === 'done' && !!h.done, doneKicker: d.lessons ? 'COACH BRUNO' : (d.round || '') + ' · VS ' + (d.opp || ''), doneTitle: d.lessons ? 'Ready for the Pit' : d.champ ? 'Iron Belt champion!' : d.won ? 'Knockout win!' : 'Knocked out',
+      doneSub: d.lessons ? 'The card is open. First up: Podd, the Boulder.' : d.champ ? 'The Iron Belt is yours.' : d.won ? 'Next up: ' + (d.next ? d.next.name + ', ' + d.next.nick.toLowerCase() : '') : 'Watch his tell, block or dodge, then counter on the green ring.',
+      doneCol: d.lessons || d.won ? '#22c55e' : '#ec3013', doneBig: d.lessons ? '6/6' : d.kd ? d.kd[1] + '–' + d.kd[0] : '', doneSmall: d.lessons ? 'LESSONS' : 'KNOCKDOWNS',
+      doneRows: d.lessons ? [['Unlocked', 'THE FIGHTING PIT', '#22c55e']].map(([k, v, c]) => ({ k, v, c })) : [['Purse', d.gold ? '+' + d.gold + 'g' : '0g', d.gold ? '#e6b45a' : '#8a847e'], ...(d.relic ? [['Relic', 'THE IRON BELT', '#ffd23a']] : [])].map(([k, v, c]) => ({ k, v, c })),
+      doneMainTxt: d.lessons ? 'FIGHT PODD' : d.champ ? 'FIGHT AGAIN' : d.won ? 'NEXT FIGHT' : 'REMATCH',
+      doneMain: e => { blur(e); if (!g) return; if (d.lessons) g.startMatch(0); else if (d.champ) g.startMatch(nR - 1); else if (d.won) g.startMatch(Math.min(nR - 1, pr.round)); else g.startMatch(h.rivals.findIndex(o => o.name === d.opp)); },
+      toIntro: e => { blur(e); g && g.toIntro(); },
+    };
+  }
+}
+</script>
+</body>
+</html>

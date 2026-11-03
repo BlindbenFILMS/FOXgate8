@@ -1,0 +1,43 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Checkers Club</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&display=swap">
+<style>
+/* layout: one phone at a time, scaled to fit, with a portrait/landscape switch above it */
+:root{--bg:#141210;--panel:#000;--ink:#fff;--mute:#a39d96;--rule:#3a3836;--accent:#ec3013;--gold:#ffd23a;--font:"Archivo",system-ui,sans-serif;color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);margin:0;padding-inline:16px;padding-block:12px;box-sizing:border-box;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.bar{display:flex;flex-wrap:wrap;align-items:stretch;gap:0;border:2px solid var(--rule);background:var(--panel);align-self:flex-start;max-width:100%}
+.bar .t{display:flex;flex-direction:column;justify-content:center;padding:6px 14px;border-right:2px solid var(--rule)}
+.k{font:800 10px var(--font);letter-spacing:.12em;color:var(--gold)}
+.n{font:900 18px var(--font)}
+button{font:900 12px var(--font);letter-spacing:.08em;min-height:48px;padding:0 16px;border:0;border-right:2px solid var(--rule);border-radius:0;background:var(--panel);color:var(--ink);cursor:pointer;text-align:left}
+button[aria-pressed="true"]{background:var(--gold);color:#000}
+button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+a.full{display:flex;align-items:center;padding:0 16px;font:900 12px var(--font);letter-spacing:.08em;color:var(--gold);text-decoration:none;min-height:48px}
+.stage{flex:1;min-height:0;position:relative}
+.phone{position:absolute;left:0;top:0;transform-origin:0 0;border:2px solid var(--rule);background:#000;box-sizing:content-box}
+.phone iframe{display:block;width:100%;height:100%;border:0}
+.size{font:800 10px var(--font);letter-spacing:.12em;color:var(--mute);padding:0 14px;display:flex;align-items:center}
+</style>
+<div class="bar" role="toolbar" aria-label="Phone shape">
+  <div class="t"><span class="k">8 GATES · MINIGAME #2</span><span class="n">Checkers Club</span></div>
+  <button id="bp" aria-pressed="true">PORTRAIT</button>
+  <button id="bl" aria-pressed="false">LANDSCAPE</button>
+  <span class="size" id="sz">390 × 844</span>
+  <a class="full" href="checkers-club.dc.html" target="_blank" rel="noopener">OPEN FULL SCREEN</a>
+</div>
+<div class="stage" id="stage"><div class="phone" id="ph"><iframe id="fr" title="Checkers Club game" src="checkers-club.dc.html?phone=1" allow="autoplay"></iframe></div></div>
+<script>
+(function(){
+  var land=false, ph=document.getElementById('ph'), st=document.getElementById('stage'), fr=document.getElementById('fr');
+  function fit(){ var w=land?844:390, h=land?390:844; ph.style.width=w+'px'; ph.style.height=h+'px';
+    var s=Math.min(1,(st.clientWidth-4)/w,(st.clientHeight-4)/h); ph.style.transform='scale('+s+')';
+    document.getElementById('sz').textContent=w+' × '+h+(s<1?' · SHOWN AT '+Math.round(s*100)+'%':''); }
+  function set(l){ land=l; document.getElementById('bp').setAttribute('aria-pressed',String(!l)); document.getElementById('bl').setAttribute('aria-pressed',String(l)); fit(); }
+  document.getElementById('bp').onclick=function(){set(false)}; document.getElementById('bl').onclick=function(){set(true)};
+  addEventListener('resize',fit); try{ new ResizeObserver(fit).observe(st); }catch(e){} fit();
+})();
+</script>
+
+</body></html>

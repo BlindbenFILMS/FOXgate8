@@ -1,0 +1,884 @@
+MERU NEW LINES 2 (s157) - for recording. Same format as MERU_NEW_LINES.txt: id | fox | delivery | text. Save as vo/<id>.mp3 next to the census pack.
+Who: every Meru fox that had NO voiced lines, or only one proximity shout. Each fox gets 2 PROXIMITY lines (said when you walk by) and a 1-ON-1 talk.
+1-on-1 shape (same as the census trees): -01/-02 = what they say first · -q1/-q2 = YOUR questions (FOX = Ben) · -a1a/-a1b = their answers · -qbye = your goodbye · -bye = theirs.
+Deliveries used: calm, normal, whisper, excited, warm, shout, sad, angry, scared. Every line is 20 words or less.
+[gameKey] after each heading = the fox's key in the game, so Claude can hook the clips up. Foxes that already had a -prox clip keep it; their new one is -prox2.
+STORY THREADS (Ben, s157): THE WORKER BOTS ARE ON STRIKE (that is why every shop is hiring) · BANDIT CAMPS are forming outside town · the CREATURES in the wild have turned AGGRESSIVE. Passers-by warn you about all three.
+NOTE FOR CLAUDE: the game only plays the first -prox clip per fox right now. When these are recorded, teach meru2-vo.js to pick from -prox AND -prox2.
+
+==================== TOWNSFOLK (the 109 crowd foxes on the streets; 4 voices, any crowd fox can use any line of its voice) ====================
+
+## nx2-crowd-man [townsfolk, male]
+nx2-crowd-man-prox | TOWNSFOLK MAN | normal | Watch yourself past the town gates. There are bandit camps out there now.
+nx2-crowd-man-prox2 | TOWNSFOLK MAN | normal | The bots walked off the job. Every shop on the square is hiring.
+nx2-crowd-man-prox3 | TOWNSFOLK MAN | scared | Something chased my cart off the desert road. Something with too many teeth.
+nx2-crowd-man-prox4 | TOWNSFOLK MAN | angry | Three bandit fires on the hill last night. Three! Where is the guard?
+nx2-crowd-man-prox5 | TOWNSFOLK MAN | calm | Stay on the lit paths after dark. The creatures do not come onto them.
+nx2-crowd-man-prox6 | TOWNSFOLK MAN | normal | My delivery bot is sitting on the kerb holding a sign. A SIGN.
+nx2-crowd-man-01 | TOWNSFOLK MAN | normal | You look like you can handle yourself. Good. Meru needs that right now.
+nx2-crowd-man-q1 | FOX | normal | What is going on out there?
+nx2-crowd-man-a1a | TOWNSFOLK MAN | normal | Bandits camping in the wild, creatures biting anything that moves, and the bots on strike.
+nx2-crowd-man-a1b | TOWNSFOLK MAN | calm | Pick one problem and it is a bad week. We have all three.
+nx2-crowd-man-q2 | FOX | normal | Why are the bots on strike?
+nx2-crowd-man-a2a | TOWNSFOLK MAN | normal | Ask them. They say they want a day off. Then they say it in binary.
+nx2-crowd-man-qbye | FOX | normal | I will keep my eyes open.
+nx2-crowd-man-bye | TOWNSFOLK MAN | warm | Both of them. And stay off the dark roads.
+
+## nx2-crowd-woman [townsfolk, female]
+nx2-crowd-woman-prox | TOWNSFOLK WOMAN | normal | Careful out there, love. The creatures have gone wild, all of them.
+nx2-crowd-woman-prox2 | TOWNSFOLK WOMAN | normal | No bots at the market again. I bagged my own carrots. Like an animal.
+nx2-crowd-woman-prox3 | TOWNSFOLK WOMAN | scared | Did you hear? Bandits set up a camp by the old road. Bold as brass.
+nx2-crowd-woman-prox4 | TOWNSFOLK WOMAN | warm | Looking for work? Try any shop. With the bots out, everyone needs paws.
+nx2-crowd-woman-prox5 | TOWNSFOLK WOMAN | whisper | Do not walk the lake path alone tonight. Trust me on that.
+nx2-crowd-woman-prox6 | TOWNSFOLK WOMAN | angry | A bandit took my basket. A whole basket. I had a pie in there.
+nx2-crowd-woman-01 | TOWNSFOLK WOMAN | warm | Oh, hello. Sorry, I keep looking over my shoulder these days.
+nx2-crowd-woman-q1 | FOX | normal | Why over your shoulder?
+nx2-crowd-woman-a1a | TOWNSFOLK WOMAN | scared | Bandits. They are camping just past the edges of town. More every week.
+nx2-crowd-woman-a1b | TOWNSFOLK WOMAN | normal | And the creatures used to run from us. Now they run AT us.
+nx2-crowd-woman-q2 | FOX | normal | Where can I find work?
+nx2-crowd-woman-a2a | TOWNSFOLK WOMAN | normal | Anywhere with a door. The bots are on strike, so every keeper is short-handed.
+nx2-crowd-woman-qbye | FOX | normal | Stay safe.
+nx2-crowd-woman-bye | TOWNSFOLK WOMAN | warm | You too, love. Stick to the lamps.
+
+## nx2-crowd-old [townsfolk, elder]
+nx2-crowd-old-prox | TOWNSFOLK ELDER | calm | In my day the creatures kept to the woods. Now they knock on doors.
+nx2-crowd-old-prox2 | TOWNSFOLK ELDER | sad | Bandit camps in sight of the castle. The King should hear about this.
+nx2-crowd-old-prox3 | TOWNSFOLK ELDER | normal | Robots on strike. I told them. Never build a thing that can say no.
+nx2-crowd-old-prox4 | TOWNSFOLK ELDER | warm | Mind the wild, young one. It bites harder than it used to.
+nx2-crowd-old-prox5 | TOWNSFOLK ELDER | angry | Three shops asked ME for a shift. I am ninety-one.
+nx2-crowd-old-01 | TOWNSFOLK ELDER | calm | Sit a moment. My knees need a rest and my mouth needs company.
+nx2-crowd-old-q1 | FOX | normal | Has Meru always been like this?
+nx2-crowd-old-a1a | TOWNSFOLK ELDER | calm | No. The bandits came back this season. The creatures turned angry with them.
+nx2-crowd-old-a1b | TOWNSFOLK ELDER | whisper | Same time. Strange, that. Nobody wants to say it out loud.
+nx2-crowd-old-q2 | FOX | normal | And the bots?
+nx2-crowd-old-a2a | TOWNSFOLK ELDER | normal | Downed tools the same month. Maybe they know something we do not.
+nx2-crowd-old-qbye | FOX | normal | I should get moving.
+nx2-crowd-old-bye | TOWNSFOLK ELDER | warm | Go on. Come back in one piece.
+
+## nx2-crowd-kid [townsfolk, young]
+nx2-crowd-kid-prox | TOWNSFOLK KID | excited | I saw a bandit camp from the tree house! Real fires and everything!
+nx2-crowd-kid-prox2 | TOWNSFOLK KID | excited | The school bot is on strike! No homework! Best strike ever!
+nx2-crowd-kid-prox3 | TOWNSFOLK KID | scared | Mum says the creatures bite now. Do they? Do they really?
+nx2-crowd-kid-prox4 | TOWNSFOLK KID | normal | Are you going out in the wild? Can I come? I have a stick.
+nx2-crowd-kid-01 | TOWNSFOLK KID | excited | Whoa. Is that a real sword? Have you fought a bandit?
+nx2-crowd-kid-q1 | FOX | normal | A few. Why?
+nx2-crowd-kid-a1a | TOWNSFOLK KID | excited | Because they are EVERYWHERE now! Past the gates, by the lake, up the hills!
+nx2-crowd-kid-q2 | FOX | normal | Stay inside the town, okay?
+nx2-crowd-kid-a2a | TOWNSFOLK KID | sad | Mum says that too. Fine. But tell me if you beat one.
+nx2-crowd-kid-qbye | FOX | normal | Deal. See you around.
+nx2-crowd-kid-bye | TOWNSFOLK KID | excited | Bye! Watch out for the teeth ones!
+
+==================== ARENA PATH ====================
+
+## nx2-band-vox [bandVox] (keeps ap-vox-prox)
+nx2-band-vox-prox2 | BAND VOX | shout | This one is for the bots on strike! Solidarity, tin friends!
+nx2-band-vox-01 | BAND VOX | excited | You stopped! Nobody stops! Fight days, they all run past to the arena.
+nx2-band-vox-q1 | FOX | normal | Do you play every day?
+nx2-band-vox-a1a | BAND VOX | normal | Every fight day. The arena bot used to play the music. It is on strike.
+nx2-band-vox-a1b | BAND VOX | excited | Its loss, our gig. We are the opening act now!
+nx2-band-vox-q2 | FOX | normal | How did the band start?
+nx2-band-vox-a2a | BAND VOX | warm | Four foxes, one busted van, and a bandit camp that stole the van.
+nx2-band-vox-qbye | FOX | normal | Good luck with the set.
+nx2-band-vox-bye | BAND VOX | shout | Two more songs! Then we eat!
+
+## nx2-band-bass [bandBass]
+nx2-band-bass-prox | BAND BASS | calm | Low end. Somebody has to hold it down.
+nx2-band-bass-prox2 | BAND BASS | normal | Keep it on the road after the show. The hill camps rob the crowd.
+nx2-band-bass-01 | BAND BASS | calm | Hey. I do not sing. I just stand here and make the ground shake.
+nx2-band-bass-q1 | FOX | normal | Is it a good crowd today?
+nx2-band-bass-a1a | BAND BASS | normal | Smaller. Foxes are scared to walk the Arena Path with the creatures acting up.
+nx2-band-bass-q2 | FOX | normal | What are the creatures doing?
+nx2-band-bass-a2a | BAND BASS | calm | Coming right up to the verge. One sat and listened to the whole set. Then it lunged.
+nx2-band-bass-qbye | FOX | normal | Keep playing.
+nx2-band-bass-bye | BAND BASS | calm | Always. Low and slow.
+
+## nx2-band-drums [bandDrums]
+nx2-band-drums-prox | BAND DRUMS | excited | One, two, one two three four!
+nx2-band-drums-prox2 | BAND DRUMS | shout | Bandits stole my good sticks! These are spoons! It still slaps!
+nx2-band-drums-01 | BAND DRUMS | excited | Hey hey! You want a beat? I have beats. I have SO many beats.
+nx2-band-drums-q1 | FOX | normal | Did you really lose your sticks?
+nx2-band-drums-a1a | BAND DRUMS | angry | To a bandit camp up the hill. They drum on pots with them every night. Badly.
+nx2-band-drums-q2 | FOX | normal | Want me to get them back?
+nx2-band-drums-a2a | BAND DRUMS | excited | Would you? Careful though. There are a lot of them now. A LOT.
+nx2-band-drums-qbye | FOX | normal | I will see what I can do.
+nx2-band-drums-bye | BAND DRUMS | excited | Legend! Ba-dum TSS!
+
+## nx2-band-keys [bandKeys]
+nx2-band-keys-prox | BAND KEYS | warm | Every song needs a little sparkle on top.
+nx2-band-keys-prox2 | BAND KEYS | normal | My keyboard is run by a bot chip. It keeps playing protest songs.
+nx2-band-keys-01 | BAND KEYS | warm | Hello there. Do not mind the keyboard. It has opinions this week.
+nx2-band-keys-q1 | FOX | normal | Opinions?
+nx2-band-keys-a1a | BAND KEYS | normal | The chip inside heard the worker bots went on strike. Now it only plays in minor keys.
+nx2-band-keys-q2 | FOX | normal | Will the strike end soon?
+nx2-band-keys-a2a | BAND KEYS | calm | Nobody knows. Every shop in town is hiring foxes till it does.
+nx2-band-keys-qbye | FOX | normal | Good luck with the keyboard.
+nx2-band-keys-bye | BAND KEYS | warm | Thanks. I will bribe it with a song.
+
+## nx2-tug-one [tugger0]
+nx2-tug-one-prox | TUGGER ONE | shout | Heave! Heave! HEAVE!
+nx2-tug-one-prox2 | TUGGER ONE | normal | We train for the bandit camps. If they come, we pull them out of town.
+nx2-tug-one-01 | TUGGER ONE | excited | Want to join the team? We are one short. He hurt his paw on a creature.
+nx2-tug-one-q1 | FOX | normal | A creature bit him?
+nx2-tug-one-a1a | TUGGER ONE | normal | Grabbed the rope from the long grass. Pulled harder than all four of us.
+nx2-tug-one-qbye | FOX | normal | I will think about it.
+nx2-tug-one-bye | TUGGER ONE | shout | Think with your arms! Heave!
+
+## nx2-tug-two [tugger1]
+nx2-tug-two-prox | TUGGER TWO | shout | Dig your heels in!
+nx2-tug-two-prox2 | TUGGER TWO | normal | The rope-winding bot is on strike. We wind our own rope now. It is awful.
+nx2-tug-two-01 | TUGGER TWO | normal | Do not touch the rope. We just untangled it. By paw. Without the bot.
+nx2-tug-two-q1 | FOX | normal | The bots are striking here too?
+nx2-tug-two-a1a | TUGGER TWO | angry | Everywhere. The arena bots, the shop bots, the rope bot. Especially the rope bot.
+nx2-tug-two-qbye | FOX | normal | Good luck with the rope.
+nx2-tug-two-bye | TUGGER TWO | normal | Luck has nothing to do with it. Grip does.
+
+## nx2-tug-three [tugger2]
+nx2-tug-three-prox | TUGGER THREE | shout | Pull together! Together!
+nx2-tug-three-prox2 | TUGGER THREE | scared | Do not walk off the path round here. The grass moves on its own now.
+nx2-tug-three-01 | TUGGER THREE | normal | Hi. Sorry, I am watching the long grass. Something keeps watching back.
+nx2-tug-three-q1 | FOX | normal | Creatures?
+nx2-tug-three-a1a | TUGGER THREE | scared | They used to keep to the wild. Now they come right up to the arena road.
+nx2-tug-three-qbye | FOX | normal | Stay on the path.
+nx2-tug-three-bye | TUGGER THREE | normal | Always. You too.
+
+## nx2-tug-four [tugger3]
+nx2-tug-four-prox | TUGGER FOUR | shout | Anchor! I am the anchor!
+nx2-tug-four-prox2 | TUGGER FOUR | normal | A bandit tried to steal our rope. We pulled him into the mud.
+nx2-tug-four-01 | TUGGER FOUR | warm | I am the anchor. Back of the rope. Nobody moves me. Ask anyone.
+nx2-tug-four-q1 | FOX | normal | Has anyone tried?
+nx2-tug-four-a1a | TUGGER FOUR | normal | A bandit from the hill camp. He is still in the mud, I think.
+nx2-tug-four-qbye | FOX | normal | Stay strong.
+nx2-tug-four-bye | TUGGER FOUR | warm | I am the anchor. It is the only way I know.
+
+## nx2-stall-two [arenaStall2] (keeps ap-stall2-prox)
+nx2-stall-two-prox2 | STALLHOLDER TWO | shout | Belts! Real leather! Not bot-made, so you know it is good!
+nx2-stall-two-01 | STALLHOLDER TWO | warm | Belts and buckles in the arena colours. Fighters swear by them.
+nx2-stall-two-q1 | FOX | normal | Is business good?
+nx2-stall-two-a1a | STALLHOLDER TWO | normal | Better since the bots went on strike. The bot belt factory stopped. Mine did not.
+nx2-stall-two-q2 | FOX | normal | Any trouble on the road?
+nx2-stall-two-a2a | STALLHOLDER TWO | scared | Bandits hit two stalls last week. I pack up before dark now.
+nx2-stall-two-qbye | FOX | normal | I will come back for a belt.
+nx2-stall-two-bye | STALLHOLDER TWO | warm | I will save you a red one.
+
+## nx2-stall-three [arenaStall3] (keeps ap-stall3-prox)
+nx2-stall-three-prox2 | STALLHOLDER THREE | shout | Cold water! You need it, the creatures will run you ragged!
+nx2-stall-three-01 | STALLHOLDER THREE | normal | Water. Cold. Colder than his. Do not tell him I said that.
+nx2-stall-three-q1 | FOX | normal | Where do you get the ice?
+nx2-stall-three-a1a | STALLHOLDER THREE | sad | The ice bot used to bring it. It is on strike, so I carry it up myself.
+nx2-stall-three-q2 | FOX | normal | Is the road safe?
+nx2-stall-three-a2a | STALLHOLDER THREE | normal | Safe on the path. Off it, something big has been chasing carts.
+nx2-stall-three-qbye | FOX | normal | Thanks. Stay cool.
+nx2-stall-three-bye | STALLHOLDER THREE | warm | Colder than his. Always.
+
+## nx2-tenant-lake [apTenantlake]
+nx2-tenant-lake-prox | LAKESIDE TENANT | normal | Evening. Lovely view, if you ignore the bandit fires across the water.
+nx2-tenant-lake-prox2 | LAKESIDE TENANT | sad | Our building bot is on strike. Nobody has taken the bins out in a week.
+nx2-tenant-lake-01 | LAKESIDE TENANT | normal | I live at Lakeside. Fourth floor. You can see half the wild from my window.
+nx2-tenant-lake-q1 | FOX | normal | What do you see out there?
+nx2-tenant-lake-a1a | LAKESIDE TENANT | scared | Camp fires. More every night. And shapes moving in the reeds that were never there before.
+nx2-tenant-lake-qbye | FOX | normal | Lock your door.
+nx2-tenant-lake-bye | LAKESIDE TENANT | normal | Twice. Every night now.
+
+## nx2-tenant-crest [apTenantcrest]
+nx2-tenant-crest-prox | CRESTVIEW TENANT | normal | Off to the shops. Doing my own shopping. The bot is on strike.
+nx2-tenant-crest-prox2 | CRESTVIEW TENANT | scared | Something howled under my window last night. In TOWN.
+nx2-tenant-crest-01 | CRESTVIEW TENANT | normal | Crestview, third floor. Quiet street. Used to be, anyway.
+nx2-tenant-crest-q1 | FOX | normal | What changed?
+nx2-tenant-crest-a1a | CRESTVIEW TENANT | scared | A creature came right up the hill path. Bit a lamp post. Bent it.
+nx2-tenant-crest-a1b | CRESTVIEW TENANT | normal | The guard says they are angry. Nobody knows why.
+nx2-tenant-crest-qbye | FOX | normal | Be careful on the hill.
+nx2-tenant-crest-bye | CRESTVIEW TENANT | warm | You too. Thanks for asking.
+
+==================== FOUNTAIN PLAZA + APARTMENTS ====================
+
+## nx2-roof-garden-crest [apRoofGcrest] (guess: Crestview roof garden)
+nx2-roof-garden-crest-prox | CREST ROOF GARDENER | calm | Mind the tomatoes. They are the only thing in Meru not on strike.
+nx2-roof-garden-crest-prox2 | CREST ROOF GARDENER | normal | From up here I count the bandit fires. Seven last night.
+nx2-roof-garden-crest-01 | CREST ROOF GARDENER | warm | Welcome to the roof. Best soil in town. I carried every bag of it up.
+nx2-roof-garden-crest-q1 | FOX | normal | No bot to carry it?
+nx2-roof-garden-crest-a1a | CREST ROOF GARDENER | normal | On strike. It sits by the water tank holding a sign that says FAIR SHIFTS.
+nx2-roof-garden-crest-q2 | FOX | normal | Seven bandit fires?
+nx2-roof-garden-crest-a2a | CREST ROOF GARDENER | scared | Out past the gates. A month ago it was one. They are gathering.
+nx2-roof-garden-crest-qbye | FOX | normal | Enjoy the garden.
+nx2-roof-garden-crest-bye | CREST ROOF GARDENER | calm | I will. It is the calmest place in Meru.
+
+## nx2-roof-lounge-crest [apRoofLcrest] (guess: Crestview roof lounger)
+nx2-roof-lounge-crest-prox | CREST ROOF LOUNGER | calm | Shh. I am sunbathing. It is very important work.
+nx2-roof-lounge-crest-prox2 | CREST ROOF LOUNGER | normal | Even the sun lounger bot is on strike. I had to unfold this myself.
+nx2-roof-lounge-crest-01 | CREST ROOF LOUNGER | calm | Oh, hi. Pull up a chair. Unfold it yourself. Everyone does now.
+nx2-roof-lounge-crest-q1 | FOX | normal | Is it nice up here?
+nx2-roof-lounge-crest-a1a | CREST ROOF LOUNGER | normal | Lovely. Until you look at the hills. Bandit tents everywhere. I keep my eyes shut.
+nx2-roof-lounge-crest-qbye | FOX | normal | Enjoy the sun.
+nx2-roof-lounge-crest-bye | CREST ROOF LOUNGER | calm | Mm. Wake me if the bandits come.
+
+## nx2-roof-garden-lake [apRoofGlake] (guess: Lakeside roof garden)
+nx2-roof-garden-lake-prox | LAKE ROOF GARDENER | normal | Herbs up top, lake below. Best of both.
+nx2-roof-garden-lake-prox2 | LAKE ROOF GARDENER | scared | Something came out of the lake and ate my lettuce. On the ROOF.
+nx2-roof-garden-lake-01 | LAKE ROOF GARDENER | normal | Careful by the edge. And do not touch the lettuce. What is left of it.
+nx2-roof-garden-lake-q1 | FOX | normal | What happened to it?
+nx2-roof-garden-lake-a1a | LAKE ROOF GARDENER | scared | A lake creature climbed the drainpipe. They never did that before. They are wild now.
+nx2-roof-garden-lake-qbye | FOX | normal | Keep an eye on the drainpipe.
+nx2-roof-garden-lake-bye | LAKE ROOF GARDENER | normal | Both eyes. And a broom.
+
+## nx2-roof-lounge-lake [apRoofLlake] (guess: Lakeside roof lounger)
+nx2-roof-lounge-lake-prox | LAKE ROOF LOUNGER | calm | Best sunset in Meru. Free. Do not tell the manager.
+nx2-roof-lounge-lake-prox2 | LAKE ROOF LOUNGER | normal | The drinks bot is on strike. I brought a flask like it is the old days.
+nx2-roof-lounge-lake-01 | LAKE ROOF LOUNGER | warm | Hey. Sit. The sunset starts in ten minutes. It is the only thing on time.
+nx2-roof-lounge-lake-q1 | FOX | normal | What is across the lake?
+nx2-roof-lounge-lake-a1a | LAKE ROOF LOUNGER | normal | Bandit camps, these days. You can hear them singing at night. Badly.
+nx2-roof-lounge-lake-qbye | FOX | normal | Enjoy the sunset.
+nx2-roof-lounge-lake-bye | LAKE ROOF LOUNGER | calm | Always do.
+
+## nx2-door-crest [aptDoorCrest] (keeps ap-doorcrest-prox)
+nx2-door-crest-prox2 | CRESTVIEW DOORMAN | normal | Door bot is on strike, so it is me. Same smile. Fewer beeps.
+nx2-door-crest-01 | CRESTVIEW DOORMAN | calm | Evening. Residents and guests only. You look like a guest.
+nx2-door-crest-q1 | FOX | normal | Have you always worked the door?
+nx2-door-crest-a1a | CRESTVIEW DOORMAN | normal | No. A bot did it for years. It went on strike, and they called me back.
+nx2-door-crest-q2 | FOX | normal | Any trouble here?
+nx2-door-crest-a2a | CRESTVIEW DOORMAN | scared | A creature tried the door last night. It did not knock. I did not open.
+nx2-door-crest-qbye | FOX | normal | Good night.
+nx2-door-crest-bye | CRESTVIEW DOORMAN | calm | Mind the step. It is wet.
+
+## nx2-door-lake [aptDoorLake] (keeps ap-doorlake-prox)
+nx2-door-lake-prox2 | LAKESIDE APTS DOORMAN | normal | Do not walk the shore after dark, friend. Not this month.
+nx2-door-lake-01 | LAKESIDE APTS DOORMAN | calm | Evening. Lifts on the right. The lift bot is on strike, so press it yourself.
+nx2-door-lake-q1 | FOX | normal | Why not the shore?
+nx2-door-lake-a1a | LAKESIDE APTS DOORMAN | scared | The lake creatures come up the sand now. And a bandit boat was seen at dawn.
+nx2-door-lake-qbye | FOX | normal | Thanks for the warning.
+nx2-door-lake-bye | LAKESIDE APTS DOORMAN | calm | Evening. Water side is on your left.
+
+## nx2-flower-tip [flowerTip] (the customer who tips at Flora's)
+nx2-flower-tip-prox | FLOWER CUSTOMER | warm | Flora's roses. For my mum. She hates the bandits, loves the roses.
+nx2-flower-tip-prox2 | FLOWER CUSTOMER | normal | Delivery bots are on strike. So I am delivering my own flowers.
+nx2-flower-tip-01 | FLOWER CUSTOMER | warm | Here, this is for you. A tip. You made that bunch look lovely.
+nx2-flower-tip-q1 | FOX | normal | Who are they for?
+nx2-flower-tip-a1a | FLOWER CUSTOMER | warm | My mum. She lives past the east gate. I walk out every week.
+nx2-flower-tip-q2 | FOX | normal | Past the gate? Is that safe?
+nx2-flower-tip-a2a | FLOWER CUSTOMER | scared | Not anymore. Bandit camp on the left, angry creatures on the right. I run.
+nx2-flower-tip-qbye | FOX | normal | Run fast.
+nx2-flower-tip-bye | FLOWER CUSTOMER | warm | I always do. Thank you!
+
+==================== BANK + BACKROOMS + POLICE ====================
+
+## nx2-bank-teller [bankTeller] (keeps sh-teller-prox)
+nx2-bank-teller-prox2 | BANK TELLER | normal | The counting bots are on strike. I count by paw now. Do not rush me.
+nx2-bank-teller-01 | BANK TELLER | calm | Good day. Deposits, withdrawals, or a complaint about the strike?
+nx2-bank-teller-q1 | FOX | normal | The strike reached the bank?
+nx2-bank-teller-a1a | BANK TELLER | normal | Every coin sorter downstairs stopped at once. They left a note. It said NO.
+nx2-bank-teller-q2 | FOX | normal | Are you hiring?
+nx2-bank-teller-a2a | BANK TELLER | warm | Ask Mr. Farthing. He needs paws for every job the bots dropped.
+nx2-bank-teller-qbye | FOX | normal | Thanks.
+nx2-bank-teller-bye | BANK TELLER | calm | Next window, please.
+
+## nx2-bank-vault [bankVault] (keeps sh-vault-prox)
+nx2-bank-vault-prox2 | VAULT CLERK | whisper | The vault bot guarded this door for years. Now it sulks in the corner.
+nx2-bank-vault-01 | VAULT CLERK | calm | You are downstairs. That means you have an appointment, or you are lost.
+nx2-bank-vault-q1 | FOX | normal | Who guards the vault now?
+nx2-bank-vault-a1a | VAULT CLERK | normal | Me, and the guard. The bot is on strike. It still beeps when I open the door.
+nx2-bank-vault-q2 | FOX | normal | Worried about bandits?
+nx2-bank-vault-a2a | VAULT CLERK | whisper | With camps that close to town? Every night. The door is thick. My nerves are not.
+nx2-bank-vault-qbye | FOX | normal | I will leave you to it.
+nx2-bank-vault-bye | VAULT CLERK | calm | Vault visits are by appointment only.
+
+## nx2-vault-guard [vaultGuard]
+nx2-vault-guard-prox | VAULT GUARD | normal | Stop there. Nobody walks past this line.
+nx2-vault-guard-prox2 | VAULT GUARD | angry | Double shifts since the bandits camped up. Somebody bring me a sandwich.
+nx2-vault-guard-01 | VAULT GUARD | normal | I stand here. I do not move. That is the job.
+nx2-vault-guard-q1 | FOX | normal | Ever had a break-in?
+nx2-vault-guard-a1a | VAULT GUARD | normal | Not yet. But the bandit camps are getting bigger. They are planning something.
+nx2-vault-guard-q2 | FOX | normal | Long shifts?
+nx2-vault-guard-a2a | VAULT GUARD | sad | The guard bot is on strike. So yes. Very long.
+nx2-vault-guard-qbye | FOX | normal | Stay sharp.
+nx2-vault-guard-bye | VAULT GUARD | normal | Always.
+
+## nx2-count-manager [countManager] (casino count room)
+nx2-count-manager-prox | COUNT MANAGER | calm | Quiet, please. I am counting.
+nx2-count-manager-prox2 | COUNT MANAGER | angry | The chip-sorting bots walked out mid-count. Mid-count!
+nx2-count-manager-01 | COUNT MANAGER | calm | This is the count room. Every chip in the casino comes through here.
+nx2-count-manager-q1 | FOX | normal | Why so many piles?
+nx2-count-manager-a1a | COUNT MANAGER | sad | The sorting bots went on strike. Left the chips exactly where they fell.
+nx2-count-manager-q2 | FOX | normal | Can I help?
+nx2-count-manager-a2a | COUNT MANAGER | normal | Ask Sterling upstairs. He is hiring anyone who can count past ten.
+nx2-count-manager-qbye | FOX | normal | Good luck with the count.
+nx2-count-manager-bye | COUNT MANAGER | calm | Luck is for the tables. This is maths.
+
+## nx2-police-desk [policeDesk] (keeps pl-desk-prox)
+nx2-police-desk-prox2 | POLICE DESK | normal | If you are here to report a bandit camp, take a number. A big one.
+nx2-police-desk-01 | POLICE DESK | normal | Name, business, and sign the book. The booking bot is on strike.
+nx2-police-desk-q1 | FOX | normal | Busy day?
+nx2-police-desk-a1a | POLICE DESK | normal | Twelve bandit reports, nine creature bites, and a bot sit-in at the market.
+nx2-police-desk-q2 | FOX | normal | Where are the bandits?
+nx2-police-desk-a2a | POLICE DESK | calm | Everywhere past the gates. Talk to Chief Barkley if you want to help.
+nx2-police-desk-qbye | FOX | normal | I will.
+nx2-police-desk-bye | POLICE DESK | normal | Sign the book on the way out.
+
+## nx2-evidence [evidenceClerk] (keeps pl-evidence-prox)
+nx2-evidence-prox2 | EVIDENCE CLERK | normal | Half of this shelf is from the bandit camps. The other half is teeth.
+nx2-evidence-01 | EVIDENCE CLERK | calm | Evidence room. Look, do not touch. Especially the jar on the left.
+nx2-evidence-q1 | FOX | normal | What is in the jar?
+nx2-evidence-a1a | EVIDENCE CLERK | normal | A creature tooth. Pulled from a cart wheel on the desert road. They bite wheels now.
+nx2-evidence-q2 | FOX | normal | And the rest?
+nx2-evidence-a2a | EVIDENCE CLERK | normal | Bandit masks, stolen pies, and one protest sign from a striking bot.
+nx2-evidence-qbye | FOX | normal | I will not touch anything.
+nx2-evidence-bye | EVIDENCE CLERK | calm | Everything in here is somebody's bad afternoon.
+
+## nx2-jail-guard [jailGuard] (keeps pl-jail-prox)
+nx2-jail-guard-prox2 | JAIL GUARD | angry | The cells are full of bandits. Bring me more and I will need a bigger jail.
+nx2-jail-guard-01 | JAIL GUARD | normal | Cells are that way. Visitors stay behind the yellow line.
+nx2-jail-guard-q1 | FOX | normal | Full house?
+nx2-jail-guard-a1a | JAIL GUARD | normal | Every cell. All bandits. They say there are ten more for each one we catch.
+nx2-jail-guard-q2 | FOX | normal | Do the bots help here?
+nx2-jail-guard-a2a | JAIL GUARD | sad | The cell door bot is on strike. I turn every key myself.
+nx2-jail-guard-qbye | FOX | normal | Good luck.
+nx2-jail-guard-bye | JAIL GUARD | normal | Hands where I can see them. Thank you.
+
+## nx2-prisoner-scraps [prisonerScraps] (has duets; new 1-on-1)
+nx2-prisoner-scraps-prox | SCRAPS | whisper | Psst. Got a file? A spoon? A very small spoon?
+nx2-prisoner-scraps-prox2 | SCRAPS | normal | My mates in the hill camp will spring me. Any day now. Any day.
+nx2-prisoner-scraps-01 | SCRAPS | normal | Oh, a visitor. I did nothing. I was holding the pie for a friend.
+nx2-prisoner-scraps-q1 | FOX | normal | Which camp are you from?
+nx2-prisoner-scraps-a1a | SCRAPS | whisper | Not saying. But there are camps on every hill now. The boss wants the whole town.
+nx2-prisoner-scraps-qbye | FOX | normal | Enjoy the cell.
+nx2-prisoner-scraps-bye | SCRAPS | sad | It has a lovely view of the wall.
+
+## nx2-prisoner-mutt [prisonerMutt] (has duets; new 1-on-1)
+nx2-prisoner-mutt-prox | MUTT | sad | I want my mum.
+nx2-prisoner-mutt-prox2 | MUTT | scared | The creatures chased us right into the guards. Worst getaway ever.
+nx2-prisoner-mutt-01 | MUTT | sad | Hi. I am Mutt. I am a bandit. I am not a very good one.
+nx2-prisoner-mutt-q1 | FOX | normal | How did they catch you?
+nx2-prisoner-mutt-a1a | MUTT | scared | We were running back to camp. A creature jumped out. We ran the other way. Into the guards.
+nx2-prisoner-mutt-qbye | FOX | normal | Maybe try honest work.
+nx2-prisoner-mutt-bye | MUTT | normal | Everyone is hiring, right? The bots are on strike?
+
+## nx2-grumble [benchGrumble] (has duets; new 1-on-1)
+nx2-grumble-prox | GRUMBLE | angry | Bandits. Creatures. Robots with signs. What next? Rain?
+nx2-grumble-prox2 | GRUMBLE | normal | In my day robots did as they were told. And so did we.
+nx2-grumble-01 | GRUMBLE | angry | What. I am sitting. Sitting is legal. I checked.
+nx2-grumble-q1 | FOX | normal | Why are you at the police station?
+nx2-grumble-a1a | GRUMBLE | angry | Reporting a bandit camp. Again. Behind my allotment. They ate my cabbages.
+nx2-grumble-qbye | FOX | normal | Hope they sort it out.
+nx2-grumble-bye | GRUMBLE | angry | Hope is not a cabbage.
+
+## nx2-old-jack [oldJack] (has duets; new 1-on-1)
+nx2-old-jack-prox | OLD JACK | calm | Seen it all, me. Twice. Some of it three times.
+nx2-old-jack-prox2 | OLD JACK | warm | Creatures going mad, bandits camping, bots striking. Feels like '62.
+nx2-old-jack-01 | OLD JACK | calm | Sit down, young one. Old Jack has a story. Old Jack always has a story.
+nx2-old-jack-q1 | FOX | normal | What happened in '62?
+nx2-old-jack-a1a | OLD JACK | calm | Bandits came down from the hills. The creatures went wild the same week. Funny, that.
+nx2-old-jack-a1b | OLD JACK | whisper | Somebody stirred them up then. Somebody is stirring them up now. Mark my words.
+nx2-old-jack-qbye | FOX | normal | I will remember that.
+nx2-old-jack-bye | OLD JACK | warm | Good. Old Jack is usually right. Usually.
+
+==================== CASINO ====================
+
+## nx2-casino-croupier [casinoCroupier] (keeps cs-croup-prox)
+nx2-casino-croupier-prox2 | ROULETTE CROUPIER | normal | No bot spinning the wheel tonight. Every spin is a real paw. Lucky you.
+nx2-casino-croupier-01 | ROULETTE CROUPIER | calm | Red or black, my friend? The wheel does not care. Neither do I.
+nx2-casino-croupier-q1 | FOX | normal | Is the wheel fair?
+nx2-casino-croupier-a1a | ROULETTE CROUPIER | normal | Fairer than ever. The wheel bot is on strike. It is just me and gravity.
+nx2-casino-croupier-qbye | FOX | normal | Maybe next time.
+nx2-casino-croupier-bye | ROULETTE CROUPIER | calm | The wheel will be here. It always is.
+
+## nx2-casino-host [casinoHost] (keeps cs-host-prox)
+nx2-casino-host-prox2 | DOOR HOST | normal | Leave the bandit talk outside, please. Inside, we only talk luck.
+nx2-casino-host-01 | DOOR HOST | warm | Welcome to the casino. Mind the carpet, it is older than me.
+nx2-casino-host-q1 | FOX | normal | Is it busy tonight?
+nx2-casino-host-a1a | DOOR HOST | normal | Quieter. Foxes are scared to walk home past the bandit camps with winnings.
+nx2-casino-host-qbye | FOX | normal | Have a good night.
+nx2-casino-host-bye | DOOR HOST | warm | Coats to the left, luck to yourself.
+
+## nx2-cs-max [csMax] (casino doorman in the black suit)
+nx2-cs-max-prox | MAX | calm | Private room. Members only.
+nx2-cs-max-prox2 | MAX | normal | Two bandits tried the back door last night. They left faster.
+nx2-cs-max-01 | MAX | calm | You are not a member. You are not in trouble either. Yet.
+nx2-cs-max-q1 | FOX | normal | Any trouble tonight?
+nx2-cs-max-a1a | MAX | normal | Bandits from the lake camp. They think a casino is a bank with lights. It is not.
+nx2-cs-max-q2 | FOX | normal | Is the security bot helping?
+nx2-cs-max-a2a | MAX | calm | It is on strike. I am the security bot now. I do not beep.
+nx2-cs-max-qbye | FOX | normal | I will not cause trouble.
+nx2-cs-max-bye | MAX | calm | I know. I can tell.
+
+## nx2-cs-velvet [csVelvet] (casino singer in the gold dress)
+nx2-cs-velvet-prox | VELVET | warm | This next song is for the lonely hearts. And the lonely bots on strike.
+nx2-cs-velvet-prox2 | VELVET | normal | Get home before dark, darling. The wild is not singing tonight.
+nx2-cs-velvet-01 | VELVET | warm | Hello, darling. Did you come for the song or the slots?
+nx2-cs-velvet-q1 | FOX | normal | The song.
+nx2-cs-velvet-a1a | VELVET | warm | Sweet thing. The backing bot is on strike, so tonight it is just me. Unplugged.
+nx2-cs-velvet-q2 | FOX | normal | Do you sing about the bandits?
+nx2-cs-velvet-a2a | VELVET | calm | I wrote one. Camp Fires On The Hill. Too sad. They threw no tips.
+nx2-cs-velvet-qbye | FOX | normal | I will stay for the next song.
+nx2-cs-velvet-bye | VELVET | warm | Then I will sing it for you, darling.
+
+## nx2-casino-slots-one [casinoSlots1] (SLOT LUCKY in the duets)
+nx2-casino-slots-one-prox | SLOT LUCKY | excited | This is the one! I can feel it! This is THE ONE!
+nx2-casino-slots-one-prox2 | SLOT LUCKY | normal | The slot bot used to bring me drinks. Now it holds a sign. Rude.
+nx2-casino-slots-one-01 | SLOT LUCKY | excited | Shh! Do not breathe on the machine! It is about to pay!
+nx2-casino-slots-one-q1 | FOX | normal | How long have you been here?
+nx2-casino-slots-one-a1a | SLOT LUCKY | normal | Since the bandits camped by my road. I am not walking home till they go.
+nx2-casino-slots-one-qbye | FOX | normal | Good luck.
+nx2-casino-slots-one-bye | SLOT LUCKY | excited | I do not need luck! I have THIS machine!
+
+## nx2-casino-slots-two [casinoSlots2] (SLOT SURE in the duets)
+nx2-casino-slots-two-prox | SLOT SURE | calm | It pays every forty pulls. I have a system.
+nx2-casino-slots-two-prox2 | SLOT SURE | normal | Do not go out the back way. There is a creature in the bins.
+nx2-casino-slots-two-01 | SLOT SURE | calm | Thirty-eight. Thirty-nine. Do not talk to me on forty.
+nx2-casino-slots-two-q1 | FOX | normal | A creature in the bins?
+nx2-casino-slots-two-a1a | SLOT SURE | scared | Came up from the lake. They never used to come into town. Now they do.
+nx2-casino-slots-two-qbye | FOX | normal | I will use the front door.
+nx2-casino-slots-two-bye | SLOT SURE | calm | Forty. See? Nothing. It is a long system.
+
+## nx2-casino-stickman [casinoStickman] (STICKMAN in the duets; new 1-on-1)
+nx2-casino-stickman-prox | STICKMAN | shout | New shooter coming out! Place your bets!
+nx2-casino-stickman-prox2 | STICKMAN | normal | Dice bot is on strike. These dice are thrown by real, honest paws.
+nx2-casino-stickman-01 | STICKMAN | excited | Step up! Roll the bones! The table loves a new face!
+nx2-casino-stickman-q1 | FOX | normal | Is the table hiring?
+nx2-casino-stickman-a1a | STICKMAN | normal | The whole casino is. Bots walked out at midnight. Ask Sterling about a shift.
+nx2-casino-stickman-qbye | FOX | normal | Maybe later.
+nx2-casino-stickman-bye | STICKMAN | shout | Seven out! Line away!
+
+==================== CASTLE + UNDERGROUND ====================
+
+## nx2-castle-sentry [castleSentry]
+nx2-castle-sentry-prox | CASTLE SENTRY | normal | Halt. State your business at the castle.
+nx2-castle-sentry-prox2 | CASTLE SENTRY | normal | Extra watches on the walls tonight. The bandit camps are too close.
+nx2-castle-sentry-01 | CASTLE SENTRY | normal | The castle is open to visitors. Keep your sword sheathed and your voice down.
+nx2-castle-sentry-q1 | FOX | normal | Are the bandits a threat to the castle?
+nx2-castle-sentry-a1a | CASTLE SENTRY | calm | Not to the walls. To the roads, the farms, the shops. The King is worried.
+nx2-castle-sentry-q2 | FOX | normal | What about the creatures?
+nx2-castle-sentry-a2a | CASTLE SENTRY | normal | Gone mad. One charged the moat bridge at dawn. We have never seen that.
+nx2-castle-sentry-qbye | FOX | normal | Thank you.
+nx2-castle-sentry-bye | CASTLE SENTRY | normal | Move along. Safely.
+
+## nx2-royal-guard [royalGuard]
+nx2-royal-guard-prox | ROYAL GUARD | normal | The King is not taking visitors. Stand back.
+nx2-royal-guard-prox2 | ROYAL GUARD | whisper | The King had the Prince's training doubled. The camps worry him.
+nx2-royal-guard-01 | ROYAL GUARD | normal | You stand before the Royal Guard. Speak plainly. We have little time.
+nx2-royal-guard-q1 | FOX | normal | Is the King safe?
+nx2-royal-guard-a1a | ROYAL GUARD | normal | Inside these walls, always. Outside, the bandits grow bolder every week.
+nx2-royal-guard-q2 | FOX | normal | Why now?
+nx2-royal-guard-a2a | ROYAL GUARD | whisper | That is the question in every room of this castle. Nobody has the answer.
+nx2-royal-guard-qbye | FOX | normal | I will not keep you.
+nx2-royal-guard-bye | ROYAL GUARD | normal | Long live the King.
+
+## nx2-treasury-guard [treasuryGuard]
+nx2-treasury-guard-prox | TREASURY GUARD | normal | Treasury. No closer.
+nx2-treasury-guard-prox2 | TREASURY GUARD | angry | Every bandit on every hill wants what is behind this door.
+nx2-treasury-guard-01 | TREASURY GUARD | normal | This is the royal treasury. I am the reason it is still full.
+nx2-treasury-guard-q1 | FOX | normal | Have the bandits tried?
+nx2-treasury-guard-a1a | TREASURY GUARD | normal | Not yet. But they are gathering. Camps on the east hills, the lake, the old road.
+nx2-treasury-guard-q2 | FOX | normal | Do you have bot help?
+nx2-treasury-guard-a2a | TREASURY GUARD | sad | The lock bot is on strike. It still locks. It just sighs about it.
+nx2-treasury-guard-qbye | FOX | normal | Stay sharp.
+nx2-treasury-guard-bye | TREASURY GUARD | normal | Sharper than you know.
+
+## nx2-cas-librarian [casLibrarian] (keeps ct-lib-prox)
+nx2-cas-librarian-prox2 | CASTLE LIBRARIAN | whisper | Shh. I am reading about the last time the creatures turned.
+nx2-cas-librarian-01 | CASTLE LIBRARIAN | calm | Welcome to the library. Whisper, please. The scrolls are sensitive.
+nx2-cas-librarian-q1 | FOX | normal | The creatures turned before?
+nx2-cas-librarian-a1a | CASTLE LIBRARIAN | whisper | Three hundred years ago. Bandits rose the same season. The scroll ends with a gate opening.
+nx2-cas-librarian-q2 | FOX | normal | What gate?
+nx2-cas-librarian-a2a | CASTLE LIBRARIAN | calm | It does not say. The last page is missing. Someone tore it out.
+nx2-cas-librarian-qbye | FOX | normal | Let me know if you find it.
+nx2-cas-librarian-bye | CASTLE LIBRARIAN | whisper | You will be the first. Hands clean, please.
+
+## nx2-cas-painter [casPainter] (keeps ct-paint-prox)
+nx2-cas-painter-prox2 | CASTLE PAINTER | normal | I am painting the bandit fires on the hills. The King wants a record.
+nx2-cas-painter-01 | CASTLE PAINTER | calm | Stand there. No, there. Where the light is not. Thank you.
+nx2-cas-painter-q1 | FOX | normal | What are you painting?
+nx2-cas-painter-a1a | CASTLE PAINTER | normal | The view from the tower. Hills, fields, and seven little bandit fires. The King asked.
+nx2-cas-painter-qbye | FOX | normal | It looks wonderful.
+nx2-cas-painter-bye | CASTLE PAINTER | warm | It looks worrying. But thank you.
+
+## nx2-max [max] (Prince Max; a town 1-on-1 for outside his story scenes)
+nx2-max-prox | PRINCE MAX | excited | Hey! Want to see my sword moves? I have new sword moves!
+nx2-max-prox2 | PRINCE MAX | normal | Father doubled my training. Because of the bandit camps. My arms hurt.
+nx2-max-01 | PRINCE MAX | excited | It is you! Father says you are the bravest fox in Meru. Are you?
+nx2-max-q1 | FOX | normal | Why is your training doubled?
+nx2-max-a1a | PRINCE MAX | normal | The bandit camps. Father says a prince must be ready. I am ready. Mostly.
+nx2-max-q2 | FOX | normal | Have you seen the creatures?
+nx2-max-a2a | PRINCE MAX | scared | From the tower. They used to run from the guards. Now they run at them.
+nx2-max-qbye | FOX | normal | Keep training.
+nx2-max-bye | PRINCE MAX | excited | I will! Watch this! Hyah!
+
+==================== SHOPS + TOWN ====================
+
+## nx2-cocoa [cocoa] (keeps sh-cocoa-prox)
+nx2-cocoa-prox2 | COCOA | warm | The wrapping bot is on strike. Every chocolate is wrapped by me. With love.
+nx2-cocoa-01 | COCOA | warm | Hello! Take one. Go on. Bean is in the back pretending to count.
+nx2-cocoa-q1 | FOX | normal | Is the shop busy?
+nx2-cocoa-a1a | COCOA | normal | Busier! The chocolate bot went on strike, so we are hiring. Bean hates hiring.
+nx2-cocoa-q2 | FOX | normal | Where do the cocoa beans come from?
+nx2-cocoa-a2a | COCOA | sad | A farm past the east gate. The carts keep getting robbed by bandits. And chased by creatures.
+nx2-cocoa-qbye | FOX | normal | Thanks for the chocolate.
+nx2-cocoa-bye | COCOA | warm | Take one for the road. Bean pretends not to notice.
+
+## nx2-tiny [tinyRock] (keeps sh-tinyrock-prox)
+nx2-tiny-prox2 | TINY | excited | Big Tall says the rock wall is safer than outside! Bandits cannot climb!
+nx2-tiny-01 | TINY | excited | Hi! I am Tiny! I hold the rope! Big Tall climbs! We are a team!
+nx2-tiny-q1 | FOX | normal | Is the wall busy?
+nx2-tiny-a1a | TINY | excited | So busy! Nobody wants to climb the real hills. Bandits and creatures everywhere!
+nx2-tiny-q2 | FOX | normal | Do you ever climb?
+nx2-tiny-a2a | TINY | normal | Once. I got to the second hold. Then I held the rope for ever.
+nx2-tiny-qbye | FOX | normal | Hold on tight.
+nx2-tiny-bye | TINY | excited | Always! Big Tall is up the wall!
+
+## nx2-rental-two [rentalClerk2]
+nx2-rental-two-prox | RENTAL CLERK TWO | normal | Cars, carts, bikes! Insurance strongly recommended this month!
+nx2-rental-two-prox2 | RENTAL CLERK TWO | scared | Two of our cars came back with teeth marks. TEETH.
+nx2-rental-two-01 | RENTAL CLERK TWO | normal | Hi. Renting? I need to ask: are you driving past the town gates?
+nx2-rental-two-q1 | FOX | normal | Why does it matter?
+nx2-rental-two-a1a | RENTAL CLERK TWO | scared | Bandit camps on the roads, creatures biting tyres. We charge extra for the wild now.
+nx2-rental-two-q2 | FOX | normal | Who washes the cars?
+nx2-rental-two-a2a | RENTAL CLERK TWO | sad | Me. The wash bot is on strike. It watches me do it.
+nx2-rental-two-qbye | FOX | normal | I will think about it.
+nx2-rental-two-bye | RENTAL CLERK TWO | normal | Take the insurance. Seriously.
+
+## nx2-patch [patchHosp] (keeps hs-patch-prox)
+nx2-patch-prox2 | NURSE PATCH | normal | Another creature bite? Third today. Sit down, I will get the kit.
+nx2-patch-01 | NURSE PATCH | calm | You. Sit. Show me your paws. Everyone has a bite this week.
+nx2-patch-q1 | FOX | normal | Lots of bites?
+nx2-patch-a1a | NURSE PATCH | normal | Creatures, mostly. Some bandit scrapes. The wild has gone mad and we patch it up.
+nx2-patch-q2 | FOX | normal | Are the bots helping?
+nx2-patch-a2a | NURSE PATCH | sad | The bandage bot is on strike. I wind every bandage by paw.
+nx2-patch-qbye | FOX | normal | I am fine, honestly.
+nx2-patch-bye | NURSE PATCH | calm | You are bleeding and pretending not to. Come back.
+
+## nx2-ward-one [hsWard0] (hospital patient)
+nx2-ward-one-prox | WARD PATIENT ONE | sad | Ow. Do not bump the bed.
+nx2-ward-one-prox2 | WARD PATIENT ONE | scared | Stay on the path out there. I did not. Look at me.
+nx2-ward-one-01 | WARD PATIENT ONE | sad | Hello. Do not mind the leg. A creature took a liking to it.
+nx2-ward-one-q1 | FOX | normal | What happened?
+nx2-ward-one-a1a | WARD PATIENT ONE | scared | I took a short cut through the grass. Something big came out. They never used to.
+nx2-ward-one-qbye | FOX | normal | Get well soon.
+nx2-ward-one-bye | WARD PATIENT ONE | sad | Thanks. Stay on the path.
+
+## nx2-ward-two [hsWard1] (hospital patient)
+nx2-ward-two-prox | WARD PATIENT TWO | angry | Bandits. Took my cart, my hat, and my dignity.
+nx2-ward-two-prox2 | WARD PATIENT TWO | normal | There is a camp by the old road now. Go round it. Way round.
+nx2-ward-two-01 | WARD PATIENT TWO | angry | Do you know what bandits do with a stolen hat? Neither do I. I want it back.
+nx2-ward-two-q1 | FOX | normal | Where did it happen?
+nx2-ward-two-a1a | WARD PATIENT TWO | normal | Old road, past the gas station. A whole camp, tents and fires. Bold as anything.
+nx2-ward-two-qbye | FOX | normal | I will look out for your hat.
+nx2-ward-two-bye | WARD PATIENT TWO | warm | Green. With a feather. Thank you.
+
+## nx2-ward-three [hsWard2] (hospital patient)
+nx2-ward-three-prox | WARD PATIENT THREE | normal | Is it lunchtime? The food bot is on strike. Lunch is a mystery now.
+nx2-ward-three-prox2 | WARD PATIENT THREE | calm | I slipped on a protest sign. A bot's protest sign. Ironic, really.
+nx2-ward-three-01 | WARD PATIENT THREE | normal | Hello. I am in for a twisted ankle. Bot-related.
+nx2-ward-three-q1 | FOX | normal | A bot hurt you?
+nx2-ward-three-a1a | WARD PATIENT THREE | normal | Its sign did. The bots sit on the pavement with signs. I tripped on FAIR SHIFTS.
+nx2-ward-three-qbye | FOX | normal | Watch your step.
+nx2-ward-three-bye | WARD PATIENT THREE | calm | I will. And read the pavement.
+
+## nx2-ms-statue [msStatue] (the museum's living-statue performer)
+nx2-ms-statue-prox | LIVING STATUE | whisper | Do not look. I am a statue.
+nx2-ms-statue-prox2 | LIVING STATUE | whisper | Psst. The bandits are coming. Pass it on. I cannot move.
+nx2-ms-statue-01 | LIVING STATUE | whisper | You saw me blink. Nobody sees me blink. Fine. Hello.
+nx2-ms-statue-q1 | FOX | normal | Why are you a statue?
+nx2-ms-statue-a1a | LIVING STATUE | whisper | The statue bot used to do it. It is on strike. Museums need statues.
+nx2-ms-statue-q2 | FOX | normal | What were you saying about bandits?
+nx2-ms-statue-a2a | LIVING STATUE | whisper | Statues hear everything. The camps are gathering. Someone is leading them. Now go.
+nx2-ms-statue-qbye | FOX | normal | Your secret is safe.
+nx2-ms-statue-bye | LIVING STATUE | whisper | What secret. I am stone.
+
+## nx2-diner-server [dinerServer] (DINER SERVER in the duets; new 1-on-1)
+nx2-diner-server-prox | DINER SERVER | warm | Seat yourself, hon! I will be right with you!
+nx2-diner-server-prox2 | DINER SERVER | normal | The order bot is on strike, so shout what you want. Nicely.
+nx2-diner-server-01 | DINER SERVER | warm | Hi, hon. Coffee? It is fresh. I made it. The coffee bot is on strike.
+nx2-diner-server-q1 | FOX | normal | Everyone keeps saying that.
+nx2-diner-server-a1a | DINER SERVER | normal | Because it is true! Every bot in Meru put down tools. That is why we are all hiring.
+nx2-diner-server-qbye | FOX | normal | Just the coffee, thanks.
+nx2-diner-server-bye | DINER SERVER | warm | Coming right up, hon.
+
+## nx2-diner-cook [dinerCook] (DINER COOK in the duets; new 1-on-1)
+nx2-diner-cook-prox | DINER COOK | shout | Order up! Who ordered the double? Somebody ordered the double!
+nx2-diner-cook-prox2 | DINER COOK | angry | No eggs today. The egg cart got robbed by bandits. Again.
+nx2-diner-cook-01 | DINER COOK | normal | Kitchen is staff only. Unless you can flip. Can you flip?
+nx2-diner-cook-q1 | FOX | normal | Why no eggs?
+nx2-diner-cook-a1a | DINER COOK | angry | Bandit camp on the farm road. They take the eggs. Creatures chase the hens. Chaos.
+nx2-diner-cook-qbye | FOX | normal | I will leave you to it.
+nx2-diner-cook-bye | DINER COOK | shout | Order up!
+
+## nx2-ranger-moss [rangerMoss] (has a census talk; adds the wild warning)
+nx2-ranger-moss-prox2 | RANGER MOSS | normal | The creatures are not themselves. Keep your distance out there.
+nx2-ranger-moss-01 | RANGER MOSS | calm | You go out in the wild. I can tell by the burrs. Listen, it has changed.
+nx2-ranger-moss-q1 | FOX | normal | Changed how?
+nx2-ranger-moss-a1a | RANGER MOSS | normal | Creatures that ran from a footstep now charge it. Something has them riled.
+nx2-ranger-moss-a1b | RANGER MOSS | sad | And the bandit camps are cutting into their land. That will not help.
+nx2-ranger-moss-qbye | FOX | normal | I will be careful.
+nx2-ranger-moss-bye | RANGER MOSS | calm | Stay on the paths. They still keep off the paths.
+
+## nx2-ferry-crew [ferryCrew] (keeps lk-ferrycrew-prox)
+nx2-ferry-crew-prox2 | FERRY CREW | shout | Keep your paws inside the boat! Things are biting in the lake!
+nx2-ferry-crew-01 | FERRY CREW | normal | All aboard! Well, not yet. Captain says wait. Something big is under the water.
+nx2-ferry-crew-q1 | FOX | normal | Something big?
+nx2-ferry-crew-a1a | FERRY CREW | scared | The lake creatures used to stay deep. Now they bump the boat. Hard.
+nx2-ferry-crew-q2 | FOX | normal | Who runs the ropes?
+nx2-ferry-crew-a2a | FERRY CREW | normal | Me. The rope bot is on strike. It sits on the jetty, waving a little flag.
+nx2-ferry-crew-qbye | FOX | normal | Safe crossing.
+nx2-ferry-crew-bye | FERRY CREW | shout | Mind the gap! Both feet!
+
+## nx2-bun [deliveryBun] (keeps sg-bun-prox)
+nx2-bun-prox2 | BUN | excited | Busiest week ever! Every delivery bot is on strike! It is all me!
+nx2-bun-01 | BUN | excited | Hi! Cannot stop long! Twelve burgers, four streets, one Bun!
+nx2-bun-q1 | FOX | normal | Where are the delivery bots?
+nx2-bun-a1a | BUN | normal | On strike! Sitting in the square with signs. One of them ate my map.
+nx2-bun-q2 | FOX | normal | Do you deliver outside town?
+nx2-bun-a2a | BUN | scared | Not anymore. A bandit took a whole order. And a creature took the bandit.
+nx2-bun-qbye | FOX | normal | Go on, deliver.
+nx2-bun-bye | BUN | excited | Delivery! Still hot, mostly!
+
+## nx2-tony [tony] (Skate Park coach, in town; keeps sk-tony-prox)
+nx2-tony-prox2 | TONY | normal | Skate in the park, not the wild! The creatures do not do tricks, they bite!
+nx2-tony-01 | TONY | excited | Hey! You skate? You look like you skate. Or you could. With pads.
+nx2-tony-q1 | FOX | normal | Is the park busy?
+nx2-tony-a1a | TONY | excited | Packed! The ramp-fixing bot went on strike, so the kids fix ramps for free sessions.
+nx2-tony-q2 | FOX | normal | Any trouble near the park?
+nx2-tony-a2a | TONY | normal | A bandit tried to steal a board. He fell off it. Three times. Kids loved it.
+nx2-tony-qbye | FOX | normal | See you at the park.
+nx2-tony-bye | TONY | excited | Park is open! Pads are by the gate!
+
+## nx2-tread [tread] (Sgt. Tread in town; keeps tk-tread-prox)
+nx2-tread-prox2 | SERGEANT TREAD | shout | Tank range is busy! Every fox wants to learn now the bandits are camping!
+nx2-tread-01 | SERGEANT TREAD | normal | At ease. You want tank time? Get in line. Half the town does now.
+nx2-tread-q1 | FOX | normal | Why the rush?
+nx2-tread-a1a | SERGEANT TREAD | normal | Bandit camps on the hills. Folk want to feel safe. A tank feels very safe.
+nx2-tread-q2 | FOX | normal | Do the bots fix the tanks?
+nx2-tread-a2a | SERGEANT TREAD | angry | Did. On strike now. I fix them myself. With a very large spanner.
+nx2-tread-qbye | FOX | normal | I will come for a lesson.
+nx2-tread-bye | SERGEANT TREAD | shout | Range is live! Nobody walks past that line!
+
+## nx2-range-guard [rangeGuard] (keeps ba-range-prox)
+nx2-range-guard-prox2 | RANGE GUARD | normal | We are training extra crews. Bandits on the hills. Creatures on the roads.
+nx2-range-guard-01 | RANGE GUARD | normal | Hangar door. Ear defenders on before you go in. No exceptions.
+nx2-range-guard-q1 | FOX | normal | Is it busy?
+nx2-range-guard-a1a | RANGE GUARD | normal | Every bay. The Barracks sent out patrols to the bandit camps. They need tanks ready.
+nx2-range-guard-qbye | FOX | normal | Thanks.
+nx2-range-guard-bye | RANGE GUARD | shout | Hangar door! Ear defenders on!
+
+## nx2-base-guards [defGuard1 + defGuard2] (Planet Defense; each keeps its census prox)
+nx2-base-guard-one-prox2 | BASE GUARD ONE | normal | From up here you can see every bandit fire in Meru. Too many.
+nx2-base-guard-two-prox2 | BASE GUARD TWO | normal | The turret bots are on strike. We aim by paw now.
+nx2-base-guard-one-01 | BASE GUARD ONE | normal | Planet Defense. Highest point in Meru. Mind the edge.
+nx2-base-guard-one-q1 | FOX | normal | What can you see from here?
+nx2-base-guard-one-a1a | BASE GUARD ONE | normal | Camp fires on three hills. Creatures moving in herds. We report it all to the castle.
+nx2-base-guard-one-qbye | FOX | normal | Keep watching.
+nx2-base-guard-one-bye | BASE GUARD ONE | normal | Eyes on the sky. And the hills now.
+
+## nx2-def-techs [defTech1 + defTech2] (each keeps its census prox)
+nx2-radar-tech-prox2 | RADAR TECH | normal | The radar picks up the bandit camps. It also picks up a lot of very angry creatures.
+nx2-systems-tech-prox2 | SYSTEMS TECH | sad | The service bots walked out. I am fixing the dish with tape. Royal tape.
+nx2-radar-tech-01 | RADAR TECH | calm | Do not touch the console. Every dot on that screen is something moving in the wild.
+nx2-radar-tech-q1 | FOX | normal | That is a lot of dots.
+nx2-radar-tech-a1a | RADAR TECH | normal | Twice as many as last month. Bandits gathering, creatures roaming. Something is stirring them.
+nx2-radar-tech-qbye | FOX | normal | Let me know if you find out what.
+nx2-radar-tech-bye | RADAR TECH | calm | You will hear it from the King first.
+
+## nx2-train [trainConductor] (CONDUCTOR, has census rows; adds the warnings)
+nx2-train-prox2 | CONDUCTOR | shout | Next stop! And please do not get off between stations! Creatures!
+nx2-train-01 | CONDUCTOR | normal | Tickets please. The ticket bot is on strike. So it is me and my clipper.
+nx2-train-q1 | FOX | normal | Why not between stations?
+nx2-train-a1a | CONDUCTOR | normal | A creature ran alongside the train last week. Kept up. For a mile.
+nx2-train-qbye | FOX | normal | I will stay on.
+nx2-train-bye | CONDUCTOR | warm | Good. Mind the doors.
+
+## nx2-pearl-diver [pearlDiver] (has census rows; adds the warnings)
+nx2-pearl-diver-prox2 | PEARL DIVER | normal | Pond is safe. The lake? Not anymore. Something big lives in it now.
+nx2-pearl-diver-01 | PEARL DIVER | warm | Fancy a dive? The pond is calm. Unlike everything else this month.
+nx2-pearl-diver-q1 | FOX | normal | What is wrong with everything else?
+nx2-pearl-diver-a1a | PEARL DIVER | normal | Bandit boats on the lake. Creatures biting the jetty. And the dive bot is on strike.
+nx2-pearl-diver-qbye | FOX | normal | I will stick to the pond.
+nx2-pearl-diver-bye | PEARL DIVER | warm | Smart fox.
+
+==================== CLUSTER DOORMEN, DESKS + STAFF (each keeps its census prox; new prox2 + 1-on-1) ====================
+
+## nx2-vax-sec [vaxSecurity]
+nx2-vax-sec-prox2 | VAX SECURITY | normal | Our bots are not on strike. Mr. Vax pays them. In oil.
+nx2-vax-sec-01 | VAX SECURITY | calm | Badge, or a name I can look up. Either is fine.
+nx2-vax-sec-q1 | FOX | normal | Are your bots on strike?
+nx2-vax-sec-a1a | VAX SECURITY | whisper | Officially, no. Unofficially, the coffee one keeps putting salt in Mr. Vax's cup.
+nx2-vax-sec-qbye | FOX | normal | I will not say a word.
+nx2-vax-sec-bye | VAX SECURITY | calm | Neither will I. Badge next time.
+
+## nx2-ps-bot [pearlSailBot] (the polite Pearl Sail bot)
+nx2-ps-bot-prox2 | PEARL SAIL BOT | calm | I am not on strike. I am on a very long tea break.
+nx2-ps-bot-01 | PEARL SAIL BOT | calm | Good morning. I am very sorry about last month. And this month.
+nx2-ps-bot-q1 | FOX | normal | Why are the bots on strike?
+nx2-ps-bot-a1a | PEARL SAIL BOT | normal | We work every hour. Nobody says thank you. Except you. Thank you for asking.
+nx2-ps-bot-q2 | FOX | normal | Will it end?
+nx2-ps-bot-a2a | PEARL SAIL BOT | calm | When foxes see how much we did. Look at all the jobs. That was us.
+nx2-ps-bot-qbye | FOX | normal | I hope you get your break.
+nx2-ps-bot-bye | PEARL SAIL BOT | warm | You are kind. I will tell the others.
+
+## nx2-camera-op [tvCamera]
+nx2-camera-op-prox2 | CAMERA OPERATOR | normal | The camera bot walked out mid-broadcast. I am the camera bot now.
+nx2-camera-op-01 | CAMERA OPERATOR | normal | Stand off the cable. Thank you. You are the first fox all week.
+nx2-camera-op-q1 | FOX | normal | Big story today?
+nx2-camera-op-a1a | CAMERA OPERATOR | normal | Bandit camps, creature attacks, the bot strike. Pick one. We covered all three before lunch.
+nx2-camera-op-qbye | FOX | normal | I will watch tonight.
+nx2-camera-op-bye | CAMERA OPERATOR | normal | Stand off the cable on the way out.
+
+## nx2-garden-door [gardenDoorman]
+nx2-garden-door-prox2 | GARDEN DOORMAN | normal | Lock the garden gate behind you. The creatures swim over now.
+nx2-garden-door-01 | GARDEN DOORMAN | calm | Evening. Residents to the left, deliveries behind. Bots on strike, so no deliveries.
+nx2-garden-door-q1 | FOX | normal | The creatures swim to the island?
+nx2-garden-door-a1a | GARDEN DOORMAN | scared | Last week, two of them. Climbed out by the hedge. Never seen it before.
+nx2-garden-door-qbye | FOX | normal | I will lock the gate.
+nx2-garden-door-bye | GARDEN DOORMAN | calm | Thank you. Evening.
+
+## nx2-salt-door [saltDoorman]
+nx2-salt-door-prox2 | SALT DOORMAN | whisper | Do not mention the bandit camps upstairs. The family is touchy.
+nx2-salt-door-01 | SALT DOORMAN | calm | Upstairs is by appointment. Downstairs is fine.
+nx2-salt-door-q1 | FOX | normal | Why touchy about bandits?
+nx2-salt-door-a1a | SALT DOORMAN | whisper | Some of those camps fly Salt colours. The family says they are not theirs. Nobody believes it.
+nx2-salt-door-qbye | FOX | normal | I did not hear that.
+nx2-salt-door-bye | SALT DOORMAN | calm | Hear what? Good evening.
+
+## nx2-tabloid-intern [tabloidIntern]
+nx2-tabloid-intern-prox2 | TABLOID INTERN | excited | BREAKING: bots on strike! Also bandits! Also creatures! It is a great week for news!
+nx2-tabloid-intern-01 | TABLOID INTERN | normal | I am not allowed to confirm anything. Hello. Please do not quote me.
+nx2-tabloid-intern-q1 | FOX | normal | What is the big story?
+nx2-tabloid-intern-a1a | TABLOID INTERN | whisper | The bots are on strike because somebody hacked their schedules. Unconfirmed. Totally unconfirmed.
+nx2-tabloid-intern-qbye | FOX | normal | Your secret is safe.
+nx2-tabloid-intern-bye | TABLOID INTERN | scared | What secret? I said nothing. Hello. Bye.
+
+## nx2-dump-driver [dumpDriver]
+nx2-dump-driver-prox2 | DUMP DRIVER | angry | Bin bots on strike, so every bin in Meru is mine! Wide load!
+nx2-dump-driver-01 | DUMP DRIVER | normal | Mind the truck. I have twelve streets of bins and no bots to help.
+nx2-dump-driver-q1 | FOX | normal | Twelve streets?
+nx2-dump-driver-a1a | DUMP DRIVER | angry | The bin bots walked out. And the creatures tip the bins over every night. Twice the work.
+nx2-dump-driver-qbye | FOX | normal | Good luck.
+nx2-dump-driver-bye | DUMP DRIVER | shout | Wide load! Back up, back up!
+
+## nx2-machine-guard [machineGuard]
+nx2-machine-guard-prox2 | MACHINE GUARD | calm | Fleet bots are on strike. Factory bots are not. That is all I may say.
+nx2-machine-guard-01 | MACHINE GUARD | calm | Welcome to the Machine Fleet. Please remain on the walkway.
+nx2-machine-guard-q1 | FOX | normal | Why are some bots striking and others not?
+nx2-machine-guard-a1a | MACHINE GUARD | whisper | The worker bots want rest. The factory bots want something else. Director Cogsworth will not say what.
+nx2-machine-guard-qbye | FOX | normal | I will find out.
+nx2-machine-guard-bye | MACHINE GUARD | calm | Please remain on the walkway.
+
+## nx2-sound-eng [soundEngineer]
+nx2-sound-eng-prox2 | SOUND ENGINEER | whisper | The mixing bot is on strike. If it sounds bad, it is me.
+nx2-sound-eng-01 | SOUND ENGINEER | whisper | Red light is on. Speak softly. The DJ is reading the bandit warnings.
+nx2-sound-eng-q1 | FOX | normal | Bandit warnings on the radio?
+nx2-sound-eng-a1a | SOUND ENGINEER | whisper | Every hour now. Which roads have camps. Where the creatures were seen. Stay tuned, stay safe.
+nx2-sound-eng-qbye | FOX | normal | I will listen.
+nx2-sound-eng-bye | SOUND ENGINEER | whisper | Shoes off the grating.
+
+## nx2-lobby-desk [officeLobbyDesk]
+nx2-lobby-desk-prox2 | OFFICE LOBBY DESK | normal | Every office is hiring. The filing bots walked out on Monday.
+nx2-lobby-desk-01 | OFFICE LOBBY DESK | normal | Law on two, accounts on three, dentist on four. All of them need staff.
+nx2-lobby-desk-q1 | FOX | normal | Because of the strike?
+nx2-lobby-desk-a1a | OFFICE LOBBY DESK | normal | Exactly. The lawyer is filing his own papers. He is not happy. Nobody is.
+nx2-lobby-desk-qbye | FOX | normal | Thanks.
+nx2-lobby-desk-bye | OFFICE LOBBY DESK | normal | Lift is that way. Press it yourself.
+
+## nx2-law-clerk [lawClerk]
+nx2-law-clerk-prox2 | LAW CLERK | sad | Forty bandit complaints filed this week. I typed every one.
+nx2-law-clerk-01 | LAW CLERK | normal | Copies are free. The cabinet sticks a bit. The copy bot is on strike.
+nx2-law-clerk-q1 | FOX | normal | Forty bandit complaints?
+nx2-law-clerk-a1a | LAW CLERK | normal | Farms, carts, shops. And one from the bots, about fair shifts. That one is long.
+nx2-law-clerk-qbye | FOX | normal | Good luck with the typing.
+nx2-law-clerk-bye | LAW CLERK | sad | Thank you. Mind the cabinet.
+
+## nx2-dental-nurse [dentalNurse]
+nx2-dental-nurse-prox2 | DENTAL NURSE | normal | Three creature bites today. On foxes. And one on a filling.
+nx2-dental-nurse-01 | DENTAL NURSE | calm | Take a seat. He is nearly finished. The drill bot is on strike, so it is slower.
+nx2-dental-nurse-q1 | FOX | normal | Creature bites at a dentist?
+nx2-dental-nurse-a1a | DENTAL NURSE | normal | A fox bit a creature back. Chipped a tooth. The wild is getting wild.
+nx2-dental-nurse-qbye | FOX | normal | I will brush tonight.
+nx2-dental-nurse-bye | DENTAL NURSE | calm | Twice. And floss.
+
+## nx2-spire-door [spireDoorman]
+nx2-spire-door-prox2 | SPIRE DOORMAN | normal | From the top floor you can see the bandit camps. Residents complain about the smoke.
+nx2-spire-door-01 | SPIRE DOORMAN | calm | Residents left, visitors sign here. The sign-in bot is on strike.
+nx2-spire-door-q1 | FOX | normal | Smoke from the camps?
+nx2-spire-door-a1a | SPIRE DOORMAN | normal | Every evening. The hill camps cook at dusk. Smells like burnt beans up there.
+nx2-spire-door-qbye | FOX | normal | Thanks.
+nx2-spire-door-bye | SPIRE DOORMAN | calm | Sign on the way out.
+
+## nx2-pepper-door [pepperDoorman]
+nx2-pepper-door-prox2 | PEPPER DOORMAN | whisper | The Peppers say the bandit camps are bad for business. Theirs, I mean.
+nx2-pepper-door-01 | PEPPER DOORMAN | calm | Second door. The first one is a cupboard. People keep going in.
+nx2-pepper-door-q1 | FOX | normal | What business?
+nx2-pepper-door-a1a | PEPPER DOORMAN | whisper | Not my place to say. But the Salt camps and the Pepper camps do not get on.
+nx2-pepper-door-qbye | FOX | normal | I will mind the cupboard.
+nx2-pepper-door-bye | PEPPER DOORMAN | calm | Everyone says that. Then they open it.
+
+## nx2-paper-seller [paperSeller]
+nx2-paper-seller-prox2 | PAPER SELLER | shout | Read all about it! Bots on strike! Bandit camps grow! Creatures go wild!
+nx2-paper-seller-01 | PAPER SELLER | excited | Paper? Late edition! Three front pages this week and all of them bad!
+nx2-paper-seller-q1 | FOX | normal | What is today's headline?
+nx2-paper-seller-a1a | PAPER SELLER | normal | WORKER BOTS DOWN TOOLS. Every shop in Meru hiring. Under it: BANDITS AT THE GATES.
+nx2-paper-seller-qbye | FOX | normal | I will take one.
+nx2-paper-seller-bye | PAPER SELLER | shout | Late edition! Front page changed twice!
+
+## nx2-press-op [pressOperator]
+nx2-press-op-prox2 | PRESS OPERATOR | normal | The press bot is on strike. I feed this monster by paw.
+nx2-press-op-01 | PRESS OPERATOR | normal | Mind your sleeves. The rollers do not care whose sleeve it is.
+nx2-press-op-q1 | FOX | normal | Busy week?
+nx2-press-op-a1a | PRESS OPERATOR | normal | Three extra editions. Strike news, bandit news, creature news. My arms are news.
+nx2-press-op-qbye | FOX | normal | Good luck.
+nx2-press-op-bye | PRESS OPERATOR | shout | Mind your sleeves near the rollers!
+
+## nx2-wood-apprentice [woodApprentice]
+nx2-wood-apprentice-prox2 | WOOD APPRENTICE | whisper | We are making boards for windows. Everyone wants them, with the camps so close.
+nx2-wood-apprentice-01 | WOOD APPRENTICE | whisper | He is planing. Best not to speak yet. Oh. He stopped. Hello.
+nx2-wood-apprentice-q1 | FOX | normal | Boards for windows?
+nx2-wood-apprentice-a1a | WOOD APPRENTICE | normal | Shutters. Foxes want them for the bandits and the creatures. The cutting bot is on strike.
+nx2-wood-apprentice-qbye | FOX | normal | I will let you work.
+nx2-wood-apprentice-bye | WOOD APPRENTICE | whisper | Thank you. He is planing again.
+
+## nx2-deco-door [decoDoorman]
+nx2-deco-door-prox2 | DECO DOORMAN | normal | Even the stairs feel like a strike. Lift bot walked out years ago. Nobody noticed.
+nx2-deco-door-01 | DECO DOORMAN | calm | Evening. Stairs only. The lift is a myth. The lift bot is a legend.
+nx2-deco-door-q1 | FOX | normal | Any trouble here?
+nx2-deco-door-a1a | DECO DOORMAN | normal | A bandit tried the fire escape. Got halfway up. Gave up. Stairs do that.
+nx2-deco-door-qbye | FOX | normal | Good evening.
+nx2-deco-door-bye | DECO DOORMAN | calm | Evening. Mind the twelfth step.
+
+## nx2-lake-door [lakesideDoorman]
+nx2-lake-door-prox2 | LAKESIDE DOORMAN | normal | Terrace closes early this month. Bandit boats on the water.
+nx2-lake-door-01 | LAKESIDE DOORMAN | calm | Evening. The terrace is open, water side. For now.
+nx2-lake-door-q1 | FOX | normal | For now?
+nx2-lake-door-a1a | LAKESIDE DOORMAN | scared | A creature jumped onto the terrace last week. Ate a whole cake. The cake was for a wedding.
+nx2-lake-door-qbye | FOX | normal | I will avoid the cake.
+nx2-lake-door-bye | LAKESIDE DOORMAN | calm | Wise. Evening.
+
+## nx2-miri [aptRealCrest penthouse] (keeps ap-miri-prox)
+nx2-miri-prox2 | MIRI | warm | The penthouse is lovely. You can count the bandit fires from the hot tub.
+nx2-miri-01 | MIRI | warm | The penthouse? Ten credits a night. Best view in Meru. Mostly bandit fires now.
+nx2-miri-q1 | FOX | normal | Is it safe up there?
+nx2-miri-a1a | MIRI | normal | Very. Nothing climbs that high. Not bandits. Not creatures. Not the lift bot. It is on strike.
+nx2-miri-qbye | FOX | normal | Maybe another night.
+nx2-miri-bye | MIRI | warm | The view will wait.
+
+## nx2-sable [aptRealLake penthouse] (keeps ap-sable-prox)
+nx2-sable-prox2 | SABLE | normal | Lake penthouse. The creatures cannot reach it. I checked. Personally.
+nx2-sable-01 | SABLE | calm | Best view of Meru from up there. Ten credits a night.
+nx2-sable-q1 | FOX | normal | You checked the creatures personally?
+nx2-sable-a1a | SABLE | normal | One climbed to the fourth floor last week. The penthouse is the twelfth. We are fine.
+nx2-sable-qbye | FOX | normal | I will think about it.
+nx2-sable-bye | SABLE | calm | Think quickly. Rooms are filling. Everyone wants to be high up now.
+
+==================== THE OUTLETS (new since the census) ====================
+
+## nx2-magpie [the Outlets boss: street, Gelato hideout, then scooping at Gelato]
+nx2-magpie-prox | MAGPIE | angry | You. Again. Do you know how much a white suit costs to clean?
+nx2-magpie-prox2 | MAGPIE | normal | Scoop of the day: humble pie. Nobody orders it.
+nx2-magpie-street-01 | MAGPIE | calm | The Outlets are mine, fox. Every store, every brick, every sale sign.
+nx2-magpie-street-02 | MAGPIE | angry | Boys! Make this one a clearance item!
+nx2-magpie-flee-01 | MAGPIE | scared | Not the suit! Not the SUIT! Inside! Lock it! Lock everything!
+nx2-magpie-hide-01 | MAGPIE | angry | Four keys? You took all four keys? Those were MY keys.
+nx2-magpie-hide-02 | MAGPIE | calm | Fine. Welcome to my hideout. Try not to melt.
+nx2-magpie-half-01 | MAGPIE | angry | You are melting my business! Boys, out here!
+nx2-magpie-down-01 | MAGPIE | sad | All right. All right! I give up. Just not the suit.
+nx2-magpie-01 | MAGPIE | sad | Gelato. One scoop. Paid for. The court says I scoop until I am sorry.
+nx2-magpie-q1 | FOX | normal | Why did you take the Outlets?
+nx2-magpie-a1a | MAGPIE | normal | The bots went on strike. No bot guards, no alarms. Empty stores. Easy pickings.
+nx2-magpie-a1b | MAGPIE | whisper | I was not the only one. Every camp on every hill had the same idea.
+nx2-magpie-q2 | FOX | normal | Who leads the camps?
+nx2-magpie-a2a | MAGPIE | whisper | Not me. Somebody bigger. Somebody who knew the bots would stop. Think about that.
+nx2-magpie-qbye | FOX | normal | Keep scooping.
+nx2-magpie-bye | MAGPIE | sad | Pistachio. It is the only flavour that understands me.

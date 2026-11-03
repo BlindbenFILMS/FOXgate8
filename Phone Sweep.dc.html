@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<style>html,body{margin:0;background:#111}a{color:#ffd23a}a:hover{color:#fff}</style>
+</helmet>
+<div style="min-height:100vh;background:#111;color:#f3f2f2;font-family:var(--font-body);padding:20px;box-sizing:border-box;display:flex;flex-direction:column;gap:16px" data-screen-label="Phone Sweep">
+  <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:baseline;border-bottom:2px solid #f3f2f2;padding-bottom:12px">
+    <div style="font:900 22px var(--font-heading)">PHONE SWEEP · 390×844 + 844×390</div>
+    <div style="font:700 12px var(--font-body);color:#cfcac4;flex-basis:100%">Loads a target in both phone frames, then lists: buttons under 44 px, text cut off or touching the edge, anything under the bottom strip, sign lines squeezed to fit.</div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px">
+    <sc-for list="{{ targets }}" as="t" hint-placeholder-count="12">
+      <button onClick="{{ t.pick }}" style="min-height:44px;padding:6px 12px;background:{{ t.bg }};color:{{ t.fg }};border:2px solid #f3f2f2;border-radius:0;font:800 12px var(--font-heading);text-align:left;cursor:pointer">{{ t.label }}</button>
+    </sc-for>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+    <button onClick="{{ probeNow }}" style="min-height:44px;padding:6px 14px;background:#ec3013;color:#fff;border:2px solid #ec3013;border-radius:0;font:900 13px var(--font-heading);text-align:left;cursor:pointer">PROBE NOW</button>
+    <button onClick="{{ runAll }}" style="min-height:44px;padding:6px 14px;background:#000;color:#ffd23a;border:2px solid #ffd23a;border-radius:0;font:900 13px var(--font-heading);text-align:left;cursor:pointer">RUN ALL TARGETS</button>
+    <div style="font:700 12px var(--font-body);color:#cfcac4">{{ status }}</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:2px;font:600 12px/1.35 ui-monospace,monospace">
+    <sc-for list="{{ lines }}" as="l" hint-placeholder-count="0">
+      <div style="color:{{ l.col }};overflow-wrap:anywhere">{{ l.text }}</div>
+    </sc-for>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start">
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div style="font:800 12px var(--font-heading);letter-spacing:0.1em;color:#ffd23a">PORTRAIT 390 × 844</div>
+      <div style="width:234px;height:507px;overflow:hidden;border:2px solid #f3f2f2"><iframe id="swp" src="{{ url }}" title="portrait" style="width:390px;height:844px;border:0;display:block;background:#000;transform:scale(0.6);transform-origin:0 0"></iframe></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div style="font:800 12px var(--font-heading);letter-spacing:0.1em;color:#ffd23a">LANDSCAPE 844 × 390</div>
+      <div style="width:506px;height:234px;overflow:hidden;border:2px solid #f3f2f2"><iframe id="swl" src="{{ url }}" title="landscape" style="width:844px;height:390px;border:0;display:block;background:#000;transform:scale(0.6);transform-origin:0 0"></iframe></div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  static TARGETS = [
+    ['Tank Range', 'Tank Range.dc.html?phone=1'], ['Speedboat Bay', 'Speedboat Bay.dc.html?phone=1'], ['Meru Arena', 'Meru Arena.dc.html?phone=1'], ['Space Dock', 'Meru Spacedock.dc.html?phone=1'],
+    ...['bankin', 'policein', 'casinoin', 'lanesin', 'barracksin', 'ruinsin', 'motel', 'rock', 'golf', 'post', 'museum', 'hospital', 'armoryin', 'crestin', 'fortunein', 'naturein', 'chiroin'].map(s => [s, 'Meru 2 Blockout.dc.html?walk=1&phone=1&spawn=' + s])
+  ];
+  state = { i: 0, lines: [], status: 'Pick a target. Probe runs 12 s after load.', all: false };
+  componentDidMount() { const run = new URLSearchParams(location.search).get('run'); if (run != null) { window.__sweep = this; this.runFrom(+run || 0); return; } const q = new URLSearchParams(location.search).get('t'); if (q) { const i = Component.TARGETS.findIndex(t => t[0] === q); if (i >= 0) this.setState({ i }); } this.arm(); window.__sweep = this; }
+  componentWillUnmount() { clearTimeout(this.tm); }
+  arm(ms) { if (ms == null) ms = /Blockout/.test(Component.TARGETS[this.state.i][1]) ? 45000 : 14000; clearTimeout(this.tm); this.tm = setTimeout(() => this.probe(), ms); }
+  pick(i) { this.setState({ i, status: 'Loading ' + Component.TARGETS[i][0] + '…' }, () => this.arm()); }
+  runFrom(i) { this.setState({ all: true, i, lines: [], status: 'RUN ALL…' }, () => this.arm()); }
+  probeFrame(id) {
+    const f = document.getElementById(id); if (!f) return ['no frame']; let W, d; try { W = f.contentWindow; d = f.contentDocument; } catch (e) { return ['cannot read frame']; } if (!d || !d.body) return ['frame not loaded'];
+    const out = [], vw = W.innerWidth, vh = W.innerHeight, seen = new Set();
+    const vis = b => { let e = b; while (e && e.nodeType === 1) { const cs = W.getComputedStyle(e); if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity < 0.05) return false; e = e.parentElement; } return true; };
+    let strip = null; for (const b of d.querySelectorAll('body *')) { const t = (b.textContent || '').trim(); if (b.children.length < 6 && /FOX SWAP/.test(t) && vis(b)) { const r = b.getBoundingClientRect(); if (r.bottom > vh - 2 && r.height < 90) { strip = { top: r.top }; break; } } }
+    const stripTop = strip ? Math.min(strip.top, vh - 46) : null;
+    for (const b of d.querySelectorAll('body *')) {
+      if (b.tagName === 'CANVAS' || b.tagName === 'SCRIPT' || b.tagName === 'STYLE') continue; const r = b.getBoundingClientRect(); if (r.width < 1 || r.height < 1 || r.bottom < 0 || r.top > vh || r.right < 0 || r.left > vw) continue;
+      const cs = W.getComputedStyle(b), btn = b.tagName === 'BUTTON' || b.getAttribute('role') === 'button' || (cs.cursor === 'pointer' && !(b.parentElement && W.getComputedStyle(b.parentElement).cursor === 'pointer'));
+      const ownText = [...b.childNodes].some(n => n.nodeType === 3 && n.textContent.trim()); if (!btn && !ownText) continue; if (!vis(b)) continue;
+      const label = ((b.innerText || b.getAttribute('aria-label') || b.tagName) + '').replace(/\s+/g, ' ').trim().slice(0, 34), key = label + '|' + Math.round(r.left) + ',' + Math.round(r.top); if (seen.has(key)) continue; seen.add(key);
+      if (btn && (r.width < 44 || r.height < 44)) out.push(['SMALL', label + ' ' + Math.round(r.width) + '×' + Math.round(r.height)]);
+      const ov = cs.overflow + cs.overflowX + cs.overflowY; if (ownText && /hidden|clip/.test(ov) && (b.scrollWidth > b.clientWidth + 2 || b.scrollHeight > b.clientHeight + 2)) out.push(['CUT', label + ' (' + b.scrollWidth + '/' + b.clientWidth + ' w, ' + b.scrollHeight + '/' + b.clientHeight + ' h)']);
+      if (ownText && cs.textOverflow === 'ellipsis' && b.scrollWidth > b.clientWidth + 1) out.push(['CUT', label + ' (…)']);
+      if (ownText && (r.right > vw + 1 || r.left < -1 || r.bottom > vh + 1)) out.push(['OFF', label + ' at ' + Math.round(r.left) + ',' + Math.round(r.top) + ' ' + Math.round(r.width) + '×' + Math.round(r.height)]);
+      else if (ownText && (r.left < 4 || r.right > vw - 4)) out.push(['EDGE', label]);
+      if (stripTop != null && btn && r.bottom > stripTop + 2 && r.top < stripTop - 2 && !/FOX SWAP|ITEM|PIN AN/.test(label)) out.push(['STRIP', label]);
+    }
+    const tf = W.__textFit; if (tf && tf.n) out.push(['SIGN', tf.n + ' sign lines squeezed to fit · last: ' + tf.last]);
+    return out;
+  }
+  probe() { const T = Component.TARGETS[this.state.i], col = { SMALL: '#ff7ad9', CUT: '#ff5a3c', OFF: '#ff5a3c', EDGE: '#ffd23a', STRIP: '#ff5a3c', SIGN: '#7dd3fc' }, lines = [...this.state.all ? this.state.lines : [], { text: '■ ' + T[0], col: '#f3f2f2' }];
+    for (const [id, nm] of [['swp', 'PORTRAIT'], ['swl', 'LANDSCAPE']]) { const r = this.probeFrame(id); lines.push({ text: '  ' + nm + ': ' + (r.length ? r.length + ' issue(s)' : 'clean'), col: r.length ? '#ffd23a' : '#22c55e' }); r.slice(0, 40).forEach(x => lines.push(typeof x === 'string' ? { text: '    ' + x, col: '#cfcac4' } : { text: '    ' + x[0] + ' · ' + x[1], col: col[x[0]] || '#cfcac4' })); }
+    this.setState({ lines, status: 'Probed ' + T[0] + ' at ' + new Date().toLocaleTimeString() });
+    if (this.state.all) { if (this.state.i < Component.TARGETS.length - 1) { this.setState({ i: this.state.i + 1 }, () => this.arm()); } else this.setState({ all: false, status: 'RUN ALL finished' }); } }
+  renderVals() { const i = this.state.i; return {
+    url: Component.TARGETS[i][1], status: this.state.status, lines: this.state.lines,
+    targets: Component.TARGETS.map((t, k) => ({ label: t[0], bg: k === i ? '#f3f2f2' : '#000', fg: k === i ? '#000' : '#f3f2f2', pick: () => this.pick(k) })),
+    probeNow: () => this.probe(), runAll: () => { this.setState({ all: true, i: 0, lines: [], status: 'RUN ALL…' }); this.arm(); } }; }
+}
+</script>
+</body>
+</html>

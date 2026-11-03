@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;min-height:100%;background:#201e1d}a{color:var(--color-accent-300)}a:hover{color:var(--color-accent)}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}svg,canvas{touch-action:none;user-select:none;-webkit-user-select:none}input[type=color]{-webkit-appearance:none;appearance:none;border:2px solid #f3f2f2;padding:0;width:44px;height:32px;background:none;cursor:pointer}input[type=color]::-webkit-color-swatch-wrapper{padding:0}input[type=color]::-webkit-color-swatch{border:0}</style>
+</helmet>
+<div style="min-height:100dvh;background:#201e1d;font-family:var(--font-body);color:#f3f2f2;display:flex;flex-direction:column" data-screen-label="Casino Workshop">
+  <div style="display:flex;align-items:stretch;border-bottom:2px solid #f3f2f2;flex-wrap:wrap">
+    <div style="padding:10px 14px;display:flex;flex-direction:column;gap:2px;border-right:2px solid #f3f2f2;flex:1;min-width:180px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-300)">Meru Casino</div>
+      <div style="font-family:var(--font-heading);font-size:20px;font-weight:800;line-height:1.05">Casino Workshop</div>
+    </div>
+    <div style="display:flex;align-items:stretch;border-right:2px solid #f3f2f2">
+      <button onClick="{{ vPlan }}" style="min-height:44px;border:0;border-right:2px solid #f3f2f2;background:{{ bgPlan }};color:{{ inkPlan }};font:800 13px var(--font-body);letter-spacing:0.06em;text-align:left;padding:0 14px;cursor:pointer">PLAN</button>
+      <button onClick="{{ v3d }}" style="min-height:44px;border:0;border-right:2px solid #f3f2f2;background:{{ bg3d }};color:{{ ink3d }};font:800 13px var(--font-body);letter-spacing:0.06em;text-align:left;padding:0 14px;cursor:pointer">3D</button>
+      <button onClick="{{ vBoth }}" style="min-height:44px;border:0;background:{{ bgBoth }};color:{{ inkBoth }};font:800 13px var(--font-body);letter-spacing:0.06em;text-align:left;padding:0 14px;cursor:pointer">BOTH</button>
+    </div>
+    <a href="Meru 2 Blockout.dc.html?walk=1" style="display:flex;align-items:center;padding:0 16px;min-height:44px;font-weight:800;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;color:#f3f2f2;white-space:nowrap">Open Meru 2 →</a>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;flex:1;min-height:0">
+    <sc-if value="{{ showPlan }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1 1 320px;min-width:0;display:flex;align-items:flex-start;justify-content:center;padding:10px;border-bottom:2px solid #f3f2f2;box-sizing:border-box">
+        <svg ref="{{ svgRef }}" viewBox="-151 -33 47 66" style="width:100%;height:auto;max-height:calc(100dvh - 90px);background:#2a1424;display:block" onPointerMove="{{ onMove }}" onPointerUp="{{ onUp }}" onPointerCancel="{{ onUp }}" onPointerLeave="{{ onUp }}">
+          <rect x="-150" y="-32" width="45" height="64" fill="{{ carpetFill }}" stroke="#f3f2f2" stroke-width="0.2"></rect>
+          <rect x="-105.4" y="-3.4" width="0.8" height="6.8" fill="#ec3013"></rect>
+          <text x="-104.2" y="0.5" style="fill:#ec3013;font-size:1.2px;font-weight:800;font-family:Archivo, sans-serif;pointer-events:none">DOOR</text>
+          <sc-for list="{{ statics }}" as="s" hint-placeholder-count="0">
+            <rect x="{{ s.x }}" y="{{ s.y }}" width="{{ s.w }}" height="{{ s.h }}" fill="{{ s.fill }}" stroke="none"></rect>
+          </sc-for>
+          <sc-for list="{{ items }}" as="it" hint-placeholder-count="0">
+            <g transform="{{ it.tf }}" onPointerDown="{{ it.down }}" style="cursor:grab">
+              <rect x="{{ it.rx }}" y="{{ it.ry }}" width="{{ it.rw }}" height="{{ it.rh }}" fill="{{ it.fill }}" stroke="{{ it.stroke }}" stroke-width="{{ it.sw }}"></rect>
+              <polygon points="{{ it.arrow }}" fill="#ffffff"></polygon>
+            </g>
+          </sc-for>
+        </svg>
+      </div>
+    </sc-if>
+    <sc-if value="{{ show3d }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1 1 360px;min-width:0;display:flex;flex-direction:column;border-bottom:2px solid #f3f2f2;border-left:2px solid #f3f2f2;box-sizing:border-box">
+        <div ref="{{ threeRef }}" style="width:100%;height:min(70dvh,620px);background:#120a10;position:relative"></div>
+        <div style="display:flex;flex-wrap:wrap;gap:0;border-top:2px solid #f3f2f2">
+          <button onClick="{{ togCeil }}" style="min-height:44px;border:0;border-right:2px solid #f3f2f2;background:transparent;color:#f3f2f2;font:800 13px var(--font-body);text-align:left;padding:0 14px;cursor:pointer">{{ ceilLabel }}</button>
+          <div style="display:flex;align-items:center;padding:0 14px;font-size:13px;color:#cfcac4">Drag to turn · wheel or pinch to zoom</div>
+        </div>
+      </div>
+    </sc-if>
+    <div style="flex:1 1 300px;min-width:0;display:flex;flex-direction:column;border-left:2px solid #f3f2f2;box-sizing:border-box">
+      <div style="padding:14px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-300)">Selected</div>
+        <div style="font-family:var(--font-heading);font-size:22px;font-weight:800;line-height:1.1">{{ selName }}</div>
+        <div style="font-size:14px;font-variant-numeric:tabular-nums">{{ selInfo }}</div>
+        <sc-if value="{{ selWarn }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:13px;font-weight:800;color:var(--color-accent-300)">Overlaps something. Move it clear so you can walk past.</div>
+        </sc-if>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-bottom:2px solid #f3f2f2">
+        <button onClick="{{ rotL90 }}" style="min-height:48px;border:0;border-right:2px solid #f3f2f2;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2">⟲ 90°</button>
+        <button onClick="{{ rotL15 }}" style="min-height:48px;border:0;border-right:2px solid #f3f2f2;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2">⟲ 15°</button>
+        <button onClick="{{ rotR15 }}" style="min-height:48px;border:0;border-right:2px solid #f3f2f2;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2">⟳ 15°</button>
+        <button onClick="{{ rotR90 }}" style="min-height:48px;border:0;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2">⟳ 90°</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-bottom:2px solid #f3f2f2">
+        <button onClick="{{ nW }}" style="min-height:48px;border:0;border-right:2px solid #f3f2f2;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2">← W</button>
+        <button onClick="{{ nN }}" style="min-height:48px;border:0;border-right:2px solid #f3f2f2;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2">↑ N</button>
+        <button onClick="{{ nS }}" style="min-height:48px;border:0;border-right:2px solid #f3f2f2;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2">↓ S</button>
+        <button onClick="{{ nE }}" style="min-height:48px;border:0;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2">→ E</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-bottom:2px solid #f3f2f2">
+        <button onClick="{{ dup }}" style="min-height:48px;border:0;border-right:2px solid #f3f2f2;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2;opacity:{{ dupOp }}">+ Add another</button>
+        <button onClick="{{ del }}" style="min-height:48px;border:0;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2;opacity:{{ delOp }}">Remove</button>
+      </div>
+      <sc-if value="{{ selIsPoker }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ cycleGame }}" style="min-height:48px;border:0;border-bottom:2px solid #f3f2f2;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 14px;cursor:pointer;color:#f3f2f2">Change game · {{ selGame }}</button>
+      </sc-if>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-bottom:2px solid #f3f2f2">
+        <button onClick="{{ addSlot }}" style="min-height:44px;border:0;border-right:2px solid #f3f2f2;background:transparent;font:700 13px var(--font-body);text-align:left;padding:0 10px;cursor:pointer;color:#f3f2f2">+ Slot</button>
+        <button onClick="{{ addPoker }}" style="min-height:44px;border:0;border-right:2px solid #f3f2f2;background:transparent;font:700 13px var(--font-body);text-align:left;padding:0 10px;cursor:pointer;color:#f3f2f2">+ Poker table</button>
+        <button onClick="{{ addChand }}" style="min-height:44px;border:0;background:transparent;font:700 13px var(--font-body);text-align:left;padding:0 10px;cursor:pointer;color:#f3f2f2">+ Chandelier</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-bottom:2px solid #f3f2f2">
+        <button onClick="{{ addPlant }}" style="min-height:44px;border:0;border-right:2px solid #f3f2f2;background:transparent;font:700 13px var(--font-body);text-align:left;padding:0 10px;cursor:pointer;color:#f3f2f2">+ Plant</button>
+        <button onClick="{{ addTop }}" style="min-height:44px;border:0;border-right:2px solid #f3f2f2;background:transparent;font:700 13px var(--font-body);text-align:left;padding:0 10px;cursor:pointer;color:#f3f2f2">+ High-top</button>
+        <button onClick="{{ addStatue }}" style="min-height:44px;border:0;border-right:2px solid #f3f2f2;background:transparent;font:700 13px var(--font-body);text-align:left;padding:0 10px;cursor:pointer;color:#f3f2f2">+ Gold 8</button>
+        <button onClick="{{ addKiosk }}" style="min-height:44px;border:0;background:transparent;font:700 13px var(--font-body);text-align:left;padding:0 10px;cursor:pointer;color:#f3f2f2">+ Kiosk</button>
+      </div>
+      <div style="display:flex;flex-direction:column;max-height:300px;overflow:auto;border-bottom:2px solid #f3f2f2">
+        <sc-for list="{{ items }}" as="it" hint-placeholder-count="6">
+          <button onClick="{{ it.pick }}" style="min-height:44px;border:0;border-bottom:1px solid #5a5654;background:{{ it.rowBg }};font:700 14px var(--font-body);text-align:left;padding:0 14px;cursor:pointer;color:{{ it.rowInk }};display:flex;align-items:center;gap:10px">
+            <span style="width:14px;height:14px;background:{{ it.fill }};flex:none"></span><span style="flex:1;min-width:0">{{ it.name }}</span><span style="font-variant-numeric:tabular-nums;font-weight:600">{{ it.short }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <div style="padding:12px 14px 4px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-300)">Colours</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));border-bottom:2px solid #f3f2f2">
+        <sc-for list="{{ colors }}" as="c" hint-placeholder-count="9">
+          <label style="display:flex;align-items:center;gap:10px;min-height:48px;padding:0 14px;font-size:13px;font-weight:700;cursor:pointer">
+            <input type="color" value="{{ c.val }}" onChange="{{ c.set }}"></input><span>{{ c.label }}</span>
+          </label>
+        </sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr))">
+        <button onClick="{{ save }}" style="min-height:52px;border:0;border-right:2px solid #f3f2f2;background:var(--color-accent);color:#ffffff;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer">{{ saveLabel }}</button>
+        <button onClick="{{ copy }}" style="min-height:52px;border:0;border-right:2px solid #f3f2f2;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2">{{ copyLabel }}</button>
+        <button onClick="{{ reset }}" style="min-height:52px;border:0;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2">Reset all</button>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { lay: null, sel: 'slot0', saved: false, copied: false, view: 'both', ceil: false };
+  svgRef = React.createRef(); threeRef = React.createRef(); drag = null;
+  COL = { slot: '#7c3aed', poker: '#163a52', plant: '#3f8a4a', hightop: '#5b3a22', statue: '#ffd23a', kiosk: '#38bdf8', wheel: '#ec4899', craps: '#1f6b45', roulette: '#c42d3c', cashier: '#c9a227', vending: '#1d3f8f', bar: '#3d2a1c', lounge: '#7a2a3a', chandelier: '#fff1c8', person: '#f97316' };
+  COLORS = [['carpet', 'Carpet'], ['carpetLine', 'Carpet rings'], ['carpetDot', 'Carpet diamonds'], ['wall', 'Walls'], ['ceiling', 'Ceiling'], ['beam', 'Gold trim'], ['neon', 'Neon'], ['chandelier', 'Chandelier bulbs'], ['light', 'Lamp glow']];
+  async componentDidMount() {
+    try { this.mod = await import(new URL('worlds/meru2-casino.js', document.baseURI).href); this.setState({ lay: this.mod.casinoLayout() }); } catch (e) { console.warn('casino layout load failed', e); }
+    this.onKey = e => { if (e.target && e.target.tagName === 'INPUT') return; const k = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key]; if (k) { e.preventDefault(); this.nudge(k[0], k[1], e.shiftKey ? 1 : 0.25); } if (e.key === 'q') this.rot(-15); if (e.key === 'e') this.rot(15); if (e.key === 'Delete' || e.key === 'Backspace') this.remove(); };
+    addEventListener('keydown', this.onKey); this.sync3d();
+  }
+  componentDidUpdate() { const s = this.state, k = this._last || {}; if (k.lay !== s.lay || k.ceil !== s.ceil || k.view !== s.view) { this._last = { lay: s.lay, ceil: s.ceil, view: s.view }; this.sync3d(); } }
+  componentWillUnmount() { removeEventListener('keydown', this.onKey); this.kill3d(); }
+  kill3d() { const T = this.T; if (!T) return; cancelAnimationFrame(T.raf); T.ro && T.ro.disconnect(); if (T.cas) T.cas.dispose(); T.renderer.dispose(); T.renderer.domElement.remove(); this.T = null; }
+  async sync3d() { const host = this.threeRef.current, on = this.state.view !== 'plan';
+    if (!on || !host) { if (this.T && (!host || !host.contains(this.T.renderer.domElement))) this.kill3d(); return; }
+    if (!this.T || !host.contains(this.T.renderer.domElement)) { this.kill3d(); const THREE = this.THREE || (this.THREE = await import(new URL('vendor/three/three.module.js', document.baseURI).href));
+      const renderer = new THREE.WebGLRenderer({ antialias: true }); renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.outputColorSpace = THREE.SRGBColorSpace; host.appendChild(renderer.domElement); renderer.domElement.style.display = 'block';
+      const scene = new THREE.Scene(); scene.background = new THREE.Color('#120a10'); scene.add(new THREE.HemisphereLight(0xfff2e0, 0x3a2030, 1.4)); const sun = new THREE.DirectionalLight(0xffffff, 0.9); sun.position.set(-110, 40, 20); scene.add(sun);
+      const camera = new THREE.PerspectiveCamera(50, 1, 0.5, 400), T = this.T = { THREE, renderer, scene, camera, yaw: -0.9, pitch: 0.75, dist: 58, people: new THREE.Group() }; scene.add(T.people);
+      const size = () => { const w = host.clientWidth || 400, h = host.clientHeight || 400; renderer.setSize(w, h, false); renderer.domElement.style.width = '100%'; renderer.domElement.style.height = '100%'; camera.aspect = w / h; camera.updateProjectionMatrix(); };
+      T.ro = new ResizeObserver(size); T.ro.observe(host); size();
+      const el = renderer.domElement, pts = new Map(); let last = null, pinch = 0;
+      el.addEventListener('pointerdown', e => { el.setPointerCapture(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]); last = [e.clientX, e.clientY]; });
+      el.addEventListener('pointermove', e => { if (!pts.has(e.pointerId)) return; pts.set(e.pointerId, [e.clientX, e.clientY]);
+        if (pts.size === 2) { const [a, b] = [...pts.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]); if (pinch) T.dist = Math.max(8, Math.min(110, T.dist * pinch / d)); pinch = d; return; }
+        if (last) { T.yaw -= (e.clientX - last[0]) * 0.006; T.pitch = Math.max(0.12, Math.min(1.45, T.pitch + (e.clientY - last[1]) * 0.005)); } last = [e.clientX, e.clientY]; });
+      const up = e => { pts.delete(e.pointerId); pinch = 0; last = pts.size ? [...pts.values()][0] : null; }; el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+      el.addEventListener('wheel', e => { e.preventDefault(); T.dist = Math.max(8, Math.min(110, T.dist * (1 + Math.sign(e.deltaY) * 0.1))); }, { passive: false });
+      const loop = () => { T.raf = requestAnimationFrame(loop); const c = [-127.5, 1, 0]; camera.position.set(c[0] + Math.sin(T.yaw) * Math.cos(T.pitch) * T.dist, c[1] + Math.sin(T.pitch) * T.dist, c[2] + Math.cos(T.yaw) * Math.cos(T.pitch) * T.dist); camera.lookAt(c[0], c[1], c[2]); if (T.cas) T.cas.tick(0.016, 0, null); renderer.render(scene, camera); }; loop(); }
+    clearTimeout(this.rb); this.rb = setTimeout(() => this.rebuild3d(), 120); }
+  rebuild3d() { const T = this.T, L = this.state.lay; if (!T || !L || !this.mod) return; const THREE = T.THREE; if (T.cas) T.cas.dispose();
+    T.cas = this.mod.buildCasino({ THREE, scene: T.scene, cols: [], touch: false, layout: L, exterior: true, ceiling: this.state.ceil });
+    T.people.clear(); const body = new THREE.CylinderGeometry(0.3, 0.3, 1.5, 10), head = new THREE.SphereGeometry(0.28, 10, 8);
+    for (const p of L.people) { const g = new THREE.Group(); g.position.set(p.x, 0, p.z); g.rotation.y = p.a * Math.PI / 180; const c = (this.mod.PEOPLE_LOOK[p.key] || {}).torso, col = Array.isArray(c) ? c[0] : (c || '#f97316');
+      const b = new THREE.Mesh(body, new THREE.MeshLambertMaterial({ color: col })); b.position.y = 0.75; g.add(b); const h = new THREE.Mesh(head, new THREE.MeshLambertMaterial({ color: '#e0823a' })); h.position.set(0, 1.75, 0); g.add(h);
+      const n = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.3, 6), new THREE.MeshLambertMaterial({ color: '#201e1d' })); n.rotation.x = Math.PI / 2; n.position.set(0, 1.72, 0.32); g.add(n); T.people.add(g); } }
+  list(L) { const P = this.mod ? this.mod.PEOPLE_NAME : {}, out = [];
+    L.slots.forEach((o, i) => out.push({ id: 'slot' + i, kind: 'slot', o, arr: 'slots', i, name: 'Slot machine ' + (i + 1) }));
+    L.pokers.forEach((o, i) => out.push({ id: 'poker' + i, kind: 'poker', o, arr: 'pokers', i, name: 'Poker table ' + (i + 1) + ' · ' + (o.game === 'holdem' ? "Hold'em" : 'Stud') }));
+    for (const k of ['wheel', 'craps', 'roulette', 'cashier', 'vending', 'bar']) if (L[k]) out.push({ id: k, kind: k, o: L[k], name: { wheel: 'Treasure Wheel', craps: 'Craps table', roulette: 'Roulette table', cashier: 'Cashier cage', vending: 'Snack Stop', bar: 'The 8 Bar' }[k] });
+    L.lounges.forEach((o, i) => out.push({ id: 'lounge' + i, kind: 'lounge', o, arr: 'lounges', i, name: 'Lounge ' + (i + 1) }));
+    (L.props || []).forEach((o, i) => out.push({ id: 'prop' + i, kind: o.type, o, arr: 'props', i, name: { plant: 'Plant', hightop: 'High-top table', statue: 'Gold 8 statue', kiosk: 'Change kiosk' }[o.type] + ' ' + (i + 1) }));
+    L.chandeliers.forEach((o, i) => out.push({ id: 'chandelier' + i, kind: 'chandelier', o, arr: 'chandeliers', i, name: 'Chandelier ' + (i + 1) }));
+    L.people.forEach((o, i) => out.push({ id: 'person' + i, kind: 'person', o, arr: 'people', i, name: (P[o.key] || o.key) + (o.phoneSkip ? ' (not on phones)' : '') })); return out; }
+  aabb(it) { const S = this.mod.CASINO_SIZE[it.kind]; return this.mod.rotBox({ x: it.o.x, z: it.o.z, a: it.o.a || 0 }, S[0], S[1]); }
+  STATIC = [[-117.75, -117.05, -11.55, -10.85, '#e9e3d6'], [-117.75, -117.05, 10.85, 11.55, '#e9e3d6'], [-106.45, -105.95, -3.65, -3.15, '#c9a227'], [-106.45, -105.95, 3.15, 3.65, '#c9a227'], [-114.5, -107.3, -2.31, -2.19, '#a3162b'], [-114.5, -107.3, 2.19, 2.31, '#a3162b'], [-110.35, -109.65, -3.6, -3.0, '#201e1d'], [-142, -105, -1.2, 1.2, '#8f1d2c']];
+  hits(a, b) { return a[0] < b[1] && a[1] > b[0] && a[2] < b[3] && a[3] > b[2]; }
+  pt(e) { const svg = this.svgRef.current; if (!svg) return null; const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; const m = svg.getScreenCTM(); return m ? p.matrixTransform(m.inverse()) : null; }
+  edit(fn) { const L = JSON.parse(JSON.stringify(this.state.lay)); const it = this.list(L).find(i => i.id === this.state.sel); if (!it) return; fn(it.o, it, L); this.setState({ lay: L, saved: false }); }
+  nudge(dx, dz, s = 0.25) { this.edit(o => { o.x = Math.round((o.x + dx * s) * 100) / 100; o.z = Math.round((o.z + dz * s) * 100) / 100; }); }
+  rot(d) { this.edit((o, it) => { if (it.kind === 'chandelier') return; o.a = (((o.a || 0) + d) % 360 + 360) % 360; }); }
+  PFX = { slots: 'slot', pokers: 'poker', lounges: 'lounge', chandeliers: 'chandelier', props: 'prop' };
+  canDup(it) { return it && !!it.arr && it.arr !== 'people'; }
+  remove() { const L = this.state.lay; if (!L) return; const it = this.list(L).find(i => i.id === this.state.sel); if (!this.canDup(it)) return; const L2 = JSON.parse(JSON.stringify(L)); L2[it.arr].splice(it.i, 1); const left = L2[it.arr].length; this.setState({ lay: L2, saved: false, sel: left ? this.PFX[it.arr] + Math.min(it.i, left - 1) : 'wheel' }); }
+  add(arr, o) { const L2 = JSON.parse(JSON.stringify(this.state.lay)); if (!L2[arr]) L2[arr] = []; L2[arr].push(o); this.setState({ lay: L2, saved: false, sel: this.PFX[arr] + (L2[arr].length - 1) }); }
+  renderVals() {
+    const S = this.state, L = S.lay, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const statics = this.STATIC.map(([x0, x1, z0, z1, fill]) => ({ x: x0, y: z0, w: x1 - x0, h: z1 - z0, fill }));
+    let items = [], sel = null;
+    if (L && this.mod) { const all = this.list(L), boxes = all.map(i => this.aabb(i)), stat = this.STATIC.slice(0, 7).map(s => s.slice(0, 4)), R = this.mod.CASINO_ROOM;
+      items = all.map((it, i) => { const [hw, hd] = this.mod.CASINO_SIZE[it.kind], on = it.id === S.sel, flat = it.kind === 'chandelier' || it.kind === 'person';
+        const bad = !flat && (stat.some(b => this.hits(boxes[i], b)) || boxes.some((b, j) => j !== i && all[j].kind !== 'chandelier' && all[j].kind !== 'person' && this.hits(boxes[i], b)) || boxes[i][0] < R.x0 || boxes[i][1] > R.x1 || boxes[i][2] < R.z0 || boxes[i][3] > R.z1);
+        const row = { ...it, bad, tf: 'translate(' + it.o.x + ' ' + it.o.z + ') rotate(' + (-(it.o.a || 0)) + ')', rx: -hw, ry: -hd, rw: hw * 2, rh: hd * 2, fill: this.COL[it.kind], stroke: bad ? '#ec3013' : on ? '#ffffff' : '#201e1d', sw: on || bad ? 0.25 : 0.08,
+          arrow: it.kind === 'chandelier' ? '0,0 0,0 0,0' : (-Math.min(0.35, hw * 0.6)) + ',' + (hd - Math.min(0.75, hd * 0.8)) + ' ' + Math.min(0.35, hw * 0.6) + ',' + (hd - Math.min(0.75, hd * 0.8)) + ' 0,' + (hd - 0.05),
+          short: it.o.x.toFixed(1) + ', ' + it.o.z.toFixed(1) + (it.kind === 'chandelier' ? '' : ' · ' + (it.o.a || 0) + '°'),
+          rowBg: on ? '#f3f2f2' : 'transparent', rowInk: on ? '#201e1d' : '#f3f2f2',
+          pick: e => { blur(e); this.setState({ sel: it.id }); },
+          down: e => { e.stopPropagation(); const p = this.pt(e); if (!p) return; this.setState({ sel: it.id }); this.drag = { id: it.id, ox: p.x - it.o.x, oz: p.y - it.o.z }; try { e.currentTarget.ownerSVGElement.setPointerCapture(e.pointerId); } catch (x) {} } };
+        if (on) sel = row; return row; }); }
+    const face = a => ({ 0: 'faces south', 90: 'faces east (door)', 180: 'faces north', 270: 'faces west' }[a] || 'turned ' + a + '°');
+    const C = L ? L.colors : {}, view = S.view, vb = v => view === v ? '#f3f2f2' : 'transparent', vi = v => view === v ? '#201e1d' : '#f3f2f2';
+    const setView = v => e => { blur(e); this.setState({ view: v }); };
+    return {
+      svgRef: this.svgRef, threeRef: this.threeRef, statics, items, carpetFill: C.carpet || '#3b1424',
+      showPlan: view !== '3d', show3d: view !== 'plan', vPlan: setView('plan'), v3d: setView('3d'), vBoth: setView('both'), bgPlan: vb('plan'), inkPlan: vi('plan'), bg3d: vb('3d'), ink3d: vi('3d'), bgBoth: vb('both'), inkBoth: vi('both'),
+      togCeil: e => { blur(e); this.setState({ ceil: !S.ceil }); }, ceilLabel: S.ceil ? 'Ceiling ON · hide it' : 'Ceiling OFF · show it',
+      onMove: e => { if (!this.drag) return; const p = this.pt(e); if (!p) return; const d = this.drag, Lz = JSON.parse(JSON.stringify(this.state.lay)), it = this.list(Lz).find(i => i.id === d.id); if (!it) return;
+        it.o.x = Math.round((p.x - d.ox) * 20) / 20; it.o.z = Math.round((p.y - d.oz) * 20) / 20; this.setState({ lay: Lz, saved: false }); },
+      onUp: () => { this.drag = null; },
+      selName: sel ? sel.name : 'Loading…', selInfo: sel ? 'x ' + sel.o.x.toFixed(2) + ' · z ' + sel.o.z.toFixed(2) + (sel.kind === 'chandelier' ? '' : ' · ' + face(sel.o.a || 0)) : '', selWarn: !!(sel && sel.bad),
+      selIsPoker: !!(sel && sel.kind === 'poker'), selGame: sel && sel.kind === 'poker' ? (sel.o.game === 'holdem' ? "Texas Hold'em" : 'Five Card Stud') : '',
+      cycleGame: e => { blur(e); this.edit(o => { o.game = o.game === 'holdem' ? 'stud' : 'holdem'; }); },
+      dupOp: this.canDup(sel) ? 1 : 0.45, delOp: this.canDup(sel) ? 1 : 0.45,
+      dup: e => { blur(e); if (!this.canDup(sel)) return; const o = JSON.parse(JSON.stringify(sel.o)), s = sel.kind === 'slot' ? 3 : sel.kind === 'chandelier' ? 6 : 7; if (sel.kind === 'slot' && (o.a === 90 || o.a === 270)) o.z += s; else o.x += s; this.add(sel.arr, o); },
+      del: e => { blur(e); this.remove(); },
+      addSlot: e => { blur(e); this.add('slots', { x: -128, z: -6, a: 0 }); }, addPoker: e => { blur(e); this.add('pokers', { x: -128, z: -12, a: 0, game: 'stud' }); }, addChand: e => { blur(e); this.add('chandeliers', { x: -128, z: 10 }); },
+      addPlant: e => { blur(e); this.add('props', { type: 'plant', x: -128, z: 14, a: 0 }); }, addTop: e => { blur(e); this.add('props', { type: 'hightop', x: -128, z: 14, a: 0 }); }, addStatue: e => { blur(e); this.add('props', { type: 'statue', x: -128, z: 14, a: 90 }); }, addKiosk: e => { blur(e); this.add('props', { type: 'kiosk', x: -128, z: 14, a: 0 }); },
+      rotL90: e => { blur(e); this.rot(-90); }, rotL15: e => { blur(e); this.rot(-15); }, rotR15: e => { blur(e); this.rot(15); }, rotR90: e => { blur(e); this.rot(90); },
+      nW: e => { blur(e); this.nudge(-1, 0); }, nE: e => { blur(e); this.nudge(1, 0); }, nN: e => { blur(e); this.nudge(0, -1); }, nS: e => { blur(e); this.nudge(0, 1); },
+      colors: this.COLORS.map(([k, label]) => ({ label, val: C[k] || '#000000', set: e => { const v = e.target.value; const L2 = JSON.parse(JSON.stringify(this.state.lay)); L2.colors[k] = v; this.setState({ lay: L2, saved: false }); } })),
+      saveLabel: S.saved ? 'Saved. Meru 2 uses this' : 'Save layout',
+      save: e => { blur(e); if (!this.mod || !L) return; localStorage.setItem(this.mod.CASINO_LAYOUT_KEY, JSON.stringify(L)); this.setState({ saved: true }); },
+      copyLabel: S.copied ? 'Copied' : 'Copy for Claude',
+      copy: e => { blur(e); if (!L) return; const t = JSON.stringify(L); (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).catch(() => prompt('Copy:', t)); this.setState({ copied: true }); setTimeout(() => this.setState({ copied: false }), 1600); },
+      reset: e => { blur(e); if (!this.mod) return; this.setState({ lay: JSON.parse(JSON.stringify(this.mod.CASINO_DEFAULT)), saved: false }); },
+    };
+  }
+}
+</script>
+</body>
+</html>

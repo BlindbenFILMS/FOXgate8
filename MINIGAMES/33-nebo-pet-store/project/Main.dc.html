@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="../../../_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Marlow's Pet Store">
+  <div ref="{{ stageRef }}" style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0;overflow:hidden"></div>
+  <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 58%, rgba(28,16,6,0.34) 100%)"></div>
+  <div data-hud-host="1" style="position:absolute;inset:0;pointer-events:none"><dc-import name="Game-HUD" game="{{ engine }}" hud="{{ stdHud }}" started="{{ walkOn }}" busy="{{ hudBusy }}" on-hud="{{ onHud }}" world="Nebo" vehicle="petstore" keys="{{ keysList }}" skip-keys="{{ skipKeys }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  <sc-if value="{{ errOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:12px;right:12px;top:12px;z-index:20;background:#000;border:2px solid #ec3013;padding:10px 12px;font:700 13px var(--font-body);color:#fff">The 3D scene could not load: {{ errTxt }}</div></sc-if>
+  <sc-if value="{{ topOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="top" style="position:absolute;left:0;right:0;top:0;z-index:3;pointer-events:none;display:flex;flex-direction:column">
+      <div style="background:#000;border-bottom:2px solid #ffd23a;display:flex;align-items:stretch;padding-top:env(safe-area-inset-top)">
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">MARLOW'S · DAY {{ h.day }}</span><span style="font:900 20px var(--font-heading);font-variant-numeric:tabular-nums">{{ petTxt }}</span></div>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">EARNED</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;color:#e6b45a">{{ earnedTxt }}</span></div>
+        <div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;min-width:0;flex:1"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">STARS</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap">{{ starsTxt }}</span></div>
+        <button onClick="{{ musicToggle }}" aria-label="{{ musicAria }}" style="pointer-events:auto;flex:none;width:52px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:{{ musicCol }};font:900 20px var(--font-heading);cursor:pointer" style-hover="background:#2a2826">♪</button>
+        <button onClick="{{ helpToggle }}" aria-label="How grooming works" style="pointer-events:auto;flex:none;width:52px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 20px var(--font-heading);cursor:pointer" style-hover="background:#2a2826">?</button>
+      </div>
+      <sc-if value="{{ cardOn }}" hint-placeholder-val="{{ false }}">
+        <div style="margin:6px;align-self:flex-start;width:min(360px, calc(100% - 12px));line-height:1.25;background:#fbfbf7;color:#201e1d;border:2px solid #201e1d;display:flex;flex-direction:column">
+          <div style="background:#2f6b55;color:#fff;padding:4px 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><span style="font:900 12px var(--font-heading);letter-spacing:0.06em;white-space:nowrap">GROOM CARD · {{ h.job.owner }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.04em;color:#ffd23a;white-space:nowrap">{{ h.job.kind }} · “{{ h.job.pet }}”</span></div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;padding:5px 6px">
+            <sc-for list="{{ chips }}" as="c" hint-placeholder-count="4"><span style="display:flex;gap:5px;align-items:center;padding:2px 6px;border:2px solid {{ c.bd }};background:{{ c.bg }};font:900 11px var(--font-heading);letter-spacing:0.04em;color:{{ c.fg }};white-space:nowrap">{{ c.t }}</span></sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;padding:0 8px 6px">
+            <span style="font:900 11px var(--font-heading);letter-spacing:0.08em;color:#201e1d;display:flex;align-items:center;gap:4px"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 21C5 15 2 11.5 2 8a5 5 0 0 1 10-1 5 5 0 0 1 10 1c0 3.5-3 7-10 13z" fill="#ec3013"></path></svg>MOOD</span>
+            <div style="height:10px;background:#e8e4da;border:2px solid #201e1d"><div style="height:100%;width:{{ moodW }};background:{{ moodCol }}"></div></div>
+            <span style="font:900 11px var(--font-heading);letter-spacing:0.06em;color:{{ moodTxtCol }};white-space:nowrap">{{ moodTxt }}</span>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{ barOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="bottom" style="position:absolute;left:0;right:0;bottom:0;z-index:4;display:flex;flex-direction:column;pointer-events:{{ barPE }}">
+      <div style="background:#000;border-top:2px solid #ffd23a;padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:grid;grid-template-columns:repeat({{ toolCols }},minmax(0,1fr))">
+        <sc-for list="{{ tools }}" as="t" hint-placeholder-count="5">
+          <button onClick="{{ t.go }}" aria-label="{{ t.aria }}" style="min-height:58px;padding:6px 4px 6px 8px;border:0;border-right:2px solid #2a2826;border-top:2px solid #2a2826;border-radius:0;background:{{ t.bg }};color:{{ t.fg }};cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:3px;min-width:0" style-hover="filter:brightness(1.2)">
+            <span style="font:900 13px var(--font-heading);letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.label }}</span>
+            <span style="font:800 9px var(--font-heading);letter-spacing:0.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ t.bc }}">{{ t.badge }}</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ jarOn }}" hint-placeholder-val="{{ false }}">
+    <button onPointerDown="{{ treatDown }}" aria-label="Treat jar: tap to toss a treat, or drag and flick it at the pet's mouth" style="position:absolute;right:max(10px, env(safe-area-inset-right));bottom:{{ trayBottom }};z-index:5;min-width:76px;min-height:64px;padding:6px 10px;border:2px solid #ffd23a;border-radius:0;background:{{ jarBg }};color:#fff;cursor:grab;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;touch-action:none;opacity:{{ jarOp }}" style-hover="background:#1a1816">
+      <span style="display:flex;align-items:center;gap:6px;font:900 15px var(--font-heading);letter-spacing:0.04em"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e6b45a" stroke-width="2.4" stroke-linecap="round"><path d="M7.5 7.5l9 9M4 8.6a2 2 0 1 1 3-3.4 2 2 0 1 1 3.4 3l-2.3 2.3M20 15.4a2 2 0 1 1-3 3.4 2 2 0 1 1-3.4-3l2.3-2.3"></path></svg>× {{ h.treats }}</span>
+      <span style="font:800 9px var(--font-heading);letter-spacing:0.1em;color:#ffd23a;white-space:nowrap">TAP · OR FLICK</span>
+    </button>
+  </sc-if>
+  <sc-if value="{{ hintOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;right:max(10px, env(safe-area-inset-right));bottom:{{ hintBottom }};z-index:3;pointer-events:none;max-width:min(260px, 64%);background:#000;border:2px solid {{ hintBd }};padding:5px 10px;font:800 11px var(--font-heading);letter-spacing:0.08em;line-height:1.35;color:{{ hintBd }};text-wrap:pretty">{{ hintTxt }}</div>
+  </sc-if>
+  <sc-if value="{{ sayOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(10px, env(safe-area-inset-left));bottom:{{ sayBottom }};z-index:3;pointer-events:none;max-width:min(340px, calc(100% - 110px));background:rgba(0,0,0,0.88);border:2px solid #3a3836;padding:8px 10px;font:700 13px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">{{ h.say }}</div>
+  </sc-if>
+  <sc-if value="{{ clawOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;bottom:{{ clawBottom }};transform:translateX(-50%);z-index:5;pointer-events:none;width:min(420px, calc(100% - 24px));background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:6px 12px"><span style="font:900 clamp(18px,5vw,24px) var(--font-heading);color:{{ clawCol }}">{{ clawTxt }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em;color:#ffd23a;white-space:nowrap">PAW {{ h.claw.paw }} / 4 · TAP IN GREEN</span></div>
+      <div style="position:relative;height:22px;margin:0 12px 10px;display:flex;gap:2px">
+        <span style="flex:{{ cz0 }};background:#9ca3af;display:block"></span><span style="flex:{{ cz1 }};background:#e6b45a;display:block"></span><span style="flex:{{ cz2 }};background:#22c55e;outline:3px solid #ffd23a;display:block"></span><span style="flex:{{ cz3 }};background:#e6b45a;display:block"></span><span style="flex:{{ cz4 }};background:#ec3013;display:block"></span>
+        <span style="position:absolute;top:-6px;bottom:-6px;left:{{ clawX }};width:4px;margin-left:-2px;background:#ffffff;display:block"></span>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ flashOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ flashTop }};transform:translateX(-50%);z-index:5;pointer-events:none;max-width:calc(100% - 24px);background:rgba(0,0,0,0.9);border:2px solid {{ flashCol }};display:flex;align-items:stretch">
+      <span style="flex:none;width:10px;background:{{ flashCol }};display:block"></span>
+      <span style="padding:8px 14px;font:900 clamp(15px,4vw,22px) var(--font-heading);letter-spacing:0.04em;color:#fff;text-wrap:pretty">{{ flashTxt }}</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ reactOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ reactTop }};transform:translateX(-50%);z-index:6;pointer-events:none;width:min(420px, calc(100% - 24px));background:#000;border:3px solid {{ h.react.col }};display:flex;flex-direction:column">
+      <div style="display:flex;align-items:stretch"><div style="flex:1;padding:10px 14px;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">{{ reactWho }}</span><span style="font:900 clamp(30px,9vw,44px) var(--font-heading);line-height:1;color:{{ h.react.col }}">{{ h.react.word }}</span></div><div style="flex:none;min-width:96px;padding:0 12px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;background:{{ h.react.col }};color:#000"><span style="font:900 20px var(--font-heading);letter-spacing:0.04em">{{ reactStars }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.08em">{{ reactPay }}</span></div></div>
+      <div style="padding:8px 14px 10px;border-top:2px solid #2a2826;font:700 15px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">“{{ h.react.line }}”</div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(10px, env(safe-area-inset-left));bottom:{{ trayBottom }};z-index:7;pointer-events:none;width:min(460px, calc(100% - 112px));background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="padding:5px 12px;border-bottom:2px solid #3a3836;font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;background:#ec3013;display:block"></span>DEMO</div>
+      <div style="display:flex;align-items:stretch"><sc-if value="{{ demoKeyOn }}" hint-placeholder-val="{{ false }}"><div style="flex:none;min-width:64px;display:flex;align-items:center;justify-content:center;padding:0 10px;background:#ec3013;color:#fff;font:900 14px var(--font-heading);border-right:2px solid #3a3836">{{ h.demo.key }}</div></sc-if><div style="padding:9px 12px;font:900 clamp(14px,3.8vw,19px) var(--font-heading);letter-spacing:0.03em;line-height:1.2;color:#fff;text-wrap:pretty">{{ h.demo.cap }}</div></div>
+    </div>
+    <button onClick="{{ demoExit }}" aria-label="Exit the demo" style="position:absolute;right:max(10px, env(safe-area-inset-right));bottom:{{ trayBottom }};z-index:7;min-width:88px;min-height:48px;padding:0 14px;border:2px solid #ec3013;border-radius:0;background:#ec3013;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">EXIT DEMO</button>
+  </sc-if>
+  <sc-if value="{{ introOn }}" hint-placeholder-val="{{ true }}">
+    <div data-safe="intro" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:6;width:min(420px, calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column">
+      <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:2px"><span style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">NEBO · MARLOW'S PET STORE · DAY {{ h.day }}</span><button onClick="{{ musicToggle }}" aria-label="{{ musicAria }}" style="min-height:32px;padding:0 10px;border:2px solid {{ musicCol }};border-radius:0;background:#000;color:{{ musicCol }};font:900 11px var(--font-heading);letter-spacing:0.1em;cursor:pointer;white-space:nowrap" style-hover="background:#2a2826">{{ musicTxt }}</button></span><span style="font:900 26px var(--font-heading);line-height:1.05">Groom some pets</span><span style="font:700 13px var(--font-body);color:#cfcac2;text-wrap:pretty">Pets come in one at a time. Work through the groom card at your own pace, keep them happy with head rubs and treats, then hand them back. Owners pay for the groom and tip for happy pets.</span></div>
+      <sc-for list="{{ introRows }}" as="r" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:86px minmax(0,1fr);gap:12px;padding:6px 16px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;color:#e6b45a">{{ r.v }}</span></div></sc-for>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+        <button onClick="{{ demoGo }}" style="min-height:48px;padding:0 16px;border:0;border-right:2px solid #3a3836;border-bottom:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WATCH THE DEMO</button>
+        <button onClick="{{ goWalk }}" style="min-height:48px;padding:0 16px;border:0;border-bottom:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">LOOK AROUND</button>
+      </div>
+      <button onClick="{{ goWork }}" style="min-height:56px;padding:0 18px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">PUT ME TO WORK</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ helpOn }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ helpToggle }}" style="position:absolute;inset:0;z-index:9;background:rgba(0,0,0,0.82);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #ffd23a;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="padding:10px 14px;border-bottom:2px solid #3a3836;font:900 16px var(--font-heading);letter-spacing:0.06em;color:#ffd23a">HOW GROOMING WORKS</div>
+        <sc-for list="{{ helpRows }}" as="r" hint-placeholder-count="8"><div style="display:grid;grid-template-columns:88px minmax(0,1fr);gap:10px;padding:7px 14px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body);line-height:1.35"><span style="font:900 11px var(--font-heading);letter-spacing:0.08em;color:#e6b45a">{{ r.k }}</span><span style="text-wrap:pretty">{{ r.v }}</span></div></sc-for>
+        <div style="padding:10px 14px;font:700 12px var(--font-body);color:#cfcac2">Tap anywhere to close</div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:8;background:rgba(0,0,0,0.78);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #3a3836;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+          <div style="padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ doneKicker }}</span><span style="font:900 24px var(--font-heading);line-height:1.05">Shop's closed</span><span style="font:700 12px var(--font-body);color:#cfcac2">{{ doneSub }}</span></div>
+          <div style="width:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#ec3013"><span style="font:900 30px var(--font-heading)">{{ d.total }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em">GOLD</span></div>
+        </div>
+        <sc-if value="{{ eodOn }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:10px;padding:10px 16px;background:#ffd23a;color:#000;border-bottom:2px solid #000;font:900 14px var(--font-heading);letter-spacing:0.06em"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18.5 21 12 16.8 5.5 21l2-7.5L2 9h7z" fill="#000"></path></svg>EMPLOYEE OF THE DAY</div></sc-if>
+        <sc-for list="{{ doneRows }}" as="r" hint-placeholder-count="5"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:7px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;font-variant-numeric:tabular-nums">{{ r.v }}</span></div></sc-for>
+        <sc-for list="{{ unlocks }}" as="u" hint-placeholder-count="1"><div style="padding:7px 16px;border-bottom:2px solid #2a2826;font:800 13px var(--font-heading);letter-spacing:0.04em;color:#22c55e">UNLOCKED · {{ u.t }}</div></sc-for>
+        <div style="padding:8px 16px 4px;font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">UPGRADE THE SALON · YOU HAVE {{ goldTxt }}</div>
+        <sc-for list="{{ shop }}" as="s" hint-placeholder-count="6">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 16px;border-top:2px solid #2a2826">
+            <div style="display:flex;flex-direction:column;min-width:0"><span style="font:900 13px var(--font-heading);letter-spacing:0.04em">{{ s.name }}</span><span style="font:600 12px var(--font-body);color:#cfcac2">{{ s.line }}</span></div>
+            <button onClick="{{ s.buy }}" disabled="{{ s.off }}" style="min-width:84px;min-height:44px;padding:0 12px;border:2px solid {{ s.bd }};border-radius:0;background:{{ s.bg }};color:{{ s.fg }};font:900 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;opacity:{{ s.op }}" style-hover="filter:brightness(1.15)">{{ s.btn }}</button>
+          </div>
+        </sc-for>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:8px">
+          <button onClick="{{ goWork }}" style="min-height:52px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">NEXT DAY</button>
+          <button onClick="{{ goWalk }}" style="min-height:52px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">TAKE A BREAK</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"start":{"editor":"text","default":"intro"}}'>
+class Component extends DCLogic {
+  state = { h: null, help: false, vw: 1200, vh: 800, hi: { pad: false, menu: false, split: false, bar: 0 } };
+  stageRef = React.createRef();
+  onHud = hi => this.setState({ hi });
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs(); try { this.ro = new ResizeObserver(this.onRs); this.stageRef.current && this.ro.observe(this.stageRef.current.parentElement); } catch (e) {}
+    try { let m = window.PetGroom; if (!m) { try { m = await import(new URL('minigames/nebo/pet-groom.js', document.baseURI).href); } catch (e) { this.loadErr = e; } } for (let i = 0; !m && i < 150; i++) { await new Promise(r => setTimeout(r, 100)); m = window.PetGroom; } if (!m) throw this.loadErr || new Error('game engine did not load'); this.g = await m.createPetGroom({ container: this.stageRef.current, onState: h => this.setState({ h }), start: /[?&]walk=1/.test(location.search) || this.props.start === 'walk' ? 'walk' : 'intro' }); window.__pets = this.g; this.forceUpdate(); if (/[?&]demo=1/.test(location.search)) setTimeout(() => this.g.demoStart(), 400); }
+    catch (e) { console.warn('pet store failed: ' + (e && e.stack || String(e))); this.setState({ err: String(e && e.message || e) }); }
+  }
+  componentDidUpdate() { const root = this.stageRef.current && this.stageRef.current.parentElement; if (!root || !this.g || !this.g.setSafe) return; const rb = root.getBoundingClientRect(); let top = 0, bot = 0, left = 0; root.querySelectorAll('[data-safe]').forEach(el => { const r = el.getBoundingClientRect(); if (!r.height) return; if (el.dataset.safe === 'top') top = Math.max(top, r.bottom - rb.top); else if (el.dataset.safe === 'intro' && rb.width > rb.height) left = Math.max(left, r.right - rb.left); else bot = Math.max(bot, rb.bottom - r.top); }); const H = rb.height; this.g.setSafe(Math.round(Math.min(top, H * 0.36)), Math.round(Math.min(bot, H * (this.g.hud().phase === 'intro' ? 0.62 : 0.32))), Math.round(Math.min(left, rb.width * 0.6))); }
+  componentWillUnmount() { removeEventListener('resize', this.onRs); try { this.ro && this.ro.disconnect(); } catch (e) {} this.g && this.g.destroy(); }
+  onRs = () => { const el = this.stageRef.current, r = el && el.parentElement ? el.parentElement.getBoundingClientRect() : null; this.setState({ vw: r && r.width ? r.width : innerWidth, vh: r && r.height ? r.height : innerHeight }); };
+  renderVals() {
+    const S = this.state, g = this.g, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const h = S.h || { mode: 'job', phase: 'intro', day: 1, petN: 0, perDay: 3, earned: 0, tips: 0, stars: 0, job: null, tool: null, mood: 1, wiggly: false, treats: 3, flash: null, say: '', react: null, done: null, gold: 0, upgrades: [], claw: null, hint: null, demo: null, walk: { prompt: null, dialog: null, toast: null }, groomed: 0 };
+    const walk = h.mode === 'walk', busy = !walk && ['arrive', 'hop', 'work', 'react', 'leave'].includes(h.phase), work = !walk && h.phase === 'work', J = h.job, d = h.done || { total: 0 }, port = S.vh > S.vw;
+    let sv = null; try { sv = JSON.parse(localStorage.getItem('8gates.save.v1') || 'null'); } catch (e) {}
+    const W = h.walk || {}, stdHud = { hp: 100, hpMax: 100, en: 100, gold: h.gold, hour: 14, day: sv && sv.stats ? sv.stats.worldDay || 1 : 1, items: sv ? Object.entries(sv.items || {}).filter(([, n]) => n > 0).map(([id, n]) => ({ id, n, label: id })) : [], place: "Nebo · Marlow's Pet Store", quest: { text: walk ? (h.groomed ? "MARLOW'S PET STORE · pet the animals · step up to the grooming table to work" : 'Talk to Marlow at the counter, or step up to the grooming table') : '' }, prompt: walk ? W.prompt : null, toast: walk ? W.toast : null, muted: !h.music, weather: 'Clear', boat: false, inCave: false, weapons: [], dialog: walk ? W.dialog : null, vehicles: [], vehAmmo: [] };
+    const tools = !J ? [] : [...J.tasks.map(t => { const on = h.tool === t.id, nx = h.hint && h.hint.tool === t.id && !on, lk = t.locked && !t.done; return { label: t.label, aria: 'Work on: ' + t.name, badge: nx ? 'NEXT ▸' : t.done ? 'DONE ✓' : t.txt, bg: on ? '#ffd23a' : nx ? '#1f3a24' : '#000000', fg: on ? '#000000' : t.done || lk ? '#8a847e' : '#ffffff', bc: on ? '#000000' : t.done ? '#22c55e' : nx ? '#ffd23a' : '#8a847e', go: e => { blur(e); g && g.setTool(t.id); } }; }),
+      { label: 'HAND BACK', aria: 'Hand the pet back', badge: h.allDone ? 'READY' : h.confirm ? 'TAP AGAIN' : 'NOT DONE', bg: h.allDone ? '#ec3013' : '#000000', fg: '#ffffff', bc: h.allDone ? '#ffffff' : '#8a847e', go: e => { blur(e); g && g.handBack(); } }];
+    const twoRows = port && tools.length > 4, barH = twoRows ? 124 : 62, trayBottom = 'calc(' + (barH + 8) + 'px + env(safe-area-inset-bottom))';
+    const z = h.claw ? h.claw.g : [0.42, 0.6], mood = Math.max(0, Math.min(1, h.mood || 0));
+    return {
+      errOn: !!S.err, errTxt: S.err || '', stageRef: this.stageRef, stageTop: (walk ? S.hi.bar || 0 : 0) + 'px', engine: g, stdHud, walkOn: !!g && walk, hudBusy: !walk, onHud: this.onHud, h, d,
+      keysList: [['WASD', 'walk'], ['E', 'talk · use'], ['1', 'pet'], ['2', 'treat'], ['Space', 'jump'], ['M', 'map'], ['I', 'menu']], skipKeys: ['KeyT', 'KeyV', 'KeyC', 'KeyN'],
+      topOn: busy && !h.done, cardOn: !!J && busy && !h.react, barOn: work, introOn: !walk && h.phase === 'intro' && !h.demo, doneOn: !walk && !!h.done, helpOn: S.help && busy,
+      petTxt: 'PET ' + Math.min(h.petN + 1, h.perDay) + ' / ' + h.perDay, earnedTxt: (h.earned + h.tips) + 'g', starsTxt: h.stars ? '★ ' + h.stars : '★ –',
+      chips: J ? J.tasks.map(t => ({ t: (t.done ? '✓ ' : '') + t.label + (t.done ? '' : ' · ' + t.txt), bg: t.done ? '#e6f6ea' : h.tool === t.id ? '#ffd23a' : '#fbfbf7', bd: t.done ? '#22c55e' : '#201e1d', fg: t.done ? '#1f6a3a' : t.locked ? '#8a847e' : '#201e1d' })) : [],
+      moodW: Math.round(mood * 100) + '%', moodCol: h.wiggly || mood < 0.25 ? '#ec3013' : mood < 0.5 ? '#e6b45a' : '#22c55e', moodTxt: h.wiggly ? 'WIGGLY!' : mood >= 0.75 ? 'HAPPY' : mood >= 0.45 ? 'OK' : 'FIDGETY', moodTxtCol: h.wiggly ? '#ec3013' : '#201e1d',
+      toolCols: twoRows ? Math.ceil(tools.length / 2) : tools.length || 1, tools, barPE: h.demo ? 'none' : 'auto',
+      jarOn: work && !h.demo && !!J, jarBg: h.wiggly ? '#3a1410' : '#000000', jarOp: h.treats > 0 ? 1 : 0.5, treatDown: e => { e.preventDefault(); try { e.currentTarget.releasePointerCapture && e.currentTarget.releasePointerCapture(e.pointerId); } catch (er) {} g && g.treatGrab(e.clientX, e.clientY); },
+      demoOn: !!h.demo, demoKeyOn: !!(h.demo && h.demo.key), demoGo: e => { blur(e); g && g.demoStart(); }, demoExit: e => { blur(e); g && g.demoStop(); },
+      hintOn: !h.demo && work && !!h.hint && !h.claw && !h.flash, hintTxt: h.hint ? h.hint.text : '', hintBd: h.wiggly ? '#ff9a8a' : '#ffd23a', hintBottom: 'calc(' + (barH + 80) + 'px + env(safe-area-inset-bottom))', trayBottom,
+      sayOn: !h.demo && !!h.say && busy && !h.react && !(port && work && h.hint), sayBottom: work ? trayBottom : 'calc(12px + env(safe-area-inset-bottom))',
+      clawOn: !!h.claw, clawX: h.claw ? (h.claw.v * 100).toFixed(1) + '%' : '0%', clawTxt: h.claw ? { LONG: 'TOO LONG', OK: 'OK', CLEAN: 'CLEAN!', QUICK: 'TOO CLOSE' }[h.claw.zone] : '', clawCol: h.claw ? { LONG: '#cfcac4', OK: '#e6b45a', CLEAN: '#22c55e', QUICK: '#ec3013' }[h.claw.zone] : '#fff',
+      cz0: 24, cz1: Math.round((z[0] - 0.24) * 100), cz2: Math.round((z[1] - z[0]) * 100), cz3: Math.round((0.82 - z[1]) * 100), cz4: 18, clawBottom: 'calc(' + (barH + (h.demo ? 150 : 80)) + 'px + env(safe-area-inset-bottom))',
+      flashOn: !!h.flash && !walk, flashTxt: h.flash ? h.flash.txt : '', flashCol: h.flash ? h.flash.col : '#ffd23a', flashTop: port ? '40%' : h.claw ? '96px' : '34%',
+      reactOn: !!h.react, reactTop: port ? 'calc(64px + env(safe-area-inset-top))' : '58px', reactWho: h.react ? h.react.who + ' · ' + h.react.pet : '', reactStars: h.react ? '★'.repeat(h.react.stars) + '☆'.repeat(3 - h.react.stars) : '', reactPay: h.react ? '+' + h.react.pay + 'g' + (h.react.tip ? ' · TIP ' + h.react.tip : '') : '',
+      introRows: [['Gold', h.gold + 'g'], ['Today', h.perDay + ' pets · no clock'], ['Pets', h.day <= 1 ? 'Dog · Parsnip the pig · Cat' : 'Dogs, cats + truffle pigs'], ['Uniform', h.uniform ? "Yours · cap, towel + Marlow's tee" : 'Finish a day to keep it']].map(([k, v]) => ({ k, v })),
+      musicToggle: e => { blur(e); g && g.toggleMusic(); this.forceUpdate(); }, musicCol: h.music === false ? '#8a847e' : '#ffd23a', musicTxt: h.music === false ? '♪ MUSIC OFF' : '♪ MUSIC ON', musicAria: h.music === false ? 'Turn music on' : 'Turn music off',
+      goWork: e => { blur(e); g && g.startDay(); }, goWalk: e => { blur(e); g && g.toWalk(); }, helpToggle: e => { blur(e); this.setState({ help: !S.help }); },
+      helpRows: [['GROOM CARD', 'Each pet comes with a card listing its jobs. Tap a job at the bottom and the camera moves in. Some jobs unlock in order: scrub, then rinse, then dry.'], ['MOOD', 'The heart bar runs down while you work. Below the red line she gets WIGGLY and won\'t let you work. Rub her head any time, or give her a treat.'], ['TREATS', 'Tap the jar to toss one. Or drag a treat out of the jar and FLICK it at her mouth: a catch gives more mood.'], ['CALM', 'Cats decide when the groom starts. Rub her head until the bar is full.'], ['BRUSH', 'Rub back and forth over each dark knot until it pops out.'], ['SCRUB · MUD', 'Rub every dirty spot until it is covered in suds. Pigs get a warm mud bath instead, and love it.'], ['RINSE', 'Hold the shower over the suds until they wash away. Not in the face!'], ['DRY', 'Drag the dryer onto the blue wet patches. They run away from it, so chase them.'], ['TRIM', 'Put your finger on the glowing dot and trace the line to the neck. Slip off and you start again from the next dot.'], ['CLAWS', 'Tap when the needle is in the green. Too close and they yelp.'], ['HOOVES', 'Rub each hoof until it shines.'], ['HAND BACK', 'When the card is done, hand the pet back. Happy, finished pets earn stars and tips.']].map(([k, v]) => ({ k, v })),
+      doneKicker: h.done ? 'DAY ' + d.day + " · MARLOW'S PET STORE" : '', doneSub: h.done ? (d.newDay ? 'Day ' + (d.day + 1) + ' tomorrow: longer groom cards' : 'Average 2 stars to move up a day') + ' · ★ ' + d.stars + ' employee stars' : '', eodOn: !!(h.done && d.eod),
+      doneRows: h.done ? [['Pets groomed', String(d.groomed)], ['Average stars', String(d.avg)], ['Wage', d.wage + 'g'], ['Grooms', d.earned + 'g'], ['Tips', d.tips + 'g']].map(([k, v]) => ({ k, v })) : [], unlocks: h.done ? d.unlock.map(t => ({ t })) : [], goldTxt: h.gold + 'g',
+      shop: h.upgrades.map(u => { const afford = h.gold >= u.cost; return { name: u.name, line: u.line, btn: u.owned ? 'OWNED' : u.cost + 'g', off: u.owned || !afford, bg: u.owned ? '#22c55e' : afford ? '#ffd23a' : '#000000', fg: u.owned || afford ? '#000000' : '#8a847e', bd: u.owned ? '#22c55e' : afford ? '#ffd23a' : '#3a3836', op: u.owned || afford ? 1 : 0.6, buy: e => { blur(e); g && g.buyUpgrade(u.id); } }; }),
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "_note": "s339: Ben's ORIGINAL SWORD sound setting (Fighter Gear Lab SOUNDS, localStorage fighter.sfx) + the original recordings, kept in audio/sword-original/ (copy of audio/sword/). To return: copy audio/sword-original/* back to audio/sword/ and set these events.",
+  "files": "audio/sword-original/ (draw, sheath, swing, hit-sword, hit-metal-1, hit-metal-2, hit-wood-1, hit-wood-2, hit-stone, hit-flesh, hit-cloth)",
+  "draw": { "s": "recDraw", "v": 1, "p": 1 },
+  "sheath": { "s": "recSheath", "v": 1, "p": 1 },
+  "cut": { "s": "recSwing", "v": 1, "p": 1 },
+  "spin": { "s": "recSwing", "v": 1.1, "p": 0.85 },
+  "swordHit": { "s": "recMetal", "v": 1.3, "p": 1 },
+  "hitSword": { "s": "recSword", "v": 1.3, "p": 1 },
+  "hitMetal": { "s": "recMetal", "v": 1.3, "p": 1 },
+  "hitWood": { "s": "recWood", "v": 1.3, "p": 1 },
+  "hitStone": { "s": "recStone", "v": 1.3, "p": 1 },
+  "hitFlesh": { "s": "recFlesh", "v": 1.3, "p": 1 },
+  "hitCloth": { "s": "recCloth", "v": 1.3, "p": 1 }
+}

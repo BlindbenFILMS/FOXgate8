@@ -1,0 +1,2046 @@
+{
+ "meta": {
+  "world": "gaya",
+  "version": 5,
+  "date": "2026-10-22",
+  "from": "uploads/GAYA_BRIEF.md + uploads/surface_gaya.html (add it)",
+  "notes": "DRAFT by Claude (s345) for Ben to move in the Map Workshop. GAYA = a gold-and-lantern hill town on a cross of two avenues: PILGRIM WAY runs north up to the castle and south over the gorge bridge to Meditation Canyon; LANTERN ROW runs west to the Gaya Open stadium and east up the Mountain Path to the cut face + the cave. Four streets make the grid (Gold St, Violet St, Bell Lane, Steam Lane). One U-shaped CARAVAN ROAD round the west, south and east edges from the Sky Dock. NPC keys are draft (from the brief) until the 2D file comes in."
+ },
+ "map": {
+  "half": 380,
+  "spawn": [
+   0,
+   24
+  ],
+  "spawnFace": "N"
+ },
+ "palette": {
+  "path": "#e8c35a",
+  "wall": "#e9e2d0",
+  "roof": "#5b3f8c",
+  "trim": "#c9a227"
+ },
+ "zones": [
+  {
+   "key": "gayaTown",
+   "label": "Gaya",
+   "r": [
+    -220,
+    220,
+    -220,
+    150
+   ],
+   "music": "town",
+   "depth": 440,
+   "new": true
+  },
+  {
+   "key": "gayaTownSquare",
+   "label": "Gaya Town Square",
+   "r": [
+    -50,
+    50,
+    -50,
+    50
+   ],
+   "music": "town",
+   "depth": 100
+  },
+  {
+   "key": "gayaCastlePath",
+   "label": "Castle Path",
+   "r": [
+    -30,
+    30,
+    -272,
+    -50
+   ],
+   "music": "castlepath",
+   "depth": 222
+  },
+  {
+   "key": "gayaCastleGrounds",
+   "label": "Gaya Castle",
+   "r": [
+    -64,
+    64,
+    -334,
+    -272
+   ],
+   "music": "castle",
+   "depth": 62,
+   "new": true
+  },
+  {
+   "key": "gayaStadiumPath",
+   "label": "Stadium Path",
+   "r": [
+    -270,
+    -50,
+    -20,
+    20
+   ],
+   "music": "stadiumpath",
+   "depth": 220
+  },
+  {
+   "key": "gayaStadiumGrounds",
+   "label": "The Gaya Open",
+   "r": [
+    -352,
+    -270,
+    -62,
+    62
+   ],
+   "music": "stadium",
+   "depth": 82,
+   "new": true
+  },
+  {
+   "key": "gayaMountainPath",
+   "label": "Mountain Path",
+   "r": [
+    50,
+    230,
+    -20,
+    20
+   ],
+   "music": "mountainpath",
+   "depth": 180
+  },
+  {
+   "key": "gayaMountainBase",
+   "label": "Mountain Base",
+   "r": [
+    230,
+    372,
+    -132,
+    70
+   ],
+   "music": "mountain",
+   "depth": 202
+  },
+  {
+   "key": "gayaCanyon",
+   "label": "Meditation Canyon",
+   "r": [
+    -120,
+    120,
+    160,
+    344
+   ],
+   "music": "canyon",
+   "depth": 184
+  },
+  {
+   "key": "gayaMillField",
+   "label": "The Millstone Snowfield",
+   "r": [
+    150,
+    372,
+    -372,
+    -230
+   ],
+   "music": "battle",
+   "depth": 222,
+   "new": true
+  },
+  {
+   "key": "gayaDreamWood",
+   "label": "The Dream Wood",
+   "r": [
+    -376,
+    -230,
+    150,
+    376
+   ],
+   "music": "wood",
+   "depth": 226,
+   "new": true
+  }
+ ],
+ "surfaces": [
+  {
+   "s": "stone",
+   "r": [
+    -50,
+    50,
+    -50,
+    50
+   ]
+  },
+  {
+   "s": "grass",
+   "r": [
+    -14,
+    14,
+    -14,
+    14
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -64,
+    64,
+    -272,
+    -252
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -270,
+    -236,
+    -30,
+    30
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -44,
+    44,
+    276,
+    324
+   ]
+  },
+  {
+   "s": "dirt",
+   "r": [
+    230,
+    372,
+    -132,
+    70
+   ]
+  },
+  {
+   "s": "grass",
+   "r": [
+    48,
+    96,
+    -320,
+    -276
+   ]
+  },
+  {
+   "s": "snow",
+   "r": [
+    222,
+    370,
+    -370,
+    -232
+   ]
+  },
+  {
+   "s": "sand",
+   "r": [
+    -120,
+    120,
+    190,
+    206
+   ]
+  },
+  {
+   "s": "sand",
+   "r": [
+    -120,
+    120,
+    240,
+    256
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -112,
+    -46,
+    -318,
+    -284
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    -100,
+    -88,
+    -306,
+    -294
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    -66,
+    -58,
+    -304,
+    -296
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    -116,
+    -104,
+    -244,
+    -232
+   ]
+  }
+ ],
+ "water": [
+  {
+   "r": [
+    -120,
+    120,
+    210,
+    236
+   ]
+  },
+  {
+   "r": [
+    232,
+    372,
+    -62,
+    -50
+   ]
+  }
+ ],
+ "roads": [
+  {
+   "w": 10,
+   "p": [
+    [
+     -262,
+     -252
+    ],
+    [
+     -200,
+     -252
+    ],
+    [
+     -200,
+     150
+    ],
+    [
+     200,
+     150
+    ],
+    [
+     200,
+     -130
+    ]
+   ]
+  }
+ ],
+ "paths": [
+  {
+   "key": "gayaPilgrimWay",
+   "label": "Pilgrim Way",
+   "w": 8,
+   "p": [
+    [
+     0,
+     -272
+    ],
+    [
+     0,
+     -50
+    ],
+    [
+     0,
+     50
+    ],
+    [
+     0,
+     320
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 18
+  },
+  {
+   "key": "gayaLanternRow",
+   "label": "Lantern Row",
+   "w": 8,
+   "p": [
+    [
+     -270,
+     0
+    ],
+    [
+     -50,
+     0
+    ],
+    [
+     50,
+     0
+    ],
+    [
+     300,
+     0
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 18
+  },
+  {
+   "key": "gayaSquareWalk",
+   "label": "Square Walk",
+   "w": 6,
+   "p": [
+    [
+     -46,
+     -46
+    ],
+    [
+     46,
+     -46
+    ],
+    [
+     46,
+     46
+    ],
+    [
+     -46,
+     46
+    ],
+    [
+     -46,
+     -46
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "gayaGoldStreet",
+   "label": "Gold Street",
+   "w": 6,
+   "p": [
+    [
+     -200,
+     -130
+    ],
+    [
+     200,
+     -130
+    ]
+   ],
+   "lining": "trees",
+   "every": 16
+  },
+  {
+   "key": "gayaVioletStreet",
+   "label": "Violet Street",
+   "w": 6,
+   "p": [
+    [
+     -200,
+     130
+    ],
+    [
+     200,
+     130
+    ]
+   ],
+   "lining": "trees",
+   "every": 16
+  },
+  {
+   "key": "gayaBellLane",
+   "label": "Bell Lane",
+   "w": 6,
+   "p": [
+    [
+     -130,
+     -220
+    ],
+    [
+     -130,
+     130
+    ]
+   ],
+   "lining": "trees",
+   "every": 16
+  },
+  {
+   "key": "gayaSteamLane",
+   "label": "Steam Lane",
+   "w": 6,
+   "p": [
+    [
+     130,
+     -220
+    ],
+    [
+     130,
+     130
+    ]
+   ],
+   "lining": "trees",
+   "every": 16
+  },
+  {
+   "key": "gayaMillTrail",
+   "label": "Millstone Trail",
+   "w": 6,
+   "p": [
+    [
+     130,
+     -220
+    ],
+    [
+     200,
+     -262
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20
+  },
+  {
+   "key": "gayaCaveTrail",
+   "label": "Cave Trail",
+   "w": 6,
+   "p": [
+    [
+     300,
+     0
+    ],
+    [
+     300,
+     -110
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20
+  },
+  {
+   "key": "gayaCutFaceTrail",
+   "label": "Cut Face Trail",
+   "w": 6,
+   "p": [
+    [
+     300,
+     0
+    ],
+    [
+     300,
+     40
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20
+  },
+  {
+   "key": "gayaWoodWalk",
+   "label": "Lantern Walk",
+   "w": 6,
+   "p": [
+    [
+     -130,
+     130
+    ],
+    [
+     -250,
+     258
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20
+  },
+  {
+   "key": "gayaDockWalk",
+   "label": "Sky Dock Steps",
+   "w": 6,
+   "p": [
+    [
+     -130,
+     -220
+    ],
+    [
+     -244,
+     -252
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "gayaFarmLane",
+   "label": "Terrace Lane",
+   "w": 6,
+   "p": [
+    [
+     130,
+     52
+    ],
+    [
+     192,
+     52
+    ]
+   ],
+   "lining": "trees",
+   "every": 16
+  },
+  {
+   "key": "gayaSpurBarracks",
+   "label": "Barracks walk",
+   "w": 4,
+   "p": [
+    [
+     40,
+     -237
+    ],
+    [
+     0,
+     -237
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 12
+  },
+  {
+   "key": "gayaSpurHospital",
+   "label": "House of Mercy walk",
+   "w": 4,
+   "p": [
+    [
+     -52,
+     -235
+    ],
+    [
+     0,
+     -235
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 12
+  },
+  {
+   "key": "gayaLawnWalk",
+   "label": "Castle Lawn walk",
+   "w": 4,
+   "p": [
+    [
+     0,
+     -290
+    ],
+    [
+     60,
+     -290
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 12
+  },
+  {
+   "key": "gayaRoyalWalk",
+   "label": "Royal Walk",
+   "w": 6,
+   "p": [
+    [
+     0,
+     -262
+    ],
+    [
+     -76,
+     -262
+    ],
+    [
+     -76,
+     -284
+    ]
+   ],
+   "lining": "lamps",
+   "every": 16
+  },
+  {
+   "key": "gayaMedevacWalk",
+   "label": "Medevac walk",
+   "w": 6,
+   "p": [
+    [
+     -130,
+     -222
+    ],
+    [
+     -110,
+     -230
+    ]
+   ],
+   "lining": "lamps",
+   "every": 10
+  }
+ ],
+ "buildings": [
+  {
+   "key": "gayaThroneRoom",
+   "label": "Gaya Castle",
+   "role": "castle",
+   "f": [
+    -40,
+    40,
+    -322,
+    -272
+   ],
+   "door": [
+    0,
+    -272
+   ],
+   "face": "S",
+   "h": 22,
+   "color": "#d8cfb8",
+   "interior": true,
+   "note": "Throne Room inside (Grant, Steward of Gaya)",
+   "sign": {
+    "roof": "GAYA CASTLE",
+    "door": "GAYA CASTLE"
+   }
+  },
+  {
+   "key": "gayaBarracks",
+   "label": "Barracks",
+   "role": "barracks",
+   "f": [
+    40,
+    84,
+    -252,
+    -222
+   ],
+   "door": [
+    40,
+    -237
+   ],
+   "face": "W",
+   "h": 10,
+   "color": "#cfc6b0",
+   "interior": true,
+   "sign": {
+    "roof": "BARRACKS",
+    "door": "BARRACKS"
+   }
+  },
+  {
+   "key": "gayaHospital",
+   "label": "House of Mercy",
+   "role": "hospital",
+   "f": [
+    -92,
+    -52,
+    -252,
+    -218
+   ],
+   "door": [
+    -52,
+    -235
+   ],
+   "face": "E",
+   "h": 12,
+   "color": "#f1ece0",
+   "interior": true,
+   "new": true,
+   "sign": {
+    "roof": "HOUSE OF MERCY",
+    "door": "HOUSE OF MERCY"
+   }
+  },
+  {
+   "key": "gayaEmbassy",
+   "label": "Galactic Post Office (Meru Embassy)",
+   "role": "post",
+   "f": [
+    -110,
+    -70,
+    -170,
+    -136
+   ],
+   "door": [
+    -90,
+    -136
+   ],
+   "face": "S",
+   "h": 12,
+   "color": "#e6dcc4",
+   "interior": true,
+   "new": true,
+   "sign": {
+    "roof": "GALACTIC POST OFFICE (MERU EMBASSY)",
+    "door": "GALACTIC POST OFFICE (MERU EMBASSY)"
+   }
+  },
+  {
+   "key": "gayaPolice",
+   "label": "Gaya Watch House",
+   "role": "police",
+   "f": [
+    40,
+    76,
+    -166,
+    -136
+   ],
+   "door": [
+    58,
+    -136
+   ],
+   "face": "S",
+   "h": 9,
+   "color": "#cdd3dc",
+   "interior": true,
+   "new": true,
+   "sign": {
+    "roof": "GAYA WATCH HOUSE",
+    "door": "GAYA WATCH HOUSE"
+   }
+  },
+  {
+   "key": "gayaFire",
+   "label": "Fire Station",
+   "role": "fire",
+   "f": [
+    86,
+    116,
+    -160,
+    -136
+   ],
+   "door": [
+    101,
+    -136
+   ],
+   "face": "S",
+   "h": 9,
+   "color": "#c9553c",
+   "interior": true,
+   "new": true,
+   "sign": {
+    "roof": "FIRE STATION",
+    "door": "FIRE STATION"
+   }
+  },
+  {
+   "key": "gayaBank",
+   "label": "Crystal Bank",
+   "role": "bank",
+   "f": [
+    -110,
+    -74,
+    -124,
+    -96
+   ],
+   "door": [
+    -92,
+    -124
+   ],
+   "face": "N",
+   "h": 10,
+   "color": "#e9e2d0",
+   "interior": true,
+   "new": true,
+   "sign": {
+    "roof": "CRYSTAL BANK",
+    "door": "CRYSTAL BANK"
+   }
+  },
+  {
+   "key": "gayaChronicle",
+   "label": "Gaya Chronicle",
+   "role": "news",
+   "f": [
+    60,
+    90,
+    -124,
+    -100
+   ],
+   "door": [
+    75,
+    -124
+   ],
+   "face": "N",
+   "h": 10,
+   "color": "#d9d1e6",
+   "interior": true,
+   "new": true,
+   "note": "News station",
+   "sign": {
+    "roof": "GAYA CHRONICLE",
+    "door": "GAYA CHRONICLE"
+   }
+  },
+  {
+   "key": "gayaChurch",
+   "label": "Church of Gaya",
+   "role": "other",
+   "f": [
+    -48,
+    -8,
+    -100,
+    -52
+   ],
+   "door": [
+    -28,
+    -52
+   ],
+   "face": "S",
+   "h": 20,
+   "color": "#f1ece0",
+   "interior": true,
+   "sign": {
+    "roof": "CHURCH OF GAYA",
+    "door": "CHURCH OF GAYA"
+   }
+  },
+  {
+   "key": "gayaLibrarySquare",
+   "label": "Library",
+   "role": "other",
+   "f": [
+    8,
+    48,
+    -96,
+    -52
+   ],
+   "door": [
+    28,
+    -52
+   ],
+   "face": "S",
+   "h": 14,
+   "color": "#e2d8f0",
+   "interior": true,
+   "sign": {
+    "roof": "LIBRARY",
+    "door": "LIBRARY"
+   }
+  },
+  {
+   "key": "gayaBathhouse",
+   "label": "Bathhouse",
+   "role": "other",
+   "f": [
+    -48,
+    -8,
+    52,
+    92
+   ],
+   "door": [
+    -28,
+    52
+   ],
+   "face": "N",
+   "h": 9,
+   "color": "#dfe6ea",
+   "interior": true,
+   "note": "Sacred bath → the Dream Wood",
+   "sign": {
+    "roof": "BATHHOUSE",
+    "door": "BATHHOUSE"
+   }
+  },
+  {
+   "key": "gayaTavern",
+   "label": "Tavern",
+   "role": "tavern",
+   "f": [
+    8,
+    44,
+    52,
+    84
+   ],
+   "door": [
+    26,
+    52
+   ],
+   "face": "N",
+   "h": 9,
+   "color": "#b98a5a",
+   "interior": true,
+   "note": "UNIQUE MINIGAME: ping-pong with Volley + Pip; darts, jukebox",
+   "games": [
+    "3D-GAMES/g/tavern-games/PongMain.dc.html"
+   ],
+   "sign": {
+    "roof": "TAVERN",
+    "door": "TAVERN"
+   }
+  },
+  {
+   "key": "gayaItemShop",
+   "label": "Item Shop",
+   "role": "itemshop",
+   "f": [
+    -86,
+    -52,
+    -46,
+    -10
+   ],
+   "door": [
+    -52,
+    -28
+   ],
+   "face": "E",
+   "h": 8,
+   "color": "#e9e2d0",
+   "interior": true,
+   "sign": {
+    "roof": "ITEM SHOP",
+    "door": "ITEM SHOP"
+   }
+  },
+  {
+   "key": "gayaArmory",
+   "label": "Armory",
+   "role": "armory",
+   "f": [
+    -86,
+    -52,
+    10,
+    44
+   ],
+   "door": [
+    -52,
+    27
+   ],
+   "face": "E",
+   "h": 8,
+   "color": "#a9a39a",
+   "interior": true,
+   "sign": {
+    "roof": "ARMORY",
+    "door": "ARMORY"
+   }
+  },
+  {
+   "key": "gayaNoodleShop",
+   "label": "Noodle Shop",
+   "role": "restaurant",
+   "f": [
+    52,
+    82,
+    -44,
+    -14
+   ],
+   "door": [
+    52,
+    -29
+   ],
+   "face": "W",
+   "h": 7,
+   "color": "#c94a3a",
+   "interior": true,
+   "note": "UNIQUE RESTAURANT: Tam's noodles (Foxy Ramen) + Washing Up in the kitchen",
+   "games": [
+    "3D-GAMES/g/foxy-ramen/Main.dc.html",
+    "3D-GAMES/g/washing-up/WashingUp.dc.html"
+   ],
+   "sign": {
+    "roof": "NOODLE SHOP",
+    "door": "NOODLE SHOP"
+   }
+  },
+  {
+   "key": "gayaCandleWorks",
+   "label": "Opa's Candle Works",
+   "role": "specialty",
+   "f": [
+    52,
+    82,
+    14,
+    44
+   ],
+   "door": [
+    52,
+    29
+   ],
+   "face": "W",
+   "h": 8,
+   "color": "#e8d6a8",
+   "interior": true,
+   "new": true,
+   "note": "UNIQUE SHOP",
+   "games": [
+    "3D-GAMES/g/gaya-candle-works/Main.dc.html"
+   ],
+   "sign": {
+    "roof": "OPA'S CANDLE WORKS",
+    "door": "OPA'S CANDLE WORKS"
+   }
+  },
+  {
+   "key": "gayaRelicShop",
+   "label": "Crystal & Relic",
+   "role": "relicShop",
+   "f": [
+    -120,
+    -92,
+    8,
+    32
+   ],
+   "door": [
+    -106,
+    8
+   ],
+   "face": "N",
+   "h": 7,
+   "color": "#9fb8e0",
+   "interior": true,
+   "new": true,
+   "note": "The famous Gaya relic to buy (DRAFT: Ben picks)",
+   "sign": {
+    "roof": "CRYSTAL & RELIC",
+    "door": "CRYSTAL & RELIC"
+   }
+  },
+  {
+   "key": "gayaWeapons",
+   "label": "Special Weapons",
+   "role": "weapons",
+   "f": [
+    -120,
+    -92,
+    -36,
+    -8
+   ],
+   "door": [
+    -106,
+    -8
+   ],
+   "face": "S",
+   "h": 7,
+   "color": "#6b6966",
+   "interior": true,
+   "new": true,
+   "note": "the 8 extra ranged + melee",
+   "sign": {
+    "roof": "SPECIAL WEAPONS",
+    "door": "SPECIAL WEAPONS"
+   }
+  },
+  {
+   "key": "gayaStadium",
+   "label": "The Gaya Open",
+   "role": "sport",
+   "f": [
+    -342,
+    -270,
+    -52,
+    52
+   ],
+   "door": [
+    -270,
+    0
+   ],
+   "face": "E",
+   "h": 14,
+   "color": "#e9e2d0",
+   "interior": true,
+   "note": "UNIQUE SPORT: tennis (GOLDEN RACKET relic)",
+   "games": [
+    "3D-GAMES/Gaya Tennis.dc.html"
+   ],
+   "sign": {
+    "roof": "THE GAYA OPEN",
+    "door": "THE GAYA OPEN"
+   }
+  },
+  {
+   "key": "gayaBallWorks",
+   "label": "Felt's Ball Works",
+   "role": "shop",
+   "f": [
+    146,
+    182,
+    -40,
+    -8
+   ],
+   "door": [
+    164,
+    -8
+   ],
+   "face": "S",
+   "h": 9,
+   "color": "#d9e86a",
+   "interior": true,
+   "new": true,
+   "games": [
+    "3D-GAMES/Gaya Ball Factory.dc.html"
+   ],
+   "sign": {
+    "roof": "FELT'S BALL WORKS",
+    "door": "FELT'S BALL WORKS"
+   }
+  },
+  {
+   "key": "gayaMountainHut",
+   "label": "Mountain Hut",
+   "role": "other",
+   "f": [
+    214,
+    230,
+    8,
+    24
+   ],
+   "door": [
+    222,
+    8
+   ],
+   "face": "N",
+   "h": 6,
+   "color": "#8a6a48",
+   "interior": true,
+   "sign": {
+    "roof": "MOUNTAIN HUT",
+    "door": "MOUNTAIN HUT"
+   }
+  },
+  {
+   "key": "gayaCarRental",
+   "label": "Caravan Hire",
+   "role": "carRental",
+   "f": [
+    -240,
+    -210,
+    -80,
+    -50
+   ],
+   "door": [
+    -210,
+    -65
+   ],
+   "face": "E",
+   "h": 6,
+   "color": "#cfc6b0",
+   "interior": true,
+   "new": true,
+   "note": "Car rental on the Caravan Road",
+   "sign": {
+    "roof": "CARAVAN HIRE",
+    "door": "CARAVAN HIRE"
+   }
+  },
+  {
+   "key": "gayaFarm",
+   "label": "Terrace Farm",
+   "role": "farm",
+   "f": [
+    150,
+    190,
+    60,
+    90
+   ],
+   "door": [
+    170,
+    60
+   ],
+   "face": "N",
+   "h": 9,
+   "color": "#a8733f",
+   "interior": true,
+   "new": true,
+   "note": "tea terraces + crystal herbs (DRAFT)",
+   "sign": {
+    "roof": "TERRACE FARM",
+    "door": "TERRACE FARM"
+   }
+  },
+  {
+   "key": "gayaHome",
+   "label": "Violet Cottage",
+   "role": "home",
+   "f": [
+    100,
+    120,
+    104,
+    124
+   ],
+   "door": [
+    110,
+    124
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#c8b8e8",
+   "interior": true,
+   "new": true,
+   "note": "the player rents / buys it",
+   "sign": {
+    "roof": "VIOLET COTTAGE",
+    "door": "VIOLET COTTAGE"
+   }
+  },
+  {
+   "key": "gayaHouse1",
+   "label": "House",
+   "role": "housing",
+   "f": [
+    -120,
+    -100,
+    104,
+    124
+   ],
+   "door": [
+    -110,
+    124
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#e6dcc4",
+   "interior": true,
+   "new": true,
+   "sign": {
+    "roof": "HOUSE",
+    "door": "HOUSE"
+   }
+  },
+  {
+   "key": "gayaHouse2",
+   "label": "House",
+   "role": "housing",
+   "f": [
+    -94,
+    -74,
+    104,
+    124
+   ],
+   "door": [
+    -84,
+    124
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#d9d1e6",
+   "interior": true,
+   "new": true,
+   "sign": {
+    "roof": "HOUSE",
+    "door": "HOUSE"
+   }
+  },
+  {
+   "key": "gayaHouse3",
+   "label": "House",
+   "role": "housing",
+   "f": [
+    -68,
+    -48,
+    104,
+    124
+   ],
+   "door": [
+    -58,
+    124
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#e9e2d0",
+   "interior": true,
+   "new": true,
+   "sign": {
+    "roof": "HOUSE",
+    "door": "HOUSE"
+   }
+  },
+  {
+   "key": "gayaHouse4",
+   "label": "House",
+   "role": "housing",
+   "f": [
+    48,
+    68,
+    104,
+    124
+   ],
+   "door": [
+    58,
+    124
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#d9d1e6",
+   "interior": true,
+   "new": true,
+   "sign": {
+    "roof": "HOUSE",
+    "door": "HOUSE"
+   }
+  },
+  {
+   "key": "gayaHouse5",
+   "label": "House",
+   "role": "housing",
+   "f": [
+    74,
+    94,
+    104,
+    124
+   ],
+   "door": [
+    84,
+    124
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#e6dcc4",
+   "interior": true,
+   "new": true,
+   "sign": {
+    "roof": "HOUSE",
+    "door": "HOUSE"
+   }
+  }
+ ],
+ "spots": [
+  {
+   "key": "gayaLet",
+   "at": [
+    12,
+    -22
+   ],
+   "kind": "npc",
+   "draft": true,
+   "note": "Let, Warden of the Gate"
+  },
+  {
+   "key": "gayaGrish",
+   "at": [
+    -22,
+    20
+   ],
+   "kind": "npc",
+   "draft": true,
+   "note": "Grish, Hero"
+  },
+  {
+   "key": "gayaRill",
+   "at": [
+    -16,
+    38
+   ],
+   "kind": "npc",
+   "draft": true,
+   "note": "Rill, priest of the water"
+  },
+  {
+   "key": "gayaHiring",
+   "at": [
+    22,
+    22
+   ],
+   "kind": "hiring",
+   "note": "NOW HIRING board"
+  },
+  {
+   "key": "gayaTownsfolk1",
+   "at": [
+    -32,
+    -14
+   ],
+   "kind": "crowd"
+  },
+  {
+   "key": "gayaTownsfolk2",
+   "at": [
+    32,
+    12
+   ],
+   "kind": "crowd"
+  },
+  {
+   "key": "gayaTownsfolk3",
+   "at": [
+    -30,
+    30
+   ],
+   "kind": "crowd"
+  },
+  {
+   "key": "gayaTownsfolk4",
+   "at": [
+    30,
+    -30
+   ],
+   "kind": "crowd"
+  },
+  {
+   "key": "gayaBastion",
+   "at": [
+    10,
+    -200
+   ],
+   "kind": "npc",
+   "draft": true,
+   "note": "Acolyte Bastion"
+  },
+  {
+   "key": "gayaGateGuard1",
+   "at": [
+    -12,
+    -262
+   ],
+   "kind": "npc",
+   "draft": true
+  },
+  {
+   "key": "gayaGateGuard2",
+   "at": [
+    12,
+    -262
+   ],
+   "kind": "npc",
+   "draft": true
+  },
+  {
+   "key": "gayaPennant",
+   "at": [
+    -180,
+    8
+   ],
+   "kind": "npc",
+   "draft": true,
+   "note": "Novice Pennant"
+  },
+  {
+   "key": "gayaUsher",
+   "at": [
+    -246,
+    10
+   ],
+   "kind": "crowd"
+  },
+  {
+   "key": "gayaBrace",
+   "at": [
+    90,
+    8
+   ],
+   "kind": "npc",
+   "draft": true,
+   "note": "Brace (novice), white-robe check"
+  },
+  {
+   "key": "gayaQuartz",
+   "at": [
+    290,
+    20
+   ],
+   "kind": "npc",
+   "draft": true,
+   "note": "Quartz, Foreman of the Face"
+  },
+  {
+   "key": "gayaGrand",
+   "at": [
+    16,
+    300
+   ],
+   "kind": "npc",
+   "draft": true,
+   "note": "Grand, Hero commander"
+  },
+  {
+   "key": "gayaFathom",
+   "at": [
+    -16,
+    290
+   ],
+   "kind": "npc",
+   "draft": true
+  },
+  {
+   "key": "gayaRelicFind",
+   "at": [
+    -30,
+    312
+   ],
+   "kind": "relicFind",
+   "note": "DRAFT: the legendary + historical relic to find (Ben picks)"
+  },
+  {
+   "key": "gayaBalloon",
+   "at": [
+    -166,
+    70
+   ],
+   "kind": "vehicle",
+   "note": "DRAFT: the Gaya special vehicle, a lilac Hot Air Balloon? (Vehicle Workshop ?v=balloon)"
+  },
+  {
+   "key": "gayaCroquet",
+   "at": [
+    72,
+    -298
+   ],
+   "kind": "game",
+   "game": "3D-GAMES/g/8-gates-croquet/Croquet.dc.html",
+   "note": "Croquet on the castle lawn"
+  },
+  {
+   "key": "gayaJuggling",
+   "at": [
+    -26,
+    -24
+   ],
+   "kind": "game",
+   "game": "3D-GAMES/g/juggling/Juggling.dc.html",
+   "note": "Juggling on the square stage"
+  },
+  {
+   "key": "gayaUnicycle",
+   "at": [
+    -36,
+    -24
+   ],
+   "kind": "vehicle",
+   "note": "Unicycle (Vehicle Workshop ?v=unicycle), the stage performers"
+  },
+  {
+   "key": "gayaGlass",
+   "at": [
+    40,
+    316
+   ],
+   "kind": "game",
+   "note": "THE GLASS: lookout telescope at the canyon overlook (2D game, NOT BUILT YET in 3D)"
+  },
+  {
+   "key": "gayaMineCart",
+   "at": [
+    312,
+    -96
+   ],
+   "kind": "game",
+   "note": "Crystal mine cart job at the cave mouth (NOT BUILT YET)"
+  },
+  {
+   "key": "gayaBellRinger",
+   "at": [
+    -28,
+    -104
+   ],
+   "kind": "hiring",
+   "note": "Church bell ringer job, behind the church (NOT BUILT YET)"
+  },
+  {
+   "key": "gayaRoyalHelipad",
+   "at": [
+    -94,
+    -300
+   ],
+   "kind": "helipad",
+   "note": "ROYAL HELIPAD west of the castle (like Meru 2 worlds/meru2-royalpad.js): the royal 8 helicopter; the castle guards fly you to the other pads."
+  },
+  {
+   "key": "gayaRoyalTelepad",
+   "at": [
+    -62,
+    -300
+   ],
+   "kind": "telepad",
+   "note": "ROYAL TELEPORT PAD west of the castle: E / TALK → beam out → the Gaya Space Dock; arriving by telepad beams you in here."
+  },
+  {
+   "key": "gayaInfirmaryHelipad",
+   "at": [
+    -110,
+    -238
+   ],
+   "kind": "helipad",
+   "note": "HOSPITAL HELIPAD (medevac) beside the hospital's west wall."
+  }
+ ],
+ "dock": {
+  "key": "gayaSpacedock",
+  "pad": [
+   -262,
+   -266
+  ],
+  "r": 14,
+  "face": "S"
+ },
+ "gates": [
+  {
+   "key": "gayaMillGate",
+   "at": [
+    200,
+    -262
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "THE MILLSTONE [gayaMill]: the landing fight (hacked Machine Fleet units)"
+  },
+  {
+   "key": "gayaCutFaceGate",
+   "at": [
+    300,
+    40
+   ],
+   "r": 7,
+   "kind": "battle",
+   "note": "the cut face: crystal crabs + shardthrowers"
+  },
+  {
+   "key": "gayaBatBridgeGate",
+   "at": [
+    0,
+    320
+   ],
+   "r": 7,
+   "kind": "battle",
+   "note": "Meditation Canyon: 14 bats round the bridge"
+  },
+  {
+   "key": "gayaKitsuneGate",
+   "at": [
+    -250,
+    258
+   ],
+   "r": 7,
+   "kind": "battle",
+   "note": "the Dream Wood (after the sacred bath)"
+  },
+  {
+   "key": "gayaMountainCave",
+   "at": [
+    300,
+    -110
+   ],
+   "r": 8,
+   "kind": "cave",
+   "note": "the painted deep: boss THE PAINTED GIANT"
+  }
+ ],
+ "wild": [
+  {
+   "key": "gayaMillWild",
+   "r": [
+    222,
+    370,
+    -370,
+    -232
+   ],
+   "for": "gayaMillGate",
+   "creatures": [
+    "robots"
+   ]
+  },
+  {
+   "key": "gayaCrystalField",
+   "r": [
+    250,
+    370,
+    62,
+    140
+   ],
+   "for": "gayaCutFaceGate",
+   "creatures": [
+    "creatures"
+   ]
+  },
+  {
+   "key": "gayaBatCliffs",
+   "r": [
+    132,
+    330,
+    172,
+    340
+   ],
+   "for": "gayaBatBridgeGate",
+   "creatures": [
+    "monsters"
+   ]
+  },
+  {
+   "key": "gayaKitsuneWild",
+   "r": [
+    -370,
+    -272,
+    160,
+    370
+   ],
+   "for": "gayaKitsuneGate",
+   "creatures": [
+    "monsters",
+    "creatures"
+   ]
+  }
+ ],
+ "props": [
+  {
+   "k": "fountain",
+   "at": [
+    -24,
+    -24
+   ]
+  },
+  {
+   "k": "fountain",
+   "at": [
+    24,
+    -24
+   ]
+  },
+  {
+   "k": "fountain",
+   "at": [
+    -24,
+    24
+   ]
+  },
+  {
+   "k": "fountain",
+   "at": [
+    24,
+    24
+   ]
+  },
+  {
+   "k": "stall",
+   "at": [
+    -26,
+    -30
+   ],
+   "note": "STAGE"
+  },
+  {
+   "k": "sign",
+   "at": [
+    26,
+    -32
+   ],
+   "note": "NOTICE BOARD"
+  },
+  {
+   "k": "statue",
+   "at": [
+    0,
+    -10
+   ],
+   "note": "TRANSPORT PAD crest (the landing pad)"
+  },
+  {
+   "k": "bench",
+   "at": [
+    -36,
+    -10
+   ]
+  },
+  {
+   "k": "bench",
+   "at": [
+    36,
+    -10
+   ]
+  },
+  {
+   "k": "bench",
+   "at": [
+    -36,
+    10
+   ]
+  },
+  {
+   "k": "bench",
+   "at": [
+    36,
+    10
+   ]
+  },
+  {
+   "k": "tree",
+   "at": [
+    -38,
+    -38
+   ]
+  },
+  {
+   "k": "tree",
+   "at": [
+    38,
+    -38
+   ]
+  },
+  {
+   "k": "tree",
+   "at": [
+    -38,
+    38
+   ]
+  },
+  {
+   "k": "tree",
+   "at": [
+    38,
+    38
+   ]
+  },
+  {
+   "k": "statue",
+   "at": [
+    16,
+    -160
+   ],
+   "note": "SHRINE"
+  },
+  {
+   "k": "fountain",
+   "at": [
+    -18,
+    -230
+   ],
+   "note": "castle path fountain"
+  },
+  {
+   "k": "rock",
+   "at": [
+    160,
+    14
+   ],
+   "note": "cairn"
+  },
+  {
+   "k": "rock",
+   "at": [
+    256,
+    -24
+   ],
+   "note": "cairn"
+  },
+  {
+   "k": "statue",
+   "at": [
+    316,
+    -40
+   ],
+   "note": "SHRINE by the river"
+  },
+  {
+   "k": "lamp",
+   "at": [
+    -30,
+    300
+   ],
+   "note": "brazier"
+  },
+  {
+   "k": "lamp",
+   "at": [
+    30,
+    300
+   ],
+   "note": "brazier"
+  },
+  {
+   "k": "planter",
+   "at": [
+    -20,
+    312
+   ],
+   "note": "meditation mat"
+  },
+  {
+   "k": "planter",
+   "at": [
+    -8,
+    312
+   ],
+   "note": "meditation mat"
+  },
+  {
+   "k": "planter",
+   "at": [
+    8,
+    312
+   ],
+   "note": "meditation mat"
+  },
+  {
+   "k": "planter",
+   "at": [
+    20,
+    312
+   ],
+   "note": "meditation mat"
+  }
+ ],
+ "look": {
+  "sky": [
+   "#b9a3e3",
+   "#e6dcf5"
+  ],
+  "fog": "#e2d6f3",
+  "sun": "#ffe8c8",
+  "light": "#f4eefc",
+  "grass": "#9db38a",
+  "ground": "#b7a98e",
+  "water": "#6fa6d6",
+  "crystal": "#8fd3ff",
+  "banners": [
+   "#b38ad9",
+   "#6b3fa0"
+  ],
+  "lamps": "#ffd58a",
+  "notes": "Light LILAC sky (Ben). Gold-trimmed pale stone, violet roofs, lilac + violet banners, warm lantern light, steam + incense; cold blue crystal glints in the mountain, the cave and the gorge glass."
+ },
+ "terrain": {
+  "notes": "A hill town: the MOUNTAIN rises in the north-east (snow on the Millstone field), a low ridge west behind the stadium, soft rolling hills in the Dream Wood, and the GORGE cut deep under the Pilgrim Way bridge in Meditation Canyon.",
+  "hills": [
+   {
+    "key": "gayaMountain",
+    "c": [
+     350,
+     -310
+    ],
+    "r": 130,
+    "h": 70
+   },
+   {
+    "key": "gayaWestRidge",
+    "c": [
+     -370,
+     -150
+    ],
+    "r": 70,
+    "h": 26
+   },
+   {
+    "key": "gayaWoodHills",
+    "c": [
+     -330,
+     300
+    ],
+    "r": 60,
+    "h": 12
+   }
+  ],
+  "cuts": [
+   {
+    "key": "gayaGorge",
+    "r": [
+     -120,
+     120,
+     206,
+     240
+    ],
+    "depth": 18
+   }
+  ],
+  "clearings": [
+   {
+    "key": "gayaRoyalCourt",
+    "r": [
+     -114,
+     -44,
+     -320,
+     -282
+    ]
+   },
+   {
+    "key": "gayaMedevacPad",
+    "r": [
+     -120,
+     -100,
+     -248,
+     -228
+    ]
+   }
+  ]
+ }
+}

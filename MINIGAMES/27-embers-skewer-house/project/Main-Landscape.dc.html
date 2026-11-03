@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Skewer House landscape</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="../../../_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Skewer House">
+  <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+
+  <!-- WALKING AROUND: the standard Meru HUD (joystick, 1 / 2 / 3, MENU, TALK) -->
+  <sc-if value="{{ walkOn }}" hint-placeholder-val="{{ false }}">
+    <div data-hud-host="1" style="position:absolute;inset:0;pointer-events:none"><dc-import name="Game-HUD" game="{{ engine }}" hud="{{ stdHud }}" started="{{ walkOn }}" busy="{{ false }}" on-hud="{{ onHud }}" world="Skewer House" keys="{{ keysList }}" skip-keys="{{ skipKeys }}" quest-steps="{{ questSteps }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+    <button onClick="{{ toIntro }}" aria-label="Back to the job card" style="position:absolute;right:max(10px, env(safe-area-inset-right));top:{{ walkBtnTop }};z-index:5;min-height:44px;padding:0 14px;border:2px solid #ffd23a;border-radius:0;background:#000;color:#ffd23a;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WORK A SHIFT</button>
+  </sc-if>
+
+  <!-- THE SHIFT -->
+  <sc-if value="{{ workOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="top" style="position:absolute;left:0;right:0;top:0;z-index:3;pointer-events:none;display:flex;flex-direction:column">
+      <div style="background:#000;border-bottom:2px solid #ffd23a;display:flex;align-items:stretch;padding-top:env(safe-area-inset-top)">
+        <div style="padding:6px 9px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap">EMBER'S · DAY {{ h.day }}</span><span style="font:900 22px var(--font-heading);font-variant-numeric:tabular-nums;color:{{ clockCol }}">{{ clock }}</span></div>
+        <div style="padding:6px 9px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">EARNED</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;color:#e6b45a">{{ earnedTxt }}</span></div>
+        <div style="padding:6px 9px;display:flex;flex-direction:column;justify-content:center;min-width:0;flex:1"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4;white-space:nowrap">SERVED · STARS</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ servedTxt }}</span></div>
+        <button onClick="{{ soundCycle }}" aria-label="{{ soundAria }}" style="pointer-events:auto;flex:none;width:46px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:{{ soundCol }};font:900 13px var(--font-heading);letter-spacing:0.04em;cursor:pointer" style-hover="background:#2a2826">{{ soundLbl }}</button>
+        <button onClick="{{ helpToggle }}" aria-label="How to work the stations" style="pointer-events:auto;flex:none;width:46px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 20px var(--font-heading);cursor:pointer" style-hover="background:#2a2826">?</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:6px;align-items:start;width:{{ tixW }};box-sizing:border-box">
+        <sc-for list="{{ tickets }}" as="o" hint-placeholder-count="2">
+          <div onClick="{{ o.serve }}" style="pointer-events:{{ o.pe }};cursor:pointer;background:#fbfbf7;color:#201e1d;border:2px solid {{ o.bd }};outline:{{ o.ol }};display:flex;flex-direction:column;min-width:0;opacity:{{ o.op }}">
+            <div style="background:#1f5f8b;color:#fff;padding:3px 6px;font:900 11px var(--font-heading);letter-spacing:0.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.name }}</div>
+            <div style="height:5px;background:#e8e4da"><div style="height:100%;width:{{ o.patW }};background:{{ o.patCol }}"></div></div>
+            <sc-if value="{{ fullTix }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:2px 6px;font:900 11px var(--font-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.recipe }}</div>
+              <div style="padding:1px 6px 3px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px">
+                <sc-for list="{{ o.seq }}" as="p" hint-placeholder-count="5"><span title="{{ p.n }}" style="height:16px;background:{{ p.col }};border:1.5px solid #201e1d;color:{{ p.fg }};font:900 9px var(--font-heading);display:flex;align-items:center;justify-content:center;outline:{{ p.ol }};outline-offset:1px">{{ p.l }}</span></sc-for>
+              </div>
+              <div style="padding:2px 6px;font:900 10px var(--font-heading);letter-spacing:0.04em;color:{{ o.charCol }};border-top:1px solid #e8e4da;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.charTxt }}</div>
+              <sc-if value="{{ o.extraOn }}" hint-placeholder-val="{{ true }}"><div style="padding:2px 6px;font:800 10px var(--font-heading);color:#a8792e;border-top:1px solid #e8e4da;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.extra }}</div></sc-if>
+              <div style="padding:2px 6px;font:800 9px var(--font-heading);letter-spacing:0.04em;color:#7a746d;border-top:1px solid #e8e4da;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.foot }}</div>
+            </sc-if>
+            <sc-if value="{{ compactTix }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:2px 6px;display:flex;gap:2px;align-items:center"><sc-for list="{{ o.seq }}" as="p" hint-placeholder-count="5"><span style="flex:1;height:12px;background:{{ p.col }};border:1px solid #201e1d;outline:{{ p.ol }}"></span></sc-for><span style="flex:none;margin-left:4px;font:900 10px var(--font-heading);color:{{ o.charCol }}">{{ o.charShort }}</span></div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <sc-if value="{{ barOn }}" hint-placeholder-val="{{ false }}">
+      <div data-safe="bottom" style="position:absolute;left:0;right:0;bottom:0;z-index:4;background:#000;border-top:2px solid #ffd23a;padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:grid;grid-template-columns:repeat({{ stCols }},minmax(0,1fr));pointer-events:{{ barPE }}">
+        <sc-for list="{{ stations }}" as="st" hint-placeholder-count="4">
+          <button onClick="{{ st.go }}" aria-label="{{ st.aria }}" style="min-height:58px;padding:6px 4px 6px 8px;border:0;border-right:2px solid #2a2826;border-radius:0;background:{{ st.bg }};color:{{ st.fg }};cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:3px;min-width:0" style-hover="filter:brightness(1.2)">
+            <span style="font:900 {{ stFs }} var(--font-heading);letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ st.label }}</span>
+            <span style="font:800 9px var(--font-heading);letter-spacing:0.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ st.bc }}">{{ st.badge }}</span>
+          </button>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- next-step chip (bottom left) -->
+    <div style="position:absolute;left:max(10px, env(safe-area-inset-left));bottom:{{ chipBottom }};z-index:3;pointer-events:none;max-width:{{ chipW }};background:#000;border:2px solid #ffd23a;display:{{ chipDisp }};flex-direction:column">
+      <div style="padding:4px 10px;font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;border-bottom:2px solid #3a3836">{{ chipHead }}</div>
+      <div style="padding:6px 10px;font:800 13px var(--font-heading);letter-spacing:0.02em;line-height:1.25;color:#fff;text-wrap:pretty">{{ chipTxt }}</div>
+    </div>
+
+    <!-- the plate: sides + bin as big buttons (dragging the 3D plate onto the customer also works) -->
+    <sc-if value="{{ plateOn }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:max(10px, env(safe-area-inset-left));bottom:{{ chipBottom }};z-index:4;width:{{ plateW }};background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+        <div style="padding:4px 10px;font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;border-bottom:2px solid #3a3836;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ plateHead }}</div>
+        <div style="display:grid;grid-template-columns:repeat({{ plateCols }},minmax(0,1fr))">
+          <sc-for list="{{ plateBtns }}" as="b" hint-placeholder-count="3"><button onClick="{{ b.go }}" style="min-height:46px;padding:0 10px;border:0;border-right:2px solid #3a3836;border-radius:0;background:{{ b.bg }};color:{{ b.fg }};font:900 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;white-space:nowrap" style-hover="filter:brightness(1.2)">{{ b.label }}</button></sc-for>
+        </div>
+        <div style="padding:5px 10px;border-top:2px solid #3a3836;font:700 12px var(--font-body);line-height:1.3;color:#cfcac2;text-wrap:pretty">{{ plateTxt }}</div>
+      </div>
+    </sc-if>
+
+    <!-- the four sides of the kabob you are turning -->
+    <sc-if value="{{ meterOn }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;right:max(10px, env(safe-area-inset-right));{{ meterPos }};z-index:3;pointer-events:none;width:{{ meterW }};background:#000;border:2px solid {{ meterBd }};display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;gap:6px;padding:4px 8px;border-bottom:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#ffd23a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ meterHead }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.08em;color:{{ meterWantCol }};white-space:nowrap">{{ meterWant }}</span></div>
+        <div style="display:flex;flex-direction:column;gap:3px;padding:5px 8px 6px">
+          <sc-for list="{{ meterSides }}" as="sd" hint-placeholder-count="4">
+            <div style="display:grid;grid-template-columns:34px minmax(0,1fr) 16px;gap:6px;align-items:center">
+              <span style="font:900 9px var(--font-heading);letter-spacing:0.04em;color:{{ sd.lc }}">{{ sd.label }}</span>
+              <span style="position:relative;height:10px;display:grid;grid-template-columns:30fr 18fr 18fr 20fr 24fr;gap:1px">
+                <span style="background:#9ca3af;display:block;opacity:0.55"></span><span style="background:#e6b45a;display:block;outline:{{ sd.oL }};outline-offset:1px"></span><span style="background:#c27a32;display:block;outline:{{ sd.oM }};outline-offset:1px"></span><span style="background:#7a4520;display:block;outline:{{ sd.oW }};outline-offset:1px"></span><span style="background:#ec3013;display:block;opacity:0.7"></span>
+                <span style="position:absolute;top:-3px;bottom:-3px;left:{{ sd.x }};width:4px;margin-left:-2px;background:#fff;display:block;box-shadow:0 0 0 1px #000"></span>
+              </span>
+              <span style="width:12px;height:12px;border-radius:50%;background:{{ sd.gl }};display:block"></span>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ meterFootOn }}" hint-placeholder-val="{{ false }}"><div style="padding:4px 8px;border-top:2px solid #3a3836;font:800 10px var(--font-heading);letter-spacing:0.06em;color:#ffd23a">{{ meterFoot }}</div></sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ sayOn }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:50%;transform:translateX(-50%);top:{{ sayTop }};z-index:3;pointer-events:none;width:min(420px, calc(100% - 24px));background:rgba(0,0,0,0.88);border:2px solid #3a3836;padding:7px 10px;font:700 13px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">{{ h.say }}</div>
+    </sc-if>
+  </sc-if>
+
+  <!-- DEMO captions -->
+  <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(10px, env(safe-area-inset-left));bottom:calc(70px + env(safe-area-inset-bottom));z-index:7;pointer-events:none;width:{{ demoW }};background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 12px;border-bottom:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;background:#ec3013;display:block"></span>DEMO</span><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">{{ demoN }}</span></div>
+      <div style="display:flex;align-items:stretch"><sc-if value="{{ demoKeyOn }}" hint-placeholder-val="{{ false }}"><div style="flex:none;min-width:64px;display:flex;align-items:center;justify-content:center;padding:0 10px;background:#ec3013;color:#fff;font:900 14px var(--font-heading);border-right:2px solid #3a3836;white-space:nowrap">{{ h.demo.key }}</div></sc-if><div style="padding:9px 12px;font:900 clamp(13px,3.6vw,18px) var(--font-heading);letter-spacing:0.03em;line-height:1.2;color:#fff;text-wrap:pretty">{{ h.demo.cap }}</div></div>
+    </div>
+    <button onClick="{{ demoExit }}" aria-label="Exit the demo" style="position:absolute;right:max(10px, env(safe-area-inset-right));bottom:calc(70px + env(safe-area-inset-bottom));z-index:7;min-width:64px;min-height:48px;padding:0 14px;border:2px solid #ec3013;border-radius:0;background:#ec3013;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">EXIT DEMO</button>
+  </sc-if>
+
+  <!-- customer reaction -->
+  <sc-if value="{{ reactOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ reactTop }};transform:translateX(-50%);z-index:6;pointer-events:none;width:min(420px, calc(100% - 24px));background:#000;border:3px solid {{ h.react.col }};display:flex;flex-direction:column">
+      <div style="display:flex;align-items:stretch"><div style="flex:1;padding:10px 14px;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">{{ h.react.who }}</span><span style="font:900 clamp(28px,8.5vw,42px) var(--font-heading);line-height:1;color:{{ h.react.col }}">{{ h.react.word }}</span></div><div style="flex:none;min-width:84px;padding:0 12px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;background:{{ h.react.col }};color:#000"><span style="font:900 20px var(--font-heading);letter-spacing:0.04em">{{ reactStars }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.08em">{{ reactTip }}</span></div></div>
+      <div style="padding:8px 14px 10px;border-top:2px solid #2a2826;font:700 14px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">“{{ h.react.line }}”</div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ flashOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ flashTop }};transform:translateX(-50%);z-index:5;pointer-events:none;max-width:calc(100% - 24px);background:rgba(0,0,0,0.9);border:2px solid {{ flashCol }};display:flex;align-items:stretch">
+      <span style="flex:none;width:10px;background:{{ flashCol }};display:block"></span>
+      <span style="padding:8px 14px;font:900 clamp(14px,3.8vw,22px) var(--font-heading);letter-spacing:0.04em;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ flashTxt }}</span>
+    </div>
+  </sc-if>
+
+  <!-- WELCOME CARD (the job offer), Meru Burgers style -->
+  <sc-if value="{{ introOn }}" hint-placeholder-val="{{ true }}">
+    <div data-safe="intro" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:6;width:min(420px, calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column">
+      <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">SKEWER HOUSE · CHEF EMBER · DAY {{ h.day }}</span><span style="font:900 26px var(--font-heading);line-height:1.05">Work a shift</span><span style="font:700 13px var(--font-body);color:#cfcac2;text-wrap:pretty">Three minutes on the coals. Thread the skewers, keep every kabob turning till all four sides match the ticket, then plate it up. Pay is a wage plus prices plus tips, in gold.</span></div>
+      <sc-for list="{{ introRows }}" as="r" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:76px minmax(0,1fr);gap:12px;padding:6px 16px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;color:#e6b45a">{{ r.v }}</span></div></sc-for>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+        <button onClick="{{ demoGo }}" style="min-height:48px;padding:0 16px;border:0;border-top:2px solid #3a3836;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WATCH THE DEMO</button>
+        <button onClick="{{ walkGo }}" style="min-height:48px;padding:0 16px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">{{ walkLbl }}</button>
+      </div>
+      <button onClick="{{ goWork }}" style="min-height:56px;padding:0 18px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">PUT ME TO WORK</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ helpOn }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ helpToggle }}" style="position:absolute;inset:0;z-index:9;background:rgba(0,0,0,0.82);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #ffd23a;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="padding:10px 14px;border-bottom:2px solid #3a3836;font:900 16px var(--font-heading);letter-spacing:0.06em;color:#ffd23a">HOW THE GRILL WORKS</div>
+        <sc-for list="{{ helpRows }}" as="r" hint-placeholder-count="7"><div style="display:grid;grid-template-columns:88px minmax(0,1fr);gap:10px;padding:7px 14px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body);line-height:1.35"><span style="font:900 11px var(--font-heading);letter-spacing:0.08em;color:#e6b45a">{{ r.k }}</span><span style="text-wrap:pretty">{{ r.v }}</span></div></sc-for>
+        <div style="padding:10px 14px;font:700 12px var(--font-body);color:#cfcac2">Tap anywhere to close</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:8;background:rgba(0,0,0,0.78);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #3a3836;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+          <div style="padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ doneKicker }}</span><span style="font:900 24px var(--font-heading);line-height:1.05">Shift over</span><span style="font:700 12px var(--font-body);color:#cfcac2">{{ doneSub }}</span></div>
+          <div style="width:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#ec3013"><span style="font:900 30px var(--font-heading)">{{ d.total }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em">GOLD</span></div>
+        </div>
+        <sc-if value="{{ eodOn }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:10px;padding:10px 16px;background:#ffd23a;color:#000;border-bottom:2px solid #000;font:900 14px var(--font-heading);letter-spacing:0.06em"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 7h7l-5.5 4.5L18.5 21 12 16.8 5.5 21l2-7.5L2 9h7z" fill="#000"></path></svg>EMPLOYEE OF THE DAY</div></sc-if>
+        <sc-for list="{{ doneRows }}" as="r" hint-placeholder-count="6"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:7px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;font-variant-numeric:tabular-nums">{{ r.v }}</span></div></sc-for>
+        <sc-for list="{{ unlocks }}" as="u" hint-placeholder-count="1"><div style="padding:7px 16px;border-bottom:2px solid #2a2826;font:800 13px var(--font-heading);letter-spacing:0.04em;color:#22c55e">UNLOCKED · {{ u.t }}</div></sc-for>
+        <div style="padding:8px 16px 4px;font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">UPGRADE THE GRILL · YOU HAVE {{ goldTxt }}</div>
+        <sc-for list="{{ shop }}" as="s" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 16px;border-top:2px solid #2a2826">
+            <div style="display:flex;flex-direction:column;min-width:0"><span style="font:900 13px var(--font-heading);letter-spacing:0.04em">{{ s.name }}</span><span style="font:600 12px var(--font-body);color:#cfcac2">{{ s.line }}</span></div>
+            <button onClick="{{ s.buy }}" disabled="{{ s.off }}" style="min-width:84px;min-height:44px;padding:0 12px;border:2px solid {{ s.bd }};border-radius:0;background:{{ s.bg }};color:{{ s.fg }};font:900 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;opacity:{{ s.op }}" style-hover="filter:brightness(1.15)">{{ s.btn }}</button>
+          </div>
+        </sc-for>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:8px">
+          <button onClick="{{ goWork }}" style="min-height:52px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">NEXT SHIFT</button>
+          <button onClick="{{ walkGo }}" style="min-height:52px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">{{ breakLbl }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const LETTER = { lamb: 'L', chicken: 'C', pepper: 'P', onion: 'O', tomato: 'T', mushroom: 'M', pineapple: 'A' };
+const ZC = { LIGHT: '#a8792e', MEDIUM: '#8a4a1a', WELL: '#5a3018' };
+class Component extends DCLogic {
+  state = { h: null, help: false, vw: 1200, vh: 800, hi: { pad: false, menu: false, split: false, bar: 0 } };
+  stageRef = React.createRef();
+  // EMBED (a world opens this page in a panel): ?embed=1 hides walking; LEAVE / shift results are posted to the parent window
+  embed = /[?&]embed=1/.test(location.search);
+  post = msg => { try { (window.parent !== window ? window.parent : window).postMessage({ source: 'skewerHouse', ...msg }, '*'); } catch (e) {} };
+  onHud = hi => this.setState({ hi });
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs(); try { this.ro = new ResizeObserver(this.onRs); this.stageRef.current && this.ro.observe(this.stageRef.current.parentElement); } catch (e) {}
+    try { const m = await import(new URL('minigames/skewer/skewer-house.js', document.baseURI).href); this.g = await m.createSkewerShift({ container: this.stageRef.current, onState: h => { if (h.done && !this.doneSent) { this.doneSent = true; this.post({ type: 'shiftDone', gold: h.done.total, served: h.done.served, day: h.done.day }); } if (!h.done) this.doneSent = false; this.setState({ h }); } }); window.__skewer = this.g; this.forceUpdate();
+      if (/[?&]demo=1/.test(location.search)) setTimeout(() => this.g.demoStart(), 400); else if (/[?&]work=1/.test(location.search)) setTimeout(() => this.g.startShift(), 300); else if (/[?&]walk=1/.test(location.search) && !this.embed) setTimeout(() => this.g.toWalk(), 300); }
+    catch (e) { console.warn('skewer house failed: ' + (e && e.stack || String(e))); }
+  }
+  componentDidUpdate() { const root = this.stageRef.current && this.stageRef.current.parentElement; if (!root || !this.g || !this.g.setSafe) return; const rb = root.getBoundingClientRect(); let top = 0, bot = 0, left = 0;
+    const shortL = rb.width > rb.height && rb.height < 520 && this.g.hud().focus === 'grill'; root.querySelectorAll('[data-safe]').forEach(el => { const r = (el.dataset.safe === 'top' && shortL && el.firstElementChild ? el.firstElementChild : el).getBoundingClientRect(); if (!r.height) return; if (el.dataset.safe === 'top') top = Math.max(top, r.bottom - rb.top); else if (el.dataset.safe === 'intro' && rb.width > rb.height) left = Math.max(left, r.right - rb.left); else bot = Math.max(bot, rb.bottom - r.top); });
+    const H = rb.height, ph = this.g.hud().phase; this.g.setSafe(Math.round(Math.min(top, H * 0.36)), Math.round(Math.min(bot + ((ph === 'shift' || ph === 'glide') && !shortL ? 40 : 0), H * (ph === 'intro' ? 0.66 : 0.32))), Math.round(Math.min(left, rb.width * 0.6))); }
+  componentWillUnmount() { removeEventListener('resize', this.onRs); this.ro && this.ro.disconnect(); this.g && this.g.destroy(); }
+  onRs = () => { const el = this.stageRef.current, r = el && el.parentElement ? el.parentElement.getBoundingClientRect() : null; this.setState({ vw: r && r.width ? r.width : innerWidth, vh: r && r.height ? r.height : innerHeight }); };
+  renderVals() {
+    const S = this.state, g = this.g, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const h = S.h || { phase: 'intro', day: 1, left: 180, earned: 0, tips: 0, served: 0, lost: 0, stars: '', gold: 0, focus: 'all', orders: [], chopOn: false, badges: {}, hint: null, flash: null, say: '', react: null, brush: 0, heat: 35, meter: null, board: null, plate: null, done: null, upgrades: [], menu: [], sides: [], glazeOn: false, flaresOn: false, uniform: false, demo: null, walk: null };
+    const work = h.phase === 'shift' || h.phase === 'glide', d = h.done || { total: 0 }, m = Math.floor(h.left / 60), s = Math.floor(h.left % 60), port = S.vh > S.vw, short = S.vw > S.vh && S.vh < 520, narrow = S.vw < 480;
+    const mt = h.meter, barOn = work && !h.done, meterOn = !!mt && (h.focus === 'grill' || h.focus === 'all' || !!h.demo) && !h.react && !(h.demo && !short);
+    const bar = S.hi.bar || 0, wk = h.walk || {};
+    const stdHud = { hp: 100, hpMax: 100, en: 100, gold: h.gold, hour: 13, day: 1, items: [], place: 'Skewer House', quest: { text: 'Talk to CHEF EMBER behind the counter to work a shift' }, prompt: wk.prompt || null, toast: wk.toast || null, muted: !!h.muted, weather: 'Clear', boat: false, inCave: false, weapons: [], dialog: wk.dialog || null, vehicles: [], vehAmmo: [] };
+    const zoneX = v => Math.min(100, v / 110 * 100).toFixed(1) + '%';
+    return {
+      stageRef: this.stageRef, h, d, engine: g, stdHud, onHud: this.onHud, walkOn: h.phase === 'walk', walkBtnTop: 'calc(' + (bar + 8) + 'px + env(safe-area-inset-top))',
+      keysList: [['WASD', 'walk'], ['E', 'talk'], ['Space', 'jump'], ['M', 'map'], ['I', 'menu']], skipKeys: ['KeyT', 'KeyN', 'KeyV', 'KeyC'], questSteps: [['Talk to CHEF EMBER', 'skewerUniform']],
+      workOn: work && !h.done, introOn: h.phase === 'intro', doneOn: !!h.done && h.phase === 'done', helpOn: S.help && work,
+      clock: m + ':' + String(s).padStart(2, '0'), clockCol: h.left < 20 ? '#ff9a8a' : '#ffffff', earnedTxt: (h.earned + h.tips) + 'g', servedTxt: h.served + (h.lost ? '·' + h.lost + ' LEFT' : '') + ' ★' + (h.stars || '–'),
+      fullTix: !short, compactTix: short,
+      tickets: h.orders.slice(0, 3).map(o => { const next = h.board && o.status.startsWith('THREADING') ? +o.status.split(' ')[1].split('/')[0] : -1;
+        const ready = !!(h.plate && o.waiting && !h.demo); return { serve: e => { blur(e); g && g.serveOrder(o.id); }, pe: ready ? 'auto' : 'none', bd: ready ? '#ec3013' : '#201e1d', ol: ready && h.plate.who === o.name ? '3px solid #ffd23a' : 'none', name: o.name, op: o.waiting ? 1 : 0.8, recipe: o.recipe, patW: Math.round(o.pat * 100) + '%', patCol: o.pat < 0.3 ? '#ec3013' : o.pat < 0.6 ? '#ffd23a' : '#22c55e',
+          seq: o.seq.map((p, i) => ({ n: p.n, l: LETTER[p.k] || p.n[0], col: p.col, fg: p.k === 'lamb' || p.k === 'pepper' || p.k === 'tomato' ? '#fff' : '#201e1d', ol: i === next ? '2px solid #ec3013' : 'none' })),
+          charTxt: o.char + (o.glaze ? ' · HONEY GLAZE' : ''), charShort: o.char === 'MEDIUM' ? 'MED' : o.char, charCol: ZC[o.char], extraOn: o.sides.length > 0, extra: '+ ' + o.sides.join(' + '), foot: o.price + 'g · ' + (o.waiting ? o.status : 'ARRIVING') }; }),
+      barOn, barPE: h.demo ? 'none' : 'auto', stCols: h.chopOn ? 5 : 4, stFs: narrow ? '11px' : '13px',
+      stations: [['all', 'ALL'], ['thread', 'THREAD'], ['grill', 'GRILL'], ['plate', 'PLATE'], ...(h.chopOn ? [['chop', 'CHOP']] : [])].map(([id, label]) => { const on = h.focus === id, nx = !!(h.hint && h.hint.station === id && !on && h.focus !== 'all'), b = nx ? 'NEXT ▸' : (h.badges || {})[id] || '', hot = /READY|SERVE|NEXT|LOADED|FIRE|BURN|OUT|\+/.test(b);
+        return { label, aria: 'Go to ' + label, badge: b || (on ? 'VIEWING' : ' '), bg: on ? '#ffd23a' : nx ? '#1f3a24' : id === 'chop' ? '#3a1410' : '#000000', fg: on ? '#000000' : '#ffffff', bc: on ? '#000000' : hot ? (/FIRE|BURN|OUT/.test(b) ? '#ff9a8a' : /NEXT/.test(b) ? '#ffd23a' : '#22c55e') : '#8a847e', go: e => { blur(e); g && g.setFocus(id); } }; }),
+      tixW: short && meterOn ? 'calc(100% - 250px)' : '100%', meterPos: short ? 'top:calc(60px + env(safe-area-inset-top))' : 'bottom:calc(66px + env(safe-area-inset-bottom))',
+      plateOn: !!h.plate && work && !h.demo && !h.react, plateW: meterOn && !short ? (narrow ? 'calc(100% - 214px)' : 'min(300px, calc(100% - 260px))') : 'min(340px, calc(100% - 24px))', plateHead: h.plate ? 'PLATE' + (h.plate.who ? ' · FOR ' + h.plate.who : ' · NO TICKET') : '',
+      plateBtns: h.plate ? [...['RICE', 'PITA'].filter(k => h.sides.includes(k)).map(k => { const on = h.plate.sides.includes(k); return { label: (on ? '✓ ' : '+ ') + k, bg: on ? '#1f3a24' : '#000', fg: on ? '#22c55e' : '#fff', go: e => { blur(e); g && g.addSide(k.toLowerCase()); } }; }), { label: 'BIN', bg: '#3a1410', fg: '#ff9a8a', go: e => { blur(e); g && g.binPlate(); } }] : [], plateCols: h.plate ? h.sides.length + 1 : 1,
+      plateTxt: h.plate ? (h.plate.who ? 'Drag the plate up toward ' + h.plate.who + ', or tap their ticket.' : 'Nobody ordered this one. Bin it.') : '',
+      chipBottom: 'calc(66px + env(safe-area-inset-bottom))', chipW: meterOn ? (narrow ? 'calc(100% - 214px)' : 'min(300px, calc(100% - 260px))') : 'min(360px, calc(100% - 24px))', chipDisp: h.demo || h.react || !h.hint || (h.plate && work) ? 'none' : 'flex', chipHead: 'NEXT', chipTxt: h.hint ? h.hint.text : '',
+      meterOn, meterW: narrow ? '186px' : '230px', meterBd: mt && mt.flare ? '#ec3013' : '#ffd23a', meterHead: mt ? 'KABOB ' + mt.slot + ' · ' + mt.name : '', meterWant: mt && mt.want ? 'WANTS ' + (mt.want === 'MEDIUM' ? 'MED' : mt.want) : '', meterWantCol: mt && mt.want ? '#fff' : '#8a847e',
+      meterSides: mt ? mt.sides.map((sd, i) => ({ label: sd.down ? '▼ COALS' : 'SIDE ' + (i + 1), lc: sd.down ? '#ff9a5a' : '#cfcac4', x: zoneX(sd.v), oL: mt.want === 'LIGHT' ? '2px solid #22c55e' : 'none', oM: mt.want === 'MEDIUM' ? '2px solid #22c55e' : 'none', oW: mt.want === 'WELL' ? '2px solid #22c55e' : 'none', gl: !mt.glazeWant ? 'transparent' : sd.glazed ? '#ffd23a' : '#3a3836' })) : [],
+      meterFootOn: !!(mt && (h.brush || mt.flare || h.heat > 60)), meterFoot: mt && mt.flare ? 'FIRE! TAP THE KABOB TO SPRITZ' : h.brush ? 'BRUSH ' + h.brush + '% · RUB ALONG THE TOP' : 'COALS HOT · ' + h.heat + '%',
+      sayOn: !!h.say && !h.demo && !h.react && !port, sayTop: 'calc(' + (short ? 86 : 150) + 'px + env(safe-area-inset-top))',
+      flashOn: !!h.flash, flashTxt: h.flash ? h.flash.txt : '', flashCol: h.flash ? h.flash.col : '#ffd23a', flashTop: port ? '30%' : '40%',
+      reactOn: !!h.react, reactTop: port ? 'calc(64px + env(safe-area-inset-top))' : '58px', reactStars: h.react ? (h.react.stars ? '★'.repeat(h.react.stars) + '☆'.repeat(3 - h.react.stars) : '✕') : '', reactTip: h.react ? (h.react.stars ? (h.react.tip ? 'TIP +' + h.react.tip + 'g' : 'NO TIP') : 'REFUSED') : '',
+      demoOn: !!h.demo, demoW: 'min(460px, calc(100% - 110px))', demoKeyOn: !!(h.demo && h.demo.key), demoN: h.demo ? 'SERVED ' + h.demo.n + ' / ' + h.demo.of : '',
+      demoGo: e => { blur(e); g && g.demoStart(); }, demoExit: e => { blur(e); g && g.demoStop(); }, walkGo: e => { blur(e); if (this.embed) this.post({ type: 'exit' }); else g && g.toWalk(); }, walkLbl: this.embed ? 'LEAVE' : 'LOOK AROUND', breakLbl: this.embed ? 'LEAVE' : 'TAKE A BREAK',
+      soundCycle: e => { blur(e); g && g.cycleSound(); this.forceUpdate(); }, soundLbl: h.muted ? 'OFF' : h.music === false ? 'FX' : '♪', soundCol: h.muted ? '#8a847e' : '#ffd23a', soundAria: h.muted ? 'Sound off. Tap to turn it on' : h.music === false ? 'Music off, effects on. Tap to mute everything' : 'Music and effects on. Tap to turn the music off', toIntro: e => { blur(e); g && g.toIntro(); }, goWork: e => { blur(e); g && g.startShift(); },
+      helpToggle: e => { blur(e); this.setState({ help: !S.help }); },
+      introRows: [['Gold', h.gold + 'g'], ['Menu', h.menu.map(r => r.name).join(', ')], ['Extras', [...h.sides, ...(h.glazeOn ? ['HONEY GLAZE'] : [])].join(', ') || 'Unlocks on day 2'], ['Uniform', h.uniform ? 'Yours · hat, towel + EMBER shirt' : 'Serve 3 to keep it']].map(([k, v]) => ({ k, v })),
+      helpRows: [['THREAD', 'Tap the bowls in the ticket order (the red box on the ticket is next). 5 pieces, then tap the skewer to put it on the coals. Tap a half-made skewer to take the last piece off.'], ['GRILL', 'Only the side facing the coals cooks. SWIPE ACROSS a kabob to roll it (flick it and it spins), or TAP it for a quarter turn. Watch the four bars: get every side into the ticket\'s zone (LIGHT, MEDIUM or WELL).'], ['FAN', 'Swipe back and forth on the palm fan: hotter coals, faster cooking. They cool down by themselves.'], ['FIRE', 'A flare-up (day 2+) burns the bottom side fast. Tap the kabob to spritz it.'], ['GLAZE', 'Day 3+. Tap the honey pot to dip the brush, then rub along the kabob: it glazes the side facing up. Roll it and do all four.'], ['PLATE', 'Drag along a finished kabob (up or down) to slide it onto the plate. Tap the rice pot or pita basket if the ticket says so, then drag the plate onto the customer. Wrong one? Drag it to the bin.'], ['CHOP', 'A bowl says OUT? Tap CHOP and swipe across the food 5 times to refill it.']].map(([k, v]) => ({ k, v })),
+      doneKicker: h.done ? 'DAY ' + d.day + " · EMBER'S SKEWER HOUSE" : '', doneSub: h.done ? (d.newDay ? 'Day ' + (d.day + 1) + ' tomorrow' : 'Serve ' + (3 + d.day) + ' to move up a day') + ' · ★ ' + d.stars + ' employee stars' : '', eodOn: !!(h.done && d.eod),
+      doneRows: h.done ? [['Served', String(d.served)], ['Walked out', String(d.lost)], ['Average stars', String(d.avg)], ['Wage', d.wage + 'g'], ['Prices', d.earned + 'g'], ['Tips', d.tips + 'g']].map(([k, v]) => ({ k, v })) : [], unlocks: h.done ? d.unlock.map(t => ({ t })) : [], goldTxt: h.gold + 'g',
+      shop: h.upgrades.map(u => { const afford = h.gold >= u.cost; return { name: u.name, line: u.line, btn: u.owned ? 'OWNED' : u.cost + 'g', off: u.owned || !afford, bg: u.owned ? '#22c55e' : afford ? '#ffd23a' : '#000000', fg: u.owned || afford ? '#000000' : '#8a847e', bd: u.owned ? '#22c55e' : afford ? '#ffd23a' : '#3a3836', op: u.owned || afford ? 1 : 0.6, buy: e => { blur(e); g && g.buyUpgrade(u.id); this.forceUpdate(); } }; }),
+    };
+  }
+}
+</script>
+</body>
+</html>

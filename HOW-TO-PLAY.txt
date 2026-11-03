@@ -1,0 +1,12 @@
+8 GATES - MERU (FRESH START)
+
+1. Unzip this folder anywhere (do not run it from inside the zip).
+2. Double-click PLAY-MERU.bat
+   Your browser opens http://localhost:8088/FOXGATE8-FRESH.dc.html
+3. Tap PLAY - SOUND ON.
+
+Needs Python (python.org, tick "Add to PATH") or Node (nodejs.org).
+Keep the black window open while you play; close it to stop.
+
+Other pages work the same way, e.g.
+http://localhost:8088/FOXGATE8-PLAYABLE.dc.html?start=voices

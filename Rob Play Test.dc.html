@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="padding:24px;font-family:Archivo, sans-serif;color:#201e1d;background:#f3f2f2;min-height:100vh;display:flex;flex-direction:column;gap:12px;align-items:flex-start;">
+  <div style="font-weight:900;font-size:22px;">LOADING ROB · PLAY FROM THE ARENA GATE…</div>
+  <a href="FOXGATE8-FRESH.dc.html?rob=play" style="color:#ec3013;font-weight:700;font-size:18px;">TAP HERE IF IT DOES NOT START</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() { setTimeout(() => location.replace('FOXGATE8-FRESH.dc.html?rob=play'), 300); }
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

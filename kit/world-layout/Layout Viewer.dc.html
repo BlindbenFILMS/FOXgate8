@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&display=swap">
+<style>html,body{margin:0;height:100%;background:#201e1d;color:#f3f2f2;font-family:Archivo,'Arial Black',Arial,sans-serif;-webkit-text-size-adjust:100%}a{color:#f3f2f2}a:hover{color:#ec3013}button:focus-visible,select:focus-visible{outline:2px solid #ec3013;outline-offset:2px}</style>
+</helmet>
+<div style="display:flex;flex-direction:column;height:100vh;height:100dvh;background:#201e1d;color:#f3f2f2;font-family:Archivo,'Arial Black',Arial,sans-serif">
+  <div style="display:flex;flex-wrap:wrap;align-items:stretch;gap:0;border-bottom:2px solid #f3f2f2">
+    <div style="display:flex;flex-direction:column;justify-content:center;padding:8px 16px;border-right:2px solid #f3f2f2;min-height:44px">
+      <div style="font-size:11px;font-weight:800;letter-spacing:0.08em;color:#ec3013">8 GATES · WORLD KIT</div>
+      <div style="font-size:18px;font-weight:900;letter-spacing:0.02em">LAYOUT VIEWER</div>
+    </div>
+    <label style="display:flex;align-items:center;gap:8px;padding:0 12px;border-right:2px solid #f3f2f2;min-height:48px;font-size:13px;font-weight:800">
+      WORLD
+      <select value="{{ world }}" onChange="{{ onWorld }}" style="font:inherit;font-size:16px;font-weight:800;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;padding:6px 8px;min-height:40px">
+        <sc-for list="{{ worlds }}" as="w" hint-placeholder-count="3"><option value="{{ w.id }}">{{ w.label }}</option></sc-for>
+      </select>
+    </label>
+    <button onClick="{{ onReload }}" style="font:inherit;font-size:14px;font-weight:800;text-align:left;background:#201e1d;color:#f3f2f2;border:0;border-right:2px solid #f3f2f2;padding:0 16px;min-height:48px;cursor:pointer" style-hover="background:#4a1a12" style-active="background:#7a2614">RELOAD</button>
+    <button onClick="{{ onOpen }}" style="font:inherit;font-size:14px;font-weight:800;text-align:left;background:#201e1d;color:#f3f2f2;border:0;border-right:2px solid #f3f2f2;padding:0 16px;min-height:48px;cursor:pointer" style-hover="background:#4a1a12" style-active="background:#7a2614">OPEN FILE</button>
+    <input ref="{{ fileRef }}" type="file" accept=".json,application/json" onChange="{{ onFile }}" style="display:none">
+    <button onClick="{{ onFit }}" style="font:inherit;font-size:14px;font-weight:800;text-align:left;background:#201e1d;color:#f3f2f2;border:0;border-right:2px solid #f3f2f2;padding:0 16px;min-height:48px;cursor:pointer" style-hover="background:#4a1a12" style-active="background:#7a2614">FIT MAP</button>
+    <button onClick="{{ onWalk }}" style="font:inherit;font-size:14px;font-weight:900;text-align:left;background:#ec3013;color:#f3f2f2;border:0;border-right:2px solid #f3f2f2;padding:0 20px;min-height:48px;cursor:pointer" style-hover="background:#c42410" style-active="background:#9a1c0c">WALK IT →</button>
+  </div>
+  <div style="display:flex;flex-direction:{{ bodyDir }};flex-wrap:nowrap;flex:1 1 0;min-height:0;overflow:{{ bodyOver }}">
+    <div ref="{{ mapRef }}" style="position:relative;flex:{{ mapFlex }};height:{{ mapH }};min-height:0;min-width:0;border-right:2px solid #f3f2f2;border-bottom:2px solid #f3f2f2;overflow:hidden;background:#2b2928">
+      <canvas ref="{{ canRef }}" style="position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab"></canvas>
+      <div style="position:absolute;left:0;bottom:0;right:0;display:flex;flex-wrap:wrap;gap:0;background:#201e1d;border-top:2px solid #f3f2f2;font-size:13px;font-weight:700;pointer-events:none">
+        <div style="padding:8px 12px;min-height:20px;text-wrap:pretty">{{ pick }}</div>
+      </div>
+    </div>
+    <div style="flex:{{ panelFlex }};min-width:0;display:flex;flex-direction:column;min-height:0;overflow:hidden">
+      <div style="padding:12px 16px;border-bottom:2px solid #f3f2f2">
+        <div style="font-size:12px;font-weight:800;letter-spacing:0.06em;opacity:0.8">FILE</div>
+        <div style="font-size:15px;font-weight:800;word-break:break-all">{{ src }}</div>
+        <div style="font-size:13px;margin-top:2px">{{ sub }}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-bottom:2px solid #f3f2f2">
+        <div style="padding:10px 16px;border-right:2px solid #f3f2f2"><div style="font-size:12px;font-weight:800">FAIL</div><div style="font-size:34px;font-weight:900;color:#ec3013;line-height:1">{{ counts.fail }}</div></div>
+        <div style="padding:10px 16px;border-right:2px solid #f3f2f2"><div style="font-size:12px;font-weight:800">WARN</div><div style="font-size:34px;font-weight:900;color:#ffd23a;line-height:1">{{ counts.warn }}</div></div>
+        <div style="padding:10px 16px"><div style="font-size:12px;font-weight:800">PASS</div><div style="font-size:34px;font-weight:900;line-height:1">{{ counts.pass }}</div></div>
+      </div>
+      <sc-if value="{{ allOk }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:12px 16px;background:#f3f2f2;color:#201e1d;font-size:15px;font-weight:900;border-bottom:2px solid #f3f2f2">CHECKER PASSES · READY TO HAND BACK</div>
+      </sc-if>
+      <div style="flex:1 1 0;overflow:auto;min-height:0;max-height:{{ listMax }}">
+        <sc-for list="{{ items }}" as="it" hint-placeholder-count="4">
+          <button onClick="{{ it.go }}" style="display:grid;grid-template-columns:64px minmax(0,1fr);gap:10px;width:100%;box-sizing:border-box;text-align:left;font:inherit;background:transparent;color:#f3f2f2;border:0;border-bottom:2px solid #3d3b3a;padding:10px 16px;min-height:48px;cursor:pointer" style-hover="background:#4a1a12" style-active="background:#7a2614">
+            <span style="font-size:12px;font-weight:900;color:{{ it.col }}">{{ it.tag }}</span>
+            <span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;font-weight:800;letter-spacing:0.06em;opacity:0.75">{{ it.rule }}</span><span style="font-size:14px;font-weight:600;text-wrap:pretty">{{ it.msg }}</span></span>
+          </button>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px 14px;padding:10px 16px;border-top:2px solid #f3f2f2;font-size:12px;font-weight:800">
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:6px;background:#e8b923"></span>PATH</span>
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:6px;background:#77736f"></span>ROAD</span>
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;background:#f3f2f2;border:2px solid #201e1d"></span>BUILDING</span>
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;background:#ec3013"></span>DOOR</span>
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:50%;background:#38bdf8"></span>NPC SPOT</span>
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;background:#5d7a3e"></span>WILD</span>
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border:2px solid #ec3013;border-radius:50%"></span>GATE / DOCK</span>
+      </div>
+    </div>
+  </div>
+  <sc-if value="{{ walking }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:50;background:#201e1d;display:flex;align-items:center;justify-content:center">
+      <div ref="{{ frameRef }}" style="position:relative;width:{{ frameW }};height:{{ frameH }};max-width:100%;max-height:100%;overflow:hidden;background:#000;outline:2px solid #f3f2f2;touch-action:none">
+        <div style="position:absolute;left:0;top:0;z-index:2;display:flex;flex-direction:column;background:#201e1d;border-right:2px solid #f3f2f2;border-bottom:2px solid #f3f2f2;padding:8px 12px;pointer-events:none;max-width:60%">
+          <div style="font-size:16px;font-weight:900;letter-spacing:0.02em">{{ zone }}</div>
+          <div style="font-size:12px;font-weight:700;opacity:0.85">{{ zoneKey }}</div>
+          <div style="font-size:12px;font-weight:800;color:{{ pathCol }}">{{ onPath }}</div>
+        </div>
+        <div style="position:absolute;right:0;top:0;z-index:2;display:flex;flex-direction:column;border-left:2px solid #f3f2f2;border-bottom:2px solid #f3f2f2">
+          <button onClick="{{ onExit }}" style="font:inherit;font-size:14px;font-weight:900;text-align:left;background:#ec3013;color:#f3f2f2;border:0;border-bottom:2px solid #f3f2f2;padding:0 16px;min-height:48px;min-width:110px;cursor:pointer" style-hover="background:#c42410" style-active="background:#9a1c0c">← MAP</button>
+          <button onClick="{{ onPhone }}" style="font:inherit;font-size:13px;font-weight:800;text-align:left;background:#201e1d;color:#f3f2f2;border:0;padding:0 16px;min-height:48px;min-width:110px;cursor:pointer" style-hover="background:#4a1a12" style-active="background:#7a2614">{{ phoneLabel }}</button>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;z-index:2;background:#201e1d;border-top:2px solid #f3f2f2;border-right:2px solid #f3f2f2;padding:6px 10px;font-size:12px;font-weight:700;pointer-events:none">{{ walkHint }}</div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { world: 'example', src: '', sub: '', items: [], counts: { fail: 0, warn: 0, pass: 0 }, ok: false, pick: 'Tap the map to see what is there. Drag to move, pinch or wheel to zoom.', walking: false, phone: 'full', zone: '', zoneKey: '', onPath: '', walkHint: '' };
+  mapRef = React.createRef(); canRef = React.createRef(); fileRef = React.createRef(); frameRef = React.createRef();
+  WORLDS = [['example', 'EXAMPLE · MERU 2'], ['gaya', 'GAYA'], ['kyoto', 'KYOTO'], ['jidda', 'JIDDA'], ['kufa', 'KUFA'], ['luxor', 'LUXOR'], ['nebo', 'NEBO'], ['ur', 'UR'], ['zion', 'ZION'], ['shasta', 'SHASTA'], ['player', 'PLAYER PLANET'], ['home', 'HOME'], ['earth', 'EARTH'], ['dsf', 'DEEP SPACE FOX'], ['meru', 'MERU']];
+  url = p => new URL(p, location.href).href;
+  componentDidMount() {
+    const q = new URLSearchParams(location.search); let w = q.get('world') || localStorage.getItem('layoutViewer.world') || 'example';
+    if (!this.WORLDS.some(a => a[0] === w)) w = 'example'; this.useDraft = q.get('draft') === '1';
+    this.onRs = () => { const n = innerWidth < 760; if (n !== this.state.narrow) this.setState({ narrow: n }); }; addEventListener('resize', this.onRs); this.onRs();
+    this.setupMap(); this.load(w); this.poll = setInterval(() => this.refresh(), 3000);
+  }
+  componentWillUnmount() { clearInterval(this.poll); removeEventListener('resize', this.onRs); this.stopWalk(); if (this.ro) this.ro.disconnect(); }
+  pathFor(w) { return w === 'example' ? 'kit/example.meru.layout.json' : 'layout/' + w + '.layout.json'; }
+  async checker() { if (!this.C) this.C = await import(this.url('./kit/layout-check.js?v=348v')); return this.C; }
+  async load(w) { this.world = w; this.text = null; this.view = null; this.userMoved = false; this.hl = null; try { localStorage.setItem('layoutViewer.world', w); } catch (e) {} this.setState({ world: w }); await this.fetchLayout(true); }
+  async fetchLayout(first) { const p = this.pathFor(this.world);
+    if (this.useDraft && this.world !== 'example') { let d = null; try { d = localStorage.getItem(this.world + '.layoutDraft'); } catch (e) {} if (d) { if (!first && d === this.text) return; this.text = d; await this.apply(d, 'DRAFT from the Map Workshop (' + this.world + ')'); return; } }
+    try { const r = await fetch(p, { cache: 'no-store' }); if (!r.ok) throw new Error('missing'); const t = await r.text(); if (!first && t === this.text) return; this.text = t; await this.apply(t, p); }
+    catch (e) { if (!first) return; this.L = null; this.setState({ src: p, sub: 'Not written yet.', items: [{ level: 'fail', rule: 'FILE', msg: p + ' does not exist yet. Ask Claude to write it (PARALLEL_WORLDS.md section 2), then tap RELOAD.' }], counts: { fail: 1, warn: 0, pass: 0 }, ok: false }); this.draw(); } }
+  refresh() { if (this.world && this.world !== 'file' && !document.hidden) this.fetchLayout(false); }
+  async apply(text, label) {
+    const C = await this.checker(); let L;
+    try { L = JSON.parse(text); } catch (e) { this.L = null; this.setState({ src: label, sub: 'JSON error', items: [{ level: 'fail', rule: 'JSON', msg: 'The file is not valid JSON: ' + e.message }], counts: { fail: 1, warn: 0, pass: 0 }, ok: false }); this.draw(); return; }
+    this.L = L; const w = (L.meta || {}).world;
+    if (this.roomsWorld !== w) { this.roomsWorld = w; this.rooms2d = null; try { const r = await fetch('uploads/surface_' + w + '.html'); if (r.ok) this.rooms2d = C.rooms2dFrom(await r.text(), w); } catch (e) {} }
+    const res = C.checkLayout(L, { rooms2d: this.rooms2d }), m = L.meta || {};
+    if (!this.view) this.fit();
+    const d = new Date(); this.setState({ src: label, sub: `${(w || '?').toUpperCase()} · version ${m.version ?? '?'} · checked ${d.toLocaleTimeString()}${this.rooms2d ? ' · ' + this.rooms2d.length + ' rooms in the 2D file' : ''}`, items: res.items, counts: res.counts, ok: res.ok });
+    this.draw(); if (this.W) this.rebuildWalk();
+  }
+  // ---------- top-down map ----------
+  setupMap() {
+    const cv = this.canRef.current, host = this.mapRef.current; if (!cv || !host) return;
+    this.ro = new ResizeObserver(() => { const dpr = Math.min(devicePixelRatio || 1, 2); cv.width = Math.max(1, Math.min(4096, host.clientWidth * dpr)); cv.height = Math.max(1, Math.min(4096, host.clientHeight * dpr)); this.dpr = dpr; if (!this.view || !this.userMoved) this.fit(); this.draw(); }); this.ro.observe(host);
+    const P = new Map(); let moved = 0, pinch = null;
+    cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); P.set(e.pointerId, [e.offsetX, e.offsetY]); moved = 0; if (P.size === 2) { const [a, b] = [...P.values()]; pinch = { d: Math.hypot(a[0] - b[0], a[1] - b[1]), s: this.view.s }; } });
+    cv.addEventListener('pointermove', e => { const p = P.get(e.pointerId); if (!p || !this.view) return; const dx = e.offsetX - p[0], dy = e.offsetY - p[1]; P.set(e.pointerId, [e.offsetX, e.offsetY]); moved += Math.abs(dx) + Math.abs(dy);
+      if (P.size === 2 && pinch) { const [a, b] = [...P.values()]; const d = Math.hypot(a[0] - b[0], a[1] - b[1]); this.view.s = Math.max(0.05, Math.min(40, pinch.s * d / pinch.d)); }
+      else if (P.size === 1) { this.userMoved = true; this.view.cx -= dx / this.view.s; this.view.cz -= dy / this.view.s; } this.draw(); });
+    const up = e => { if (P.size === 1 && moved < 6) this.tapAt(e.offsetX, e.offsetY); P.delete(e.pointerId); if (P.size < 2) pinch = null; };
+    cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', e => { P.delete(e.pointerId); pinch = null; });
+    cv.addEventListener('wheel', e => { e.preventDefault(); if (!this.view) return; this.userMoved = true; const [wx, wz] = this.toW(e.offsetX, e.offsetY); this.view.s = Math.max(0.05, Math.min(40, this.view.s * Math.exp(-e.deltaY * 0.0015))); const [nx, nz] = this.toW(e.offsetX, e.offsetY); this.view.cx += wx - nx; this.view.cz += wz - nz; this.draw(); }, { passive: false });
+  }
+  fit() { const host = this.mapRef.current; if (!host) return; const half = (this.L && this.L.map && this.L.map.half) || 300, W = host.clientWidth, H = host.clientHeight - 40; if (W < 50 || H < 50) return; this.view = { cx: 0, cz: 0, s: Math.max(0.05, Math.min(W, H) / (2 * half * 1.06)) }; }
+  toW(sx, sy) { const host = this.mapRef.current, v = this.view; return [v.cx + (sx - host.clientWidth / 2) / v.s, v.cz + (sy - (host.clientHeight - 40) / 2) / v.s]; }
+  focus(at) { if (!at || !this.view) return; this.userMoved = true; this.view.cx = at[0]; this.view.cz = at[1]; this.view.s = Math.max(this.view.s, 3); this.hl = at; this.draw(); }
+  tapAt(sx, sy) { const L = this.L; if (!L) return; const [x, z] = this.toW(sx, sy), tol = 10 / this.view.s, C = this.C; let t = null;
+    const near = (p, r) => p && Math.hypot(p[0] - x, p[1] - z) < r;
+    for (const s of L.spots || []) if (near(s.at, tol)) { t = `SPOT ${s.key} · ${s.kind || 'npc'}${s.from2d ? ' · 2D key' : ''}${s.draft ? ' · draft' : ''}`; break; }
+    if (!t) for (const g of L.gates || []) if (near(g.at, Math.max(tol, g.r || 6))) { t = `GATE ${g.key} · ${g.kind || ''}`; break; }
+    if (!t && L.dock && near(L.dock.pad, Math.max(tol, L.dock.r || 10))) t = `DOCK ${L.dock.key}`;
+    if (!t) for (const b of L.buildings || []) if (near(b.door, tol)) { t = `DOOR ${b.key} · faces ${b.face}`; break; }
+    if (!t) for (const b of L.buildings || []) if (b.f && x > b.f[0] && x < b.f[1] && z > b.f[2] && z < b.f[3]) { t = `BUILDING ${b.key} · ${b.label || ''} · ${Math.round(b.f[1] - b.f[0])} x ${Math.round(b.f[3] - b.f[2])} m · h ${b.h || '?'}${b.interior ? ' · has an interior' : ''}`; break; }
+    if (!t) for (const p of L.paths || []) if (p.p && C.polyD(x, z, p.p) < (p.w || 4) / 2 + tol) { t = `PATH ${p.key} · ${p.label || ''} · ${p.lining} every ${p.every} m`; break; }
+    if (!t) for (const w of L.wild || []) if (w.r && x > w.r[0] && x < w.r[1] && z > w.r[2] && z < w.r[3]) { t = `WILD ${w.key} · for ${w.for || '?'}`; break; }
+    if (!t) { const Z = C.zoneAt(L, x, z); t = Z ? `ZONE ${Z.key} · ${Z.label}` : 'Nothing here.'; }
+    this.setState({ pick: `${t}   (x ${Math.round(x)}, z ${Math.round(z)})` });
+  }
+  draw() {
+    const cv = this.canRef.current, host = this.mapRef.current; if (!cv || !host) return; const g = cv.getContext('2d'), dpr = this.dpr || 1;
+    g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = '#2b2928'; g.fillRect(0, 0, cv.width, cv.height); const L = this.L; if (!L || !this.view) return;
+    g.setTransform(dpr, 0, 0, dpr, 0, 0); const v = this.view, W = host.clientWidth, H = host.clientHeight - 40, S = v.s;
+    const X = x => (x - v.cx) * S + W / 2, Z = z => (z - v.cz) * S + H / 2, rect = (r, fill, stroke, lw = 2) => { const x = X(r[0]), y = Z(r[2]), w = (r[1] - r[0]) * S, h = (r[3] - r[2]) * S; if (fill) { g.fillStyle = fill; g.fillRect(x, y, w, h); } if (stroke) { g.strokeStyle = stroke; g.lineWidth = lw; g.strokeRect(x, y, w, h); } };
+    const line = (p, w, col) => { if (!p || p.length < 2) return; g.strokeStyle = col; g.lineWidth = Math.max(1.5, w * S); g.lineCap = 'round'; g.lineJoin = 'round'; g.beginPath(); p.forEach(([x, z], i) => i ? g.lineTo(X(x), Z(z)) : g.moveTo(X(x), Z(z))); g.stroke(); };
+    const text = (s, x, y, col = '#201e1d', size = 12, bg) => { g.font = `800 ${size}px Archivo, Arial, sans-serif`; if (bg) { const w = g.measureText(s).width; g.fillStyle = bg; g.fillRect(x - 3, y - size, w + 6, size + 5); } g.fillStyle = col; g.fillText(s, x, y); };
+    const half = (L.map && L.map.half) || 300, SURF = { stone: '#d3cdc2', grass: '#a9c48a', sand: '#eadcb4', wood: '#b48a5c', dirt: '#bea27c', snow: '#f4f6f8', tile: '#d8d2d8', metal: '#b9bec4' };
+    rect([-half, half, -half, half], '#bcd3a0', '#f3f2f2', 2);
+    for (const s of L.surfaces || []) if (s.r) rect(s.r, SURF[s.s] || '#cfcac2');
+    for (const w of L.wild || []) if (w.r) { rect(w.r, 'rgba(70,100,45,0.55)', '#3f5a2a', 2); }
+    { const T = L.terrain || {}; g.setLineDash([4, 4]); for (const f of T.forests || []) if (f.r) rect(f.r, 'rgba(47,95,42,0.18)', '#2f5f2a', 1.5); for (const c of T.clearings || []) if (c.r) rect(c.r, 'rgba(243,242,242,0.25)', '#f3f2f2', 1.5); g.setLineDash([]); }
+    for (const w of L.water || []) { g.fillStyle = '#7fb8de'; if (w.e) { g.beginPath(); g.ellipse(X(w.e[0]), Z(w.e[1]), w.e[2] * S, w.e[3] * S, 0, 0, 7); g.fill(); } else if (w.r) rect(w.r, '#7fb8de'); }
+    for (const o of L.islands || []) if (o.r) { const pts = this.C && this.C.islandOutline ? this.C.islandOutline(o, 72) : []; g.fillStyle = '#e8d8a8'; g.beginPath(); pts.forEach(([x, z], i) => i ? g.lineTo(X(x), Z(z)) : g.moveTo(X(x), Z(z))); g.closePath(); g.fill(); }
+    for (const w of L.water || []) if (w.canal && w.r) rect(w.r, '#7fb8de');
+    if (L.islands && L.islands.length) for (const s of L.surfaces || []) if (s.r) rect(s.r, SURF[s.s] || '#cfcac2');
+    for (const r of L.roads || []) line(r.p, r.w || 10, '#77736f');
+    const pc = (L.palette && L.palette.path) || '#e8b923'; for (const p of L.paths || []) line(p.p, p.w || 4, '#201e1d'), line(p.p, Math.max(0.1, (p.w || 4) - 0.8), pc);
+    if (S > 1.2) { g.fillStyle = '#201e1d'; for (const p of L.paths || []) { const pts = this.liningPts(p); for (const [x, z] of pts) { g.beginPath(); g.arc(X(x), Z(z), Math.max(1.5, 0.5 * S), 0, 7); g.fill(); } } }
+    for (const b of L.buildings || []) { if (!b.f) continue; rect(b.f, b.color && S > 0.6 ? b.color : '#f3f2f2', '#201e1d', 2);
+      if (b.door && b.face) { const C = this.C; if (S > 1.5 && C) { const A = C.apronRect(b); g.setLineDash([4, 3]); rect(A, null, '#ec3013', 1.5); g.setLineDash([]); } g.fillStyle = '#ec3013'; g.fillRect(X(b.door[0]) - 4, Z(b.door[1]) - 4, 8, 8); } }
+    for (const z of L.zones || []) { g.setLineDash([8, 5]); if (z.r) rect(z.r, null, '#201e1d', 2); else if (z.c) { g.strokeStyle = '#201e1d'; g.lineWidth = 2; g.beginPath(); g.arc(X(z.c[0]), Z(z.c[1]), z.c[2] * S, 0, 7); g.stroke(); } g.setLineDash([]); }
+    for (const s of L.spots || []) if (s.at) { g.fillStyle = s.kind === 'crowd' ? '#7a8a99' : s.kind === 'keeper' ? '#a78bfa' : '#38bdf8'; g.beginPath(); g.arc(X(s.at[0]), Z(s.at[1]), 5, 0, 7); g.fill(); g.strokeStyle = '#201e1d'; g.lineWidth = 1.5; g.stroke(); }
+    const ring = (p, r, col) => { g.strokeStyle = col; g.lineWidth = 3; g.beginPath(); g.arc(X(p[0]), Z(p[1]), Math.max(7, r * S), 0, 7); g.stroke(); };
+    for (const gt of L.gates || []) if (gt.at) ring(gt.at, gt.r || 6, '#ec3013');
+    if (L.dock && L.dock.pad) { ring(L.dock.pad, L.dock.r || 12, '#ec3013'); g.fillStyle = 'rgba(236,48,19,0.25)'; g.beginPath(); g.arc(X(L.dock.pad[0]), Z(L.dock.pad[1]), Math.max(7, (L.dock.r || 12) * S), 0, 7); g.fill(); }
+    if (S > 1) for (const p of L.props || []) if (p.at) { g.fillStyle = p.k === 'tree' ? '#3f6b2a' : '#5b5652'; g.fillRect(X(p.at[0]) - 2, Z(p.at[1]) - 2, 4, 4); }
+    const sp = L.map && L.map.spawn; if (sp) { g.fillStyle = '#ec3013'; g.beginPath(); g.moveTo(X(sp[0]), Z(sp[1]) - 9); g.lineTo(X(sp[0]) + 7, Z(sp[1]) + 6); g.lineTo(X(sp[0]) - 7, Z(sp[1]) + 6); g.closePath(); g.fill(); g.strokeStyle = '#f3f2f2'; g.lineWidth = 2; g.stroke(); }
+    if (this.W && this.W.pos) { const [px, pz] = this.W.pos; g.fillStyle = '#f97316'; g.beginPath(); g.arc(X(px), Z(pz), 6, 0, 7); g.fill(); }
+    // labels last so they sit on top
+    for (const z of L.zones || []) { const a = z.r ? [z.r[0], z.r[2]] : z.c ? [z.c[0] - z.c[2] * 0.7, z.c[1] - z.c[2] * 0.7] : null; if (a) text((z.label || z.key).toUpperCase(), X(a[0]) + 5, Z(a[1]) + 16, '#f3f2f2', 12, '#201e1d'); }
+    if (S > 0.9) for (const b of L.buildings || []) if (b.f && (b.f[1] - b.f[0]) * S > 30) text(b.label || b.key, X(b.f[0]) + 4, Z(b.f[2]) + 15, '#201e1d', 11);
+    if (S > 2.5) for (const s of L.spots || []) if (s.at) text(s.key, X(s.at[0]) + 8, Z(s.at[1]) + 4, '#201e1d', 11, 'rgba(243,242,242,0.85)');
+    if (this.hl) { g.strokeStyle = '#ec3013'; g.lineWidth = 4; g.beginPath(); g.arc(X(this.hl[0]), Z(this.hl[1]), 22, 0, 7); g.stroke(); }
+    text(`${Math.round(40 / S)} m`, 12, H - 10, '#f3f2f2', 12, '#201e1d'); g.fillStyle = '#f3f2f2'; g.fillRect(12, H - 6, 40, 3);
+  }
+  liningPts(p) { const out = [], pts = p.p || [], e = p.every || 14, off = (p.w || 4) / 2 + 1.2; if (pts.length < 2) return out;
+    for (let i = 0; i < pts.length - 1; i++) { const [ax, az] = pts[i], [bx, bz] = pts[i + 1], len = Math.hypot(bx - ax, bz - az); if (len < 0.1) continue; const ux = (bx - ax) / len, uz = (bz - az) / len;
+      for (let t = e / 2; t < len; t += e) for (const sd of [-1, 1]) out.push([ax + ux * t - uz * off * sd, az + uz * t + ux * off * sd]); }
+    return out; }
+  // ---------- WALK IT ----------
+  async startWalk() { if (!this.L) return; this.setState({ walking: true }, () => this.initWalk()); }
+  stopWalk() { const W = this.W; if (!W) return; cancelAnimationFrame(W.raf); W.off.forEach(f => f()); W.ro.disconnect(); W.renderer.dispose(); W.renderer.domElement.remove(); this.W = null; }
+  async initWalk() {
+    const host = this.frameRef.current; if (!host || this.W) return;
+    const THREE = await import(this.url('./vendor/three/three.module.js'));
+    const touch = matchMedia('(pointer: coarse)').matches, renderer = new THREE.WebGLRenderer({ antialias: !touch, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, touch ? 1.5 : 2)); renderer.domElement.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none'; host.appendChild(renderer.domElement);
+    const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(55, 1, 0.1, 900); scene.fog = new THREE.Fog('#bfdcec', 80, touch ? 220 : 320);
+    const hemi = new THREE.HemisphereLight('#ffffff', '#6a7a5a', 1.1); scene.add(hemi); const sun = new THREE.DirectionalLight('#fff4e0', 1.6); sun.position.set(60, 120, 40); scene.add(sun);
+    const data = new Uint8Array([70, 70, 70, 255, 150, 150, 150, 255, 215, 215, 215, 255, 255, 255, 255, 255]), grad = new THREE.DataTexture(data, 4, 1, THREE.RGBAFormat); grad.minFilter = grad.magFilter = THREE.NearestFilter; grad.needsUpdate = true;
+    const cache = new Map(), toon = (c, extra) => { const k = c + (extra ? JSON.stringify(extra) : ''); if (!cache.has(k)) cache.set(k, new THREE.MeshToonMaterial({ color: c, gradientMap: grad, ...extra })); return cache.get(k); };
+    const outlineMat = new THREE.MeshBasicMaterial({ color: 0x1a1626, side: THREE.BackSide });
+    const M = (geo, mat, x = 0, y = 0, z = 0, parent, outline = 0.04, radius) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); if (outline) { geo.computeBoundingBox(); const s = new THREE.Vector3(); geo.boundingBox.getSize(s); const o = new THREE.Mesh(geo, outlineMat); if (radius) o.scale.setScalar(1 + outline / radius); else o.scale.set(1 + 2 * outline / Math.max(s.x, 0.01), 1 + 2 * outline / Math.max(s.y, 0.01), 1 + 2 * outline / Math.max(s.z, 0.01)); m.add(o); } (parent || scene).add(m); return m; };
+    const clamp = (x, a, b) => Math.min(b, Math.max(a, x)), smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); }, damp = (a, b, k, dt) => a + (b - a) * (1 - Math.exp(-k * dt)), rr = (a, b) => a + Math.random() * (b - a), pick = a => a[Math.floor(Math.random() * a.length)];
+    const fk = this.testFox(THREE, toon), fox = fk.fox; scene.add(fox);
+    const bb = new THREE.Box3().setFromObject(fox), foxH = bb.max.y - bb.min.y;
+    const W = this.W = { THREE, renderer, scene, camera, toon, M, fk, fox, foxH, touch, hemi, sun, keys: {}, joy: null, camYaw: 0, dist: 11, pitch: 0.42, world: null, off: [], t0: performance.now(), zoneT: 0 };
+    const sp = (this.L.map && this.L.map.spawn) || [0, 0], fv = { N: [0, -1], S: [0, 1], E: [1, 0], W: [-1, 0] }[(this.L.map && this.L.map.spawnFace) || 'N'];
+    W.pos = [sp[0], sp[1]]; W.face = Math.atan2(fv[0], fv[1]); W.camYaw = W.face + Math.PI;
+    this.rebuildWalk();
+    const resize = () => { const w = host.clientWidth || 1, h = host.clientHeight || 1; renderer.setSize(w, h, false); camera.aspect = w / h; camera.fov = w < h ? 68 : 55; camera.updateProjectionMatrix(); };
+    W.ro = new ResizeObserver(resize); W.ro.observe(host); resize();
+    const on = (el, ev, f, o) => { el.addEventListener(ev, f, o); W.off.push(() => el.removeEventListener(ev, f, o)); };
+    on(window, 'keydown', e => { W.keys[e.key.toLowerCase()] = true; if (e.key === 'Escape') this.exitWalk(); });
+    on(window, 'keyup', e => { W.keys[e.key.toLowerCase()] = false; });
+    const cv = renderer.domElement, ptr = new Map();
+    on(cv, 'pointerdown', e => { cv.setPointerCapture(e.pointerId); const r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, joy = e.pointerType !== 'mouse' && x < r.width * 0.45;
+      ptr.set(e.pointerId, { joy, x0: x, y0: y, x, y }); if (joy) W.joy = { id: e.pointerId, dx: 0, dy: 0 }; });
+    on(cv, 'pointermove', e => { const p = ptr.get(e.pointerId); if (!p) return; const r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+      if (p.joy && W.joy) { const R = 60, dx = x - p.x0, dy = y - p.y0, d = Math.hypot(dx, dy), k = d > R ? R / d : 1; W.joy.dx = dx * k / R; W.joy.dy = dy * k / R; }
+      else { W.camYaw -= (x - p.x) * 0.006; W.pitch = clamp(W.pitch + (y - p.y) * 0.004, 0.12, 1.25); } p.x = x; p.y = y; });
+    const up = e => { const p = ptr.get(e.pointerId); if (p && p.joy) W.joy = null; ptr.delete(e.pointerId); };
+    on(cv, 'pointerup', up); on(cv, 'pointercancel', up);
+    on(cv, 'wheel', e => { e.preventDefault(); W.dist = clamp(W.dist * Math.exp(e.deltaY * 0.001), 4, 60); }, { passive: false });
+    this.setState({ walkHint: touch ? 'Left thumb = walk · right thumb = look' : 'WASD / arrows = walk · drag = look · wheel = zoom · Shift = run' + ` · fox ${foxH.toFixed(2)} m tall` });
+    let last = performance.now(); const loop = () => { W.raf = requestAnimationFrame(loop); const now = performance.now(), dt = Math.min(0.05, (now - last) / 1000); last = now; this.stepWalk(dt); renderer.render(scene, camera); }; loop();
+  }
+  // THE ONE TEST AVATAR (Ben s345: as simple as possible, loads instantly): ~10 boxes / cones, 2.6 m tall like the game fox (ears included).
+  testFox(THREE, toon) { const g = new THREE.Group(), O = toon('#f07a2a'), W = toon('#f4f1ec'), D = toon('#201e1d'), B = toon('#2e4a6b'), m = (geo, mat, x, y, z, p = g) => { const o = new THREE.Mesh(geo, mat); o.position.set(x, y, z); p.add(o); return o; };
+    const legs = [-0.22, 0.22].map(x => { const l = new THREE.Group(); l.position.set(x, 0.9, 0); g.add(l); m(new THREE.BoxGeometry(0.26, 0.9, 0.3), D, 0, -0.45, 0, l); return l; });
+    m(new THREE.BoxGeometry(0.8, 0.85, 0.5), B, 0, 1.32, 0); m(new THREE.BoxGeometry(0.62, 0.55, 0.6), O, 0, 2.02, 0.02); m(new THREE.BoxGeometry(0.3, 0.22, 0.34), W, 0, 1.94, 0.42);
+    m(new THREE.BoxGeometry(0.1, 0.1, 0.06), D, 0, 2.0, 0.6); for (const x of [-0.2, 0.2]) { const e = m(new THREE.ConeGeometry(0.15, 0.36, 4), O, x, 2.45, 0); e.rotation.y = Math.PI / 4; m(new THREE.BoxGeometry(0.08, 0.08, 0.04), D, x * 0.75, 2.1, 0.33); }
+    const tail = m(new THREE.ConeGeometry(0.2, 1.0, 6), O, 0, 1.1, -0.55); tail.rotation.x = -1.1; m(new THREE.SphereGeometry(0.13, 6, 4), W, 0, 0.92, -1.0);
+    let ph = 0; return { fox: g, animFox: (f, dt, speed) => { ph += dt * (speed > 0.2 ? 4 + speed : 0); const a = speed > 0.2 ? Math.sin(ph) * 0.6 : 0; legs[0].rotation.x = a; legs[1].rotation.x = -a; tail.rotation.z = Math.sin(ph * 0.5) * 0.2; } }; }
+  applyLook(W, L) { const T = W.THREE, lk = L.look || {}, sky = [].concat(lk.sky || ['#9fc8e6', '#d6ebf5']), c = document.createElement('canvas'); c.width = 2; c.height = 256; const g = c.getContext('2d'), gr = g.createLinearGradient(0, 0, 0, 256); gr.addColorStop(0, sky[0]); gr.addColorStop(1, sky[1] || sky[0]); g.fillStyle = gr; g.fillRect(0, 0, 2, 256);
+    const t = new T.CanvasTexture(c); t.colorSpace = T.SRGBColorSpace; W.scene.background = t; W.scene.fog.color.set(lk.fog || sky[1] || '#bfdcec'); W.hemi.color.set(lk.light || '#ffffff'); W.hemi.groundColor.set(lk.grass || '#6a7a5a'); W.sun.color.set(lk.sun || '#fff4e0'); }
+  heightAt(L, x, z) { const T = L.terrain || {}; let h = 0; for (const q of T.hills || []) { const d = Math.hypot(x - q.c[0], z - q.c[1]) / q.r; if (d < 1) h += q.cliff ? (d < 0.84 ? q.h : q.h * (0.5 + 0.5 * Math.cos(Math.PI * (d - 0.84) / 0.16))) : q.h * (0.5 + 0.5 * Math.cos(Math.PI * d)); }
+    for (const q of T.cuts || []) { const r = q.r, e = 8, dx = Math.max(r[0] - x, 0, x - r[1]), dz = Math.max(r[2] - z, 0, z - r[3]), d = Math.hypot(dx, dz); if (d < e) h -= q.depth * (1 - d / e); } return h; }
+  rebuildWalk() { const W = this.W; if (!W || !this.L) return; this.applyLook(W, this.L); if (W.world) { W.scene.remove(W.world); W.world.traverse(o => { if (o.geometry) o.geometry.dispose(); }); } W.world = this.buildWorld(W, this.L); W.scene.add(W.world); }
+  buildWorld(W, L) {
+    const { THREE, toon } = W, G = new THREE.Group(), C = this.C, half = (L.map && L.map.half) || 300, y0 = { v: 0.02 };
+    const flat = (w, d, col, x, z, y, ry = 0) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), toon(col)); m.rotation.x = -Math.PI / 2; m.rotation.z = ry; m.position.set(x, y, z); G.add(m); return m; };
+    const lk = L.look || {}, GS = 2 * half + 200, seg = W.touch ? 110 : 160, gg = new THREE.PlaneGeometry(GS, GS, seg, seg); gg.rotateX(-Math.PI / 2); const pa = gg.attributes.position; for (let i = 0; i < pa.count; i++) pa.setY(i, this.heightAt(L, pa.getX(i), pa.getZ(i))); gg.computeVertexNormals(); const gm = new THREE.Mesh(gg, toon(lk.grass || '#8fb36a')); G.add(gm);
+    const cutsY = (x, z) => Math.min(0, this.heightAt(L, x, z));
+    const SURF = { stone: '#cfc8bb', grass: lk.grass || '#8fb36a', sand: '#e3d19f', wood: '#a87a4a', dirt: '#a98b64', snow: '#f4f6f8', tile: '#d2ccd2', metal: '#b0b6bc' };
+    (L.surfaces || []).forEach((s, i) => { if (s.r) flat(s.r[1] - s.r[0], s.r[3] - s.r[2], SURF[s.s] || '#c9c4bb', (s.r[0] + s.r[1]) / 2, (s.r[2] + s.r[3]) / 2, (L.islands && L.islands.length ? 0.036 : 0.01) + i * 0.0004); });
+    for (const w of L.wild || []) if (w.r) flat(w.r[1] - w.r[0], w.r[3] - w.r[2], '#5f7f3f', (w.r[0] + w.r[1]) / 2, (w.r[2] + w.r[3]) / 2, L.islands && L.islands.length ? 0.037 : 0.012);
+    for (const w of L.water || []) { if (w.e) { const m = new THREE.Mesh(new THREE.CircleGeometry(1, 48), toon('#4aa3d8')); m.rotation.x = -Math.PI / 2; m.scale.set(w.e[2], w.e[3], 1); m.position.set(w.e[0], 0.03, w.e[1]); m.material = toon(lk.water || '#4aa3d8'); G.add(m); } else if (w.r) { const cx = (w.r[0] + w.r[1]) / 2, cz = (w.r[2] + w.r[3]) / 2; flat(w.r[1] - w.r[0], w.r[3] - w.r[2], lk.water || '#4aa3d8', cx, cz, cutsY(cx, cz) + 0.03 + (cutsY(cx, cz) < 0 ? 2 : 0)); } }
+    for (const o of L.islands || []) if (o.r) { const cx = (o.r[0] + o.r[1]) / 2, cz = (o.r[2] + o.r[3]) / 2; const mk = (grow, col, y) => { const pts = this.C && this.C.islandOutline ? this.C.islandOutline(o, 72) : [[o.r[0], o.r[2]], [o.r[1], o.r[2]], [o.r[1], o.r[3]], [o.r[0], o.r[3]]]; const sh = new THREE.Shape(pts.map(([x, z]) => new THREE.Vector2(cx + (x - cx) * grow, -(cz + (z - cz) * grow)))); const m = new THREE.Mesh(new THREE.ShapeGeometry(sh), toon(col)); m.rotation.x = -Math.PI / 2; m.position.y = y; G.add(m); }; mk(1.07, lk.sand || '#e8d8a8', 0.032); mk(1, lk.grass || '#9db38a', 0.034); }
+    for (const w of L.water || []) if (w.canal && w.r) flat(w.r[1] - w.r[0], w.r[3] - w.r[2], lk.canal || lk.water || '#4aa3d8', (w.r[0] + w.r[1]) / 2, (w.r[2] + w.r[3]) / 2, 0.0355);
+    const strip = (p, w, col, y) => { for (let i = 0; i < p.length - 1; i++) { const [ax, az] = p[i], [bx, bz] = p[i + 1], len = Math.hypot(bx - ax, bz - az); if (len < 0.05) continue; const m = flat(w, len, col, (ax + bx) / 2, (az + bz) / 2, y); m.rotation.z = Math.atan2(bx - ax, bz - az) + Math.PI; }
+      for (const [x, z] of p) { const d = new THREE.Mesh(new THREE.CircleGeometry(w / 2, 16), toon(col)); d.rotation.x = -Math.PI / 2; d.position.set(x, y - 0.001, z); G.add(d); } };
+    for (const r of L.roads || []) if (r.p) strip(r.p, r.w || 10, '#55534f', 0.04);
+    const pc = (L.palette && L.palette.path) || '#e8c35a'; for (const p of L.paths || []) if (p.p) strip(p.p, p.w || 4, pc, 0.05);
+    // path lining, instanced
+    const lamps = [], lanterns = [], trees = []; for (const p of L.paths || []) { const pts = this.liningPts(p); (p.lining === 'trees' ? trees : p.lining === 'lanterns' ? lanterns : lamps).push(...pts); }
+    for (const pr of L.props || []) if (pr.at) (pr.k === 'tree' ? trees : pr.k === 'lamp' ? lamps : []).push(pr.at);
+    const inst = (geo, mat, pts, y, sc = 1) => { if (!pts.length) return; const m = new THREE.InstancedMesh(geo, mat, pts.length), o = new THREE.Object3D(); pts.forEach(([x, z], i) => { o.position.set(x, y, z); o.scale.setScalar(sc); o.updateMatrix(); m.setMatrixAt(i, o.matrix); }); G.add(m); };
+    inst(new THREE.CylinderGeometry(0.09, 0.12, 4.2, 6), toon('#201e1d'), lamps, 2.1); inst(new THREE.SphereGeometry(0.32, 10, 8), new THREE.MeshBasicMaterial({ color: '#ffe7a3' }), lamps, 4.3);
+    inst(new THREE.CylinderGeometry(0.1, 0.1, 1.6, 6), toon('#5b3a22'), lanterns, 0.8); inst(new THREE.BoxGeometry(0.45, 0.55, 0.45), new THREE.MeshBasicMaterial({ color: '#ffb347' }), lanterns, 1.85);
+    inst(new THREE.CylinderGeometry(0.22, 0.3, 2.4, 6), toon('#6b4a2e'), trees, 1.2); inst(new THREE.ConeGeometry(1.8, 4.4, 8), toon('#3f7a34'), trees, 4.4);
+    // forests (s346): scattered trees from terrain.forests, standing on the hills; fewer on phones
+    const FT = C.forestTrees ? C.forestTrees(L, { thin: W.touch ? 1.35 : 1 }) : [], TC = [].concat(lk.trees || ['#2f5f2a', '#3f7a34', '#5a8a34']);
+    const instF = (geo, mat, pts, y) => { if (!pts.length) return; const m = new THREE.InstancedMesh(geo, mat, pts.length), o = new THREE.Object3D(); pts.forEach((q, i) => { o.position.set(q.x, this.heightAt(L, q.x, q.z) + y * q.s, q.z); o.rotation.y = q.x * 0.37; o.scale.setScalar(q.s); o.updateMatrix(); m.setMatrixAt(i, o.matrix); }); G.add(m); };
+    const pines = FT.filter(q => q.kind === 'pine'), broad = FT.filter(q => q.kind === 'broad'), palms = FT.filter(q => q.kind === 'palm'), cherry = FT.filter(q => q.kind === 'cherry');
+    instF(new THREE.CylinderGeometry(0.22, 0.34, 2.6, 5), toon('#5b3f26'), FT.filter(q => q.kind !== 'palm'), 1.1);
+    instF(new THREE.CylinderGeometry(0.16, 0.3, 6, 5), toon('#8a6a44'), palms, 3); instF(new THREE.ConeGeometry(2.9, 1.3, 7), toon(TC[0]), palms, 6.3); instF(new THREE.ConeGeometry(1.8, 1.0, 7), toon(TC[1] || TC[0]), palms, 6.9);
+    instF(new THREE.ConeGeometry(1.9, 5.6, 7), toon(TC[0]), pines.filter((q, i) => i % 2), 4.6); instF(new THREE.ConeGeometry(1.7, 5.0, 7), toon(TC[1] || TC[0]), pines.filter((q, i) => !(i % 2)), 4.4);
+    instF(new THREE.IcosahedronGeometry(2.4, 0), toon(TC[2] || TC[1] || TC[0]), broad, 4.0);
+    instF(new THREE.IcosahedronGeometry(2.6, 1), toon(lk.blossom || '#f6b8cc'), cherry.filter((q, i) => i % 2), 3.8); instF(new THREE.IcosahedronGeometry(2.4, 1), toon(lk.blossom2 || '#f9d2df'), cherry.filter((q, i) => !(i % 2)), 3.9);
+    // other props
+    const PK = { bench: [new THREE.BoxGeometry(1.8, 0.5, 0.6), '#8a5a34', 0.25], planter: [new THREE.BoxGeometry(1.2, 0.8, 1.2), '#7a6a5a', 0.4], fence: [new THREE.BoxGeometry(2.4, 1, 0.12), '#a07850', 0.5], rock: [new THREE.DodecahedronGeometry(0.9), '#8a8580', 0.5], stall: [new THREE.BoxGeometry(3, 2.4, 2), '#c44a3a', 1.2], sign: [new THREE.BoxGeometry(1.4, 2.2, 0.12), '#201e1d', 1.1], statue: [new THREE.BoxGeometry(1.2, 3.6, 1.2), '#bdb7ad', 1.8], fountain: [new THREE.CylinderGeometry(3, 3.3, 0.9, 20), '#cfc8bb', 0.45], crate: [new THREE.BoxGeometry(1, 1, 1), '#b08850', 0.5], barrel: [new THREE.CylinderGeometry(0.45, 0.45, 1.1, 10), '#7a4e2e', 0.55] };
+    for (const [k, [geo, col, y]] of Object.entries(PK)) inst(geo, toon(col), (L.props || []).filter(p => p.k === k && p.at).map(p => p.at), y);
+    // buildings
+    const pal = L.palette || {}, colOf = v => v && v[0] === '@' ? pal[v.slice(1)] : v;
+    W.blocks = [];
+    for (const b of L.buildings || []) { if (!b.f) continue; const [x0, x1, z0, z1] = b.f, w = x1 - x0, d = z1 - z0, h = b.h || 8, cx = (x0 + x1) / 2, cz = (z0 + z1) / 2;
+      W.M(new THREE.BoxGeometry(w, h, d), toon(colOf(b.color) || pal.wall || '#ddd5c8'), cx, h / 2, cz, G, 0.08);
+      W.M(new THREE.BoxGeometry(w + 0.6, 0.5, d + 0.6), toon(pal.roof || '#7a3b2a'), cx, h + 0.25, cz, G, 0.05);
+      W.blocks.push(b.f);
+      if (b.door && b.face) { const fv = C.faceVec(b.face), dm = new THREE.Mesh(new THREE.BoxGeometry(fv[0] ? 0.3 : 2.6, 3.4, fv[0] ? 2.6 : 0.3), toon('#201e1d')); dm.position.set(b.door[0] + fv[0] * 0.1, 1.7, b.door[1] + fv[1] * 0.1); G.add(dm);
+        const sg = b.sign || {}, roofTxt = (sg.roof || b.label || b.key).toUpperCase(), doorTxt = (sg.door || b.label || b.key).toUpperCase();
+        const roof = this.labelSprite(THREE, roofTxt); roof.scale.multiplyScalar(2.6); roof.position.set(b.door[0] + fv[0] * 0.5 - fv[0] * Math.min(4, (fv[0] ? w : d) / 2), h + 2.4, b.door[1] + fv[1] * 0.5 - fv[1] * Math.min(4, (fv[0] ? w : d) / 2)); G.add(roof);   // ROOF SIGN: big, readable from far
+        const side = [-fv[1], fv[0]], plate = this.labelSprite(THREE, doorTxt); plate.scale.multiplyScalar(0.8); plate.position.set(b.door[0] + fv[0] * 0.6 + side[0] * 2.6, 2.0, b.door[1] + fv[1] * 0.6 + side[1] * 2.6); G.add(plate); } }   // DOOR SIGN at the fox's eye level, beside the door
+    // spots, gates, dock
+    const spotPts = (L.spots || []).filter(s => s.at && !s.room).map(s => s.at); inst(new THREE.CylinderGeometry(0.35, 0.35, 1.5, 10), toon('#38bdf8'), spotPts, 0.75); inst(new THREE.SphereGeometry(0.32, 10, 8), toon('#f3f2f2'), spotPts, 1.75);
+    for (const g of L.gates || []) if (g.at) { const t = new THREE.Mesh(new THREE.TorusGeometry(g.r || 6, 0.25, 8, 40), new THREE.MeshBasicMaterial({ color: '#ec3013' })); t.rotation.x = -Math.PI / 2; t.position.set(g.at[0], 0.15, g.at[1]); G.add(t); const lab = this.labelSprite(THREE, 'GATE · ' + g.key); lab.position.set(g.at[0], 3, g.at[1]); G.add(lab); }
+    if (L.dock && L.dock.pad) { const r = L.dock.r || 12, p = new THREE.Mesh(new THREE.CylinderGeometry(r, r, 0.4, 40), toon('#c9ccd2')); p.position.set(L.dock.pad[0], 0.2, L.dock.pad[1]); G.add(p); const t = new THREE.Mesh(new THREE.TorusGeometry(r * 0.8, 0.3, 8, 40), new THREE.MeshBasicMaterial({ color: '#ec3013' })); t.rotation.x = -Math.PI / 2; t.position.set(L.dock.pad[0], 0.45, L.dock.pad[1]); G.add(t); const lab = this.labelSprite(THREE, 'SPACE DOCK'); lab.position.set(L.dock.pad[0], 4, L.dock.pad[1]); G.add(lab); }
+    // map edge
+    const edgeM = toon('#5a5652'); for (const [x, z, w, d] of [[0, -half, 2 * half, 1], [0, half, 2 * half, 1], [-half, 0, 1, 2 * half], [half, 0, 1, 2 * half]]) { const m = new THREE.Mesh(new THREE.BoxGeometry(w, 2, d), edgeM); m.position.set(x, 1, z); G.add(m); }
+    return G;
+  }
+  labelSprite(THREE, s) { const c = document.createElement('canvas'), g = c.getContext('2d'); g.font = '900 44px Archivo, Arial, sans-serif'; const w = Math.min(1000, Math.ceil(g.measureText(s).width) + 40); c.width = w; c.height = 72;
+    g.fillStyle = '#201e1d'; g.fillRect(0, 0, w, 72); g.font = '900 44px Archivo, Arial, sans-serif'; g.fillStyle = '#f3f2f2'; g.textBaseline = 'middle'; g.fillText(s, 20, 38);
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, depthTest: true })); sp.scale.set(w / 72 * 0.9, 0.9, 1); return sp; }
+  stepWalk(dt) {
+    const W = this.W, L = this.L, C = this.C; if (!W || !L) return; const k = W.keys, half = (L.map && L.map.half) || 300;
+    let ix = (k['d'] || k['arrowright'] ? 1 : 0) - (k['a'] || k['arrowleft'] ? 1 : 0), iz = (k['s'] || k['arrowdown'] ? 1 : 0) - (k['w'] || k['arrowup'] ? 1 : 0);
+    if (W.joy) { ix = W.joy.dx; iz = W.joy.dy; } let mag = Math.min(1, Math.hypot(ix, iz));
+    const run = k['shift'] ? 1.7 : 1, sp = 6.5 * run * mag; let speed = 0;
+    if (mag > 0.08) { const cy = W.camYaw, fx = -Math.sin(cy), fz = -Math.cos(cy), rx = Math.cos(cy), rz = -Math.sin(cy); let vx = rx * ix - fx * iz, vz = rz * ix - fz * iz; const n = Math.hypot(vx, vz) || 1; vx /= n; vz /= n;
+      const nx = W.pos[0] + vx * sp * dt, nz = W.pos[1] + vz * sp * dt, ok = (x, z) => Math.abs(x) < half - 1 && Math.abs(z) < half - 1 && !(C.inWater(L, x, z) && !C.onWay(L, x, z)) && !(C.onCliff && C.onCliff(L, x, z)) && !(W.blocks || []).some(f => x > f[0] - 0.45 && x < f[1] + 0.45 && z > f[2] - 0.45 && z < f[3] + 0.45);
+      if (ok(nx, nz)) W.pos = [nx, nz]; else if (ok(nx, W.pos[1])) W.pos = [nx, W.pos[1]]; else if (ok(W.pos[0], nz)) W.pos = [W.pos[0], nz];
+      const tf = Math.atan2(vx, vz); let d = tf - W.face; d = Math.atan2(Math.sin(d), Math.cos(d)); W.face += d * Math.min(1, dt * 12); speed = sp; }
+    W.fox.position.set(W.pos[0], 0.06, W.pos[1]); W.fox.rotation.y = W.face; W.fk.animFox(W.fox, dt, speed);
+    const cy = W.camYaw, D = W.dist, ch = Math.cos(W.pitch), sh = Math.sin(W.pitch); W.camera.position.set(W.pos[0] + Math.sin(cy) * D * ch, 1.4 + D * sh, W.pos[1] + Math.cos(cy) * D * ch); W.camera.lookAt(W.pos[0], 1.4, W.pos[1]);
+    W.zoneT -= dt; if (W.zoneT <= 0) { W.zoneT = 0.25; const Z = C.zoneAt(L, W.pos[0], W.pos[1]), on = C.onWay(L, W.pos[0], W.pos[1]); const st = { zone: Z ? (Z.label || Z.key).toUpperCase() : 'NO ZONE', zoneKey: Z ? '[' + Z.key + ']' : `x ${Math.round(W.pos[0])} · z ${Math.round(W.pos[1])}`, onPath: on ? 'ON PATH' : 'OFF PATH' };
+      if (st.zone !== this.state.zone || st.zoneKey !== this.state.zoneKey || st.onPath !== this.state.onPath) this.setState(st); }
+  }
+  exitWalk() { this.stopWalk(); this.setState({ walking: false }, () => this.draw()); }
+  renderVals() {
+    const s = this.state, col = { fail: '#ec3013', warn: '#ffd23a', pass: '#f3f2f2' }, PH = { full: ['100%', '100%', 'FULL SCREEN'], p: ['390px', '844px', 'PHONE 390×844'], l: ['844px', '390px', 'PHONE 844×390'] }, ph = PH[s.phone];
+    const nw = !!s.narrow;
+    return {
+      bodyDir: nw ? 'column' : 'row', bodyOver: nw ? 'auto' : 'hidden', mapFlex: nw ? '0 0 auto' : '3 1 0', mapH: nw ? '62vh' : 'auto', panelFlex: nw ? '0 0 auto' : '0 0 360px', listMax: nw ? '60vh' : 'none',
+      worlds: this.WORLDS.map(([id, label]) => ({ id, label })), world: s.world, src: s.src, sub: s.sub, counts: s.counts, allOk: s.ok && s.items.length > 0, pick: s.pick,
+      items: s.items.map(it => ({ ...it, rule: (it.rule || '').toUpperCase(), tag: it.level.toUpperCase(), col: col[it.level], go: () => { if (it.at) this.focus(it.at); } })),
+      fileRef: this.fileRef, mapRef: this.mapRef, canRef: this.canRef, frameRef: this.frameRef,
+      onWorld: e => this.load(e.target.value), onReload: () => { this.roomsWorld = null; if (this.world === 'file' && this.text) this.apply(this.text, this.state.src); else this.fetchLayout(true); },
+      onOpen: () => this.fileRef.current && this.fileRef.current.click(),
+      onFile: async e => { const f = e.target.files && e.target.files[0]; if (!f) return; this.world = 'file'; this.view = null; this.userMoved = false; this.text = await f.text(); this.apply(this.text, 'opened: ' + f.name); e.target.value = ''; },
+      onFit: () => { this.userMoved = false; this.fit(); this.hl = null; this.draw(); },
+      onWalk: () => this.startWalk(), onExit: () => this.exitWalk(),
+      walking: s.walking, frameW: ph[0], frameH: ph[1], phoneLabel: ph[2] + ' ↻', onPhone: () => this.setState({ phone: s.phone === 'full' ? 'p' : s.phone === 'p' ? 'l' : 'full' }),
+      zone: s.zone, zoneKey: s.zoneKey, onPath: s.onPath, pathCol: s.onPath === 'ON PATH' ? '#f3f2f2' : '#ffd23a', walkHint: s.walkHint
+    };
+  }
+}
+</script>
+</body>
+</html>

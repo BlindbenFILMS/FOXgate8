@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Gaya Tennis Open">
+  <div ref="{{ stageRef }}" style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0;overflow:hidden"></div>
+  <div data-hud-host="1" style="position:absolute;inset:0;pointer-events:none"><dc-import name="Game HUD" game="{{ engine }}" hud="{{ stdHud }}" started="{{ started }}" busy="{{ busy }}" on-hud="{{ onHud }}" world="Gaya" vehicle="tennis" keys="{{ keysList }}" skip-keys="{{ skipKeys }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  <sc-if value="{{ lessonOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:{{ cardTop }};width:{{ colW }};z-index:2;pointer-events:none;background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:6px 10px;border-bottom:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap">{{ lessonKick }}</span><span style="font:900 16px var(--font-heading);font-variant-numeric:tabular-nums">{{ lessonCount }}</span></div>
+      <div style="padding:6px 10px 8px;display:flex;flex-direction:column;gap:3px"><span style="font:900 18px var(--font-heading);line-height:1">{{ h.lesson.title }}</span><span style="font:700 13px var(--font-body);line-height:1.35;color:#e8e4de;text-wrap:pretty">{{ h.lesson.text }}</span></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ callOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ callTop }};transform:translateX(-50%);z-index:3;pointer-events:none;max-width:calc(100% - 24px);background:#000;border:2px solid #3a3836;display:flex;align-items:stretch">
+      <span style="padding:5px 8px;background:#1f4a34;font:800 10px var(--font-heading);letter-spacing:0.12em;color:#fff;display:flex;align-items:center;white-space:nowrap">UMPIRE DEUCE</span>
+      <span style="padding:5px 12px;font:900 clamp(14px,3.8vw,18px) var(--font-heading);letter-spacing:0.04em;color:#fff;text-wrap:pretty">{{ h.call }}</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ serveOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;bottom:{{ lowBottom }};transform:translateX(-50%);z-index:3;pointer-events:none;width:min(360px, calc(100% - 24px));background:#000;border:2px solid #ffd23a;padding:7px 12px;display:flex;flex-direction:column;gap:2px">
+      <span style="font:900 14px var(--font-heading);letter-spacing:0.06em;color:#ffd23a">YOUR SERVE</span><span style="font:700 12px var(--font-body);line-height:1.35;color:#fff">Press 1 to toss, then 1 again in the green. The stick moves you along the line and aims wide or down the middle.</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ meterOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ netTop }};transform:translate(-50%,-50%);z-index:4;pointer-events:none;width:min(380px, calc(100% - 24px));background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:6px 12px"><span style="font:900 18px var(--font-heading);color:{{ meterCol }}">{{ meterTxt }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:#ffd23a;white-space:nowrap">PRESS 1 IN THE GREEN</span></div>
+      <div style="position:relative;height:20px;margin:0 12px 10px;display:flex;gap:2px">
+        <span style="flex:36;background:#9ca3af;display:block"></span><span style="flex:24;background:#e8e4de;display:block"></span><span style="flex:22;background:#22c55e;outline:3px solid #ffd23a;display:block"></span><span style="flex:10;background:#e6b45a;display:block"></span><span style="flex:8;background:#ec3013;display:block"></span>
+        <span style="position:absolute;top:-6px;bottom:-6px;left:{{ meterX }};width:4px;margin-left:-2px;background:#ffffff;display:block"></span>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ flashOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ netTop }};transform:translate(-50%,-50%);z-index:5;pointer-events:none;max-width:calc(100% - 24px);background:rgba(0,0,0,0.88);border:2px solid {{ flashCol }};display:flex;align-items:stretch">
+      <span style="flex:none;width:10px;background:{{ flashCol }};display:block"></span><span style="padding:4px 12px;font:900 clamp(14px,3.8vw,20px) var(--font-heading);letter-spacing:0.04em;color:#fff;white-space:nowrap">{{ flashTxt }}</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:{{ cardTop }};z-index:7;pointer-events:none;width:{{ demoW }};background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="padding:5px 12px;border-bottom:2px solid #3a3836;font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;background:#ec3013;display:block"></span>DEMO · NOTHING IS SAVED</div>
+      <div style="display:flex;align-items:stretch"><sc-if value="{{ demoKeyOn }}" hint-placeholder-val="{{ false }}"><div style="flex:none;min-width:56px;display:flex;align-items:center;justify-content:center;padding:0 8px;background:#ec3013;color:#fff;font:900 14px var(--font-heading);border-right:2px solid #3a3836">{{ demoKey }}</div></sc-if><div style="padding:9px 12px;font:900 clamp(14px,3.8vw,17px) var(--font-heading);letter-spacing:0.03em;line-height:1.25;color:#fff;text-wrap:pretty">{{ demoCap }}</div></div>
+    </div>
+    <button onClick="{{ demoExit }}" aria-label="Exit the demo" style="position:absolute;right:max(12px, env(safe-area-inset-right));top:{{ cardTop }};z-index:7;min-width:96px;min-height:48px;padding:0 14px;border:2px solid #ec3013;border-radius:0;background:#ec3013;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">EXIT DEMO</button>
+  </sc-if>
+  <sc-if value="{{ introOn }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:6;width:min(420px, calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column">
+      <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:3px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">GAYA · STADIUM · gayaStadium</span><span style="font:900 28px var(--font-heading);line-height:1">The Gaya Open</span><span style="font:700 13px var(--font-body);line-height:1.4;color:#cfcac2;text-wrap:pretty">Learn the shots with Coach Fault, then win three rounds for the Golden Racket. Run with the stick and press while the ring around the ball is green.</span></div>
+      <sc-for list="{{ introRows }}" as="r" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:7px 16px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;color:{{ r.c }};white-space:nowrap">{{ r.v }}</span></div></sc-for>
+      <button onClick="{{ goAlt2 }}" style="min-height:48px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">TUTORIAL</button>
+      <button onClick="{{ goMain }}" style="min-height:56px;padding:0 18px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10">{{ mainBtn }}</button>
+      <button onClick="{{ goAlt }}" style="min-height:48px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WATCH THE DEMO</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:8;background:rgba(0,0,0,0.74);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #3a3836;width:min(440px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+          <div style="padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ doneKicker }}</span><span style="font:900 26px var(--font-heading);line-height:1.05">{{ doneTitle }}</span><span style="font:700 13px var(--font-body);color:#cfcac2;text-wrap:pretty">{{ doneSub }}</span></div>
+          <div style="min-width:88px;padding:0 10px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;background:{{ doneCol }}"><span style="font:900 30px var(--font-heading);line-height:1">{{ doneBig }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em">{{ doneSmall }}</span></div>
+        </div>
+        <sc-for list="{{ doneRows }}" as="r" hint-placeholder-count="2"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:8px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;color:{{ r.c }};white-space:nowrap">{{ r.v }}</span></div></sc-for>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+          <button onClick="{{ doneMain }}" style="min-height:54px;padding:0 16px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10">{{ doneMainTxt }}</button>
+          <button onClick="{{ toIntro }}" style="min-height:54px;padding:0 16px;border:0;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">BACK</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { h: null, vw: 1200, vh: 800, hi: { pad: false, menu: false, split: false, bar: 0 } };
+  stageRef = React.createRef();
+  onHud = hi => this.setState({ hi });
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs();
+    try { const m = await import(new URL('minigames/gaya/tennis-open.js', document.baseURI).href); this.g = await m.createTennis({ container: this.stageRef.current, onState: h => this.setState({ h }) }); window.__tennis = this.g; this.forceUpdate(); if (/[?&]demo=1/.test(location.search)) setTimeout(() => this.g.demoStart(), 400); }
+    catch (e) { console.warn('tennis failed: ' + (e && e.stack || String(e))); }
+  }
+  componentWillUnmount() { removeEventListener('resize', this.onRs); this.g && this.g.destroy(); }
+  onRs = () => this.setState({ vw: innerWidth, vh: innerHeight });
+  renderVals() {
+    const S = this.state, g = this.g, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const h = S.h || { mode: 'intro', ph: 'idle', quest: 'THE GAYA OPEN', flash: null, call: '', done: null, lesson: null, meter: null, serveP: false, match: null, prog: { lesson: 0, lessons: 6, round: 0, unlocked: false, champ: false }, opps: [{ name: 'SLICE', round: 'ROUND 1', gold: 30 }, { name: 'LOFT', round: 'SEMI-FINAL', gold: 50 }, { name: 'ACE', round: 'FINAL', gold: 150 }], gold: 0 };
+    const { vw, vh } = S, phone = Math.min(vw, vh) < 520, land = phone && vw > vh, bar = S.hi.bar || 0, pad = !!S.hi.pad, play = h.mode === 'lesson' || h.mode === 'match', d = h.done || {}, pr = h.prog, nextR = Math.min(pr.round, 2), op = h.opps[nextR];
+    let sv = null; try { sv = JSON.parse(localStorage.getItem('8gates.save.v1') || 'null'); } catch (e) {}
+    const stdHud = { hp: 100, hpMax: 100, en: 100, gold: h.gold, hour: 15, day: sv && sv.stats ? sv.stats.worldDay || 1 : 1, items: sv ? Object.entries(sv.items || {}).filter(([, n]) => n > 0).map(([id, n]) => ({ id, n, label: id })) : [], place: 'Gaya · Stadium', quest: { text: h.quest }, prompt: null, toast: null, muted: false, weather: 'Clear', boat: false, inCave: false, weapons: [], dialog: null, vehicles: [], vehAmmo: [] };
+    const m = h.meter ? h.meter.v : 0, zone = m < 0.36 ? ['TOO SOFT', '#9ca3af'] : m < 0.6 ? ['SAFE', '#ffffff'] : m <= 0.82 ? ['PERFECT', '#22c55e'] : m <= 0.92 ? ['RISKY', '#e6b45a'] : ['TOO HARD', '#ec3013'];
+    const lowBottom = pad && !land ? 'calc(' + (phone ? 220 : 200) + 'px + env(safe-area-inset-bottom))' : 'calc(' + (pad ? 60 : 70) + 'px + env(safe-area-inset-bottom))';
+    const mainBtn = pr.champ ? 'DEFEND THE TITLE · FINAL VS ACE' : 'PLAY ' + op.round + ' VS ' + op.name;
+    const goMain = e => { blur(e); if (!g) return; g.startMatch(pr.champ ? 2 : nextR); };
+    const doneTitle = d.lessons ? 'Lessons done' : d.champ ? 'Champion of Gaya!' : d.won ? 'You won!' : 'Beaten this time';
+    return {
+      stageRef: this.stageRef, engine: g, stdHud, started: !!g && play, busy: !play, onHud: this.onHud, h,
+      stageTop: bar + 'px', cardTop: (bar + 42) + 'px', colW: phone ? (land ? '250px' : 'min(300px, calc(100% - 24px))') : '320px', callTop: phone && !land && h.lesson ? (bar + 168) + 'px' : (bar + 42) + 'px',
+      keysList: [['WASD', 'run'], ['1 / J', 'hit · serve'], ['2 / K', 'lob'], ['Space / L', 'smash'], ['M', 'map'], ['I', 'menu']], skipKeys: ['KeyJ', 'KeyT', 'KeyN', 'KeyV', 'KeyC', 'KeyO', 'KeyH', 'KeyL', 'KeyK'],
+      lessonOn: play && !h.demo && !!h.lesson && !S.hi.menu, lessonKick: h.lesson ? 'LESSON ' + h.lesson.n + ' / ' + h.lesson.of + ' · COACH FAULT' : '', lessonCount: h.lesson ? h.lesson.c + ' / ' + h.lesson.goal : '', callOn: play && !!h.call && !S.hi.menu, serveOn: play && !h.demo && h.serveP && !S.hi.menu && h.mode === 'match', meterOn: play && !!h.meter, meterX: (m * 100).toFixed(1) + '%', meterTxt: zone[0], meterCol: zone[1], lowBottom,
+      flashOn: play && !!h.flash, netTop: 'calc(' + bar + 'px + (100% - ' + bar + 'px) * ' + (h.netY != null ? h.netY : 0.45).toFixed(3) + ')', flashTxt: h.flash ? h.flash.txt : '', flashCol: h.flash ? h.flash.col : '#ffd23a',
+      introOn: h.mode === 'intro',
+      introRows: [['Tutorial (optional)', Math.min(pr.lesson, pr.lessons) + ' / ' + pr.lessons, pr.unlocked ? '#22c55e' : '#8a847e'], ...h.opps.map((o, i) => [o.round + ' · ' + o.name, pr.round > i ? 'WON' : i === nextR ? 'NEXT · ' + o.gold + 'g' : 'LOCKED', pr.round > i ? '#22c55e' : i === nextR ? '#ffd23a' : '#8a847e']), ['Prize', pr.champ ? 'GOLDEN RACKET · YOURS' : 'GOLDEN RACKET', pr.champ ? '#22c55e' : '#e6b45a']].map(([k, v, c]) => ({ k, v, c })),
+      mainBtn, goMain, altBtn: 'WATCH THE DEMO', goAlt: e => { blur(e); g && g.demoStart(); }, alt2On: true, goAlt2: e => { blur(e); g && g.startLesson(pr.lesson && pr.lesson < pr.lessons ? pr.lesson : 0); },
+      demoOn: !!h.demo, demoW: phone && !land ? 'calc(100% - 24px - 108px - max(12px, env(safe-area-inset-left)) + 12px)' : 'min(320px, calc(100% - 140px))', demoKeyOn: !!(h.demo && h.demo[0]), demoKey: h.demo ? h.demo[0] : '', demoCap: h.demo ? h.demo[1] : '', demoExit: e => { blur(e); g && g.demoStop(); },
+      doneOn: h.mode === 'done' && !!h.done, doneKicker: d.lessons ? 'COACH FAULT' : (d.round || '') + ' · VS ' + (d.opp || ''), doneTitle,
+      doneSub: d.lessons ? 'The tournament is open. Round 1 is against Slice.' : d.champ ? 'The Golden Racket is yours.' : d.won ? 'Next up: ' + (d.next ? d.next.round + ' vs ' + d.next.name : '') : 'Watch for the green ring and try again.',
+      doneCol: d.lessons || d.won ? '#22c55e' : '#ec3013', doneBig: d.lessons ? '6/6' : d.games ? d.games[0] + '–' + d.games[1] : '', doneSmall: d.lessons ? 'LESSONS' : 'GAMES',
+      doneRows: d.lessons ? [['Unlocked', 'THE GAYA OPEN', '#22c55e']].map(([k, v, c]) => ({ k, v, c })) : [['Prize money', d.gold ? '+' + d.gold + 'g' : '0g', d.gold ? '#e6b45a' : '#8a847e'], ...(d.relic ? [['Relic', 'GOLDEN RACKET', '#ffd23a']] : [])].map(([k, v, c]) => ({ k, v, c })),
+      doneMainTxt: d.lessons ? 'PLAY ROUND 1' : d.champ ? 'PLAY AGAIN' : d.won ? 'NEXT ROUND' : 'REMATCH',
+      doneMain: e => { blur(e); if (!g) return; if (d.lessons) g.startMatch(0); else if (d.champ) g.startMatch(2); else if (d.won) g.startMatch(Math.min(2, pr.round)); else g.startMatch(h.opps.findIndex(o => o.name === d.opp)); },
+      toIntro: e => { blur(e); g && g.toIntro(); },
+    };
+  }
+}
+</script>
+</body>
+</html>

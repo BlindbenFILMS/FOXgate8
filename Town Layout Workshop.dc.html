@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;min-height:100%;background:#201e1d}a{color:var(--color-accent-300)}a:hover{color:var(--color-accent)}button:focus-visible,a:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}svg{touch-action:none;user-select:none;-webkit-user-select:none}</style>
+</helmet>
+<div style="min-height:100dvh;background:#201e1d;font-family:var(--font-body);color:#f3f2f2;display:flex;flex-direction:column" data-screen-label="Town Layout Workshop">
+  <div style="display:flex;align-items:stretch;border-bottom:2px solid #f3f2f2;flex-wrap:wrap">
+    <div style="padding:10px 14px;display:flex;flex-direction:column;gap:2px;border-right:2px solid #f3f2f2;flex:1;min-width:200px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-300)">Meru 2 · Buildings + paths</div>
+      <div style="font-family:var(--font-heading);font-size:20px;font-weight:800;line-height:1.05">Town Layout Workshop</div>
+    </div>
+    <div style="display:flex;align-items:stretch;border-right:2px solid #f3f2f2">
+      <button onClick="{{ vTown }}" style="min-height:44px;border:0;border-right:2px solid #f3f2f2;background:{{ bgTown }};color:{{ inkTown }};font:800 13px var(--font-body);letter-spacing:0.06em;text-align:left;padding:0 14px;cursor:pointer">TOWN</button>
+      <button onClick="{{ vPaths }}" style="min-height:44px;border:0;border-right:2px solid #f3f2f2;background:{{ bgPaths }};color:{{ inkPaths }};font:800 13px var(--font-body);letter-spacing:0.06em;text-align:left;padding:0 14px;cursor:pointer">PATHS</button>
+      <button onClick="{{ zIn }}" aria-label="Zoom in" style="min-height:44px;min-width:48px;border:0;border-right:2px solid #f3f2f2;background:transparent;color:#f3f2f2;font:900 20px var(--font-heading);cursor:pointer">+</button>
+      <button onClick="{{ zOut }}" aria-label="Zoom out" style="min-height:44px;min-width:48px;border:0;border-right:2px solid #f3f2f2;background:transparent;color:#f3f2f2;font:900 20px var(--font-heading);cursor:pointer">−</button>
+      <button onClick="{{ zFull }}" style="min-height:44px;border:0;border-right:2px solid #f3f2f2;background:#ffd23a;color:#201e1d;font:900 13px var(--font-body);letter-spacing:0.06em;text-align:left;padding:0 14px;cursor:pointer">FULL MAP · {{ zPct }}</button>
+      <button onClick="{{ vMap }}" style="min-height:44px;border:0;background:{{ bgMap }};color:{{ inkMap }};font:800 13px var(--font-body);letter-spacing:0.06em;text-align:left;padding:0 14px;cursor:pointer">WHOLE MAP</button>
+    </div>
+    <a href="Meru 2 Blockout.dc.html?walk=1" style="display:flex;align-items:center;padding:0 16px;min-height:44px;font-weight:800;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;color:#f3f2f2;white-space:nowrap">Open Meru 2 →</a>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;flex:1;min-height:0">
+    <div style="flex:1 1 380px;min-width:0;display:flex;flex-direction:column;border-bottom:2px solid #f3f2f2;box-sizing:border-box">
+      <svg ref="{{ svgRef }}" viewBox="{{ viewBox }}" style="width:100%;height:auto;max-height:calc(100dvh - 140px);background:#28301f;display:block" onPointerMove="{{ onMove }}" onPointerUp="{{ onUp }}" onPointerCancel="{{ onUp }}" onPointerLeave="{{ onUp }}">
+        <polygon points="{{ lakePts }}" fill="#1e3a52" stroke="#7fb3d5" stroke-width="0.8"></polygon>
+        <sc-for list="{{ zones }}" as="z" hint-placeholder-count="0">
+          <rect x="{{ z.x }}" y="{{ z.y }}" width="{{ z.w }}" height="{{ z.h }}" fill="none" stroke="#5a5654" stroke-width="0.6" stroke-dasharray="3 3"></rect>
+        </sc-for>
+        <sc-for list="{{ roads }}" as="r" hint-placeholder-count="0">
+          <polyline points="{{ r.pts }}" fill="none" stroke="#4a4744" stroke-width="{{ r.w }}" stroke-linejoin="round"></polyline>
+        </sc-for>
+        <sc-for list="{{ skyPlazas }}" as="p" hint-placeholder-count="0">
+          <rect x="{{ p.x }}" y="{{ p.y }}" width="{{ p.w }}" height="{{ p.h }}" fill="{{ p.fill }}" stroke="{{ p.stroke }}" stroke-width="{{ p.sw }}" onPointerDown="{{ p.down }}" style="cursor:grab"></rect>
+        </sc-for>
+        <sc-for list="{{ skyRoads }}" as="r" hint-placeholder-count="0">
+          <polyline points="{{ r.pts }}" fill="none" stroke="#8a847e" stroke-width="10" stroke-linejoin="round" stroke-linecap="square"></polyline>
+        </sc-for>
+        <sc-for list="{{ skyTowers }}" as="t" hint-placeholder-count="0">
+          <rect x="{{ t.x }}" y="{{ t.y }}" width="{{ t.w }}" height="{{ t.h }}" fill="{{ t.fill }}" stroke="#f3f2f2" stroke-width="1" onPointerDown="{{ t.down }}" style="cursor:grab"></rect>
+        </sc-for>
+        <sc-for list="{{ skyDoors }}" as="o" hint-placeholder-count="0">
+          <line x1="{{ o.x1 }}" y1="{{ o.y1 }}" x2="{{ o.x2 }}" y2="{{ o.y2 }}" stroke="#ffd23a" stroke-width="2.5" style="pointer-events:none"></line>
+          <circle cx="{{ o.x1 }}" cy="{{ o.y1 }}" r="2.6" fill="#ffd23a" style="pointer-events:none"></circle>
+        </sc-for>
+        <sc-for list="{{ skyLabels }}" as="l" hint-placeholder-count="0">
+          <text x="{{ l.x }}" y="{{ l.y }}" fill="#ffd23a" font-size="{{ l.s }}" font-weight="900" font-family="Archivo, sans-serif" style="pointer-events:none">{{ l.t }}</text>
+        </sc-for>
+        <polygon points="{{ desertPts }}" fill="#dfc08a" fill-opacity="0.55" stroke="#c49a5c" stroke-width="1" style="pointer-events:none"></polygon>
+        <sc-for list="{{ trails }}" as="k" hint-placeholder-count="0">
+          <polyline points="{{ k.pts }}" fill="none" stroke="#e6b45a" stroke-width="{{ k.w }}" stroke-linejoin="round" stroke-linecap="round" style="pointer-events:none"></polyline>
+        </sc-for>
+        <sc-for list="{{ links }}" as="k" hint-placeholder-count="0">
+          <polyline points="{{ k.pts }}" fill="none" stroke="#d6d1c9" stroke-width="4" stroke-linejoin="miter" stroke-linecap="square" style="pointer-events:none"></polyline>
+        </sc-for>
+        <sc-for list="{{ bridges }}" as="b" hint-placeholder-count="0">
+          <rect x="{{ b.x }}" y="{{ b.y }}" width="{{ b.w }}" height="{{ b.h }}" fill="#3d3b3a" stroke="#ec3013" stroke-width="2" style="pointer-events:none"></rect>
+        </sc-for>
+        <polyline points="{{ ferryPts }}" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="5 4" style="pointer-events:none"></polyline>
+        <sc-for list="{{ ferryStops }}" as="f" hint-placeholder-count="0">
+          <circle cx="{{ f.x }}" cy="{{ f.y }}" r="5" fill="#38bdf8" stroke="#201e1d" stroke-width="1.5" style="pointer-events:none"></circle>
+        </sc-for>
+        <polyline points="{{ trainPts }}" fill="none" stroke="#ec3013" stroke-width="3" stroke-dasharray="8 4"></polyline>
+        <sc-for list="{{ trainWarn }}" as="t" hint-placeholder-count="0">
+          <circle cx="{{ t.x }}" cy="{{ t.y }}" r="14" fill="none" stroke="#ffd23a" stroke-width="3" style="pointer-events:none"></circle>
+        </sc-for>
+        <sc-for list="{{ bands }}" as="b" hint-placeholder-count="0">
+          <rect x="{{ b.x }}" y="{{ b.y }}" width="{{ b.w }}" height="{{ b.h }}" fill="#3f9a5e" fill-opacity="0.35" stroke="#7cff9b" stroke-width="0.5"></rect>
+        </sc-for>
+        <sc-for list="{{ xings }}" as="c" hint-placeholder-count="0">
+          <g transform="{{ c.tf }}">
+            <rect x="{{ c.rx }}" y="{{ c.ry }}" width="{{ c.rw }}" height="{{ c.rh }}" fill="#f3f2f2" fill-opacity="0.85"></rect>
+            <rect x="{{ c.sx }}" y="{{ c.sy }}" width="{{ c.sw }}" height="{{ c.sh }}" fill="#201e1d" fill-opacity="0.55"></rect>
+          </g>
+        </sc-for>
+        <sc-for list="{{ pz }}" as="z" hint-placeholder-count="0">
+          <rect x="{{ z.cx }}" y="{{ z.cy }}" width="{{ z.cw }}" height="{{ z.ch }}" fill="#f3f2f2" fill-opacity="0.13"></rect>
+          <rect x="{{ z.x }}" y="{{ z.y }}" width="{{ z.w }}" height="{{ z.h }}" fill="#c98a3e" stroke="#3a3734" stroke-width="0.7"></rect>
+        </sc-for>
+        <sc-for list="{{ pr }}" as="p" hint-placeholder-count="0">
+          <polyline points="{{ p.pts }}" fill="none" stroke="#f3f2f2" stroke-opacity="0.13" stroke-width="{{ p.cw }}" stroke-linejoin="miter" stroke-linecap="square"></polyline>
+        </sc-for>
+        <sc-for list="{{ pr }}" as="p" hint-placeholder-count="0">
+          <polyline points="{{ p.pts }}" fill="none" stroke="{{ p.edge }}" stroke-width="{{ p.ew }}" stroke-linejoin="miter" stroke-linecap="square" stroke-dasharray="{{ p.dash }}"></polyline>
+        </sc-for>
+        <sc-for list="{{ pr }}" as="p" hint-placeholder-count="0">
+          <polyline points="{{ p.pts }}" fill="none" stroke="{{ p.col }}" stroke-width="{{ p.w }}" stroke-linejoin="miter" stroke-linecap="square" stroke-dasharray="{{ p.dash }}" onPointerDown="{{ p.pick }}" style="cursor:pointer"></polyline>
+        </sc-for>
+        <sc-for list="{{ lots }}" as="q" hint-placeholder-count="0">
+          <rect x="{{ q.x }}" y="{{ q.y }}" width="{{ q.w }}" height="{{ q.h }}" fill="#4a4745" stroke="#f3f2f2" stroke-width="0.4" stroke-dasharray="2 1.4"></rect>
+        </sc-for>
+        <sc-for list="{{ props }}" as="p" hint-placeholder-count="0">
+          <rect x="{{ p.x }}" y="{{ p.y }}" width="{{ p.w }}" height="{{ p.h }}" fill="{{ p.fill }}" stroke="{{ p.stroke }}" stroke-width="0.4"></rect>
+        </sc-for>
+        <circle cx="0" cy="0" r="7" fill="#7fb3d5" stroke="#f3f2f2" stroke-width="0.6"></circle>
+        <g style="pointer-events:none">{{ labels }}</g>
+        <sc-for list="{{ phandles }}" as="h" hint-placeholder-count="0">
+          <circle cx="{{ h.x }}" cy="{{ h.y }}" r="{{ h.r }}" fill="#ffffff" stroke="#201e1d" stroke-width="0.5" onPointerDown="{{ h.down }}" style="cursor:move"></circle>
+        </sc-for>
+        <sc-for list="{{ items }}" as="it" hint-placeholder-count="0">
+          <g onPointerDown="{{ it.down }}" style="cursor:grab">
+            <rect x="{{ it.x }}" y="{{ it.y }}" width="{{ it.w }}" height="{{ it.h }}" fill="{{ it.fill }}" stroke="{{ it.stroke }}" stroke-width="{{ it.sw }}"></rect>
+            <circle cx="{{ it.dx }}" cy="{{ it.dy }}" r="1.8" fill="#ffd23a" stroke="#201e1d" stroke-width="0.4"></circle>
+          </g>
+        </sc-for>
+      </svg>
+      <div style="display:flex;flex-wrap:wrap;gap:0;border-top:2px solid #f3f2f2">
+        <sc-if value="{{ notPaths }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;padding:8px 14px;font-size:13px;color:#cfcac4;flex:1;min-width:220px">Green = the two walking paths. Red = something standing in them. Yellow dot = door. Drag a building to move it. Whole map: red dashes = train · blue dashes = ferry (dots = stops) · dark bar = Garden Bridge · pale = station walks · sand = desert · yellow ring = a tower too close to the track.</div>
+        </sc-if>
+        <sc-if value="{{ isPaths }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;padding:8px 14px;font-size:13px;color:#cfcac4;flex:1;min-width:220px">Brick = entrance clearings. Gold = main path. Amber = door paths. Stone = front strips + links. Pale band = kept clear (1 m each side). Dashed = suggested, switched off. Tap a path to pick it, drag a white dot to move its bend. Buildings still drag; the paths follow.</div>
+        </sc-if>
+      </div>
+    </div>
+    <sc-if value="{{ isPaths }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1 1 320px;min-width:0;display:flex;flex-direction:column;border-left:2px solid #f3f2f2;box-sizing:border-box">
+      <div style="padding:14px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-300)">Fountain area · path network</div>
+        <div style="font-family:var(--font-heading);font-size:22px;font-weight:800;line-height:1.1">{{ pVerdict }}</div>
+        <div style="font-size:14px;color:#cfcac4">{{ pSub }}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-bottom:2px solid #f3f2f2">
+        <sc-for list="{{ legend }}" as="g" hint-placeholder-count="6">
+          <div style="min-height:40px;display:flex;align-items:center;gap:10px;padding:0 14px;border-bottom:1px solid #5a5654;font-size:13px;font-weight:700"><span style="width:22px;height:8px;background:{{ g.col }};flex:none;outline:1px solid #201e1d"></span><span style="flex:1;min-width:0">{{ g.name }}</span><span style="font-weight:600;color:#cfcac4;font-variant-numeric:tabular-nums">{{ g.w }}</span></div>
+        </sc-for>
+      </div>
+      <div style="padding:14px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-300)">Selected path</div>
+        <div style="font-family:var(--font-heading);font-size:20px;font-weight:800;line-height:1.1">{{ rName }}</div>
+        <div style="font-size:14px;font-variant-numeric:tabular-nums;color:#cfcac4">{{ rInfo }}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-bottom:2px solid #f3f2f2">
+        <button onClick="{{ rToggle }}" style="min-height:48px;border:0;border-right:2px solid #f3f2f2;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2;opacity:{{ rOp }}">{{ rToggleLabel }}</button>
+        <button onClick="{{ rAuto }}" style="min-height:48px;border:0;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2;opacity:{{ rAutoOp }}">Auto bend</button>
+      </div>
+      <sc-if value="{{ hasConflicts }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:12px 14px 4px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-300)">Props to move off the paths</div>
+        <div style="display:flex;flex-direction:column;border-bottom:2px solid #f3f2f2">
+          <sc-for list="{{ conflicts }}" as="c" hint-placeholder-count="0">
+            <div style="min-height:40px;border-bottom:1px solid #5a5654;padding:0 14px;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700"><span style="width:14px;height:14px;background:#ec3013;flex:none"></span><span style="flex:1;min-width:0">{{ c.name }}</span><span style="font-weight:600;font-size:13px;color:#cfcac4">{{ c.where }}</span></div>
+          </sc-for>
+        </div>
+      </sc-if>
+      <div style="padding:12px 14px 4px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-300)">Every path · tap to pick, the right column switches it</div>
+      <div style="display:flex;flex-direction:column;max-height:420px;overflow:auto;border-bottom:2px solid #f3f2f2">
+        <sc-for list="{{ prows }}" as="r" hint-placeholder-count="10">
+          <div style="display:flex;align-items:stretch;border-bottom:1px solid #5a5654;background:{{ r.rowBg }}">
+            <button onClick="{{ r.pick }}" style="flex:1;min-width:0;min-height:44px;border:0;background:transparent;font:700 14px var(--font-body);text-align:left;padding:0 14px;cursor:pointer;color:{{ r.rowInk }};display:flex;align-items:center;gap:10px"><span style="width:14px;height:14px;background:{{ r.col }};flex:none;opacity:{{ r.op }}"></span><span style="flex:1;min-width:0">{{ r.name }}</span><span style="font-weight:600;font-size:13px;font-variant-numeric:tabular-nums">{{ r.len }}</span></button>
+            <button onClick="{{ r.toggle }}" style="width:64px;min-height:44px;border:0;border-left:1px solid #5a5654;background:{{ r.tBg }};color:{{ r.tInk }};font:800 13px var(--font-body);text-align:left;padding:0 10px;cursor:pointer">{{ r.state }}</button>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+        <button onClick="{{ pCopy }}" style="min-height:52px;border:0;border-right:2px solid #f3f2f2;background:var(--color-accent);color:#ffffff;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer">{{ pCopyLabel }}</button>
+        <button onClick="{{ pReset }}" style="min-height:52px;border:0;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2">Reset paths</button>
+      </div>
+    </div>
+    </sc-if>
+    <sc-if value="{{ notPaths }}" hint-placeholder-val="{{ true }}">
+    <div style="flex:1 1 320px;min-width:0;display:flex;flex-direction:column;border-left:2px solid #f3f2f2;box-sizing:border-box">
+      <div style="padding:14px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-300)">Paths clear?</div>
+        <div style="font-family:var(--font-heading);font-size:22px;font-weight:800;line-height:1.1">{{ verdict }}</div>
+        <div style="font-size:14px;color:#cfcac4">{{ verdictSub }}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:auto repeat(3,minmax(0,1fr));border-bottom:2px solid #f3f2f2">
+        <div style="display:flex;align-items:center;padding:0 12px;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;border-right:2px solid #f3f2f2">Path width</div>
+        <sc-for list="{{ widths }}" as="w" hint-placeholder-count="3">
+          <button onClick="{{ w.set }}" style="min-height:44px;border:0;border-right:2px solid #f3f2f2;background:{{ w.bg }};color:{{ w.ink }};font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer">{{ w.label }}</button>
+        </sc-for>
+      </div>
+      <div style="padding:14px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-300)">Selected</div>
+        <div style="font-family:var(--font-heading);font-size:22px;font-weight:800;line-height:1.1">{{ selName }}</div>
+        <sc-if value="{{ canName }}" hint-placeholder-val="{{ false }}">
+          <label style="display:flex;flex-direction:column;gap:4px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#cfcac4">Name in the game
+            <input value="{{ nameVal }}" onChange="{{ nameSet }}" placeholder="Type a name" maxlength="40" style="min-height:44px;border:2px solid #f3f2f2;background:#201e1d;color:#f3f2f2;font:700 16px var(--font-body);padding:0 12px;border-radius:0;outline:none;text-transform:none;letter-spacing:0" style-focus="border-color:#ec3013"></input>
+          </label>
+        </sc-if>
+        <div style="font-size:14px;font-variant-numeric:tabular-nums">{{ selInfo }}</div>
+        <sc-if value="{{ selWarn }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:13px;font-weight:800;color:var(--color-accent-300)">{{ selWarnText }}</div>
+        </sc-if>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-bottom:2px solid #f3f2f2">
+        <button onClick="{{ nW }}" style="min-height:48px;border:0;border-right:2px solid #f3f2f2;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2">← W</button>
+        <button onClick="{{ nN }}" style="min-height:48px;border:0;border-right:2px solid #f3f2f2;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2">↑ N</button>
+        <button onClick="{{ nS }}" style="min-height:48px;border:0;border-right:2px solid #f3f2f2;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2">↓ S</button>
+        <button onClick="{{ nE }}" style="min-height:48px;border:0;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2">→ E</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-bottom:2px solid #f3f2f2">
+        <button onClick="{{ rotL }}" style="min-height:48px;border:0;border-right:2px solid #f3f2f2;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2">⟲ 90°</button>
+        <button onClick="{{ rotR }}" style="min-height:48px;border:0;border-right:2px solid #f3f2f2;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2">⟳ 90°</button>
+        <button onClick="{{ undoOne }}" style="min-height:48px;border:0;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2;opacity:{{ undoOp }}">{{ undoLabel }}</button>
+      </div>
+      <div style="padding:12px 14px 4px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-300)">Add a building · square, {{ addHint }}</div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-bottom:2px solid #f3f2f2">
+        <sc-for list="{{ adds }}" as="a" hint-placeholder-count="3">
+          <button onClick="{{ a.go }}" style="min-height:48px;border:0;border-right:2px solid #f3f2f2;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2" style-hover="background:#3d3b3a">{{ a.label }}</button>
+        </sc-for>
+      </div>
+      <div style="padding:12px 14px 4px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-300)">In the way</div>
+      <div style="display:flex;flex-direction:column;max-height:240px;overflow:auto;border-bottom:2px solid #f3f2f2">
+        <sc-for list="{{ blockers }}" as="b" hint-placeholder-count="3">
+          <button onClick="{{ b.pick }}" style="min-height:44px;border:0;border-bottom:1px solid #5a5654;background:{{ b.rowBg }};font:700 14px var(--font-body);text-align:left;padding:0 14px;cursor:pointer;color:{{ b.rowInk }};display:flex;align-items:center;gap:10px">
+            <span style="width:14px;height:14px;background:{{ b.dot }};flex:none"></span><span style="flex:1;min-width:0">{{ b.name }}</span><span style="font-weight:600;font-size:13px">{{ b.where }}</span>
+          </button>
+        </sc-for>
+        <sc-if value="{{ noBlockers }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:12px 14px;font-size:14px;font-weight:700">Nothing. Both paths are clear.</div>
+        </sc-if>
+      </div>
+      <div style="padding:12px 14px 4px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-300)">Crosswalks on the paths</div>
+      <div style="display:flex;flex-direction:column;border-bottom:2px solid #f3f2f2">
+        <sc-for list="{{ xingList }}" as="c" hint-placeholder-count="4">
+          <div style="min-height:40px;border-bottom:1px solid #5a5654;padding:0 14px;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700">
+            <span style="flex:1;min-width:0">{{ c.name }}</span><span style="font-weight:600;font-size:13px;color:{{ c.col }}">{{ c.state }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="padding:12px 14px 4px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-300)">All buildings</div>
+      <div style="display:flex;flex-direction:column;max-height:260px;overflow:auto;border-bottom:2px solid #f3f2f2">
+        <sc-for list="{{ items }}" as="it" hint-placeholder-count="8">
+          <button onClick="{{ it.pick }}" style="min-height:44px;border:0;border-bottom:1px solid #5a5654;background:{{ it.rowBg }};font:700 14px var(--font-body);text-align:left;padding:0 14px;cursor:pointer;color:{{ it.rowInk }};display:flex;align-items:center;gap:10px">
+            <span style="width:14px;height:14px;background:{{ it.fill }};flex:none"></span><span style="flex:1;min-width:0">{{ it.label }}</span><span style="font-variant-numeric:tabular-nums;font-weight:600;font-size:13px">{{ it.moved }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr))">
+        <button onClick="{{ save }}" style="min-height:52px;border:0;border-right:2px solid #f3f2f2;background:var(--color-accent);color:#ffffff;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer">{{ saveLabel }}</button>
+        <button onClick="{{ copy }}" style="min-height:52px;border:0;border-right:2px solid #f3f2f2;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2">{{ copyLabel }}</button>
+        <button onClick="{{ reset }}" style="min-height:52px;border:0;background:transparent;font:800 14px var(--font-body);text-align:left;padding:0 12px;cursor:pointer;color:#f3f2f2">Back to my layout</button>
+      </div>
+    </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  KEY = 'meru2.townLayout';
+  PKEY = 'meru2.townPaths';
+  state = { L: null, lay: { width: 12, b: {} }, sel: 'casino', view: 'town', saved: false, copied: false, paths: { on: {}, k: {}, extra: [] }, rsel: null, pcopied: false };
+  setPaths(p) { this.setState({ paths: p }); try { localStorage.setItem(this.PKEY, JSON.stringify(p)); } catch (e) {} }
+  net(all) { return this.TN ? this.TN.townNet(all, this.state.paths) : Object.assign([], { plazas: [] }); }
+  svgRef = React.createRef(); drag = null;
+  XING = [[160, 0], [-160, 0], [0, 150], [0, -140]];   // crosswalks already painted by worlds/meru2-city.js
+  async componentDidMount() {
+    try { const L = await import(new URL('worlds/meru2-layout.js', document.baseURI).href); let lay = { width: 12, b: {} };
+      try { const s = JSON.parse(localStorage.getItem(this.KEY) || 'null'); if (s && s.b) lay = { width: s.width || 12, b: s.b, sky: s.sky, extra: s.extra || [], names: s.names || {} }; } catch (e) {} if (!lay.sky && L.TOWN_MOVES && L.TOWN_MOVES.sky) lay.sky = { ...L.TOWN_MOVES.sky };   // s40: the clusters showed unmoved (sky was dropped on load)
+      let D = { on: {}, k: {}, extra: [] }; try { const M = await import(new URL('worlds/meru2-townpaths.js', document.baseURI).href); D = M.TOWN_PATHS; } catch (e) {} this.PDEF = D; try { this.TN = await import(new URL('worlds/meru2-townnet.js', document.baseURI).href); } catch (e) { console.warn('townnet load failed', e); }
+      let paths = { on: { ...D.on }, k: { ...D.k }, extra: D.extra.slice() }; try { const p = JSON.parse(localStorage.getItem(this.PKEY) || 'null'); if (p) paths = { on: { ...D.on, ...(p.on || {}) }, k: { ...D.k, ...(p.k || {}) }, extra: p.extra || D.extra.slice() }; } catch (e) {}
+      const view = /[?&]view=paths/.test(location.search) ? 'paths' : 'town';
+      try { this.towers = await (await fetch(new URL('worlds/meru2-towers.json', document.baseURI).href)).json(); } catch (e) {} this.setState({ L, lay, paths, view }); } catch (e) { console.warn('layout load failed', e); }
+    this.onKey = e => { if (e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return; const k = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key]; if (k) { e.preventDefault(); this.nudge(k[0], k[1], e.shiftKey ? 5 : 1); } };
+    addEventListener('keydown', this.onKey);
+    const svg = () => this.svgRef.current; this.onWheel = e => { const el = svg(); if (!el || !el.contains(e.target)) return; e.preventDefault(); this.zoomBy && this.zoomBy(e.deltaY > 0 ? 1.15 : 0.87); };
+    addEventListener('wheel', this.onWheel, { passive: false });
+    this.pans = new Map(); this.onPD = e => { const el = svg(); if (!el || !el.contains(e.target) || this.drag) return; if (e.target.tagName !== 'svg' && e.target.tagName !== 'rect' && e.target.tagName !== 'polygon' && e.target.tagName !== 'polyline') return; this.pans.set(e.pointerId, [e.clientX, e.clientY]); };
+    this.onPM = e => { if (!this.pans.has(e.pointerId) || this.drag) return; const el = svg(); const p = this.pans.get(e.pointerId), r = el.getBoundingClientRect(), vb = el.viewBox.baseVal, sc = vb.width / r.width;
+      if (this.pans.size === 1) { const Z = this.state.zm || { cx: vb.x + vb.width / 2, cz: vb.y + vb.height / 2, w: vb.width, h: vb.height }; this.setState({ zm: { ...Z, cx: Z.cx - (e.clientX - p[0]) * sc, cz: Z.cz - (e.clientY - p[1]) * sc } }); }
+      else if (this.pans.size === 2) { const [a, b] = [...this.pans.values()], d0 = Math.hypot(a[0] - b[0], a[1] - b[1]); this.pans.set(e.pointerId, [e.clientX, e.clientY]); const [a2, b2] = [...this.pans.values()], d1 = Math.hypot(a2[0] - b2[0], a2[1] - b2[1]); if (d0 > 10 && d1 > 10) this.zoomBy(d0 / d1); return; }
+      this.pans.set(e.pointerId, [e.clientX, e.clientY]); };
+    this.onPU = e => this.pans.delete(e.pointerId);
+    addEventListener('pointerdown', this.onPD); addEventListener('pointermove', this.onPM); addEventListener('pointerup', this.onPU); addEventListener('pointercancel', this.onPU);
+  }
+  componentDidUpdate() { const s = this.state; if (!s.L) return;   // autosave every change
+    if (this._savedLay === undefined) { this._savedLay = s.lay; return; }
+    if (s.lay !== this._savedLay) { this._savedLay = s.lay; try { localStorage.setItem(this.KEY, JSON.stringify(s.lay)); } catch (e) {} if (!s.saved) this.setState({ saved: true }); } }
+  componentWillUnmount() { removeEventListener('keydown', this.onKey); }
+  blds() { const L = this.state.L; if (!L) return []; const O = this.state.lay.b;
+    const R = ['N', 'E', 'S', 'W'];
+    const EX = (this.state.lay.extra || []).filter(e => !(L.PROMOTED || []).includes(e.key)).map(e => ({ ...e, extra: true, room: null }));   // s41d: Ben's extra square buildings (saved with the layout)
+    const NM = this.state.lay.names || {};
+    return L.BUILDINGS.filter(b => !b.extra).concat(EX).map(b => NM[b.key] && !b.extra ? { ...b, label: NM[b.key] } : b).map(b => { if (b.extra) return { ...b, orig: b }; const o = O[b.key]; if (!o) { const F = b.skyFrom ? b.skyFrom.f : b.f, Dr = b.skyFrom ? b.skyFrom.door : b.door, k = b.skyFrom ? b.skyFrom.key : (F && !b.orig && !b.noSky && L.skyKeyAt ? L.skyKeyAt((F[0] + F[1]) / 2, (F[2] + F[3]) / 2, 0) : null);
+        if (k) { const d = (L.skyClamp ? L.skyClamp(this.state.lay.sky || {}) : (this.state.lay.sky || {}))[k] || [0, 0]; return { ...b, f: [F[0] + d[0], F[1] + d[0], F[2] + d[1], F[3] + d[1]], door: Dr ? [Dr[0] + d[0], Dr[1] + d[1]] : b.door, fixed: true, orig: b }; } return { ...b, orig: b }; }
+      // a building that grew since it was moved (Item Shop ×3, Burgers ×2): keep the moved centre + facing, take the new size
+      const turns = ((R.indexOf(o.face) - R.indexOf(b.face)) % 4 + 4) % 4, bw = b.f[1] - b.f[0], bd = b.f[3] - b.f[2], ew = turns % 2 ? bd : bw, ed = turns % 2 ? bw : bd;
+      let f = o.f, door = o.door; if (Math.abs((o.f[1] - o.f[0]) - ew) > 0.5 || Math.abs((o.f[3] - o.f[2]) - ed) > 0.5) { const cx = (o.f[0] + o.f[1]) / 2, cz = (o.f[2] + o.f[3]) / 2; f = [cx - ew / 2, cx + ew / 2, cz - ed / 2, cz + ed / 2];
+        door = o.face === 'N' ? [cx, f[2]] : o.face === 'S' ? [cx, f[3]] : o.face === 'W' ? [f[0], cz] : [f[1], cz]; }
+      return { ...b, f, door, face: o.face, moved: true, orig: b }; }); }
+  set(key, fn) { const all = this.blds(), b = all.find(x => x.key === key); if (!b || b.fixed) return; const n = { f: b.f.slice(), door: b.door.slice(), face: b.face }; fn(n, b);
+    if (b.extra) { const extra = (this.state.lay.extra || []).map(e => e.key === key ? { ...e, ...n } : e); this.setState({ lay: { ...this.state.lay, extra }, saved: false }); return; }
+    const lay = { ...this.state.lay, b: { ...this.state.lay.b, [key]: n } }; this.setState({ lay, saved: false }); }
+  SKYN = { spire: 'SPIRE DISTRICT', deco: 'DECO DISTRICT', pearl: 'PEARL QUARTER', garden: 'GARDEN DISTRICT' };
+  skyNudge(key, dx, dz) { const L = this.state.L, sky0 = { ...(this.state.lay.sky || {}) }, sky = L && L.skyClamp ? L.skyClamp(sky0) : sky0, d = sky[key] || [0, 0], n = [d[0] + dx, d[1] + dz]; if (!n[0] && !n[1]) delete sky[key]; else sky[key] = L && L.skyClamp ? L.skyClamp({ [key]: n })[key] : n; this.setState({ lay: { ...this.state.lay, sky }, saved: false }); }
+  nudge(dx, dz, s = 1) { const sel = this.state.sel || ''; if (sel.startsWith('sky:')) { this.skyNudge(sel.slice(4), dx * s, dz * s); return; } this.set(this.state.sel, n => { n.f = [n.f[0] + dx * s, n.f[1] + dx * s, n.f[2] + dz * s, n.f[3] + dz * s]; n.door = [n.door[0] + dx * s, n.door[1] + dz * s]; }); }
+  rot(dir) { this.set(this.state.sel, n => { const [x0, x1, z0, z1] = n.f, cx = (x0 + x1) / 2, cz = (z0 + z1) / 2, hw = (x1 - x0) / 2, hd = (z1 - z0) / 2;
+    n.f = [cx - hd, cx + hd, cz - hw, cz + hw]; const dx = n.door[0] - cx, dz = n.door[1] - cz; n.door = dir > 0 ? [cx - dz, cz + dx] : [cx + dz, cz - dx];
+    const R = ['N', 'E', 'S', 'W'], i = R.indexOf(n.face); n.face = R[(i + (dir > 0 ? 1 : 3)) % 4]; }); }
+  pt(e) { const svg = this.svgRef.current; if (!svg) return null; const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; const m = svg.getScreenCTM(); return m ? p.matrixTransform(m.inverse()) : null; }
+  hit(a, b) { return a[0] < b[1] && a[1] > b[0] && a[2] < b[3] && a[3] > b[2]; }
+  segBox(ax, az, bx, bz, r) { const n = 24; for (let i = 0; i <= n; i++) { const x = ax + (bx - ax) * i / n, z = az + (bz - az) * i / n; if (x > r[0] && x < r[1] && z > r[2] && z < r[3]) return [x, z]; } return null; }
+  renderVals() {
+    const S = this.state, L = S.L, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur(), hw = S.lay.width / 2;
+    const isP = S.view === 'paths', town = S.view === 'town' || isP, vb0 = isP ? [-166, -146, 332, 300] : town ? [-200, -190, 400, 380] : [-(this.state.L ? this.state.L.MAP.half : 450) - 10, -(this.state.L ? this.state.L.MAP.half : 450) - 10, 2 * (this.state.L ? this.state.L.MAP.half : 450) + 20, 2 * (this.state.L ? this.state.L.MAP.half : 450) + 20], Z = S.zm, viewBox = Z ? [Z.cx - Z.w / 2, Z.cz - Z.h / 2, Z.w, Z.h].map(v => Math.round(v * 10) / 10).join(' ') : vb0.join(' ');
+    const zoomBy = f => { const b = Z || { cx: vb0[0] + vb0[2] / 2, cz: vb0[1] + vb0[3] / 2, w: vb0[2], h: vb0[3] }; const w = Math.max(30, Math.min(1400, b.w * f)); this.setState({ zm: { cx: b.cx, cz: b.cz, w, h: w * b.h / b.w } }); };
+    this.zoomBy = zoomBy;
+    const out = { svgRef: this.svgRef, viewBox, zIn: e => { blur(e); zoomBy(0.7); }, zOut: e => { blur(e); zoomBy(1.43); }, zFull: e => { blur(e); this.setState({ view: 'map', zm: null }); }, zPct: Math.round((Z ? vb0[2] / Z.w : 1) * 100) + '%', labels: null, labelSize: isP ? 5 : town ? 7 : 13, isPaths: isP, notPaths: !isP, pr: [], pz: [], lots: [], phandles: [], prows: [], legend: [], conflicts: [], hasConflicts: false,
+      pVerdict: '', pSub: '', rName: 'None', rInfo: 'Tap a path on the plan or in the list.', rToggleLabel: 'Switch off', rOp: 0.45, rAutoOp: 0.45, rToggle: () => {}, rAuto: () => {},
+      pCopyLabel: S.pcopied ? 'Copied' : 'Copy for Claude', bgPaths: isP ? '#f3f2f2' : 'transparent', inkPaths: isP ? '#201e1d' : '#f3f2f2',
+      vPaths: e => { blur(e); this.setState({ view: 'paths', zm: null }); },
+      pReset: e => { blur(e); const D = this.PDEF || { on: {}, k: {}, extra: [] }; this.setPaths({ on: { ...D.on }, k: { ...D.k }, extra: D.extra.slice() }); }, desertPts: '', links: [], bridges: [], ferryPts: '', ferryStops: [], trainWarn: [], lakePts: '', zones: [], roads: [], trainPts: '', bands: [], xings: [], props: [], items: [], blockers: [], xingList: [], noBlockers: false,
+      verdict: 'Loading…', verdictSub: '', selName: '', selInfo: '', selWarn: false, selWarnText: '', undoOp: 0.45,
+      bgTown: S.view === 'town' ? '#f3f2f2' : 'transparent', inkTown: S.view === 'town' ? '#201e1d' : '#f3f2f2', bgMap: S.view === 'map' ? '#f3f2f2' : 'transparent', inkMap: S.view === 'map' ? '#201e1d' : '#f3f2f2',
+      vTown: e => { blur(e); this.setState({ view: 'town' }); }, vMap: e => { blur(e); this.setState({ view: 'map' }); },
+      widths: [8, 12, 16].map(w => ({ label: w + ' m', bg: S.lay.width === w ? '#f3f2f2' : 'transparent', ink: S.lay.width === w ? '#201e1d' : '#f3f2f2', set: e => { blur(e); this.setState({ lay: { ...S.lay, width: w }, saved: false }); } })),
+      nW: e => { blur(e); this.nudge(-1, 0); }, nE: e => { blur(e); this.nudge(1, 0); }, nN: e => { blur(e); this.nudge(0, -1); }, nS: e => { blur(e); this.nudge(0, 1); },
+      rotL: e => { blur(e); this.rot(-1); }, rotR: e => { blur(e); this.rot(1); },
+      undoOne: e => { blur(e); { const ex = (S.lay.extra || []).find(q => q.key === S.sel); if (ex) { this.setState({ lay: { ...S.lay, extra: S.lay.extra.filter(q => q !== ex) }, sel: null, saved: false }); return; } } if ((S.sel || '').startsWith('sky:')) { const sky = { ...(S.lay.sky || {}) }; delete sky[S.sel.slice(4)]; this.setState({ lay: { ...S.lay, sky }, saved: false }); return; } const b = { ...S.lay.b }; delete b[S.sel]; this.setState({ lay: { ...S.lay, b }, saved: false }); },
+      undoLabel: (S.lay.extra || []).some(q => q.key === S.sel) ? 'Delete' : 'Put back', addHint: 'bigger than the Fortune Teller (12 m)',
+      adds: [14, 16, 20].map(m => ({ label: '+ ' + m + ' × ' + m + ' m', go: e => { blur(e); const ex = (S.lay.extra || []).slice(), n = ex.length + 1, c = S.zm ? [Math.round(S.zm.cx), Math.round(S.zm.cz)] : [-125, 118], h = m / 2;
+        const key = 'extra' + Date.now().toString(36), b = { key, label: 'New building ' + n, f: [c[0] - h, c[0] + h, c[1] - h, c[1] + h], door: [c[0], c[1] + h], face: 'S', size: m };
+        ex.push(b); this.setState({ lay: { ...S.lay, extra: ex }, sel: key, saved: false }); } })),
+      onMove: e => { if (!this.drag) return; const p = this.pt(e); if (!p) return; const d = this.drag;
+        if (d.bend) { const k = Math.max(2, Math.min(90, Math.round((p.x - d.x) * d.dx + (p.y - d.z) * d.dz))); if (k !== this.state.paths.k[d.id]) this.setPaths({ ...this.state.paths, k: { ...this.state.paths.k, [d.id]: k } }); return; }
+        const dx = Math.round(p.x - d.px), dz = Math.round(p.y - d.pz); if (!dx && !dz) return; d.px += dx; d.pz += dz; this.nudge(dx, dz, 1); },
+      onUp: () => { this.drag = null; },
+      saveLabel: S.saved ? 'Saved automatically' : 'Save layout', copyLabel: S.copied ? 'Copied' : 'Copy for Claude',
+      save: e => { blur(e); localStorage.setItem(this.KEY, JSON.stringify(S.lay)); this.setState({ saved: true }); },
+      copy: e => { blur(e); const t = JSON.stringify({ townLayout: S.lay }); (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).catch(() => prompt('Copy:', t)); this.setState({ copied: true }); setTimeout(() => this.setState({ copied: false }), 1600); },
+      reset: e => { blur(e); if (!confirm('Put every building back to your saved Meru 2 layout?')) return; const T = (L && L.TOWN_MOVES) || { width: 16, b: {} }; const lay = { width: T.width || 16, b: JSON.parse(JSON.stringify(T.b || {})) }; try { localStorage.setItem(this.KEY, JSON.stringify(lay)); } catch (er) {} this.setState({ lay, saved: true }); } };
+    if (!L) return out;
+    // s37d (Ben): the far BUILDING CLUSTERS to scale: district plazas, their access roads, the 21 towers (landmarks red) + front doors, names
+    { const SK = L.SKYLINE_ORIG || L.SKYLINE, TW = this.towers, NAMES = this.SKYN, seen = new Set(), sky = L.skyClamp ? L.skyClamp(S.lay.sky || {}) : (S.lay.sky || {}), D = k => (k && sky[k]) || [0, 0], kAt = (x, z) => L.skyKeyAt ? L.skyKeyAt(x, z) : null;
+      const selK = S.sel && S.sel.startsWith('sky:') ? S.sel.slice(4) : null;   // s38b (Ben): drag a cluster (its plaza or any of its towers) to move the whole district
+      const down = key => e => { e.stopPropagation(); const p = this.pt(e); if (!p) return; this.setState({ sel: 'sky:' + key }); this.drag = { px: p.x, pz: p.y }; try { e.currentTarget.ownerSVGElement.setPointerCapture(e.pointerId); } catch (x) {} };
+      out.skyPlazas = SK ? SK.plazas.map(p => { const d = D(p.key), on = selK === p.key; return { x: p.r[0] + d[0], y: p.r[2] + d[1], w: p.r[1] - p.r[0], h: p.r[3] - p.r[2], fill: on ? '#86807a' : '#6b6762', stroke: on ? '#ffffff' : '#cfcac4', sw: on ? 3 : 1, down: down(p.key) }; }) : [];
+      const sp = L.squareSpines ? L.squareSpines(sky) : L.skySpines ? L.skySpines(sky) : SK.spines; out.skyRoads = SK ? Object.values(sp).map(p => ({ pts: p.map(q => q.join(',')).join(' ') })) : [];
+      out.skyTowers = TW ? TW.towers.map(t => { const k = kAt(t.x, t.z), d = D(k); return { x: t.x - t.w / 2 + d[0], y: t.z - t.d / 2 + d[1], w: t.w, h: t.d, fill: t.lm ? '#ec3013' : t.h > 90 ? '#3d4148' : '#5c7896', down: k ? down(k) : null }; }) : [];
+      out.skyDoors = TW ? TW.doors.map(([x, z, nx, nz]) => { const d = D(kAt(x, z)); return { x1: x + d[0], y1: z + d[1], x2: x + d[0] + nx * 9, y2: z + d[1] + nz * 9 }; }) : [];
+      out.skyLabels = SK ? SK.plazas.filter(p => !seen.has(p.key) && seen.add(p.key)).map(p => { const d = D(p.key); return { t: NAMES[p.key] || p.key, x: p.r[0] + d[0], y: p.r[2] + d[1] - 6, s: 13 }; }) : [];
+      this.skyRects = SK ? SK.plazas.map(p => { const d = D(p.key); return { key: p.key, r: [p.r[0] + d[0], p.r[1] + d[0], p.r[2] + d[1], p.r[3] + d[1]] }; }) : []; }
+    // the two walking paths: Ruins Path → Arena Path along z 0, Castle Path → Lake Path along x 0 (worlds/meru2-layout.js PATHS)
+    const EW = [-432, 400, -hw, hw], NS = [-hw, hw, -400, 230], bandsR = [['Ruins ↔ Arena path', EW], ['Castle ↔ Lake path', NS]];
+    out.bands = isP ? [] : bandsR.map(([, r]) => ({ x: r[0], y: r[2], w: r[1] - r[0], h: r[3] - r[2] }));
+    const inBand = box => { const fountain = Math.abs((box[0] + box[1]) / 2) < 12 && Math.abs((box[2] + box[3]) / 2) < 12; if (fountain) return null; const hits = bandsR.filter(([, r]) => this.hit(box, r)).map(([n]) => n); return hits.length ? hits : null; };
+    { const pts = []; for (let i = 0; i < 96; i++) { const [x, z] = L.lakeEdge(i / 96 * Math.PI * 2); pts.push(x.toFixed(1) + ',' + z.toFixed(1)); } out.lakePts = pts.join(' '); }
+    out.zones = L.ZONES.filter(z => z.r).map(z => ({ x: z.r[0], y: z.r[2], w: z.r[1] - z.r[0], h: z.r[3] - z.r[2] }));
+    out.roads = L.ROADS.filter(r => !r.sky).map(r => ({ pts: r.p.map(p => p.join(',')).join(' '), w: r.w }));
+    out.trainPts = [...L.TRAIN.line, L.TRAIN.line[0]].map(p => p.join(',')).join(' ');
+    // s41: what the game builds from the same layout: desert, station walks, Garden Bridge, the 3-stop ferry
+    { const D = L.DESERT; out.desertPts = D ? Array.from({ length: 120 }, (_, i) => { const t = i / 120 * Math.PI * 2, R = D.r + 6 * Math.sin(3 * t + 1) + 4 * Math.sin(7 * t + 2) + 2 * Math.sin(13 * t + 0.5); return (D.c[0] + Math.cos(t) * R).toFixed(1) + ',' + (D.c[1] + Math.sin(t) * R).toFixed(1); }).join(' ') : '';
+      out.links = (L.LINKS || []).map(k => ({ pts: k.p.map(p => p.join(',')).join(' ') }));
+      out.trails = [...(L.PATHS || []), ...(L.TRAILS || [])].filter(k => k.p && k.p.length > 1).map(k => ({ pts: k.p.map(p => p.join(',')).join(' '), w: k.w || 4 }));   // s151: foot paths + trails (Castle Path, Ridge Trail up to the castle, Falls + Park trails)
+      out.bridges = (L.BRIDGES || []).map(b => ({ x: b.x - b.w / 2, y: b.z0, w: b.w, h: b.z1 - b.z0 }));
+      const F = L.LAKE && L.LAKE.ferry; out.ferryPts = F ? F.path.map(p => p.join(',')).join(' ') : ''; out.ferryStops = F ? F.stops.map(s => ({ x: s.off[0], y: s.off[1] })) : [];
+      // a moved cluster whose towers come within 12 m of the track: ring it (the train would clip it)
+      const sky2 = L.skyClamp ? L.skyClamp(S.lay.sky || {}) : (S.lay.sky || {}), segD = (x, z, p) => { let m = 1e9; for (let i = 0; i < p.length - 1; i++) { const [ax, az] = p[i], [bx, bz] = p[i + 1], dx = bx - ax, dz = bz - az, l2 = dx * dx + dz * dz || 1, u = Math.max(0, Math.min(1, ((x - ax) * dx + (z - az) * dz) / l2)); m = Math.min(m, Math.hypot(x - ax - dx * u, z - az - dz * u)); } return m; }, line = [...L.TRAIN.line, L.TRAIN.line[0]];
+      out.trainWarn = []; const tw = (this.towers && this.towers.towers) || []; for (const t of tw) { const k = L.skyKeyAt ? L.skyKeyAt(t.x, t.z) : null, d = (k && sky2[k]) || [0, 0], x = t.x + d[0], z = t.z + d[1]; if (segD(x, z, line) < Math.max(t.w, t.d) / 2 + 12) out.trainWarn.push({ x, y: z }); } }
+    // crosswalks: every place a path centre line crosses a road
+    const xs = []; for (const r of L.ROADS) for (let i = 0; i < r.p.length - 1; i++) { const [ax, az] = r.p[i], [bx, bz] = r.p[i + 1];
+      if ((az <= 0 && bz >= 0) || (az >= 0 && bz <= 0)) { if (az !== bz) { const t = -az / (bz - az), x = ax + (bx - ax) * t; if (x >= EW[0] && x <= EW[1]) xs.push({ x, z: 0, along: 'x', w: r.w }); } }
+      if ((ax <= 0 && bx >= 0) || (ax >= 0 && bx <= 0)) { if (ax !== bx) { const t = -ax / (bx - ax), z = az + (bz - az) * t; if (z >= NS[2] && z <= NS[3]) xs.push({ x: 0, z, along: 'z', w: r.w }); } } }
+    const seen = new Set(), X = xs.filter(c => { const k = Math.round(c.x) + ',' + Math.round(c.z); if (seen.has(k)) return false; seen.add(k); return true; });
+    out.xings = X.map(c => { const len = c.w + 1, wid = S.lay.width; return c.along === 'x' ? { tf: 'translate(' + c.x + ' ' + c.z + ')', rx: -len / 2, ry: -wid / 2, rw: len, rh: wid, sx: -len / 2, sy: -wid / 2 + wid * 0.12, sw: len, sh: wid * 0.76 * 0 } : { tf: 'translate(' + c.x + ' ' + c.z + ')', rx: -wid / 2, ry: -len / 2, rw: wid, rh: len, sx: 0, sy: 0, sw: 0, sh: 0 }; });
+    out.xingList = X.map(c => { const has = this.XING.some(([a, b]) => Math.hypot(a - c.x, b - c.z) < 6), name = (c.along === 'x' ? 'Ruins ↔ Arena' : 'Castle ↔ Lake') + ' crosses the road at ' + Math.round(c.x) + ', ' + Math.round(c.z);
+      return { name, state: has ? 'Crosswalk there' : 'NEW crosswalk', col: has ? '#7cff9b' : '#ffd23a' }; });
+    // things that are not buildings but stand near the paths: market stalls + Lanes Court tables (worlds/meru2-market.js)
+    const props = []; for (const sz of [-1, 1]) { for (let x = -58; x > -103; x -= 13) props.push({ name: 'Market stall', box: [x - 1.65, x + 1.65, sz * 10.4 - 0.95, sz * 10.4 + 0.95] }); for (let x = 56; x < 100; x += 6.5) props.push({ name: 'Café table', box: [x - 1, x + 1, sz * 9.8 - 0.6, sz * 9.8 + 0.6] }); }
+    const train = []; for (let i = 0; i < L.TRAIN.line.length - 1; i++) { const [ax, az] = L.TRAIN.line[i], [bx, bz] = L.TRAIN.line[i + 1]; for (const [n, r] of bandsR) { const h = this.segBox(ax, az, bx, bz, r); if (h) train.push({ name: 'Train line', path: n, at: h }); } }
+    // buildings
+    const all = this.blds(), boxes = all.map(b => [b.f[0], b.f[1], b.f[2], b.f[3]]), blockers = [];
+    // rental lots follow their shop live (same rule as the game: worlds/meru2-layout.js movedLot + fitLot)
+    for (const b of all) if (b.lot && b.lot.r) { const want = b.moved && L.movedLot ? L.movedLot(b.orig && b.orig.orig ? b.orig : (L.BUILDINGS.find(q => q.key === b.key) || b), b.f, b.face) : b.lot.r; b.lot = { ...b.lot, r: L.fitLot ? L.fitLot(b, want, all) : want }; }
+    out.lots = all.filter(b => b.lot && b.lot.r).map(b => { const r = b.lot.r; return { x: r[0], y: r[2], w: r[1] - r[0], h: r[3] - r[2] }; });
+    out.items = all.map((b, i) => { const box = boxes[i], ib = b.open ? null : inBand(box), hall = b.door2 && ib, over = boxes.some((o, j) => j !== i && this.hit([box[0] - 1, box[1] + 1, box[2] - 1, box[3] + 1], o)), on = b.key === S.sel;
+      const roadHit = L.ROADS.some(r => r.p.some((p, k) => k < r.p.length - 1 && this.segBox(p[0], p[1], r.p[k + 1][0], r.p[k + 1][1], [box[0] - r.w / 2, box[1] + r.w / 2, box[2] - r.w / 2, box[3] + r.w / 2])));
+      const bad = !!ib || over || (b.moved && roadHit);
+      if (ib) blockers.push({ key: b.key, name: b.label + (hall ? ' (walk-through hall)' : ''), where: ib.map(n => n.split(' ')[0]).join(' + '), dot: hall ? '#ffd23a' : '#ec3013' });
+      const row = { key: b.key, label: b.label, short: b.label, x: box[0], y: box[2], w: box[1] - box[0], h: box[3] - box[2], dx: b.door[0], dy: b.door[1], tx: box[0] + 0.8, ty: box[2] - 1.8,
+        fill: isP ? '#5a5654' : ib ? (hall ? '#8a6a1a' : '#8f1d2c') : b.moved ? '#2e4a6b' : '#5a5654', stroke: on ? '#ffffff' : bad && !isP ? '#ec3013' : '#201e1d', sw: on ? (isP ? 0.8 : 1.2) : bad && !isP ? 1 : 0.4,
+        moved: b.moved ? 'moved' : '', rowBg: on ? '#f3f2f2' : 'transparent', rowInk: on ? '#201e1d' : '#f3f2f2', bad, over, roadHit: b.moved && roadHit, ib,
+        pick: e => { blur(e); this.setState({ sel: b.key }); },
+        down: e => { e.stopPropagation(); const p = this.pt(e); if (!p) return; this.setState({ sel: b.key }); this.drag = { px: p.x, pz: p.y }; try { e.currentTarget.ownerSVGElement.setPointerCapture(e.pointerId); } catch (x) {} } };
+      return row; });
+    out.labels = out.items.map(it => React.createElement('text', { key: it.key, x: it.tx, y: it.ty, fontSize: out.labelSize, fill: '#f3f2f2', stroke: '#201e1d', strokeWidth: isP ? 1.1 : town ? 1.6 : 3, paintOrder: 'stroke', style: { fontWeight: 800, fontFamily: 'Archivo, sans-serif' } }, it.label));
+    out.props = props.map(p => { const ib = inBand(p.box); if (ib) blockers.push({ key: null, name: p.name, where: ib.map(n => n.split(' ')[0]).join(' + '), dot: '#ec3013' }); return { x: p.box[0], y: p.box[2], w: p.box[1] - p.box[0], h: p.box[3] - p.box[2], fill: ib ? '#8f1d2c' : '#6b4a35', stroke: ib ? '#ec3013' : '#201e1d' }; });
+    for (const t of train) blockers.push({ key: null, name: 'Train line crosses (' + Math.round(t.at[0]) + ', ' + Math.round(t.at[1]) + ')', where: t.path.split(' ')[0], dot: '#c9a227' });
+    out.blockers = blockers.map(b => ({ ...b, rowBg: b.key && b.key === S.sel ? '#f3f2f2' : 'transparent', rowInk: b.key && b.key === S.sel ? '#201e1d' : '#f3f2f2', pick: e => { blur(e); if (b.key) this.setState({ sel: b.key }); } }));
+    out.noBlockers = !blockers.length;
+    const hard = blockers.filter(b => b.dot === '#ec3013').length;
+    out.verdict = hard ? hard + ' thing' + (hard > 1 ? 's' : '') + ' in the way' : 'Both paths are clear';
+    out.verdictSub = 'Only the fountain may stand in the paths. Path width ' + S.lay.width + ' m. ' + (blockers.length - hard ? (blockers.length - hard) + ' more to check (yellow): the train line and walk-through halls.' : '');
+    if (isP) {
+      const routes = this.net(all), COL = { main: '#f0c43a', spur: '#e09a2e', spur2: '#e09a2e', front: '#cfc3ad', link: '#cfc3ad', extra: '#e09a2e' }, ORD = { front: 0, link: 1, extra: 2, spur2: 2, spur: 3, main: 4 };
+      const near = (r, box) => { const m = r.w / 2 + 1; for (let i = 0; i < r.pts.length - 1; i++) { const a = r.pts[i], b = r.pts[i + 1]; if (this.hit([Math.min(a[0], b[0]) - m, Math.max(a[0], b[0]) + m, Math.min(a[1], b[1]) - m, Math.max(a[1], b[1]) + m], box)) return true; } return false; };
+      const onR = routes.filter(r => r.on), sorted = routes.slice().sort((a, b) => ORD[a.kind] - ORD[b.kind] || (a.on - b.on));
+      out.pr = sorted.map(r => { const s = r.id === S.rsel; return { pts: r.pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' '), w: r.on ? r.w : 0.8, cw: r.on ? r.w + 2 : 0, ew: r.on ? r.w + 0.7 : 0,
+        col: s ? '#ffffff' : r.block ? '#ec3013' : r.on ? COL[r.kind] : '#9a948d', edge: r.block ? '#ec3013' : '#3a3734', dash: r.on ? 'none' : '2.5 2',
+        pick: e => { e.stopPropagation(); this.setState({ rsel: r.id }); } }; });
+      out.phandles = routes.filter(r => r.bend && (r.on || r.id === S.rsel)).map(r => { const p = r.pts[1]; return { x: p[0], y: p[1], r: r.id === S.rsel ? 2.4 : 1.6,
+        down: e => { e.stopPropagation(); this.setState({ rsel: r.id }); this.drag = { bend: true, id: r.id, ...r.bend }; try { e.currentTarget.ownerSVGElement.setPointerCapture(e.pointerId); } catch (x) {} } }; });
+      const PL = routes.plazas; out.pz = PL.map(p => ({ x: p.r[0], y: p.r[2], w: p.r[1] - p.r[0], h: p.r[3] - p.r[2], cx: p.r[0] - 1, cy: p.r[2] - 1, cw: p.r[1] - p.r[0] + 2, ch: p.r[3] - p.r[2] + 2 }));
+      const conf = [];
+      for (const p of props) { const hitR = onR.find(r => near(r, p.box)) || PL.find(q => this.hit([q.r[0] - 1, q.r[1] + 1, q.r[2] - 1, q.r[3] + 1], p.box)); if (hitR) conf.push({ name: p.name, where: Math.round((p.box[0] + p.box[1]) / 2) + ', ' + Math.round((p.box[2] + p.box[3]) / 2), box: p.box }); }
+      out.conflicts = conf; out.hasConflicts = conf.length > 0;
+      out.props = props.map(p => { const c = conf.some(q => q.box === p.box); return { x: p.box[0], y: p.box[2], w: p.box[1] - p.box[0], h: p.box[3] - p.box[2], fill: c ? '#8f1d2c' : '#6b4a35', stroke: c ? '#ec3013' : '#201e1d' }; });
+      const tot = onR.filter(r => r.kind !== 'main').reduce((a, r) => a + r.L, 0), blk = routes.filter(r => r.on && r.block).length;
+      out.pVerdict = onR.filter(r => r.kind !== 'main').length + ' paths on · ' + Math.round(tot) + ' m';
+      out.pSub = (blk ? blk + ' switched-on path' + (blk > 1 ? 's run' : ' runs') + ' into a building (red). ' : '') + 'Every door gets a brick entrance clearing and a door path from the nearest main path; a second path from the other main path is suggested where it is not much longer. Each front gets a strip, linked to the nearest door in its quarter. Nothing is built in the game until you send Copy for Claude.';
+      out.legend = [['Entrance', '#c98a3e', '≤20 × 8 m'], ['Main path', '#f0c43a', '3.2 m'], ['Door path', '#e09a2e', '2.4 m'], ['Second path', '#e09a2e', '2.4 m'], ['Front strip', '#cfc3ad', '2 m'], ['Link', '#cfc3ad', '2 m'], ['Kept clear', '#5c635a', '+1 m']].map(([name, col, w]) => ({ name, col, w }));
+      const rows = routes.filter(r => r.kind !== 'main');
+      const toggle = r => this.setPaths({ ...S.paths, on: { ...S.paths.on, [r.id]: !r.on } });
+      out.prows = rows.map(r => { const s = r.id === S.rsel; return { name: r.name, len: Math.round(r.L) + ' m', col: r.block ? '#ec3013' : COL[r.kind], op: r.on ? 1 : 0.35, state: r.on ? 'ON' : 'OFF',
+        tBg: r.on ? '#f3f2f2' : 'transparent', tInk: r.on ? '#201e1d' : '#f3f2f2', rowBg: s ? '#3a3734' : 'transparent', rowInk: '#f3f2f2',
+        pick: e => { blur(e); this.setState({ rsel: r.id }); }, toggle: e => { blur(e); toggle(r); } }; });
+      const rs = routes.find(r => r.id === S.rsel);
+      if (rs) { out.rName = rs.name; out.rInfo = Math.round(rs.L) + ' m · ' + rs.w + ' m wide · ' + (rs.on ? 'on' : 'off') + (rs.block ? ' · runs into ' + rs.block : '') + (rs.bend ? ' · bend ' + rs.bend.k + ' m out from the door (drag the white dot)' : '');
+        if (rs.kind !== 'main') { out.rOp = 1; out.rToggleLabel = rs.on ? 'Switch off' : 'Switch on'; out.rToggle = e => { blur(e); toggle(rs); }; }
+        if (rs.bend && S.paths.k[rs.id] != null) { out.rAutoOp = 1; out.rAuto = e => { blur(e); const k = { ...S.paths.k }; delete k[rs.id]; this.setPaths({ ...S.paths, k }); }; } }
+      out.pCopy = e => { blur(e); const t = JSON.stringify({ townPaths: { on: S.paths.on, k: S.paths.k, extra: S.paths.extra || [], plazas: PL.map(p => ({ key: p.key, r: p.r.map(v => +v.toFixed(2)) })), net: onR.map(r => ({ id: r.id, kind: r.kind, w: r.w, pts: r.pts.map(p => [+p[0].toFixed(2), +p[1].toFixed(2)]) })) } });
+        (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).catch(() => prompt('Copy:', t)); this.setState({ pcopied: true }); setTimeout(() => this.setState({ pcopied: false }), 1600); };
+    }
+    const sel = out.items.find(i => i.key === S.sel), sb = all.find(b => b.key === S.sel);
+    if ((S.sel || '').startsWith('sky:')) { const k = S.sel.slice(4), d = (L.skyClamp ? L.skyClamp(S.lay.sky || {}) : (S.lay.sky || {}))[k] || [0, 0], R = (this.skyRects || []).filter(p => p.key === k);
+      out.selName = (this.SKYN[k] || k).replace(/\b\w+/g, w => w[0] + w.slice(1).toLowerCase()); out.selInfo = (d[0] || d[1] ? 'moved ' + d[0] + ' m E, ' + d[1] + ' m S' : 'not moved') + ' · drag it or use the arrows (Shift = 5 m). Its towers, plaza, road + Pearl Sail door move with it.';
+      const hitB = all.filter(b => b.f && !(b.skyFrom || b.fixed && b.key === 'pearlSail') && R.some(p => this.hit([p.r[0] - 3, p.r[1] + 3, p.r[2] - 3, p.r[3] + 3], b.f))).map(b => b.label), hitS = (this.skyRects || []).filter(p => p.key !== k && R.some(q => this.hit(q.r, p.r))).map(p => this.SKYN[p.key]);
+      const ring = R.some(p => this.hit(p.r, [-166, 166, -146, 156])), HM = L.MAP.half, edge = R.some(p => p.r[0] < -HM || p.r[1] > HM || p.r[2] < -HM || p.r[3] > HM);
+      out.selWarn = !!(hitB.length || hitS.length || ring || edge); out.selWarnText = edge ? 'Past the map edge.' : ring ? 'Inside the ring road (the town).' : [...hitB, ...hitS].length ? 'Overlaps ' + [...new Set([...hitB, ...hitS])].slice(0, 3).join(', ') + '.' : ''; out.undoOp = d[0] || d[1] ? 1 : 0.45; return out; }
+    out.canName = !!(sel && sb && !(S.sel || '').startsWith('sky:')); out.nameVal = sb ? sb.label : '';
+    out.nameSet = e => { const v = e.target.value.slice(0, 40), key = S.sel, lay = this.state.lay; if ((lay.extra || []).some(q => q.key === key)) this.setState({ lay: { ...lay, extra: lay.extra.map(q => q.key === key ? { ...q, label: v } : q) }, saved: false }); else this.setState({ lay: { ...lay, names: { ...(lay.names || {}), [key]: v } }, saved: false }); };
+    if (sel && sb) { out.selName = sb.label; out.selInfo = 'centre ' + Math.round((sb.f[0] + sb.f[1]) / 2) + ', ' + Math.round((sb.f[2] + sb.f[3]) / 2) + ' · ' + Math.round(sb.f[1] - sb.f[0]) + ' × ' + Math.round(sb.f[3] - sb.f[2]) + ' m · door faces ' + sb.face;
+      out.selWarn = sel.bad; out.selWarnText = sel.ib ? 'Stands in the ' + sel.ib.join(' and the ') + '.' : sel.over ? 'Too close to another building (keep 1 m).' : sel.roadHit ? 'Sits on a road.' : ''; out.undoOp = sb.moved ? 1 : 0.45; }
+    return out;
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Pearl Sail Tower">
+  <div ref="{{ stageRef }}" style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0;overflow:hidden"></div>
+  <div style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0;pointer-events:none;background:radial-gradient(ellipse at 50% 55%, rgba(0,0,0,0) 55%, rgba(10,14,22,0.38) 100%);z-index:1"></div>
+  <div style="position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 120px 30px #ec3013;opacity:{{ hurtOp }};z-index:1"></div>
+  <div data-hud-host="1" style="position:absolute;left:0;right:0;top:0;bottom:0;pointer-events:none"><dc-import name="Game HUD" game="{{ engine }}" hud="{{ stdHud }}" started="{{ started }}" busy="{{ hudBusy }}" on-hud="{{ onHud }}" world="Meru" keys="{{ keysList }}" skip-keys="{{ skipKeys }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  <sc-if value="{{ showCard }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:{{ cardTop }};width:{{ colW }};background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column;pointer-events:none;z-index:2">
+      <div style="padding:6px 10px;display:flex;flex-direction:column;gap:2px;border-bottom:2px solid #3a3836">
+        <span style="font:700 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap">PEARL SAIL · pearlSailTower</span>
+        <span style="font:800 {{ titleSize }} var(--font-heading);line-height:1.05;letter-spacing:-0.01em">{{ floorTxt }}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+        <div style="padding:4px 10px;display:flex;flex-direction:column;border-right:2px solid #3a3836"><span style="font:700 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">BOTS HERE</span><span style="font:800 15px var(--font-heading);font-variant-numeric:tabular-nums">{{ leftTxt }}</span></div>
+        <div style="padding:4px 10px;display:flex;flex-direction:column"><span style="font:700 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">TIME</span><span style="font:800 15px var(--font-heading);font-variant-numeric:tabular-nums">{{ timeTxt }}</span></div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ hasBoss }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;right:max(12px, env(safe-area-inset-right));top:{{ cardTop }};width:{{ bossW }};background:#000;border:2px solid #ec3013;padding:6px 10px;display:flex;flex-direction:column;gap:5px;pointer-events:none;z-index:2">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font:800 11px var(--font-heading);letter-spacing:0.1em;color:#ffd23a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ bossName }}</span><span style="font:800 12px var(--font-heading);font-variant-numeric:tabular-nums">{{ bossPct }}</span></div>
+      <div style="height:8px;background:#3a3836;position:relative"><div style="position:absolute;left:0;top:0;bottom:0;width:{{ bossW2 }};background:{{ bossCol }}"></div></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ hasBanner }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:0;right:0;top:{{ bannerTop }};display:flex;justify-content:flex-start;padding:0 max(16px, env(safe-area-inset-left));pointer-events:none;z-index:3">
+      <div style="background:#ec3013;color:#fff;padding:8px 16px;font:900 clamp(18px,5vw,34px) var(--font-heading);letter-spacing:0.02em;line-height:1.05;border:2px solid #000">{{ banner }}</div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}">
+    <button onClick="{{ demoStop }}" style="position:absolute;right:max(12px, env(safe-area-inset-right));top:{{ demoTop }};z-index:6;min-height:48px;padding:6px 14px;border:2px solid #000;border-radius:0;background:#ffd23a;color:#000;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:1px;pointer-events:auto" style-hover="background:#f5c400"><span style="font:900 10px var(--font-heading);letter-spacing:0.12em">DEMO PLAYING</span><span style="font:900 15px var(--font-heading);letter-spacing:0.06em">TAP TO TAKE OVER</span></button>
+  </sc-if>
+  <sc-if value="{{ wcOn }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:10;width:min(420px, calc(100% - 24px));max-height:calc(100% - 24px);display:flex;pointer-events:none"><dc-import name="Welcome Card" kicker="MERU · PEARL QUARTER · BATTLE" title="The Pearl Sail" text="The tower's security bots went haywire. Climb six floors, beat SUDS-9 on the roof, take the Pearl of the Sail." rows="{{ wcRows }}" play-label="ENTER THE TOWER" on-play="{{ wcGo }}" on-tutorial="{{ wcTut }}" on-demo="{{ wcDemo }}" hint-size="100%,340px" style="width:100%"></dc-import></div>
+  </sc-if>
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:11;background:rgba(0,0,0,0.82);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #3a3836;width:min(460px,100%);display:flex;flex-direction:column">
+        <div style="padding:12px 16px;display:flex;flex-direction:column;gap:2px;border-bottom:2px solid #3a3836"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">PEARL SAIL · CLEARED</span><span style="font:900 26px var(--font-heading);line-height:1.05">The Pearl of the Sail</span><span style="font:700 12px var(--font-body);color:#cfcac2">{{ bestTxt }}</span></div>
+        <sc-for list="{{ rows }}" as="r" hint-placeholder-count="4">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;padding:9px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;font-variant-numeric:tabular-nums">{{ r.v }}</span></div>
+        </sc-for>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+          <button onClick="{{ again }}" style="min-height:52px;padding:0 18px;border-radius:0;border:0;border-right:2px solid #3a3836;background:#000;color:#fff;font:900 15px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">CLIMB AGAIN</button>
+          <button onClick="{{ leave }}" style="min-height:52px;padding:0 18px;border-radius:0;border:0;background:#ec3013;color:#fff;font:900 15px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">BACK TO MERU</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { vw: 1200, vh: 800, hud: { state: 'ready', hp: 100, en: 100, floor: 0, floorName: 'LOBBY', left: 0, banner: '', time: 0 }, hi: { pad: false, menu: false, split: false, bar: 0 } };
+  stageRef = React.createRef();
+  onHud = hi => this.setState({ hi });
+  embed = /[?&]embed=1/.test(location.search);
+  leaveTower = () => { if (this.embed && parent !== window) parent.postMessage({ type: '8gates:minigame-back' }, '*'); else location.href = 'Meru 2 Blockout.dc.html?walk=1'; };
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs();
+    import(new URL('worlds/meru-shops.js', document.baseURI).href).then(m => { this.labels = m.ITEM_LABELS; this.forceUpdate(); }).catch(() => {});
+    try { const mod = await import(new URL('worlds/pearl-sail.js', document.baseURI).href);
+      this.lab = await mod.createPearlSail({ container: this.stageRef.current, onState: hud => this.setState({ hud }), onExit: this.leaveTower });
+      this.engine = this.lab; window.__pearl = this.lab; this.forceUpdate();
+      if (/[?&]autostart=1/.test(location.search)) this.lab.start();
+    } catch (e) { console.warn('pearl sail failed: ' + (e && e.stack || String(e))); }
+  }
+  componentWillUnmount() { this.lab && this.lab.destroy(); removeEventListener('resize', this.onRs); }
+  onRs = () => this.setState({ vw: innerWidth, vh: innerHeight });
+  renderVals() {
+    const S = this.state, h = S.hud, { vw, vh } = S, phone = Math.min(vw, vh) < 520, land = phone && vw > vh, pad = !!S.hi.pad, bar = S.hi.bar || 0;
+    const play = h.state === 'run', mm = s => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'), w = h.won;
+    const stdHud = { hp: h.hp, hpMax: 100, en: h.en, gold: h.gold || 0, hour: 12, day: 1, items: (h.items || []).map(i => ({ ...i, label: (this.labels && this.labels[i.id]) || i.id })), place: h.place || 'Pearl Sail · Floor 1', quest: h.quest || { text: 'Climb to the roof' }, prompt: h.prompt || null, toast: null, muted: true, weather: 'Clear', inCave: true, weapons: [], dialog: null };
+    return {
+      stageRef: this.stageRef, engine: this.engine, stdHud, started: !!this.lab && h.state !== 'ready', hudBusy: !play, onHud: this.onHud,
+      stageTop: S.hi.split ? 'calc(' + bar + 'px + (100% - ' + bar + 'px) / 2)' : bar + 'px',
+      keysList: [['A D', 'move'], ['W', 'aim up'], ['S + Space', 'drop down'], ['Space', 'jump · again = double'], ['1 / J', 'slash'], ['2 / K', 'laser'], ['E', 'exit (lobby)'], ['I', 'menu'], ['Wheel', 'zoom']],
+      skipKeys: ['KeyJ', 'KeyK', 'KeyT', 'KeyN', 'KeyV', 'KeyC', 'KeyO', 'KeyH'],
+      showCard: play && !S.hi.menu && !(pad && land), cardTop: (bar + 40) + 'px', colW: phone ? (land ? '200px' : 'min(220px, calc(50% - 18px))') : '250px', titleSize: phone ? '15px' : '19px',
+      floorTxt: h.floor === 6 ? 'THE ROOF' : (h.floor + 1) + ' · ' + h.floorName, leftTxt: String(h.left), timeTxt: mm(h.time || 0),
+      hasBoss: play && !!h.boss && !S.hi.menu, bossName: h.boss ? h.boss.name : '', bossPct: h.boss ? h.boss.pct + '%' : '', bossW: phone ? (land ? '240px' : 'min(220px, calc(50% - 18px))') : '320px', bossW2: (h.boss ? h.boss.pct : 0) + '%', bossCol: h.boss && h.boss.docked ? '#ffd23a' : '#ec3013',
+      hasBanner: !!h.banner && !S.hi.menu, banner: h.banner, bannerTop: 'calc(' + bar + 'px + 30%)',
+      hurtOp: h.hp < 30 && play ? 0.35 : h.ko ? 0.7 : 0,
+      wcOn: h.state === 'ready', wcRows: [{ k: 'Floors', v: '6 + the roof', c: '#ffd23a' }, { k: 'Bots', v: 'crawlers · drones · turrets · droppers · shields', c: '#ffd23a' }, { k: 'Boss', v: 'SUDS-9 · window cleaner', c: '#ffd23a' }, { k: 'Tip', v: 'jump again in the air · shields block the front', c: '#cfcac4' }],
+      wcGo: () => this.lab && this.lab.start(),
+      wcTut: () => this.lab && this.lab.start(true),
+      wcDemo: () => this.lab && this.lab.demo(true),
+      demoOn: !!h.demo && play, demoStop: e => { e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur(); this.lab && this.lab.demo(false); }, demoTop: (bar + (h.boss ? 96 : 40)) + 'px',
+      doneOn: h.state === 'won', bestTxt: w ? (w.demo ? 'DEMO RUN · NO REWARD · NOW TRY IT YOURSELF' : w.newBest ? 'NEW BEST TIME' : 'BEST ' + mm(w.best)) : '',
+      rows: w ? [['Time', mm(w.time)], ['Bots wrecked', String(w.kills)], ['Knocked out', String(w.kos)], ['Reward', '+' + w.gold + ' CR' + (w.first ? ' · relic added' : '')]].map(([k, v]) => ({ k, v })) : [],
+      again: () => location.reload(), leave: () => this.leaveTower(),
+    };
+  }
+}
+</script>
+</body>
+</html>

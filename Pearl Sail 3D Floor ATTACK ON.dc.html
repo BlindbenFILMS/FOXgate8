@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<!-- s697b Ben: sound ON in Pearl Sail (mute-all removed; ?sound=1 no longer needed) -->
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}@keyframes blReloadPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(236,48,19,0.7)}50%{transform:scale(1.08);box-shadow:0 0 0 14px rgba(236,48,19,0)}}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Pearl Sail 3D Floor">
+  <div ref="{{ stageRef }}" style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0;overflow:hidden"></div>
+  <div style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0;pointer-events:none;background:radial-gradient(ellipse at 50% 55%, rgba(0,0,0,0) 55%, rgba(10,14,22,0.38) 100%);z-index:1"></div>
+  <div style="position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 120px 30px #ec3013;opacity:{{ hurtOp }};z-index:1"></div>
+  <div data-hud-host="1" style="position:absolute;left:0;right:0;top:0;bottom:0;pointer-events:none"><dc-import name="Game HUD" keep="top strip keys compass pad view talk nobag" game="{{ engine }}" hud="{{ stdHud }}" started="{{ started }}" busy="{{ hudBusy }}" on-hud="{{ onHud }}" world="Meru" keys="{{ keysList }}" skip-keys="{{ skipKeys }}" hint-size="100%,100%" style="position:absolute;inset:0;pointer-events:none"></dc-import></div>
+  <sc-if value="{{ showCard }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(12px, env(safe-area-inset-left));top:{{ cardTop }};width:{{ colW }};background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column;pointer-events:none;z-index:2">
+      <div style="padding:6px 10px;display:flex;flex-direction:column;gap:2px;border-bottom:2px solid #3a3836">
+        <span style="font:700 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;white-space:nowrap">PEARL SAIL · 3D</span>
+        <span style="font:800 {{ titleSize }} var(--font-heading);line-height:1.05">{{ floorTxt }}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr))">
+        <div style="padding:4px 10px;display:flex;flex-direction:column;border-right:2px solid #3a3836"><span style="font:700 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">BOTS</span><span style="font:800 15px var(--font-heading);font-variant-numeric:tabular-nums">{{ leftTxt }}</span></div>
+        <div style="padding:4px 10px;display:flex;flex-direction:column;border-right:2px solid #3a3836"><span style="font:700 10px var(--font-heading);letter-spacing:0.1em;color:{{ gateCol }}">GATES</span><span style="font:800 15px var(--font-heading);font-variant-numeric:tabular-nums;color:{{ gateCol }}">{{ gateTxt }}</span></div>
+        <div style="padding:4px 10px;display:flex;flex-direction:column"><span style="font:700 10px var(--font-heading);letter-spacing:0.1em;color:#cfcac4">TIME</span><span style="font:800 15px var(--font-heading);font-variant-numeric:tabular-nums">{{ timeTxt }}</span></div>
+      </div>
+      <sc-if value="{{ hasPower }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:8px;padding:5px 10px;border-top:2px solid #3a3836"><span style="width:10px;height:10px;background:{{ powerCol }};display:block"></span><span style="font:800 12px var(--font-heading);letter-spacing:0.08em;color:{{ powerCol }}">{{ powerTxt }}</span></div></sc-if>
+      <sc-if value="{{ hasBill }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:baseline;gap:8px;padding:5px 10px;border-top:2px solid #3a3836"><span style="font:700 10px var(--font-heading);letter-spacing:0.1em;color:#ff9b2a">DAMAGES</span><span style="font:800 13px var(--font-heading);font-variant-numeric:tabular-nums;color:#ff9b2a">{{ billTxt }}</span></div></sc-if>
+    </div>
+  </sc-if>
+  <div style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0;pointer-events:none;z-index:3">
+    <sc-for list="{{ marks }}" as="g" hint-placeholder-count="0">
+      <div style="position:absolute;left:{{ g.l }};top:{{ g.t }};transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center">
+        <div style="width:40px;height:40px;box-sizing:border-box;background:#000;border:2px solid {{ g.bc }};display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" style="transform:rotate({{ g.r }})"><path d="M4 12h13M12 5l7 7-7 7" fill="none" stroke="{{ g.ac }}" stroke-width="3" stroke-linecap="square"></path></svg></div>
+        <div style="background:{{ g.bg }};border:2px solid #000;border-top:0;padding:1px 6px;font:800 10px var(--font-heading);letter-spacing:0.08em;color:{{ g.fg }};white-space:nowrap">{{ g.label }}</div>
+      </div>
+    </sc-for>
+  </div>
+  <sc-if value="{{ netOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;right:max(10px, env(safe-area-inset-right));top:{{ netTop }};z-index:6;display:flex;flex-direction:column;align-items:stretch;width:{{ netW }};pointer-events:none">
+      <div style="display:flex;align-items:stretch;background:#000;border:2px solid #3a3836">
+        <span style="flex:none;width:8px;background:{{ netCol }};display:block"></span>
+        <div style="flex:1;min-width:0;padding:4px 8px;display:flex;flex-direction:column"><span style="font:800 9px var(--font-heading);letter-spacing:0.12em;color:#cfcac4;white-space:nowrap">{{ netKick }}</span><span style="font:900 13px var(--font-heading);color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ netTxt }}</span></div>
+        <button onClick="{{ netInvite }}" style="pointer-events:auto;flex:none;min-height:44px;padding:0 10px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#ffd23a;color:#000;font:900 11px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">{{ netInvTxt }}</button>
+      </div>
+      <sc-for list="{{ netPeers }}" as="p" hint-placeholder-count="0"><div style="display:flex;align-items:center;gap:6px;background:rgba(0,0,0,0.85);border:2px solid #3a3836;border-top:0;padding:3px 8px"><span style="flex:none;width:9px;height:9px;background:{{ p.col }};display:block"></span><span style="font:900 11px var(--font-heading);color:#fff;white-space:nowrap">{{ p.name }}</span><span style="margin-left:auto;font:800 10px var(--font-heading);letter-spacing:0.06em;color:#cfcac4;white-space:nowrap">{{ p.what }}</span></div></sc-for>
+    </div>
+  </sc-if>
+  <sc-if value="{{ invOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:45;background:rgba(0,0,0,0.78);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto;pointer-events:auto">
+      <div style="width:min(420px,100%);background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column;color:#fff">
+        <div style="padding:12px 16px;display:flex;flex-direction:column;gap:3px;border-bottom:2px solid #3a3836"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ invKick }}</span><span style="font:900 24px var(--font-heading);line-height:1.05">Invite friends</span><span style="font:600 13px/1.4 var(--font-body);color:#cfcac4;text-wrap:pretty">{{ invNote }}</span></div>
+        <div style="display:flex;gap:12px;padding:12px 16px;align-items:flex-start;border-bottom:2px solid #3a3836">
+          <img ref="{{ invQrRef }}" alt="QR code to join" style="flex:none;width:132px;height:132px;background:#fff;border:2px solid #fff;display:block">
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">SCAN OR SEND THIS LINK</span><input readonly="" value="{{ invUrl }}" onFocus="{{ invSel }}" style="width:100%;box-sizing:border-box;min-height:40px;padding:6px 8px;border:2px solid #3a3836;border-radius:0;background:#141312;color:#fff;font:700 12px var(--font-body)"><span style="font:800 12px var(--font-heading);letter-spacing:0.08em;color:{{ invMsgCol }}">{{ invMsg }}</span></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+          <button onClick="{{ invCopy }}" style="min-height:52px;padding:0 14px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ffd23a;color:#000;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">COPY LINK</button>
+          <button onClick="{{ invShare }}" style="min-height:52px;padding:0 14px;border:0;border-radius:0;background:#2a2826;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">SHARE…</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:2px solid #3a3836">
+          <button onClick="{{ invPrivate }}" style="min-height:48px;padding:0 14px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">{{ invPrivTxt }}</button>
+          <button onClick="{{ invClose }}" style="min-height:48px;padding:0 14px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left">CLOSE</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ netFull }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:40;background:rgba(0,0,0,0.8);display:flex;align-items:center;padding:12px"><div style="width:min(420px,100%);background:#000;border:2px solid #ec3013;display:flex;flex-direction:column"><div style="padding:14px 16px;display:flex;flex-direction:column;gap:4px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ff6b5a">PEARL SAIL · ONLINE</span><span style="font:900 24px var(--font-heading)">This world is full (4/4)</span><span style="font:600 14px/1.4 var(--font-body);color:#cfcac4">Make a private room and invite your friends, or play solo.</span></div><div style="display:grid;grid-template-columns:1fr 1fr"><button onClick="{{ netPrivate }}" style="min-height:52px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#ffd23a;color:#000;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;padding:0 14px">PRIVATE ROOM</button><button onClick="{{ netSolo }}" style="min-height:52px;border:0;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;padding:0 14px">PLAY SOLO</button></div></div></div>
+  </sc-if>
+  <sc-if value="{{ blOn }}" hint-placeholder-val="{{ false }}">
+    <div onPointerDown="{{ blDown }}" onPointerUp="{{ blUp }}" onPointerCancel="{{ blUp }}" onPointerLeave="{{ blUp }}" onPointerMove="{{ blMove }}" onContextMenu="{{ blCtx }}" style="position:absolute;left:0;right:0;top:{{ stageTop }};bottom:0;z-index:9;cursor:none;touch-action:none">
+      <div style="position:absolute;inset:0;pointer-events:none;background:#ec3013;opacity:{{ blHurtOp }}"></div>
+      <div style="position:absolute;inset:0;pointer-events:none;background:#ffffff;opacity:{{ blFlashOp }}"></div>
+      <sc-if value="{{ blPlay }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:0;right:0;top:0;display:flex;align-items:stretch;background:#000;border-bottom:2px solid #ff3df2;pointer-events:none">
+          <div style="flex:1;min-width:0;padding:6px 12px;display:flex;flex-direction:column;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ff7af5;white-space:nowrap">BLASTER · {{ blView }}</span><span style="font:900 26px var(--font-heading);line-height:1;font-variant-numeric:tabular-nums">{{ blScore }}</span></div>
+          <div style="flex:none;width:86px;padding:6px 12px 0;display:flex;flex-direction:column;border-right:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">TIME</span><span style="font:900 26px var(--font-heading);line-height:1;font-variant-numeric:tabular-nums;color:{{ blTimeCol }}">{{ blTime }}</span><div style="margin-top:auto;height:4px;background:#3a3836;margin:4px -12px 0"><div style="height:4px;width:{{ blTimePct }};background:{{ blTimeCol }}"></div></div></div>
+          <sc-for list="{{ blFriends }}" as="q" hint-placeholder-count="0"><div style="flex:none;padding:6px 10px;display:flex;flex-direction:column;border-right:2px solid #3a3836;border-top:4px solid {{ q.col }}"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#cfcac4;white-space:nowrap">{{ q.name }}</span><span style="font:900 18px var(--font-heading);line-height:1;font-variant-numeric:tabular-nums">{{ q.s }}</span></div></sc-for><div style="flex:none;width:64px;padding:6px 10px;display:flex;flex-direction:column;background:{{ blMultBg }}"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">COMBO</span><span style="font:900 22px var(--font-heading);line-height:1;color:#ffd23a">×{{ blMult }}</span></div>
+        </div>
+        <sc-if value="{{ blPwOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;right:12px;top:66px;display:flex;flex-direction:column;align-items:flex-end;gap:4px;pointer-events:none"><sc-for list="{{ blPws }}" as="p" hint-placeholder-count="1"><div style="background:#000;border:2px solid {{ p.c }};padding:3px 10px;font:900 12px var(--font-heading);letter-spacing:0.08em;color:{{ p.c }}">{{ p.t }}</div></sc-for></div></sc-if>
+        <sc-if value="{{ blViewOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:12px;top:{{ blCardTop }};display:flex;flex-direction:column;pointer-events:none;border-left:6px solid #ff3df2;background:#000;padding:8px 14px 10px"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ff7af5">NEW SWEEP</span><span style="font:900 clamp(18px,4vw,28px) var(--font-heading);line-height:1.05;color:#fff">{{ blView }}</span></div></sc-if>
+        <sc-if value="{{ blCountOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:12px;top:{{ blCardTop }};display:flex;align-items:stretch;pointer-events:none;background:#000;border-left:6px solid #ffd23a"><div style="padding:8px 14px 10px;display:flex;flex-direction:column;justify-content:center"><span style="font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a">GET READY</span><span style="font:800 14px var(--font-heading);color:#cfcac4;white-space:nowrap">TURRET ONLINE IN</span></div><div style="min-width:72px;padding:4px 16px;display:flex;align-items:center;border-left:2px solid #3a3836;font:900 56px var(--font-heading);line-height:1;color:#ffd23a;font-variant-numeric:tabular-nums">{{ blCount }}</div></div></sc-if>
+        <sc-if value="{{ blNeedReload }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;left:0;right:0;bottom:calc(96px + env(safe-area-inset-bottom));display:flex;justify-content:center;pointer-events:none">
+            <button onPointerDown="{{ blReloadBtn }}" aria-label="Reload" style="pointer-events:auto;min-width:200px;min-height:72px;padding:0 22px;border:3px solid #000;border-radius:0;background:#ec3013;color:#fff;font:900 26px var(--font-heading);letter-spacing:0.12em;cursor:pointer;text-align:left;display:flex;align-items:center;gap:14px;animation:blReloadPulse 0.7s ease-in-out infinite"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="square"></path></svg><span style="display:flex;flex-direction:column;line-height:1;white-space:nowrap"><span>RELOAD</span><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd9d2">{{ blReloadHint }}</span></span></button>
+          </div>
+        </sc-if>
+        <div style="position:absolute;left:{{ blCx }};top:{{ blCy }};width:44px;height:44px;margin:-22px 0 0 -22px;pointer-events:none"><svg width="44" height="44" viewBox="0 0 44 44"><circle cx="22" cy="22" r="13" fill="none" stroke="{{ blCrossCol }}" stroke-width="3"></circle><path d="M22 2v10M22 32v10M2 22h10M32 22h10" stroke="{{ blCrossCol }}" stroke-width="3"></path><circle cx="22" cy="22" r="2.5" fill="{{ blCrossCol }}"></circle><path d="M12 12l6 6M32 12l-6 6M12 32l6-6M32 32l-6-6" stroke="#ffd23a" stroke-width="3.5" opacity="{{ blHitOp }}"></path></svg></div>
+        <div style="position:absolute;left:0;right:0;bottom:0;display:flex;align-items:stretch;background:#000;border-top:2px solid #ff3df2;padding-bottom:env(safe-area-inset-bottom)">
+          <div style="flex:1;min-width:0;padding:8px 12px;display:flex;flex-direction:column;gap:5px;pointer-events:none"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:{{ blAmmoCol }}">{{ blAmmoLbl }}</span><div style="display:flex;gap:4px;height:22px"><sc-for list="{{ blCells }}" as="k" hint-placeholder-count="8"><span style="flex:none;width:12px;background:{{ k.c }};border:2px solid {{ k.b }};box-sizing:border-box;display:block"></span></sc-for></div></div>
+          <button onPointerDown="{{ blReloadBtn }}" style="flex:none;width:124px;min-height:60px;padding:0 14px;border:0;border-left:2px solid #3a3836;border-radius:0;background:{{ blReloadBg }};color:{{ blReloadFg }};font:900 15px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left">{{ blReloadTxt }}</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ blIntro }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:flex-start;padding:12px;box-sizing:border-box;cursor:default;background:rgba(0,0,0,0.35)">
+          <div style="width:min(440px,100%);background:#000;border:2px solid #ff3df2;display:flex;flex-direction:column">
+            <div style="padding:12px 16px;display:flex;flex-direction:column;gap:3px;border-bottom:2px solid #3a3836"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ff7af5">PEARL SAIL · SECURITY TEST</span><span style="font:900 28px var(--font-heading);line-height:1.05">Office Blaster</span><span style="font:600 14px/1.4 var(--font-body);color:#cfcac4;text-wrap:pretty">Man the turret. Machine Fleet bots are storming the hall. Shoot them before they reach you. 80 seconds, 3 sweeps.</span></div>
+            <sc-for list="{{ blRules }}" as="r" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px;padding:7px 16px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body)"><span style="font:900 12px var(--font-heading);letter-spacing:0.08em;color:{{ r.c }}">{{ r.k }}</span><span style="color:#fff">{{ r.v }}</span></div></sc-for>
+            <button onPointerDown="{{ blGo }}" style="min-height:56px;padding:0 16px;border:0;border-radius:0;background:#ff3df2;color:#000;font:900 16px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left">START ›</button>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ blDone }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;cursor:default;background:rgba(0,0,0,0.7)">
+          <div style="width:min(420px,100%);background:#000;border:2px solid #ff3df2;display:flex;flex-direction:column">
+            <div style="padding:12px 16px;display:flex;align-items:flex-end;gap:14px;border-bottom:2px solid #3a3836"><div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ff7af5">OFFICE BLASTER · {{ blNew }}</span><span style="font:900 34px var(--font-heading);line-height:1;font-variant-numeric:tabular-nums">{{ blFinal }}</span></div><span style="font:900 54px var(--font-heading);line-height:0.9;color:#ffd23a">{{ blGrade }}</span></div>
+            <sc-for list="{{ blRows }}" as="r" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;padding:8px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;font-variant-numeric:tabular-nums;color:{{ r.c }}">{{ r.v }}</span></div></sc-for>
+            <button onPointerDown="{{ blOut }}" style="min-height:56px;padding:0 16px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left">BACK TO THE FLOOR ›</button>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{ bossOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:0;right:0;top:{{ bossTop }};display:flex;justify-content:center;padding:0 12px;pointer-events:none;z-index:3">
+      <div style="width:min(520px, 100%);background:#000;border:2px solid #ec3013;display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;gap:8px;padding:4px 10px"><span style="font:900 13px var(--font-heading);letter-spacing:0.08em;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ bossName }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em;color:#ffd23a;white-space:nowrap">TO 75 % = DUEL</span></div>
+        <div style="position:relative;height:12px;background:#2a2826;margin:0 10px 6px"><div style="position:absolute;left:0;top:0;bottom:0;width:{{ bossW }};background:#ec3013"></div><div style="position:absolute;left:75%;top:-3px;bottom:-3px;width:3px;background:#ffd23a"></div></div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ chalOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom));display:flex;justify-content:flex-start;padding:0 max(12px, env(safe-area-inset-left));z-index:8">
+      <div style="width:min(620px, 100%);background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 14px;border-bottom:2px solid #3a3836"><span style="background:#ec3013;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.1em;padding:2px 8px">{{ chalName }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">THE WINDOW CLEANER</span></div>
+        <div style="padding:12px 14px;font:700 clamp(16px, 4.2vw, 21px)/1.3 var(--font-body);color:#fff;text-wrap:pretty">“{{ chalText }}”</div>
+        <button onClick="{{ acceptDuel }}" style="min-height:52px;padding:0 16px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 15px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">ACCEPT THE DUEL ›</button>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ duelOn }}" hint-placeholder-val="{{ false }}">
+    <iframe src="{{ duelSrc }}" title="Pearl Sail roof duel" allow="autoplay; fullscreen" style="position:absolute;inset:0;width:100%;height:100%;border:0;z-index:30;background:#000"></iframe>
+  </sc-if>
+  <sc-if value="{{ scopeOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;pointer-events:none;z-index:3">
+      <svg width="100%" height="100%" viewBox="0 0 160 100" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;display:block"><defs><mask id="bino"><rect x="-50" y="-50" width="260" height="200" fill="#fff"></rect><circle cx="61" cy="50" r="33" fill="#000"></circle><circle cx="99" cy="50" r="33" fill="#000"></circle></mask></defs><rect x="-50" y="-50" width="260" height="200" fill="#050506" mask="url(#bino)"></rect><circle cx="61" cy="50" r="33" fill="none" stroke="#201e1d" stroke-width="1.6"></circle><circle cx="99" cy="50" r="33" fill="none" stroke="#201e1d" stroke-width="1.6"></circle><path d="M74 50h4M82 50h4M80 44v4M80 52v4" stroke="#ffd23a" stroke-width="0.5"></path></svg>
+      <div style="position:absolute;left:0;right:0;top:{{ scopeTop }};display:flex;justify-content:flex-start;padding:0 max(16px, env(safe-area-inset-left))"><div style="display:flex;flex-direction:column;gap:2px;background:#000;border:2px solid #ffd23a;padding:6px 12px"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">LOOKOUT · MERU · ×{{ scopeZoom }}</span><span style="font:900 clamp(18px,4.5vw,28px) var(--font-heading);line-height:1.05;color:#fff">{{ scopeName }}</span></div></div>
+      <div style="position:absolute;left:0;right:0;top:{{ scopeTop2 }};display:flex;flex-wrap:wrap;align-items:stretch;gap:0;padding:0 max(16px, env(safe-area-inset-left))">
+        <div style="background:#000;border:2px solid #3a3836;padding:8px 12px;font:700 12px var(--font-body);color:#cfcac4;max-width:min(420px, calc(100vw - 32px))">{{ scopeHelp }}</div>
+        <button onClick="{{ scopeZoomIn }}" aria-label="Zoom in" style="pointer-events:auto;min-width:48px;min-height:48px;border:2px solid #3a3836;border-left:0;border-radius:0;background:#000;color:#fff;font:900 20px var(--font-heading);cursor:pointer" style-hover="background:#2a2826">+</button>
+        <button onClick="{{ scopeZoomOut }}" aria-label="Zoom out" style="pointer-events:auto;min-width:48px;min-height:48px;border:2px solid #3a3836;border-left:0;border-radius:0;background:#000;color:#fff;font:900 20px var(--font-heading);cursor:pointer" style-hover="background:#2a2826">−</button>
+        <button onClick="{{ scopeBack }}" style="pointer-events:auto;min-height:48px;padding:0 16px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">STEP BACK</button>
+      </div>
+    </div>
+  </sc-if>
+  <div style="position:absolute;inset:0;background:#000;opacity:{{ fadeOp }};pointer-events:none;z-index:4"><svg width="57" height="22" viewBox="0 0 57 22" preserveAspectRatio="none" style="position: absolute; left: 541px; top: 389px; width: 57px; height: 22px; overflow: visible; fill: none; stroke: #8a8378; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round"><defs><marker id="dc-arrow-head" orient="auto" markerWidth="5" markerHeight="5" refX="0.8" refY="2" overflow="visible"><path d="M-3.2 -1.7 L0.8 0 L-3.2 1.7" transform="translate(0 2)" fill="none" stroke="context-stroke" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"></path></marker></defs><path d="M 57 0 L 0 22" marker-end="url(#dc-arrow-head)"></path></svg></div>
+  <sc-if value="{{ hasBanner }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:0;right:0;top:{{ bannerTop }};display:flex;padding:0 max(16px, env(safe-area-inset-left));pointer-events:none;z-index:3"><div style="background:#ec3013;color:#fff;padding:8px 16px;font:900 clamp(18px,5vw,34px) var(--font-heading);line-height:1.05;border:2px solid #000">{{ banner }}</div></div>
+  </sc-if>
+  <sc-if value="{{ wcOn }}" hint-placeholder-val="{{ true }}">
+    <div data-super-hide="1" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:10;width:min(420px, calc(100% - 24px));max-height:calc(100% - 24px);display:flex;pointer-events:none"><dc-import name="Welcome Card" kicker="MERU · PEARL SAIL · MACHINE FLEET HQ" title="The Pearl Sail" text="Follow the BLACK rug through the overrun offices. A RED rug leads to a GATE spawner: destroy every gate to unlock the stairs." rows="{{ wcRows }}" play-label="ENTER THE TOWER" on-play="{{ wcGo }}" on-tutorial="{{ wcTut }}" hint-size="100%,340px" style="width:100%"></dc-import></div>
+  </sc-if>
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+    <div data-super-hide="1" style="position:absolute;inset:0;z-index:11;background:rgba(0,0,0,0.82);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #3a3836;width:min(460px,100%);display:flex;flex-direction:column">
+        <div style="padding:12px 16px;display:flex;flex-direction:column;gap:2px;border-bottom:2px solid #3a3836"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">PEARL SAIL · 3D · CLEARED</span><span style="font:900 26px var(--font-heading);line-height:1.05">{{ doneTitle }}</span></div>
+        <div style="padding:10px 16px;display:flex;flex-direction:column;gap:2px;border-bottom:2px solid #3a3836"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">REPUTATION · PEARL SAIL HOLDINGS</span><span style="font:900 28px var(--font-heading);line-height:1.05;color:{{ repCol }}">{{ repTxt }}</span></div>
+        <sc-for list="{{ rows }}" as="r" hint-placeholder-count="4">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:8px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;font-variant-numeric:tabular-nums;color:{{ r.c }};text-align:right">{{ r.v }}</span></div>
+        </sc-for>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+          <button onClick="{{ again }}" style="min-height:52px;padding:0 18px;border-radius:0;border:0;border-right:2px solid #3a3836;background:#000;color:#fff;font:900 15px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">PLAY AGAIN</button>
+          <a href="Pearl Sail Tower.dc.html" style="min-height:52px;padding:0 18px;display:flex;align-items:center;background:#ec3013;color:#fff;font:900 15px var(--font-heading);letter-spacing:0.1em;text-decoration:none" style-hover="background:#c82a10">SIDE-ON VERSION</a>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { vw: 1200, vh: 800, hud: { state: 'ready', hp: 100, en: 100, left: 0, pct: 0, time: 0, banner: '' }, hi: { pad: false, menu: false, split: false, bar: 0 } };
+  stageRef = React.createRef();
+  // s36 ROOF DUEL: SUDS-9's challenge → ACCEPT → the Kyoto duel engine in Pearl mode, full screen; it posts { type: '8gates:pearl-duel', won } back
+  onMsg = e => { const d = e && e.data; if (!d || d.type !== '8gates:pearl-duel' || !this.state.duel) return; this.skipDuel = true; this.setState({ duel: false }); this.lab && this.lab.finishDuel(!!d.won); };
+  componentDidUpdate() { const h = this.state.hud; if (h && !h.duel) this.skipDuel = false; if (h && h.duel && !this.state.duel && this.lab && !this.skipDuel) { this.lab.duelOpen(); this.setState({ duel: true }); } }
+  onHud = hi => this.setState({ hi });
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs(); addEventListener('message', this.onMsg);
+    import(new URL('worlds/meru-shops.js', document.baseURI).href).then(m => { this.labels = m.ITEM_LABELS; this.forceUpdate(); }).catch(() => {});
+    try { const mod = await import(new URL('worlds/pearl-floor3d.js?v=s697', document.baseURI).href);
+      this.lab = await mod.createPearlFloor3D({ container: this.stageRef.current, onState: hud => this.setState({ hud }) });
+      this.engine = this.lab; window.__pearl3d = this.lab; this.forceUpdate(); /* ATTACK ON (Ben s194): start straight in, bring the bots round the fox and keep them coming */ setTimeout(() => { try { this.lab.start(0); if (/[?&]finale=1/.test(location.search) && this.lab.testFinale) { this.lab.testFinale(); return; } /* s269 TESTING (Ben): start straight on the floor-2 turret. Add ?walk=1 to the URL for the normal start */ if (/[?&]turret=1/.test(location.search) && this.lab.testBlaster) { this.lab.testBlaster(); return; } if (!/[?&]walk=1/.test(location.search) && this.lab.testFloor) { this.lab.testFloor(2); return; }   /* s272 TESTING: start on floor 3 (the atrium) · ?turret=1 = floor-2 turret · ?walk=1 = normal start */ setTimeout(() => { this.lab.dropEnergy && this.lab.dropEnergy(3); this.lab.dropHealth && this.lab.dropHealth(2); this.lab.dropShield && this.lab.dropShield(2); this.lab.dropPowers && this.lab.dropPowers(['jump', 'star']); }, 1800); /* s243 QUIET START: no swarm at the start; once you have walked 20 m from the start the bots keep coming */ this.atkIv = setInterval(() => { try { const D = this.lab._dbg; if (D.St.state !== 'run' || D.St.paused) return; const P = D.P; if (!this.atk0) this.atk0 = [P.x, P.z]; if (!this.atkGo) { if (Math.hypot(P.x - this.atk0[0], P.z - this.atk0[1]) < 20) return; this.atkGo = true; } const near = D.foes.filter(e => e.alive && e.type !== 'gate' && Math.hypot(e.x - P.x, e.z - P.z) < 9).length; if (near < 2) this.lab.swarm(4); } catch (e) {} }, 5000); } catch (e) {} }, 400); if (/[?&]duel=1/.test(location.search)) { this.lab.goDuel(); } else { const fm = /[?&]floor=(\d)/.exec(location.search); if (fm) { this.setState({ startFloor: Math.max(0, Math.min(3, +fm[1] - 1)) }); this.lab._dbg.loadFloor(this.state.startFloor ?? 0); this.lab.start(); } else if (/[?&]autostart=1/.test(location.search)) this.lab.start(); }
+    } catch (e) { console.warn('pearl 3d failed: ' + (e && e.stack || String(e))); }
+  }
+  componentWillUnmount() { clearInterval(this.atkIv); removeEventListener('message', this.onMsg); this.lab && this.lab.destroy(); removeEventListener('resize', this.onRs); }
+  onRs = () => this.setState({ vw: innerWidth, vh: innerHeight });
+  renderVals() {
+    const S = this.state, h = S.hud, { vw, vh } = S, phone = Math.min(vw, vh) < 520, land = phone && vw > vh, pad = !!S.hi.pad, bar = S.hi.bar || 0, play = h.state === 'run', nf = n => Number(n || 0).toLocaleString('en-US'), mm = s => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'), w = h.won;
+    const stdHud = { hp: h.hp, hpMax: 100, en: h.en, gold: h.gold || 0, hour: 12, day: 1, items: (h.items || []).map(i => ({ ...i, label: (this.labels && this.labels[i.id]) || i.id })), place: h.place || 'Pearl Sail · Floor 2', quest: h.quest || { text: 'Follow the black rug' }, prompt: h.prompt || null, toast: null, muted: true, weather: 'Clear', inCave: true, weapons: [], dialog: h.dialog || null, scope: h.scope || null, slow: !!h.slow };   /* s694c the SCOPE reaches Game HUD (menu circle / button 4) */
+    return {
+      stageRef: this.stageRef, engine: this.engine, stdHud, started: !!this.lab && h.state !== 'ready', hudBusy: !play || !!h.challenge || !!h.duel || !!S.duel || !!h.blast, onHud: this.onHud,
+      stageTop: S.hi.split ? 'calc(' + bar + 'px + (100% - ' + bar + 'px) / 2)' : bar + 'px',
+      keysList: [['WASD', 'move'], ['Space', 'jump · again = double'], ['1 / J', 'slash'], ['2 / K', 'laser (auto-aim)'], ['E', 'look (binoculars)'], ['4 / F', 'SCOPE'], ['I', 'menu'], ['Wheel', 'zoom']], skipKeys: ['KeyJ', 'KeyK', 'KeyT', 'KeyN', 'KeyV', 'KeyC', 'KeyO', 'KeyH', 'KeyE'],
+      showCard: false,   /* s207 Ben: removed the top-left floor info card */ cardTop: (bar + 40) + 'px', colW: phone ? (land ? '220px' : 'min(240px, calc(100% - 24px))') : '270px', titleSize: phone ? '15px' : '19px',
+      leftTxt: String(h.left), gateTxt: (h.gatesT || 0) - (h.gates || 0) + '/' + (h.gatesT || 0), gateCol: h.gates ? '#ff6b5a' : '#7cff9b', timeTxt: mm(h.time || 0), floorTxt: (h.floorNo || 1) + ' · ' + (h.floorName || 'OPEN OFFICE'),
+      hasBill: !!h.bill, billTxt: nf(h.bill) + ' CR · ' + (h.broke || 0) + ' BROKEN', hasPower: !!h.power || !!h.shield, powerTxt: [h.power ? h.power.kind + ' · ' + h.power.t + 'S' : '', h.shield ? 'SHIELD · ' + h.shield : ''].filter(Boolean).join('  ·  '), powerCol: h.power ? h.power.col : '#38bdf8', fadeOp: h.fade || 0, marks: play && !S.hi.menu && !h.blast ? (h.marks || []).map(m => ({ l: Math.min(Math.max(m.x, 8), 92) + '%', t: Math.min(Math.max(m.y, 34), 72) + '%', r: m.a + 'deg', d: m.d, label: (m.kind === 'duel' ? 'DUEL ' : m.kind === 'exit' ? 'STAIRS ' : 'GATE ') + m.d + ' M', bc: m.kind === 'duel' ? '#ffd23a' : m.kind === 'exit' ? '#2fae55' : '#ec3013', ac: m.kind === 'duel' ? '#ffd23a' : m.kind === 'exit' ? '#7cff9b' : '#ff6b5a', bg: m.kind === 'duel' ? '#ffd23a' : m.kind === 'exit' ? '#2fae55' : '#ec3013', fg: m.kind === 'exit' || m.kind === 'duel' ? '#000' : '#fff' })) : [],
+      scopeOn: !!h.scopeView, scopeName: h.scopeName || 'MERU', scopeZoom: h.scopeZoom || 1, scopeTop: 'calc(' + bar + 'px + 14px)', scopeTop2: 'calc(' + bar + 'px + ' + (phone ? 74 : 84) + 'px)', scopeHelp: phone ? 'Drag or use the stick to look · pinch to zoom' : 'Drag, WASD or arrows to look · wheel or + / − to zoom · E or Esc to step back',
+      scopeZoomIn: () => this.lab && this.lab.zoomBy(0.75), scopeZoomOut: () => this.lab && this.lab.zoomBy(1.33), scopeBack: () => this.lab && this.lab.talk(),
+      bossOn: !!h.boss && play && !S.hi.menu, bossName: h.boss ? h.boss.name : '', bossW: h.boss ? h.boss.pct + '%' : '0%', bossTop: 'calc(' + bar + 'px + ' + (phone && !land ? 150 : 8) + 'px)',
+      chalOn: !!h.challenge, chalName: h.challenge ? h.challenge.name : '', chalText: h.challenge ? h.challenge.text : '', acceptDuel: () => this.lab && this.lab.acceptDuel(),
+      duelOn: !!S.duel, duelSrc: 'FOXFIGHTERS-FINAL/FoxFighters/Kyoto Sword Duel.dc.html?pearl=1&embed=1&match=ben-suds',
+      ...(() => { const I = S.inv; if (!I) return { invOn: false }; const url = location.origin + location.pathname + '?' + ((new URLSearchParams(location.search).get('net') === 'local' ? 'net=local' : '') ? (new URLSearchParams(location.search).get('net') === 'local' ? 'net=local' : '') + '&' : '') + (I.code ? 'room=' + I.code : '').replace(/&$/, '');
+        return { invOn: true, invUrl: url.replace(/[?&]$/, ''), invQr: 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=8&data=' + encodeURIComponent(url.replace(/[?&]$/, '')), invQrRef: el => { const q = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=8&data=' + encodeURIComponent(url.replace(/[?&]$/, '')); if (el && el.getAttribute('src') !== q) el.setAttribute('src', q); }, invKick: I.code ? 'PRIVATE ROOM ' + I.code : 'OPEN WORLD · NO CODE NEEDED',
+          invNote: I.code ? 'Only people with this link or code join you.' : 'Anyone who opens this link meets you here automatically (up to 4 foxes).', invMsg: I.msg || '', invMsgCol: I.ok ? '#7cff9b' : '#ff9b2a', invSel: e => e.target.select(),
+          invCopy: async () => { const u = url.replace(/[?&]$/, ''); let ok = false; try { await navigator.clipboard.writeText(u); ok = true; } catch (e) { try { const t = document.createElement('textarea'); t.value = u; document.body.appendChild(t); t.select(); ok = document.execCommand('copy'); t.remove(); } catch (er) {} } this.setState({ inv: { ...I, msg: ok ? 'COPIED · PASTE IT IN A MESSAGE' : 'COPY BLOCKED HERE · HOLD THE LINK TO COPY', ok } }); },
+          invShare: async () => { const u = url.replace(/[?&]$/, ''); if (navigator.share) { try { await navigator.share({ title: 'FOX GATE 8', text: 'Play with me!', url: u }); return; } catch (e) { if (e && e.name === 'AbortError') return; } } this.setState({ inv: { ...I, msg: 'SHARING NOT AVAILABLE HERE · USE COPY LINK', ok: false } }); },
+          invPrivTxt: I.code ? 'BACK TO OPEN WORLD' : 'MAKE A PRIVATE ROOM', invPrivate: () => { const q = new URLSearchParams(location.search); if (I.code) q.delete('room'); else q.set('room', Array.from({ length: 4 }, () => 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'[Math.random() * 31 | 0]).join('')); location.search = '?' + q.toString(); },
+          invClose: () => this.setState({ inv: null }) }; })(),
+      hasBanner: !!h.banner && !S.hi.menu && !h.scopeView && !h.challenge && !h.blast,
+      ...(() => { const n = h.net; if (!n || n.status === 'off') return { netOn: false,   /* s211 Ben: invite / online box removed */ netFull: false }; const on = n.status === 'online' || n.status === 'local', code = n.code;
+        return { netOn: !h.blast && !S.duel && !S.hi.menu, netFull: !!n.full, netTop: 'calc(' + (bar + (phone && !land ? 150 : 46)) + 'px)', netW: phone ? 'min(220px, 58vw)' : '260px', netCol: n.col || '#3a3836',
+          netKick: n.status === 'connecting' ? 'CONNECTING…' : !on ? 'OFFLINE · SOLO' : (code ? 'ROOM ' + code : 'PEARL SAIL · OPEN WORLD') + (n.host ? ' · HOST' : ''),
+          netTxt: !on ? 'Just you' : n.n > 1 ? n.n + '/4 FOXES · YOU ' + n.me : 'Just you · invite a friend', netInvTxt: n.n >= 4 ? 'FULL' : 'INVITE',
+          netPeers: on ? (n.peers || []).map(p => ({ name: p.name, col: p.col, what: p.what })) : [],
+          netInvite: () => this.setState({ inv: { code: code || '' } }),
+          netPrivate: () => { location.search = '?room=' + this.lab.netInvite(); }, netSolo: () => { location.search = '?net=off'; } }; })(),
+      ...(() => { const b = h.blast; if (!b) return { blOn: false }; const play = b.ready && !b.done, ndc = ev => { const r = this.stageRef.current.getBoundingClientRect(); return [((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1, ev.clientX - r.left, ev.clientY - r.top]; };
+        return { blOn: true, blPlay: !!play, blIntro: !b.ready && !b.done, blDone: !!b.done,
+          blDown: ev => { if (!play || ev.button === 2) return; const [x, y, px, py] = ndc(ev); this.setState({ blc: [px, py] }); this.lab.blastAim(x, y); this.lab.blastShoot(x, y); }, blUp: () => { this.lab && this.lab.blastUp && this.lab.blastUp(); }, blMove: ev => { const [x, y, px, py] = ndc(ev); this.setState({ blc: [px, py] }); this.lab && this.lab.blastAim(x, y); }, blCtx: ev => { ev.preventDefault(); this.lab && this.lab.blastReload(); },
+          blCx: (S.blc ? S.blc[0] : -99) + 'px', blCy: (S.blc ? S.blc[1] : -99) + 'px', blCrossCol: b.empty ? '#ff6b5a' : b.rapid ? '#7df9ff' : '#ffffff', blHitOp: b.hitMark ? 1 : 0,
+          blFriends: (b.friends || []).map(q => ({ name: q.name, s: nf(q.s), col: q.col })), blScore: nf(b.score), blTime: mm(b.left), blTimePct: Math.max(0, Math.min(100, (b.left || 0) / 80 * 100)) + '%', blCardTop: '66px', blTimeCol: b.left <= 15 ? '#ff6b5a' : '#ffffff', blMult: b.mult, blMultBg: b.mult > 1 ? '#3a1638' : '#000000', blView: b.view, blViewOn: b.viewT && !b.count,
+          blCountOn: b.count > 0, blCount: b.count, blHurtOp: b.hurt * 0.45, blFlashOp: b.flash * 0.9,
+          blPwOn: !!(b.rapid || b.dbl), blPws: [b.rapid ? { t: 'RAPID FIRE · ' + b.rapid + 'S', c: '#7df9ff' } : null, b.dbl ? { t: 'DOUBLE POINTS · ' + b.dbl + 'S', c: '#ffd23a' } : null].filter(Boolean),
+          blAmmoLbl: b.rapid ? 'RAPID FIRE · NO RELOAD' : b.reload ? 'RELOADING…' : b.empty ? 'EMPTY · RELOAD!' : 'LASER CELLS · ' + b.ammo + ' / 30', blAmmoCol: b.empty ? '#ff6b5a' : b.rapid ? '#7df9ff' : '#ff7af5',
+          blCells: Array.from({ length: 8 }, (_, i) => ({ c: b.rapid ? '#7df9ff' : i < b.ammo / 30 * 8 && !b.reload ? '#ff3df2' : '#1a1918', b: i < b.ammo / 30 * 8 || b.rapid ? '#000' : '#3a3836' })),
+          blReloadTxt: b.reload ? '…' : 'RELOAD', blNeedReload: !!(b.empty && !b.reload), blReloadHint: phone ? 'OUT OF CELLS' : 'OR PRESS R', blReloadBg: b.empty ? '#ec3013' : '#000000', blReloadFg: '#ffffff', blReloadBtn: ev => { ev.stopPropagation(); this.lab && this.lab.blastReload(); },
+          blRules: [{ k: 'SHOOT', v: phone ? 'tap anywhere on a bot' : 'click a bot (or Space at the crosshair)', c: '#ff7af5' }, { k: 'RELOAD', v: phone ? '30 shots · hold to keep firing · tap RELOAD' : '30 shots · hold to keep firing · R, right-click or RELOAD', c: '#ff7af5' }, { k: '!', v: 'a flashing bot is about to zap you · −50', c: '#ff6b5a' }, { k: 'POWER-UPS', v: 'shoot them: BOMB clears the screen · RAPID · ×2 · +10 S', c: '#ffd23a' }, { k: 'BEST', v: nf(b.best) + ' points', c: '#cfcac4' }],
+          blGo: ev => { ev.stopPropagation(); this.lab && this.lab.blastStart(); },
+          blFinal: b.done ? nf(b.done.score) : '', blGrade: b.done ? b.done.grade : '', blNew: b.done && b.done.newBest ? 'NEW BEST' : 'RESULT',
+          blRows: b.done ? [...(b.done.friends || []).map(q => ({ k: q.name + ' (race)', v: nf(q.s), c: q.col })), { k: 'Bots hit', v: String(b.done.hits), c: '#fff' }, { k: 'Accuracy', v: b.done.acc + ' %', c: '#fff' }, { k: 'Best', v: nf(b.done.best), c: '#ffd23a' }, { k: 'Credits', v: '+' + b.done.cr + ' CR', c: '#7cff9b' }] : [],
+          blOut: ev => { ev.stopPropagation(); this.lab && this.lab.blastLeave(); } }; })(), banner: h.banner, bannerTop: (phone && !land ? 150 : land ? 58 : 116) + 'px', hurtOp: h.hp < 30 && play ? 0.35 : h.ko ? 0.7 : 0,
+      wcOn: h.state === 'ready', wcRows: [...[['1', 'Open office'], ['2', 'Server room'], ['3', 'Atrium climb · floors 3–5'], ['4', 'The roof · drones, lookout, SUDS-9']].map(([n, nm], i) => ({ k: 'Start on floor ' + n, v: nm, c: (S.startFloor || 0) === i ? '#ffd23a' : '#cfcac4', sel: (S.startFloor || 0) === i, go: () => { this.setState({ startFloor: i }); this.lab && this.lab._dbg.loadFloor(i); } })), { k: 'Gates', v: 'bot spawners at the end of each red rug · destroy all to open the stairs', c: '#ffd23a' }, { k: 'Power-ups', v: 'speed boots · triple laser · power sword · shield', c: '#ffd23a' }, { k: 'Props', v: 'desks, glass, racks all break · Pearl Sail Holdings bills big messes', c: '#ff9b2a' }, { k: 'Tip', v: 'jump over the cubicle walls · double jump up the atrium platforms', c: '#cfcac4' }],
+      wcGo: () => this.lab && this.lab.start(),
+      wcTut: () => this.lab && this.lab.start(true),
+      doneOn: h.state === 'won', repTxt: w ? w.rep : '', repCol: w ? w.repCol : '#fff',
+      rows: w ? [...(w.roof ? [['Roof boss', 'SUDS-9 · BEATEN IN THE DUEL', '#ffd23a'], ['Relic', 'THE PEARL OF THE SAIL', '#7df9ff'], ['Next quest', 'KING\u2019S ERRAND · FIND PRINCE MAX', '#ffd23a']] : []), ['Floors', String(w.floors)], ['Time', mm(w.time)], ['Bots wrecked', String(w.kills)], ['Knocked out', String(w.kos)], ['Credits', '+' + w.gold + ' CR'], ['Clean bonus', (w.bonus ? '+' + w.bonus + ' CR · ' : '') + (w.grades || []).join(' · '), w.bonus ? '#7cff9b' : '#cfcac4'], ['Props broken', w.broke + ' / ' + w.props + ' · ' + w.pct + ' %'],
+        ...(w.bill ? [['Damages bill', nf(w.bill) + ' CR', '#ff9b2a'], ['Insurance covers', '−' + nf(w.cover) + ' CR'], ['Charged by Pearl Sail Holdings', w.charged ? '−' + nf(w.charged) + ' CR' : 'nothing', w.charged ? '#ff6b5a' : '#7cff9b']] : [])].map(([k, v, c]) => ({ k, v, c: c || '#fff' })) : [],
+      again: () => location.reload(), doneTitle: w && w.roof ? 'The Pearl Sail is clear' : 'Up to the roof',
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="732afe06-6c39-48ab-9e6f-7d70e38c45a8"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+
+<style>/* Modernist — design-system tokens and component classes. This file is the source of truth for the system's look; retune it here and see readme.md. */
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("76d1cf37-81a1-439a-9819-3fbe55e48ade") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("42e523a0-6a75-44dc-a222-d6a0829e82ef") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("cf368d0b-65c0-4122-9f71-6628489d6c70") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("76d1cf37-81a1-439a-9819-3fbe55e48ade") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("42e523a0-6a75-44dc-a222-d6a0829e82ef") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("cf368d0b-65c0-4122-9f71-6628489d6c70") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("76d1cf37-81a1-439a-9819-3fbe55e48ade") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("42e523a0-6a75-44dc-a222-d6a0829e82ef") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("cf368d0b-65c0-4122-9f71-6628489d6c70") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+
+:root {
+  --color-bg: #f3f2f2;
+  --color-surface: #eae9e9;
+  --color-text: #201e1d;
+  --color-accent: #ec3013;
+  --color-accent-2: #e15b47;
+  --color-divider: color-mix(in srgb, #201e1d 40%, transparent);
+
+  /* Tonal ramps — generated in OKLCH on one shared lightness scale, so the
+     same step of any role matches the others in visual value. */
+  --color-neutral-100: #f8f4f4;
+  --color-neutral-200: #eae7e7;
+  --color-neutral-300: #d7d3d3;
+  --color-neutral-400: #bab6b6;
+  --color-neutral-500: #9b9797;
+  --color-neutral-600: #7d7979;
+  --color-neutral-700: #605d5d;
+  --color-neutral-800: #444141;
+  --color-neutral-900: #2d2b2b;
+
+  --color-accent-100: #fff2ef;
+  --color-accent-200: #ffe0d9;
+  --color-accent-300: #ffc4b8;
+  --color-accent-400: #ff9783;
+  --color-accent-500: #ff563c;
+  --color-accent-600: #dd2b0f;
+  --color-accent-700: #ae1800;
+  --color-accent-800: #7c1405;
+  --color-accent-900: #4d170e;
+
+  --color-accent-2-100: #fff2ef;
+  --color-accent-2-200: #ffe0da;
+  --color-accent-2-300: #ffc4b9;
+  --color-accent-2-400: #ff9784;
+  --color-accent-2-500: #ef6853;
+  --color-accent-2-600: #c94b39;
+  --color-accent-2-700: #9e3526;
+  --color-accent-2-800: #71261b;
+  --color-accent-2-900: #471d16;
+
+  --font-heading: "Archivo", system-ui, sans-serif;
+  --font-heading-weight: 800;
+  --font-body: "Archivo", system-ui, sans-serif;
+
+  --space-1: 4.0px;
+  --space-2: 8.0px;
+  --space-3: 12.0px;
+  --space-4: 16.0px;
+  --space-6: 24.0px;
+  --space-8: 32.0px;
+
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+
+  /* Elevation — derived from the ground: soft ink-tinted shadows on a
+     light theme, a hairline edge + ambient darkness on a dark one. */
+  --shadow-sm: 0 1px 2px color-mix(in srgb, #2d2b2b 14%, transparent);
+  --shadow-md: 0 3px 10px color-mix(in srgb, #2d2b2b 16%, transparent);
+  --shadow-lg: 0 12px 32px color-mix(in srgb, #2d2b2b 22%, transparent);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: var(--font-heading-weight); }
+
+.grayscale{filter:grayscale(1) contrast(1.08)}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Components — built with the tokens above. Plain CSS
+   on plain HTML: no JavaScript, no build step. Each class is documented in
+   readme.md and demonstrated in foundations/ and components/.
+   ══════════════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-size: 15px; line-height: 1.55; font-weight: 400; }
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 var(--space-2);
+}
+h1 { font-size: 42px; }
+h2 { font-size: 32px; }
+h3 { font-size: 25px; }
+h4 { font-size: 20px; }
+h5 { font-size: 16px; }
+h6 { font-size: 13px; }
+h6 { letter-spacing: 0.08em; text-transform: uppercase; }
+p { margin: 0 0 var(--space-3); }
+a { color: var(--color-accent); text-underline-offset: 3px; }
+img { display: block; max-width: 100%; }
+figure { margin: 0; }
+figcaption {
+  font-size: 11px; margin-top: var(--space-1);
+  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+}
+.text-muted { color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
+
+/* — rules — */
+.hr {
+  height: 2px; border: 0; margin: var(--space-4) 0;
+  background: var(--color-divider);
+}
+
+/* — buttons — */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  cursor: pointer; text-decoration: none;
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 14px; line-height: 1.2; color: var(--color-text); /* matches the .input's 14px —
+     the pair sits side by side in sign-up rows */
+  background: transparent; border: 1px solid transparent;
+  padding: var(--space-2) calc(var(--space-3) * 1.2);
+  border-radius: var(--radius-md);
+}
+.btn svg { display: block; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-primary { background: var(--color-accent); color: var(--color-bg); }
+.btn-primary:hover { background: var(--color-accent-600); }
+.btn-primary:active { background: var(--color-accent-700); }
+.btn-secondary { border-color: var(--color-divider); }
+.btn-secondary:hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.btn-secondary:active { background: color-mix(in srgb, var(--color-text) 14%, transparent); }
+.btn-ghost { color: var(--color-accent); padding-inline: var(--space-1); }
+.btn-ghost:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+.btn-ghost:active { background: color-mix(in srgb, var(--color-accent) 18%, transparent); }
+.btn-icon { width: 36px; height: 36px; padding: 0; }
+.btn-block { width: 100%; margin-top: var(--space-2); justify-content: flex-start; text-align: left; }
+
+/* — forms — */
+.field > label {
+  display: block; font-size: 12px; margin-bottom: 5px;
+  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+}
+.input {
+  width: 100%; min-height: 36px; padding: 6px 10px; font: inherit;
+  font-size: 14px; color: var(--color-text); caret-color: var(--color-accent);
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+}
+.input:hover { border-color: color-mix(in srgb, var(--color-text) 45%, transparent); }
+.input:focus-visible { border-color: var(--color-accent); outline-offset: 0; }
+textarea.input { min-height: 90px; resize: vertical; }
+.radio { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
+.radio input, .seg-opt input {
+  position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;
+}
+.radio .dot {
+  width: 16px; height: 16px; flex: none; border-radius: 50%;
+  border: 1.5px solid var(--color-divider);
+}
+.radio:hover .dot { border-color: var(--color-accent); }
+.radio input:checked + .dot {
+  border-color: var(--color-accent); background: var(--color-accent);
+  box-shadow: inset 0 0 0 4px var(--color-bg);
+}
+.radio input:focus-visible + .dot { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.seg {
+  display: inline-flex; overflow: hidden;
+  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+}
+.seg-opt {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 12px; font-size: 13px; cursor: pointer;
+}
+.seg-opt + .seg-opt { border-left: 1px solid var(--color-divider); }
+.seg-opt:has(input:checked) { background: var(--color-accent); color: var(--color-bg); }
+.seg-opt:not(:has(input:checked)):hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.seg-opt:has(input:focus-visible) { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+
+/* — cards — */
+.card {
+  display: flex; flex-direction: column; gap: var(--space-2);
+  padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-surface);
+}
+.card-kicker { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent); }
+.card-title {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 17px; line-height: 1.2;
+}
+.card-body { margin: 0; font-size: 13px; opacity: 0.8; flex: 1; }
+.card-meta {
+  display: flex; align-items: center; gap: 6px; font-size: 11px;
+  color: color-mix(in srgb, var(--color-text) 50%, transparent);
+}
+.elev-sm { box-shadow: var(--shadow-sm); }
+.elev-md { box-shadow: var(--shadow-md); }
+.elev-lg { box-shadow: var(--shadow-lg); }
+
+/* — tags — */
+.tag {
+  display: inline-flex; align-items: center; font-size: 11px;
+  letter-spacing: 0.02em; padding: 3px 10px;
+  border-radius: calc(var(--radius-md) * 0.75);
+}
+.tag-accent { background: var(--color-accent-100); color: var(--color-accent-800); }
+.tag-accent-2 { background: var(--color-accent-2-100); color: var(--color-accent-2-800); }
+.tag-neutral { background: var(--color-neutral-100); color: var(--color-neutral-800); }
+.tag-outline { border: 1px solid var(--color-accent); color: var(--color-accent); }
+
+/* — navigation — */
+.nav {
+  display: flex; align-items: center; gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 2px solid var(--color-divider);
+}
+.nav-brand {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 18px; margin-right: auto;
+}
+.nav a { color: inherit; text-decoration: none; font-size: 14px; }
+.nav a:hover, .nav a[aria-current='page'] { color: var(--color-accent); }
+
+/* — tables — */
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table th {
+  text-align: left; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  padding: var(--space-2); border-bottom: 2px solid var(--color-divider);
+}
+.table td {
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--color-divider);
+}
+.table tbody tr:hover { background: color-mix(in srgb, var(--color-text) 4%, transparent); }
+
+/* — dialog — */
+.dialog-backdrop {
+  position: fixed; inset: 0; display: grid; place-items: center;
+  padding: var(--space-4);
+  background: color-mix(in srgb, var(--color-neutral-900) 50%, transparent);
+}
+.dialog {
+  width: min(440px, 100%); display: flex; flex-direction: column; gap: var(--space-3);
+  padding: var(--space-4); border-radius: var(--radius-lg);
+  background: var(--color-surface); box-shadow: var(--shadow-lg);
+}
+.dialog-title {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 20px;
+}
+.dialog-body { font-size: 14px; opacity: 0.85; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-2); }
+
+</style>
+<script src="97ce8eaf-c4ec-4102-9e38-9a7752321cba"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("76d1cf37-81a1-439a-9819-3fbe55e48ade") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("42e523a0-6a75-44dc-a222-d6a0829e82ef") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("cf368d0b-65c0-4122-9f71-6628489d6c70") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("76d1cf37-81a1-439a-9819-3fbe55e48ade") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("42e523a0-6a75-44dc-a222-d6a0829e82ef") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("cf368d0b-65c0-4122-9f71-6628489d6c70") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("76d1cf37-81a1-439a-9819-3fbe55e48ade") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("42e523a0-6a75-44dc-a222-d6a0829e82ef") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("cf368d0b-65c0-4122-9f71-6628489d6c70") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("76d1cf37-81a1-439a-9819-3fbe55e48ade") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("42e523a0-6a75-44dc-a222-d6a0829e82ef") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("cf368d0b-65c0-4122-9f71-6628489d6c70") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+<style>
+  html, body { margin: 0; height: 100%; background: #1b2a32; overflow: hidden; }
+  * { box-sizing: border-box; }
+  a { color: #ec3013; }
+  a:hover { color: #b8250e; }
+  @keyframes cdIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes cdTitle { 0% { opacity: 0; transform: scale(.94); } 16% { opacity: 1; transform: scale(1); } 78% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes cdFlow { to { stroke-dashoffset: -22; } }
+  @keyframes cdGlow { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+  @keyframes cdPop { 0% { transform: scale(.6); opacity: 0; } 60% { transform: scale(1.08); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+</style>
+</helmet>
+
+<div style="position:absolute; inset:0; display:flex; flex-direction:column; background:#1b2a32; font-family:var(--font-body), Archivo, sans-serif; color:#201e1d; user-select:none; -webkit-user-select:none">
+
+  <div style="display:flex; align-items:stretch; background:#f3f2f2; border-bottom:2px solid #201e1d; flex:0 0 auto; z-index:4">
+    <div style="padding:9px 14px; display:flex; flex-direction:column; gap:1px; flex:0 0 auto">
+      <span style="font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:#ec3013; font-weight:700; white-space:nowrap">{{ hudKicker }}</span>
+      <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:15px; font-weight:800; letter-spacing:-.01em; text-transform:uppercase; line-height:1.1; white-space:nowrap; width:max-content">Conduit Deck</span>
+    </div>
+    <div style="border-left:2px solid #201e1d; padding:8px 14px; display:flex; align-items:center; gap:12px; flex:1 1 auto; min-width:0">
+      <sc-for list="{{ legend }}" as="lg" hint-placeholder-count="1">
+        <div style="display:flex; align-items:center; gap:6px; flex:0 0 auto">
+          <div style="width:13px; height:13px; border:1.6px solid #201e1d; background:{{ lg.fill }}"></div>
+          <div style="display:flex; flex-direction:column; gap:0px">
+            <span style="font-size:9px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; line-height:1.2; white-space:nowrap">{{ lg.name }}</span>
+            <span style="font-size:8px; font-weight:700; letter-spacing:.04em; color:{{ lg.tagColor }}; line-height:1.2; white-space:nowrap">{{ lg.tag }}</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="border-left:2px solid #201e1d; padding:9px 14px; display:flex; flex-direction:column; gap:1px; justify-content:center; flex:0 0 auto">
+      <span style="font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:#6b6864; font-weight:700">Turns</span>
+      <span style="font-size:11px; font-weight:700; font-variant-numeric:tabular-nums; color:{{ turnColor }}; white-space:nowrap">{{ turnText }}</span>
+    </div>
+    <div style="display:flex; align-items:stretch; flex:0 0 auto">
+      <button sc-camel-on-click="{{ toggleMusic }}" style="padding:0 12px; border:0; border-left:2px solid #201e1d; background:#f3f2f2; color:{{ musicColor }}; font-family:var(--font-body), Archivo, sans-serif; font-size:9px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; white-space:nowrap" style-hover="background:#e6e4dd">{{ musicLabel }}</button>
+      <button sc-camel-on-click="{{ toggleSound }}" style="padding:0 12px; border:0; border-left:2px solid #201e1d; background:#f3f2f2; color:{{ soundColor }}; font-family:var(--font-body), Archivo, sans-serif; font-size:9px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; white-space:nowrap" style-hover="background:#e6e4dd">{{ soundLabel }}</button>
+    </div>
+  </div>
+
+  <div data-screen-label="{{ stageLabel }}" style="position:relative; flex:1 1 auto; min-height:0; overflow:hidden; background:#1b2a32">
+
+    <svg sc-camel-view-box="0 0 200 140" sc-camel-preserve-aspect-ratio="xMidYMid slice" style="position:absolute; inset:0; width:100%; height:100%; display:block">
+      <rect x="0" y="0" width="200" height="140" fill="#1b2a32"></rect>
+      <g stroke="#223642" stroke-width="0.7" fill="none">
+        <path d="M 0 24 L 200 24"></path><path d="M 0 60 L 200 60"></path><path d="M 0 96 L 200 96"></path>
+        <path d="M 30 0 L 30 140"></path><path d="M 100 0 L 100 140"></path><path d="M 170 0 L 170 140"></path>
+      </g>
+      <rect x="0" y="0" width="200" height="10" fill="#243740"></rect>
+      <rect x="0" y="130" width="200" height="10" fill="#243740"></rect>
+      <g fill="#2e454f">
+        <rect x="12" y="2" width="14" height="6"></rect><rect x="36" y="2" width="14" height="6"></rect>
+        <rect x="152" y="2" width="14" height="6"></rect><rect x="176" y="2" width="14" height="6"></rect>
+        <rect x="12" y="132" width="14" height="6"></rect><rect x="60" y="132" width="14" height="6"></rect>
+        <rect x="152" y="132" width="14" height="6"></rect>
+      </g>
+    </svg>
+
+    <svg sc-camel-view-box="0 0 200 140" sc-camel-preserve-aspect-ratio="xMidYMid meet" style="position:absolute; inset:0; width:100%; height:100%; display:block; z-index:1">
+
+      <rect x="42" y="22" width="114" height="95" fill="#15222a" stroke="#2e454f" stroke-width="1.6"></rect>
+      <g stroke="#213440" stroke-width="0.6" fill="none">
+        <sc-for list="{{ gridLines }}" as="gl" hint-placeholder-count="0">
+          <path d="{{ gl.d }}"></path>
+        </sc-for>
+      </g>
+
+      <sc-for list="{{ ports }}" as="pt" hint-placeholder-count="2">
+        <g>
+          <rect x="{{ pt.x }}" y="{{ pt.y }}" width="15" height="15" fill="{{ pt.fill }}" stroke="{{ pt.stroke }}" stroke-width="1.6"></rect>
+          <path d="{{ pt.arrow }}" fill="none" stroke="{{ pt.ink }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          <sc-if value="{{ pt.lit }}" hint-placeholder-val="{{ false }}">
+            <rect x="{{ pt.rx }}" y="{{ pt.ry }}" width="21" height="21" fill="none" stroke="{{ pt.stroke }}" stroke-width="1.2" style="animation:cdGlow 1.4s ease-in-out infinite"></rect>
+          </sc-if>
+        </g>
+      </sc-for>
+
+      <sc-for list="{{ cells }}" as="cl" hint-placeholder-count="0">
+        <g sc-camel-on-click="{{ cl.onTap }}" style="cursor:pointer">
+          <rect x="{{ cl.x }}" y="{{ cl.y }}" width="19" height="19" fill="#ffffff" opacity="0.01"></rect>
+          <g style="{{ cl.spin }}">
+            <path d="{{ cl.d }}" fill="none" stroke="#0f1a20" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="{{ cl.d }}" fill="none" stroke="{{ cl.ink }}" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"></path>
+            <sc-if value="{{ cl.flowed }}" hint-placeholder-val="{{ false }}">
+              <path d="{{ cl.d }}" fill="none" stroke="{{ cl.spark }}" stroke-width="1.3" stroke-linecap="round" stroke-dasharray="2.4 9" style="animation:cdFlow 1s linear infinite"></path>
+            </sc-if>
+          </g>
+        </g>
+      </sc-for>
+
+      <sc-if value="{{ allDone }}" hint-placeholder-val="{{ false }}">
+        <g style="pointer-events:none; transform-box:fill-box; transform-origin:center; animation:cdPop .32s ease-out">
+          <rect x="48" y="57" width="104" height="25" fill="#f3f2f2" stroke="#201e1d" stroke-width="2"></rect>
+          <foreignObject x="48" y="64" width="104" height="16" style="overflow:hidden">
+            <div xmlns="http://www.w3.org/1999/xhtml" style="width:104px; display:flex; justify-content:center">
+              <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:8.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#201e1d; white-space:nowrap">Flow restored</span>
+            </div>
+          </foreignObject>
+        </g>
+      </sc-if>
+    </svg>
+
+    <sc-if value="{{ showHint }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute; left:0; right:0; bottom:0; z-index:2; background:#201e1d; padding:9px 14px; display:flex; align-items:center; gap:9px">
+        <span style="flex:0 0 auto; width:2px; align-self:stretch; background:#ec3013"></span>
+        <span style="flex:1 1 auto; min-width:0; font-size:12px; font-weight:700; color:#f3f2f2; line-height:1.35; overflow-wrap:break-word">{{ hintText }}</span>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showTitleCard }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute; inset:0; z-index:5; display:flex; align-items:center; justify-content:center; pointer-events:none; animation:cdTitle 1.6s ease-out forwards">
+        <div style="background:#f3f2f2; border:2px solid #201e1d; padding:16px 26px; max-width:78%">
+          <div style="font-family:var(--font-heading), Archivo, sans-serif; font-size:clamp(24px, 6vw, 42px); font-weight:800; line-height:.98; letter-spacing:-.02em; text-transform:uppercase">{{ cardTitle }}</div>
+          <div style="height:2px; background:#ec3013; width:56px; margin:9px 0"></div>
+          <div style="font-size:13px; color:#201e1d; line-height:1.4">{{ cardHint }}</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showIntro }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute; inset:0; z-index:6; background:rgba(14,22,28,.88); display:flex; flex-direction:column; padding:22px; overflow:auto">
+       <div style="margin:auto 0; display:flex; flex-wrap:wrap-reverse; align-items:center; gap:26px">
+        <svg sc-camel-view-box="0 0 220 200" sc-camel-preserve-aspect-ratio="xMidYMid meet" style="flex:0 1 min(48%, 480px); min-width:0; aspect-ratio:220 / 200; max-height:min(460px, 74vh); order:2; pointer-events:none">
+          <defs>
+            <clipPath id="cdPorthole"><circle cx="176" cy="42" r="27"></circle></clipPath>
+          </defs>
+          <g clip-path="url(#cdPorthole)">
+            <rect x="149" y="15" width="54" height="54" fill="#0a1018"></rect>
+            <g fill="#f6f4ef">
+              <circle cx="158" cy="24" r="1.1"></circle>
+              <circle cx="192" cy="22" r="0.9"></circle>
+              <circle cx="164" cy="34" r="0.8"></circle>
+            </g>
+            <circle cx="178" cy="76" r="26" fill="#c98a3a"></circle>
+            <path d="M 154 56 q 24 -7 50 2" fill="none" stroke="#a86a2c" stroke-width="3.4"></path>
+            <path d="M 153 66 q 25 6 51 -3" fill="none" stroke="#e0a95e" stroke-width="2.6"></path>
+          </g>
+          <circle cx="176" cy="42" r="27" fill="none" stroke="#5f7278" stroke-width="3.4"></circle>
+          <circle cx="176" cy="42" r="22" fill="none" stroke="#3d4f55" stroke-width="1.2"></circle>
+
+          <path d="M 150 72 L 170 86 L 170 168 L 150 182 Z" fill="#2e454f" stroke="#18232a" stroke-width="2.4"></path>
+          <rect x="156" y="118" width="9" height="20" fill="#ec3013"></rect>
+          <path d="M 154 96 L 166 96" stroke="#18232a" stroke-width="2"></path>
+
+          <rect x="20" y="72" width="130" height="110" fill="#243740" stroke="#18232a" stroke-width="3"></rect>
+          <g fill="#5f7278">
+            <circle cx="27" cy="79" r="2.6"></circle>
+            <circle cx="143" cy="79" r="2.6"></circle>
+            <circle cx="27" cy="175" r="2.6"></circle>
+            <circle cx="143" cy="175" r="2.6"></circle>
+          </g>
+          <rect x="32" y="84" width="106" height="86" fill="#15222a" stroke="#2e454f" stroke-width="2"></rect>
+          <g stroke="#213440" stroke-width="0.9" fill="none">
+            <path d="M 59 84 L 59 170"></path><path d="M 85 84 L 85 170"></path><path d="M 111 84 L 111 170"></path>
+            <path d="M 32 113 L 138 113"></path><path d="M 32 141 L 138 141"></path>
+          </g>
+
+          <g stroke-linecap="round" stroke-linejoin="round" fill="none">
+            <path d="M 32 99 L 66 99 L 66 127 L 138 127" stroke="#0f1a20" stroke-width="9"></path>
+            <path d="M 32 99 L 66 99 L 66 127 L 138 127" stroke="#d9a84e" stroke-width="4.6"></path>
+            <path d="M 32 155 L 85 155" stroke="#0f1a20" stroke-width="9"></path>
+            <path d="M 32 155 L 85 155" stroke="#6f9d86" stroke-width="4.6"></path>
+            <path d="M 111 155 L 138 155" stroke="#0f1a20" stroke-width="9"></path>
+            <path d="M 111 155 L 138 155" stroke="#2f5a4c" stroke-width="4.6"></path>
+            <path d="M 98 141 L 98 169" stroke="#0f1a20" stroke-width="9"></path>
+            <path d="M 98 141 L 98 169" stroke="#2f5a4c" stroke-width="4.6"></path>
+          </g>
+          <rect x="86" y="142" width="25" height="26" fill="none" stroke="#ec3013" stroke-width="2"></rect>
+        </svg>
+        <div style="flex:1 1 320px; min-width:0; order:1; display:flex; flex-direction:column; gap:14px; max-width:560px">
+          <div style="display:flex; flex-direction:column">
+            <span style="font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#d9a84e; font-weight:700">Station engineering · four panels</span>
+            <span style="font-family:var(--font-heading), Archivo, sans-serif; font-size:clamp(34px, 8.2vw, 62px); font-weight:800; line-height:.92; letter-spacing:-.03em; text-transform:uppercase; color:#f3f2f2">Conduit Deck</span>
+          </div>
+          <div style="height:2px; background:#ec3013; width:116px"></div>
+          <p style="margin:0; font-size:15px; line-height:1.5; color:#f3f2f2">A section of conduit got knocked out of line. Tap any pipe to turn it a quarter turn. Connect each coloured line from its inlet on the left to its outlet on the right.</p>
+          <p style="margin:0; font-size:14px; line-height:1.5; color:#6f9d86">You can always see how you're doing: the fluid fills the pipe as far as it connects. No timer — just try to do it in few turns.</p>
+          <button sc-camel-on-click="{{ begin }}" style="align-self:flex-start; padding:16px 26px; border:0; background:#ec3013; color:#f3f2f2; font-family:var(--font-heading), Archivo, sans-serif; font-size:18px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; text-align:left; cursor:pointer" style-hover="background:#b8250e">Open the panel</button>
+        </div>
+       </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showCard }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute; inset:0; z-index:6; background:rgba(10,16,20,.82); display:flex; align-items:center; justify-content:center; padding:18px">
+        <div style="width:100%; max-width:380px; max-height:100%; min-height:0; display:flex; flex-direction:column; background:#f3f2f2; border:2px solid #201e1d; padding:20px; animation:cdIn .18s ease-out">
+          <div style="flex:0 0 auto">
+            <div style="font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:#ec3013; font-weight:700">{{ cardKicker }}</div>
+            <div style="font-family:var(--font-heading), Archivo, sans-serif; font-size:30px; font-weight:800; line-height:1; letter-spacing:-.02em; margin:7px 0 4px">{{ cardScore }}</div>
+            <div style="font-size:12px; margin-bottom:14px">{{ cardMood }}</div>
+            <div style="height:2px; background:#201e1d; margin-bottom:13px"></div>
+          </div>
+          <div style="flex:1 1 auto; min-height:0; overflow:auto">
+            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px">
+              <sc-for list="{{ cardRows }}" as="r" hint-placeholder-count="0">
+                <div style="display:flex; align-items:center; gap:9px">
+                  <span style="flex:0 0 84px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em">{{ r.name }}</span>
+                  <div style="flex:1 1 auto; height:8px; background:#dedcd6; border:1px solid #201e1d">
+                    <div style="height:100%; width:{{ r.pct }}%; background:{{ r.color }}"></div>
+                  </div>
+                  <span style="flex:0 0 30px; text-align:right; font-size:12px; font-weight:700; font-variant-numeric:tabular-nums">{{ r.val }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="border-top:2px solid #201e1d; padding-top:11px; margin-bottom:16px; font-size:11px; line-height:1.4">{{ cardLine }}</div>
+          </div>
+          <button sc-camel-on-click="{{ cardAction }}" style="flex:0 0 auto; width:100%; padding:14px 16px; border:0; background:#ec3013; color:#f3f2f2; font-family:var(--font-heading), Archivo, sans-serif; font-size:15px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; text-align:left; cursor:pointer" style-hover="background:#b8250e">{{ cardCta }}</button>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;sound&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Audio&quot;},&quot;music&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Audio&quot;}}">
+const n = v => Math.round(v * 1000) / 1000;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+const COLS = 6, ROWS = 5, CELL = 19, X0 = 42, Y0 = 22;
+const HALF = CELL / 2;
+const cx = c => X0 + c * CELL + HALF;
+const cy = r => Y0 + r * CELL + HALF;
+// 0 up, 1 right, 2 down, 3 left
+const DX = [0, 1, 0, -1], DY = [-1, 0, 1, 0];
+
+const LINES = [
+  { key: "power", name: "Power", dim: "#6b5a2c", ink: "#d9a84e", spark: "#f6e3b4" },
+  { key: "coolant", name: "Coolant", dim: "#2f5a4c", ink: "#6f9d86", spark: "#cfe8dc" },
+  { key: "air", name: "Air", dim: "#33506b", ink: "#6e8fb8", spark: "#d2e2f2" }
+];
+
+// base openings at rot 0; rotating adds r to each direction
+const BASE = { straight: [0, 2], elbow: [0, 1] };
+const SHAPE = {
+  straight: "M 0 " + -HALF + " L 0 " + HALF,
+  elbow: "M 0 " + -HALF + " L 0 0 L " + HALF + " 0"
+};
+const openingsOf = (type, rot) => BASE[type].map(d => (d + rot) % 4);
+
+const ROUNDS = [
+  { lines: [0], starts: [2], ends: [2], wander: 3.6, minLen: 9, sys: "Galley power feed" },
+  { lines: [0, 1], starts: [1, 3], ends: [0, 4], wander: 3, minLen: 7, sys: "Reactor coolant loop" },
+  { lines: [0, 1, 2], starts: [0, 2, 4], ends: [1, 2, 3], wander: 2.4, sys: "Habitat ring trunk" },
+  { lines: [0, 1, 2], starts: [0, 2, 4], ends: [2, 3, 4], wander: 2.8, sys: "Dock umbilical spine" }
+];
+
+function rng(seed) {
+  let s = seed + 0x6d2b79f5;
+  return () => {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// route a non-crossing path from the left edge to the right edge, biased toward the exit
+function routeLine(taken, sr, er, rand, wander) {
+  const goal = [COLS - 1, er];
+  const path = [];
+  const seen = {};
+  function walk(c, r) {
+    path.push([c, r]);
+    seen[c + "," + r] = true;
+    if (c === goal[0] && r === goal[1]) return true;
+    const dirs = [0, 1, 2, 3]
+      .map(d => {
+        const nc = c + DX[d], nr = r + DY[d];
+        const ok = nc >= 0 && nc < COLS && nr >= 0 && nr < ROWS
+          && !taken[nc + "," + nr] && !seen[nc + "," + nr];
+        const h = Math.abs(goal[0] - nc) + Math.abs(goal[1] - nr);
+        return { d, nc, nr, ok, w: h + rand() * (wander || 2.6) };
+      })
+      .filter(x => x.ok)
+      .sort((a, b) => a.w - b.w);
+    for (const x of dirs) if (walk(x.nc, x.nr)) return true;
+    path.pop();
+    delete seen[c + "," + r];
+    return false;
+  }
+  if (taken["0," + sr]) return null;
+  return walk(0, sr) ? path : null;
+}
+
+// turn a path into placed pieces: each cell's two openings are its neighbours
+function piecesFromPath(path, lineIdx) {
+  const out = [];
+  for (let i = 0; i < path.length; i++) {
+    const [c, r] = path[i];
+    const ds = [];
+    if (i === 0) ds.push(3);
+    else ds.push([0, 1, 2, 3].find(d => path[i - 1][0] === c + DX[d] && path[i - 1][1] === r + DY[d]));
+    if (i === path.length - 1) ds.push(1);
+    else ds.push([0, 1, 2, 3].find(d => path[i + 1][0] === c + DX[d] && path[i + 1][1] === r + DY[d]));
+    if (ds[0] == null || ds[1] == null || ds[0] === ds[1]) return null;
+    const opposite = (ds[0] + 2) % 4 === ds[1];
+    const type = opposite ? "straight" : "elbow";
+    let rot = null;
+    for (let k = 0; k < 4; k++) {
+      const o = openingsOf(type, k);
+      if (o.includes(ds[0]) && o.includes(ds[1])) { rot = k; break; }
+    }
+    if (rot == null) return null;
+    out.push({ c, r, type, rot, line: lineIdx });
+  }
+  return out;
+}
+
+function buildPuzzle(round, parallel) {
+  const cfg = ROUNDS[round % ROUNDS.length];
+  // fallback: straight-across endpoints are always routable
+  const ends = parallel ? cfg.starts : cfg.ends;
+  for (let seed = 1; seed < 400; seed++) {
+    const rand = rng(seed + round * 977);
+    const taken = {};
+    const pieces = [];
+    let ok = true;
+    for (let i = 0; i < cfg.lines.length; i++) {
+      const path = routeLine(taken, cfg.starts[i], ends[i], rand, cfg.wander);
+      if (!path || path.length < (parallel ? 3 : cfg.minLen || 3)) { ok = false; break; }
+      const pcs = piecesFromPath(path, cfg.lines[i]);
+      if (!pcs) { ok = false; break; }
+      pcs.forEach(p => { taken[p.c + "," + p.r] = true; pieces.push(p); });
+    }
+    if (!ok) continue;
+    // scramble, then make sure it isn't handed over already solved
+    const scrambled = pieces.map(p => {
+      let rot = Math.floor(rand() * 4);
+      if (rot === p.rot && rand() < 0.8) rot = (rot + 1 + Math.floor(rand() * 3)) % 4;
+      return Object.assign({}, p, { rot, correct: p.rot });
+    });
+    const par = scrambled.reduce((a, p) => a + turnsNeeded(p), 0);
+    if (par < 3) continue;
+    return { pieces: scrambled, cfg, par };
+  }
+  return parallel ? null : buildPuzzle(round, true);
+}
+
+function turnsNeeded(p) {
+  const d = (p.correct - p.rot + 4) % 4;
+  // a straight pipe reads the same at 0 and 180
+  return p.type === "straight" ? Math.min(d, (d + 2) % 4) : d;
+}
+
+
+// patient puzzle loop: soft plucks in dorian over a low pulse
+const MUSIC = (() => {
+  const notes = [];
+  const chords = [[45, 52, 57], [43, 50, 55], [41, 48, 53], [45, 52, 59]];
+  chords.forEach((ch, s) => {
+    const at = s * 8;
+    notes.push({ b: at, m: ch[0] - 12, d: 7.4, v: "bass" });
+    ch.forEach((m, i) => notes.push({ b: at + i * 0.5, m, d: 6.6, v: "pad" }));
+    [0.5, 2, 3.5, 5, 6.5].forEach((off, i) => notes.push({ b: at + off, m: ch[(i + 1) % 3] + 12, d: 1.4, v: "lead" }));
+  });
+  [7.5, 15.5, 23.5, 31.5].forEach(b => notes.push({ b, m: 81, d: 1.6, v: "bell" }));
+  return { notes, beats: 32, spb: 0.5 };
+})();
+const midiHz = m => 440 * Math.pow(2, (m - 69) / 12);
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = Object.assign({ overlay: "intro", muted: false, musicOff: false }, this.freshRound(0));
+  }
+
+  freshRound(round) {
+    const pz = buildPuzzle(round);
+    return {
+      round, pieces: pz.pieces, cfg: pz.cfg, par: pz.par,
+      turns: 0, solvedAt: null,
+      titleCard: ["Panel " + ((round % 4) + 1), pz.cfg.sys], cardAt: Date.now()
+    };
+  }
+
+  componentDidMount() {
+    window.__conduitTarget = this;
+    this.started = false;
+    this.killMusic();
+    this.tick = setInterval(() => {
+      const s = this.state;
+      if (this.started && window.__conduitAC) {
+        if (this.musicOn()) this.scheduleMusic();
+        else if (window.__conduitMusicBus) this.killMusic();
+      }
+      if (s.titleCard && Date.now() - s.cardAt > 1600) this.setState({ titleCard: null });
+    }, 120);
+  }
+
+  componentWillUnmount() { clearInterval(this.tick); this.killMusic(); }
+
+  muted() { return this.state.muted || (this.props.sound ?? true) === false; }
+
+  audio() {
+    if (this.muted() || !this.started) return null;
+    if (!window.__conduitAC) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      window.__conduitAC = new AC();
+      window.addEventListener("pagehide", () => { try { window.__conduitAC.close(); } catch (e) {} });
+    }
+    this.actx = window.__conduitAC;
+    if (this.actx.state === "suspended") this.actx.resume();
+    return this.actx;
+  }
+
+  tone(freq, dur, gain, type, to) {
+    const ac = this.audio();
+    if (!ac) return;
+    const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime;
+    o.type = type || "sine";
+    o.frequency.setValueAtTime(freq, t);
+    if (to) o.frequency.exponentialRampToValueAtTime(Math.max(20, to), t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(gain, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(ac.destination);
+    o.start(t); o.stop(t + dur + 0.02);
+  }
+
+
+  musicOn() { return !this.muted() && (this.props.music ?? true) !== false && !this.state.musicOff; }
+
+  voice(nt, at) {
+    const ac = this.actx, g = ac.createGain(), o = ac.createOscillator();
+    const dur = nt.d * MUSIC.spb;
+    let peak = 0.02;
+    if (nt.v === "bass") { o.type = "triangle"; peak = 0.044; }
+    else if (nt.v === "pad") { o.type = "sine"; peak = 0.02; }
+    else if (nt.v === "lead") { o.type = "triangle"; peak = 0.03; }
+    else if (nt.v === "bell") { o.type = "sine"; peak = 0.028; }
+    else { o.type = "square"; peak = 0.007; }
+    o.frequency.setValueAtTime(midiHz(nt.m), at);
+    if (nt.g) o.frequency.linearRampToValueAtTime(midiHz(nt.g), at + dur * 0.7);
+    g.gain.setValueAtTime(0.0001, at);
+    g.gain.exponentialRampToValueAtTime(peak, at + (nt.v === "pad" ? 0.4 : 0.016));
+    g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+    o.connect(g); g.connect(window.__conduitMusicBus);
+    o.start(at); o.stop(at + dur + 0.03);
+  }
+
+  scheduleMusic() {
+    const ac = this.actx;
+    if (!ac || !this.musicOn()) return;
+    if (!window.__conduitMusicBus) {
+      const bus = ac.createGain();
+      bus.gain.value = 0.5;
+      bus.connect(ac.destination);
+      window.__conduitMusicBus = bus;
+      this.musicStart = ac.currentTime + 0.12;
+      this.musicBar = 0;
+    }
+    const barLen = MUSIC.beats * MUSIC.spb;
+    while (this.musicStart + this.musicBar * barLen < ac.currentTime + 0.9) {
+      const base = this.musicStart + this.musicBar * barLen;
+      MUSIC.notes.forEach(nt => {
+        const at = base + nt.b * MUSIC.spb;
+        if (at > ac.currentTime - 0.05) this.voice(nt, at);
+      });
+      this.musicBar++;
+    }
+  }
+
+  killMusic() {
+    const bus = window.__conduitMusicBus;
+    if (bus) { try { bus.gain.value = 0; bus.disconnect(); } catch (e) {} }
+    window.__conduitMusicBus = null;
+    this.musicBar = 0;
+  }
+
+  toggleMusic = () => {
+    this.audio();
+    if (this.musicOn()) this.killMusic();
+    this.setState(s => ({ musicOff: !s.musicOff }));
+  };
+
+  sfx(kind) {
+    if (!this.audio()) return;
+    const hz = m => 440 * Math.pow(2, (m - 69) / 12);
+    if (kind === "turn") this.tone(660, 0.05, 0.035, "triangle", 880);
+    else if (kind === "connect") [0, 7, 12].forEach((s, i) => setTimeout(() => this.tone(hz(72 + s), 0.16, 0.05, "triangle"), i * 60));
+    else if (kind === "done") [0, 4, 7, 12].forEach((s, i) => setTimeout(() => this.tone(hz(72 + s), 0.24, 0.055, "triangle"), i * 100));
+  }
+
+  // which pieces the fluid reaches, per line, walking out from the inlet
+  flow(pieces, cfg) {
+    const at = {};
+    pieces.forEach(p => { at[p.c + "," + p.r] = p; });
+    const wet = {};
+    const done = {};
+    cfg.lines.forEach((li, i) => {
+      const sr = cfg.starts[i], er = cfg.ends[i];
+      const first = at["0," + sr];
+      if (!first || first.line !== li || !openingsOf(first.type, first.rot).includes(3)) { done[li] = false; return; }
+      const stack = [[0, sr]];
+      const seen = {};
+      seen["0," + sr] = true;
+      wet["0," + sr] = true;
+      while (stack.length) {
+        const [c, r] = stack.pop();
+        const p = at[c + "," + r];
+        openingsOf(p.type, p.rot).forEach(d => {
+          const nc = c + DX[d], nr = r + DY[d];
+          const q = at[nc + "," + nr];
+          if (!q || q.line !== li || seen[nc + "," + nr]) return;
+          if (!openingsOf(q.type, q.rot).includes((d + 2) % 4)) return;
+          seen[nc + "," + nr] = true;
+          wet[nc + "," + nr] = true;
+          stack.push([nc, nr]);
+        });
+      }
+      const last = at[COLS - 1 + "," + er];
+      done[li] = !!(last && seen[COLS - 1 + "," + er] && openingsOf(last.type, last.rot).includes(1));
+    });
+    return { wet, done };
+  }
+
+  rotate(idx) {
+    if (this.state.overlay || this.state.solvedAt) return;
+    this.audio();
+    this.sfx("turn");
+    this.setState(s => {
+      const pieces = s.pieces.map((p, i) => i === idx ? Object.assign({}, p, { rot: (p.rot + 1) % 4 }) : p);
+      const before = this.flow(s.pieces, s.cfg).done;
+      const after = this.flow(pieces, s.cfg).done;
+      const newly = s.cfg.lines.some(li => after[li] && !before[li]);
+      const all = s.cfg.lines.every(li => after[li]);
+      if (all) {
+        this.sfx("done");
+        setTimeout(() => this.setState({ overlay: "card" }), 1300);
+      } else if (newly) this.sfx("connect");
+      return { pieces, turns: s.turns + 1, solvedAt: all ? Date.now() : null };
+    });
+  }
+
+  begin = () => { this.started = true; this.audio(); this.setState({ overlay: null }); };
+
+  cardAction = () => {
+    this.setState(s => Object.assign(this.freshRound(s.round + 1), { overlay: null, muted: s.muted }));
+  };
+
+  toggleSound = () => {
+    if (!this.state.muted) this.killMusic();
+    this.setState(s => ({ muted: !s.muted }));
+  };
+
+  renderVals() {
+    const s = this.state, cfg = s.cfg;
+    const { wet, done } = this.flow(s.pieces, cfg);
+    const allDone = cfg.lines.every(li => done[li]);
+
+    const over = Math.max(0, s.turns - s.par);
+    const efficiency = clamp(100 - over * 5, 0, 100);
+    const score = Math.round(allDone ? efficiency * 0.55 + 45 : 0);
+
+    const gridLines = [];
+    for (let c = 1; c < COLS; c++) gridLines.push({ d: "M " + (X0 + c * CELL) + " " + Y0 + " L " + (X0 + c * CELL) + " " + (Y0 + ROWS * CELL) });
+    for (let r = 1; r < ROWS; r++) gridLines.push({ d: "M " + X0 + " " + (Y0 + r * CELL) + " L " + (X0 + COLS * CELL) + " " + (Y0 + r * CELL) });
+
+    const ports = [];
+    cfg.lines.forEach((li, i) => {
+      const L = LINES[li];
+      const lit = done[li];
+      const sy = cy(cfg.starts[i]) - 7.5, ey = cy(cfg.ends[i]) - 7.5;
+      ports.push({
+        x: n(X0 - 17), y: n(sy), rx: n(X0 - 20), ry: n(sy - 3),
+        fill: lit ? L.ink : "#22323c", stroke: L.ink, ink: lit ? "#15222a" : L.ink,
+        arrow: "M " + n(X0 - 13) + " " + n(sy + 7.5) + " L " + n(X0 - 6) + " " + n(sy + 7.5)
+          + " M " + n(X0 - 9) + " " + n(sy + 4.5) + " L " + n(X0 - 6) + " " + n(sy + 7.5)
+          + " L " + n(X0 - 9) + " " + n(sy + 10.5),
+        lit
+      });
+      ports.push({
+        x: n(X0 + COLS * CELL + 2), y: n(ey), rx: n(X0 + COLS * CELL - 1), ry: n(ey - 3),
+        fill: lit ? L.ink : "#22323c", stroke: L.ink, ink: lit ? "#15222a" : L.ink,
+        arrow: "M " + n(X0 + COLS * CELL + 5) + " " + n(ey + 7.5) + " L " + n(X0 + COLS * CELL + 12) + " " + n(ey + 7.5)
+          + " M " + n(X0 + COLS * CELL + 9) + " " + n(ey + 4.5) + " L " + n(X0 + COLS * CELL + 12) + " " + n(ey + 7.5)
+          + " L " + n(X0 + COLS * CELL + 9) + " " + n(ey + 10.5),
+        lit
+      });
+    });
+
+    const cells = s.pieces.map((p, i) => {
+      const L = LINES[p.line];
+      const isWet = !!wet[p.c + "," + p.r];
+      return {
+        x: n(X0 + p.c * CELL), y: n(Y0 + p.r * CELL),
+        d: SHAPE[p.type],
+        // drawn in base orientation and rotated, so the turn animates
+        spin: "transform: translate(" + n(cx(p.c)) + "px, " + n(cy(p.r)) + "px) rotate(" + p.rot * 90 + "deg); transition: transform .16s ease-out",
+        ink: isWet ? L.ink : L.dim,
+        spark: L.spark,
+        flowed: isWet,
+        onTap: () => this.rotate(i)
+      };
+    });
+
+    const legend = cfg.lines.map(li => ({
+      fill: done[li] ? LINES[li].ink : "#dedcd6",
+      name: LINES[li].name,
+      tag: done[li] ? "Connected" : "Open",
+      tagColor: done[li] ? "#2f7d3a" : "#b8250e"
+    }));
+
+    return {
+      hudKicker: "Panel " + ((s.round % 4) + 1) + " of 4",
+      stageLabel: cfg.sys,
+      legend,
+      turnText: s.turns + " / " + s.par + " par",
+      turnColor: over > 0 ? "#c2560f" : "#201e1d",
+      musicLabel: this.musicOn() ? "Music on" : "Music off",
+      musicColor: this.musicOn() ? "#201e1d" : "#a8a6a0",
+      toggleMusic: this.toggleMusic,
+      soundLabel: this.muted() ? "Sound off" : "Sound on",
+      soundColor: this.muted() ? "#a8a6a0" : "#201e1d",
+      toggleSound: this.toggleSound,
+
+      gridLines, ports, cells,
+      allDone: allDone && s.overlay !== "card",
+
+      showHint: !s.overlay && !s.titleCard,
+      hintText: allDone ? "Flow restored on every line. Nice work."
+        : "Tap a pipe to turn it a quarter turn. Connect each colour from its inlet on the left to its outlet on the right.",
+
+      showTitleCard: !!s.titleCard && !s.overlay,
+      cardTitle: s.titleCard ? s.titleCard[0] : "",
+      cardHint: s.titleCard ? s.titleCard[1] : "",
+
+      showIntro: s.overlay === "intro",
+      begin: this.begin,
+
+      showCard: s.overlay === "card",
+      cardKicker: s.round + 1 >= 4 ? "Deck complete · " + cfg.sys : cfg.sys + " · restored",
+      cardScore: score + " / 100",
+      cardMood: over === 0 ? "Done in par. Clean work."
+        : over <= 3 ? "A few turns over par." : "Got there the long way round.",
+      cardRows: [
+        { name: "Routing", val: 100, pct: 100, color: "#2f7d3a" },
+        { name: "Efficiency", val: efficiency, pct: efficiency, color: efficiency >= 75 ? "#2f7d3a" : efficiency >= 45 ? "#b07d00" : "#c2210f" }
+      ],
+      cardLine: "Solved in " + s.turns + " turns against a par of " + s.par + ".",
+      cardCta: s.round + 1 >= 4 ? "Start the deck again" : "Next panel",
+      cardAction: this.cardAction
+    };
+  }
+}
+</script>
+
+
+</body></html>

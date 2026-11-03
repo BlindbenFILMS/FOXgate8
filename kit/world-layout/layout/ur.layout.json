@@ -1,0 +1,2336 @@
+{
+ "meta": {
+  "world": "ur",
+  "version": 1,
+  "date": "2026-10-22",
+  "from": "uploads/UR_BRIEF.md (Ur section of 8GATES_DESIGN_BRIEF_ALL.md, zoo in from Luxor, pyramid out to Luxor) + uploads/surface_ur.html (add it)",
+  "notes": "DRAFT by Claude (s348) for Ben. SWAP (Ben s348): the ZOO (Zoo Path + Hessa's Menagerie) moved IN from Luxor; the PYRAMID moved OUT to Luxor. UR = an orange terracotta CANAL CITY: the old town sits on an island inside a square CANAL RING (4 bridges) round the crested TRANSPORT PAD + fountain. Inside the ring: the square and its shops (Tavern = the college pub, Ur Espresso, The Anvil, Item Shop, College, bank, post, watch). N: Crest Street past the Kiln Brigade, The Tablet, Ur Grounds, Infirmary to the palace on its brick terrace + Barracks; COLLEGE WALK runs east to the College Stadium, Cricket Nets + Power House. E: LAB PATH (picket line) to the white Ur Laboratory, then BEAST RUN, BEAST RUN FAR END and HUNTERS POND. SE: the CLEAN LAKE (The Storage, farm). S: Reed Row houses, the poisoned TOXIC LAKE (skiff + skimmer), the Gauntlet trail. W: the ZOO PATH (ten cages) to Hessa's Menagerie; the reed marsh + cave beyond. EVERY BUILDING IS UNIQUE (\"outside\" note) with a roof sign + eye-level door sign. NPC keys are draft until surface_ur.html comes in.",
+  "rooms": {
+   "urTownSquare": "zone",
+   "urGauntlet": "gate (battle map)",
+   "urCastlePath": "zone",
+   "urLabPath": "zone",
+   "urBeastRunA": "zone",
+   "urBeastRunB": "zone",
+   "urHuntersPond": "zone",
+   "urToxicLake": "zone",
+   "urCleanLake": "zone",
+   "urZooPath": "zone (MOVED FROM LUXOR: luxorZooPath)",
+   "urCollege": "building",
+   "urBarracks": "building",
+   "urThroneRoom": "building (castle)",
+   "urLab": "building",
+   "urLabVault": "interior (behind the lab north door)",
+   "urWarehouse": "building (The Storage)"
+  },
+  "moved": {
+   "fromLuxor": [
+    "luxorZooPath",
+    "Hessa's Menagerie"
+   ],
+   "toLuxor": [
+    "urPyramidPath",
+    "urPyramidEntry",
+    "urPyramidInt1",
+    "urPyramidGate",
+    "urPyramidInt2",
+    "Ur Pyramid Dig",
+    "Wrecking Crane"
+   ]
+  }
+ },
+ "map": {
+  "half": 440,
+  "spawn": [
+   0,
+   18
+  ],
+  "spawnFace": "N"
+ },
+ "palette": {
+  "path": "#c98a5a",
+  "wall": "#d0844a",
+  "roof": "#8a3a1e",
+  "trim": "#2f8fa0",
+  "notes": "ORANGE TERRACOTTA = Ur's build theme colour; turquoise-blue glazed tile as the accent; brass tokens."
+ },
+ "zones": [
+  {
+   "key": "urTown",
+   "label": "Ur",
+   "r": [
+    -112,
+    112,
+    -112,
+    112
+   ],
+   "music": "town",
+   "depth": 224,
+   "new": true
+  },
+  {
+   "key": "urTownSquare",
+   "label": "Ur Town Square",
+   "r": [
+    -48,
+    48,
+    -48,
+    48
+   ],
+   "music": "town",
+   "depth": 96
+  },
+  {
+   "key": "urCastlePath",
+   "label": "Castle Path",
+   "r": [
+    -60,
+    110,
+    -268,
+    -112
+   ],
+   "music": "castlepath",
+   "depth": 156
+  },
+  {
+   "key": "urCastleGrounds",
+   "label": "Ur Palace",
+   "r": [
+    -120,
+    110,
+    -350,
+    -268
+   ],
+   "music": "castle",
+   "depth": 82,
+   "new": true
+  },
+  {
+   "key": "urCollegeRow",
+   "label": "College Row",
+   "r": [
+    110,
+    320,
+    -262,
+    -96
+   ],
+   "music": "college",
+   "depth": 166,
+   "new": true
+  },
+  {
+   "key": "urLabPath",
+   "label": "Lab Path",
+   "r": [
+    112,
+    250,
+    -60,
+    90
+   ],
+   "music": "lab",
+   "depth": 150
+  },
+  {
+   "key": "urBeastRunA",
+   "label": "Beast Run",
+   "r": [
+    250,
+    340,
+    -70,
+    90
+   ],
+   "music": "beastrun",
+   "depth": 160
+  },
+  {
+   "key": "urBeastRunB",
+   "label": "Beast Run, Far End",
+   "r": [
+    340,
+    438,
+    -70,
+    90
+   ],
+   "music": "beastrun",
+   "depth": 98
+  },
+  {
+   "key": "urHuntersPond",
+   "label": "Hunters Pond",
+   "r": [
+    350,
+    438,
+    90,
+    250
+   ],
+   "music": "pond",
+   "depth": 160
+  },
+  {
+   "key": "urCleanLake",
+   "label": "The Clean Lake",
+   "r": [
+    112,
+    300,
+    90,
+    260
+   ],
+   "music": "cleanlake",
+   "depth": 170
+  },
+  {
+   "key": "urToxicLake",
+   "label": "Toxic Lake",
+   "r": [
+    -140,
+    100,
+    180,
+    340
+   ],
+   "music": "toxic",
+   "depth": 160
+  },
+  {
+   "key": "urZooPath",
+   "label": "Zoo Path",
+   "r": [
+    -340,
+    -112,
+    -60,
+    60
+   ],
+   "music": "zoo",
+   "depth": 120
+  },
+  {
+   "key": "urDockYard",
+   "label": "Ur Space Dock",
+   "r": [
+    -250,
+    -170,
+    200,
+    290
+   ],
+   "music": "dock",
+   "depth": 80,
+   "new": true
+  },
+  {
+   "key": "urReedMarsh",
+   "label": "Reed Marsh",
+   "r": [
+    -438,
+    -240,
+    -438,
+    -200
+   ],
+   "music": "marsh",
+   "depth": 200,
+   "new": true
+  }
+ ],
+ "surfaces": [
+  {
+   "s": "stone",
+   "r": [
+    -40,
+    40,
+    -40,
+    40
+   ]
+  },
+  {
+   "s": "tile",
+   "r": [
+    -8,
+    8,
+    -8,
+    8
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -40,
+    40,
+    -286,
+    -274
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    -112,
+    -46,
+    -318,
+    -284
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    -102,
+    -90,
+    -308,
+    -296
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    -66,
+    -58,
+    -306,
+    -298
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    62,
+    74,
+    -192,
+    -180
+   ]
+  },
+  {
+   "s": "metal",
+   "r": [
+    254,
+    266,
+    -106,
+    -94
+   ]
+  },
+  {
+   "s": "stone",
+   "r": [
+    190,
+    260,
+    -10,
+    10
+   ]
+  },
+  {
+   "s": "grass",
+   "r": [
+    180,
+    230,
+    210,
+    250
+   ]
+  },
+  {
+   "s": "dirt",
+   "r": [
+    -280,
+    -190,
+    -20,
+    20
+   ]
+  }
+ ],
+ "water": [
+  {
+   "r": [
+    -110,
+    110,
+    -110,
+    -100
+   ],
+   "note": "CANAL RING north"
+  },
+  {
+   "r": [
+    -110,
+    110,
+    100,
+    110
+   ],
+   "note": "CANAL RING south"
+  },
+  {
+   "r": [
+    -110,
+    -100,
+    -100,
+    100
+   ],
+   "note": "CANAL RING west"
+  },
+  {
+   "r": [
+    100,
+    110,
+    -100,
+    100
+   ],
+   "note": "CANAL RING east"
+  },
+  {
+   "r": [
+    190,
+    280,
+    108,
+    190
+   ],
+   "note": "THE CLEAN LAKE (blue)"
+  },
+  {
+   "e": [
+    0,
+    262,
+    74,
+    46
+   ],
+   "toxic": true,
+   "note": "THE TOXIC LAKE (green until cleaned, then blue)"
+  },
+  {
+   "e": [
+    410,
+    210,
+    22,
+    26
+   ],
+   "note": "HUNTERS POND"
+  }
+ ],
+ "roads": [],
+ "paths": [
+  {
+   "key": "urCrestStreet",
+   "label": "Crest Street",
+   "w": 10,
+   "p": [
+    [
+     0,
+     -280
+    ],
+    [
+     0,
+     200
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20,
+   "note": "bridges over the canal ring at z ±105"
+  },
+  {
+   "key": "urMainStreet",
+   "label": "Main Street",
+   "w": 10,
+   "p": [
+    [
+     -112,
+     0
+    ],
+    [
+     112,
+     0
+    ]
+   ],
+   "lining": "lamps",
+   "every": 16,
+   "note": "bridges over the canal ring at x ±105"
+  },
+  {
+   "key": "urCrestRing",
+   "label": "Pad Ring",
+   "w": 6,
+   "p": [
+    [
+     -44,
+     -44
+    ],
+    [
+     44,
+     -44
+    ],
+    [
+     44,
+     44
+    ],
+    [
+     -44,
+     44
+    ],
+    [
+     -44,
+     -44
+    ]
+   ],
+   "lining": "trees",
+   "every": 14,
+   "note": "date palms round the square"
+  },
+  {
+   "key": "urBarracksWalk",
+   "label": "Barracks walk",
+   "w": 6,
+   "p": [
+    [
+     0,
+     -241
+    ],
+    [
+     60,
+     -241
+    ]
+   ],
+   "lining": "lamps",
+   "every": 14
+  },
+  {
+   "key": "urRoyalWalk",
+   "label": "Royal Walk",
+   "w": 6,
+   "p": [
+    [
+     0,
+     -262
+    ],
+    [
+     -80,
+     -262
+    ],
+    [
+     -80,
+     -290
+    ]
+   ],
+   "lining": "lamps",
+   "every": 14
+  },
+  {
+   "key": "urMedevacWalk",
+   "label": "Medevac walk",
+   "w": 6,
+   "p": [
+    [
+     46,
+     -186
+    ],
+    [
+     62,
+     -186
+    ]
+   ],
+   "lining": "lamps",
+   "every": 10
+  },
+  {
+   "key": "urCollegeWalk",
+   "label": "College Walk",
+   "w": 10,
+   "p": [
+    [
+     0,
+     -130
+    ],
+    [
+     310,
+     -130
+    ]
+   ],
+   "lining": "lamps",
+   "every": 20
+  },
+  {
+   "key": "urStadiumPadWalk",
+   "label": "Stadium helipad walk",
+   "w": 6,
+   "p": [
+    [
+     260,
+     -130
+    ],
+    [
+     260,
+     -106
+    ]
+   ],
+   "lining": "lamps",
+   "every": 12
+  },
+  {
+   "key": "urLabRoad",
+   "label": "Lab Path",
+   "w": 10,
+   "p": [
+    [
+     112,
+     0
+    ],
+    [
+     240,
+     0
+    ]
+   ],
+   "lining": "trees",
+   "every": 14,
+   "note": "the PICKET LINE in front of the lab steps"
+  },
+  {
+   "key": "urBeastTrail",
+   "label": "Beast Run",
+   "w": 8,
+   "p": [
+    [
+     240,
+     0
+    ],
+    [
+     340,
+     0
+    ],
+    [
+     400,
+     0
+    ],
+    [
+     400,
+     150
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20
+  },
+  {
+   "key": "urCleanLakeWalk",
+   "label": "Clean Lake walk",
+   "w": 8,
+   "p": [
+    [
+     160,
+     0
+    ],
+    [
+     160,
+     200
+    ],
+    [
+     205,
+     200
+    ]
+   ],
+   "lining": "trees",
+   "every": 14
+  },
+  {
+   "key": "urReedRow",
+   "label": "Reed Row",
+   "w": 8,
+   "p": [
+    [
+     0,
+     140
+    ],
+    [
+     110,
+     140
+    ]
+   ],
+   "lining": "trees",
+   "every": 14
+  },
+  {
+   "key": "urGauntletTrail",
+   "label": "Gauntlet Trail",
+   "w": 6,
+   "p": [
+    [
+     110,
+     140
+    ],
+    [
+     200,
+     270
+    ],
+    [
+     300,
+     320
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20
+  },
+  {
+   "key": "urToxicRoad",
+   "label": "Toxic Lake road",
+   "w": 8,
+   "p": [
+    [
+     0,
+     200
+    ],
+    [
+     -110,
+     200
+    ],
+    [
+     -110,
+     290
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20
+  },
+  {
+   "key": "urZooRoad",
+   "label": "Zoo Path",
+   "w": 10,
+   "p": [
+    [
+     -112,
+     0
+    ],
+    [
+     -282,
+     0
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 16,
+   "note": "the ten cages line both sides"
+  },
+  {
+   "key": "urDockRoad",
+   "label": "Dock Road",
+   "w": 8,
+   "p": [
+    [
+     -210,
+     0
+    ],
+    [
+     -210,
+     240
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20
+  },
+  {
+   "key": "urMarshTrail",
+   "label": "Reed Marsh trail",
+   "w": 6,
+   "p": [
+    [
+     -260,
+     0
+    ],
+    [
+     -260,
+     -200
+    ],
+    [
+     -370,
+     -290
+    ]
+   ],
+   "lining": "lanterns",
+   "every": 20,
+   "note": "DRAFT trail to the cave"
+  }
+ ],
+ "buildings": [
+  {
+   "key": "urTavern",
+   "label": "The College Pub",
+   "role": "tavern",
+   "f": [
+    -40,
+    -10,
+    -80,
+    -52
+   ],
+   "door": [
+    -25,
+    -52
+   ],
+   "face": "S",
+   "h": 10,
+   "color": "#c0602e",
+   "interior": true,
+   "note": "Sabra. SKEE BALL lane at the back, THE MACHINE token slot \"Enlil\". UNIQUE TAVERN GAME: CRIBBAGE (the college pub). Regulars Ubara, Shala.",
+   "games": [
+    "3D-GAMES/g/cribbage/cribbage.dc.html"
+   ],
+   "outside": "Terracotta tavern with a brick barrel-vault roof, a reed-thatch porch on palm posts, a giant brass token slot (\"THE MACHINE\") beside the door, a cribbage board carved over the arch.",
+   "sign": {
+    "roof": "COLLEGE PUB",
+    "door": "TAVERN · CRIBBAGE · SKEE BALL"
+   }
+  },
+  {
+   "key": "urArmory",
+   "label": "The Anvil",
+   "role": "armory",
+   "f": [
+    10,
+    40,
+    -80,
+    -52
+   ],
+   "door": [
+    25,
+    -52
+   ],
+   "face": "S",
+   "h": 9,
+   "color": "#8a4a2a",
+   "interior": true,
+   "note": "Dagan.",
+   "outside": "Thick clay-brick smithy with a bronze anvil on a plinth by the door, a tall kiln chimney glowing at the top, bronze shields set into the wall.",
+   "sign": {
+    "roof": "THE ANVIL",
+    "door": "ARMORY · DAGAN"
+   }
+  },
+  {
+   "key": "urCoffee",
+   "label": "Ur Espresso",
+   "role": "restaurant",
+   "f": [
+    -40,
+    -12,
+    52,
+    76
+   ],
+   "door": [
+    -26,
+    52
+   ],
+   "face": "N",
+   "h": 8,
+   "color": "#a85a3a",
+   "interior": true,
+   "note": "Ku-bau. ESPRESSO job.",
+   "games": [
+    "3D-GAMES/g/ur-espresso/Main.dc.html"
+   ],
+   "outside": "UNIQUE RESTAURANT: a round clay café with a domed roof shaped like an upturned cup, a neon steaming-cup sign, a shaded terrace with low tables.",
+   "sign": {
+    "roof": "UR ESPRESSO",
+    "door": "UR ESPRESSO · NOW HIRING"
+   }
+  },
+  {
+   "key": "urShop",
+   "label": "Item Shop",
+   "role": "itemshop",
+   "f": [
+    12,
+    40,
+    52,
+    76
+   ],
+   "door": [
+    26,
+    52
+   ],
+   "face": "N",
+   "h": 8,
+   "color": "#d0844a",
+   "interior": true,
+   "note": "Ishtu.",
+   "outside": "Market shop with a striped orange awning, clay jars + baskets stacked outside, a brass scale hanging as the sign.",
+   "sign": {
+    "roof": "ITEM SHOP",
+    "door": "ITEM SHOP · ISHTU"
+   }
+  },
+  {
+   "key": "urCollege",
+   "label": "College",
+   "role": "other",
+   "f": [
+    -92,
+    -52,
+    -42,
+    -6
+   ],
+   "door": [
+    -52,
+    -24
+   ],
+   "face": "E",
+   "h": 14,
+   "color": "#d8a060",
+   "interior": true,
+   "note": "Hushed library: stacks, desks, lectern, pyramid shelf. Archivist Enhedu; Kubatum, Ku-Bau, student Shesh. COLLEGE ARCHIVIST + TABLET SCRIBE jobs (NOT BUILT YET).",
+   "outside": "Tall stepped (3-tier) library hall like a small ziggurat of books, lamp-lit tablet windows, a big U crest + an open-book carving over the doors, a reading terrace on top.",
+   "sign": {
+    "roof": "COLLEGE",
+    "door": "COLLEGE · LIBRARY"
+   }
+  },
+  {
+   "key": "urPost",
+   "label": "Galactic Post Office (Meru Embassy)",
+   "role": "post",
+   "f": [
+    -88,
+    -52,
+    8,
+    36
+   ],
+   "door": [
+    -52,
+    22
+   ],
+   "face": "E",
+   "h": 10,
+   "color": "#e0b07a",
+   "interior": true,
+   "new": true,
+   "outside": "Clay post house with a tall square clock tower + Meru flag, a row of brass mail slots in the wall, the Galactic Post dish on the roof.",
+   "sign": {
+    "roof": "POST OFFICE",
+    "door": "GALACTIC POST · MERU EMBASSY"
+   }
+  },
+  {
+   "key": "urBank",
+   "label": "Token House",
+   "role": "bank",
+   "f": [
+    52,
+    88,
+    -42,
+    -8
+   ],
+   "door": [
+    52,
+    -25
+   ],
+   "face": "W",
+   "h": 11,
+   "color": "#b8783a",
+   "interior": true,
+   "new": true,
+   "outside": "Brass-domed bank (the brass token mint): a huge brass U token turning slowly on the dome, bronze doors, carved token reliefs.",
+   "sign": {
+    "roof": "TOKEN HOUSE",
+    "door": "TOKEN HOUSE · BANK"
+   }
+  },
+  {
+   "key": "urWatch",
+   "label": "Clay Watch",
+   "role": "police",
+   "f": [
+    52,
+    86,
+    8,
+    36
+   ],
+   "door": [
+    52,
+    22
+   ],
+   "face": "W",
+   "h": 9,
+   "color": "#7a4a32",
+   "interior": true,
+   "new": true,
+   "outside": "Square watch tower with a blue lamp on top, a reed-rope bell, a slatted lookout balcony, the U crest on a shield.",
+   "sign": {
+    "roof": "CLAY WATCH",
+    "door": "CLAY WATCH · POLICE"
+   }
+  },
+  {
+   "key": "urFireStation",
+   "label": "Kiln Brigade",
+   "role": "fire",
+   "f": [
+    -40,
+    -12,
+    -152,
+    -126
+   ],
+   "door": [
+    -12,
+    -139
+   ],
+   "face": "E",
+   "h": 9,
+   "color": "#c0402a",
+   "interior": true,
+   "new": true,
+   "outside": "Red-glazed brick fire hall with a wide arched bay, a water cart with a brass pump out front, a bell tower.",
+   "sign": {
+    "roof": "KILN BRIGADE",
+    "door": "KILN BRIGADE · FIRE"
+   }
+  },
+  {
+   "key": "urTablet",
+   "label": "The Tablet",
+   "role": "news",
+   "f": [
+    12,
+    40,
+    -152,
+    -126
+   ],
+   "door": [
+    12,
+    -139
+   ],
+   "face": "W",
+   "h": 11,
+   "color": "#c89a6a",
+   "interior": true,
+   "new": true,
+   "outside": "News house with a giant clay TABLET as its front wall (headlines carved in), a reed antenna mast, scrolling lamp letters under the roof sign.",
+   "sign": {
+    "roof": "THE TABLET",
+    "door": "THE TABLET · NEWS"
+   }
+  },
+  {
+   "key": "urGrounds",
+   "label": "Ur Grounds",
+   "role": "shop",
+   "f": [
+    -38,
+    -12,
+    -198,
+    -174
+   ],
+   "door": [
+    -12,
+    -186
+   ],
+   "face": "E",
+   "h": 8,
+   "color": "#6a3a22",
+   "interior": true,
+   "note": "The second Ur restaurant job.",
+   "games": [
+    "3D-GAMES/g/ur-grounds/Main.dc.html"
+   ],
+   "outside": "Coffee roastery: a big copper roasting drum in the window, a smoking twin chimney, sacks of beans on a cart by the door.",
+   "sign": {
+    "roof": "UR GROUNDS",
+    "door": "UR GROUNDS · ROASTERY"
+   }
+  },
+  {
+   "key": "urHospital",
+   "label": "Ur Infirmary",
+   "role": "hospital",
+   "f": [
+    12,
+    46,
+    -202,
+    -170
+   ],
+   "door": [
+    12,
+    -186
+   ],
+   "face": "W",
+   "h": 12,
+   "color": "#f0e2c8",
+   "interior": true,
+   "new": true,
+   "outside": "Pale plaster with turquoise tile bands, a courtyard with a date palm, a red cross on the roof, the medevac helipad beside it.",
+   "sign": {
+    "roof": "INFIRMARY",
+    "door": "UR INFIRMARY"
+   }
+  },
+  {
+   "key": "urThroneRoom",
+   "label": "Throne Room",
+   "role": "castle",
+   "f": [
+    -40,
+    40,
+    -336,
+    -280
+   ],
+   "door": [
+    0,
+    -280
+   ],
+   "face": "S",
+   "h": 22,
+   "color": "#d07a3a",
+   "interior": true,
+   "note": "Long nave, dais + throne, braziers, empty TREASURY plinth. Steward Una; Hall Guards Ur-Bau, Ninlil.",
+   "outside": "The grandest building: a terracotta palace on a raised brick terrace, a ramped stair up to a tall arched gate, blue-glazed lion tiles along the walls, U-crest banners on 4 towers.",
+   "sign": {
+    "roof": "UR PALACE",
+    "door": "THRONE ROOM · STEWARD UNA"
+   }
+  },
+  {
+   "key": "urBarracks",
+   "label": "Barracks",
+   "role": "barracks",
+   "f": [
+    60,
+    104,
+    -256,
+    -226
+   ],
+   "door": [
+    60,
+    -241
+   ],
+   "face": "W",
+   "h": 10,
+   "color": "#b0602e",
+   "interior": true,
+   "note": "Mess, six bunks, training hall, war room, sparring, vault. Captain Shulgi, Master of Arms Ilshu, recruits Puzur, Ashgi, Kuli.",
+   "outside": "Zigzag clay keep with a sparring yard behind a reed fence, arrow slits, the U banner on a pole.",
+   "sign": {
+    "roof": "BARRACKS",
+    "door": "BARRACKS · CAPTAIN SHULGI"
+   }
+  },
+  {
+   "key": "urStadium",
+   "label": "College Stadium",
+   "role": "sport",
+   "f": [
+    120,
+    240,
+    -252,
+    -138
+   ],
+   "door": [
+    180,
+    -138
+   ],
+   "face": "S",
+   "h": 14,
+   "color": "#c87a44",
+   "interior": true,
+   "games": [
+    "3D-GAMES/g/track-and-field/TrackField.dc.html"
+   ],
+   "new": true,
+   "outside": "UNIQUE SPORT: an oval brick stadium with arched outer walls, a running track + field, a tall torch tower at the gate, college pennants round the rim.",
+   "sign": {
+    "roof": "COLLEGE STADIUM",
+    "door": "TRACK AND FIELD"
+   }
+  },
+  {
+   "key": "urCricket",
+   "label": "Cricket Nets",
+   "role": "sport",
+   "f": [
+    250,
+    300,
+    -200,
+    -138
+   ],
+   "door": [
+    275,
+    -138
+   ],
+   "face": "S",
+   "h": 7,
+   "color": "#9a7a4a",
+   "interior": true,
+   "games": [
+    "3D-GAMES/Cricket Nets.dc.html"
+   ],
+   "new": true,
+   "outside": "Long open pavilion with a reed roof, 3 net lanes behind it, a scoreboard hut with a clock.",
+   "sign": {
+    "roof": "CRICKET NETS",
+    "door": "CRICKET NETS"
+   }
+  },
+  {
+   "key": "urPowerHouse",
+   "label": "Power House",
+   "role": "shop",
+   "f": [
+    150,
+    182,
+    -122,
+    -100
+   ],
+   "door": [
+    166,
+    -122
+   ],
+   "face": "N",
+   "h": 10,
+   "color": "#5a4a3a",
+   "interior": true,
+   "note": "ELECTRICIAN JOB.",
+   "games": [
+    "3D-GAMES/g/electrician-job/ElectricianJob.dc.html"
+   ],
+   "new": true,
+   "outside": "Brick power station with 2 tall copper coils on the roof that spark, a humming transformer yard behind a fence, lightning-bolt sign.",
+   "sign": {
+    "roof": "POWER HOUSE",
+    "door": "POWER HOUSE · NOW HIRING"
+   }
+  },
+  {
+   "key": "urLab",
+   "label": "Ur Laboratory",
+   "role": "specialty",
+   "f": [
+    200,
+    250,
+    -50,
+    -12
+   ],
+   "door": [
+    225,
+    -12
+   ],
+   "face": "S",
+   "h": 13,
+   "color": "#e8e4dc",
+   "interior": true,
+   "note": "Science hall: orrery, workbenches, reagent shelves, specimen tanks, locked NORTH DOOR → LAB VAULT [urLabVault] (8 cages, the manifest). Director Dr. Adapa, desk tech Kish (shop).",
+   "games": [
+    "3D-GAMES/g/ur-lab/Main.dc.html"
+   ],
+   "outside": "UNIQUE SPECIALTY SHOP: the only white building in Ur: smooth white walls, a glass ORRERY dome on the roof, wide LAB STEPS up to steel doors, the picket line in front.",
+   "sign": {
+    "roof": "UR LABORATORY",
+    "door": "UR LAB · DR. ADAPA"
+   }
+  },
+  {
+   "key": "urWarehouse",
+   "label": "The Storage",
+   "role": "other",
+   "f": [
+    120,
+    150,
+    140,
+    170
+   ],
+   "door": [
+    150,
+    155
+   ],
+   "face": "E",
+   "h": 9,
+   "color": "#7a5a3a",
+   "interior": true,
+   "note": "20 numbered BARRELS, stacks, tally desk. Ur-Shanabi, Girini, Nabi, Kubbutum.",
+   "outside": "Shore house + warehouse: corrugated clay roof, a NEW PADLOCK on the door, numbered barrels stacked by the wall, a jetty behind it.",
+   "sign": {
+    "roof": "THE STORAGE",
+    "door": "STORAGE · KEEP OUT"
+   }
+  },
+  {
+   "key": "urFarm",
+   "label": "Barley & Date Farm",
+   "role": "farm",
+   "f": [
+    180,
+    230,
+    210,
+    250
+   ],
+   "door": [
+    205,
+    210
+   ],
+   "face": "N",
+   "h": 8,
+   "color": "#b08a4a",
+   "interior": true,
+   "games": [
+    "3D-GAMES/g/fox-farm/Main.dc.html"
+   ],
+   "new": true,
+   "outside": "Farmstead with a reed-roof barn, irrigation channels from the clean lake, a shaduf water lift, date palms + barley rows.",
+   "sign": {
+    "roof": "BARLEY FARM",
+    "door": "BARLEY & DATE FARM"
+   }
+  },
+  {
+   "key": "urHome",
+   "label": "Garden Terrace",
+   "role": "home",
+   "f": [
+    10,
+    26,
+    148,
+    162
+   ],
+   "door": [
+    18,
+    148
+   ],
+   "face": "N",
+   "h": 9,
+   "color": "#d89a5a",
+   "interior": true,
+   "note": "the player rents / buys it",
+   "new": true,
+   "outside": "Terrace flat with a roof garden + hanging vines, a blue-glazed door, a little canal-side bench.",
+   "sign": {
+    "roof": "GARDEN TERRACE",
+    "door": "YOUR HOME"
+   }
+  },
+  {
+   "key": "urHouse1",
+   "label": "House",
+   "role": "housing",
+   "f": [
+    36,
+    52,
+    148,
+    162
+   ],
+   "door": [
+    44,
+    148
+   ],
+   "face": "N",
+   "h": 8,
+   "color": "#c07a4a",
+   "interior": true,
+   "new": true,
+   "outside": "Flat-roof mud-brick house with a wind tower, red door.",
+   "sign": {
+    "roof": "HOUSE",
+    "door": "HOUSE"
+   }
+  },
+  {
+   "key": "urHouse2",
+   "label": "House",
+   "role": "housing",
+   "f": [
+    62,
+    78,
+    148,
+    162
+   ],
+   "door": [
+    70,
+    148
+   ],
+   "face": "N",
+   "h": 10,
+   "color": "#e0a870",
+   "interior": true,
+   "new": true,
+   "outside": "Two-storey house with a wooden balcony + reed blinds, green door.",
+   "sign": {
+    "roof": "HOUSE",
+    "door": "HOUSE"
+   }
+  },
+  {
+   "key": "urHouse3",
+   "label": "House",
+   "role": "housing",
+   "f": [
+    88,
+    104,
+    148,
+    162
+   ],
+   "door": [
+    96,
+    148
+   ],
+   "face": "N",
+   "h": 8,
+   "color": "#a86a3a",
+   "interior": true,
+   "new": true,
+   "outside": "Round beehive-domed house of clay, yellow door, a clay oven outside.",
+   "sign": {
+    "roof": "HOUSE",
+    "door": "HOUSE"
+   }
+  },
+  {
+   "key": "urWeapons",
+   "label": "Bronze & Bolt",
+   "role": "weapons",
+   "f": [
+    -150,
+    -126,
+    -36,
+    -8
+   ],
+   "door": [
+    -138,
+    -8
+   ],
+   "face": "S",
+   "h": 8,
+   "color": "#6a4a2a",
+   "interior": true,
+   "note": "SPECIAL WEAPONS: the 8 extra ranged + melee",
+   "new": true,
+   "outside": "Bronze-plated front with a giant crossed bolt-caster + sickle sword sign, weapon racks behind bronze grilles.",
+   "sign": {
+    "roof": "BRONZE & BOLT",
+    "door": "SPECIAL WEAPONS"
+   }
+  },
+  {
+   "key": "urRelicShop",
+   "label": "The Cylinder Seal",
+   "role": "relicShop",
+   "f": [
+    -184,
+    -160,
+    -32,
+    -8
+   ],
+   "door": [
+    -172,
+    -8
+   ],
+   "face": "S",
+   "h": 7,
+   "color": "#b8893a",
+   "interior": true,
+   "note": "The famous Ur relic to BUY (DRAFT: Ben picks)",
+   "new": true,
+   "outside": "Tiny shop shaped like a giant stone CYLINDER SEAL lying on its side, rolling slowly, carved figures round it.",
+   "sign": {
+    "roof": "CYLINDER SEAL",
+    "door": "THE CYLINDER SEAL · RELICS"
+   }
+  },
+  {
+   "key": "urHoverHire",
+   "label": "Hover Hire",
+   "role": "carRental",
+   "f": [
+    -152,
+    -124,
+    8,
+    34
+   ],
+   "door": [
+    -138,
+    8
+   ],
+   "face": "N",
+   "h": 7,
+   "color": "#3a6a7a",
+   "interior": true,
+   "note": "Car rental Ur style: HOVERBOARDS (+ a cart DRAFT)",
+   "new": true,
+   "outside": "Sleek teal-tiled kiosk, hoverboards floating on glowing pads in a rack out front, a neon board sign.",
+   "sign": {
+    "roof": "HOVER HIRE",
+    "door": "HOVER HIRE · RENTAL"
+   }
+  },
+  {
+   "key": "urZoo",
+   "label": "Hessa's Menagerie",
+   "role": "shop",
+   "f": [
+    -332,
+    -282,
+    -40,
+    40
+   ],
+   "door": [
+    -282,
+    0
+   ],
+   "face": "E",
+   "h": 10,
+   "color": "#9a7a3a",
+   "interior": true,
+   "note": "Hessa the keeper. The Zoo Path [urZooPath] has the ten cages (LION, WOLF, BOAR, BEAR, RAM, CROC, STAG, APE, PANTHER, SERPENT). Ties into the lab story (SAVE the ANIMALS). Was luxorZooPath.",
+   "games": [
+    "3D-GAMES/g/luxor-zoo/Main.dc.html"
+   ],
+   "room2d": "luxorZooPath",
+   "outside": "MOVED FROM LUXOR (Ben s348): the zoo hall at the end of the Zoo Path: a big arched gate with carved animals (lion, croc, serpent), the KEEPER HUT beside it, a feed cart, cage roofs behind the wall.",
+   "sign": {
+    "roof": "MENAGERIE",
+    "door": "HESSA'S MENAGERIE · ZOO"
+   }
+  }
+ ],
+ "spots": [
+  {
+   "key": "urSabra",
+   "at": [
+    -25,
+    -60
+   ],
+   "kind": "keeper",
+   "note": "Sabra (Tavern)",
+   "draft": true
+  },
+  {
+   "key": "urKubau",
+   "at": [
+    -26,
+    60
+   ],
+   "kind": "keeper",
+   "note": "Ku-bau (Ur Espresso)",
+   "draft": true
+  },
+  {
+   "key": "urDagan",
+   "at": [
+    25,
+    -60
+   ],
+   "kind": "keeper",
+   "note": "Dagan (The Anvil)",
+   "draft": true
+  },
+  {
+   "key": "urIshtu",
+   "at": [
+    26,
+    60
+   ],
+   "kind": "keeper",
+   "note": "Ishtu (shop)",
+   "draft": true
+  },
+  {
+   "key": "urRegulars",
+   "at": [
+    -24,
+    20
+   ],
+   "kind": "crowd",
+   "note": "Geme, Ilu, Anu-banu, Ninshar"
+  },
+  {
+   "key": "urTownsfolk",
+   "at": [
+    24,
+    -20
+   ],
+   "kind": "crowd",
+   "note": "Sarru, Nin, Adab, Iltani, Ubar, Zamu"
+  },
+  {
+   "key": "urRaptorAmbush",
+   "at": [
+    20,
+    24
+   ],
+   "kind": "npc",
+   "note": "START: 5 raptors (collared lab-mutant lizards) ambush the square: 3 Reed Runners, 2 Tall Ones",
+   "draft": true
+  },
+  {
+   "key": "urSentry1",
+   "at": [
+    -10,
+    -270
+   ],
+   "kind": "npc",
+   "note": "Gate Sentries Ibbi + Lugal",
+   "draft": true
+  },
+  {
+   "key": "urSentry2",
+   "at": [
+    10,
+    -270
+   ],
+   "kind": "npc",
+   "note": "Gate Sentries Geme + Enanna",
+   "draft": true
+  },
+  {
+   "key": "urPicket",
+   "at": [
+    200,
+    10
+   ],
+   "kind": "npc",
+   "note": "PICKET LINE: SAVE the ANIMALS / NO to POLLUTION. Protesters Nanshe, Kubaba, Lu-igi; lab liaison Ur-Ninurta",
+   "draft": true
+  },
+  {
+   "key": "urNammu",
+   "at": [
+    300,
+    -10
+   ],
+   "kind": "npc",
+   "note": "Pen hand Nammu at THE PENS gate",
+   "draft": true
+  },
+  {
+   "key": "urBelShunu",
+   "at": [
+    410,
+    170
+   ],
+   "kind": "npc",
+   "note": "Bel-shunu the hunter (hut, campfire, drying racks, rowboat)",
+   "draft": true
+  },
+  {
+   "key": "urHaulers",
+   "at": [
+    -100,
+    216
+   ],
+   "kind": "npc",
+   "note": "Haulers Ilku, Bau, Shu-ilishu with a cart; Dr. Adapa",
+   "draft": true
+  },
+  {
+   "key": "urHessa",
+   "at": [
+    -276,
+    10
+   ],
+   "kind": "keeper",
+   "note": "Hessa the zoo keeper (moved from Luxor)",
+   "draft": true
+  },
+  {
+   "key": "urSkimmer",
+   "at": [
+    -40,
+    214
+   ],
+   "kind": "game",
+   "note": "SKIFF + SKIMMER cleanup minigame on the Toxic Lake (2D); the lake turns blue when clean"
+  },
+  {
+   "key": "urSkeeBall",
+   "at": [
+    -16,
+    -74
+   ],
+   "kind": "game",
+   "note": "SKEE BALL lane at the back of the Tavern (2D)"
+  },
+  {
+   "key": "urKiln",
+   "at": [
+    -60,
+    -150
+   ],
+   "kind": "hiring",
+   "note": "BRICK KILN job by the Kiln Brigade (NOT BUILT YET)"
+  },
+  {
+   "key": "urScribe",
+   "at": [
+    24,
+    -122
+   ],
+   "kind": "hiring",
+   "note": "TABLET SCRIBE job at The Tablet (NOT BUILT YET)"
+  },
+  {
+   "key": "urArchivist",
+   "at": [
+    -46,
+    -30
+   ],
+   "kind": "hiring",
+   "note": "COLLEGE ARCHIVIST job (NOT BUILT YET)"
+  },
+  {
+   "key": "urGlyphLock",
+   "at": [
+    -60,
+    -22
+   ],
+   "kind": "game",
+   "note": "GLYPH LOCK puzzle in the College (2D, NOT BUILT YET)"
+  },
+  {
+   "key": "urHiring",
+   "at": [
+    24,
+    24
+   ],
+   "kind": "hiring",
+   "note": "NOW HIRING board in the square"
+  },
+  {
+   "key": "urHoverboard",
+   "at": [
+    -138,
+    20
+   ],
+   "kind": "vehicle",
+   "note": "HOVERBOARD (Vehicle Workshop ?v=hover) from Hover Hire: ride the streets, the canal paths + the lake shores"
+  },
+  {
+   "key": "urRelicFind",
+   "at": [
+    -330,
+    -390
+   ],
+   "kind": "relicFind",
+   "note": "DRAFT: the legendary + historical relic to find: the FIRST CLAY TABLET, sunk in the reed marsh by the cave (Ben picks)"
+  },
+  {
+   "key": "urRoyalHelipad",
+   "at": [
+    -96,
+    -302
+   ],
+   "kind": "helipad",
+   "note": "ROYAL HELIPAD west of the palace (Meru 2 worlds/meru2-royalpad.js): the royal 8 helicopter; the palace guards fly you to the other pads."
+  },
+  {
+   "key": "urRoyalTelepad",
+   "at": [
+    -62,
+    -302
+   ],
+   "kind": "telepad",
+   "note": "ROYAL TELEPORT PAD west of the palace: E / TALK → beam out → the Ur Space Dock; arriving by telepad beams you in here."
+  },
+  {
+   "key": "urInfirmaryHelipad",
+   "at": [
+    68,
+    -186
+   ],
+   "kind": "helipad",
+   "note": "INFIRMARY HELIPAD (medevac, red cross on the H)"
+  },
+  {
+   "key": "urStadiumHelipad",
+   "at": [
+    260,
+    -100
+   ],
+   "kind": "helipad",
+   "note": "COLLEGE STADIUM HELIPAD: meet-day arrivals"
+  }
+ ],
+ "dock": {
+  "key": "urSpacedock",
+  "pad": [
+   -210,
+   256
+  ],
+  "r": 14,
+  "face": "N"
+ },
+ "gates": [
+  {
+   "key": "urGauntlet",
+   "at": [
+    300,
+    328
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "THE GAUNTLET [urGauntlet] battle map: defend the transport pad 30 s, five gate lines marching north, cover pillars, walker. 5 Gate Wardens, 3 Gate Crawlers, 2 Gate Lances (HACKED Machine Fleet: free them)."
+  },
+  {
+   "key": "urBeastRun",
+   "at": [
+    300,
+    60
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "BEAST RUN pens: 3 Reed Runners, 2 Tall Ones, 1 Spitter (collared lab mutants: victims of the lab)"
+  },
+  {
+   "key": "urSpecimenOne",
+   "at": [
+    424,
+    236
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "HUNTERS POND: boss SPECIMEN ONE (THE CHIP) + Far End pack (6 Reed Runners, 2 Tall Ones, Spitter, Cart Warden)"
+  },
+  {
+   "key": "urToxicWorks",
+   "at": [
+    -120,
+    300
+   ],
+   "r": 8,
+   "kind": "battle",
+   "note": "TOXIC LAKE: THE WORKS + 4 outfalls: 3 Tall Ones, 2 Reed Runners; the grey slag lumps"
+  },
+  {
+   "key": "urReedCaves",
+   "at": [
+    -380,
+    -300
+   ],
+   "r": 8,
+   "kind": "cave",
+   "note": "DRAFT: THE REED CAVES under the marsh (Ur's new cave now the pyramid is in Luxor); boss for Ben to pick"
+  }
+ ],
+ "wild": [
+  {
+   "key": "urGauntletWild",
+   "r": [
+    330,
+    438,
+    290,
+    438
+   ],
+   "for": "urGauntlet",
+   "creatures": [
+    "robots"
+   ]
+  },
+  {
+   "key": "urBeastWild",
+   "r": [
+    260,
+    340,
+    30,
+    88
+   ],
+   "for": "urBeastRun",
+   "creatures": [
+    "monsters"
+   ]
+  },
+  {
+   "key": "urPondWild",
+   "r": [
+    350,
+    390,
+    100,
+    240
+   ],
+   "for": "urSpecimenOne",
+   "creatures": [
+    "monsters",
+    "creatures"
+   ]
+  },
+  {
+   "key": "urToxicWild",
+   "r": [
+    -200,
+    -130,
+    250,
+    338
+   ],
+   "for": "urToxicWorks",
+   "creatures": [
+    "monsters"
+   ]
+  },
+  {
+   "key": "urMarshWild",
+   "r": [
+    -438,
+    -300,
+    -438,
+    -330
+   ],
+   "for": "urReedCaves",
+   "creatures": [
+    "creatures"
+   ],
+   "note": "marsh birds, eels, reed cats (DRAFT)"
+  }
+ ],
+ "props": [
+  {
+   "k": "fountain",
+   "at": [
+    0,
+    0
+   ],
+   "note": "crested TRANSPORT PAD + fountain"
+  },
+  {
+   "k": "sign",
+   "at": [
+    -30,
+    -30
+   ],
+   "note": "neon signs"
+  },
+  {
+   "k": "bench",
+   "at": [
+    24,
+    12
+   ]
+  },
+  {
+   "k": "bench",
+   "at": [
+    -24,
+    12
+   ]
+  },
+  {
+   "k": "planter",
+   "at": [
+    30,
+    30
+   ]
+  },
+  {
+   "k": "planter",
+   "at": [
+    -30,
+    30
+   ]
+  },
+  {
+   "k": "statue",
+   "at": [
+    -20,
+    -226
+   ],
+   "note": "U-crest lion statue"
+  },
+  {
+   "k": "statue",
+   "at": [
+    20,
+    -226
+   ],
+   "note": "U-crest lion statue"
+  },
+  {
+   "k": "sign",
+   "at": [
+    184,
+    -12
+   ],
+   "note": "SAVE the ANIMALS"
+  },
+  {
+   "k": "sign",
+   "at": [
+    192,
+    12
+   ],
+   "note": "NO to POLLUTION"
+  },
+  {
+   "k": "fence",
+   "at": [
+    290,
+    -20
+   ],
+   "note": "THE PENS gate (rusted)"
+  },
+  {
+   "k": "fence",
+   "at": [
+    370,
+    -20
+   ],
+   "note": "second pen run"
+  },
+  {
+   "k": "lamp",
+   "at": [
+    396,
+    180
+   ],
+   "note": "CAMPFIRE"
+  },
+  {
+   "k": "fence",
+   "at": [
+    388,
+    160
+   ],
+   "note": "DRYING RACKS (two tallies)"
+  },
+  {
+   "k": "crate",
+   "at": [
+    420,
+    180
+   ],
+   "note": "hunter's HUT"
+  },
+  {
+   "k": "statue",
+   "at": [
+    -60,
+    234
+   ],
+   "note": "THE WORKS + outfalls"
+  },
+  {
+   "k": "rock",
+   "at": [
+    30,
+    240
+   ],
+   "note": "grey slag"
+  },
+  {
+   "k": "rock",
+   "at": [
+    50,
+    280
+   ],
+   "note": "grey slag"
+  },
+  {
+   "k": "rock",
+   "at": [
+    -30,
+    290
+   ],
+   "note": "grey slag"
+  },
+  {
+   "k": "crate",
+   "at": [
+    196,
+    124
+   ],
+   "note": "JETTY"
+  },
+  {
+   "k": "crate",
+   "at": [
+    -286,
+    22
+   ],
+   "note": "FEED CART"
+  },
+  {
+   "k": "fence",
+   "at": [
+    -196,
+    -14
+   ],
+   "note": "ZOO CAGE: LION"
+  },
+  {
+   "k": "fence",
+   "at": [
+    -196,
+    14
+   ],
+   "note": "ZOO CAGE: WOLF"
+  },
+  {
+   "k": "fence",
+   "at": [
+    -214,
+    -14
+   ],
+   "note": "ZOO CAGE: BOAR"
+  },
+  {
+   "k": "fence",
+   "at": [
+    -214,
+    14
+   ],
+   "note": "ZOO CAGE: BEAR"
+  },
+  {
+   "k": "fence",
+   "at": [
+    -232,
+    -14
+   ],
+   "note": "ZOO CAGE: RAM"
+  },
+  {
+   "k": "fence",
+   "at": [
+    -232,
+    14
+   ],
+   "note": "ZOO CAGE: CROC"
+  },
+  {
+   "k": "fence",
+   "at": [
+    -250,
+    -14
+   ],
+   "note": "ZOO CAGE: STAG"
+  },
+  {
+   "k": "fence",
+   "at": [
+    -250,
+    14
+   ],
+   "note": "ZOO CAGE: APE"
+  },
+  {
+   "k": "fence",
+   "at": [
+    -268,
+    -14
+   ],
+   "note": "ZOO CAGE: PANTHER"
+  },
+  {
+   "k": "fence",
+   "at": [
+    -268,
+    14
+   ],
+   "note": "ZOO CAGE: SERPENT"
+  },
+  {
+   "k": "sign",
+   "at": [
+    8,
+    -116
+   ],
+   "note": "PALACE signpost"
+  },
+  {
+   "k": "sign",
+   "at": [
+    8,
+    116
+   ],
+   "note": "LAKES signpost"
+  },
+  {
+   "k": "sign",
+   "at": [
+    116,
+    8
+   ],
+   "note": "LAB signpost"
+  },
+  {
+   "k": "sign",
+   "at": [
+    -116,
+    8
+   ],
+   "note": "ZOO signpost"
+  }
+ ],
+ "look": {
+  "sky": [
+   "#5f9fbf",
+   "#f6ecd8"
+  ],
+  "fog": "#ecdcc0",
+  "sun": "#fff6dc",
+  "light": "#fffaf0",
+  "grass": "#b8a05a",
+  "ground": "#c98a5a",
+  "water": "#4aa8c0",
+  "toxic": "#7ac43a",
+  "lamps": "#ffbe6a",
+  "banners": [
+   "#d0602a",
+   "#2f8fa0"
+  ],
+  "trees": [
+   "#5a7a32",
+   "#7a8f3a",
+   "#94a24a"
+  ],
+  "notes": "Hot bright day: a hard blue sky bleaching to a white-hot horizon. ORANGE TERRACOTTA + clay brick everywhere (the build theme colour), turquoise-blue glazed tiles as the accent, brass tokens, U-crest banners. The canal ring + clean lake are clear blue; the Toxic Lake is sick green until you clean it. Date palms + reeds by the water. Warm lamps in the tablet halls at night."
+ },
+ "terrain": {
+  "notes": "UR = a flat river-plain city. The town, the canal island and every road stay flat. Low clay TELLS (old buried mounds) out in the plain, a reed MARSH in the north-west, the lakes in the south-east and south.",
+  "hills": [
+   {
+    "key": "urTellNW",
+    "c": [
+     -190,
+     -170
+    ],
+    "r": 40,
+    "h": 10
+   },
+   {
+    "key": "urTellNE",
+    "c": [
+     360,
+     -300
+    ],
+    "r": 60,
+    "h": 14
+   },
+   {
+    "key": "urTellN",
+    "c": [
+     180,
+     -380
+    ],
+    "r": 44,
+    "h": 10
+   },
+   {
+    "key": "urTellSW",
+    "c": [
+     -360,
+     250
+    ],
+    "r": 50,
+    "h": 12
+   },
+   {
+    "key": "urTellS",
+    "c": [
+     -20,
+     410
+    ],
+    "r": 50,
+    "h": 9
+   },
+   {
+    "key": "urTellE",
+    "c": [
+     300,
+     200
+    ],
+    "r": 22,
+    "h": 5
+   },
+   {
+    "key": "urMarshRise",
+    "c": [
+     -420,
+     -180
+    ],
+    "r": 30,
+    "h": 6
+   }
+  ],
+  "cuts": [],
+  "forests": [
+   {
+    "key": "urPadPalmsNW",
+    "r": [
+     -96,
+     -56,
+     -96,
+     -56
+    ],
+    "every": 10,
+    "mix": "palm",
+    "giants": 0
+   },
+   {
+    "key": "urPadPalmsNE",
+    "r": [
+     56,
+     96,
+     -96,
+     -56
+    ],
+    "every": 10,
+    "mix": "palm",
+    "giants": 0
+   },
+   {
+    "key": "urPadPalmsSW",
+    "r": [
+     -96,
+     -56,
+     56,
+     96
+    ],
+    "every": 10,
+    "mix": "palm",
+    "giants": 0
+   },
+   {
+    "key": "urPadPalmsSE",
+    "r": [
+     56,
+     96,
+     56,
+     96
+    ],
+    "every": 10,
+    "mix": "palm",
+    "giants": 0
+   },
+   {
+    "key": "urCleanLakePalms",
+    "r": [
+     170,
+     300,
+     92,
+     108
+    ],
+    "every": 10,
+    "mix": "palm",
+    "giants": 0
+   },
+   {
+    "key": "urFarmPalms",
+    "r": [
+     236,
+     300,
+     200,
+     260
+    ],
+    "every": 9,
+    "mix": "palm",
+    "giants": 0
+   },
+   {
+    "key": "urReedMarsh",
+    "r": [
+     -438,
+     -240,
+     -438,
+     -200
+    ],
+    "every": 12,
+    "mix": "broad",
+    "giants": 0
+   }
+  ],
+  "clearings": [
+   {
+    "key": "urRoyalCourt",
+    "r": [
+     -114,
+     -44,
+     -320,
+     -282
+    ]
+   },
+   {
+    "key": "urCaveMouth",
+    "r": [
+     -400,
+     -360,
+     -320,
+     -280
+    ]
+   }
+  ]
+ }
+}

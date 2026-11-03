@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rafiq's Spy Shop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}a{color:#ffd23a}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Rafiq's Spy Shop">
+  <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+
+  <sc-if value="{{ topOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="top" style="position:absolute;left:0;right:0;top:0;z-index:3;pointer-events:none;display:flex;flex-direction:column">
+      <div style="background:#000;border-bottom:2px solid #ffd23a;display:flex;align-items:stretch;padding-top:env(safe-area-inset-top)">
+        <sc-for list="{{ topCells }}" as="c" hint-placeholder-count="3"><div style="padding:6px 12px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #3a3836;min-width:0;flex:{{ c.flex }}"><span style="font:800 10px var(--font-heading);letter-spacing:0.1em;color:{{ c.kc }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.k }}</span><span style="font:900 18px var(--font-heading);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ c.col }}">{{ c.v }}</span></div></sc-for>
+        <span style="margin-left:auto"></span><button onClick="{{ musicToggle }}" aria-label="{{ musicAria }}" style="pointer-events:auto;flex:none;width:48px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:{{ musicCol }};font:900 20px var(--font-heading);cursor:pointer;text-decoration:{{ musicDeco }}" style-hover="background:#2a2826">♪</button>
+        <button onClick="{{ helpToggle }}" aria-label="How the jobs work" style="pointer-events:auto;flex:none;width:52px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 20px var(--font-heading);cursor:pointer" style-hover="background:#2a2826">?</button>
+      </div>
+      <sc-if value="{{ cardOn }}" hint-placeholder-val="{{ false }}">
+        <div style="margin:6px;align-self:flex-start;max-width:calc(100% - 12px);line-height:1.25;background:#fbfbf7;color:#201e1d;border:2px solid #201e1d;display:flex;flex-direction:column">
+          <div style="background:#1e2450;color:#fff;padding:4px 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><span style="font:900 12px var(--font-heading);letter-spacing:0.06em;white-space:nowrap">JOB CARD · {{ h.job.client }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.04em;color:#e6c26a;white-space:nowrap">{{ h.job.item }}</span></div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;padding:5px 6px">
+            <sc-for list="{{ chips }}" as="c" hint-placeholder-count="3"><span style="display:flex;gap:5px;align-items:center;padding:2px 6px;border:2px solid {{ c.bd }};background:{{ c.bg }};font:900 11px var(--font-heading);letter-spacing:0.04em;color:{{ c.fg }};white-space:nowrap">{{ c.t }}</span></sc-for>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ stripOn }}" hint-placeholder-val="{{ false }}">
+        <div style="margin:6px 6px 0;min-height:48px;background:rgba(0,0,0,0.92);border:2px solid {{ stripBd }};display:flex;align-items:stretch">
+          <div style="flex:none;min-width:58px;display:flex;align-items:center;justify-content:center;padding:0 8px;background:{{ stripKeyBg }};color:{{ stripKeyFg }};font:900 12px var(--font-heading);letter-spacing:0.08em;text-align:center">{{ stripKey }}</div>
+          <div style="flex:1;min-width:0;padding:6px 10px;display:flex;align-items:center;font:900 clamp(13px,3.6vw,16px) var(--font-heading);letter-spacing:0.03em;line-height:1.22;color:{{ stripFg }};text-wrap:pretty">{{ stripTxt }}</div>
+          <sc-if value="{{ demoOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ demoExit }}" aria-label="Exit the demo" style="pointer-events:auto;flex:none;min-width:76px;min-height:44px;padding:0 10px;border:0;border-left:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 11px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#c82a10">EXIT DEMO</button></sc-if>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ barOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="bottom" style="position:absolute;left:0;right:0;bottom:0;z-index:4;display:flex;flex-direction:column;pointer-events:none">
+      <sc-if value="{{ lockOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:minmax(0,46%) minmax(0,1fr);gap:8px;padding:8px;pointer-events:none">
+          <div data-pad="tension" style="height:{{ padH }};border:3px solid {{ padBd }};background:{{ padBg }};display:flex;flex-direction:column;justify-content:center;padding:0 12px;box-sizing:border-box">
+            <span style="font:800 11px var(--font-heading);letter-spacing:0.14em;color:{{ padK }}">{{ padKick }}</span>
+            <span style="font:900 clamp(20px,6vw,28px) var(--font-heading);line-height:1;color:{{ padFg }}">TENSION</span>
+          </div>
+          <div style="background:#000;border:2px solid #3a3836;display:flex;flex-direction:column;justify-content:center;gap:6px;padding:6px 10px;min-width:0">
+            <span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">PINS SET</span>
+            <div style="display:flex;gap:6px"><sc-for list="{{ pinDots }}" as="d" hint-placeholder-count="4"><span style="width:18px;height:18px;border:2px solid {{ d.bd }};background:{{ d.bg }};display:block"></span></sc-for></div>
+            <span style="font:800 11px var(--font-heading);letter-spacing:0.04em;color:{{ lockCol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ lockTxt }}</span>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ safeOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:stretch;background:#000;border-top:2px solid #3a3836;min-height:{{ panelH }}">
+          <div style="flex:none;min-width:70px;padding:4px 10px;display:flex;flex-direction:column;justify-content:center;border-right:2px solid #2a2826;background:{{ dialBg }}"><span style="font:800 9px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">DIAL</span><span style="font:900 26px var(--font-heading);line-height:1;font-variant-numeric:tabular-nums;color:{{ dialCol }}">{{ h.safe.num }}</span></div>
+          <div style="flex:1;min-width:0;padding:4px 10px;display:flex;flex-direction:column;justify-content:center;gap:4px;border-right:2px solid #2a2826"><span style="font:800 10px var(--font-heading);letter-spacing:0.08em;color:#ffd23a;white-space:nowrap">{{ safeDir }}</span><div style="display:flex;gap:3px"><sc-for list="{{ meter }}" as="m" hint-placeholder-count="8"><span style="flex:1;height:12px;background:{{ m.bg }};display:block"></span></sc-for></div></div>
+          <div style="flex:none;display:flex;gap:4px;align-items:center;padding:0 8px"><sc-for list="{{ combo }}" as="c" hint-placeholder-count="3"><span style="min-width:30px;height:34px;border:2px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font:900 15px var(--font-heading);display:flex;align-items:center;justify-content:center">{{ c.t }}</span></sc-for></div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ codeOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:stretch;background:#000;border-top:2px solid #3a3836;min-height:{{ panelH }}">
+          <div style="flex:1;min-width:0;padding:4px 12px;display:flex;flex-direction:column;justify-content:center;gap:4px"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#c9a0ff">{{ codeKick }}</span><span style="font:900 18px var(--font-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ codeCol }}">{{ codeTxt }}</span></div>
+          <sc-if value="{{ codeLock }}" hint-placeholder-val="{{ false }}"><button onClick="{{ lockIn }}" style="pointer-events:auto;flex:none;min-width:120px;min-height:56px;padding:0 16px;border:0;border-radius:0;background:{{ lockBg }};color:#fff;font:900 15px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="filter:brightness(1.15)">LOCK IN</button></sc-if>
+        </div>
+      </sc-if>
+      <sc-if value="{{ sweepOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:stretch;background:#000;border-top:2px solid #3a3836;min-height:{{ panelH }}">
+          <div style="flex:1;min-width:0;padding:4px 12px;display:flex;flex-direction:column;justify-content:center;gap:5px"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">BUG WAND · SIGNAL</span><div style="display:flex;gap:3px"><sc-for list="{{ meter }}" as="m" hint-placeholder-count="8"><span style="flex:1;height:14px;background:{{ m.bg }};display:block"></span></sc-for></div></div>
+          <div style="flex:none;min-width:84px;padding:4px 12px;display:flex;flex-direction:column;justify-content:center;border-left:2px solid #2a2826"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">BUGS OUT</span><span style="font:900 20px var(--font-heading);font-variant-numeric:tabular-nums">{{ bugTxt }}</span></div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ laserOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:stretch;background:#000;border-top:2px solid #3a3836;min-height:{{ panelH }}">
+          <div style="flex:1;min-width:0;padding:4px 12px;display:flex;flex-direction:column;justify-content:center;gap:2px"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ff9a8a">{{ laserKick }}</span><span style="font:900 16px var(--font-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ laserTxt }}</span></div>
+          <button onClick="{{ dust }}" aria-label="Puff dust to show the beams" style="pointer-events:auto;flex:none;min-width:96px;min-height:56px;padding:0 14px;border:0;border-left:2px solid #2a2826;border-radius:0;background:{{ dustBg }};color:{{ dustFg }};font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="filter:brightness(1.2)">DUST</button>
+        </div>
+      </sc-if>
+      <div style="pointer-events:auto;background:#000;border-top:2px solid #ffd23a;padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:grid;grid-template-columns:repeat({{ toolCols }},minmax(0,1fr))">
+        <sc-for list="{{ tools }}" as="t" hint-placeholder-count="4">
+          <button onClick="{{ t.go }}" aria-label="{{ t.aria }}" style="min-height:{{ toolH }};padding:6px 4px 6px 8px;border:0;border-right:2px solid #2a2826;border-radius:0;background:{{ t.bg }};color:{{ t.fg }};cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:3px;min-width:0" style-hover="filter:brightness(1.2)">
+            <span style="font:900 13px var(--font-heading);letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.label }}</span>
+            <span style="font:800 9px var(--font-heading);letter-spacing:0.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ t.bc }}">{{ t.badge }}</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ hintOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;right:max(10px, env(safe-area-inset-right));bottom:{{ trayBottom }};z-index:3;pointer-events:none;max-width:min(270px, 64%);background:#000;border:2px solid #ffd23a;padding:5px 10px;font:800 11px var(--font-heading);letter-spacing:0.08em;line-height:1.35;color:#ffd23a;text-wrap:pretty">{{ hintTxt }}</div>
+  </sc-if>
+  <sc-if value="{{ sayOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(10px, env(safe-area-inset-left));bottom:{{ sayBottom }};top:{{ sayTop }};z-index:3;pointer-events:none;height:max-content;max-width:min(360px, calc(100% - 20px));background:rgba(0,0,0,0.88);border:2px solid #3a3836;padding:8px 10px;font:700 13px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">{{ h.say }}</div>
+  </sc-if>
+  <sc-if value="{{ flashOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ flashTop }};transform:translateX(-50%);z-index:5;pointer-events:none;max-width:calc(100% - 24px);background:rgba(0,0,0,0.9);border:2px solid {{ flashCol }};display:flex;align-items:stretch">
+      <span style="flex:none;width:10px;background:{{ flashCol }};display:block"></span>
+      <span style="padding:8px 14px;font:900 clamp(14px,4vw,21px) var(--font-heading);letter-spacing:0.04em;color:#fff;text-wrap:pretty">{{ flashTxt }}</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ reactOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:{{ reactTop }};transform:translateX(-50%);z-index:6;pointer-events:none;width:min(420px, calc(100% - 24px));background:#000;border:3px solid {{ h.react.col }};display:flex;flex-direction:column">
+      <div style="display:flex;align-items:stretch"><div style="flex:1;padding:10px 14px;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#cfcac4">{{ h.react.who }}</span><span style="font:900 clamp(30px,9vw,44px) var(--font-heading);line-height:1;color:{{ h.react.col }}">{{ h.react.word }}</span></div><div style="flex:none;min-width:96px;padding:0 12px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;background:{{ h.react.col }};color:#000"><span style="font:900 20px var(--font-heading);letter-spacing:0.04em">{{ reactStars }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.08em">{{ reactPay }}</span></div></div>
+      <div style="padding:8px 14px 10px;border-top:2px solid #2a2826;font:700 15px var(--font-body);line-height:1.35;color:#fff;text-wrap:pretty">“{{ h.react.line }}”</div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ demoFloatOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(10px, env(safe-area-inset-left));bottom:{{ trayBottom }};z-index:7;pointer-events:none;width:min(460px, calc(100% - 112px));background:#000;border:2px solid #ffd23a;display:flex;flex-direction:column">
+      <div style="padding:5px 12px;border-bottom:2px solid #3a3836;font:800 10px var(--font-heading);letter-spacing:0.14em;color:#ffd23a;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;background:#ec3013;display:block"></span>DEMO</div>
+      <div style="display:flex;align-items:stretch"><sc-if value="{{ demoKeyOn }}" hint-placeholder-val="{{ false }}"><div style="flex:none;min-width:64px;display:flex;align-items:center;justify-content:center;padding:0 10px;background:#ec3013;color:#fff;font:900 14px var(--font-heading);border-right:2px solid #3a3836">{{ h.demo.key }}</div></sc-if><div style="padding:9px 12px;font:900 clamp(13px,3.6vw,18px) var(--font-heading);letter-spacing:0.03em;line-height:1.2;color:#fff;text-wrap:pretty">{{ h.demo.cap }}</div></div>
+    </div>
+    <button onClick="{{ demoExit }}" aria-label="Exit the demo" style="position:absolute;right:max(10px, env(safe-area-inset-right));bottom:{{ trayBottom }};z-index:7;min-width:88px;min-height:48px;padding:0 14px;border:2px solid #ec3013;border-radius:0;background:#ec3013;color:#fff;font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">EXIT DEMO</button>
+  </sc-if>
+
+  <sc-if value="{{ introOn }}" hint-placeholder-val="{{ true }}">
+    <div data-safe="intro" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:6;width:min(420px, calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column">
+      <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:2px;position:relative"><button onClick="{{ musicToggle }}" aria-label="{{ musicAria }}" style="position:absolute;top:6px;right:6px;min-width:64px;min-height:44px;padding:0 10px;border:2px solid #3a3836;border-radius:0;background:#000;color:{{ musicCol }};font:900 12px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left" style-hover="background:#2a2826">♪ {{ musicTxt }}</button><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a;padding-right:72px">KUFA · RAFIQ'S SPY SHOP · DAY {{ h.day }}</span><span style="font:900 26px var(--font-heading);line-height:1.05">Work the quiet trade</span><span style="font:700 13px var(--font-body);color:#cfcac2;text-wrap:pretty">{{ introTxt }}</span></div>
+      <sc-for list="{{ introRows }}" as="r" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:76px minmax(0,1fr);gap:12px;padding:6px 16px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;color:#e6b45a">{{ r.v }}</span></div></sc-for>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+        <button onClick="{{ demoGo }}" style="min-height:48px;padding:0 16px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#ffd23a;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">WATCH THE DEMO</button>
+        <button onClick="{{ walkGo }}" style="min-height:48px;padding:0 16px;border:0;border-radius:0;background:#000;color:#ffd23a;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">LOOK AROUND</button>
+      </div>
+      <button onClick="{{ trainGo }}" style="min-height:48px;padding:0 16px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center" style-hover="background:#2a2826"><span>TRAINING ROOM</span><span style="color:#e6b45a">{{ trainedTxt }}</span></button>
+      <button onClick="{{ goWork }}" style="min-height:56px;padding:0 18px;border:0;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">{{ mainBtn }}</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ trainOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="intro" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:6;width:min(420px, calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column">
+      <div style="padding:10px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">BACK ROOM · BEHIND THE BOOKCASE</span><span style="font:900 24px var(--font-heading);line-height:1.05">Train with Rafiq</span><span style="font:700 12px var(--font-body);color:#cfcac2;text-wrap:pretty">One tool at a time. Pass a lesson and that job can come through the door.</span></div>
+      <sc-for list="{{ lessons }}" as="l" hint-placeholder-count="5">
+        <button onClick="{{ l.go }}" aria-label="{{ l.aria }}" style="min-height:46px;padding:0 16px;border:0;border-bottom:2px solid #2a2826;border-radius:0;background:{{ l.bg }};color:#fff;cursor:pointer;text-align:left;display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:10px;align-items:center" style-hover="background:#2a2826">
+          <span style="font:900 14px var(--font-heading);letter-spacing:0.06em;color:{{ l.lc }}">{{ l.label }}</span><span style="font:700 12px var(--font-body);color:#cfcac2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ l.name }}</span><span style="font:900 13px var(--font-heading);color:{{ l.sc }};white-space:nowrap">{{ l.status }}</span>
+        </button>
+      </sc-for>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+        <button onClick="{{ toIntro }}" style="min-height:52px;padding:0 16px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">BACK TO THE SHOP</button>
+        <button onClick="{{ goWork }}" style="min-height:52px;padding:0 16px;border:0;border-radius:0;background:{{ workBg }};color:#fff;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="filter:brightness(1.15)">PUT ME TO WORK</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ resOn }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="intro" style="position:absolute;left:max(12px, env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:6;width:min(420px, calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;background:#000;border:2px solid #3a3836;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+        <div style="flex:1;padding:12px 16px;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#22c55e">LESSON PASSED · {{ h.lessonRes.label }}</span><span style="font:900 30px var(--font-heading);line-height:1.05;color:#ffd23a">{{ resStars }}</span><span style="font:700 13px var(--font-body);color:#cfcac2;text-wrap:pretty">RAFIQ: “{{ h.lessonRes.line }}”</span></div>
+        <div style="width:84px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#ec3013"><span style="font:900 26px var(--font-heading)">+{{ h.lessonRes.gold }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em">GOLD</span></div>
+      </div>
+      <sc-if value="{{ resNextOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ nextLesson }}" style="min-height:52px;padding:0 16px;border:0;border-bottom:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 15px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">{{ resNextTxt }}</button></sc-if>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+        <button onClick="{{ trainGo }}" style="min-height:52px;padding:0 16px;border:0;border-right:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">TRAINING ROOM</button>
+        <button onClick="{{ goWork }}" style="min-height:52px;padding:0 16px;border:0;border-radius:0;background:{{ resWorkBg }};color:#fff;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="filter:brightness(1.15)">PUT ME TO WORK</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ walkOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:max(10px, env(safe-area-inset-left));top:calc(10px + env(safe-area-inset-top));z-index:4;pointer-events:none;background:#000;border:2px solid #ffd23a;padding:5px 10px;display:flex;flex-direction:column"><span style="font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">KUFA</span><span style="font:900 15px var(--font-heading)">SPY SHOP</span></div>
+    <button onClick="{{ musicToggle }}" aria-label="{{ musicAria }}" style="position:absolute;right:calc(108px + env(safe-area-inset-right));top:calc(10px + env(safe-area-inset-top));z-index:4;min-width:48px;min-height:48px;border:2px solid #ffd23a;border-radius:0;background:#000;color:{{ musicCol }};font:900 18px var(--font-heading);cursor:pointer;text-decoration:{{ musicDeco }}" style-hover="background:#2a2826">♪</button>
+    <button onClick="{{ toIntro }}" aria-label="Stop walking" style="position:absolute;right:max(10px, env(safe-area-inset-right));top:calc(10px + env(safe-area-inset-top));z-index:4;min-width:88px;min-height:48px;padding:0 14px;border:2px solid #ffd23a;border-radius:0;background:#000;color:#ffd23a;font:900 13px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">BACK</button>
+    <sc-if value="{{ promptOn }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ walkAct }}" style="position:absolute;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom));z-index:5;min-width:min(300px, calc(100% - 32px));min-height:60px;padding:0 18px;border:2px solid #000;border-radius:0;background:#ec3013;color:#fff;font:900 16px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:12px" style-hover="background:#c82a10"><span>{{ h.prompt.label }}</span><span style="font:800 11px var(--font-heading);color:#ffd23a">{{ promptKey }}</span></button>
+    </sc-if>
+    <sc-if value="{{ walkTipOn }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom));z-index:4;pointer-events:none;background:rgba(0,0,0,0.85);border:2px solid #3a3836;padding:8px 14px;font:800 12px var(--font-heading);letter-spacing:0.1em;color:#ffd23a;white-space:nowrap">{{ walkTip }}</div>
+    </sc-if>
+  </sc-if>
+
+  <sc-if value="{{ helpOn }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ helpToggle }}" style="position:absolute;inset:0;z-index:9;background:rgba(0,0,0,0.82);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #ffd23a;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="padding:10px 14px;border-bottom:2px solid #3a3836;font:900 16px var(--font-heading);letter-spacing:0.06em;color:#ffd23a">HOW THE QUIET TRADE WORKS</div>
+        <sc-for list="{{ helpRows }}" as="r" hint-placeholder-count="7"><div style="display:grid;grid-template-columns:72px minmax(0,1fr);gap:10px;padding:7px 14px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body);line-height:1.35"><span style="font:900 11px var(--font-heading);letter-spacing:0.08em;color:#e6b45a">{{ r.k }}</span><span style="text-wrap:pretty">{{ r.v }}</span></div></sc-for>
+        <div style="padding:10px 14px;font:700 12px var(--font-body);color:#cfcac2">Tap anywhere to close</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:8;background:rgba(0,0,0,0.78);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;overflow:auto">
+      <div style="background:#000;border:2px solid #3a3836;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+          <div style="padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">{{ doneKicker }}</span><span style="font:900 24px var(--font-heading);line-height:1.05">Shop's shut</span><span style="font:700 12px var(--font-body);color:#cfcac2">{{ doneSub }}</span></div>
+          <div style="width:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#ec3013"><span style="font:900 30px var(--font-heading)">{{ d.total }}</span><span style="font:800 11px var(--font-heading);letter-spacing:0.1em">GOLD</span></div>
+        </div>
+        <sc-if value="{{ eodOn }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:10px;padding:10px 16px;background:#ffd23a;color:#000;border-bottom:2px solid #000;font:900 14px var(--font-heading);letter-spacing:0.06em"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18.5 21 12 16.8 5.5 21l2-7.5L2 9h7z" fill="#000"></path></svg>EMPLOYEE OF THE DAY</div></sc-if>
+        <sc-for list="{{ doneRows }}" as="r" hint-placeholder-count="5"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:7px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font-family:var(--font-heading);font-weight:800;font-variant-numeric:tabular-nums">{{ r.v }}</span></div></sc-for>
+        <sc-for list="{{ unlocks }}" as="u" hint-placeholder-count="1"><div style="padding:7px 16px;border-bottom:2px solid #2a2826;font:800 13px var(--font-heading);letter-spacing:0.04em;color:#22c55e">UNLOCKED · {{ u.t }}</div></sc-for>
+        <div style="padding:8px 16px 4px;font:800 11px var(--font-heading);letter-spacing:0.12em;color:#ffd23a">KIT FOR THE SHOP · YOU HAVE {{ goldTxt }}</div>
+        <sc-for list="{{ shop }}" as="s" hint-placeholder-count="6">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 16px;border-top:2px solid #2a2826">
+            <div style="display:flex;flex-direction:column;min-width:0"><span style="font:900 13px var(--font-heading);letter-spacing:0.04em">{{ s.name }}</span><span style="font:600 12px var(--font-body);color:#cfcac2">{{ s.line }}</span></div>
+            <button onClick="{{ s.buy }}" disabled="{{ s.off }}" style="min-width:84px;min-height:44px;padding:0 12px;border:2px solid {{ s.bd }};border-radius:0;background:{{ s.bg }};color:{{ s.fg }};font:900 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer;text-align:left;opacity:{{ s.op }}" style-hover="filter:brightness(1.15)">{{ s.btn }}</button>
+          </div>
+        </sc-for>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:8px">
+          <button onClick="{{ goWork }}" style="min-height:52px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-right:2px solid #3a3836;border-radius:0;background:#ec3013;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#c82a10">NEXT DAY</button>
+          <button onClick="{{ toIntro }}" style="min-height:52px;padding:0 18px;border:0;border-top:2px solid #3a3836;border-radius:0;background:#000;color:#fff;font:900 14px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:#2a2826">TAKE A BREAK</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  state = { h: null, help: false, vw: 390, vh: 844 };
+  stageRef = React.createRef();
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs(); try { this.ro = new ResizeObserver(this.onRs); this.stageRef.current && this.ro.observe(this.stageRef.current.parentElement); } catch (e) {}
+    try { const m = await import(new URL('minigames/kufa/spy-shop.js', document.baseURI).href); this.g = await m.createSpyShop({ container: this.stageRef.current, onState: h => this.setState({ h }) }); window.__spy = this.g; const q = new URLSearchParams(location.search), st = q.get('start') || ''; if (q.get('demo') === '1' || st === 'demo') setTimeout(() => this.g.demoStart(), 400); else if (st === 'work') setTimeout(() => this.g.startDay(), 400); else if (st === 'train') setTimeout(() => this.g.openTraining(), 400); else if (st === 'walk') setTimeout(() => this.g.walkStart(), 400); else if (/^lesson:/.test(st)) setTimeout(() => this.g.startLesson(st.slice(7)), 400); }
+    catch (e) { console.warn('spy shop failed: ' + (e && e.stack || String(e))); }
+  }
+  componentDidUpdate() { const root = this.stageRef.current && this.stageRef.current.parentElement; if (!root || !this.g || !this.g.setSafe) return; const rb = root.getBoundingClientRect(); let top = 0, bot = 0, left = 0;
+    root.querySelectorAll('[data-safe]').forEach(el => { const r = el.getBoundingClientRect(); if (!r.height) return; if (el.dataset.safe === 'top') top = Math.max(top, r.bottom - rb.top); else if (el.dataset.safe === 'intro' && rb.width > rb.height) left = Math.max(left, r.right - rb.left); else bot = Math.max(bot, rb.bottom - r.top); });
+    const H = rb.height, ph = this.g.hud().phase, big = ph === 'intro' || ph === 'train' || ph === 'lessonDone';
+    this.g.setSafe(Math.round(Math.min(top, H * 0.36)), Math.round(Math.min(bot, H * (big ? 0.62 : 0.45))), Math.round(Math.min(left, rb.width * 0.6)));
+    const pe = root.querySelector('[data-pad]'); if (pe) { const r = pe.getBoundingClientRect(); this.g.setPad({ x: r.left - rb.left, y: r.top - rb.top, w: r.width, h: r.height }); } else this.g.setPad(null); }
+  componentWillUnmount() { removeEventListener('resize', this.onRs); this.g && this.g.destroy(); }
+  onRs = () => { const el = this.stageRef.current, r = el && el.parentElement ? el.parentElement.getBoundingClientRect() : null; this.setState({ vw: r && r.width ? r.width : innerWidth, vh: r && r.height ? r.height : innerHeight }); };
+  renderVals() {
+    const S = this.state, g = this.g, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur();
+    const h = S.h || { phase: 'intro', day: 1, n: 0, perDay: 3, earned: 0, tips: 0, stars: 0, job: null, tool: null, flash: null, say: '', react: null, done: null, gold: 0, upgrades: [], hint: null, demo: null, training: [], trained: 0, lesson: null, lessonRes: null, prompt: null, touch: true };
+    const ph = h.phase, busy = ['arrive', 'work', 'react', 'leave'].includes(ph), work = ph === 'work', les = ph === 'lesson', J = h.job, d = h.done || { total: 0 }, port = S.vh > S.vw, demo = !!h.demo;
+    const tools = les && h.lesson ? [{ label: 'LESSON · ' + h.lesson.label, aria: 'Lesson', badge: h.lesson.txt || ' ', bg: '#ffd23a', fg: '#000000', bc: '#000000', go: e => blur(e) }, { label: 'QUIT LESSON', aria: 'Quit the lesson', badge: 'BACK TO THE ROOM', bg: '#000000', fg: '#ffffff', bc: '#8a847e', go: e => { blur(e); g && g.quitLesson(); } }]
+      : !J ? [] : [...J.tasks.map(t => { const on = h.tool === t.id, nx = h.hint && h.hint.tool === t.id && !on; return { label: t.label, aria: 'Work on ' + t.name, badge: t.locked ? 'LOCKED' : nx ? 'NEXT ▸' : t.done ? 'DONE ✓' : t.txt, bg: on ? '#ffd23a' : nx ? '#1f3a24' : '#000000', fg: on ? '#000000' : t.done || t.locked ? '#8a847e' : '#ffffff', bc: on ? '#000000' : t.done ? '#22c55e' : nx ? '#ffd23a' : '#8a847e', go: e => { blur(e); g && g.setTool(t.id); } }; }),
+        { label: 'HAND BACK', aria: 'Hand the job back', badge: h.allDone ? 'READY' : h.confirm ? 'TAP AGAIN' : 'NOT DONE', bg: h.allDone ? '#ec3013' : '#000000', fg: '#ffffff', bc: h.allDone ? '#ffffff' : '#8a847e', go: e => { blur(e); g && g.handBack(); } }];
+    const T = (work || les) ? h.tool : null, L = T === 'lock' && h.lock, SF = T === 'safe' && h.safe, CD = T === 'code' && h.code, SW = T === 'sweep' && h.sweep, LZ = T === 'laser' && h.laser;
+    const padPx = port ? 104 : 62, tH = port ? 58 : 46, pH = port ? 56 : 44, barH = port && tools.length > 5 ? tH * 2 : tH, panelH = L ? padPx + 16 : (SF || CD || SW || LZ) ? pH + 2 : 0, trayB = barH + panelH + 10;
+    const stripOn = les || (busy && !h.react), sayFresh = !!h.say && !h.react;
+    const strip = !stripOn ? null : h.flash ? { key: '!', txt: h.flash.txt, bd: h.flash.col, kb: h.flash.col, kf: '#000000', fg: '#ffffff' } : demo ? { key: h.demo.key || 'DEMO', txt: h.demo.cap, bd: '#ffd23a', kb: '#ec3013', kf: '#ffffff', fg: '#ffffff' } : sayFresh ? { key: 'SAYS', txt: h.say, bd: '#3a3836', kb: '#3a3836', kf: '#ffd23a', fg: '#ffffff' } : h.hint ? { key: 'NEXT', txt: h.hint.text, bd: '#ffd23a', kb: '#ffd23a', kf: '#000000', fg: '#ffd23a' } : { key: '·', txt: work ? 'Work the job card at your own pace' : 'Rafiq is watching', bd: '#3a3836', kb: '#3a3836', kf: '#ffffff', fg: '#cfcac4' };
+    const meterOf = (v, n = 8) => Array.from({ length: n }, (_, i) => ({ bg: v * n > i + 0.15 ? (i >= n - 2 ? '#ec3013' : i >= n - 4 ? '#ffd23a' : '#22c55e') : '#2a2826' }));
+    const stars = n => '★'.repeat(n) + '☆'.repeat(3 - n);
+    const topCells = les && h.lesson ? [{ k: 'TRAINING ROOM', v: h.lesson.label, kc: '#ffd23a', col: '#ffffff', flex: '1' }, { k: 'RAFIQ WATCHES', v: h.lesson.txt || '', kc: '#cfcac4', col: '#e6b45a', flex: '1' }]
+      : [{ k: "RAFIQ'S SPY SHOP · DAY " + h.day, v: 'CLIENT ' + Math.min(h.n + 1, h.perDay) + ' / ' + h.perDay, kc: '#ffd23a', col: '#ffffff', flex: 'none' }, { k: port && h.stars ? 'EARNED · ★ ' + h.stars : 'EARNED', v: (h.earned + h.tips) + 'g', kc: '#cfcac4', col: '#e6b45a', flex: port ? '1' : 'none' }, ...(port ? [] : [{ k: J ? J.client : 'CLIENT', v: J ? J.item : '', kc: '#cfcac4', col: '#ffffff', flex: '1' }]), ...(port ? [] : [{ k: 'STARS', v: h.stars ? '★ ' + h.stars : '★ –', kc: '#cfcac4', col: '#ffffff', flex: 'none' }])];
+    const lessonsDone = h.trained || 0, R = h.lessonRes;
+    return {
+      stageRef: this.stageRef, h, d, stripOn, stripTxt: strip ? strip.txt : '', stripKey: strip ? strip.key : '', stripBd: strip ? strip.bd : '#000', stripKeyBg: strip ? strip.kb : '#000', stripKeyFg: strip ? strip.kf : '#fff', stripFg: strip ? strip.fg : '#fff', toolH: tH + 'px', panelH: pH + 'px', demoFloatOn: demo && !stripOn,
+      musicToggle: e => { blur(e); g && g.toggleMusic(); }, musicAria: h.music === false ? 'Turn music on' : 'Turn music off', musicCol: h.music === false ? '#8a847e' : '#ffd23a', musicDeco: h.music === false ? 'line-through' : 'none', musicTxt: h.music === false ? 'OFF' : 'ON', topOn: (busy && !h.done) || les, topCells, cardOn: !!J && busy && !h.react && (port || !work) && !(demo && !port), chips: J ? J.tasks.map(t => ({ t: (t.done ? '✓ ' : '') + t.label + (t.done ? '' : ' · ' + t.txt), bg: t.done ? '#e6f6ea' : h.tool === t.id ? '#ffd23a' : '#fbfbf7', bd: t.done ? '#22c55e' : '#201e1d', fg: t.done ? '#1f6a3a' : t.locked ? '#8a847e' : '#201e1d' })) : [],
+      barOn: work || les, toolCols: port && tools.length > 5 ? Math.ceil(tools.length / 2) : tools.length || 1, tools,
+      lockOn: !!L, padH: padPx + 'px', padBg: L && L.tension ? 'rgba(34,197,94,0.32)' : 'rgba(0,0,0,0.55)', padBd: L && L.tension ? '#22c55e' : '#ffd23a', padFg: L && L.tension ? '#22c55e' : '#ffffff', padK: L && L.tension ? '#22c55e' : '#ffd23a', padKick: L && L.tension ? 'HOLDING · KEEP IT DOWN' : (h.touch ? 'HOLD HERE WITH A THUMB' : 'CLICK OR HOLD SPACE'),
+      pinDots: L ? L.pins.map(s => ({ bg: s ? '#22c55e' : '#000000', bd: s ? '#22c55e' : '#8a847e' })) : [], lockTxt: !L ? '' : L.overset ? 'OVERSET · LET GO OF TENSION' : L.win ? 'IT CATCHES · EASE OFF' : L.tension ? 'PUSH PINS UP SLOWLY' : 'TENSION FIRST', lockCol: L && L.overset ? '#ff9a8a' : L && L.win ? '#ffd23a' : '#cfcac4',
+      safeOn: !!SF, safeDir: !SF ? '' : SF.pull ? 'PULL THE HANDLE ▸' : SF.click ? 'CLICK! LET GO TO KEEP IT' : 'TURN ' + SF.need + ' · LISTEN', meter: meterOf(SF ? SF.sig : SW ? SW.sig : 0), dialBg: SF && SF.click ? '#1f3a24' : '#000000', dialCol: SF && SF.click ? '#22c55e' : '#ffffff',
+      combo: SF ? SF.entered.map((v, i) => ({ t: v == null ? (i === SF.step ? '?' : '–') : String(v), bg: v == null ? '#000000' : '#22c55e', fg: v == null ? '#8a847e' : '#000000', bd: v == null ? (i === SF.step ? '#ffd23a' : '#3a3836') : '#22c55e' })) : [],
+      codeOn: !!CD, codeKick: !CD ? '' : CD.phase === 'uv' ? 'UV LAMP · RUB THE NOTE' : 'CIPHER WHEEL · CLUE ' + CD.clue, codeTxt: !CD ? '' : CD.phase === 'uv' ? 'HIDDEN INK ' + Math.round(CD.prog * 100) + '%' : 'NOW: ' + CD.pair, codeCol: CD && CD.reads ? '#22c55e' : '#ffffff', codeLock: !!(CD && CD.canLock), lockBg: CD && CD.reads ? '#ec3013' : '#3a3836',
+      lockIn: e => { blur(e); g && g.lockIn(); },
+      sweepOn: !!SW, bugTxt: SW ? (SW.n - SW.left) + ' / ' + SW.n : '',
+      laserOn: !!LZ, laserKick: LZ ? (LZ.alarms ? 'ALARMS · ' + LZ.alarms : 'GLOVE · DRAG ANYWHERE') : '', laserTxt: LZ ? (LZ.carry ? 'BRING IT BACK OUT' : 'GET THE ' + LZ.prize) : '', dustBg: LZ && LZ.faint && !LZ.dustOn ? '#ffd23a' : '#000000', dustFg: LZ && LZ.faint && !LZ.dustOn ? '#000000' : '#ffd23a', dust: e => { blur(e); g && g.dust(); },
+      hintOn: false, hintTxt: h.hint ? h.hint.text : '', trayBottom: 'calc(' + trayB + 'px + env(safe-area-inset-bottom))',
+      sayOn: !demo && !!h.say && !h.react && ph !== 'done' && !stripOn, sayBottom: (work || les) ? 'calc(' + (trayB + 44) + 'px + env(safe-area-inset-bottom))' : 'auto', sayTop: (work || les) ? 'auto' : (ph === 'walk' ? 'calc(70px + env(safe-area-inset-top))' : 'calc(12px + env(safe-area-inset-top))'),
+      flashOn: !!h.flash && !stripOn, flashTxt: h.flash ? h.flash.txt : '', flashCol: h.flash ? h.flash.col : '#ffd23a', flashTop: port ? '40%' : '34%',
+      reactOn: !!h.react, reactTop: port ? 'calc(64px + env(safe-area-inset-top))' : '58px', reactStars: h.react ? stars(h.react.stars) : '', reactPay: h.react ? '+' + h.react.pay + 'g' + (h.react.tip ? ' · TIP ' + h.react.tip : '') : '',
+      demoOn: demo, demoKeyOn: !!(h.demo && h.demo.key), demoGo: e => { blur(e); g && g.demoStart(); }, demoExit: e => { blur(e); g && g.demoStop(); },
+      introOn: ph === 'intro' && !demo, introTxt: lessonsDone ? 'Clients bring locked cases, strongboxes, coded slips and things that listen. Fix them quietly. Pay is the job plus tips, in gold.' : 'Rafiq hires you behind the counter. First he trains you in the back room: locks, safes, codes, bugs and lasers.',
+      introRows: [['Gold', h.gold + 'g'], ['Trained', lessonsDone + ' / 5 tools'], ['Record', '★ ' + (h.empStars || 0) + ' employee stars · best day ' + (h.bestDay || 0) + 'g'], ['Uniform', h.uniform ? 'Yours · navy coat, K pin + red fez' : 'Finish a day to keep it']].map(([k, v]) => ({ k, v })),
+      trainedTxt: lessonsDone + ' / 5', mainBtn: lessonsDone ? 'PUT ME TO WORK' : 'START TRAINING',
+      walkGo: e => { blur(e); g && g.walkStart(); }, trainGo: e => { blur(e); g && g.openTraining(); }, goWork: e => { blur(e); g && g.startDay(); }, toIntro: e => { blur(e); g && g.toIntro(); },
+      trainOn: ph === 'train' && !demo, workBg: lessonsDone ? '#ec3013' : '#3a3836',
+      lessons: (h.training || []).map(l => ({ label: l.label, name: l.name, aria: 'Lesson: ' + l.name, status: l.stars ? stars(l.stars) : 'NEW', sc: l.stars ? '#ffd23a' : '#22c55e', lc: l.stars ? '#ffffff' : '#ffd23a', bg: '#000000', go: e => { blur(e); g && g.startLesson(l.id); } })),
+      resOn: ph === 'lessonDone' && !!R, resStars: R ? stars(R.stars) : '', resNextOn: !!(R && R.next), resNextTxt: R && R.next ? 'NEXT LESSON · ' + R.next.toUpperCase() : '', nextLesson: e => { blur(e); g && R && R.next && g.startLesson(R.next); }, resWorkBg: R && R.next ? '#3a3836' : '#ec3013',
+      walkOn: ph === 'walk', promptOn: ph === 'walk' && !!h.prompt, promptKey: h.touch ? 'TAP' : 'E', walkAct: e => { blur(e); g && g.walkAct(); }, walkTipOn: ph === 'walk' && !h.prompt, walkTip: h.touch ? 'TAP THE FLOOR TO WALK' : 'CLICK THE FLOOR OR USE WASD',
+      helpOn: S.help && (busy || les), helpToggle: e => { blur(e); this.setState({ help: !S.help }); },
+      helpRows: [['JOB CARD', 'Each client brings one item and a card of jobs. Tap a job at the bottom and the camera moves to it. Hand it back when it is all done.'], ['LOCK', 'Hold the TENSION pad with one thumb. With the other, slide under the pins and push up slowly. The stiff pin clicks at the shear line: ease off when it catches. Push too far and it oversets: let go of tension to reset.'], ['SAFE', 'Circle your thumb around the dial. The meter and the ticks grow near the number, and it CLICKS on it. Let go on the click (or turn back) to keep it. Three numbers: right, left, right. Then tap the handle.'], ['CODE', 'Rub the UV lamp over the note until the hidden ink shows. Then turn the cipher wheel until A sits over the clue letter and the note reads. Tap LOCK IN.'], ['SWEEP', 'Drag the bug wand over the item. The beeps speed up near a bug. When a red light shows, tap the bug to pull it out.'], ['LASER', 'Drag anywhere: the glove moves with your finger, so your thumb never hides it. Slip through the gaps, grab the order, bring it back to START. DUST shows faint beams.'], ['ORDER', 'A coded slip inside a case or a strongbox can only be read once it is open.'], ['BY EAR', 'Every tool can be played by sound: pins click when they set, the dial clicks on the number, the wand beeps faster near a bug, and the laser hum gets louder near a beam.']].map(([k, v]) => ({ k, v })),
+      doneOn: !!h.done && ph === 'done', doneKicker: h.done ? 'DAY ' + d.day + " · RAFIQ'S SPY SHOP" : '', doneSub: h.done ? (d.newDay ? 'Day ' + (d.day + 1) + ' tomorrow: harder jobs' : 'Average 2 stars to move up a day') + ' · ★ ' + d.stars + ' employee stars' : '', eodOn: !!(h.done && d.eod),
+      doneRows: h.done ? [['Clients served', String(d.served)], ['Average stars', String(d.avg)], ['Wage', d.wage + 'g'], ['Jobs', d.earned + 'g'], ['Tips', d.tips + 'g']].map(([k, v]) => ({ k, v })) : [], unlocks: h.done ? d.unlock.map(t => ({ t })) : [], goldTxt: h.gold + 'g',
+      shop: h.upgrades.map(u => { const afford = h.gold >= u.cost; return { name: u.name, line: u.line, btn: u.owned ? 'OWNED' : u.cost + 'g', off: u.owned || !afford, bg: u.owned ? '#22c55e' : afford ? '#ffd23a' : '#000000', fg: u.owned || afford ? '#000000' : '#8a847e', bd: u.owned ? '#22c55e' : afford ? '#ffd23a' : '#3a3836', op: u.owned || afford ? 1 : 0.6, buy: e => { blur(e); g && g.buyUpgrade(u.id); } }; }),
+    };
+  }
+}
+</script>
+</body>
+</html>

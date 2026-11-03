@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>
+html, body { margin: 0; background: #201e1d; color: #f3f2f2; font-family: Archivo, sans-serif; }
+a { color: #f3f2f2; } a:hover { color: #ec3013; }
+button, input { font-family: Archivo, sans-serif; }
+button:focus-visible, input:focus-visible { outline: 2px solid #ec3013; outline-offset: 2px; }
+input[type=color] { -webkit-appearance: none; appearance: none; padding: 0; border: 2px solid #f3f2f2; background: none; width: 44px; height: 44px; border-radius: 0; cursor: pointer; }
+input[type=color]::-webkit-color-swatch-wrapper { padding: 0; } input[type=color]::-webkit-color-swatch { border: 0; border-radius: 0; }
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-wrap:wrap;background:#201e1d;color:#f3f2f2" data-screen-label="DSF Uniform Workshop">
+  <div style="flex:1 1 520px;min-height:70vh;position:relative;border-right:2px solid #f3f2f2;border-bottom:2px solid #f3f2f2">
+    <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+    <div style="position:absolute;left:14px;top:12px;right:14px;display:flex;flex-direction:column;gap:2px;pointer-events:none">
+      <span style="font-size:22px;font-weight:900">{{ title }}</span>
+      <span style="font-size:15px;font-weight:800;max-width:min(480px,90%);line-height:1.35;text-wrap:pretty">{{ sub }}</span>
+    </div>
+    <div style="position:absolute;left:14px;bottom:12px;display:flex;gap:6px;flex-wrap:wrap">
+      <button onClick="{{ toggleSpin }}" style="min-height:44px;padding:0 12px;background:{{ spinBg }};color:#f3f2f2;border:2px solid {{ spinBd }};border-radius:0;font-size:13px;font-weight:900;text-align:left;cursor:pointer">{{ spinLabel }}</button>
+      <sc-for list="{{ views }}" as="v" hint-placeholder-count="3">
+        <button onClick="{{ v.pick }}" style="min-height:44px;padding:0 12px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:13px;font-weight:900;text-align:left;cursor:pointer" style-hover="background:#4a1a10">{{ v.label }}</button>
+      </sc-for>
+    </div>
+    <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;padding-left:14px;font-size:16px;font-weight:800">Loading the crew…</div>
+    </sc-if>
+  </div>
+  <div style="flex:1 1 380px;max-width:520px;display:flex;flex-direction:column;max-height:100vh;overflow-y:auto">
+    <div style="padding:14px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:4px">
+      <div style="display:flex;align-items:center;gap:10px"><span style="width:8px;height:28px;background:#ec3013"></span><span style="font-size:26px;font-weight:900">DSF UNIFORM WORKSHOP</span></div>
+      <div style="font-size:14px;font-weight:700;line-height:1.4;text-wrap:pretty">Space Station 8. Built from the 2D game's wardrobe: DUTY, TRADE, SUIT, CONSTABLE. Live: changes save into the game.</div>
+    </div>
+    <div style="padding:12px 14px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:12px;font-weight:900;letter-spacing:0.06em">SHOW</div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px">
+        <sc-for list="{{ whos }}" as="w" hint-placeholder-count="4">
+          <button onClick="{{ w.pick }}" style="min-height:44px;padding:0 10px;background:{{ w.bg }};color:#f3f2f2;border:2px solid {{ w.bd }};border-radius:0;font-size:14px;font-weight:900;text-align:left;cursor:pointer">{{ w.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <sc-if value="{{ wearing }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:12px 14px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:12px;font-weight:900;letter-spacing:0.06em">KIT</div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px">
+          <sc-for list="{{ kits }}" as="s" hint-placeholder-count="4">
+            <button onClick="{{ s.pick }}" style="min-height:44px;padding:0 10px;background:{{ s.bg }};color:#f3f2f2;border:2px solid {{ s.bd }};border-radius:0;font-size:14px;font-weight:900;text-align:left;cursor:pointer">{{ s.label }}</button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ isDuty }}" hint-placeholder-val="{{ true }}">
+          <div style="font-size:12px;font-weight:900;letter-spacing:0.06em;margin-top:4px">DIVISION</div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px">
+            <sc-for list="{{ divs }}" as="s" hint-placeholder-count="3">
+              <button onClick="{{ s.pick }}" style="min-height:44px;padding:0 8px;background:{{ s.bg }};color:#f3f2f2;border:2px solid {{ s.bd }};border-radius:0;display:flex;align-items:center;gap:6px;font-size:13px;font-weight:900;text-align:left;cursor:pointer"><span style="width:12px;height:12px;flex:none;background:{{ s.col }}"></span>{{ s.label }}</button>
+            </sc-for>
+          </div>
+          <div style="font-size:12px;font-weight:900;letter-spacing:0.06em;margin-top:4px">RANK · PIPS ON THE COLLAR</div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px">
+            <sc-for list="{{ ranks }}" as="s" hint-placeholder-count="6">
+              <button onClick="{{ s.pick }}" style="min-height:44px;padding:0 8px;background:{{ s.bg }};color:#f3f2f2;border:2px solid {{ s.bd }};border-radius:0;font-size:12px;font-weight:900;text-align:left;cursor:pointer">{{ s.label }}</button>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+    <sc-if value="{{ isSuit }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:12px 14px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px"><span style="font-size:16px;font-weight:900">THE SUIT</span><span style="font-size:13px;font-weight:800;white-space:nowrap">{{ suitStats }}</span></div>
+        <div style="font-size:13px;font-weight:700;line-height:1.4;text-wrap:pretty">One equipable suit, worn anywhere in space. Free for the STEWARD; rank pips are earned by quests. Only 2 gem slots, so the suit gives its own bonus.</div>
+        <sc-for list="{{ suitRows }}" as="r" hint-placeholder-count="5">
+          <div style="display:flex;justify-content:space-between;gap:10px;font-size:15px;font-weight:800;border-bottom:2px solid #3a3633;padding-bottom:5px"><span>{{ r.name }}</span><span style="color:{{ r.col }}">{{ r.val }}</span></div>
+        </sc-for>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:4px">
+          <sc-for list="{{ gemSlots }}" as="s" hint-placeholder-count="2">
+            <div style="min-height:62px;padding:6px 8px;border:2px {{ s.line }} {{ s.bd }};display:grid;grid-template-columns:24px minmax(0,1fr);align-items:center;gap:8px">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="{{ s.fill }}" stroke="{{ s.ic }}" stroke-width="1.8" stroke-linejoin="miter"><path d="M6 3h12l3 6-9 12L3 9zM3 9h18M9 3l3 6 3-6"></path></svg>
+              <span style="display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font-size:10px;font-weight:900;letter-spacing:0.06em">{{ s.top }}</span><span style="font-size:13px;font-weight:900">{{ s.name }}</span><span style="font-size:12px;font-weight:700">{{ s.bonus }}</span></span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+    <div style="padding:12px 14px;border-bottom:2px solid #f3f2f2;display:flex;flex-direction:column;gap:10px">
+      <div style="font-size:12px;font-weight:900;letter-spacing:0.06em">{{ colTitle }}</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px">
+        <sc-for list="{{ cols }}" as="c" hint-placeholder-count="6">
+          <label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:900;letter-spacing:0.04em"><input type="color" value="{{ c.v }}" onInput="{{ c.set }}" aria-label="{{ c.label }}" style="flex:none;min-width:44px">{{ c.label }}</label>
+        </sc-for>
+      </div>
+    </div>
+    <div style="padding:14px;display:flex;gap:8px;flex-wrap:wrap">
+      <button onClick="{{ resetKit }}" style="min-height:44px;padding:0 14px;background:#201e1d;color:#f3f2f2;border:2px solid #f3f2f2;border-radius:0;font-size:14px;font-weight:900;text-align:left;cursor:pointer" style-hover="background:#4a1a10">{{ resetLabel }}</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { U: null, who: 'player', loading: true, spin: false };
+  stageRef = React.createRef();
+  async componentDidMount() {
+    try { this.A = await import('./engine/dsf-uniforms.js'); this.setState({ U: this.A.loadUniforms() });
+      const m = await import('./engine/dsf-uniform-stage.js'); this.st = await m.startUniformStage(this.stageRef.current); window.__uni = this.st; this.show(); } catch (e) { console.error(e); }
+    this.setState({ loading: false });
+  }
+  componentWillUnmount() { this.st && this.st.destroy(); }
+  show(S = this.state) { if (!this.st || !S.U) return; if (S.who === 'crew') this.st.lineup(S.U); else this.st.show(S.who, S.U, S.U.wear[S.who]); }
+  edit(fn) { const U = JSON.parse(JSON.stringify(this.state.U)); fn(U); this.A.saveUniforms(U); this.setState({ U }, () => { clearTimeout(this._t); this._t = setTimeout(() => this.show(), 80); }); }
+  renderVals() {
+    const S = this.state, U = S.U, A = this.A, pick = on => ({ bg: on ? '#ec3013' : '#201e1d', bd: on ? '#ec3013' : '#f3f2f2' });
+    if (!U || !A) return { isSuit: false, suitRows: [], gemSlots: [], suitStats: '', stageRef: this.stageRef, loading: true, whos: [], kits: [], divs: [], ranks: [], cols: [], views: [], wearing: false, isDuty: false, title: '', sub: '', colTitle: '', resetLabel: 'RESET', spinLabel: 'SPIN', spinBg: '#201e1d', spinBd: '#f3f2f2' };
+    const go = p => this.setState(p, () => this.show()), crew = S.who === 'crew', w = crew ? null : U.wear[S.who];
+    const kitName = k => (A.KITS.find(x => x[0] === k) || [, k])[1], divName = d => (A.DIVS.find(x => x[0] === d) || [, d])[1], rankName = p => (A.RANKS.find(x => x[0] === p) || [, ''])[1];
+    const colKit = crew ? 'duty' : w.kit, C = [];
+    const col = (label, get, set) => C.push({ label, v: get(U), set: e => { const v = e.target.value; this.edit(u => set(u, v)); } });
+    if (colKit === 'duty') { const d = crew ? 'command' : w.div;
+      col('YOKE LIT', u => u.div[d].hi, (u, v) => { u.div[d].hi = v; }); col('YOKE', u => u.div[d].mid, (u, v) => { u.div[d].mid = v; }); col('YOKE SEAM', u => u.div[d].lo, (u, v) => { u.div[d].lo = v; });
+      col('BODY', u => u.duty.bodyMid, (u, v) => { u.duty.bodyMid = v; }); col('UNDERSHIRT', u => u.duty.collar, (u, v) => { u.duty.collar = v; }); col('BADGE', u => u.duty.badge, (u, v) => { u.duty.badge = v; }); }
+    else if (colKit === 'trade') { ['LIGHT', 'MID', 'DARK'].forEach((l, i) => col(l, u => u.trade.cols[i], (u, v) => { u.trade.cols[i] = v; })); col('TRIM', u => u.trade.trim, (u, v) => { u.trade.trim = v; }); col('SHIRT', u => u.trade.shirt, (u, v) => { u.trade.shirt = v; }); }
+    else if (colKit === 'suit') { ['LIGHT', 'MID', 'DARK'].forEach((l, i) => col(l, u => u.suit.cols[i], (u, v) => { u.suit.cols[i] = v; })); col('SHIRT', u => u.suit.shirt, (u, v) => { u.suit.shirt = v; }); col('WAISTCOAT', u => u.suit.vest, (u, v) => { u.suit.vest = v; }); col('BUTTONS', u => u.suit.trim, (u, v) => { u.suit.trim = v; }); col('SQUARE', u => u.suit.square, (u, v) => { u.suit.square = v; }); }
+    else { col('TUNIC LIT', u => u.constable.hi, (u, v) => { u.constable.hi = v; }); col('TUNIC', u => u.constable.mid, (u, v) => { u.constable.mid = v; }); col('COLLAR', u => u.constable.collar, (u, v) => { u.constable.collar = v; }); col('STRAP', u => u.constable.strap, (u, v) => { u.constable.strap = v; }); col('PEWTER 8', u => u.constable.badge, (u, v) => { u.constable.badge = v; }); }
+    const setW = p => this.edit(u => { Object.assign(u.wear[S.who], p); });
+    return {
+      stageRef: this.stageRef, loading: S.loading,
+      title: crew ? 'THE CREW OF SPACE STATION 8' : (S.who === 'player' ? 'YOU · THE STEWARD' : S.who.toUpperCase()),
+      sub: crew ? A.CREW.map(c => c.name).join(' · ') : kitName(w.kit) + (w.kit === 'duty' ? ' · ' + divName(w.div) + (rankName(w.pips) ? ' · ' + rankName(w.pips) : '') : ''),
+      spinLabel: S.spin ? 'PAUSE' : 'SPIN', ...(o => ({ spinBg: o.bg, spinBd: o.bd }))(pick(S.spin)), toggleSpin: () => { const on = !S.spin; this.setState({ spin: on }); this.st && this.st.spin(on); },
+      views: [['front', 'FRONT'], ['side', 'SIDE'], ['back', 'BACK']].map(([k, l]) => ({ label: l, pick: () => this.st && this.st.view(k) })),
+      whos: [['player', 'YOU · STEWARD'], ['hope', 'HOPE'], ['noble', 'NOBLE'], ['crew', 'THE 2D CREW · LINE UP']].map(([k, l]) => ({ label: l, ...pick(S.who === k), pick: () => go({ who: k }) })),
+      wearing: !crew, isDuty: !crew && w.kit === 'duty',
+      kits: A.KITS.map(([k, l]) => ({ label: l + (k === 'duty' ? ' · EQUIPABLE' : ' · NPC ONLY'), ...pick(!crew && w.kit === k), pick: () => setW({ kit: k }) })),
+      isSuit: !crew && w.kit === 'duty',
+      suitStats: A.SUIT.armor + ' ARMOUR · ' + A.SUIT.kg + ' KG',
+      suitRows: (() => { if (crew) return []; const NM = { pilot: 'PILOT', talk: 'TALK', super: 'SUPER CHARGE', xp: 'XP', armor: 'ARMOUR' }, sum = {}; A.suitBonus(w.pips).forEach(([s, v]) => { sum[s] = (sum[s] || 0) + v; });
+        return Object.entries(sum).map(([s, v]) => ({ name: NM[s] || s.toUpperCase(), val: '+' + v + ' %', col: s === 'armor' && A.pipCount(w.pips) ? '#d9b24a' : '#f3f2f2' })).concat(A.pipCount(w.pips) ? [{ name: A.pipCount(w.pips) + ' RANK PIP' + (A.pipCount(w.pips) > 1 ? 'S' : '') + ' · +2 % ARMOUR EACH', val: 'INCLUDED', col: '#d9b24a' }] : []); })(),
+      gemSlots: [{ top: 'WORLD · DEEP SPACE GEM', name: 'EMPTY', bonus: 'Win or find it on the station', bd: '#6b6460', line: 'dashed', ic: '#7df9ff', fill: 'none' }, { top: 'ANY GEM', name: 'EMPTY', bonus: 'Any power-up gem', bd: '#6b6460', line: 'dashed', ic: '#6b6460', fill: 'none' }],
+      divs: A.DIVS.map(([k, l]) => ({ label: l, col: U.div[k].mid, ...pick(!crew && w.div === k), pick: () => setW({ div: k }) })),
+      ranks: A.RANKS.map(([k, l]) => ({ label: l, ...pick(!crew && w.pips === k), pick: () => setW({ pips: k }) })),
+      colTitle: 'COLOURS · ' + kitName(colKit) + (colKit === 'duty' ? ' · ' + divName(crew ? 'command' : w.div) : '') + ' · SHARED BY EVERYONE IN THIS KIT', cols: C,
+      resetLabel: 'RESET ' + kitName(colKit) + ' COLOURS',
+      resetKit: () => this.edit(u => { const D = JSON.parse(JSON.stringify(A.UNIFORM_DEFAULTS)); if (colKit === 'duty') { u.duty = D.duty; u.div = D.div; } else u[colKit] = D[colKit]; }),
+    };
+  }
+}
+</script>
+</body>
+</html>

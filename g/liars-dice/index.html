@@ -1,0 +1,57 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Liar's Dice</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&display=swap">
+<style>
+/* Layout: phone frames side by side on a wide screen; on a phone the game fills the screen. Single dark look on purpose (the game is black + red + yellow). */
+:root { --bg: #151312; --ink: #f3f2f2; --muted: #a8a19a; --rule: #3a3836; --accent: #ec3013; --gold: #ffd23a; --font: "Archivo", "Arial Black", Arial, sans-serif; color-scheme: dark; }
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font); margin: 0; }
+.wrap { padding-block: 20px 28px; padding-inline: 16px; display: flex; flex-direction: column; gap: 16px; }
+header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; border-bottom: 2px solid var(--gold); padding-bottom: 10px; }
+header h1 { margin: 0; font-weight: 900; font-size: 26px; letter-spacing: 0.01em; }
+header p { margin: 0; color: var(--muted); font-weight: 600; font-size: 13px; max-width: 62ch; }
+.k { font-weight: 800; font-size: 11px; letter-spacing: 0.14em; color: var(--gold); text-transform: uppercase; }
+.row { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
+figure { margin: 0; display: flex; flex-direction: column; gap: 8px; max-width: 100%; }
+figcaption { font-weight: 800; font-size: 11px; letter-spacing: 0.14em; color: var(--muted); }
+.frame { border: 3px solid #000; outline: 2px solid var(--rule); background: #000; overflow: hidden; max-width: 100%; }
+.frame iframe { display: block; border: 0; width: 100%; height: 100%; }
+.portrait { width: 390px; height: 844px; }
+.landscape { width: 844px; height: 390px; }
+.open { align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; background: var(--accent); color: #fff; font-weight: 900; font-size: 13px; letter-spacing: 0.1em; text-decoration: none; }
+.open:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.solo { display: none; }
+/* On a phone: the game is the page */
+@media (max-width: 700px) {
+  .wrap { display: none; }
+  .solo { display: block; position: fixed; inset: 0; width: 100%; height: 100%; border: 0; background: #000; }
+}
+</style>
+<div class="wrap">
+  <header>
+    <span class="k">8 Gates · Minigame #8</span>
+    <h1>Liar's Dice</h1>
+    <p>Live phone preview. Both screens are playable: start a game, or tap WATCH THE DEMO in the menu. Open this link on your phone to play it full screen.</p>
+  </header>
+  <div class="row">
+    <figure>
+      <figcaption>IPHONE PORTRAIT · 390 × 844</figcaption>
+      <div class="frame portrait"><iframe id="pv-portrait" title="Liar's Dice, portrait" src="liars-dice.dc.html?phone=1" loading="lazy"></iframe></div>
+    </figure>
+    <figure>
+      <figcaption>IPHONE LANDSCAPE · 844 × 390</figcaption>
+      <div class="frame landscape"><iframe id="pv-landscape" title="Liar's Dice, landscape" src="liars-dice.dc.html?phone=2" loading="lazy"></iframe></div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px"><a class="open" href="liars-dice.dc.html">PLAY FULL SCREEN</a><a class="open" style="background:#000;color:var(--gold);outline:2px solid var(--gold)" href="liars-dice.dc.html?demo=1">WATCH THE DEMO</a></div>
+    </figure>
+  </div>
+</div>
+<iframe class="solo" id="pv-phone" title="Liar's Dice" data-src="liars-dice.dc.html"></iframe>
+<script>
+// Load only what this screen needs: two frames on a wide screen, one full-screen game on a phone.
+(function () { var phone = matchMedia('(max-width: 700px)');
+  function pick() { var s = document.getElementById('pv-phone'); if (phone.matches) { if (!s.src) s.src = s.dataset.src; document.querySelectorAll('.wrap iframe').forEach(function (f) { if (f.src && !f.dataset.src) { f.dataset.src = f.getAttribute('src'); f.removeAttribute('src'); } }); }
+    else { document.querySelectorAll('.wrap iframe').forEach(function (f) { if (!f.getAttribute('src') && f.dataset.src) f.src = f.dataset.src; }); } }
+  pick(); phone.addEventListener && phone.addEventListener('change', pick); })();
+</script>
+
+</body></html>

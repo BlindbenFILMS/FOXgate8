@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chess Club</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#000}
+a{color:#ffd23a}a:hover{color:#ec3013}
+button:focus-visible,input:focus-visible{outline:2px solid #ffd23a;outline-offset:-2px}
+.cb{min-height:52px;padding:0 14px;border:0;border-radius:0;background:#000;color:#fff;font:900 13px var(--font-heading);letter-spacing:0.08em;cursor:pointer;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:2px;min-width:0;box-sizing:border-box}
+.cb:hover{background:#2a2826}.cb:active{background:#3a3836}
+.cb:disabled{color:#5f5a55;cursor:default;background:#000}
+.cb .s{font:800 9px var(--font-heading);letter-spacing:0.08em;color:#8a847e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cr{background:#ec3013;color:#fff}.cr:hover{background:#c82a10}.cr:active{background:#a8230d}.cr .s{color:#ffe1da}
+.cy{background:#ffd23a;color:#000}.cy:hover{background:#f2c41c}.cy .s{color:#3a3020}
+.rule{border-top:2px solid #3a3836}
+.k{font:800 10px var(--font-heading);letter-spacing:0.12em;color:#ffd23a}
+.mut{font:700 12px var(--font-body);color:#cfcac2;line-height:1.35;text-wrap:pretty}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.scroll{overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+</style>
+</helmet>
+<div style="position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);user-select:none;-webkit-user-select:none;touch-action:none" data-screen-label="Chess Club">
+  <div ref="{{ stageRef }}" style="position:absolute;inset:0"></div>
+  <div class="sr" role="status" aria-live="polite">{{ liveTxt }}</div>
+
+  <!-- ===================== PLAY · PORTRAIT ===================== -->
+  <sc-if value="{{ playPort }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="top" style="position:absolute;left:0;right:0;top:0;z-index:3;background:#000;border-bottom:2px solid #3a3836;padding-top:env(safe-area-inset-top)">
+      <div style="display:flex;align-items:stretch;min-height:56px">
+        <div style="flex:1;min-width:0;padding:6px 12px;display:flex;align-items:center;gap:10px;border-left:6px solid {{ topActive }}">
+          <span style="flex:none;width:16px;height:16px;background:{{ top.col }};border:2px solid #fff"></span>
+          <div style="min-width:0;display:flex;flex-direction:column;gap:1px">
+            <span style="font:900 17px var(--font-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ top.name }}</span>
+            <span style="font:800 10px var(--font-heading);letter-spacing:0.08em;color:{{ topSubCol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ topSub }}</span>
+          </div>
+          <span style="margin-left:auto;font:400 18px/1 serif;color:#cfcac2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0" aria-label="Captured pieces">{{ top.caps }}<span style="font:900 11px var(--font-heading);color:#ffd23a;margin-left:4px">{{ top.adv }}</span></span>
+        </div>
+        <sc-if value="{{ top.clockOn }}" hint-placeholder-val="{{ false }}"><div style="flex:none;min-width:72px;padding:0 10px;display:flex;align-items:center;border-left:2px solid #3a3836;background:{{ topClockBg }};color:{{ topClockFg }};font:900 20px var(--font-heading);font-variant-numeric:tabular-nums">{{ top.clock }}</div></sc-if>
+        <button class="cb" onClick="{{ pauseOpen }}" aria-label="Menu" style="flex:none;width:56px;border-left:2px solid #3a3836;align-items:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="square"><path d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+      </div>
+      <div style="padding:4px 12px;border-top:2px solid #2a2826;font:800 11px var(--font-heading);letter-spacing:0.04em;color:#8a847e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" aria-hidden="true">{{ movesLine }}</div>
+    </div>
+    <div data-safe="bottom" style="position:absolute;left:0;right:0;bottom:0;z-index:3;display:flex;flex-direction:column">
+      <sc-if value="{{ sayOn }}" hint-placeholder-val="{{ false }}">
+        <div style="margin:0 10px 8px;align-self:flex-start;max-width:min(420px, calc(100% - 20px));background:rgba(0,0,0,0.9);border:2px solid #3a3836;display:flex;flex-direction:column"><span class="k" style="padding:5px 10px 0">{{ sayWho }}</span><span style="padding:2px 10px 7px;font:700 14px var(--font-body);line-height:1.35;text-wrap:pretty">{{ sayTxt }}</span></div>
+      </sc-if>
+      <div style="background:#000;border-top:2px solid #3a3836;padding-bottom:env(safe-area-inset-bottom)">
+        <div style="display:flex;align-items:stretch;min-height:56px">
+          <div style="flex:1;min-width:0;padding:6px 12px;display:flex;align-items:center;gap:10px;border-left:6px solid {{ botActive }}">
+            <span style="flex:none;width:16px;height:16px;background:{{ bottom.col }};border:2px solid #fff"></span>
+            <div style="min-width:0;display:flex;flex-direction:column;gap:1px">
+              <span style="font:900 17px var(--font-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ statusCol }}">{{ statusTxt }}</span>
+              <span style="font:800 10px var(--font-heading);letter-spacing:0.08em;color:#8a847e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ bottom.name }} · {{ bottom.sub }}</span>
+            </div>
+            <span style="margin-left:auto;font:400 18px/1 serif;color:#cfcac2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0" aria-label="Captured pieces">{{ bottom.caps }}<span style="font:900 11px var(--font-heading);color:#ffd23a;margin-left:4px">{{ bottom.adv }}</span></span>
+          </div>
+          <sc-if value="{{ bottom.clockOn }}" hint-placeholder-val="{{ false }}"><div style="flex:none;min-width:72px;padding:0 10px;display:flex;align-items:center;border-left:2px solid #3a3836;background:{{ botClockBg }};color:{{ botClockFg }};font:900 20px var(--font-heading);font-variant-numeric:tabular-nums">{{ bottom.clock }}</div></sc-if>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat({{ actCols }},minmax(0,1fr));border-top:2px solid #3a3836">
+          <sc-for list="{{ actions }}" as="a" hint-placeholder-count="4">
+            <button class="{{ a.cls }}" onClick="{{ a.go }}" disabled="{{ a.off }}" aria-label="{{ a.aria }}" style="border-right:2px solid #2a2826"><span>{{ a.label }}</span><span class="s">{{ a.sub }}</span></button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===================== PLAY · LANDSCAPE ===================== -->
+  <sc-if value="{{ playLand }}" hint-placeholder-val="{{ false }}">
+    <div data-safe="right" style="position:absolute;top:0;right:0;bottom:0;z-index:3;width:{{ panelW }};background:#000;border-left:2px solid #3a3836;display:flex;flex-direction:column;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) 0;box-sizing:border-box">
+      <div style="display:flex;align-items:stretch;min-height:52px;border-bottom:2px solid #3a3836">
+        <div style="flex:1;min-width:0;padding:4px 10px;display:flex;align-items:center;gap:8px;border-left:6px solid {{ topActive }}">
+          <span style="flex:none;width:14px;height:14px;background:{{ top.col }};border:2px solid #fff"></span>
+          <div style="min-width:0;display:flex;flex-direction:column"><span style="font:900 15px var(--font-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ top.name }}</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;color:{{ topSubCol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ topSub }}</span></div>
+          <span style="margin-left:auto;font:400 15px/1 serif;color:#cfcac2;white-space:nowrap;overflow:hidden;min-width:0">{{ top.caps }}</span>
+        </div>
+        <sc-if value="{{ top.clockOn }}" hint-placeholder-val="{{ false }}"><div style="flex:none;min-width:60px;padding:0 8px;display:flex;align-items:center;border-left:2px solid #3a3836;background:{{ topClockBg }};color:{{ topClockFg }};font:900 17px var(--font-heading);font-variant-numeric:tabular-nums">{{ top.clock }}</div></sc-if>
+        <button class="cb" onClick="{{ pauseOpen }}" aria-label="Menu" style="flex:none;width:52px;border-left:2px solid #3a3836;align-items:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="square"><path d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+      </div>
+      <div class="scroll" style="flex:1;min-height:0;padding:4px 0">
+        <sc-for list="{{ moveRows }}" as="m" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:30px minmax(0,1fr) minmax(0,1fr);padding:2px 10px;font:800 12px var(--font-heading);font-variant-numeric:tabular-nums"><span style="color:#8a847e">{{ m.n }}</span><span>{{ m.w }}</span><span>{{ m.b }}</span></div>
+        </sc-for>
+        <sc-if value="{{ sayOn }}" hint-placeholder-val="{{ false }}"><div style="margin:6px 8px;border:2px solid #3a3836;display:flex;flex-direction:column"><span class="k" style="padding:4px 8px 0">{{ sayWho }}</span><span style="padding:2px 8px 6px;font:700 12px var(--font-body);line-height:1.3;text-wrap:pretty">{{ sayTxt }}</span></div></sc-if>
+      </div>
+      <div style="display:flex;align-items:stretch;min-height:52px;border-top:2px solid #3a3836">
+        <div style="flex:1;min-width:0;padding:4px 10px;display:flex;align-items:center;gap:8px;border-left:6px solid {{ botActive }}">
+          <span style="flex:none;width:14px;height:14px;background:{{ bottom.col }};border:2px solid #fff"></span>
+          <div style="min-width:0;display:flex;flex-direction:column"><span style="font:900 15px var(--font-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ statusCol }}">{{ statusTxt }}</span><span style="font:800 9px var(--font-heading);letter-spacing:0.08em;color:#8a847e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ bottom.name }} · {{ bottom.caps }}</span></div>
+        </div>
+        <sc-if value="{{ bottom.clockOn }}" hint-placeholder-val="{{ false }}"><div style="flex:none;min-width:60px;padding:0 8px;display:flex;align-items:center;border-left:2px solid #3a3836;background:{{ botClockBg }};color:{{ botClockFg }};font:900 17px var(--font-heading);font-variant-numeric:tabular-nums">{{ bottom.clock }}</div></sc-if>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:2px solid #3a3836">
+        <sc-for list="{{ actions }}" as="a" hint-placeholder-count="4">
+          <button class="{{ a.cls }}" onClick="{{ a.go }}" disabled="{{ a.off }}" aria-label="{{ a.aria }}" style="min-height:48px;border-right:2px solid #2a2826;border-bottom:2px solid #2a2826"><span>{{ a.label }}</span><span class="s">{{ a.sub }}</span></button>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- CHECK / CHECKMATE banner -->
+  <sc-if value="{{ flashOn }}" hint-placeholder-val="{{ false }}">
+    <div aria-hidden="true" style="position:absolute;left:0;right:0;top:44%;z-index:5;pointer-events:none;display:flex;justify-content:flex-start;padding-left:max(16px, env(safe-area-inset-left))">
+      <div style="background:#000;border:3px solid {{ flashCol }};display:flex;align-items:stretch"><span style="width:14px;background:{{ flashCol }};display:block"></span><span style="padding:8px 18px;font:900 clamp(26px,8vw,44px) var(--font-heading);letter-spacing:0.08em;color:#fff">{{ flashTxt }}</span></div>
+    </div>
+  </sc-if>
+
+  <!-- reactions (online) -->
+  <sc-if value="{{ reactsOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:10px;top:{{ reactTop }};z-index:4;display:flex;flex-direction:column;gap:6px;pointer-events:none">
+      <sc-for list="{{ reacts }}" as="r" hint-placeholder-count="2"><div style="background:#000;border:2px solid {{ r.col }};display:flex;align-items:stretch"><span style="background:{{ r.col }};color:#000;padding:4px 8px;font:900 11px var(--font-heading);letter-spacing:0.08em">{{ r.who }}</span><span style="padding:4px 10px;font:900 16px var(--font-heading);letter-spacing:0.06em">{{ r.w }}</span></div></sc-for>
+    </div>
+  </sc-if>
+
+  <!-- ===================== MAIN MENU ===================== -->
+  <sc-if value="{{ menuOn }}" hint-placeholder-val="{{ true }}">
+    <div class="scroll" style="position:absolute;inset:0;z-index:6;display:flex;align-items:{{ menuAlign }};justify-content:flex-start;padding:max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));box-sizing:border-box;touch-action:pan-y">
+      <div data-safe="{{ menuSafe }}" style="background:#000;border:2px solid #3a3836;width:{{ menuW }};display:grid;grid-template-columns:{{ menuCols }};align-items:start;margin:auto 0 0">
+        <div style="display:flex;flex-direction:column;min-width:0;border-right:{{ menuSplit }}">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+          <div style="flex:1;padding:{{ menuHeadPad }};display:flex;flex-direction:column;gap:3px"><span class="k">CHESS CLUB · {{ goldTxt }}</span><span style="font:900 {{ menuTitleFs }} var(--font-heading);line-height:1">Chess</span><sc-if value="{{ port }}" hint-placeholder-val="{{ true }}"><span class="mut">Sit at the club table. Play a fox, pass the phone to a friend, or open a room for up to 5.</span></sc-if></div>
+          <sc-if value="{{ embed }}" hint-placeholder-val="{{ false }}"><button class="cb" onClick="{{ goBack }}" style="flex:none;border-left:2px solid #3a3836">BACK</button></sc-if>
+        </div>
+        <sc-if value="{{ resumePortOn }}" hint-placeholder-val="{{ false }}">
+          <button class="cb cy" onClick="{{ doResume }}" style="border-bottom:2px solid #000;min-height:56px"><span style="font-size:15px">RESUME GAME</span><span class="s">{{ resumeLbl }}</span></button>
+        </sc-if>
+        <div style="padding:8px 16px 6px" class="k">VS A FOX · PICK YOUR OPPONENT</div>
+        <sc-for list="{{ opps }}" as="o" hint-placeholder-count="3">
+          <button class="cb" onClick="{{ o.pick }}" aria-pressed="{{ o.on }}" style="min-height:{{ oppH }};flex-direction:row;align-items:center;gap:12px;border-top:2px solid #2a2826;background:{{ o.bg }};color:{{ o.fg }}">
+            <span style="flex:none;width:68px;font:900 11px var(--font-heading);letter-spacing:0.1em;color:{{ o.tagCol }}">{{ o.tag }}</span>
+            <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1px"><span style="font:900 16px var(--font-heading)">{{ o.name }}</span><span style="font:700 11px var(--font-body);color:{{ o.subCol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.who }}</span></span>
+            <span style="flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:1px"><span style="font:900 12px var(--font-heading);color:{{ o.goldCol }}">WIN {{ o.gold }}G</span><span style="font:800 10px var(--font-heading);color:{{ o.subCol }}">{{ o.rec }}</span></span>
+          </button>
+        </sc-for>
+        <div style="display:grid;grid-template-columns:auto repeat(3,minmax(0,1fr));border-top:2px solid #2a2826;align-items:stretch">
+          <span class="k" style="display:flex;align-items:center;padding:0 12px 0 16px">YOU PLAY</span>
+          <sc-for list="{{ colorBtns }}" as="c" hint-placeholder-count="3"><button class="cb" onClick="{{ c.go }}" aria-pressed="{{ c.on }}" style="min-height:48px;border-left:2px solid #2a2826;background:{{ c.bg }};color:{{ c.fg }}">{{ c.label }}</button></sc-for>
+        </div>
+        <button class="cb cr" onClick="{{ playCpu }}" style="min-height:58px"><span style="font-size:16px">PLAY {{ oppName }}</span><span class="s">{{ playSub }}</span></button>
+        </div>
+        <div style="display:flex;flex-direction:column;min-width:0">
+        <sc-if value="{{ resumeLandOn }}" hint-placeholder-val="{{ false }}">
+          <button class="cb cy" onClick="{{ doResume }}" style="border-bottom:2px solid #000;min-height:56px"><span style="font-size:15px">RESUME GAME</span><span class="s">{{ resumeLbl }}</span></button>
+        </sc-if>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:2px solid #3a3836">
+          <button class="cb" onClick="{{ playLocal }}" style="border-right:2px solid #3a3836"><span>PASS &amp; PLAY</span><span class="s">2 ON ONE PHONE</span></button>
+          <button class="cb" onClick="{{ onlineOpen }}"><span style="color:#7dd3fc">ONLINE</span><span class="s">ROOM OF UP TO 5</span></button>
+        </div>
+        <button class="cb" onClick="{{ watchDemo }}" style="border-top:2px solid #3a3836;min-height:52px"><span style="color:#ffd23a">WATCH THE DEMO</span><span class="s">TWO FOXES PLAY · CAPTIONS TEACH THE MOVES · TAP TO TAKE OVER</span></button>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:2px solid #3a3836">
+          <sc-for list="{{ toggles }}" as="t" hint-placeholder-count="6"><button class="cb" onClick="{{ t.go }}" aria-pressed="{{ t.on }}" style="min-height:48px;border-right:2px solid #2a2826;border-bottom:2px solid #2a2826"><span style="font-size:11px">{{ t.label }}</span><span class="s" style="color:{{ t.col }}">{{ t.state }}</span></button></sc-for>
+        </div>
+        <button class="cb" onClick="{{ helpOpen }}" style="min-height:44px;border-top:2px solid #3a3836;color:#ffd23a">HOW TO PLAY</button>
+        <sc-if value="{{ land }}" hint-placeholder-val="{{ false }}"><div class="mut" style="padding:10px 14px;border-top:2px solid #3a3836">Sit at the club table. Play a fox for gold, pass the phone to a friend, or open a room for up to 5: two play, the rest watch and take the next game.</div></sc-if>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===================== ONLINE: JOIN / CREATE ===================== -->
+  <sc-if value="{{ joinOn }}" hint-placeholder-val="{{ false }}">
+    <div class="scroll" style="position:absolute;inset:0;z-index:7;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;touch-action:pan-y">
+      <div style="background:#000;border:2px solid #3a3836;width:min(440px,100%);display:flex;flex-direction:column;margin:auto 0">
+        <div style="padding:12px 16px;border-bottom:2px solid #3a3836;display:flex;flex-direction:column;gap:3px"><span class="k" style="color:#7dd3fc">ONLINE · NO SERVER NEEDED</span><span style="font:900 24px var(--font-heading);line-height:1.05">Play friends</span><span class="mut">Up to 5 in a room. Two play, the others watch and get in line. Winner stays on.</span></div>
+        <button class="cb cr" onClick="{{ netCreate }}" style="min-height:56px"><span style="font-size:16px">CREATE ROOM</span><span class="s">GET A CODE TO SHARE</span></button>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;border-top:2px solid #3a3836">
+          <input value="{{ codeIn }}" onChange="{{ codeType }}" onKeyDown="{{ codeKey }}" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Room code" placeholder="CODE" style="min-width:0;min-height:56px;padding:0 14px;border:0;border-radius:0;background:#1a1918;color:#ffd23a;font:900 24px var(--font-heading);letter-spacing:0.2em;text-transform:uppercase;outline:none;box-sizing:border-box"></input>
+          <button class="cb cy" onClick="{{ netJoin }}" style="min-width:96px">JOIN</button>
+        </div>
+        <sc-if value="{{ joinMsgOn }}" hint-placeholder-val="{{ false }}"><div class="mut" style="padding:8px 16px;color:#ff9a8a">{{ joinMsg }}</div></sc-if>
+        <button class="cb" onClick="{{ onlineClose }}" style="border-top:2px solid #3a3836">BACK</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===================== ONLINE ROOM ===================== -->
+  <sc-if value="{{ roomOn }}" hint-placeholder-val="{{ false }}">
+    <div class="scroll" style="position:absolute;inset:0;z-index:7;background:rgba(0,0,0,0.62);display:flex;align-items:{{ menuAlign }};justify-content:flex-start;padding:max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));box-sizing:border-box;touch-action:pan-y">
+      <div data-safe="{{ menuSafe }}" style="background:#000;border:2px solid #3a3836;width:min(440px,100%);display:flex;flex-direction:column;margin:auto 0 0">
+        <div style="padding:10px 14px;border-bottom:2px solid #3a3836;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:12px">
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span class="k">ROOM · {{ netStat }}</span><span style="font:900 42px var(--font-heading);line-height:1;letter-spacing:0.12em;color:#ffd23a">{{ net.code }}</span></div>
+          <button class="cb" onClick="{{ netShare }}" style="min-height:44px;border:2px solid #ffd23a;color:#ffd23a;white-space:nowrap">{{ shareTxt }}</button>
+        </div>
+        <div class="mut" style="padding:8px 14px">{{ roomMsg }}</div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:2px solid #3a3836">
+          <sc-for list="{{ seats }}" as="s" hint-placeholder-count="2">
+            <button class="cb" onClick="{{ s.go }}" disabled="{{ s.off }}" style="min-height:64px;color:#fff;border-right:2px solid #3a3836;border-left:6px solid {{ s.col }}"><span class="k" style="color:#cfcac2">{{ s.label }}</span><span style="font:900 17px var(--font-heading)">{{ s.name }}</span><span class="s" style="color:#ffd23a">{{ s.act }}</span></button>
+          </sc-for>
+        </div>
+        <div style="border-top:2px solid #3a3836">
+          <sc-for list="{{ people }}" as="p" hint-placeholder-count="3">
+            <div style="display:grid;grid-template-columns:14px minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 14px;border-bottom:2px solid #1f1d1c"><span style="width:14px;height:14px;background:{{ p.col }};display:block"></span><span style="font:900 14px var(--font-heading)">{{ p.name }}<span style="font:800 10px var(--font-heading);color:#8a847e;margin-left:8px">{{ p.tag }}</span></span><span style="font:800 10px var(--font-heading);letter-spacing:0.08em;color:#ffd23a">{{ p.seat }}</span></div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ clockRowOn }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:auto repeat(4,minmax(0,1fr));align-items:stretch">
+            <span class="k" style="display:flex;align-items:center;padding:0 10px 0 14px">CLOCK</span>
+            <sc-for list="{{ tcBtns }}" as="c" hint-placeholder-count="4"><button class="cb" onClick="{{ c.go }}" disabled="{{ c.off }}" aria-pressed="{{ c.on }}" style="min-height:44px;padding:0 8px;border-left:2px solid #2a2826;background:{{ c.bg }};color:{{ c.fg }}">{{ c.label }}</button></sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ queueOn }}" hint-placeholder-val="{{ false }}"><button class="cb" onClick="{{ netQueue }}" style="border-top:2px solid #3a3836;color:#7dd3fc">GET IN LINE FOR THE NEXT GAME</button></sc-if>
+        <div style="display:grid;grid-template-columns:{{ roomBtnCols }};border-top:2px solid #3a3836">
+          <sc-if value="{{ startOn }}" hint-placeholder-val="{{ false }}"><button class="cb cr" onClick="{{ netStart }}" style="min-height:56px;border-right:2px solid #3a3836"><span style="font-size:15px">{{ startTxt }}</span><span class="s">{{ startSub }}</span></button></sc-if>
+          <sc-if value="{{ watchOn }}" hint-placeholder-val="{{ false }}"><button class="cb cy" onClick="{{ roomClose }}" style="min-height:56px;border-right:2px solid #3a3836"><span style="font-size:15px">WATCH THE GAME</span></button></sc-if>
+          <button class="cb" onClick="{{ netLeave }}" style="min-height:56px">LEAVE</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===================== PAUSE ===================== -->
+  <sc-if value="{{ pauseOn }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ pauseClose }}" class="scroll" style="position:absolute;inset:0;z-index:8;background:rgba(0,0,0,0.72);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;touch-action:pan-y">
+      <div onClick="{{ stop }}" style="background:#000;border:2px solid #3a3836;width:min(400px,100%);display:flex;flex-direction:column;margin:auto 0">
+        <div style="padding:10px 14px;border-bottom:2px solid #3a3836" class="k">{{ pauseKicker }}</div>
+        <button class="cb cr" onClick="{{ pauseClose }}"><span style="font-size:15px">BACK TO THE BOARD</span></button>
+        <sc-for list="{{ pauseRows }}" as="r" hint-placeholder-count="4"><button class="cb" onClick="{{ r.go }}" style="border-top:2px solid #2a2826;color:{{ r.col }}"><span>{{ r.label }}</span><span class="s">{{ r.sub }}</span></button></sc-for>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:2px solid #3a3836">
+          <sc-for list="{{ toggles4 }}" as="t" hint-placeholder-count="6"><button class="cb" onClick="{{ t.go }}" aria-pressed="{{ t.on }}" style="min-height:48px;border-right:2px solid #2a2826;border-bottom:2px solid #2a2826"><span style="font-size:11px">{{ t.label }}</span><span class="s" style="color:{{ t.col }}">{{ t.state }}</span></button></sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===================== PROMOTION ===================== -->
+  <sc-if value="{{ promoOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:0;right:0;bottom:0;z-index:9;background:#000;border-top:2px solid #ffd23a;padding:10px max(12px, env(safe-area-inset-left)) calc(10px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px">
+      <span class="k">YOUR PAWN REACHED THE END · PICK WHAT IT BECOMES</span>
+      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) auto;gap:8px">
+        <sc-for list="{{ promos }}" as="p" hint-placeholder-count="4"><button class="cb" onClick="{{ p.go }}" aria-label="{{ p.name }}" style="min-height:64px;border:2px solid #ffd23a;align-items:flex-start"><span style="font:400 28px/1 serif">{{ p.glyph }}</span><span class="s" style="color:#ffd23a">{{ p.name }}</span></button></sc-for>
+        <button class="cb" onClick="{{ promoCancel }}" style="border:2px solid #3a3836">CANCEL</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===================== GAME OVER ===================== -->
+  <sc-if value="{{ overOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:8;background:rgba(0,0,0,0.55);display:flex;align-items:{{ menuAlign }};justify-content:flex-start;padding:max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));box-sizing:border-box">
+      <div style="background:#000;border:2px solid #3a3836;width:min(420px,100%);display:flex;flex-direction:column;margin:auto 0 0">
+        <div style="display:flex;align-items:stretch;border-bottom:2px solid #3a3836">
+          <div style="padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:3px"><span class="k">{{ overKicker }}</span><span style="font:900 28px var(--font-heading);line-height:1.05">{{ over.title }}</span><span class="mut">{{ over.sub }}</span></div>
+          <div style="width:84px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-left:12px;background:{{ overBg }};color:{{ overFg }}"><span style="font:900 26px var(--font-heading)">{{ overBig }}</span><span style="font:800 10px var(--font-heading);letter-spacing:0.1em">{{ overUnit }}</span></div>
+        </div>
+        <sc-for list="{{ overRows }}" as="r" hint-placeholder-count="2"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;padding:7px 16px;border-bottom:2px solid #2a2826;font:700 14px var(--font-body)"><span>{{ r.k }}</span><span style="font:900 14px var(--font-heading)">{{ r.v }}</span></div></sc-for>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr))">
+          <button class="cb cr" onClick="{{ again }}" style="border-right:2px solid #3a3836">{{ againTxt }}</button>
+          <button class="cb" onClick="{{ overLook }}" style="border-right:2px solid #3a3836">SEE BOARD</button>
+          <button class="cb" onClick="{{ overMenu }}">{{ overMenuTxt }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===================== HOW TO PLAY ===================== -->
+  <sc-if value="{{ helpOn }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ helpClose }}" class="scroll" style="position:absolute;inset:0;z-index:10;background:rgba(0,0,0,0.82);display:flex;align-items:center;justify-content:flex-start;padding:12px;box-sizing:border-box;touch-action:pan-y">
+      <div style="background:#000;border:2px solid #ffd23a;width:min(460px,100%);margin:auto 0;display:flex;flex-direction:column">
+        <div style="padding:10px 14px;border-bottom:2px solid #3a3836;font:900 16px var(--font-heading);letter-spacing:0.06em;color:#ffd23a">HOW TO PLAY</div>
+        <sc-for list="{{ helpRows }}" as="r" hint-placeholder-count="8"><div style="display:grid;grid-template-columns:84px minmax(0,1fr);gap:10px;padding:7px 14px;border-bottom:2px solid #2a2826;font:700 13px var(--font-body);line-height:1.35"><span style="font:900 11px var(--font-heading);letter-spacing:0.08em;color:#e6b45a">{{ r.k }}</span><span style="text-wrap:pretty">{{ r.v }}</span></div></sc-for>
+        <div class="mut" style="padding:10px 14px">Tap anywhere to close</div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { h: null, vw: 1200, vh: 800, pause: false, help: false, online: false, codeIn: '', joinMsg: '', peek: false, pickLv: null, pickCol: null };
+  stageRef = React.createRef();
+  embed = /[?&]embed=1/.test(location.search);
+  async componentDidMount() {
+    addEventListener('resize', this.onRs); this.onRs(); try { this.ro = new ResizeObserver(this.onRs); this.stageRef.current && this.ro.observe(this.stageRef.current.parentElement); } catch (e) {}
+    try { const m = await import(new URL('minigames/chess/chess-club.js', document.baseURI).href); this.g = await m.createChessClub({ container: this.stageRef.current, onState: h => this.setState(s => ({ h, peek: h.over ? s.peek : false, online: h.net ? false : s.online })) }); window.__chess = this.g; }
+    catch (e) { console.warn('chess club failed: ' + (e && e.stack || String(e))); }
+  }
+  componentDidUpdate() { const root = this.stageRef.current && this.stageRef.current.parentElement; if (!root || !this.g) return; const rb = root.getBoundingClientRect(); let top = 0, bottom = 0, right = 0, left = 0;
+    root.querySelectorAll('[data-safe]').forEach(el => { const r = el.getBoundingClientRect(); if (!r.height) return; const k = el.dataset.safe; if (k === 'top') top = Math.max(top, r.bottom - rb.top); else if (k === 'right') right = Math.max(right, rb.right - r.left); else if (k === 'left') left = Math.max(left, r.right - rb.left); else bottom = Math.max(bottom, rb.bottom - r.top); });
+    this.g.setSafe({ top, bottom: Math.min(bottom, rb.height * 0.7), right, left: Math.min(left, rb.width * 0.62) }); }
+  componentWillUnmount() { removeEventListener('resize', this.onRs); try { this.ro && this.ro.disconnect(); } catch (e) {} this.g && this.g.destroy(); }
+  onRs = () => { const el = this.stageRef.current, r = el && el.parentElement ? el.parentElement.getBoundingClientRect() : null; this.setState({ vw: r && r.width ? r.width : innerWidth, vh: r && r.height ? r.height : innerHeight }); };
+  renderVals() {
+    const S = this.state, g = this.g, blur = e => e && e.currentTarget && e.currentTarget.blur && e.currentTarget.blur(), act = f => e => { blur(e); g && f(g); };
+    const blank = { name: '', sub: '', col: '#000', caps: '', adv: '', clock: '', clockOn: false, low: false, active: false, thinking: false };
+    const h = S.h || { phase: 'menu', mode: 'cpu', level: 1, myColor: 'w', top: blank, bottom: blank, status: '', moves: [], say: null, promo: null, over: null, canUndo: false, canHint: false, opponents: [], resume: null, gold: 0, net: null, prefs: { sound: true, music: true, icons: false, speak: false, theme: 'wood', autoFlip: true, view: 'play', color: 'w', level: 1, tc: 'none' }, live: '' };
+    const P = h.prefs, port = S.vh >= S.vw, play = h.phase === 'play' || (h.phase === 'room' && !!h.net && h.net.live), net = h.net, N = net || { code: '', seats: [], people: [], status: '', reacts: [] };
+    const lv = S.pickLv ?? P.level, col = S.pickCol ?? P.color, O = (h.opponents || [])[lv] || { name: 'HOPE', gold: 15 };
+    const VIEWN = { play: 'TILT', top: 'TOP', table: 'TABLE' }, nextView = { play: 'TOP', top: 'TABLE', table: 'TILT' }[P.view] || 'TOP';
+    const isWatcher = h.mode === 'net' && net && !net.mine;
+    let actions;
+    if (h.mode === 'demo') actions = [{ label: 'TAKE OVER', sub: 'PLAY FROM HERE', aria: 'Take over this game and play from here', cls: 'cb cr', go: act(g => g.takeOver()) }, { label: 'EXIT DEMO', sub: 'BACK TO THE MENU', aria: 'Exit the demo', go: act(g => g.menu()) }, { label: 'VIEW', sub: VIEWN[P.view] + ' › ' + nextView, aria: 'Change the camera', go: act(g => g.cycleView()) }];
+    else if (h.mode === 'cpu') actions = [{ label: 'UNDO', sub: 'TAKE BACK', aria: 'Undo your last move', off: !h.canUndo, go: act(g => g.undo()) }, { label: h.hintBusy ? '…' : 'HINT', sub: 'SHOW A MOVE', aria: 'Show a good move', off: !h.canHint, go: act(g => g.hint()) }, { label: 'VIEW', sub: VIEWN[P.view] + ' › ' + nextView, aria: 'Change the camera', go: act(g => g.cycleView()) }, { label: 'SPEAK', sub: P.speak ? 'ON' : 'OFF', aria: 'Speak moves out loud', go: act(g => g.setPref('speak', !P.speak)) }];
+    else if (h.mode === 'local') actions = [{ label: 'UNDO', sub: 'TAKE BACK', aria: 'Undo the last move', off: !h.canUndo, go: act(g => g.undo()) }, { label: 'TURN', sub: P.autoFlip ? 'AUTO · ON' : 'AUTO · OFF', aria: 'Turn the board each move', go: act(g => g.setPref('autoFlip', !P.autoFlip)) }, { label: 'VIEW', sub: VIEWN[P.view] + ' › ' + nextView, aria: 'Change the camera', go: act(g => g.cycleView()) }, { label: 'FLIP', sub: 'BOARD', aria: 'Flip the board', go: act(g => g.flip()) }];
+    else actions = ['NICE', 'WOW', 'OOF', 'GG'].map(w => ({ label: w, sub: 'CHEER', aria: 'Send ' + w, go: act(g => g.netReact(w)) })).concat([{ label: 'VIEW', sub: VIEWN[P.view], aria: 'Change the camera', go: act(g => g.cycleView()) }]);
+    actions = actions.map(a => ({ off: false, cls: 'cb', ...a }));
+    const actCols = actions.length;
+    const top = h.top || blank, bottom = h.bottom || blank;
+    const clockBg = s => s.low && s.active ? '#ec3013' : s.active ? '#ffd23a' : '#000', clockFg = s => s.active ? '#000' : '#fff';
+    const pairs = h.moves || [], tail = pairs.slice(-4);
+    const statusCol = h.over ? '#ffd23a' : /CHECK/.test(h.status || '') ? '#ff9a8a' : /YOUR MOVE|TO MOVE/.test(h.status || '') ? '#ffffff' : '#cfcac2';
+    const seatAct = s => { if (s.mine) return net.live ? 'YOU' : 'TAP TO STAND UP'; if (s.open) return net.mine ? 'TAKEN BY YOU · OTHER SEAT' : 'TAP TO SIT'; return ''; };
+    const roomSeats = (N.seats || []).map(s => ({ label: s.c === 'w' ? 'WHITE' : 'BLACK', name: s.mine ? 'YOU' : s.name, col: s.col, act: net && !net.live ? (s.mine ? 'TAP TO STAND UP' : s.open && !net.mine ? 'TAP TO SIT' : '') : '', off: !net || net.live || (!s.mine && !(s.open && !net.mine)), go: act(g => s.mine ? g.netStand() : g.netSit(s.c)) }));
+    const room = h.phase === 'room' && !!net && !net.live && !S.peek;
+    const tcs = [['none', 'NONE'], ['10', '10 MIN'], ['5', '5 MIN'], ['3', '3 MIN']];
+    const ov = h.over || { title: '', sub: '', gold: 0, xp: 0 };
+    return {
+      stageRef: this.stageRef, h, net: N, top, bottom, liveTxt: h.live || '', embed: this.embed,
+      playPort: play && port, playLand: play && !port, panelW: S.vw < 760 ? '300px' : 'min(340px, 40%)',
+      topActive: top.active ? '#ffd23a' : '#000', botActive: bottom.active ? '#ffd23a' : '#000',
+      topSub: top.thinking ? 'THINKING…' : top.sub, topSubCol: top.thinking ? '#ffd23a' : '#8a847e',
+      topClockBg: clockBg(top), topClockFg: clockFg(top), botClockBg: clockBg(bottom), botClockFg: clockFg(bottom),
+      movesLine: pairs.length ? tail.map(m => m.n + '. ' + m.w + (m.b ? ' ' + m.b : '')).join('   ') : 'NEW GAME · WHITE MOVES FIRST',
+      moveRows: pairs.slice(-40), statusTxt: h.status || '', statusCol,
+      sayOn: (!!h.say || !!h.demo) && !h.over, sayWho: h.demo ? 'DEMO · ' + h.demo.key : h.say ? h.say.who : '', sayTxt: h.demo ? h.demo.cap : h.say ? h.say.text : '',
+      watchDemo: act(g => g.demo()),
+      actions, actCols, goldTxt: (h.gold || 0) + ' GOLD',
+      reactsOn: !!(net && net.reacts && net.reacts.length), reacts: net ? net.reacts : [], reactTop: port ? 'calc(110px + env(safe-area-inset-top))' : '12px',
+      // menu
+      menuOn: h.phase === 'menu' && !S.online, menuAlign: port ? 'flex-end' : 'center',
+      port, land: !port, resumePortOn: !!h.resume && port, resumeLandOn: !!h.resume && !port, menuSafe: port ? 'bottom' : 'left', menuW: port ? 'min(440px,100%)' : 'min(780px,100%)', menuCols: port ? 'minmax(0,1fr)' : 'minmax(0,1fr) minmax(0,1fr)', menuSplit: port ? '0' : '2px solid #3a3836', menuHeadPad: port ? '12px 16px' : '8px 14px', menuTitleFs: port ? '30px' : '22px', oppH: port ? '56px' : '46px', resumeLbl: h.resume ? h.resume.label : '', doResume: act(g => g.resume()),
+      opps: (h.opponents || []).map(o => { const on = o.level === lv; return { ...o, on, bg: on ? '#ffd23a' : '#000', fg: on ? '#000' : '#fff', tagCol: on ? '#000' : '#ffd23a', subCol: on ? '#3a3020' : '#8a847e', goldCol: on ? '#000' : '#e6b45a', pick: e => { blur(e); this.setState({ pickLv: o.level }); g && g.previewOpponent(o.level); } }; }),
+      colorBtns: [['w', 'WHITE'], ['b', 'BLACK'], ['random', 'RANDOM']].map(([c, label]) => ({ label, on: c === col, bg: c === col ? '#fff' : '#000', fg: c === col ? '#000' : '#fff', go: e => { blur(e); this.setState({ pickCol: c }); } })),
+      oppName: O.name, playSub: 'WIN ' + O.gold + ' GOLD · ' + (col === 'random' ? 'RANDOM COLOUR' : col === 'w' ? 'YOU MOVE FIRST' : O.name + ' MOVES FIRST'),
+      playCpu: act(g => g.playCpu(lv, col)), playLocal: act(g => g.playLocal()), onlineOpen: e => { blur(e); this.setState({ online: true, joinMsg: '' }); }, onlineClose: e => { blur(e); this.setState({ online: false }); },
+      toggles: [['SOUND', 'sound'], ['MUSIC', 'music'], ['SPEAK MOVES', 'speak'], ['HIGH CONTRAST', 'theme'], ['PIECE ICONS', 'icons'], ['BOARD TURNS', 'autoFlip']].map(([label, k]) => { const on = k === 'theme' ? P.theme === 'contrast' : !!P[k]; return { label, on, state: on ? 'ON' : 'OFF', col: on ? '#22c55e' : '#8a847e', go: act(g => g.setPref(k, k === 'theme' ? (on ? 'wood' : 'contrast') : !on)) }; }),
+      helpOpen: e => { blur(e); this.setState({ help: true }); }, helpClose: () => this.setState({ help: false }), helpOn: S.help,
+      goBack: e => { blur(e); try { parent.postMessage({ type: '8gates:minigame', game: 'chessClub', action: 'close' }, '*'); } catch (er) {} },
+      // join
+      joinOn: S.online && !net, codeIn: S.codeIn, joinMsgOn: !!S.joinMsg, joinMsg: S.joinMsg,
+      codeType: e => this.setState({ codeIn: String(e.target.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4) }),
+      codeKey: e => { if (e.key === 'Enter') { e.preventDefault(); this.join(); } }, netJoin: e => { blur(e); this.join(); }, netCreate: act(g => g.netCreate()),
+      // room
+      roomOn: room, netStat: !net ? '' : net.status === 'local' ? 'TEST · SAME DEVICE' : net.status === 'online' ? net.count + ' / ' + net.max + ' HERE' : net.status === 'offline' ? 'OFFLINE' : net.status === 'off' ? 'NETWORK OFF' : 'CONNECTING…',
+      shareTxt: net && net.copied ? 'LINK COPIED' : 'SHARE LINK',
+      netShare: async e => { blur(e); if (!g) return; const u = g.netShareURL(); if (!u) return; try { if (navigator.share && port) await navigator.share({ title: '8 GATES · Chess Club', text: 'Play chess with me in 8 GATES. Room ' + net.code, url: u }); else { await navigator.clipboard.writeText(u); g.netCopied(true); setTimeout(() => g.netCopied(false), 2000); } } catch (er) {} },
+      roomMsg: !net ? '' : net.status === 'offline' ? 'Could not reach the network. Some school or work Wi-Fi blocks this.' : net.count < 2 ? 'Waiting for friends. Send the link, or tell them the code.' : net.result ? 'Game over. Tap NEXT GAME: the winner stays on and the next fox in line sits down.' : !net.canStart && net.mine ? 'Waiting for someone to take the other seat.' : net.canStart ? 'Both seats taken. Tap START GAME.' : 'Tap an open seat to play, or watch and get in line.',
+      seats: roomSeats,
+      people: (N.people || []).map(p => ({ ...p, name: p.me ? 'YOU' : p.name, tag: p.host ? 'HOST' : '' })),
+      clockRowOn: !!(net && net.host), tcBtns: tcs.map(([v, label]) => ({ label, on: net && net.tc === v, off: !net || net.live, bg: net && net.tc === v ? '#fff' : '#000', fg: net && net.tc === v ? '#000' : '#fff', go: act(g => g.netClock(v)) })),
+      queueOn: !!(net && !net.mine && !net.inQueue && net.count > 2), netQueue: act(g => g.netQueue()),
+      startOn: !!(net && net.canStart), startTxt: net && net.result ? 'NEXT GAME' : 'START GAME', startSub: net && net.tc !== 'none' ? net.tc + ' MIN EACH' : 'NO CLOCK', netStart: act(g => g.netStart()),
+      watchOn: !!(net && net.live), roomClose: e => { blur(e); this.setState({ peek: true }); },
+      roomBtnCols: net && (net.canStart || net.live) ? 'minmax(0,2fr) minmax(0,1fr)' : 'minmax(0,1fr)', netLeave: act(g => g.netLeave()),
+      // pause
+      pauseOn: S.pause, pauseOpen: e => { blur(e); this.setState({ pause: true }); }, pauseClose: e => { blur(e); this.setState({ pause: false }); }, stop: e => e.stopPropagation(),
+      pauseKicker: h.mode === 'cpu' ? 'VS ' + ((h.opponents || [])[h.level] || {}).name + ' · ' + (h.practice ? 'PRACTICE' : 'FOR GOLD') : h.mode === 'local' ? 'PASS & PLAY' : 'ONLINE · ROOM ' + (net ? net.code : ''),
+      pauseRows: [
+        ...(h.mode === 'net' ? [{ label: 'ROOM', sub: 'SEATS · LINE · SHARE LINK', col: '#7dd3fc', go: e => { blur(e); this.setState({ pause: false, peek: false }); g && g.netOpenRoom(); } }] : []),
+        ...(h.mode !== 'demo' && (h.mode !== 'net' || (net && net.mine && net.live)) ? [{ label: 'RESIGN', sub: h.mode === 'local' ? 'THE PLAYER TO MOVE GIVES UP' : 'GIVE UP THIS GAME', col: '#ff9a8a', go: e => { blur(e); this.setState({ pause: false }); g && g.resign(); } }] : []),
+        { label: 'HOW TO PLAY', sub: 'RULES · MOVES · CONTROLS', col: '#ffd23a', go: e => { blur(e); this.setState({ pause: false, help: true }); } },
+        { label: h.mode === 'net' ? 'LEAVE ROOM' : 'MAIN MENU', sub: h.mode === 'cpu' || h.mode === 'local' ? 'THIS GAME IS SAVED · RESUME LATER' : '', col: '#ffffff', go: e => { blur(e); this.setState({ pause: false }); g && (h.mode === 'net' ? g.netLeave() : g.menu()); } },
+        ...(this.embed ? [{ label: 'LEAVE THE CLUB', sub: 'BACK TO THE WORLD', col: '#ffffff', go: e => { blur(e); try { parent.postMessage({ type: '8gates:minigame', game: 'chessClub', action: 'close' }, '*'); } catch (er) {} } }] : [])],
+      toggles4: [['SOUND', 'sound'], ['MUSIC', 'music'], ['SPEAK MOVES', 'speak'], ['HIGH CONTRAST', 'theme'], ['PIECE ICONS', 'icons'], ['CAMERA', 'view']].map(([label, k]) => { if (k === 'view') return { label, on: true, state: VIEWN[P.view], col: '#ffd23a', go: act(g => g.cycleView()) }; const on = k === 'theme' ? P.theme === 'contrast' : !!P[k]; return { label, on, state: on ? 'ON' : 'OFF', col: on ? '#22c55e' : '#8a847e', go: act(g => g.setPref(k, k === 'theme' ? (on ? 'wood' : 'contrast') : !on)) }; }),
+      // promotion
+      promoOn: !!h.promo, promos: [['q', 'QUEEN', '♛'], ['r', 'ROOK', '♜'], ['b', 'BISHOP', '♝'], ['n', 'KNIGHT', '♞']].map(([t, name, gl]) => ({ name, glyph: gl + '︎', go: act(g => g.promote(t)) })), promoCancel: act(g => g.cancelPromo()),
+      // over
+      overOn: !!h.over && !h.flash && !S.peek && !S.pause,    over: ov,
+      overKicker: (h.mode === 'cpu' ? 'VS ' + (((h.opponents || [])[h.level] || {}).name || '') : h.mode === 'local' ? 'PASS & PLAY' : 'ONLINE') + ' · ' + (h.over ? h.over.result : ''),
+      overBig: ov.gold ? '+' + ov.gold : ov.xp ? '+' + ov.xp : ov.result === '1/2-1/2' ? '½' : ov.winner === 'w' ? '1-0' : '0-1', overUnit: ov.gold ? 'GOLD' : ov.xp ? 'XP' : 'RESULT',
+      overBg: ov.gold ? '#ffd23a' : '#ec3013', overFg: ov.gold ? '#000' : '#fff',
+      overRows: [...(ov.gold ? [{ k: 'Gold', v: '+' + ov.gold }] : []), ...(ov.xp ? [{ k: 'XP', v: '+' + ov.xp }] : []), { k: 'Moves', v: String(pairs.length) }, ...(ov.record ? [{ k: 'Record', v: ov.record.replace(/^vs [^:]+: /, '') }] : [])],
+      flashOn: !!h.flash && !h.promo, flashTxt: h.flash ? h.flash.txt : '', flashCol: h.flash ? h.flash.col : '#ffd23a',
+      againTxt: h.mode === 'net' ? (net && net.canStart ? 'NEXT GAME' : 'ROOM') : 'REMATCH', again: e => { blur(e); if (!g) return; if (h.mode === 'net') { if (net && net.canStart) g.netStart(); else { g.netOpenRoom(); this.setState({ peek: false }); } } else g.rematch(); },
+      overLook: e => { blur(e); this.setState({ peek: true }); }, overMenuTxt: h.mode === 'net' ? 'LEAVE' : 'MENU', overMenu: act(g => h.mode === 'net' ? g.netLeave() : g.menu()),
+      helpRows: [['MOVE', 'Tap one of your pieces. Dots show where it can go, rings show captures. Tap a dot. You can also drag a piece.'], ['WIN', 'Trap the other king so it cannot escape: checkmate. Check means the king is attacked and must get out of it.'], ['PAWNS', 'Move forward one square (two on their first move), capture diagonally. Reach the far side and pick a new piece.'], ['CASTLE', 'Tap your king, then the square two steps toward a rook. Not out of, through or into check.'], ['EN PASSANT', 'A pawn that jumps two squares past yours can be taken as if it moved one. Only right away.'], ['DRAWS', 'Stalemate, the same position three times, 50 moves with no capture or pawn move, or too few pieces to mate.'], ['SPEAK MOVES', 'Turn it on to hear every move and every square you tap. Keyboard: arrow keys move a cursor, Enter picks.'], ['ONLINE', 'Up to 5 in a room. Two sit and play, the rest watch, cheer and get in line. Winner stays on, colours swap.'], ['GOLD', 'Beat Pip, Hope or Noble for gold. Using UNDO or HINT makes it a practice game.'], ['PIECES', 'Gold marks tell the pieces apart: pawn one ring, rook two rings, knight gold eyes, bishop a gold slit and ball, queen a gold crown, king a gold cross. PIECE ICONS shows a flat symbol over every piece.']].map(([k, v]) => ({ k, v })),
+    };
+  }
+  join() { const c = this.state.codeIn; if (c.length < 4) { this.setState({ joinMsg: 'Type the 4-letter room code from your friend.' }); return; } this.g && this.g.netJoin(c); }
+}
+</script>
+</body>
+</html>

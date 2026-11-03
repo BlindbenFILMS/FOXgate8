@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><script src="engine/mute-all.js"></script>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000000}a{color:var(--color-accent-700)}a:hover{color:var(--color-accent)}button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}</style>
+</helmet>
+<div style="--color-bg:#000000;--color-text:#f3f2f2;--color-neutral-700:#b8b5b3;--color-accent-100:#3a0f08;position:fixed;inset:0;display:flex;flex-direction:column;font-family:var(--font-body);color:var(--color-text);background:var(--color-bg)" data-screen-label="Fighter Gear Lab">
+  <div style="display:flex;flex-wrap:wrap;align-items:baseline;column-gap:12px;row-gap:2px;padding:10px 14px;border-bottom:2px solid var(--color-text)">
+    <div style="font-family:var(--font-heading);font-weight:800;font-size:18px;letter-spacing:0.02em">FIGHTER GEAR LAB · BEN</div>
+    <div style="font-size:13px;color:var(--color-neutral-700)">{{ status }}</div>
+  </div>
+  <div style="flex:1;min-height:0;position:relative">
+    <div ref="{{ stage }}" style="position:absolute;inset:0;touch-action:none"></div>
+    <sc-if value="{{ sndOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;top:0;right:0;bottom:0;width:min(420px,100%);overflow-y:auto;background:var(--color-bg);border-left:2px solid var(--color-text);display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:2px solid var(--color-text);position:sticky;top:0;background:var(--color-bg);z-index:1">
+          <div style="flex:1;min-width:0">
+            <div style="font-family:var(--font-heading);font-weight:800;font-size:16px">FIGHTER SOUNDS</div>
+            <div style="font-size:12px;color:var(--color-neutral-700);text-wrap:pretty">Saved on this device · every battle map with the fighter gear uses them</div>
+          </div>
+          <button onClick="{{ onSndReset }}" style="min-height:44px;padding:0 12px;text-align:left;font:700 13px var(--font-body);background:transparent;color:var(--color-text);border:2px solid var(--color-text);cursor:pointer" style-hover="background:var(--color-accent-100)">RESET</button>
+          <button onClick="{{ onSnd }}" style="min-height:44px;padding:0 12px;text-align:left;font:700 13px var(--font-body);background:var(--color-text);color:var(--color-bg);border:2px solid var(--color-text);cursor:pointer">CLOSE</button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;padding:12px 14px;border-bottom:2px solid var(--color-text)">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="flex:1;font-weight:800;font-size:14px">BATTLE MUSIC</div>
+            <button onClick="{{ onMus }}" style="min-height:44px;min-width:72px;padding:0 12px;text-align:left;font:700 13px var(--font-body);background:var(--color-accent);color:#ffffff;border:0;cursor:pointer" style-active="background:var(--color-accent-600)">{{ musLabel }}</button>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <sc-for list="{{ musLevels }}" as="o" hint-placeholder-count="3">
+              <button onClick="{{ o.pick }}" style="min-height:40px;padding:0 12px;text-align:left;font:700 12px var(--font-body);letter-spacing:0.04em;background:{{ o.bg }};color:{{ o.fg }};border:2px solid var(--color-text);cursor:pointer">{{ o.name }}</button>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:64px minmax(0,1fr) 40px;align-items:center;gap:8px;font-size:12px;font-weight:700">
+            <div>VOLUME</div><input type="range" min="0" max="1" step="0.05" value="{{ musVol }}" onChange="{{ onMusVol }}" style="width:100%;accent-color:var(--color-accent)"><div>{{ musVolTxt }}</div>
+          </div>
+        </div>
+        <sc-for list="{{ sndRows }}" as="row" hint-placeholder-count="6">
+          <div style="display:flex;flex-direction:column;gap:8px;padding:12px 14px;border-bottom:2px solid var(--color-text)">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="flex:1;font-weight:800;font-size:14px">{{ row.label }}</div>
+              <button onClick="{{ row.test }}" style="min-height:44px;min-width:72px;padding:0 12px;text-align:left;font:700 13px var(--font-body);background:var(--color-accent);color:#ffffff;border:0;cursor:pointer" style-active="background:var(--color-accent-600)">▶ TEST</button>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <sc-for list="{{ row.opts }}" as="o" hint-placeholder-count="4">
+                <button onClick="{{ o.pick }}" style="min-height:40px;padding:0 12px;text-align:left;font:700 12px var(--font-body);letter-spacing:0.04em;background:{{ o.bg }};color:{{ o.fg }};border:2px solid var(--color-text);cursor:pointer">{{ o.name }}</button>
+              </sc-for>
+            </div>
+            <div style="display:grid;grid-template-columns:64px minmax(0,1fr) 40px;align-items:center;gap:8px;font-size:12px;font-weight:700">
+              <div>VOLUME</div><input type="range" min="0" max="3" step="0.05" value="{{ row.v }}" onChange="{{ row.setV }}" style="width:100%;accent-color:var(--color-accent)"><div>{{ row.vTxt }}</div>
+              <div>PITCH</div><input type="range" min="0.5" max="2" step="0.05" value="{{ row.p }}" onChange="{{ row.setP }}" style="width:100%;accent-color:var(--color-accent)"><div>{{ row.pTxt }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border-top:2px solid var(--color-text)">
+    <button onPointerDown="{{ on1Down }}" onPointerUp="{{ on1Up }}" onPointerLeave="{{ on1Up }}" onContextMenu="{{ noMenu }}" style="min-height:64px;padding:8px 14px;text-align:left;font:700 15px var(--font-body);background:var(--color-accent);color:#ffffff;border:0;border-right:2px solid var(--color-text);border-bottom:2px solid var(--color-text);cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none" style-active="background:var(--color-accent-600)">1 · TAP CUT · HOLD = POWER SWING</button>
+    <button onPointerDown="{{ on2Down }}" onPointerUp="{{ on2Up }}" onPointerLeave="{{ on2Up }}" onContextMenu="{{ noMenu }}" style="min-height:64px;padding:8px 14px;text-align:left;font:700 15px var(--font-body);background:transparent;color:var(--color-text);border:0;border-right:2px solid var(--color-text);border-bottom:2px solid var(--color-text);cursor:pointer" style-hover="background:var(--color-accent-100)">2 · LASER · HOLD = KEEP FIRING</button>
+    <button onClick="{{ onWalk }}" style="min-height:64px;padding:8px 14px;text-align:left;font:700 15px var(--font-body);background:transparent;color:var(--color-text);border:0;border-right:2px solid var(--color-text);border-bottom:2px solid var(--color-text);cursor:pointer" style-hover="background:var(--color-accent-100)">WALK</button>
+    <button onClick="{{ onSlow }}" style="min-height:64px;padding:8px 14px;text-align:left;font:700 15px var(--font-body);background:transparent;color:var(--color-text);border:0;border-right:2px solid var(--color-text);border-bottom:2px solid var(--color-text);cursor:pointer" style-hover="background:var(--color-accent-100)">{{ slowLabel }}</button>
+    <button onClick="{{ onView }}" style="min-height:64px;padding:8px 14px;text-align:left;font:700 15px var(--font-body);background:transparent;color:var(--color-text);border:0;border-bottom:2px solid var(--color-text);cursor:pointer" style-hover="background:var(--color-accent-100)">VIEW · {{ viewLabel }}</button>
+    <button onClick="{{ onSnd }}" style="min-height:64px;padding:8px 14px;text-align:left;font:700 15px var(--font-body);background:transparent;color:var(--color-text);border:0;border-left:2px solid var(--color-text);border-bottom:2px solid var(--color-text);cursor:pointer" style-hover="background:var(--color-accent-100)">SOUNDS</button>
+    <button onClick="{{ onSuper }}" style="min-height:64px;padding:8px 14px;text-align:left;font:700 15px var(--font-body);background:var(--color-text);color:var(--color-bg);border:0;border-bottom:2px solid var(--color-text);cursor:pointer">PICK A SUPER · or hold Q / hold the SUPER bar</button>
+    <button onClick="{{ onWhirl }}" style="min-height:64px;padding:8px 14px;text-align:left;font:700 15px var(--font-body);background:transparent;color:var(--color-text);border:0;border-left:2px solid var(--color-text);border-bottom:2px solid var(--color-text);cursor:pointer" style-hover="background:var(--color-accent-100)">↓ ↔ + 1 · WHIRLWIND</button>
+    <button onClick="{{ onBeam }}" style="min-height:64px;padding:8px 14px;text-align:left;font:700 15px var(--font-body);background:transparent;color:var(--color-text);border:0;border-left:2px solid var(--color-text);border-bottom:2px solid var(--color-text);cursor:pointer" style-hover="background:var(--color-accent-100)">↓ ↔ + 2 · FOX BEAM</button>
+        <button onClick="{{ onHit }}" style="min-height:64px;padding:8px 14px;text-align:left;font:700 15px var(--font-body);background:transparent;color:var(--color-text);border:0;border-left:2px solid var(--color-text);border-bottom:2px solid var(--color-text);cursor:pointer" style-hover="background:var(--color-accent-100)">HIT SHIELD · {{ shieldPct }}</button>
+    <button onClick="{{ onBarrage }}" style="min-height:64px;padding:8px 14px;text-align:left;font:700 15px var(--font-body);background:transparent;color:var(--color-text);border:0;border-left:2px solid var(--color-text);border-bottom:2px solid var(--color-text);cursor:pointer" style-hover="background:var(--color-accent-100)">BARRAGE · 6 HITS</button>
+    <button onClick="{{ onHurt }}" style="min-height:64px;padding:8px 14px;text-align:left;font:700 15px var(--font-body);background:transparent;color:var(--color-text);border:0;border-left:2px solid var(--color-text);border-bottom:2px solid var(--color-text);cursor:pointer" style-hover="background:var(--color-accent-100)">HURT BEN (NO SHIELD)</button>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:0;background:transparent;color:var(--color-text);">
+    <div style="padding:12px 14px 8px;font:900 15px var(--font-heading);letter-spacing:0.06em;border-bottom:2px solid var(--color-text);">SUPER GRAPHICS · 03–22 (tap to see)</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));">
+      <sc-for list="{{ fxList }}" as="m" hint-placeholder-count="12">
+        <button onClick="{{ m.play }}" style="min-height:60px;padding:8px 14px;text-align:left;font:700 14px var(--font-body);background:transparent;color:var(--color-text);border:0;border-right:2px solid var(--color-text);border-bottom:2px solid var(--color-text);cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:2px;" style-hover="background:var(--color-accent-900);" style-active="background:var(--color-accent-700);"><span style="font-weight:900;">{{ m.name }}</span><span style="font-size:12px;opacity:0.85;">{{ m.input }}</span></button>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { st: null, vi: 0, snd: /[?#&]sounds|robot/i.test(location.search + location.hash), cfg: null, mus: false, musK: 0.5, musV: null };
+  stage = React.createRef();
+  views = ['back', 'three', 'side', 'front'];
+  names = { back: 'GAME (BACK)', three: '3/4 FRONT', side: 'SIDE', front: 'FRONT' };
+  async componentDidMount() {
+    const m = await import('./engine/fighter-gear-lab.js?v=s342');
+    this.lab = await m.startGearLab(this.stage.current); window.__gearLab = this.lab; this.lab.view('back'); this.setState({ cfg: this.lab.sfx.get() });
+    this.tick = setInterval(() => this.setState({ st: this.lab.state() }), 250);
+    this.kd = e => { if (e.repeat) return; if (e.code === 'Digit1') this.down1(); if (e.code === 'Digit2') this.down2(); if (e.code === 'KeyW' && !this.lab.superFrozen()) this.lab.walk(); if (e.code === 'KeyH') this.lab.fists(); if (e.code === 'KeyV') this.nextView(); };
+    this.ku = e => { if (e.code === 'Digit1') this.up1(); if (e.code === 'Digit2') this.up2(); };
+    addEventListener('keydown', this.kd); addEventListener('keyup', this.ku);
+  }
+  componentWillUnmount() { clearInterval(this.tick); removeEventListener('keydown', this.kd); removeEventListener('keyup', this.ku); this.lab && this.lab.destroy(); }
+  down1() { if (!this.lab || this.hold) return; if (this.lab.superFrozen()) { this.lab.superBtn(1); return; } this.hold = { done: false, t: setTimeout(() => { this.hold.done = true; if (!this.lab.charge()) { if (this.lab.state().fists) { this.lab.fists(); this.lab.draw(); } } }, 300) }; }
+  up1() { const h = this.hold; if (!h) return; this.hold = null; clearTimeout(h.t); if (!h.done) this.lab.strike(); else if (!this.lab.release()) this.lab.strike(); }
+  down2() { if (!this.lab || this.fire) return; if (this.lab.superFrozen()) { this.lab.superBtn(2); return; } this.lab.shoot(); this.fire = setInterval(() => this.lab.shoot(), 150); }
+  up2() { clearInterval(this.fire); this.fire = null; }
+  sndSet(k, part) { const S = this.lab.sfx; S.set(k, part); this.setState({ cfg: S.get() }); }
+  sndTest(k) { const S = this.lab.sfx; if (k === 'charge') { S.loopStart('charge'); let c = 0; const iv = setInterval(() => { c += 0.05; S.loopLevel(Math.min(1, c)); if (c >= 1.3) { clearInterval(iv); S.loopStop(); S.play('power'); } }, 50); } else S.play(k); }
+  nextView() { const vi = (this.state.vi + 1) % this.views.length; this.setState({ vi }); this.lab && this.lab.view(this.views[vi]); }
+  renderVals() {
+    const L = () => this.lab, st = this.state.st;
+    return {
+      stage: this.stage,
+      status: !st ? 'Loading Ben…' : (st.fists ? 'FISTS · tap 1 = jab, cross, hook, kick · H = sword' : 'SWORD · tap 1 = draw + chop, sweep, spin · hold 1 = power swing · back after 3 s · H = fists') + (st.walk ? ' · walking' : '') + (st.slow < 1 ? ' · slow motion' : '') + ' · keys 1 2 H V · SUPER bar: tap / Q = use · hold = pick',
+      on1Down: e => { e.preventDefault(); this.down1(); }, on1Up: () => this.up1(), noMenu: e => e.preventDefault(),
+      on2Down: e => { e.preventDefault(); this.down2(); }, on2Up: () => this.up2(), onWalk: () => L() && L().walk(), onSlow: () => L() && L().slow(),
+      slowLabel: st && st.slow < 1 ? 'SLOW MO · ON' : 'SLOW MO · OFF',
+      sndOpen: this.state.snd, onSnd: () => this.setState({ snd: !this.state.snd }), onSndReset: () => { if (!this.lab) return; this.lab.sfx.reset(); this.setState({ cfg: this.lab.sfx.get() }); },
+      sndRows: !this.lab || !this.state.cfg ? [] : this.lab.sfxEvents.map(ev => { const c = this.state.cfg[ev.key]; return { label: ev.label, v: c.v, p: c.p, vTxt: Math.round(c.v * 100) + '%', pTxt: c.p.toFixed(2) + 'x',
+        test: () => this.sndTest(ev.key), setV: e => this.sndSet(ev.key, { v: +e.target.value }), setP: e => this.sndSet(ev.key, { p: +e.target.value }),
+        opts: ev.styles.map(s => ({ name: s.toUpperCase(), bg: s === c.s ? 'var(--color-text)' : 'transparent', fg: s === c.s ? 'var(--color-bg)' : 'var(--color-text)', pick: () => { this.sndSet(ev.key, { s }); if (s !== 'off') setTimeout(() => this.sndTest(ev.key), 0); } })) }; }),
+      onSuper: () => L() && L().superPick(), fxList: (this.lab && this.lab.superFxList || []).map(([k, name, input, num]) => ({ name: num + ' · ' + name, input, play: () => L() && L().superFx(k) })), onWhirl: () => L() && L().superDemo('whirl'), onBeam: () => L() && L().superDemo('beam'), onSlam: () => L() && L().superDemo('slam'),
+      onHurt: () => L() && L().hurtMe(), onHit: () => L() && L().hitShield(12), onBarrage: () => { if (!L()) return; for (let i = 0; i < 6; i++) setTimeout(() => L().hitShield(14), i * 140); },
+      shieldPct: !this.lab ? '' : (this.lab.shield.up ? Math.round(this.lab.shield.pct * 100) + '%' : 'DOWN'),
+      musLabel: this.state.mus ? '■ STOP' : '▶ PLAY', onMus: () => { const M = this.lab && this.lab.music; if (!M) return; if (this.state.mus) { M.stop(); this.setState({ mus: false }); } else { M.start(); M.intensity(this.state.musK); this.setState({ mus: true }); } },
+      musLevels: [['CALM', 0.1], ['FIGHT', 0.5], ['BOSS / SWARM', 1]].map(([name, k]) => ({ name, bg: this.state.musK === k ? 'var(--color-text)' : 'transparent', fg: this.state.musK === k ? 'var(--color-bg)' : 'var(--color-text)', pick: () => { this.setState({ musK: k }); this.lab && this.lab.music.intensity(k); } })),
+      musVol: this.state.musV ?? (this.lab ? this.lab.music.vol : 0.5), musVolTxt: Math.round((this.state.musV ?? (this.lab ? this.lab.music.vol : 0.5)) * 100) + '%', onMusVol: e => { const v = +e.target.value; this.lab && this.lab.music.volume(v); this.setState({ musV: v }); },
+      onView: () => this.nextView(), viewLabel: this.names[this.views[this.state.vi]],
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-10-05T18:14:19Z"
+  },
+  "title": "Foxy Cakes",
+  "launch": {
+    "view": "focused",
+    "file": "Main.dc.html"
+  },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Foxy Cakes \u00b7 iPhone portrait",
+      "is_interactive": true
+    },
+    "Landscape.dc.html": {
+      "x": 470,
+      "y": 0,
+      "w": 844,
+      "h": 390,
+      "title": "Foxy Cakes \u00b7 iPhone landscape",
+      "is_interactive": true
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Landscape.dc.html"
+  ],
+  "notes": {
+    "howto": {
+      "x": 470,
+      "y": 470,
+      "w": 440,
+      "maxH": 520,
+      "text": "FOXY CAKES: a cake bakery for the FOX world, built on the Foxy Pies restaurant engine. PUT ME TO WORK for a shift, WATCH THE DEMO for one whole cake, LOOK AROUND to walk the FOX player through the shop, or BAKE YOUR OWN to write any message. Mix: tap the jars. Whisk: circle in the bowl. Pour: pull down to tilt. Bake: PULL IT OUT in the green. Frost: drag while it spins. Pipe: trace the stencil, pick colour + tip, add a border for a bonus. Toppers: tap; sprinkles: drag. In the 3D world it drops into any building through buildCakery() in minigames/cake/cake-shift.js. URL extras: ?walk=1 starts walking, ?demo=1 starts the demo. SOUND: live-synthesized waltz + lullaby and 40 baking sounds (the oven hum rises as it bakes; a bell rings in the green). Help panel (?) has MUSIC, SOUND EFFECTS, VOICE GUIDE and VIBRATION. Merge kit: worlds/meru-cakes.js + FOXY_CAKES_MERGE.md in the export zip."
+    }
+  },
+  "designSystems": []
+}

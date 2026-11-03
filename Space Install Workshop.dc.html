@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/styles.css">
+<script src="_ds/modernist-ae67aa6b-5da8-44ce-9255-829f1d75925f/_ds_bundle.js"></script>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#201e1d}a{color:#f3f2f2}a:hover{color:var(--color-accent)}button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}input[type=range]{width:100%;height:44px;margin:0;accent-color:#ec3013;background:transparent}input[type=color]{width:56px;height:44px;padding:0;border:2px solid #f3f2f2;border-radius:0;background:#201e1d;cursor:pointer}</style>
+</helmet>
+<div style="display:grid;grid-template-rows:auto minmax(0,1fr);height:100vh;height:100dvh;background:var(--color-text);color:var(--color-bg);font-family:var(--font-body)" data-screen-label="Space Install Workshop">
+  <div style="display:flex;align-items:stretch;border-bottom:2px solid var(--color-bg);min-width:0">
+    <div style="padding:8px 16px;display:flex;flex-direction:column;gap:2px;flex:1;min-width:0">
+      <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;color:var(--color-accent);white-space:nowrap">8 GATES · SPACE MAP</div>
+      <div style="font-family:var(--font-heading);font-size:20px;font-weight:800;line-height:1.05">Space Install Workshop</div>
+    </div>
+    <div style="display:flex;align-items:center;padding:0 14px;border-left:2px solid var(--color-bg);font:800 11px var(--font-heading);letter-spacing:0.1em;color:{{ savedCol }};white-space:nowrap">{{ savedTxt }}</div>
+  </div>
+
+  <div style="display:grid;grid-template-areas:{{ areas }};grid-template-columns:{{ cols }};grid-template-rows:{{ rows }};min-height:0">
+    <div style="grid-area:tabs;display:flex;flex-direction:{{ tabsDir }};overflow:auto;border-right:{{ tabsBorderR }};border-bottom:{{ tabsBorderB }};min-width:0">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="10">
+        <button onClick="{{ t.pick }}" style="flex:none;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;min-height:52px;padding:8px 14px;border:0;border-bottom:{{ t.bb }};border-right:{{ t.br }};border-radius:0;background:{{ t.bg }};color:var(--color-bg);text-align:left;cursor:pointer" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">
+          <span style="font:800 13px var(--font-heading);letter-spacing:0.05em;white-space:nowrap">{{ t.name }}</span>
+          <span style="font:700 10px var(--font-heading);letter-spacing:0.1em;color:{{ t.mc }};white-space:nowrap">{{ t.meta }}</span>
+        </button>
+      </sc-for>
+    </div>
+
+    <div style="grid-area:view;position:relative;min-width:0;min-height:0;overflow:hidden;border-bottom:{{ viewBorderB }};background:#03040a">
+      <div ref="{{ stageRef }}" style="position:absolute;inset:0;touch-action:none"></div>
+      <div style="position:absolute;left:8px;top:8px;display:flex;flex-direction:column;gap:2px;pointer-events:none">
+        <span style="font:900 22px/1 var(--font-heading);letter-spacing:0.04em;color:#ffffff;text-shadow:0 2px 0 #000,0 0 6px #000">{{ title }}</span>
+        <span style="font:800 11px var(--font-heading);letter-spacing:0.1em;color:#ffd23a;text-shadow:0 2px 0 #000">{{ statTxt }}</span>
+      </div>
+      <div style="position:absolute;right:8px;bottom:8px;display:flex;gap:6px">
+        <button onClick="{{ camMap }}" style="min-height:44px;padding:0 12px;border:2px solid var(--color-bg);border-radius:0;background:{{ camMapBg }};color:var(--color-bg);font:800 12px var(--font-heading);letter-spacing:0.08em;text-align:left;cursor:pointer" style-hover="background:var(--color-accent-900)">MAP CAMERA</button>
+        <button onClick="{{ camFree }}" style="min-height:44px;padding:0 12px;border:2px solid var(--color-bg);border-radius:0;background:{{ camFreeBg }};color:var(--color-bg);font:800 12px var(--font-heading);letter-spacing:0.08em;text-align:left;cursor:pointer" style-hover="background:var(--color-accent-900)">FREE ORBIT</button>
+      </div>
+      <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:800 13px var(--font-heading);letter-spacing:0.12em;color:var(--color-bg)">LOADING…</div>
+      </sc-if>
+    </div>
+
+    <div style="grid-area:panel;overflow:auto;min-height:0;display:flex;flex-direction:column">
+      <div style="padding:12px 16px;border-bottom:2px solid var(--color-bg);display:flex;flex-direction:column;gap:4px">
+        <span style="font:900 18px var(--font-heading);letter-spacing:0.04em">{{ title }}</span>
+        <span style="font:500 14px/1.35 var(--font-body);text-wrap:pretty">{{ role }}</span>
+      </div>
+      <div style="padding:10px 16px;border-bottom:2px solid var(--color-bg);display:flex;flex-direction:column;gap:8px">
+        <button onClick="{{ sndToggle }}" style="min-height:44px;padding:0 14px;border:2px solid var(--color-bg);border-radius:0;background:{{ sndBg }};color:var(--color-bg);font:800 13px var(--font-heading);letter-spacing:0.08em;text-align:left;cursor:pointer" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">{{ sndBtn }}</button>
+        <sc-if value="{{ sndOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <span style="font:800 11px var(--font-heading);letter-spacing:0.12em">THRUST SOUNDS</span>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button onClick="{{ thr1 }}" style="min-height:44px;padding:0 12px;border:2px solid var(--color-bg);border-radius:0;background:{{ thr1Bg }};color:var(--color-bg);font:800 12px var(--font-heading);letter-spacing:0.06em;text-align:left;cursor:pointer" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">OPTION 1 · MADE HERE</button>
+              <button onClick="{{ thr2 }}" style="min-height:44px;padding:0 12px;border:2px solid var(--color-bg);border-radius:0;background:{{ thr2Bg }};color:var(--color-bg);font:800 12px var(--font-heading);letter-spacing:0.06em;text-align:left;cursor:pointer" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">OPTION 2 · RUNWAY</button>
+            </div>
+          </div>
+          <div style="font:500 13px/1.4 var(--font-body);opacity:0.85;text-wrap:pretty">Every recorded space sound. Tap ▶ to hear it. Slide to set its loudness (100 % = as recorded). Saves on its own; the Space Map picks it up.</div>
+          <div style="display:flex;flex-direction:column;gap:0">
+            <sc-for list="{{ sounds }}" as="s" hint-placeholder-count="8">
+              <div style="display:grid;grid-template-columns:44px minmax(0,1fr) 52px;gap:8px;align-items:center;padding:4px 0;border-top:{{ s.bt }}">
+                <button onClick="{{ s.play }}" style="width:44px;height:44px;border:2px solid var(--color-bg);border-radius:0;background:transparent;color:var(--color-bg);font:800 14px var(--font-heading);cursor:pointer" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">▶</button>
+                <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                  <span style="font:800 12px var(--font-heading);letter-spacing:0.06em">{{ s.grp }} · {{ s.name }}</span>
+                  <input type="range" min="0" max="2" step="0.05" value="{{ s.v }}" onInput="{{ s.set }}" style="width:100%;accent-color:#ec3013;min-height:28px">
+                </div>
+                <span style="font:800 13px var(--font-heading);text-align:right;color:{{ s.col }}">{{ s.pct }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <button onClick="{{ sndReset }}" style="min-height:44px;padding:0 14px;border:2px solid var(--color-bg);border-radius:0;background:transparent;color:var(--color-bg);font:800 12px var(--font-heading);letter-spacing:0.08em;text-align:left;cursor:pointer" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">RESET ALL SOUNDS</button>
+        </sc-if>
+      </div>
+      <div style="padding:10px 16px;border-bottom:2px solid var(--color-bg);display:flex;flex-direction:column;gap:6px">
+        <span style="font:800 11px var(--font-heading);letter-spacing:0.12em">WORLD · ITS FLEET TABS + PREVIEW COLOUR</span>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <sc-for list="{{ worlds }}" as="w" hint-placeholder-count="9">
+            <button onClick="{{ w.pick }}" style="min-height:44px;display:flex;align-items:center;gap:6px;padding:0 10px;border:2px solid {{ w.bd }};border-radius:0;background:{{ w.bg }};color:var(--color-bg);font:800 12px var(--font-heading);letter-spacing:0.06em;cursor:pointer" style-hover="background:var(--color-accent-900)">
+              <span style="width:14px;height:14px;background:{{ w.tint }};border:2px solid var(--color-bg)"></span>{{ w.name }}
+            </button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column">
+        <sc-for list="{{ params }}" as="p" hint-placeholder-count="10">
+          <div style="padding:8px 16px;border-bottom:2px solid var(--color-bg);display:flex;flex-direction:column;gap:2px">
+            <sc-if value="{{ p.isRange }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;justify-content:space-between;gap:8px;font:800 12px var(--font-heading);letter-spacing:0.08em"><span>{{ p.label }}</span><span style="color:#ffd23a;font-variant-numeric:tabular-nums">{{ p.valTxt }}</span></div>
+              <input type="range" min="{{ p.min }}" max="{{ p.max }}" step="{{ p.step }}" value="{{ p.val }}" onChange="{{ p.onChange }}">
+            </sc-if>
+            <sc-if value="{{ p.isColor }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px"><span style="font:800 12px var(--font-heading);letter-spacing:0.08em">{{ p.label }}</span><input type="color" value="{{ p.val }}" onChange="{{ p.onChange }}"></div>
+            </sc-if>
+            <sc-if value="{{ p.isBool }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ p.onToggle }}" style="min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0;border:0;border-radius:0;background:transparent;color:var(--color-bg);cursor:pointer;text-align:left">
+                <span style="font:800 12px var(--font-heading);letter-spacing:0.08em">{{ p.label }}</span>
+                <span style="min-width:56px;padding:6px 10px;border:2px solid var(--color-bg);background:{{ p.bg }};font:900 12px var(--font-heading);letter-spacing:0.1em;text-align:left">{{ p.onTxt }}</span>
+              </button>
+            </sc-if>
+            <sc-if value="{{ p.isChoice }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:6px;padding:4px 0">
+                <span style="font:800 12px var(--font-heading);letter-spacing:0.08em">{{ p.label }}</span>
+                <div style="display:flex;flex-wrap:wrap;gap:6px">
+                  <sc-for list="{{ p.opts }}" as="o" hint-placeholder-count="4">
+                    <button onClick="{{ o.pick }}" style="min-height:44px;padding:0 12px;border:2px solid var(--color-bg);border-radius:0;background:{{ o.bg }};color:var(--color-bg);font:900 12px var(--font-heading);letter-spacing:0.1em;cursor:pointer;text-align:left" style-hover="background:var(--color-accent-900)">{{ o.name }}</button>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+      <div style="padding:10px 16px;border-bottom:2px solid var(--color-bg);display:flex;flex-direction:column;gap:6px">
+        <span style="font:800 11px var(--font-heading);letter-spacing:0.12em">PREVIEW</span>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <sc-for list="{{ toggles }}" as="g" hint-placeholder-count="4">
+            <button onClick="{{ g.flip }}" style="min-height:44px;padding:0 12px;border:2px solid var(--color-bg);border-radius:0;background:{{ g.bg }};color:var(--color-bg);font:800 12px var(--font-heading);letter-spacing:0.08em;text-align:left;cursor:pointer" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">{{ g.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="padding:12px 16px 20px;display:flex;gap:8px;flex-wrap:wrap">
+        <button onClick="{{ resetOne }}" style="min-height:44px;padding:0 14px;border:2px solid var(--color-bg);border-radius:0;background:transparent;color:var(--color-bg);font:800 12px var(--font-heading);letter-spacing:0.08em;text-align:left;cursor:pointer" style-hover="background:var(--color-accent-900)" style-active="background:var(--color-accent-700)">RESET {{ title }}</button>
+        <a href="Space Map.dc.html" style="min-height:44px;display:flex;align-items:center;padding:0 14px;border:2px solid var(--color-bg);font:800 12px var(--font-heading);letter-spacing:0.08em;text-decoration:none">OPEN SPACE MAP</a>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { type: 'ship', looks: null, world: 'meru', outlines: true, low: false, ship: true, spin: false, cam: 'map', loading: true, stat: '', saved: '', vw: window.innerWidth, vh: window.innerHeight, worlds: [] };
+  stageRef = React.createRef();
+  async componentDidMount() {
+    this.onResize = () => { this.setState({ vw: window.innerWidth, vh: window.innerHeight }); this.fit && this.fit(); };
+    window.addEventListener('resize', this.onResize);
+    const base = location.href;
+    const [THREE, K, G] = await Promise.all([import(new URL('vendor/three/three.module.js', base).href), import(new URL('worlds/space-installs.js?v=s596a', base).href), import(new URL('worlds/space-galaxy.js', base).href)]);
+    import(new URL('engine/ship-pilot.js?v=s571a', base).href).then(PM => { const d = new Uint8Array(16); [70, 150, 215, 255].forEach((v, i) => d.set([v, v, v, 255], i * 4)); const gr = new THREE.DataTexture(d, 4, 1); gr.minFilter = gr.magFilter = THREE.NearestFilter; gr.needsUpdate = true; this.PK = PM.shipPilot({ THREE, grad: gr }); this.dirty = true; });   // s571 the pilot fox in the cockpit
+    this.T = THREE; this.K = K; window.__ws = this;
+    const worlds = G.WORLDS.filter(w => w.dock).map(w => ({ key: w.key, name: w.name, tint: w.tint }));
+    this.setState({ looks: K.loadLooks(), worlds, loading: false });
+    const el = this.stageRef.current; if (!el) return;
+    const R = new THREE.WebGLRenderer({ antialias: true }); R.setPixelRatio(Math.min(devicePixelRatio, 2)); R.outputColorSpace = THREE.SRGBColorSpace; el.appendChild(R.domElement); R.domElement.style.cssText = 'display:block;width:100%;height:100%';
+    const S = new THREE.Scene(); S.background = new THREE.Color('#03040a');
+    S.add(new THREE.HemisphereLight(0xbcd4ff, 0x1a1530, 0.9)); const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(-0.55, 1, -0.35); S.add(sun);
+    const cam = new THREE.PerspectiveCamera(45, 1, 0.5, 2000);
+    { const n = 900, P = new Float32Array(n * 3); for (let i = 0; i < n; i++) { const v = new THREE.Vector3().randomDirection().multiplyScalar(600 + Math.random() * 300); P.set([v.x, v.y, v.z], i * 3); }
+      const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(P, 3)); S.add(new THREE.Points(g, new THREE.PointsMaterial({ color: 0xcfd8ff, size: 1.6, sizeAttenuation: false }))); }
+    // ship for scale (the map's scout art, half-length 3)
+    this.ship = new THREE.Mesh(new THREE.PlaneGeometry(6, 6), new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false })); this.ship.rotation.x = -Math.PI / 2; S.add(this.ship);
+    new THREE.TextureLoader().load(new URL('worlds/space-ship-scout.svg', base).href, t => { t.colorSpace = THREE.SRGBColorSpace; this.ship.material.map = t; this.ship.material.needsUpdate = true; });
+    this.R = R; this.S = S; this.cam = cam; this.orb = { yaw: 0, pitch: 1.08, dist: 60 };
+    this.fit = () => { const w = el.clientWidth || 1, h = el.clientHeight || 1; R.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); this.ws = (h * R.getPixelRatio() * 0.5) / Math.tan((cam.fov * Math.PI) / 360) / R.getPixelRatio(); };
+    this.ro = new ResizeObserver(() => this.fit()); this.ro.observe(el); this.fit();
+    // orbit: drag rotates (free) / pans nothing (map); wheel + pinch zoom
+    const pts = new Map(); let pinch = 0;
+    el.addEventListener('pointerdown', e => { el.setPointerCapture(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]); if (pts.size === 2) { const [a, b] = [...pts.values()]; pinch = Math.hypot(a[0] - b[0], a[1] - b[1]); } });
+    el.addEventListener('pointermove', e => { if (!pts.has(e.pointerId)) return; const p = pts.get(e.pointerId), dx = e.clientX - p[0], dy = e.clientY - p[1]; pts.set(e.pointerId, [e.clientX, e.clientY]);
+      if (pts.size === 2) { const [a, b] = [...pts.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]); if (pinch) this.orb.dist = Math.min(400, Math.max(10, this.orb.dist * pinch / d)); pinch = d; return; }
+      this.orb.yaw -= dx * 0.008; if (this.state.cam === 'free') this.orb.pitch = Math.min(1.5, Math.max(-0.2, this.orb.pitch + dy * 0.006)); });
+    const up = e => { pts.delete(e.pointerId); pinch = 0; }; el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+    el.addEventListener('wheel', e => { e.preventDefault(); this.orb.dist = Math.min(400, Math.max(10, this.orb.dist * (e.deltaY > 0 ? 1.1 : 0.9))); }, { passive: false });
+    this.rebuild(true);
+    let last = performance.now();
+    const loop = now => { this.raf = requestAnimationFrame(loop); const dt = Math.min(0.05, (now - last) / 1000); last = now;
+      if (this.dirty) { this.dirty = false; this.rebuild(this.refit); this.refit = false; }
+      if (this.state.spin) this.orb.yaw += dt * 0.25;
+      const o = this.orb; cam.position.set(Math.sin(o.yaw) * Math.cos(o.pitch) * o.dist, Math.sin(o.pitch) * o.dist, Math.cos(o.yaw) * Math.cos(o.pitch) * o.dist); cam.lookAt(0, 0, 0);
+      if (this.inst) this.inst.tick(dt, this.ws);
+      if (this.trail) { const a = this.inst && this.inst.api; if (a && a.engines) { const L = a.look, sc = this.inst.group.scale.x; this.trail.length = L.trailLen || 1; this.trail.width = (L.trailWidth || 1) * sc; this.trail.setColor(L.engine || L.glow); this._b = this._b || new THREE.Vector3(0, 0, 1); this._c = this._c || new THREE.Vector3();
+          for (const e of a.engines) this.trail.emit(e, this._b, this._c, a.thrust, a.boost, dt); }
+        this.trail.update(dt, this.ws, this._drift || (this._drift = new THREE.Vector3(0, 0, 9))); }
+      R.render(S, cam); };
+    this.raf = requestAnimationFrame(loop);
+  }
+  componentWillUnmount() { cancelAnimationFrame(this.raf); window.removeEventListener('resize', this.onResize); if (this.ro) this.ro.disconnect(); if (this.R) this.R.dispose(); }
+  rebuild(refit) {
+    if (!this.K || !this.S || !this.state.looks) return;
+    const key = this.state.low + '|' + this.state.outlines; if (this.kitKey !== key) { this.kit = this.K.installKit(this.T, { low: this.state.low, outlines: this.state.outlines }); this.kitKey = key; }
+    if (this.inst) this.inst.dispose(); if (this.refShip) { this.refShip.dispose(); this.refShip = null; } if (this.refFox) { this.S.remove(this.refFox); this.refFox = null; }
+    const w = this.state.worlds.find(x => x.key === this.state.world), t = this.state.type;
+    this.inst = this.kit.build(t, this.state.looks[t], { tint: w ? w.tint : null }); this.S.add(this.inst.group);
+    if (this.PK && this.state.pilot !== false && !/^(pir|mach[SCG])/.test(t) && !this.K.FLEET_WORLD[t]) { const inst = this.inst; this.PK.attach(inst, t).then(h => { if (h && this.inst !== inst) h.dispose(); }).catch(e => console.warn('pilot', e)); }
+    const wantTr = t === 'ship' || t === 'hullGunship' || t === 'hullFlagWalk';   // s562: walk-in ships with engines show the particle exit too
+    if (this.trail && (this.trailKit !== this.kit || !wantTr)) { this.trail.dispose(); this.trail = null; }
+    if (wantTr && !this.trail) { this.trail = this.kit.trail(); this.trailKit = this.kit; this.S.add(this.trail.points); }
+    // s555 (Ben: "player ship + shuttle side by side for scale"): walk-in ships show YOUR SHIP (the hull you fly) beside them at their real size on the planet, plus a fox for height
+    const WALK = { hullShuttle: 6.3, hullCorvette: 7.2, hullGunship: 7.9, hullFlagWalk: 9.5, hullCargo: 6.8 }[t];
+    if (WALK && this.state.ship) { const LK = this.state.looks, HT = this.K.flyingHull(LK), rs = this.kit.build(HT, LK[HT]); rs.group.userData.noFloat = true; const shipS = 23.4 / (HT === 'ship' ? 6.2 : rs.hit * 1.9), k = shipS / WALK; rs.group.scale.multiplyScalar(k);
+      const hw2 = t === 'hullCargo' ? 6.4 : t === 'hullCorvette' ? 2.6 : t === 'hullGunship' ? 3.4 : t === 'hullFlagWalk' ? 3.6 : 1.7; rs.group.position.set(-(hw2 + 3.4 * k + 0.6), 2.4 * 1.8 / WALK, 0); this.S.add(rs.group); this.refShip = rs;
+      const T = this.T, fx = new T.Group(), fm = new T.MeshBasicMaterial({ color: '#e3924e' }), h = 1.7 / WALK; const b = new T.Mesh(new T.CapsuleGeometry(h * 0.22, h * 0.5, 4, 8), fm); b.position.y = h * 0.47; fx.add(b); const hd = new T.Mesh(new T.SphereGeometry(h * 0.2, 10, 8), fm); hd.position.y = h * 0.9; fx.add(hd);
+      for (const s of [-1, 1]) { const e = new T.Mesh(new T.ConeGeometry(h * 0.08, h * 0.18, 4), fm); e.position.set(s * h * 0.1, h * 1.08, 0); fx.add(e); }
+      const ft = this.inst.api && this.inst.api.rampFoot ? this.inst.api.rampFoot[2] : 3; fx.position.set(0.15 * (t === 'hullCargo' ? 3 : 1), 0, ft + h * 0.6); this.S.add(fx); this.refFox = fx; }
+    // s590 (Ben: "show the pirates side by side with the player's ships"): each pirate tab shows the player ship it was built from beside it, same scale
+    const PREF = { pirScout: 'ship', pirCruiser: 'hullCorvette', pirGunner: 'hullGunship', machScout: 'ship', machCruiser: 'hullCorvette', machGunner: 'hullGunship', merScout: 'ship', merShuttle: 'hullShuttle', merCruiser: 'hullCorvette', merGunner: 'hullGunship', merFlagship: 'hullFlagWalk' }[t] || this.K.FLEET_BASE[t];
+    if (PREF && this.state.ship) { const LK = this.state.looks, rs = this.kit.build(PREF, { ...LK[PREF], ramp: 0 }); rs.group.userData.noFloat = true; rs.group.scale.setScalar(this.inst.group.scale.x); this.S.add(rs.group); rs.group.updateMatrixWorld(true);
+      this.inst.group.updateMatrixWorld(true); const pb = new this.T.Box3().setFromObject(this.inst.group), bx = new this.T.Box3().setFromObject(rs.group), c = bx.getCenter(new this.T.Vector3()); rs.group.position.set(pb.max.x - bx.min.x + 1.5, 0, -c.z); this.refShip = rs; }
+    const shipLike = ['ship', 'pirScout', 'pirCruiser', 'pirGunner', 'machScout', 'machCruiser', 'machGunner', 'merScout', 'merShuttle', 'merCruiser', 'merGunner', 'merFlagship'].includes(t) || !!this.K.FLEET_BASE[t]; this.ship.visible = this.state.ship && t !== 'ship' && !WALK && !PREF; this.ship.position.set(shipLike ? 6.5 : this.inst.hit + 5, shipLike ? 0 : 1, shipLike ? 2 : this.inst.hit * 0.3);
+    if (refit) this.orb.dist = WALK ? (t === 'hullCargo' ? 46 : t === 'hullCorvette' ? 18 : t === 'hullGunship' ? 21 : t === 'hullFlagWalk' ? 25 : 16) : shipLike ? (this.K.FLEET_BASE[t] ? ({ ship: 17, hullShuttle: 20, hullCorvette: 23, hullGunship: 25, hullFlagWalk: 30 })[this.K.FLEET_BASE[t]] : t === 'merFlagship' ? 30 : t === 'pirGunner' || t === 'machGunner' || t === 'merGunner' ? 25 : t === 'pirCruiser' || t === 'machCruiser' || t === 'merCruiser' ? 23 : t === 'merShuttle' ? 20 : 17) : Math.max(24, this.inst.hit * (t === 'dock' ? 2.2 : 3.3));
+    const s = this.inst.stats(); this.setState({ stat: s.draws + ' DRAWS · ' + (s.tris / 1000).toFixed(1) + 'K TRIS' + (this.state.low ? ' · PHONE' : '') });
+  }
+  later(refit) { this.dirty = true; if (refit) this.refit = true; }
+  setLook(k, v) {
+    const t = this.state.type, looks = { ...this.state.looks, [t]: { ...this.state.looks[t], [k]: v } };
+    this.K.saveLooks(looks); clearTimeout(this.svT); this.svT = setTimeout(() => this.setState({ saved: '' }), 1600);
+    this.setState({ looks, saved: 'SAVED' }, () => this.later(k === 'size' || k === 'length' || k === 'radius' || k === 'rock'));
+  }
+  renderVals() {
+    const K = this.K, st = this.state, looks = st.looks, t = st.type, land = st.vw > st.vh && st.vw >= 700;
+    const types = K ? K.TYPES.filter(tt => !K.FLEET_WORLD || !K.FLEET_WORLD[tt] || K.FLEET_WORLD[tt] === st.world) : ['ship', 'pirScout', 'pirCruiser', 'pirGunner', 'machScout', 'machCruiser', 'machGunner', 'merScout', 'merShuttle', 'merCruiser', 'merGunner', 'merFlagship', 'yard', 'fuel', 'mine', 'gate', 'dock'];
+    const name = K ? K.INFO[t].name : '';
+    const edited = tt => K && looks && K.PARAMS[tt].some(p => looks[tt][p.k] !== p.def);
+    const params = K && looks ? K.PARAMS[t].map(p => { const v = looks[t][p.k];
+      return { label: p.label, isRange: p.kind === 'range', isColor: p.kind === 'color', isBool: p.kind === 'bool', isChoice: p.kind === 'choice', opts: p.kind === 'choice' ? p.options.map(o => ({ name: o.toUpperCase(), bg: o === v ? 'var(--color-accent)' : 'transparent', pick: () => this.setLook(p.k, o) })) : [], min: p.min, max: p.max, step: p.step, val: v,
+        valTxt: p.kind === 'range' ? (p.step < 1 ? Number(v).toFixed(2) : String(v)) : '', onTxt: v ? 'ON' : 'OFF', bg: v ? 'var(--color-accent)' : 'transparent',
+        onChange: e => this.setLook(p.k, p.kind === 'range' ? Number(e.target.value) : e.target.value), onToggle: () => this.setLook(p.k, !v) }; }) : [];
+    const tg = (label, k, after) => ({ label: label + (st[k] ? ' · ON' : ' · OFF'), bg: st[k] ? 'var(--color-accent)' : 'transparent', flip: () => this.setState({ [k]: !st[k] }, () => after && this.later()) });
+    return {
+      stageRef: this.stageRef, loading: st.loading, title: name, role: K ? K.INFO[t].role : '', statTxt: st.stat,
+      savedTxt: st.saved || 'AUTO-SAVES', savedCol: st.saved ? '#7cf3c4' : 'var(--color-bg)',
+      areas: land ? '"tabs view panel"' : '"tabs" "view" "panel"', cols: land ? '176px minmax(0,1fr) 320px' : 'minmax(0,1fr)', rows: land ? 'minmax(0,1fr)' : 'auto 46vh minmax(0,1fr)',
+      tabsDir: land ? 'column' : 'row', tabsBorderR: land ? '2px solid var(--color-bg)' : '0', tabsBorderB: land ? '0' : '2px solid var(--color-bg)', viewBorderB: land ? '0' : '2px solid var(--color-bg)',
+      tabs: types.map(tt => ({ name: K ? K.INFO[tt].name : tt.toUpperCase(), meta: edited(tt) ? 'EDITED' : 'DEFAULT', mc: edited(tt) ? '#ffd23a' : 'var(--color-neutral-400)', bg: tt === t ? 'var(--color-accent)' : 'transparent',
+        bb: land ? '2px solid var(--color-bg)' : '0', br: land ? '0' : '2px solid var(--color-bg)', pick: () => this.setState({ type: tt }, () => this.later(true)) })),
+      worlds: st.worlds.map(w => ({ name: w.name, tint: w.tint, bg: w.key === st.world ? 'var(--color-accent)' : 'transparent', bd: 'var(--color-bg)', pick: () => this.setState(s0 => { const FW = K && K.FLEET_WORLD, cur = s0.type; if (FW && FW[cur] && FW[cur] !== w.key) { const kind = cur.replace(/^[a-z]+/, ''), nt = K.FLEET_PRE[w.key] + kind; if (K.INFO[nt]) return { world: w.key, type: nt }; } return { world: w.key }; }, () => this.later(true)) })),
+      params,
+      toggles: [tg('OUTLINES', 'outlines', true), tg('PHONE MODE', 'low', true), tg('SHIP FOR SCALE', 'ship', true), tg('AUTO SPIN', 'spin')],
+      camMap: () => { this.orb && Object.assign(this.orb, { pitch: 1.08, yaw: 0 }); this.setState({ cam: 'map' }); }, camFree: () => { if (this.orb) this.orb.pitch = 0.55; this.setState({ cam: 'free' }); },
+      camMapBg: st.cam === 'map' ? 'var(--color-accent)' : 'var(--color-text)', camFreeBg: st.cam === 'free' ? 'var(--color-accent)' : 'var(--color-text)',
+      sndOpen: !!st.sndOpen, sndBtn: st.sndOpen ? 'SOUNDS · CLOSE' : 'SOUNDS · VOLUME OF EVERY SOUND', sndBg: st.sndOpen ? 'var(--color-accent)' : 'transparent',
+      sndToggle: () => { if (!this.S2) import(new URL('engine/space-samples.js?v=s447', document.baseURI).href).then(M => { this.S2 = M; M.loadSpaceSamples(); this.forceUpdate(); }); this.setState({ sndOpen: !st.sndOpen }); },
+      thr1Bg: this.S2 && this.S2.getThrustOpt() === '1' ? 'var(--color-accent)' : 'transparent', thr2Bg: !this.S2 || this.S2.getThrustOpt() === '2' ? 'var(--color-accent)' : 'transparent',
+      thr1: () => { if (this.S2) { this.S2.setThrustOpt('1'); this.forceUpdate(); } }, thr2: () => { if (this.S2) { this.S2.setThrustOpt('2'); this.forceUpdate(); } },
+      sndReset: () => { if (this.S2) { this.S2.resetVols(); this.forceUpdate(); } },
+      sounds: this.S2 && st.sndOpen ? [['ALL', ['_all']], ...Object.entries(this.S2.GROUPS)].flatMap(([g, ks]) => ks.map((k2, i) => { const v = this.S2.getVol(k2);
+        return { grp: g, name: k2 === '_all' ? 'MASTER' : k2.replace(/([A-Z])/g, ' $1').toUpperCase(), v, pct: Math.round(v * 100) + ' %', col: v === 1 ? 'var(--color-bg)' : '#ffd23a', bt: i === 0 ? '2px solid var(--color-bg)' : '0',
+          play: () => { const M = this.S2; M.loadSpaceSamples().then(() => { if (k2 === '_all') return M.playSample('shipExplodeSmall'); if (!M.playSample(k2, { gap: 0 })) { const lv = M.loopVoice(k2); if (lv) { lv.set(0.6); setTimeout(() => { lv.set(0); setTimeout(() => lv.stop(), 400); }, 2500); } } }); },
+          set: e => { this.S2.setVol(k2, Number(e.target.value)); this.forceUpdate(); } }; })) : [],
+      resetOne: () => { if (!K) return; const looks2 = { ...looks, [t]: K.defaults(t) }; K.saveLooks(looks2); this.setState({ looks: looks2, saved: 'RESET' }, () => this.later(true)); },
+    };
+  }
+}
+</script>
+</body>
+</html>
