@@ -5,7 +5,9 @@
 // BOUNCE (pump it up and down), WIGGLE (shake it), FREEZE (hold still: the music stops too). The sky is a club:
 // coloured beams sweep and pulse on the beat, they follow the way you tilt the phone, the colours change every bar,
 // and a mirror ball throws sparkles across the stars. Every cue is spoken and has its own sound, so it plays by ear.
-// No motion sensor? The buttons (and tapping the screen) work too.
+// Or use the dance pad: five buttons along the bottom, one per move (Lean left, Bounce, Wiggle, Freeze, Lean right),
+// each with its own colour and picture. When he calls a move, its button lights up and pulses, so it's always clear what
+// to do. Tap a button to do the move once; hold it to keep doing it. Moving the phone still works as well.
 // Art: media/games/fearless/ — stage.jpg (the painting with the robot taken out), and his parts cut out:
 // body.png, head.png, armL.png (the arm holding the lantern), lant.png (the lantern), armR.png.
 import * as THREE from 'three';
@@ -24,13 +26,31 @@ const EYES = [{ u: 0.525, v: 0.223 }, { u: 0.603, v: 0.207 }], LAMP = { u: 0.455
 const BPM = 112, BEAT = 60 / BPM, BAR = BEAT * 4;
 const WARM = 2, SLOT = 2;                                                 // bars before the first move; bars per move
 const MOVES = {
-  L: { word: 'Lean left', icon: '◀', say: 'Lean left!', how: 'Tilt your phone to the left' },
-  R: { word: 'Lean right', icon: '▶', say: 'Lean right!', how: 'Tilt your phone to the right' },
-  B: { word: 'Bounce', icon: '↕', say: 'Bounce!', how: 'Pump your phone up and down' },
-  W: { word: 'Wiggle', icon: '〰', say: 'Wiggle!', how: 'Shake it all about' },
-  F: { word: 'Freeze!', icon: '✋', say: 'Freeze!', how: 'Hold your phone still' },
+  L: { word: 'Lean left', icon: '◀', say: 'Lean left!', how: 'Press Lean left, or tilt your phone left' },
+  R: { word: 'Lean right', icon: '▶', say: 'Lean right!', how: 'Press Lean right, or tilt your phone right' },
+  B: { word: 'Bounce', icon: '↕', say: 'Bounce!', how: 'Tap Bounce to the beat, or pump your phone' },
+  W: { word: 'Wiggle', icon: '〰', say: 'Wiggle!', how: 'Hold Wiggle, or shake your phone' },
+  F: { word: 'Freeze!', icon: '✋', say: 'Freeze!', how: 'Press Freeze, and hold still' },
   A: { word: 'Arms up!', icon: '🙌', say: 'Arms up! Big finish!', how: 'Move everything!' },
 };
+/* the dance pad: one button per move, with its own club colour and a little drawn picture */
+const PAD = [
+  { mv: 'L', label: 'Lean left', col: '#29c4ff', svg: '<rect x="13" y="8" width="14" height="24" rx="3" transform="rotate(-24 20 20)"/><path d="M9 30 Q5 20 11 11"/><path d="M8 15 L11 11 L15 13"/>' },
+  { mv: 'B', label: 'Bounce', col: '#ffd23f', svg: '<rect x="13" y="10" width="14" height="22" rx="3"/><path d="M20 2 L20 7 M16 5 L20 1 L24 5"/><path d="M20 35 L20 39 M16 36 L20 40 L24 36" transform="translate(0 -1)"/>' },
+  { mv: 'W', label: 'Wiggle', col: '#4ee08a', svg: '<rect x="13" y="9" width="14" height="22" rx="3" transform="rotate(10 20 20)"/><path d="M5 14 Q8 17 5 20 Q2 23 5 26"/><path d="M35 14 Q32 17 35 20 Q38 23 35 26"/>' },
+  { mv: 'F', label: 'Freeze', col: '#c9f0ff', svg: '<path d="M20 4 V36 M6 12 L34 28 M6 28 L34 12"/><path d="M16 7 L20 11 L24 7 M16 33 L20 29 L24 33 M8 17 L13 15 L11 10 M32 23 L27 25 L29 30 M8 23 L13 25 L11 30 M32 17 L27 15 L29 10"/>' },
+  { mv: 'R', label: 'Lean right', col: '#ff4fd8', svg: '<rect x="13" y="8" width="14" height="24" rx="3" transform="rotate(24 20 20)"/><path d="M31 30 Q35 20 29 11"/><path d="M32 15 L29 11 L25 13"/>' },
+];
+const PAD_CSS = `.mgk-btns.fd-pad{gap:6px}
+.mgk-btns.fd-pad button{flex:1 1 0;min-width:0;min-height:84px;padding:6px 2px 8px;flex-direction:column;gap:4px;background:#111;color:#fff;border:3px solid var(--c);border-radius:14px;
+  font:900 clamp(11px,3.1vw,15px)/1.05 Archivo,'Arial Black',Arial,sans-serif;letter-spacing:.02em;box-shadow:0 0 0 rgba(0,0,0,0);transition:background .15s,color .15s,box-shadow .15s}
+.mgk-btns.fd-pad button svg{width:clamp(30px,9vw,42px);height:clamp(30px,9vw,42px);fill:none;stroke:var(--c);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.mgk-btns.fd-pad button span{display:block;text-align:center}
+.mgk-btns.fd-pad button.now{background:var(--c);color:#000;box-shadow:0 0 18px var(--c),0 0 4px #fff;animation:fdpulse .54s ease-in-out infinite alternate}
+.mgk-btns.fd-pad button.now svg{stroke:#000}
+.mgk-btns.fd-pad button.down{transform:scale(.94);filter:brightness(1.25)}
+@keyframes fdpulse{from{transform:scale(1)}to{transform:scale(1.07)}}
+@media (prefers-reduced-motion:reduce){.mgk-btns.fd-pad button.now{animation:none}}`;
 const ROUTINE = ['L', 'R', 'B', 'W', 'R', 'L', 'B', 'F', 'L', 'R', 'W', 'B', 'R', 'L', 'F', 'W'];
 const PRAISE = ['Groovy!', 'Funky!', 'Smooth!', 'Robot approved!', 'Fearless!', 'Electric!', 'Yes!'];
 const END_BAR = WARM + ROUTINE.length * SLOT + 2;                         // two bars of "arms up", then the finale
@@ -222,8 +242,12 @@ export function robotDanceGame() {
       if (ph && (mv === 'B' || mv === 'W' || mv === 'A')) I.peaks++;
       return;
     }
-    I.roll = (M.ok ? M.roll : 0) + I.btnRoll;
-    I.e = Math.min(1, Math.max(M.e, I.btnE, I.btnRoll ? 0.3 : 0));
+    // the dance pad: a tap does the move for a moment, holding keeps it going
+    for (const k of ['leanT', 'wigT', 'frzT']) if (!I.held[k]) I[k] = Math.max(0, I[k] - dt);
+    const lean = I.leanT > 0 ? I.leanDir * 30 : 0;
+    I.roll = (M.ok ? M.roll : 0) + I.btnRoll + lean;
+    I.e = Math.min(1, Math.max(M.e, I.btnE, I.btnRoll || lean ? 0.3 : 0, I.wigT > 0 ? 0.85 : 0));
+    if (I.frzT > 0) { I.e = 0; I.roll = 0; }   // Freeze button: perfectly still, whatever the phone is doing
     I.peaks = M.peaks + I.btnPeaks;
   }
   const tapBounce = () => { const I = G.in; I.btnPeaks++; I.btnE = Math.min(1, I.btnE + 0.35); };
@@ -353,7 +377,7 @@ export function robotDanceGame() {
       Object.assign(G, { loaded: 0, score: 0, hits: 0, missed: 0, combo: 0, bestCombo: 0, slot: -1, move: null, announced: null, acc: null, hudT: -1,
         E: 0.2, club: 0, hue: 0.58, hueT: 0.58, lightT: 0, ballT: 0, ballDraw: 0, flash: 0, eyeFlash: 0, cueA: 0, cuePop: 0, swing: 0, swingV: 0, prevHand: null, prevV: [0, 0],
         lost: false, lostSaid: false, finished: false, t0: 0, lastBar: -1, freezeB: 0, tint: new THREE.Color(),
-        in: { roll: 0, e: 0, peaks: 0, btnRoll: 0, btnE: 0, btnPeaks: 0 } });
+        in: { roll: 0, e: 0, peaks: 0, btnRoll: 0, btnE: 0, btnPeaks: 0, leanT: 0, leanDir: 0, wigT: 0, frzT: 0, held: {} } });
       G.pz = { sq: 0, sway: 0, shim: 0, lean: 0, hop: 0, head: 0, hb: 0, armR: 0.25, armL: -0.15, stepL: 0, stepR: 0 };
       G.U = { uA: { value: 0 }, uTint: { value: new THREE.Vector3(1, 1, 1) }, uTintA: { value: 0 }, uFlash: { value: 0 } };
       // the stage: the painting with the robot taken out, lit like a club
@@ -381,15 +405,21 @@ export function robotDanceGame() {
       // music, motion, buttons
       const ac = K.audio(); G.music = ac ? funk(ac, b => moveAt(b)) : { st: { combo: 0 }, start() {}, stop() {}, duck() {} };
       sensors();
-      G.ui.buttons([
-        { label: 'Lean', icon: '◀', kind: 'red', aria: 'Lean left', press: () => { G.in.btnRoll = -30; }, release: () => { G.in.btnRoll = 0; } },
-        { label: 'Bounce', icon: '↕', kind: 'red', aria: 'Bounce', press: tapBounce },
-        { label: 'Lean', icon: '▶', kind: 'red', aria: 'Lean right', press: () => { G.in.btnRoll = 30; }, release: () => { G.in.btnRoll = 0; } },
-      ]);
+      if (!document.getElementById('fd-pad-css')) { const st = document.createElement('style'); st.id = 'fd-pad-css'; st.textContent = PAD_CSS; document.head.appendChild(st); }
+      const act = {
+        L: { press: () => { const I = G.in; I.leanDir = -1; I.leanT = 0.9; I.frzT = 0; I.held.leanT = true; }, release: () => { G.in.held.leanT = false; } },
+        R: { press: () => { const I = G.in; I.leanDir = 1; I.leanT = 0.9; I.frzT = 0; I.held.leanT = true; }, release: () => { G.in.held.leanT = false; } },
+        B: { press: () => { G.in.frzT = 0; tapBounce(); } },
+        W: { press: () => { const I = G.in; I.wigT = 1.3; I.frzT = 0; I.held.wigT = true; }, release: () => { G.in.held.wigT = false; } },
+        F: { press: () => { const I = G.in; I.frzT = 2.6; I.leanT = 0; I.wigT = 0; I.held.frzT = true; }, release: () => { G.in.held.frzT = false; } },
+      };
+      G.pad = G.ui.buttons(PAD.map(p => ({ label: p.label, aria: p.label + (p.mv === 'B' ? ': tap to the beat' : p.mv === 'W' ? ': hold to wiggle' : ''), ...act[p.mv] })));
+      G.pad.forEach((e, i) => { e.style.setProperty('--c', PAD[i].col); e.innerHTML = `<svg viewBox="0 0 40 40" aria-hidden="true">${PAD[i].svg}</svg><span>${PAD[i].label}</span>`; });
+      if (G.pad[0]) G.pad[0].parentElement.classList.add('fd-pad');
       hud(true);
       G.onGo = () => { G.t0 = clock() + 0.12; G.music.start(G.t0); G.go = true; hud(true); };
-      K.intro(G, { title: 'Robot dance party', how: 'Move your phone and he dances: the more you move, the more he grooves. Follow his moves: lean left, lean right, bounce, wiggle, and FREEZE!',
-        say: 'Robot dance party! This big robot wants to dance, and you are the music. Move your phone and he dances. The more you move, the more he grooves. He will call out his moves: lean left, lean right, bounce, wiggle, and freeze, when the music stops. Tilt, pump and shake your phone with him. No motion? Use the buttons. Let’s dance!' });
+      K.intro(G, { title: 'Robot dance party', how: 'Follow his moves with the dance buttons: the one he calls lights up. Lean left, lean right, bounce, wiggle, and FREEZE! (Moving your phone works too.)',
+        say: 'Robot dance party! This big robot wants to dance, and you are the music. Move your phone and he dances. The more you move, the more he grooves. He will call out his moves: lean left, lean right, bounce, wiggle, and freeze, when the music stops. Press the dance buttons along the bottom: the button for each move lights up when he calls it. Or tilt, pump and shake your phone with him. Let’s dance!' });
     },
     update(dt) {
       if (!G) return;
@@ -466,6 +496,7 @@ export function robotDanceGame() {
         s.material.opacity += ((want ? (1 - ph) * 0.9 : 0) - s.material.opacity) * Math.min(1, dt * 10); s.scale.setScalar(0.05 + 0.02 * pulse);
       });
       if (G.lost && !G.lostSaid && G.playing) { G.lostSaid = true; G.ui.alert('Keep dancing!', 'Point back at the painting to see him', 2, 'black'); }
+      if (G.pad) { const now = G.playing && G.move && G.move !== 'A' ? G.move : null; G.pad.forEach((e, i) => e.classList.toggle('now', PAD[i].mv === now)); }   // the called move's button lights up
       hud();
     },
     pointer(kind, ev) {

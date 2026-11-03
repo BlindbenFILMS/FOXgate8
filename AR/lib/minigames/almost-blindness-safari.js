@@ -3,9 +3,11 @@
 // a bicycle bell, dripping water, wind chimes, a crosswalk signal and a guide dog's tags. Move your finger (or point the
 // phone) through the fog: each sound gets louder, brighter and comes from its side as you get close. Hold still on one
 // to find it, and the fog clears there. When all six are found, follow the door chime home to the light.
-// Headphones make the left / right sounds even clearer. Every sound is made live with WebAudio (no files).
+// Each sound has a picture (drawn in code, safari-things.js): it shows faintly through the fog as you get close, and
+// pops out clearly when found. Headphones make the left / right sounds even clearer. Every sound is made live with WebAudio (no files).
 import * as THREE from 'three';
 import * as K from './kit.js';
+import { thingCanvas } from './safari-things.js';
 
 const SOUNDS = [
   { id: 'birds', name: 'birdsong in a tree', u: 0.2, v: 0.22 },
@@ -16,7 +18,7 @@ const SOUNDS = [
   { id: 'dog', name: 'a guide dog’s tags', u: 0.1, v: 0.5 },
 ];
 const HOME = { id: 'home', name: 'home', u: 0.5, v: 0.42 };
-const FIND_R = 0.075, HOLD = 1.0, HEAR = 0.7;
+const FIND_R = 0.075, HOLD = 1.0, HEAR = 0.7, THING = 0.19;   // THING: how big the pictures are (share of the painting's width)
 
 /* ── the sound makers: each one is played into its own channel (volume, brightness, left / right) ── */
 function soundscape(ac) {
@@ -93,6 +95,7 @@ export function soundSafariGame() {
   }
   function find(s) {
     s.got = true; s.hole = 0.001; G.found++;
+    const th = G.things.find(t => t.s === s); if (th) th.pop = 1;
     const [x, y] = G.S.P(s.u, s.v); G.fx.add(x, y, '#e8f4ff', 26, 0.3); G.buzz([30, 40, 70]);
     K.chord([523.3, 659.3, 784].map(f => f * (1 + G.found * 0.06)), 0.9, { vol: 0.05 });
     G.ui.pop(s.name.replace(/^(a|the) /, '').toUpperCase());
@@ -125,6 +128,11 @@ export function soundSafariGame() {
       G.fog = new THREE.Mesh(new THREE.PlaneGeometry(1.004, G.h + 0.004), new THREE.ShaderMaterial({ uniforms: G.uni, vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: false }));
       G.fog.position.z = 0.03; G.fog.renderOrder = 12; G.root.add(G.fog);
       G.ring = K.sprite(K.ringTex, 0.08, { color: '#cfe8ff', order: 16, opacity: 0 }); G.ring.position.z = 0.05; G.root.add(G.ring);
+      G.things = SOUNDS.map((s, i) => {   // the sound-makers' pictures, over the fog
+        const t = new THREE.CanvasTexture(thingCanvas(s.id, 256)); t.colorSpace = THREE.SRGBColorSpace;
+        const sp = K.sprite(t, THING, { order: 14, opacity: 0 }), [x, y] = G.S.P(s.u, s.v); sp.position.set(x, y, 0.04); G.root.add(sp);
+        return { s, sp, x, y, pop: 0, ph: i * 1.3, near: 0 };
+      });
       G.sc = soundscape(K.audio());
       G.ui.buttons([{ label: 'Hint', icon: '?', kind: 'red', aria: 'Hint: which way to go', press: () => G.playing && hint() }]);
       hud();
@@ -145,6 +153,13 @@ export function soundSafariGame() {
       else { const r = G.renderer.domElement.getBoundingClientRect(), p = G.S.toBoard({ clientX: r.left + r.width / 2, clientY: r.top + r.height / 2 }, G.root); if (p) G.aim = { u: Math.max(0, Math.min(1, p.u)), v: Math.max(0, Math.min(1, p.v)) }; }
       const k = Math.min(1, dt * 10); G.ear.u += (G.aim.u - G.ear.u) * k; G.ear.v += (G.aim.v - G.ear.v) * k; G.uni.uEar.value.set(G.ear.u, G.ear.v);
       const [ex, ey] = G.S.P(G.ear.u, G.ear.v); G.ring.position.set(ex, ey, 0.05);
+      for (const th of G.things) {   // faint as you get close, clear when found (and a little hop), gently moving with their sound
+        const d = dist(th.s, G.ear), want = th.s.got || G.homeDone ? 1 : G.playing ? Math.max(0, 1 - d / 0.3) * 0.45 : 0;
+        th.near += (want - th.near) * Math.min(1, dt * 4); th.pop = Math.max(0, th.pop - dt * 2.2);
+        th.sp.material.opacity = th.near;
+        th.sp.position.y = th.y + Math.sin(th.pop * Math.PI) * 0.035 + Math.sin(G.t * 1.4 + th.ph) * 0.003;
+        th.sp.scale.setScalar(THING * (1 + Math.sin(th.pop * Math.PI) * 0.3));
+      }
       if (G.settle > 0) { G.settle -= dt; if (G.settle <= 0 && !G.over) {
         const t = Math.round(G.t - G.t0), r = K.best('almost-blindness:safari', t, 'lower');
         G.sc.volume(0.35); for (const s of SOUNDS) G.sc.ch[s.id].set(0.5, 0.8, (s.u - 0.5) * 1.6);   // every sound, softly, all around

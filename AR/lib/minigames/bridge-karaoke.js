@@ -1,8 +1,8 @@
 // THE BRIDGE OF PERCEPTION (Bill McCann): PUPPET KARAOKE, "say it from the creek".
+// Bill's face in the painting becomes a puppet. First the real Bill speaks through it: his own voice, from his interview.
 // Bill's face in the painting becomes a puppet. A prompt card asks something (first: Ben's question, "What would you say if
 // you fell through a hole other people can easily see and avoid?"). Press Talk and say your answer: his mouth moves
-// with your voice as you speak. Then he says it back, in the voice style you pick (normal, echoing under the bridge,
-// gurgly from the water, deep or squeaky): his jaw drops with every word, his eyes blink and pop wide on loud bits,
+// with your voice as you speak. Then he says it back in your own voice: his jaw drops with every word, his eyes blink and pop wide on loud bits,
 // the creek ripples out from his chin and bubbles rise when it gets loud, and your words appear as captions.
 // No microphone, or rather type? Press Type and he says your words in a computer voice.
 // Everything stays on this phone: nothing is uploaded or saved.
@@ -17,9 +17,13 @@ const PROMPTS = [
   'What’s the funniest thing you’ve ever walked into?',
   'What do you wish people could see about you?',
 ];
-const STYLES = [
-  { id: 'normal', label: 'Normal', say: 'normal voice' }, { id: 'bridge', label: 'Echo', say: 'echoing under the bridge' }, { id: 'gurgle', label: 'Gurgly', say: 'gurgly, through the water' },
-  { id: 'deep', label: 'Deep', say: 'deep voice' }, { id: 'squeak', label: 'Squeaky', say: 'squeaky voice' },
+// Bill McCann himself, saying this painting's quote (the 3D gallery's clip for it), with captions timed to his words
+const BILL = new URL('../../../3D/gallery/audio/art_39.mp3', import.meta.url).href;
+const BILL_LINES = [
+  [0, 'We can’t totally trust our own perceptions of the world.'],
+  [5.2, 'Of course, we have to make judgments based on our perceptions.'],
+  [11.2, 'Of course we do. But we also have to be open to the possibility…'],
+  [15.6, '…that, you know what? I could be completely wrong about this.'],
 ];
 const MAX_REC = 12;
 
@@ -78,26 +82,19 @@ void main(){
 export function puppetKaraokeGame() {
   let G = null;
 
-  // ── voice styles, applied when Bill says it back ──
-  function impulse(ac, secs, decay) { const n = ac.sampleRate * secs, b = ac.createBuffer(2, n, ac.sampleRate); for (let c = 0; c < 2; c++) { const d = b.getChannelData(c); for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, decay); } return b; }
-  function playBuffer(buf, style) {
+  // ── Bill says it back, in the voice it was said in ──
+  function playBuffer(buf) {
     const ac = G.ac, src = ac.createBufferSource(); src.buffer = buf;
     const out = ac.createGain(); out.gain.value = 1.4; out.connect(G.an); G.an.connect(ac.destination);
-    if (style === 'deep') src.playbackRate.value = 0.78;
-    if (style === 'squeak') src.playbackRate.value = 1.42;
-    if (style === 'bridge') {   // a stone-and-wood echo under the bridge
-      const cv = ac.createConvolver(), wet = ac.createGain(), dl = ac.createDelay(1), fb = ac.createGain();
-      cv.buffer = impulse(ac, 1.8, 2.6); wet.gain.value = 0.55; dl.delayTime.value = 0.23; fb.gain.value = 0.32;
-      src.connect(out); src.connect(cv).connect(wet).connect(out); src.connect(dl); dl.connect(fb).connect(dl); dl.connect(wet);
-    } else if (style === 'gurgle') {   // talking through the water: a wobble and a muffle
-      const dl = ac.createDelay(0.05), lfo = ac.createOscillator(), lg = ac.createGain(), lp = ac.createBiquadFilter();
-      dl.delayTime.value = 0.012; lfo.frequency.value = 9; lg.gain.value = 0.006; lfo.connect(lg).connect(dl.delayTime); lfo.start();
-      lp.type = 'lowpass'; lp.frequency.value = 1500; src.connect(dl).connect(lp).connect(out); src.onended = () => lfo.stop();
-    } else src.connect(out);
-    src.start(); G.src = src;
-    return buf.duration / src.playbackRate.value;
+    src.connect(out); src.start(); G.src = src;
+    return buf.duration;
   }
-
+  // the real Bill, first: his mouth moves with his own voice, and his words show as captions
+  function billSpeaks() {
+    if (!G.billBuf || G.bot) { G.state = 'ready'; buttons(); showPrompt(); return; }
+    G.billIntro = true; G.state = 'say'; G.sayT = 0; G.words = ''; G.sayLen = playBuffer(G.billBuf); buttons();
+    G.ui.banner('Bill McCann', 'The artist, in his own words', 0, 'The Bridge of Perception');
+  }
   // ── the screen: prompt, captions and buttons ──
   function caption(text) {
     if (!G.capEl) { G.capEl = document.createElement('div'); G.capEl.className = 'mgk'; G.capEl.setAttribute('aria-live', 'polite');
@@ -117,8 +114,7 @@ export function puppetKaraokeGame() {
     else {
       B.push({ label: 'Talk', icon: '🎤', kind: 'red', aria: 'Talk: record your answer', press: () => startRec() });
       if (G.buf) B.push({ label: 'Play', icon: '▶', aria: 'Hear Bill say it again', press: () => sayBack() });
-      B.push({ label: G.buf ? STYLES[G.si].label : 'Type', icon: G.buf ? '♪' : '⌨', kind: 'black', aria: G.buf ? 'Voice: ' + STYLES[G.si].say + '. Press for the next voice' : 'Type instead of talking',
-        press: () => { if (G.buf) { G.si = (G.si + 1) % STYLES.length; buttons(); sayBack(); } else typeIt(); } });
+      B.push({ label: 'Type', icon: '⌨', kind: 'black', aria: 'Type instead of talking', press: () => typeIt() });
       B.push({ label: G.takes ? 'Next' : 'Shuffle', icon: '↻', aria: 'A new prompt', press: () => { G.pi++; G.buf = null; G.words = ''; caption(''); buttons(); showPrompt(); } });
       if (G.takes >= 1) B.push({ label: 'Done', icon: '✓', aria: 'Finish', press: () => finish() });
     }
@@ -146,10 +142,12 @@ export function puppetKaraokeGame() {
   function sayBack() {
     if (!G.buf || G.state === 'rec') return;
     try { G.src && G.src.stop(); } catch (e) {}
-    G.state = 'say'; G.sayT = 0; G.sayLen = playBuffer(G.buf, STYLES[G.si].id); buttons();
+    G.state = 'say'; G.sayT = 0; G.sayLen = playBuffer(G.buf); buttons();
     if (!G.words) caption('');
   }
-  function endSay() { try { G.src && G.src.stop(); } catch (e) {} try { speechSynthesis.cancel(); } catch (e) {} G.state = 'ready'; G.tts = false; buttons(); if (G.words) caption(G.words); }
+  function endSay() { try { G.src && G.src.stop(); } catch (e) {} try { speechSynthesis.cancel(); } catch (e) {} G.state = 'ready'; G.tts = false;
+    if (G.billIntro) { G.billIntro = false; caption(''); buttons(); showPrompt(); return; }   // Bill's done: your turn
+    buttons(); if (G.words) caption(G.words); }
   // or type it, and he says it in a computer voice
   function typeIt() {
     if (!G.box) {
@@ -163,12 +161,12 @@ export function puppetKaraokeGame() {
   }
   function speakTyped(text) {
     G.words = text; G.takes++; caption(text); G.state = 'say'; G.tts = true; G.sayT = 0; G.sayLen = Math.max(1.5, text.split(/\s+/).length * 0.42); buttons();
-    try { const u = new SpeechSynthesisUtterance(text); u.rate = 0.95; u.pitch = STYLES[G.si].id === 'deep' ? 0.6 : STYLES[G.si].id === 'squeak' ? 1.7 : 1;
+    try { const u = new SpeechSynthesisUtterance(text); u.rate = 0.95;
       u.onend = () => { if (G && G.tts) endSay(); }; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (e) {}
   }
   function finish() {
     G.state = 'done'; caption(''); if (G.box) G.box.style.display = 'none';
-    K.finale(G, { won: true, kicker: 'Thanks for speaking up', title: 'Bill heard you', line: G.work && G.work.quote, cells: [{ k: 'Takes', v: G.takes }], say: 'Thanks for speaking up. Bill heard you. ' + ((G.work && G.work.quote) || '') });
+    K.finale(G, { won: true, kicker: 'Thanks for speaking up', title: 'Bill heard you', line: G.work && G.work.quote, cells: [{ k: 'Takes', v: G.takes }], say: 'Thanks for speaking up. Bill heard you.' });
   }
 
   return {
@@ -176,7 +174,7 @@ export function puppetKaraokeGame() {
     start(ctx) {
       if (G) this.stop();
       G = K.makeBase(ctx);
-      Object.assign(G, { ac: K.audio(), pi: 0, si: 1, state: 'intro', takes: 0, buf: null, words: '', open: 0, talk: 0, blink: 0, nextBlink: 2, pop: 0, bubbles: [], recT: 0, sayT: 0, sayLen: 0 });
+      Object.assign(G, { ac: K.audio(), pi: 0, state: 'intro', billBuf: null, billIntro: false, takes: 0, buf: null, words: '', open: 0, talk: 0, blink: 0, nextBlink: 2, pop: 0, bubbles: [], recT: 0, sayT: 0, sayLen: 0 });
       G.an = G.ac.createAnalyser(); G.an.fftSize = 1024; G.abuf = new Float32Array(G.an.fftSize);
       G.uni = { map: { value: null }, uOpen: { value: 0 }, uBlink: { value: 0 }, uPop: { value: 0 }, uTalk: { value: 0 }, uT: { value: 0 }, uA: { value: 0 }, uH: { value: G.h } };
       G.face = new THREE.Mesh(new THREE.PlaneGeometry(1.002, G.h + 0.002), new THREE.ShaderMaterial({ uniforms: G.uni, vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: false }));
@@ -184,9 +182,10 @@ export function puppetKaraokeGame() {
       const src = ctx.work && ctx.work.image;
       if (src) new THREE.TextureLoader().load(src, t => { if (!G) return; t.colorSpace = THREE.NoColorSpace; G.uni.map.value = t; G.face.visible = true; });
       G.bubTex = K.canvasTex(64, 64, (g) => { g.strokeStyle = 'rgba(255,255,255,.9)'; g.lineWidth = 5; g.beginPath(); g.arc(32, 32, 24, 0, Math.PI * 2); g.stroke(); g.fillStyle = 'rgba(255,255,255,.8)'; g.beginPath(); g.arc(24, 23, 6, 0, Math.PI * 2); g.fill(); });
-      G.onGo = () => { G.state = 'ready'; buttons(); showPrompt(); };
+      fetch(BILL).then(r => r.ok ? r.arrayBuffer() : Promise.reject()).then(ab => G && G.ac.decodeAudioData(ab)).then(b => { if (G) G.billBuf = b; }).catch(() => {});   // Bill's own voice
+      G.onGo = () => billSpeaks();
       K.intro(G, { title: 'Say it from the creek', how: 'Bill fell through. Answer the prompt: press Talk and say it, and Bill says it back from the creek. Your voice stays on this phone.',
-        say: 'Say it from the creek. Bill fell into the creek under the bridge. Answer the prompt: press Talk and say it out loud, then Bill says it back. Change his voice, or press Type to write it instead. Your voice stays on this phone.' });
+        say: 'Say it from the creek. Bill fell into the creek under the bridge. First, hear Bill himself. Then answer the prompt: press Talk and say it out loud, and Bill says it back. Or press Type to write it instead. Your voice stays on this phone.' });
     },
     update(dt) {
       if (!G || G.paused) return;
@@ -221,7 +220,8 @@ export function puppetKaraokeGame() {
       if (G.state === 'say') {
         G.sayT += dt;
         // captions: the words appear as he says them
-        if (G.words) { const w = G.words.split(/\s+/), n = Math.max(1, Math.ceil(w.length * Math.min(1, G.sayT / Math.max(0.5, G.sayLen * 0.92)))); caption(w.slice(0, n).join(' ')); }
+        if (G.billIntro) { let line = ''; for (const [at, l] of BILL_LINES) if (G.sayT >= at) line = l; caption(line); }
+        else if (G.words) { const w = G.words.split(/\s+/), n = Math.max(1, Math.ceil(w.length * Math.min(1, G.sayT / Math.max(0.5, G.sayLen * 0.92)))); caption(w.slice(0, n).join(' ')); }
         if (!G.tts && G.sayT > G.sayLen + 0.4) endSay();
         if (G.tts && G.sayT > G.sayLen + 4) endSay();   // in case the computer voice never says it's finished
       }
@@ -232,7 +232,7 @@ export function puppetKaraokeGame() {
     pause() { if (G) { G.paused = true; try { G.src && G.src.stop(); } catch (e) {} } },
     resume() { if (G) G.paused = false; },
     get over() { return !!(G && G.over); },
-    get debug() { return G && { engine: 'karaoke', playing: G.playing, over: G.over, state: G.state, takes: G.takes, style: STYLES[G.si].id, prompt: G.pi, open: +G.open.toFixed(2), words: G.words, t: +G.t.toFixed(1) }; },
+    get debug() { return G && { engine: 'karaoke', playing: G.playing, over: G.over, state: G.state, takes: G.takes, bill: G.billIntro, billReady: !!G.billBuf, prompt: G.pi, open: +G.open.toFixed(2), words: G.words, t: +G.t.toFixed(1) }; },
     stop() {
       if (G) { try { G.rec && G.rec.state !== 'inactive' && G.rec.stop(); } catch (e) {} try { G.sr && G.sr.stop(); } catch (e) {} try { G.src && G.src.stop(); } catch (e) {} try { speechSynthesis.cancel(); } catch (e) {}
         if (G.stream) G.stream.getTracks().forEach(t => t.stop()); G.capEl && G.capEl.remove(); G.box && G.box.remove(); try { G.an.disconnect(); } catch (e) {} }

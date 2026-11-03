@@ -7,17 +7,23 @@
 // The street behind him was filled in (media/games/pedals/road.jpg) and he was cut out (rider.png).
 import * as THREE from 'three';
 import * as K from './kit.js';
+import { thingCanvas } from './pedals-things.js';
 // (Textures read by a custom shader stay in their own colours: NoColorSpace, so they match the painting exactly.)
 
-const ART = 'media/games/pedals/';
+const ART = new URL('../../media/games/pedals/', import.meta.url).href;   // from this file, so it works on any page (AR, 3D gallery)
+// Bill McCann telling his own story (from his interview; the 3D gallery's clip for this painting), played as the painting comes alive
+const BILL_STORY = new URL('../../../3D/gallery/audio/art_36.mp3', import.meta.url).href;
 const BOX = { x0: 0.3359, y0: 0.0859, x1: 0.8604, y1: 1.0 };   // where Bill and his bike sit in the painting
 const ANCHOR = { lx: 0.37, ly: 0.985 };                         // the front wheel's contact point, inside that box
 const FAR = { u: 0.335, v: 0.47 };                              // where the lane disappears: he starts here
-const RIDE = 52, LANE = 0.17, AHEAD = 0.075;                    // seconds for the whole block; lane width at full size; how far ahead things appear
+const RIDE = 52, LANE = 0.25, AHEAD = 0.075;                    // seconds for the whole block; lane width at full size; how far ahead things appear
 const THINGS = [
-  { e: '⚽', name: 'a ball', snd: 'boing' }, { e: '🐈', name: 'a cat', snd: 'meow' }, { e: '💧', name: 'a puddle', snd: 'splash' },
-  { e: '🗑️', name: 'a trash can', snd: 'clank' }, { e: '🌿', name: 'a branch', snd: 'crack' }, { e: '🐕', name: 'a dog', snd: 'woof' }, { e: '🛹', name: 'a skateboard', snd: 'rumble' },
+  { kind: 'ball', name: 'a ball', snd: 'boing' }, { kind: 'cat', name: 'a cat', snd: 'meow' }, { kind: 'puddle', name: 'a puddle', snd: 'splash' },
+  { kind: 'can', name: 'a trash can', snd: 'clank' }, { kind: 'branch', name: 'a branch', snd: 'crack' }, { kind: 'dog', name: 'a dog', snd: 'woof' }, { kind: 'skateboard', name: 'a skateboard', snd: 'rumble' },
 ];
+// the things are drawn in code (pedals-things.js), standing on a ground line 0.36 below the middle of their square
+const thingTex = {}, GROUND = 0.36;
+function texFor(kind) { if (!thingTex[kind]) { const t = new THREE.CanvasTexture(thingCanvas(kind, 256)); t.colorSpace = THREE.SRGBColorSpace; thingTex[kind] = t; } return thingTex[kind]; }
 
 const VERT = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
 // Bill on his bike, with his legs pedalling (local u, v inside his box, v from the top)
@@ -88,7 +94,7 @@ export function rideTheBlockGame() {
   function spawn() {
     const k = THINGS[G.spawned % THINGS.length], lane = [-1, 0, 1][Math.floor(Math.random() * 3)];
     const lanePick = lane === G.lane || Math.random() < 0.55 ? G.lane : lane;   // most things come in Bill's own lane: you have to call it
-    const q = Math.min(0.93, G.p + AHEAD), s = K.sprite(K.emojiTex(k.e, { ring: true, color: '#ffffff', bg: 'rgba(20,20,20,.55)' }), 0.1, { order: 25, opacity: 0 });
+    const q = Math.min(0.93, G.p + AHEAD), s = K.sprite(texFor(k.kind), 0.1, { order: 25, opacity: 0 });
     s.position.z = 0.06; G.root.add(s);
     G.things.push({ ...k, q, lane: lanePick, s, warned: false, done: false });
     G.spawned++;
@@ -131,6 +137,8 @@ export function rideTheBlockGame() {
     update(dt) {
       if (!G || G.paused) return;
       G.t += dt; G.ui.update(dt); G.fx.update(dt); K.introUpdate(G, dt); K.finaleUpdate(G, dt);
+      // once the painting comes alive, Bill himself tells his story (the geese over the driveway)
+      if (G.over && !G.billAu) { G.overT = (G.overT || 0) + dt; if (G.overT > 2.4) { try { G.billAu = new Audio(BILL_STORY); G.billAu.play().catch(() => {}); } catch (e) {} } }
       const fadeIn = G.roadOK && G.riderOK ? 1 : 0;
       G.road.material.opacity += ((G.endT > 2.4 ? 0 : fadeIn) - G.road.material.opacity) * Math.min(1, dt * 2);
       G.uni.uA.value += ((G.endT > 2.4 ? 0 : fadeIn) - G.uni.uA.value) * Math.min(1, dt * 2);
@@ -153,8 +161,8 @@ export function rideTheBlockGame() {
       // things in the road: they come into view ahead of Bill, and he either swerves or bumps
       for (const k of G.things) {
         if (k.done && k.s.material.opacity <= 0.01) continue;
-        const ks = scaleAt(k.q), ka = roadAt(k.q, k.lane), [kx, ky] = G.S.P(ka.u, ka.v - 0.035 * ks);
-        k.s.position.set(kx, ky, 0.06); k.s.scale.setScalar(0.05 + ks * 0.09);
+        const ks = scaleAt(k.q), ka = roadAt(k.q, k.lane), ksz = 0.07 + ks * 0.17, [kx, gy] = G.S.P(ka.u, ka.v), ky = gy + GROUND * ksz;   // standing on the road
+        k.s.position.set(kx, ky, 0.06); k.s.scale.setScalar(ksz);
         const show = k.done ? 0 : Math.min(1, (AHEAD - (k.q - G.p)) / 0.02 + 0.3);
         k.s.material.opacity += (show - k.s.material.opacity) * Math.min(1, dt * 6);
         k.s.renderOrder = k.q > G.p ? 25 : 18;
@@ -177,7 +185,7 @@ export function rideTheBlockGame() {
         if (G.endT > 3.4 && !G.over) {
           try { G.sr && G.sr.stop(); } catch (e) {} G.sr = null;
           const t = Math.round(G.t - G.t0), r = K.best('pedals-of-freedom:ride', G.bumps, 'lower');
-          K.finale(G, { won: true, title: 'You rode the block', line: G.work && G.work.quote, best: r.isBest,
+          K.finale(G, { won: true, title: 'You rode the block', line: G.work && G.work.quote, best: r.isBest, say: 'You rode the block!',
             cells: [{ k: 'Dodged', v: G.dodged }, { k: 'Bumps', v: G.bumps }, { k: 'Time', v: Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0') }] });
         }
       }
@@ -192,6 +200,6 @@ export function rideTheBlockGame() {
     resume() { if (G) G.paused = false; },
     get over() { return !!(G && G.over); },
     get debug() { return G && { engine: 'ride', playing: G.playing, over: G.over, p: +G.p.toFixed(3), lane: G.lane, dodged: G.dodged, bumps: G.bumps, things: G.things.length, finishing: G.finishing, t: +G.t.toFixed(1) }; },
-    stop() { if (G) { try { G.sr && G.sr.abort(); } catch (e) {} G.sr = null; } K.cleanup(G); G = null; },
+    stop() { if (G) { try { G.sr && G.sr.abort(); } catch (e) {} G.sr = null; try { G.billAu && G.billAu.pause(); } catch (e) {} } K.cleanup(G); G = null; },
   };
 }

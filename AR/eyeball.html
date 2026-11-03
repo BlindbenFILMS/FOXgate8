@@ -122,6 +122,7 @@ import * as THREE from 'three';
 import { MindARThree } from 'mindar-image-three';
 import * as DATA from './artworks.js';
 import { visionOverlay } from './lib/gallery-vision.js';
+import { follower } from './lib/lk-follow.js';
 
 const $ = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -587,9 +588,9 @@ async function startAR() {
       $('scan').style.display = 'none'; buzz([40, 30, 40]);
       if (!current || current.work !== work) { current = { work, anchor, h }; tilt.ok = false; newLevel(); }
       else if (playing || countdown > 0) { /* same painting again: carry on */ }
-      lost = false;
+      lost = false; held = false;
     };
-    anchor.onTargetLost = () => { if (current && current.work === work) { lost = true; $('scan').style.display = 'flex'; say('Center the art in your camera', false); } };
+    anchor.onTargetLost = () => { if (current && current.work === work) { if (LK && LK.active(anchor)) { held = true; return; } loseIt(); } };   // (the Art Alive tracker may still have it)
   });
 
   const msg = $('loading').lastElementChild;
@@ -597,7 +598,8 @@ async function startAR() {
     : await loadTargets(works.map(w => w.target), (d, n) => { msg.textContent = 'Loading paintings ' + d + ' of ' + n + '…'; });
   msg.textContent = 'Starting camera…';
   await mindar.start();
-  keepAligned(mindar);   // stays on the painting if the phone turns, the address bar slides or the camera changes resolution
+  LK = params.get('lk') === '0' ? null : follower({ mindar, camera, renderer, THREE });   // the Art Alive tracker: keeps the board glued to the painting between MindAR's measurements
+  keepAligned(mindar, () => LK && LK.drop());   // stays on the painting if the phone turns, the address bar slides or the camera changes resolution
   $('loading').style.display = 'none'; $('scan').style.display = 'flex'; $('top').style.display = 'flex'; $('bar').style.display = 'flex';
   $('ar').removeAttribute('aria-hidden');
   say('Center a painting in your camera', false);
@@ -605,6 +607,8 @@ async function startAR() {
   let last = performance.now(), lastTick = 0;
   renderer.setAnimationLoop(() => {
     const now = performance.now(), dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (LK) { LK.capture(mindar.anchors); const on = LK.step(current && !lost ? current.anchor : null, current ? current.h : 1);
+      if (held && !on) { held = false; current.anchor.group.visible = false; loseIt(); } }   // the tracker lost it too
     if (current && !lost) {
       readTilt();
       if (countdown > 0) { const before = Math.ceil(countdown); countdown -= dt; const after = Math.ceil(countdown);
@@ -617,10 +621,11 @@ async function startAR() {
     if (bigT > 0) { bigT -= dt; if (bigT <= 0) hideBig(); }
     if (vision) vision.update(dt, 0, 0);
     renderer.render(scene, camera);
-    if (params.get('debug')) window.__eyeball = { mode: MODE, ball: { x: +ball.x.toFixed(3), y: +ball.y.toFixed(3) }, tilt: { r: +(tilt.r - tilt.r0).toFixed(3), p: +(tilt.p - tilt.p0).toFixed(3) }, playing, phase: L && L.phase, total: L && L.total, items: L && L.items && L.items.filter(i => i.got).length, title: current && current.work.title };
+    if (params.get('debug')) window.__eyeball = { mode: MODE, ball: { x: +ball.x.toFixed(3), y: +ball.y.toFixed(3) }, tilt: { r: +(tilt.r - tilt.r0).toFixed(3), p: +(tilt.p - tilt.p0).toFixed(3) }, playing, phase: L && L.phase, total: L && L.total, items: L && L.items && L.items.filter(i => i.got).length, title: current && current.work.title, lk: LK && LK.info.mode, held };
   });
 }
-let lost = true;
+let lost = true, held = false, LK = null;
+function loseIt() { lost = true; $('scan').style.display = 'flex'; say('Center the art in your camera', false); }
 </script>
 </body>
 </html>

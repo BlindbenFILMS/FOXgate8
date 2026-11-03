@@ -136,7 +136,7 @@ export function napkinsGame() {
     const rec = G.score > bestScore; if (rec) { bestScore = G.score; try { localStorage.setItem('napkins-best', String(bestScore)); } catch (e) {} }
     big('Napkin avalanche!', G.score + ' napkins swiped' + (rec ? ' · New best!' : ' · Best ' + bestScore), 4);
     hud().textContent = G.score + ' swiped' + (rec ? ' · Best!' : ' · Best ' + bestScore);
-    G.say('Napkin avalanche! You swiped ' + G.score + ' napkins.' + (rec ? ' New best!' : ''));
+    G.say('Napkin avalanche! You swiped ' + (G.score === 0 ? 'no napkins' : G.score === 1 ? '1 napkin' : G.score + ' napkins') + '.' + (rec ? ' New best!' : ''));   // (each sentence matches one of Ben's recordings)
     G.overT = 0;
   }
 

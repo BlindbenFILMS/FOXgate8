@@ -1,24 +1,27 @@
 // MIDNIGHT MELODIES (Wayne Pearcy): NIGHT LIGHT, a flashlight game with a lofi beat.
 // The room goes dark. Your phone is the flashlight: wherever the middle of the screen points on the real painting,
 // a warm beam lights it up (or drag a finger to move the light). Seven little things are hidden in the dark. Hold the
-// light on one to find it: it plays a trumpet note and stays softly lit, and the lofi song grows a new layer
+// light on one to find it (they're dream things drawn into the painting: a sleepy moon, a teddy bear, a counting sheep,
+// a golden note, a firefly jar, an alarm clock and a toy rocket; see midnight-things.js): it plays a trumpet note and stays softly lit, and the lofi song grows a new layer
 // (vinyl and chords, then hats, then the beat, then bass, then a sleepy trumpet). When all seven are found,
 // shine on the trumpet lamp above Wayne: it switches on, the whole room fills with light, and a lullaby plays.
 // By ear: a soft twinkle comes from the side of the nearest hidden thing and speeds up as you get close, a rising
 // hum means you're on it, and the Hint button says which way to move.
 import * as THREE from 'three';
 import * as K from './kit.js';
+import { thingCanvas } from './midnight-things.js';
 
 /* things to find: u, v on the painting (0..1 from the top-left) */
 const SPOTS = [
-  { name: 'a little pine tree', u: 0.315, v: 0.085 },
-  { name: 'a comet', u: 0.115, v: 0.245 },
-  { name: 'a paper sailboat', u: 0.155, v: 0.395 },
-  { name: 'a sleepy star', u: 0.05, v: 0.585 },
-  { name: 'the trumpet’s valves', u: 0.40, v: 0.60 },
-  { name: 'Wayne, fast asleep', u: 0.60, v: 0.47 },
-  { name: 'a cosy pillow', u: 0.86, v: 0.19 },
+  { kind: 'moon', name: 'a sleepy moon', u: 0.09, v: 0.08 },
+  { kind: 'rocket', name: 'a toy rocket', u: 0.52, v: 0.07 },
+  { kind: 'note', name: 'a golden note', u: 0.66, v: 0.24 },
+  { kind: 'clock', name: 'an alarm clock', u: 0.94, v: 0.42 },
+  { kind: 'teddy', name: 'a teddy bear', u: 0.92, v: 0.66 },
+  { kind: 'sheep', name: 'a counting sheep', u: 0.12, v: 0.8 },
+  { kind: 'jar', name: 'a firefly jar', u: 0.66, v: 0.9 },
 ];
+const THING = 0.15;   // how big the things are (share of the painting's width)
 const LAMP = { name: 'the trumpet lamp', u: 0.385, v: 0.285 };
 const FIND_R = 0.075, DWELL = 0.55, BEAM_R = 0.13;
 
@@ -140,6 +143,7 @@ export function midnightMelodiesGame() {
 
   function find(s) {
     s.got = true; G.found++; s.lit = 0.001;
+    const th = G.things.find(t => t.s === s); if (th) th.pop = 1;
     const [x, y] = G.S.P(s.u, s.v), pan = Math.max(-1, Math.min(1, (s.u - 0.5) * 1.8));
     G.music.horn(K.audio().currentTime + 0.02, [65, 67, 69, 72, 74, 76, 77][G.found - 1], 0.9, 0.09);
     K.tone(1568, 0.5, { vol: 0.05, pan, delay: 0.05 }); G.fx.add(x, y, '#ffd27a', 26, 0.28); G.buzz([30, 40, 60]);
@@ -182,12 +186,19 @@ export function midnightMelodiesGame() {
       G.dark = new THREE.Mesh(new THREE.PlaneGeometry(1.004, G.h + 0.004), new THREE.ShaderMaterial({ uniforms: G.uni, vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: false }));
       G.dark.position.z = 0.03; G.dark.renderOrder = 12; G.root.add(G.dark);
       G.glow = K.sprite(K.glowTex, BEAM_R * 2.2, { color: '#ffc46b', additive: true, opacity: 0, order: 13 }); G.glow.position.z = 0.035; G.root.add(G.glow);
+      // the dream things: drawn under the dark, so the beam reveals them; a faint twinkle shows through the dark at each one
+      G.things = SPOTS.map((s, i) => {
+        const t = new THREE.CanvasTexture(thingCanvas(s.kind, 256)); t.colorSpace = THREE.SRGBColorSpace;
+        const sp = K.sprite(t, THING, { order: 11, opacity: 0 }), [x, y] = G.S.P(s.u, s.v); sp.position.set(x, y, 0.02); G.root.add(sp);
+        const tw = K.sprite(K.glowTex, 0.05, { color: '#ffe7a8', additive: true, opacity: 0, order: 14 }); tw.position.set(x, y, 0.036); G.root.add(tw);
+        return { s, sp, tw, x, y, pop: 0, ph: i * 1.7 };
+      });
       G.music = band(K.audio()); G.music.start();
       G.ui.buttons([{ label: 'Hint', icon: '?', kind: 'red', aria: 'Hint: which way to move the light', press: () => hint() }]);
       hud();
       G.onGo = () => { G.t0 = G.t; G.say('Lights out. Move your phone to shine the light.'); };
-      K.intro(G, { title: 'Night light', how: 'The room went dark. Move your phone to shine your light and find 7 hidden things. Each one adds to the music.',
-        say: 'Night light. Wayne is asleep and the room went dark. Your phone is a flashlight: move it across the painting, or drag a finger, and find 7 hidden things. Hold the light on each one. Listen: a twinkle comes from the side of the nearest one and gets faster as you get close. Every find adds to the music.' });
+      K.intro(G, { title: 'Night light', how: 'The room went dark. Move your phone to shine your light and find 7 dream things hidden in the dark. Each one adds to the music.',
+        say: 'Night light. Wayne is asleep and the room went dark. Your phone is a flashlight: move it across the painting, or drag a finger, and find 7 dream things hidden in the dark: a sleepy moon, a teddy bear, a counting sheep and more. Hold the light on each one. Listen: a twinkle comes from the side of the nearest one and gets faster as you get close. Every find adds to the music.' });
     },
     update(dt) {
       if (!G || G.paused) return;
@@ -206,6 +217,14 @@ export function midnightMelodiesGame() {
       const [bx, by] = G.S.P(G.beam.u, G.beam.v); G.glow.position.set(bx, by, 0.035); G.glow.material.opacity = G.uni.uOn.value * 0.32 * (1 - G.uni.uLamp.value);
       // found things glow up; the lamp floods the room
       [...SPOTS, LAMP].forEach((s, i) => { if (s.lit > 0 && s.lit < 1) s.lit = Math.min(1, s.lit + dt * 1.6); G.uni.uSpots.value[i].set(s.u, s.v, s.lit || 0); });
+      for (const th of G.things) {   // the things fade in with the dark, bob gently, and hop when found
+        th.pop = Math.max(0, th.pop - dt * 2.5);
+        th.sp.material.opacity = Math.min(1, G.uni.uDark.value * 1.1);
+        th.sp.position.y = th.y + Math.sin(G.t * 1.6 + th.ph) * 0.004 + Math.sin(th.pop * Math.PI) * 0.03;
+        th.sp.scale.setScalar(THING * (1 + Math.sin(th.pop * Math.PI) * 0.25));
+        th.tw.material.opacity = th.s.got || G.lampDone ? 0 : G.uni.uOn.value * (0.18 + 0.22 * Math.max(0, Math.sin(G.t * 2.3 + th.ph)));
+        th.tw.scale.setScalar(0.04 + 0.02 * Math.max(0, Math.sin(G.t * 2.3 + th.ph)));
+      }
       if (G.lampT >= 0) { G.lampT += dt; G.uni.uLamp.value = Math.min(1, G.lampT / 2.2); }
       if (G.settle > 0) { G.settle -= dt; if (G.settle <= 0 && G.lampDone && !G.over) {
         const t = Math.round(G.t - G.t0), r = K.best('midnight-melodies:light', t, 'lower');

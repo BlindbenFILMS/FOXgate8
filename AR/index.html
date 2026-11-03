@@ -195,6 +195,7 @@ import { MindARThree } from 'mindar-image-three';
 import * as DATA from './artworks.js';
 import { visionOverlay } from './lib/gallery-vision.js';
 import { GAMES } from './lib/minigames/index.js';
+import { follower } from './lib/lk-follow.js';
 const ARTWORKS = DATA.ARTWORKS, EXHIBITIONS = DATA.EXHIBITIONS || [];
 
 const $ = id => document.getElementById(id);
@@ -725,7 +726,8 @@ async function startAR() {
     anchor.onTargetFound = () => {
       // MindAR can lock on (or hold on) with only a sliver of the painting in view. Only count it as found when
       // most of it is on screen; otherwise let it go at once so the painting you're actually pointing at can be found.
-      if (onScreen(sc) < SHOW_AT) { sc.rejected = true; return; }
+      // (during a game you're up close and moving, so a smaller part of the painting is enough to pick it back up)
+      if (onScreen(sc) < (sc.gameOn ? GAME_LET_GO_AT : SHOW_AT)) { sc.rejected = true; return; }
       sc.found = true; sc.appearT = performance.now();
       bindMedia(sc);
       stats.found(sc.work.title);
@@ -752,7 +754,7 @@ async function startAR() {
         sc.lastSpoken = performance.now(); describe(sc.work);
       }
     };
-    anchor.onTargetLost = () => {
+    anchor.onTargetLost = sc.lostReal = () => {
       if (sc.rejected) { sc.rejected = false; if (!sc.found) return; }
       sc.found = false; stats.lost();
       if (sc.gameOn) game.pause(); else if (!scenes.some(s => s.found)) setNowShowing(null);
@@ -767,6 +769,10 @@ async function startAR() {
         $('scan').style.display = 'flex';
       }
     };
+    // with the Art Alive tracker following this painting, a MindAR drop-out doesn't count as losing it: the tracker holds on
+    const foundReal = anchor.onTargetFound;
+    anchor.onTargetFound = () => { if (sc.lkHeld) { sc.lkHeld = false; return; } foundReal(); };
+    anchor.onTargetLost = () => { if (sc.lkActive && LK.sc === sc) { sc.lkHeld = true; return; } sc.lostReal(); };
     return sc;
   });
   allScenes = scenes;
@@ -789,6 +795,7 @@ async function startAR() {
   }
   const resting = new Map();   // painting index → time until which the search skips it (so it can't block its neighbour)
   function letGo(sc) {   // tell MindAR to drop this painting and start searching again
+    if (LK.sc === sc) lkDrop();
     const ctrl = mindar.controller, st = ctrl && ctrl.trackingStates && ctrl.trackingStates[sc.index];
     if (!st) return;
     resting.set(sc.index, performance.now() + 1200);
@@ -831,7 +838,7 @@ async function startAR() {
       return keep.length ? match.call(ctrl, input, keep) : Promise.resolve({ targetIndex: -1, modelViewTransform: null }); };
   }
   skipResting();
-  keepAligned(mindar, skipResting);
+  keepAligned(mindar, () => { skipResting(); lkDrop(); });   // (a new camera picture size: the tracker starts fresh)
   stats.scanning();
 
   $('loading').style.display = 'none';
@@ -846,6 +853,7 @@ async function startAR() {
   const alpha = (c, dt) => 1 / (1 + 1 / (2 * Math.PI * c * dt));
   function stick(sc, dt) {
     const g = sc.anchor.group; if (!g.visible) { sc.pose = null; return; }
+    if (sc.lkActive) { sc.pose = null; return; }   // the Art Alive tracker is steering this one
     const st = sc.pose || (sc.pose = { set: null }), now = performance.now();
     if (g.matrix !== st.set) {   // MindAR just measured the painting again
       g.matrix.decompose(_p, _q, _s);
@@ -860,10 +868,31 @@ async function startAR() {
     const m = st.set || new THREE.Matrix4(); m.compose(st.P, st.Q, st.S); g.matrix = st.set = m;
   }
 
+  /* Art Alive tracking (lib/lk-tracker.js, from ArtAliveStudio's game player): MindAR says WHICH painting and roughly where;
+     the tracker then follows the painting itself from frame to frame (dozens of little details, optical flow), so the art
+     and the games stay glued on while you move, get close, or MindAR briefly loses it. One painting at a time: the one
+     showing (or being played). MindAR's fresh measurements keep correcting it. Add ?lk=0 to the address to turn it off. */
+  const LK = { sc: null, on: params.get('lk') !== '0', F: follower({ mindar, camera, renderer, THREE }) };
+  function lkLose(sc) { sc.lkActive = false; if (sc.lkHeld) { sc.lkHeld = false; sc.anchor.group.visible = false; sc.lostReal(); } }
+  function lkDrop() { if (LK.sc) lkLose(LK.sc); LK.sc = null; LK.F.drop(); }
+  function lkStep() {
+    const sc = LK.on ? (gameScene || current) : null;
+    if (!sc || !(sc.found || sc.lkHeld)) { if (LK.sc) lkDrop(); return; }
+    if (LK.sc !== sc) { lkDrop(); LK.sc = sc; }
+    if (LK.F.step(sc.anchor, sc.work.height / sc.work.width)) sc.lkActive = true;
+    else lkLose(sc);   // the tracker has lost it too: now it's really gone (or back to MindAR alone)
+    if (params.get('debug')) window.__lk = { painting: sc.work.id, mode: LK.F.info.mode, points: LK.F.info.points, held: !!sc.lkHeld };
+  }
+
+  if (params.get('debug')) window.__ar = { mindar, scenes, camera, renderer, LK };   // (for testing)
   const clock = new THREE.Clock();
   renderer.setAnimationLoop(() => {
     const t = clock.getElapsedTime(), nowG = performance.now(), dtG = Math.min(0.05, (nowG - (window.__lastG || nowG)) / 1000); window.__lastG = nowG;
+    // during a game, hold on through short tracking drop-outs (a fast move, a hand, a glare) instead of pausing the game
+    if (mindar.controller) mindar.controller.missTolerance = game ? 12 : 3;
+    LK.F.capture(mindar.anchors, a => { const sc = scenes[a.targetIndex]; return sc && sc.pose && sc.pose.set; });
     for (const sc of scenes) stick(sc, dtG);
+    lkStep();
     if (game) { game.update(dtG); if (params.get('debug')) window.__mg = game.debug; if (game.over && !$('gameBtn').dataset.over) { $('gameBtn').dataset.over = '1'; setGameBtn('again'); } }
     else delete $('gameBtn').dataset.over;
     for (const sc of scenes) {
