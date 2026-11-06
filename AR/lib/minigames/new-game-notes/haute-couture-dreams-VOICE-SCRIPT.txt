@@ -1,0 +1,130 @@
+VOICE LINES: HAUTE COUTURE DREAMS (Shardasia Hadley) - "Style the dream"
+
+Save each line as its own mp3 with the file name shown, in AR/media/voice/.
+One sentence per file. Say it just as written (the game matches the words exactly).
+Anything not recorded keeps using the computer voice, so you can record a few at a time.
+(Shardasia's quote at the end plays in her own voice, from 3D/gallery/audio/art_50.mp3.)
+
+
+=====================================================================
+PART 1: NEW LINES TO RECORD (10)
+=====================================================================
+
+style-intro-7          Press Next to see each look, and Wear It when it fits.
+style-intro-8          Then take her down the runway, and press Pose on the beat.
+style-first            Press Next to see the first look.
+style-next             Try the next look.
+style-bottom-coral     And a swingy coral skirt: warm and sunny.
+style-look-navy-tee    A navy tee with her long black skirt.
+style-maya-no-floral   Pretty, but not bold enough for me.
+style-jordan-no-floral Pretty, but too busy next to my paintings.
+style-shardasia-no-navy    Too quiet for a dance party! Bolder, please.
+style-shardasia-no-yellow  I always wear yellow!
+
+
+=====================================================================
+PART 2: THE WHOLE GAME, IN THE ORDER YOU HEAR IT
+(NEW = record it. Everything else you've already recorded.)
+=====================================================================
+
+Intro
+style-intro-1          Style the dream.
+style-intro-2          Shardasia loves fashion, and today you are her stylist.
+style-intro-3          Three clients will tell you what they need.
+style-intro-7          Press Next to see each look, and Wear It when it fits.        NEW
+style-intro-8          Then take her down the runway, and press Pose on the beat.    NEW
+
+
+CLIENT 1: MAYA
+
+Her brief
+style-client-1         Client 1: Maya.
+style-maya-brief-1     I’m spending the day in the park with my friends.
+style-maya-brief-2     I want to be comfortable, but I want people to see me coming!
+style-maya-brief-3     It’s sunny out.
+style-first            Press Next to see the first look.                              NEW
+
+Look 1: the floral dress (wrong)
+style-wall-floral      The floral dress: red roses on cream.
+style-maya-no-floral   Pretty, but not bold enough for me.                            NEW
+style-next             Try the next look.                                             NEW
+
+Look 2: the blazer (wrong)
+style-layer-blazer     The blazer: sharp tailoring and a crisp white collar. Instant chic.
+style-maya-no-structured  A jacket? It’s way too warm in the park.
+style-next             Try the next look.
+
+Look 3: yellow tee and coral skirt (RIGHT)
+style-top-yellow       Her sunflower yellow tee: soft cotton, easy and bright.
+style-bottom-coral     And a swingy coral skirt: warm and sunny.                      NEW
+style-maya-yes         Yes! Comfy, bright and bold. I love it!
+
+Look 4: navy tee and black skirt (wrong)
+style-look-navy-tee    A navy tee with her long black skirt.                          NEW
+style-maya-no-dark     Too dark for a sunny day.
+style-next             Try the next look.
+
+
+CLIENT 2: JORDAN
+
+Her brief
+style-client-2         Client 2: Jordan.
+style-jordan-brief-1   Tonight is the opening of my first art show.
+style-jordan-brief-2   I want to look chic and smart, but calm.
+style-jordan-brief-3   I don’t want my outfit louder than my paintings.
+
+Look 1: the hot pink dress (wrong)
+style-wall-pink        The hot pink dress.
+style-jordan-no-party  That’s a party look, not a gallery look.
+style-hint-bold        Try something calmer, like the beige shirt.
+
+Look 2: beige shirt and black skirt (RIGHT)
+style-top-beige        The beige button-up shirt: crisp and smart, a calm sandy colour.
+style-bottom-black     Her long black skirt: flowy and comfy, and it goes with everything.
+style-jordan-yes       Chic, smart and calm. My paintings will be jealous.
+
+Look 3: yellow tee and pink skirt (wrong)
+style-top-yellow       Her sunflower yellow tee: soft cotton, easy and bright.
+style-bottom-pink      A hot pink skirt with the swirly pattern. Made for dancing.
+style-jordan-no-bold   Too loud! Calmer, please.
+style-hint-bold        Try something calmer, like the beige shirt.
+
+Look 4: the floral dress (wrong)
+style-wall-floral      The floral dress: red roses on cream.
+style-jordan-no-floral Pretty, but too busy next to my paintings.                     NEW
+style-hint-bold        Try something calmer, like the beige shirt.
+
+
+CLIENT 3: SHARDASIA
+
+Her brief
+style-client-3         Client 3: Shardasia.
+style-shardasia-brief-1  Dance party tonight!
+style-shardasia-brief-2  I want something bold and fun, and I need to be able to move.
+style-shardasia-brief-3  Try a colour I’ve never worn!
+
+Look 1: navy blue dress (wrong)
+style-color-navy       Navy blue: deep, like a cello.
+style-shardasia-no-navy  Too quiet for a dance party! Bolder, please.                 NEW
+
+Look 2: beige with the blazer (wrong)
+style-layer-blazer     The blazer: sharp tailoring and a crisp white collar. Instant chic.
+style-shardasia-no-structured  I can’t dance in a blazer!
+style-next             Try the next look.
+
+Look 3: sunflower yellow dress (wrong)
+style-color-sunflower  Sunflower yellow: bright as a bell.
+style-shardasia-no-yellow  I always wear yellow!                                      NEW
+style-shardasia-brief-3    Try a colour I’ve never worn!
+
+Look 4: emerald green dress (RIGHT)
+style-color-emerald    Emerald green: rich and fresh.
+style-shardasia-yes    Bold, fun, and I can dance in it. This is so me!
+
+
+The runway (after each client says yes)
+style-runway           Runway! Press Pose on the beat.
+
+The end
+style-end              Three looks, three happy clients. You styled the dream.
+(then Shardasia reads her quote in her own voice)

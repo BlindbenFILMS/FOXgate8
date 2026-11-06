@@ -1,0 +1,108 @@
+VOICE LINES TO RECORD: RICKY RUZICKA'S THREE GAMES (narrator lines for the AR games)
+
+Save each line as its own mp3 with the file name shown, in AR/media/voice/ (e.g. goal-intro-1.mp3).
+One sentence per file. Say it just as written (the game matches the words exactly).
+Anything not recorded keeps using the computer voice, so you can record a few at a time.
+Ricky's quotes at the end of each game are NOT recorded: the games play Ricky's own voice.
+
+
+GOALBALL IS... - "Block the shot"
+
+Intro
+goal-intro-1       Block the shot.
+goal-intro-2       Goalball is played by ear.
+goal-intro-3       The ball has bells inside.
+goal-intro-4       Listen.
+goal-intro-5       Is it coming from the left, the middle, or the right?
+goal-intro-6       Tap that side to dive and block it.
+goal-intro-7       Block ten shots!
+
+Before the first throw (the referee)
+goal-quiet         Quiet please.
+
+The first three throws are called out
+goal-from-left     From the left!
+goal-from-middle   Down the middle!
+goal-from-right    From the right!
+
+A block
+goal-block-1       Block!
+goal-block-2       Great block!
+goal-block-3       What a save!
+goal-block-4       Stopped it!
+goal-half          Halfway there!
+goal-one-more      One more!
+goal-ten           Ten blocks!
+goal-star          You are a goalball star!
+
+A goal against you
+goal-goal          Goal.
+goal-listen        Listen for the bells.
+
+Finale
+goal-end           What a game!
+
+
+HOPE IS NOT LOST - "Fly to the light"
+
+Intro
+hope-intro-1       Fly to the light.
+hope-intro-2       Storm clouds rumble ahead.
+hope-intro-3       Somewhere else, the wind chimes of the dawn are ringing.
+hope-intro-4       Hold left or right to steer the island toward the chimes, and fly around the storm.
+hope-intro-5       Pass eight storms to reach the sunrise.
+
+A storm appears
+hope-storm-left    Storm on the left!
+hope-storm-middle  Storm in the middle!
+hope-storm-right   Storm on the right!
+hope-follow-right  Follow the chimes to the right.
+hope-follow-left   Follow the chimes to the left.
+
+You fly around it
+hope-pass-1        Through the storm!
+hope-pass-2        The sky is brighter!
+hope-pass-half     Halfway to the sunrise!
+hope-pass-one      One more storm!
+hope-pass-sun      The sun is rising!
+
+You fly into it
+hope-hit           The storm shook the island.
+hope-follow        Follow the chimes.
+
+Finale
+hope-all-way       You flew all the way to the light!
+hope-end           You reached the light!
+
+
+SEEING THE WORLD TOGETHER - "Our song"
+
+Intro
+wife-intro-1       Our song.
+wife-intro-2       She sings a little tune of low, middle and high notes.
+wife-intro-3       Then it’s your turn.
+wife-intro-4       Play them back in the same order.
+wife-intro-5       Each tune gets one note longer, and every tune you finish lights up the city.
+wife-intro-6       Eight tunes.
+
+Turns (first tunes only)
+wife-listen        Listen to her.
+wife-your-turn     Your turn.
+
+A tune played back together
+wife-nice-1        Beautiful!
+wife-nice-2        Together!
+wife-nice-3        The city lights up!
+wife-half          Halfway there!
+wife-last          Last tune!
+wife-complete      Our song is complete!
+wife-longer        One more note.
+
+A wrong note, or waiting too long
+wife-again         Try again with her.
+wife-listen-again  Listen again.
+
+Finale
+wife-world         You saw the world together!
+wife-end           You made it together!
+

@@ -19,7 +19,7 @@ const WATER = [
 const SKY = [[0, 0], [1, 0], [1, 0.14], [0.95, 0.13], [0.92, 0.1], [0.88, 0.08], [0.85, 0.06], [0.8, 0.05], [0.72, 0.06], [0.68, 0.1], [0.63, 0.17], [0.6, 0.22], [0.55, 0.3], [0.5, 0.33], [0.4, 0.36], [0.35, 0.33], [0.3, 0.33], [0.2, 0.27], [0.18, 0.3], [0.12, 0.33], [0.05, 0.3], [0, 0.32]];
 const MUSICIANS = [[0.15, 0.74], [0.25, 0.72], [0.55, 0.79], [0.77, 0.77], [0.88, 0.71], [0.47, 0.57], [0.65, 0.19], [0.93, 0.16]];
 const STORMS = [{ clouds: 3, speed: 0.05, charge: [5, 7] }, { clouds: 4, speed: 0.06, charge: [3.8, 5.5] }, { clouds: 5, speed: 0.07, charge: [3, 4.5] }];
-const CHARGE = 1.7, TOO_HARD = 0.82, TOO_LONG = 1.3, GONE = 0.42;   // a cloud is gone once it's this far past the painting's edge
+const CHARGE = 1.7, TOO_HARD = 0.93, TOO_LONG = 2.0, GONE = 0.42;   // a cloud is gone once it's this far past the painting's edge
 
 const VERT = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
 // the town: the river flows, the storm dims everything, lightning flashes, rain falls
@@ -128,16 +128,26 @@ function townBand(ac) {
   };
 }
 
-/* ── the microphone: how hard you're blowing (0..1) ── */
+/* ── the microphone: how hard you're blowing (0..1) ──
+   Blowing on a phone's microphone makes a loud, rough, noisy rumble, strongest in the low and middle frequencies.
+   (Fixed 3 Nov: the phone's own echo cancelling treated a breath as noise and filtered it out, and the old meter needed
+   it very loud.) Now it listens to the 80–1500 Hz band, learns how quiet the room is in the first moment, and only counts
+   sound that is noisy like breath (music is made of clear notes, so the game's own band doesn't count). */
 function blowMeter(ac, stream) {
-  const src = ac.createMediaStreamSource(stream), an = ac.createAnalyser(); an.fftSize = 1024; src.connect(an);
-  const buf = new Float32Array(an.fftSize); let floor = 0.01, lvl = 0;
+  const src = ac.createMediaStreamSource(stream), an = ac.createAnalyser(); an.fftSize = 1024; an.smoothingTimeConstant = 0.3; src.connect(an);
+  const spec = new Float32Array(an.frequencyBinCount), hz = ac.sampleRate / an.fftSize, b0 = Math.max(1, Math.round(80 / hz)), b1 = Math.round(1500 / hz);
+  let lvl = 0; const hist = [];   // the last few seconds of loudness, to know how quiet the room is
   return {
     read() {
-      an.getFloatTimeDomainData(buf); let rms = 0; for (let i = 0; i < buf.length; i++) rms += buf[i] * buf[i]; rms = Math.sqrt(rms / buf.length);
-      if (rms < floor * 1.5) floor += (rms - floor) * 0.01; else floor += (rms - floor) * 0.0005;   // learn how quiet the room is
-      const raw = Math.max(0, Math.min(1, (rms - floor * 2) / 0.16));
-      lvl += (raw - lvl) * (raw > lvl ? 0.5 : 0.15); return lvl;
+      an.getFloatFrequencyData(spec);
+      let sum = 0, logSum = 0, cnt = 0;
+      for (let i = b0; i <= b1; i++) { const pw = Math.pow(10, spec[i] / 10) + 1e-14; sum += pw; logSum += Math.log(pw); cnt++; }
+      const mean = sum / cnt, db = 10 * Math.log10(mean), flat = Math.exp(logSum / cnt) / mean;   // loudness, and how noise-like (1) or note-like (0) it is
+      if (db > -110) { hist.push(db); if (hist.length > 360) hist.shift(); }                 // (skip digital silence while the mic starts)
+      if (hist.length < 8) return 0;
+      const floor = [...hist].sort((a, b) => a - b)[Math.floor(hist.length * 0.1)];          // the room: the quietest tenth of the last ~6 seconds
+      const over = db - floor, raw = flat > 0.12 ? Math.max(0, Math.min(1, (over - 6) / 40)) : 0;   // only breathy, noisy sound counts (not music, not talking)
+      lvl += (raw - lvl) * (raw > lvl ? 0.6 : 0.2); return lvl;
     },
     stop() { try { src.disconnect(); } catch (e) {} stream.getTracks().forEach(t => t.stop()); },
   };
@@ -169,11 +179,11 @@ export function blowTheStormGame() {
     const S = STORMS[i]; G.phase = 'storm'; G.wave = i; G.chargeT = S.charge[0] + 1.5; G.hard = 0;
     G.clouds = [];
     for (let k = 0; k < S.clouds; k++) {
-      const side = k % 2 ? 1 : -1, u = side < 0 ? -0.5 - Math.random() * 0.25 : 1.5 + Math.random() * 0.25;
+      const side = k % 2 ? 1 : -1, u = side < 0 ? -0.2 - Math.random() * 0.15 : 1.2 + Math.random() * 0.15;   // just off the edges, so they're in view in a moment
       G.clouds.push({ u, v: 0.05 + Math.random() * 0.17, r: 0.17 + Math.random() * 0.07, side, home: 0.2 + (k / Math.max(1, S.clouds - 1)) * 0.6, charge: 0, gone: false, a: 1, bump: 0 });
     }
     const first = i === 0;
-    G.ui.alert(first ? 'A storm is rolling in!' : 'Here comes another storm!', 'Blow into your phone to blow the clouds away', 2.8, 'red');
+    G.ui.alert(first ? 'A storm is rolling in!' : 'Here comes another storm!', 'Blow into your phone, or hold Blow', 1.5, 'red');   // short, so it doesn't hide the clouds coming in
     G.say(first ? 'Oh no, a storm is rolling in! Blow into your phone to blow the clouds away, so the town can play. But when a cloud flickers and crackles, wait! Blowing on it makes lightning. And don’t blow too hard.' : `Here comes storm ${i + 1}! Blow the clouds away. Wait when they flicker.`);
     G.band.rumble(0); hud();
   }
@@ -207,11 +217,12 @@ export function blowTheStormGame() {
       G.band = K.audio() ? townBand(K.audio()) : new Proxy({ layers: {} }, { get: (o, k) => (k in o ? o[k] : () => {}) });
       // the microphone (no microphone: the Blow button, or hold a finger on the screen)
       if (!G.bot && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: false, autoGainControl: false } })
+        navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } })   // (echo cancelling filters a breath out)
           .then(st => { if (!G) { st.getTracks().forEach(t => t.stop()); return; } G.mic = blowMeter(K.audio(), st); G.micOK = true; })
           .catch(() => { if (G) G.micNo = true; });
       } else G.micNo = !G.bot;
-      G.ui.buttons([{ label: 'Blow', icon: '🌬', kind: 'red', aria: 'Blow (hold)', press: () => { G.btn = true; }, release: () => { G.btn = false; } }]);
+      G.streaks = []; G.streakTex = K.canvasTex(128, 16, (g) => { const r = g.createLinearGradient(0, 0, 128, 0); r.addColorStop(0, 'rgba(255,255,255,0)'); r.addColorStop(0.5, 'rgba(255,255,255,1)'); r.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = r; g.fillRect(0, 5, 128, 6); });
+      G.blowBtn = (G.ui.buttons([{ label: 'Hold to blow', icon: '🌬', kind: 'red', aria: 'Blow (hold)', press: () => { G.btn = true; G.hudT = 0; }, release: () => { G.btn = false; } }]) || [])[0];
       hud();
       G.onGo = () => { G.t0 = G.t; G.band.start(); G.phase = 'calm'; G.phaseT = 6; hud(); if (G.micNo) G.ui.alert('No microphone?', 'Hold the Blow button instead', 2.5, 'blue'); };
       K.intro(G, { title: 'Blow the storm away', how: 'The town is gathering for music. When a storm rolls in, blow into your phone to blow the clouds away. When a cloud flickers, wait! And don’t blow too hard.',
@@ -226,7 +237,16 @@ export function blowTheStormGame() {
       let blow = G.mic ? G.mic.read() : 0;
       if (G.btn || G.hold) blow = Math.max(blow, 0.55);
       if (G.bot && G.phase === 'storm') blow = G.clouds.some(c => c.charge > 0) ? 0 : 0.6;
+      if (blow > 0.12 && (G.blow || 0) <= 0.12) G.hudT = 0;   // show "Blowing…" at once
       G.blow = blow;
+      // you can SEE your breath: streaks of wind fly out across the sky, the clouds ripple, and the Blow button fills
+      G.windT = (G.windT || 0) - dt * (blow > 0.1 ? 1 : 0);
+      if (blow > 0.1 && G.windT <= 0) { G.windT = 0.05 / (0.3 + blow);
+        const side = Math.random() < 0.5 ? -1 : 1, s = K.sprite(G.streakTex, 0.12, { color: '#ffffff', additive: true, opacity: 0, order: 21 }), v = 0.04 + Math.random() * 0.26, [x, y] = G.S.P(0.5 + side * 0.05, v);
+        s.position.set(x, y, 0.07); s.scale.set(0.08 + blow * 0.1, 0.012, 1); G.root.add(s); G.streaks.push({ s, x, y, side, t: 0, sp: 0.6 + blow * 0.9 }); }
+      for (let i = G.streaks.length - 1; i >= 0; i--) { const w = G.streaks[i]; w.t += dt; w.s.position.x = w.x + w.side * w.t * w.sp; w.s.material.opacity = Math.min(0.75, w.t * 6) * Math.max(0, 1 - w.t / 0.7);
+        if (w.t > 0.7) { G.root.remove(w.s); w.s.material.dispose(); G.streaks.splice(i, 1); } }
+      if (G.blowBtn) G.blowBtn.style.background = `linear-gradient(90deg, #ffd25a ${Math.round(blow * 100)}%, #ec3013 ${Math.round(blow * 100)}%)`;
       const charge = G.clouds.reduce((m, c) => Math.max(m, c.gone ? 0 : c.charge > 0 ? 1 : 0), 0);
       // the timeline: calm → storm → the band plays on → … → the gathering
       if (G.phase === 'calm' || G.phase === 'between') { G.phaseT -= dt; if (G.phaseT <= 0 && G.playing) startStorm(G.phase === 'calm' ? 0 : G.wave + 1); }
@@ -242,12 +262,12 @@ export function blowTheStormGame() {
           if (c.gone) { c.a = Math.max(0, c.a - dt * 1.5); continue; }
           if (c.charge > 0) { c.charge -= dt; if (blow > 0.3 && CHARGE - c.charge > 0.4) strike(c, 'Lightning! Wait while the clouds flicker.'); else if (c.charge <= 0) G.band.rumble((c.u - 0.5) * 1.6); }
           // the storm drifts in toward the sky over the town; your breath pushes it back out
-          const off = c.u < 0 || c.u > 1, sp = off && !c.entered ? 0.11 : S.speed, inward = (c.home - c.u) * sp * 3, push = c.entered ? blow * 0.32 * c.side * (c.charge > 0 ? 0 : 1) : 0;
+          const off = c.u < 0 || c.u > 1, sp = off && !c.entered ? 0.2 : S.speed, inward = (c.home - c.u) * sp * 3, push = c.entered ? blow * 0.5 * c.side * (c.charge > 0 ? 0 : 1) : 0;   // your breath moves them right away (once they've drifted into the sky: blowing early used to push them away for good, so the storm never ended)
           c.u += (Math.sign(inward) * Math.min(Math.abs(inward), sp) + push) * dt;
           if (!c.entered && c.u > 0.02 && c.u < 0.98) c.entered = true;
           c.v = Math.max(0.03, Math.min(0.25, c.v + Math.sin(G.t * 0.4 + c.home * 9) * 0.004 * dt));
-          c.bump = Math.max(0, c.bump - dt * 2);
-          if (c.u < -GONE || c.u > 1 + GONE) { if (Math.abs(c.u - 0.5) > 0.5 + GONE && push !== 0) { c.gone = true; G.band.poof((c.u - 0.5) * 1.6, G.clouds.filter(k => k.gone).length); G.buzz(30); G.ui.pop('Whoosh!'); } }
+          c.bump = Math.max(0, c.bump - dt * 2); if (blow > 0.15 && c.charge <= 0) c.bump = Math.max(c.bump, 0.35 + Math.sin(G.t * 14 + c.home * 7) * 0.25);   // they ripple as you blow
+          if (c.entered && (c.u < -GONE || c.u > 1 + GONE)) { if (Math.abs(c.u - 0.5) > 0.5 + GONE && push !== 0) { c.gone = true; G.band.poof((c.u - 0.5) * 1.6, G.clouds.filter(k => k.gone).length); G.buzz(30); G.ui.pop('Whoosh!'); } }
         }
         if (G.clouds.every(c => c.gone)) {
           G.cleared++; G.band.cheer();

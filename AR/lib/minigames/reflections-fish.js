@@ -1,18 +1,19 @@
-// REFLECTIONS OF SISTERHOOD (April & Melissa): FISH FOR THE SISTERS.
+// REFLECTIONS OF SISTERHOOD (April & Melissa): FEED THE FISH.
 // April and Melissa sit on the dock in Guanaja with their feet in the water. Tropical fish swim through it (blue tangs,
 // yellowtail snappers, parrotfish, angelfish, sergeant majors, a little puffer, and later a spotted eagle ray and a
-// sea turtle). Point them out so the sisters can see them: tap a fish (or hold the middle of the screen on it). The
-// sister on that side hears what it is, and the fish swims over to tickle her toes with a splash. Spot 12 fish.
-// The water ripples all the time, every tap and splash sends out rings, a lofi island band plays (keys, a soft beat, a
-// shaker and waves), and every fish you point out adds a marimba note. By ear: each fish makes little bubbles from its
-// side, louder as you get close, and the Point button points out the fish nearest to where you're looking.
+// sea turtle). Tap the water to drop a pinch of fish food: the nearest fish swims up and gobbles it, then swims over to
+// tickle a sister's toes with a splash. Feed 10 fish. The water ripples all the time, a lofi island band plays (keys, a soft
+// beat, a shaker and waves), and every fish you feed adds a marimba note. By ear: each fish makes little bubbles from its
+// side, louder as you get close, and the big Feed button drops food right in front of the fish nearest where you're looking.
+// At the end, April & Melissa speak in their own words.
 import * as THREE from 'three';
 import * as K from './kit.js';
 // (Textures read by a custom shader stay in their own colours: NoColorSpace, so they match the painting exactly.)
 
+const ARTIST = new URL('../../../3D/gallery/audio/art_10.mp3', import.meta.url).href;   // April & Melissa, in their own words
 const WATER = 0.6;                                             // the waterline (v)
 const SISTERS = [{ name: 'April', feet: { u: 0.235, v: 0.625 } }, { name: 'Melissa', feet: { u: 0.6, v: 0.625 } }];
-const GOAL = 12, HOLD = 0.6;
+const GOAL = 10, FEED_R = 0.32, MAX_FOOD = 4;
 const KINDS = {
   tang: { name: 'a blue tang', size: 0.22, pitch: 880 },
   snapper: { name: 'a yellowtail snapper', size: 0.27, pitch: 740 },
@@ -127,6 +128,8 @@ function band(ac) {
     marimba: (i, p) => marimba(ac.currentTime + 0.02, MARIMBA[i % MARIMBA.length], p),
     splash: (p = 0, big = 1) => { const t = ac.currentTime + 0.02; noise(t, 0.35 * big, { freq: 2200, q: 0.6, vol: 0.22 * big, p, out: air, sweep: 600 }); for (let i = 0; i < 4; i++) tone(t + 0.04 + Math.random() * 0.2, 600 + Math.random() * 900, 0.06, { vol: 0.05, p, out: air, slide: 1600 }); },
     bubbles: (p, vol, pitch) => { const t = ac.currentTime + 0.02; for (let i = 0; i < 3; i++) tone(t + i * 0.07, pitch * (0.8 + Math.random() * 0.5), 0.07, { vol, p, out: air, slide: pitch * 2 }); },
+    gulp: (p) => { const t = ac.currentTime + 0.02; tone(t, 420, 0.09, { type: 'triangle', vol: 0.1, p, out: air, slide: 180 }); tone(t + 0.1, 520, 0.08, { type: 'triangle', vol: 0.08, p, out: air, slide: 220 }); },   // nom nom
+    plop: (p) => { const t = ac.currentTime + 0.02; tone(t, 900, 0.12, { vol: 0.08, p, out: air, slide: 300 }); noise(t, 0.12, { freq: 1600, q: 0.8, vol: 0.06, p, out: air, sweep: 500 }); },   // food hits the water
     giggle: (p) => { const t = ac.currentTime + 0.05; [0, 1, 2, 3].forEach(i => tone(t + i * 0.09, 900 + i * 140 + (i % 2) * 120, 0.08, { type: 'triangle', vol: 0.06, p, out: air })); },
     start() { if (timer) return; next = ac.currentTime + 0.08; timer = setInterval(schedule, 30); schedule(); this.volume(1.3); },
     volume(v) { bus.gain.setTargetAtTime(v, ac.currentTime, 0.25); air.gain.setTargetAtTime(v, ac.currentTime, 0.25); },
@@ -134,12 +137,23 @@ function band(ac) {
   };
 }
 
+// a pinch of fish food: little colourful flakes
+function foodTex() {
+  return K.canvasTex(64, 64, (g) => {
+    const C = ['#ffb347', '#ff6f61', '#ffe066', '#9bdc5a', '#f7a1c4'];
+    for (let i = 0; i < 16; i++) { const a = i * 2.39, r = 4 + (i % 6) * 3.6, x = 32 + Math.cos(a) * r, y = 32 + Math.sin(a) * r;
+      g.save(); g.translate(x, y); g.rotate(a); g.fillStyle = C[i % C.length]; g.strokeStyle = 'rgba(60,30,10,.7)'; g.lineWidth = 1.2;
+      g.beginPath(); g.moveTo(-4, -2); g.lineTo(3, -3); g.lineTo(4, 2); g.lineTo(-3, 3); g.closePath(); g.fill(); g.stroke(); g.restore(); }
+  });
+}
+
 export function sistersFishGame() {
   let G = null;
   const dist = (a, b) => Math.hypot(a.u - b.u, (a.v - b.v) * G.h);
+  const nameOf = k => KINDS[k].name[0].toUpperCase() + KINDS[k].name.slice(1);
 
   function hud() {
-    G.ui.panel('Fish for the sisters', `${G.spotted}<small>of ${GOAL} fish</small>`, { segs: [G.spotted, GOAL], sub: G.kinds.size ? `${G.kinds.size} of ${Object.keys(KINDS).length} kinds · tap a fish to point it out` : 'Tap a fish to point it out' });
+    G.ui.panel('Feed the fish', `${G.fed}<small>of ${GOAL} fish</small>`, { segs: [G.fed, GOAL], sub: G.fed >= GOAL ? 'Every fish, fed!' : 'Tap the water to drop some food' });
   }
   function ripple(u, v, big = 1) { const r = G.rips[G.ripI++ % G.rips.length]; r.set(u, v, 0, big); }
   function spawn(kind) {
@@ -147,31 +161,48 @@ export function sistersFishGame() {
     const uni = { map: { value: G.tex[kind] }, uT: { value: Math.random() * 10 }, uWig: { value: kind === 'turtle' ? 0.01 : kind === 'ray' ? 0.03 : 0.04 }, uA: { value: 0 }, uDeep: { value: 0.3 }, uGlow: { value: 0 } };
     const m = new THREE.Mesh(new THREE.PlaneGeometry(1, 0.5, 12, 1), new THREE.ShaderMaterial({ uniforms: uni, vertexShader: FISH_VERT, fragmentShader: FISH_FRAG, transparent: true, depthWrite: false }));
     m.renderOrder = 13; G.root.add(m);
-    const f = { kind, m, uni, u: dir > 0 ? -0.08 : 1.08, v, v0: v, dir, speed: (K0.special ? 0.035 : 0.05) + Math.random() * 0.035, ph: Math.random() * 6, state: 'swim', t: 0, bubT: Math.random() };
+    const f = { kind, m, uni, u: dir > 0 ? -0.08 : 1.08, v, v0: v, dir, speed: (K0.special ? 0.03 : 0.04) + Math.random() * 0.03, ph: Math.random() * 6, state: 'swim', t: 0, bubT: Math.random() };
     G.fish.push(f); return f;
   }
-  function point(f, how = 'tap') {
-    if (!f || f.state !== 'swim') return;
-    f.state = 'go'; f.t = 0; G.spotted++; G.kinds.add(f.kind);
+  function nearestTo(at, maxD = 9) { let best = null, bd = maxD; for (const f of G.fish) if (f.state === 'swim' && f.u > -0.02 && f.u < 1.02) { const d = dist(f, at); if (d < bd) { bd = d; best = f; } } return best; }
+
+  /* ── the food ── */
+  function drop(u, v) {
+    if (!G.playing || G.ending) return;
+    if (G.food.length >= MAX_FOOD) { const old = G.food.shift(); G.root.remove(old.m); if (old.f) { old.f.state = 'swim'; old.f.v0 = old.f.v; } }
+    v = Math.max(WATER + 0.03, Math.min(0.96, v)); u = Math.max(0.03, Math.min(0.97, u));
+    const m = K.sprite(G.foodTex, 0.07, { order: 14, opacity: 0 }); m.position.z = 0.045; G.root.add(m);
+    G.food.push({ m, u, v, u0: u, t: 0, f: null });
+    ripple(u, v, 0.6); G.band.plop((u - 0.5) * 1.6); G.buzz(12);
+  }
+  function eat(f) {
+    const food = f.food; if (food) { G.root.remove(food.m); G.food.splice(G.food.indexOf(food), 1); }
+    f.food = null; f.state = 'go'; f.t = 0; G.fed++; G.kinds.add(f.kind);
     const sis = f.u < 0.42 ? SISTERS[0] : SISTERS[1]; f.sis = sis;
     const p = (f.u - 0.5) * 1.6;
-    G.band.marimba(G.spotted - 1, p); G.band.bubbles(p, 0.06, KINDS[f.kind].pitch); ripple(f.u, f.v, 0.8); G.buzz(25);
-    const [x, y] = G.S.P(f.u, f.v); G.fx.add(x, y, '#d8f6ff', 14, 0.22);
+    G.band.gulp(p); G.band.marimba(G.fed - 1, p); G.band.bubbles(p, 0.06, KINDS[f.kind].pitch); ripple(f.u, f.v, 0.8); G.buzz([20, 30, 20]);
+    const [x, y] = G.S.P(f.u, f.v); G.fx.add(x, y, '#ffe9a8', 16, 0.24);
     G.ui.pop(KINDS[f.kind].name.replace(/^(a|an) /, '').toUpperCase());
-    G.say(`${sis.name}, look! ${KINDS[f.kind].name[0].toUpperCase() + KINDS[f.kind].name.slice(1)}!`);
+    G.say(`${sis.name}, look! ${nameOf(f.kind)}!`);
     hud();
-    if (G.spotted >= GOAL) { G.ending = 4.5; G.ui.alert('You helped them see', 'Every fish, together.', 2.6, 'red'); }
+    if (G.fed >= GOAL) { G.ending = 4.5; G.ui.alert('Every fish, fed', 'Look how happy they are.', 2.6, 'red'); }
   }
-  function nearestTo(at, maxD = 9) { let best = null, bd = maxD; for (const f of G.fish) if (f.state === 'swim' && f.u > -0.02 && f.u < 1.02) { const d = dist(f, at); if (d < bd) { bd = d; best = f; } } return best; }
-  const hitR = f => KINDS[f.kind].size * (0.75 + (f.v - WATER) * 0.9) * 0.42 + 0.015;
+  // the Feed button: food lands just in front of the fish nearest where you're looking
+  function feedButton() {
+    if (!G.playing || G.ending) return;
+    const f = nearestTo(G.aim, 0.45);
+    if (f) drop(f.u + f.dir * 0.05, f.v);
+    else { G.say('No fish near there. Try lower in the water.'); drop(G.aim.u, G.aim.v); }
+  }
 
   return {
-    title: 'Fish for the sisters',
+    title: 'Feed the fish',
     start(ctx) {
       if (G) this.stop();
       G = K.makeBase(ctx);
-      Object.assign(G, { fish: [], spotted: 0, kinds: new Set(), nextT: 0.5, aim: { u: 0.5, v: 0.8 }, touch: null, touchT: 0, hold: 0, holdF: null, ending: 0, ripI: 0, splashT: 3, specials: [], t0: 0 });
+      Object.assign(G, { fish: [], food: [], fed: 0, kinds: new Set(), nextT: 0.5, aim: { u: 0.5, v: 0.8 }, touch: null, touchT: 0, ending: 0, ripI: 0, splashT: 3, specials: [], t0: 0, botT: 1, endT: 0, artist: null });
       G.tex = {}; for (const k of Object.keys(KINDS)) { G.tex[k] = fishTex(k); G.tex[k].colorSpace = THREE.NoColorSpace; }
+      G.foodTex = foodTex();
       // the water: the painting itself, rippling below the waterline
       G.rips = Array.from({ length: 8 }, () => new THREE.Vector4(0, 0, 0, 0));
       G.wu = { map: { value: null }, uT: { value: 0 }, uH: { value: G.h }, uA: { value: 0 }, uLine: { value: WATER }, uRip: { value: G.rips } };
@@ -182,53 +213,74 @@ export function sistersFishGame() {
       G.ring = K.sprite(K.ringTex, 0.08, { color: '#e8fbff', order: 16, opacity: 0 }); G.ring.position.z = 0.05; G.root.add(G.ring);
       G.band = K.audio() ? band(K.audio()) : null;
       if (!G.band) G.band = new Proxy({}, { get: () => () => {} });
-      G.ui.buttons([{ label: 'Point', icon: '👉', kind: 'red', aria: 'Point out the fish nearest to where you are looking', press: () => { if (G.playing) { const f = nearestTo(G.aim, 0.45); if (f) point(f, 'button'); else { G.say('No fish near there. Try lower in the water.'); } } } }]);
+      const story = G.story; G.story = () => { if (G && G.artist) G.artist.pause(); story && story(); };   // the story button stops the artist's clip first
+      G.ui.buttons([{ label: 'Feed', icon: '🐟', kind: 'red', aria: 'Drop food for the fish nearest to where you are looking', press: feedButton }]);
       hud();
       G.onGo = () => { G.t0 = G.t; G.band.start(); };
-      K.intro(G, { title: 'Fish for the sisters', how: 'Fish are swimming under the dock. Point them out so April and Melissa can see them: tap a fish, or hold the middle of the screen on it.',
-        say: 'Fish for the sisters. April and Melissa are sitting on the dock in Guanaja, with their feet in the water. Tropical fish are swimming by. Point them out so the sisters can see them: tap a fish, or hold the middle of the screen on it. Each fish makes little bubbles from its side, so you can find them by ear too. Spot twelve fish!' });
+      K.intro(G, { title: 'Feed the fish', how: 'Tap the water to drop some fish food, and the fish swim up to eat. Feed ten fish!',
+        say: 'Feed the fish. April and Melissa are sitting on the dock in Guanaja, with their feet in the water. Tropical fish are swimming by. Tap the water to drop some fish food, and the fish swim up to eat. Each fish makes little bubbles from its side, so you can find them by ear too. Feed ten fish!' });
     },
     update(dt) {
       if (!G || G.paused) return;
       G.t += dt; G.ui.update(dt); G.fx.update(dt); K.introUpdate(G, dt); K.finaleUpdate(G, dt);
       G.wu.uT.value = G.t; G.wu.uA.value += ((G.ready && !G.over ? 1 : 0) - G.wu.uA.value) * Math.min(1, dt * 2);
       for (const r of G.rips) if (r.w > 0) { r.z += dt; r.w = Math.max(0, r.w - dt * 0.45); }
+      // the artist speaks once the finale line is done; the band goes soft under them
+      if (G.over && !G.artist) { G.endT += dt; if (G.endT > 3.4) { G.artist = new Audio(ARTIST); G.artist.play().catch(() => {}); G.band.volume(0.25); } }
       // the sisters kick their feet now and then
       G.splashT -= dt; if (G.splashT <= 0 && G.ready) { G.splashT = 4 + Math.random() * 5; const s = SISTERS[Math.floor(Math.random() * 2)]; ripple(s.feet.u + (Math.random() - 0.5) * 0.04, s.feet.v + 0.01, 0.55); if (G.playing) G.band.splash((s.feet.u - 0.5) * 1.6, 0.4); }
       // where you're looking: a finger, else the middle of the screen
-      if (G.bot && G.playing) { const f = nearestTo(G.aim); if (f) { G.aim.u += (f.u - G.aim.u) * Math.min(1, dt * 3); G.aim.v += (f.v - G.aim.v) * Math.min(1, dt * 3); } }
-      else if (G.touch) G.aim = { ...G.touch };
+      if (G.touch) G.aim = { ...G.touch };
       else if (G.touchT > 0) G.touchT -= dt;
       else { const r = G.renderer.domElement.getBoundingClientRect(), p = G.S.toBoard({ clientX: r.left + r.width / 2, clientY: r.top + r.height / 2 }, G.root); if (p) G.aim = { u: Math.max(0, Math.min(1, p.u)), v: Math.max(0, Math.min(1, p.v)) }; }
       const [ax, ay] = G.S.P(G.aim.u, G.aim.v); G.ring.position.set(ax, ay, 0.05);
-      G.ring.material.opacity = G.playing && G.aim.v > WATER ? 0.45 : 0; G.ring.scale.setScalar(0.07 + G.hold * 0.05);
-      // the fish
+      G.ring.material.opacity = G.playing && G.aim.v > WATER ? 0.35 : 0;
+      // the robot tester drops food in front of a fish now and then
+      if (G.bot && G.playing && !G.ending) { G.botT -= dt; if (G.botT <= 0) { G.botT = 1.3; const f = nearestTo({ u: 0.5, v: 0.8 }); if (f && f.u > 0.05 && f.u < 0.95) drop(f.u + f.dir * 0.05, f.v); } }
+      // new fish swim in
       if (G.playing && !G.ending) {
         G.nextT -= dt;
-        const swimming = G.fish.filter(f => f.state === 'swim').length;
+        const swimming = G.fish.filter(f => f.state === 'swim' || f.state === 'hungry').length;
         if (G.nextT <= 0 && swimming < 5) {
-          G.nextT = 1.4 + Math.random() * 1.8;
+          G.nextT = 1.2 + Math.random() * 1.6;
           let kind = COMMON[Math.floor(Math.random() * COMMON.length)];
-          if (G.spotted >= 4 && !G.specials.includes('ray')) { kind = 'ray'; G.specials.push('ray'); }
-          else if (G.spotted >= 8 && !G.specials.includes('turtle')) { kind = 'turtle'; G.specials.push('turtle'); }
+          if (G.fed >= 3 && !G.specials.includes('ray')) { kind = 'ray'; G.specials.push('ray'); }
+          else if (G.fed >= 7 && !G.specials.includes('turtle')) { kind = 'turtle'; G.specials.push('turtle'); }
           const f = spawn(kind);
-          if (KINDS[kind].special) { G.ui.alert(kind === 'turtle' ? 'A sea turtle!' : 'A ray is gliding by!', 'Point it out!', 2, 'blue'); G.say(kind === 'turtle' ? 'Something big is coming. A sea turtle!' : 'Something big is gliding by. A spotted eagle ray!'); G.band.bubbles((f.u - 0.5) * 1.6, 0.08, 300); }
+          if (KINDS[kind].special) { G.ui.alert(kind === 'turtle' ? 'A sea turtle!' : 'A ray is gliding by!', 'Feed it!', 2, 'blue'); G.say(kind === 'turtle' ? 'Something big is coming. A sea turtle!' : 'Something big is gliding by. A spotted eagle ray!'); G.band.bubbles((f.u - 0.5) * 1.6, 0.08, 300); }
         }
       }
-      let near = null, nearD = 9;
+      // the food sinks slowly and drifts; the nearest free fish comes for it
+      for (let i = G.food.length - 1; i >= 0; i--) {
+        const fd = G.food[i]; fd.t += dt;
+        fd.v = Math.min(0.97, fd.v + 0.02 * dt); fd.u = fd.u0 + Math.sin(fd.t * 1.7) * 0.01;
+        const [x, y] = G.S.P(fd.u, fd.v); fd.m.position.set(x, y, 0.045); fd.m.material.rotation = fd.t * 0.4;
+        fd.m.material.opacity = Math.min(1, fd.t * 4) * Math.max(0, Math.min(1, (7 - fd.t) / 1));
+        if (fd.t > 7) { if (fd.f) { fd.f.state = 'swim'; fd.f.v0 = fd.f.v; fd.f.food = null; } G.root.remove(fd.m); G.food.splice(i, 1); continue; }
+        if (!fd.f && G.playing) {
+          let best = null, bd = FEED_R; for (const f of G.fish) if (f.state === 'swim') { const d = dist(f, fd); if (d < bd) { bd = d; best = f; } }
+          if (best) { fd.f = best; best.food = fd; best.state = 'hungry'; best.t = 0; G.band.bubbles((best.u - 0.5) * 1.6, 0.05, KINDS[best.kind].pitch * 1.2); }
+        }
+      }
+      // the fish
       for (let i = G.fish.length - 1; i >= 0; i--) {
         const f = G.fish[i], K0 = KINDS[f.kind]; f.t += dt; f.uni.uT.value += dt;
         if (f.state === 'swim') {
           f.u += f.dir * f.speed * dt; f.v = f.v0 + Math.sin(G.t * 0.9 + f.ph) * 0.015;
           if (f.u < -0.12 || f.u > 1.12) { G.root.remove(f.m); G.fish.splice(i, 1); continue; }
-          const d = dist(f, G.aim); if (d < nearD) { nearD = d; near = f; }
           // bubbles from its side, louder as you get close
+          const d = dist(f, G.aim);
           f.bubT -= dt; if (f.bubT <= 0 && G.playing) { f.bubT = 0.9 + Math.random() * 1.2 + d * 2; if (d < 0.5) G.band.bubbles(Math.max(-1, Math.min(1, (f.u - G.aim.u) * 2.6)), 0.012 + (0.5 - d) * 0.07, K0.pitch); }
-          f.uni.uA.value = Math.min(0.92, f.t * 1.5); f.uni.uGlow.value = f === G.holdF ? G.hold : 0;
-        } else if (f.state === 'go') {   // off to tickle her toes
+          f.uni.uA.value = Math.min(0.92, f.t * 1.5); f.uni.uGlow.value = 0; f.uni.uWig.value += ((f.kind === 'turtle' ? 0.01 : f.kind === 'ray' ? 0.03 : 0.04) - f.uni.uWig.value) * Math.min(1, dt * 3);
+        } else if (f.state === 'hungry') {   // dashing over to the food, wiggling hard
+          const fd = f.food; if (!fd) { f.state = 'swim'; f.v0 = f.v; continue; }
+          const k = Math.min(1, dt * (1.8 + f.t)), du = fd.u - f.u; f.u += du * k; f.v += (fd.v - f.v) * k; if (Math.abs(du) > 0.004) f.dir = Math.sign(du);
+          f.uni.uWig.value = 0.09; f.uni.uA.value = Math.min(0.92, f.uni.uA.value + dt * 2); f.uni.uGlow.value = 0.25;
+          if (dist(f, fd) < 0.03) eat(f);
+        } else if (f.state === 'go') {   // full and happy: off to tickle her toes
           const tgt = { u: f.sis.feet.u + Math.sin(f.t * 3) * 0.035, v: f.sis.feet.v + 0.045 + Math.cos(f.t * 3) * 0.01 }, k = Math.min(1, dt * 1.6);
           const du = tgt.u - f.u; f.u += du * k; f.v += (tgt.v - f.v) * k; if (Math.abs(du) > 0.004) f.dir = Math.sign(du);
-          f.uni.uGlow.value = Math.max(0, 0.6 - f.t * 0.3);
+          f.uni.uGlow.value = Math.max(0, 0.6 - f.t * 0.3); f.uni.uWig.value = 0.05;
           if (f.t > 1.4 && !f.tickled) { f.tickled = true; ripple(f.sis.feet.u, f.sis.feet.v + 0.01, 1); G.band.splash((f.sis.feet.u - 0.5) * 1.6, 0.8); G.band.giggle((f.sis.feet.u - 0.5) * 1.6); const [x, y] = G.S.P(f.sis.feet.u, f.sis.feet.v); G.fx.add(x, y, '#ffffff', 12, 0.2); }
           if (f.t > 3.2) { f.state = 'leave'; f.dir = f.u < 0.5 ? -1 : 1; f.t = 0; }
         } else {   // swims away and fades
@@ -241,34 +293,27 @@ export function sistersFishGame() {
         f.uni.uDeep.value = 0.12 + Math.max(0, 0.3 - (f.v - WATER)) * 0.9;
       }
       if (!G.playing) return;
-      // hold the middle of the screen (or your finger) on a fish to point it out
-      if (near && nearD < hitR(near) && !G.ending) {
-        if (G.holdF !== near) { G.holdF = near; G.hold = 0; }
-        G.hold += dt / HOLD; if (G.hold >= 1) { G.hold = 0; point(near, 'hold'); G.holdF = null; }
-      } else { G.hold = Math.max(0, G.hold - dt * 2); }
       if (G.ending > 0) { G.ending -= dt; if (G.ending <= 0 && !G.over) {
         SISTERS.forEach((s, i) => setTimeout(() => { if (!G) return; ripple(s.feet.u, s.feet.v + 0.01, 1); G.band.splash((s.feet.u - 0.5) * 1.6, 1); }, i * 350));
         G.band.volume(0.6);
-        const t = Math.round(G.t - G.t0), r = K.best('reflections-of-sisterhood:fish', t, 'lower');
-        K.finale(G, { won: true, title: 'You helped them see', line: G.work && G.work.quote, best: r.isBest,
-          cells: [{ k: 'Fish', v: `${G.spotted}` }, { k: 'Kinds', v: `${G.kinds.size}/${Object.keys(KINDS).length}` }, { k: 'Time', v: Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0') }] });
+        for (const fd of G.food) G.root.remove(fd.m); G.food = [];
+        const t = Math.round(G.t - G.t0), r = K.best('reflections-of-sisterhood:feed', t, 'lower');
+        K.finale(G, { won: true, title: 'Every fish, fed', line: G.work && G.work.quote, best: r.isBest, say: 'You fed every fish!',
+          cells: [{ k: 'Fish fed', v: `${G.fed}` }, { k: 'Kinds', v: `${G.kinds.size}/${Object.keys(KINDS).length}` }, { k: 'Time', v: Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0') }] });
       } }
     },
     pointer(kind, ev) {
       if (!G || !G.playing || G.paused) return;
       const p = G.S.toBoard(ev, G.root); if (!p) return;
-      if (kind === 'down') {
-        G.touch = { u: p.u, v: p.v };
-        if (p.v > WATER - 0.02) ripple(p.u, Math.max(WATER + 0.01, p.v), 0.6);
-        const f = nearestTo(p); if (f && dist(f, p) < hitR(f) + 0.015 && !G.ending) point(f, 'tap');
-      } else if (kind === 'move' && G.touch) G.touch = { u: p.u, v: p.v };
+      if (kind === 'down') { G.touch = { u: p.u, v: p.v }; drop(p.u, p.v); }
+      else if (kind === 'move' && G.touch) G.touch = { u: p.u, v: p.v };
       else if (kind === 'up') { G.touch = null; G.touchT = 1.0; }
     },
-    pause() { if (G) { G.paused = true; G.band.volume(0); } },
-    resume() { if (G) { G.paused = false; G.band.volume(G.over ? 0.6 : 1.3); } },
+    pause() { if (G) { G.paused = true; G.band.volume(0); if (G.artist) G.artist.pause(); } },
+    resume() { if (G) { G.paused = false; G.band.volume(G.artist ? 0.25 : G.over ? 0.6 : 1.3); if (G.artist && G.over) G.artist.play().catch(() => {}); } },
     get over() { return !!(G && G.over); },
-    get debug() { return G && { engine: 'sisters-fish', playing: G.playing, over: G.over, spotted: G.spotted, kinds: [...G.kinds], fish: G.fish.map(f => `${f.kind}:${f.state}@${f.u.toFixed(2)},${f.v.toFixed(2)}`), t: +G.t.toFixed(1) }; },
-    stop() { if (G && G.band) G.band.stop(); K.cleanup(G); G = null; },
+    get debug() { return G && { engine: 'feed-the-fish', playing: G.playing, over: G.over, fed: G.fed, food: G.food.length, kinds: [...G.kinds], artist: G.artist ? +G.artist.currentTime.toFixed(1) : null, fish: G.fish.map(f => `${f.kind}:${f.state}`).join(' '), t: +G.t.toFixed(1) }; },
+    stop() { if (G) { try { if (G.artist) { G.artist.pause(); G.artist = null; } } catch (e) {} try { G.band.stop(); } catch (e) {} } K.cleanup(G); G = null; },
   };
 }
 export { band as islandBand };   // for testing the music on its own

@@ -1,0 +1,55 @@
+LIGHTHOUSE OF HOPE (Craig Ellis): Riddles of the lighthouse — VOICE SCRIPT (polished 5 Nov 2026)
+Every line is NEW: this game had no recordings before. Record each line as its own file, named as shown (e.g. light-intro.mp3),
+into AR/media/voice/. A riddle line (light-q1 ... light-q6) is the riddle AND its three answers, read as one take.
+Craig's quote at the end is his own clip: don't record it.
+
+== Start ==
+light-intro    Riddles of the lighthouse. Hello, traveller. Six ships are lost at sea tonight. Answer my riddles, and my light will guide them home. The answers are left, middle and right.
+
+== Riddle 1 ==
+light-r1    Riddle 1.
+light-q1    I have no hands, but I lead the way. I walk beside you every day. I stop at every curb and stair, and wag my tail to say we’re there. What am I? Left, a guide dog. Middle, a cat. Right, a pigeon.
+light-hint1    I wear a harness, and I love a good belly rub.
+light-yes1    Yes! A guide dog. A best friend and a guide.
+light-home1    1 ship is home.
+
+== Riddle 2 ==
+light-r2    Riddle 2.
+light-q2    I’m long and white, I tap and sweep. I find the curb before you leap. Fold me up and I fit in a bag. What am I? Left, an umbrella. Middle, a white cane. Right, a broom.
+light-hint2    People who are blind hold me out in front, tapping side to side.
+light-yes2    Yes! A white cane. Tap, sweep, and step with confidence.
+light-home2    2 ships are home.
+
+== Riddle 3 ==
+light-r3    Riddle 3.
+light-q3    I’m little bumps, in groups of six. You read me with your fingertips. What am I? Left, Morse code. Middle, sign language. Right, Braille.
+light-hint3    Louis Braille invented me when he was only fifteen.
+light-yes3    Yes! Braille. Reading with your fingertips.
+light-home3    3 ships are home.
+
+== Riddle 4 ==
+light-r4    Riddle 4.
+light-q4    Touch me and I talk. I read your messages and your books out loud, so you can use a phone without seeing it. What am I? Left, a radio. Middle, a screen reader. Right, an alarm clock.
+light-hint4    I live inside phones and computers, and I speak whatever is on the screen.
+light-yes4    Yes! A screen reader. A voice for everything on the screen.
+light-home4    4 ships are home.
+
+== Riddle 5 ==
+light-r5    Riddle 5.
+light-q5    I stand on the shore and shine all night, so ships lost at sea can find their way. Craig says I’m just like hope. What am I? Left, a lighthouse. Middle, the moon. Right, a campfire.
+light-hint5    I stand tall by the sea, with a great lamp at the top.
+light-yes5    Yes! A lighthouse. A light that says, this way, you’re not alone.
+light-home5    5 ships are home.
+
+== Riddle 6 ==
+light-r6    Riddle 6.
+light-q6    Craig says it’s the very first thing they give to someone losing their sight. It weighs nothing at all, but it lights the way to the future. What is it? Left, a map. Middle, a flashlight. Right, hope.
+light-hint6    Look at the name of this painting.
+light-yes6    Yes. Hope. The first thing they give, and the light that shines out of the lighthouse.
+
+== Wrong answer (any riddle) ==
+light-no    Not that one.
+
+== The end (then Craig reads his quote in his own voice) ==
+light-all-home    Every ship is home.
+light-end    Hope is the light.

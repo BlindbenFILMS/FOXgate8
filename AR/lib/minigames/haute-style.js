@@ -1,320 +1,345 @@
-// HAUTE COUTURE DREAMS (Shardasia Hadley): STYLE THE DREAM.
+// HAUTE COUTURE DREAMS (Shardasia Hadley): STYLE THE DREAM.  (Polished 5 Nov 2026)
 // Shardasia loves fashion: finding new styles, chic or kind of baggy, being comfortable, and trying out colours
-// to see how they look on her. Here you are her stylist. Three clients each give you a brief ("comfortable but bold
-// for a sunny day"). The clothes on the collage wall really come off their hangers: tap one and it flies onto her.
-// Or use the buttons: Top, Bottom and Layer go through what's on the rack; Colour changes the colour of the last piece
-// you touched, and every colour is spoken and has its own sound (yellow rings like a bell, navy hums like a cello).
-// The client's wishes show as a checklist, ticked off out loud as you dress her. Press Done: if the look fits, she
-// takes it down the runway: the lights drop, cameras flash from the photos on the wall, and you press Pose on the
-// beat to make her strike a pose. Three looks, then Shardasia's own words.
-// Made for low vision: everything is spoken and described, and the client tells you what's still missing.
+// to see how they look on her. Here you are her stylist. Three clients each tell you what they need.
+// One simple action: press NEXT to see the next of four looks on her (she twirls into each one, and clothes really fly
+// off the collage wall onto her), and WEAR IT when the look fits. The third client is Shardasia herself: she wants a
+// colour she's never worn, and her coloured dresses are spoken with their own sound (yellow rings like a bell, navy hums like a cello).
+// When a look fits, she takes it down the runway: the lights drop, cameras flash from the photos on the wall, she walks
+// towards you, and you press POSE on the beat to make her lean, spin, step and pop. Three looks, then Shardasia reads
+// her own words in her own voice.
+// Made for low vision: every look is spoken, every press has a sound, the beat is a clear kick, and tapping her
+// repeats what she's wearing.
 import * as THREE from 'three';
 import * as K from './kit.js';
-// (Textures read by a custom shader stay in their own colours: NoColorSpace, so they match the painting exactly.)
 
 const ART = 'media/games/haute/';
-const COLORS = [
-  { id: 'sunflower', name: 'sunflower yellow', hex: '#f2cf1d', tags: ['bright', 'warm', 'bold'], note: 880, wave: 'sine', feel: 'bright as a bell' },
-  { id: 'coral', name: 'coral', hex: '#ff6f5e', tags: ['bright', 'warm', 'playful'], note: 784, wave: 'triangle', feel: 'warm and sunny' },
-  { id: 'hotpink', name: 'hot pink', hex: '#e8418a', tags: ['bold', 'bright', 'party', 'warm'], note: 988, wave: 'square', feel: 'loud and fun' },
-  { id: 'red', name: 'cherry red', hex: '#c61f2b', tags: ['bold', 'warm', 'party'], note: 659, wave: 'sawtooth', feel: 'strong, like a trumpet' },
-  { id: 'emerald', name: 'emerald green', hex: '#1c9a62', tags: ['bold', 'cool'], note: 523, wave: 'triangle', feel: 'rich and fresh' },
-  { id: 'sky', name: 'sky blue', hex: '#7ab8e6', tags: ['calm', 'cool', 'bright'], note: 587, wave: 'sine', feel: 'light and breezy' },
-  { id: 'lavender', name: 'lavender', hex: '#b39ade', tags: ['calm', 'cool', 'playful'], note: 698, wave: 'sine', feel: 'soft and dreamy' },
-  { id: 'navy', name: 'navy blue', hex: '#1e2b5c', tags: ['calm', 'cool', 'dark', 'smart'], note: 196, wave: 'triangle', feel: 'deep, like a cello' },
-  { id: 'black', name: 'black', hex: '#141416', tags: ['dark', 'chic', 'night'], note: 131, wave: 'triangle', feel: 'low and classic' },
-  { id: 'white', name: 'white', hex: '#f1efe8', tags: ['bright', 'calm', 'chic'], note: 1047, wave: 'sine', feel: 'clean and crisp' },
-  { id: 'sand', name: 'sand beige', hex: '#d5c393', tags: ['calm', 'warm', 'smart'], note: 392, wave: 'sine', feel: 'soft and easy' },
-];
-const FAB_SCALE = { floral: [8.5, 4], pink: [31, 4.5], beige: [12.5, 10] };   // how many times each fabric repeats across the painting
-const C = id => COLORS.find(c => c.id === id);
-// mode: 0 = what she's wearing in the painting, 1 = plain colour, 2 = a fabric from the wall
-const RACK = {
-  top: [
-    { id: 'yellow', name: 'yellow tee', mode: 0, tags: ['comfy', 'casual', 'bright', 'bold', 'warm'], say: 'Her sunflower yellow tee: soft cotton, easy and bright.' },
-    { id: 'floral', name: 'floral blouse', mode: 2, fab: 'floral', tags: ['chic', 'playful', 'warm'], say: 'The floral blouse: little red roses on cream. Light and pretty.' },
-    { id: 'beige', name: 'beige shirt', mode: 2, fab: 'beige', tags: ['smart', 'chic', 'calm', 'warm'], say: 'The beige button-up shirt: crisp and smart, a calm sandy colour.' },
-    { id: 'pink', name: 'pink top', mode: 2, fab: 'pink', tags: ['bold', 'party', 'playful', 'bright'], say: 'The pink top: hot pink with a swirly white pattern. Bold and fun.' },
-    { id: 'tee', name: 'plain tee', mode: 1, color: 'sky', tags: ['comfy', 'casual'], say: 'A plain cotton tee. Comfy. Press Colour to pick its colour.' },
-  ],
-  bottom: [
-    { id: 'black', name: 'black skirt', mode: 0, tags: ['comfy', 'chic', 'dark', 'night'], say: 'Her long black skirt: flowy and comfy, and it goes with everything.' },
-    { id: 'floral', name: 'floral skirt', mode: 2, fab: 'floral', tags: ['playful', 'chic'], say: 'A floral skirt, roses on cream, to match the blouse.' },
-    { id: 'pink', name: 'pink skirt', mode: 2, fab: 'pink', tags: ['bold', 'party', 'playful'], say: 'A hot pink skirt with the swirly pattern. Made for dancing.' },
-    { id: 'beige', name: 'beige skirt', mode: 2, fab: 'beige', tags: ['smart', 'calm'], say: 'A beige skirt: smart and simple.' },
-    { id: 'skirt', name: 'plain skirt', mode: 1, color: 'navy', tags: ['comfy'], say: 'A plain, swingy skirt. Comfy. Press Colour to pick its colour.' },
-  ],
-  layer: [
-    { id: 'none', name: 'no jacket', tags: [], say: 'No jacket.' },
-    { id: 'blazer', name: 'blazer', color: 'black', tags: ['chic', 'smart', 'structured'], say: 'The blazer: sharp tailoring and a crisp white collar. Instant chic.' },
-  ],
+const ARTIST = new URL('../../../3D/gallery/audio/art_50.mp3', import.meta.url).href;   // Shardasia, in her own words
+const QUOTE = '“I’m into fashion at the moment. I like finding new and different styles of clothing, whether it be chic or kind of baggy. I like being comfortable. And I like trying out certain colors to see how they look on me.” — Shardasia Hadley';
+
+const COLORS = {
+  sunflower: { name: 'Sunflower yellow', hex: '#f2cf1d', note: 880, wave: 'sine', say: 'Sunflower yellow: bright as a bell.' },
+  coral: { name: 'Coral', hex: '#ff6f5e', note: 784, wave: 'triangle', say: 'Coral: warm and sunny.' },
+  hotpink: { name: 'Hot pink', hex: '#e8418a', note: 988, wave: 'square', say: 'Hot pink: loud and fun.' },
+  red: { name: 'Cherry red', hex: '#c61f2b', note: 659, wave: 'sawtooth', say: 'Cherry red: strong, like a trumpet.' },
+  emerald: { name: 'Emerald green', hex: '#1c9a62', note: 523, wave: 'triangle', say: 'Emerald green: rich and fresh.' },
+  sky: { name: 'Sky blue', hex: '#7ab8e6', note: 587, wave: 'sine', say: 'Sky blue: light and breezy.' },
+  lavender: { name: 'Lavender', hex: '#b39ade', note: 698, wave: 'sine', say: 'Lavender: soft and dreamy.' },
+  navy: { name: 'Navy blue', hex: '#1e2b5c', note: 196, wave: 'triangle', say: 'Navy blue: deep, like a cello.' },
+  black: { name: 'Black', hex: '#141416', note: 131, wave: 'triangle', say: 'Black: low and classic.' },
+  white: { name: 'White', hex: '#f1efe8', note: 1047, wave: 'sine', say: 'White: clean and crisp.' },
+  sand: { name: 'Sand beige', hex: '#d5c393', note: 392, wave: 'sine', say: 'Sand beige: soft and easy.' },
 };
-// the clothes on the wall (u, v from the top-left of the painting): tap one and it flies onto her
-const WALL = [
-  { id: 'blazer', box: [0.075, 0.255, 0.25, 0.555], put: { layer: 'blazer' }, say: 'The black and white blazer.' },
-  { id: 'floral', box: [0.2, 0.285, 0.41, 0.655], put: { top: 'floral', bottom: 'floral' }, say: 'The floral dress: red roses on cream.' },
-  { id: 'beige', box: [0.755, 0.345, 0.965, 0.595], put: { top: 'beige' }, say: 'The beige button-up shirt.' },
-  { id: 'pink', box: [0.8, 0.545, 0.955, 0.865], put: { top: 'pink', bottom: 'pink' }, say: 'The hot pink dress.' },
-];
+const FAB_SCALE = { floral: [8.5, 4], pink: [31, 4.5], beige: [12.5, 10] };   // how many times each fabric repeats across the painting
+// how each piece is drawn on her. mode: 0 = what she's wearing in the painting, 1 = plain colour, 2 = a fabric from the wall
+const PIECE = {
+  top: { yellow: { mode: 0 }, floral: { mode: 2, fab: 'floral' }, beige: { mode: 2, fab: 'beige' }, pink: { mode: 2, fab: 'pink' }, tee: { mode: 1 } },
+  bottom: { black: { mode: 0 }, floral: { mode: 2, fab: 'floral' }, pink: { mode: 2, fab: 'pink' }, beige: { mode: 2, fab: 'beige' }, skirt: { mode: 1 } },
+};
+// the clothes on the wall (u, v from the top-left of the painting): a look from the wall flies off its hanger onto her
+const WALL = {
+  blazer: [0.075, 0.255, 0.25, 0.555], floral: [0.2, 0.285, 0.41, 0.655], beige: [0.755, 0.345, 0.965, 0.595], pink: [0.8, 0.545, 0.955, 0.865],
+};
+const L = {   // the sentences that describe each piece (all recorded by Ben)
+  yellow: 'Her sunflower yellow tee: soft cotton, easy and bright.',
+  black: 'Her long black skirt: flowy and comfy, and it goes with everything.',
+  blazer: 'The blazer: sharp tailoring and a crisp white collar. Instant chic.',
+  beige: 'The beige button-up shirt: crisp and smart, a calm sandy colour.',
+  pinkSkirt: 'A hot pink skirt with the swirly pattern. Made for dancing.',
+  coralSkirt: 'And a swingy coral skirt: warm and sunny.',
+  pinkDress: 'The hot pink dress.',
+  floralDress: 'The floral dress: red roses on cream.',
+  navyTee: 'A navy tee with her long black skirt.',
+};
+const NEXT = 'Try the next look.', CALMER = 'Try something calmer, like the beige shirt.';
+// three clients; each has four looks to flip through, and one of them is right
 const CLIENTS = [
-  { name: 'Maya', job: 'A sunny day in the park', brief: 'I’m spending the day in the park with my friends. I want to be comfortable, but I want people to see me coming! It’s sunny out.',
-    want: ['comfy', 'bright', 'bold'], avoid: ['dark', 'structured'],
-    no: { dark: 'Too dark for a sunny day.', structured: 'A jacket? It’s way too warm in the park.' }, yes: 'Yes! Comfy, bright and bold. I love it!' },
-  { name: 'Jordan', job: 'A gallery opening', brief: 'Tonight is the opening of my first art show. I want to look chic and smart, but calm. I don’t want my outfit louder than my paintings.',
-    want: ['chic', 'smart', 'calm'], avoid: ['party', 'bold'],
-    no: { party: 'That’s a party look, not a gallery look.', bold: 'Too loud! Calmer, please.' }, yes: 'Chic, smart and calm. My paintings will be jealous.' },
-  { name: 'Shardasia', job: 'A dance party', brief: 'Dance party tonight! I want something bold and fun, and I need to be able to move. Try a colour I’ve never worn!',
-    want: ['bold', 'party', 'comfy'], avoid: ['smart', 'structured'],
-    no: { smart: 'Too smart, this is a dance party!', structured: 'I can’t dance in a blazer!' }, yes: 'Bold, fun, and I can dance in it. This is so me!' },
+  { name: 'Maya', job: 'A sunny day in the park', want: 'Comfy · Bright · Bold',
+    brief: ['Client 1: Maya.', 'I’m spending the day in the park with my friends.', 'I want to be comfortable, but I want people to see me coming!', 'It’s sunny out.'],
+    yes: 'Yes! Comfy, bright and bold. I love it!',
+    looks: [
+      { short: 'The floral dress', wall: 'floral', fit: { top: 'floral', bottom: 'floral', layer: 0 }, say: [L.floralDress], no: 'Pretty, but not bold enough for me.', hint: NEXT },
+      { short: 'The blazer', wall: 'blazer', fit: { top: 'yellow', bottom: 'black', layer: 1 }, say: [L.blazer], no: 'A jacket? It’s way too warm in the park.', hint: NEXT },
+      { short: 'Yellow tee, coral skirt', fit: { top: 'yellow', bottom: 'skirt', layer: 0 }, col: { bottom: 'coral' }, say: [L.yellow, L.coralSkirt], ok: true },
+      { short: 'Navy tee, black skirt', fit: { top: 'tee', bottom: 'black', layer: 0 }, col: { top: 'navy' }, say: [L.navyTee], no: 'Too dark for a sunny day.', hint: NEXT },
+    ] },
+  { name: 'Jordan', job: 'A gallery opening', want: 'Chic · Smart · Calm',
+    brief: ['Client 2: Jordan.', 'Tonight is the opening of my first art show.', 'I want to look chic and smart, but calm.', 'I don’t want my outfit louder than my paintings.'],
+    yes: 'Chic, smart and calm. My paintings will be jealous.',
+    looks: [
+      { short: 'The hot pink dress', wall: 'pink', fit: { top: 'pink', bottom: 'pink', layer: 0 }, say: [L.pinkDress], no: 'That’s a party look, not a gallery look.', hint: CALMER },
+      { short: 'Beige shirt, black skirt', wall: 'beige', fit: { top: 'beige', bottom: 'black', layer: 0 }, say: [L.beige, L.black], ok: true },
+      { short: 'Yellow tee, pink skirt', fit: { top: 'yellow', bottom: 'pink', layer: 0 }, say: [L.yellow, L.pinkSkirt], no: 'Too loud! Calmer, please.', hint: CALMER },
+      { short: 'The floral dress', wall: 'floral', fit: { top: 'floral', bottom: 'floral', layer: 0 }, say: [L.floralDress], no: 'Pretty, but too busy next to my paintings.', hint: CALMER },
+    ] },
+  { name: 'Shardasia', job: 'A dance party', want: 'Bold · Fun · A new colour',
+    brief: ['Client 3: Shardasia.', 'Dance party tonight!', 'I want something bold and fun, and I need to be able to move.', 'Try a colour I’ve never worn!'],
+    yes: 'Bold, fun, and I can dance in it. This is so me!',
+    looks: [
+      { short: 'Navy blue dress', colour: 'navy', fit: { top: 'tee', bottom: 'skirt', layer: 0 }, col: { top: 'navy', bottom: 'navy' }, say: [COLORS.navy.say], no: 'Too quiet for a dance party! Bolder, please.' },
+      { short: 'Beige with the blazer', wall: 'blazer', fit: { top: 'beige', bottom: 'beige', layer: 1 }, say: [L.blazer], no: 'I can’t dance in a blazer!', hint: NEXT },
+      { short: 'Sunflower yellow dress', colour: 'sunflower', fit: { top: 'tee', bottom: 'skirt', layer: 0 }, col: { top: 'sunflower', bottom: 'sunflower' }, say: [COLORS.sunflower.say], no: 'I always wear yellow! Try a colour I’ve never worn!' },
+      { short: 'Emerald green dress', colour: 'emerald', fit: { top: 'tee', bottom: 'skirt', layer: 0 }, col: { top: 'emerald', bottom: 'emerald' }, say: [COLORS.emerald.say], ok: true },
+    ] },
 ];
-const WORD = { comfy: 'comfy', bright: 'bright', bold: 'bold', chic: 'chic', smart: 'smart', calm: 'calm', party: 'party', playful: 'playful' };
-const BPM = 104, BEATS = 8;
+const LINES = {
+  first: 'Press Next to see the first look.',
+  runway: 'Runway! Press Pose on the beat.',
+  end: 'Three looks, three happy clients. You styled the dream.',
+};
+const BPM = 100, SPB = 60 / BPM, POSES = 6, WALK = 16;   // up to 6 poses in a 16-beat walk
+const MOVES = ['lean', 'spin', 'step', 'lean', 'hip', 'spin'];
+const POPS = ['Fierce!', 'Yes!', 'Work it!', 'Iconic!', 'Stunning!', 'Legend!'];
 
 const VERT = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
 // the painting with her outfit changed: her shirt and skirt are re-dressed (keeping the folds of the painted fabric),
-// a blazer can go over the top, and on the runway she sways and strikes poses under a spotlight
+// a blazer can go over the top, and she moves: sways, spins, steps towards you and strikes poses under a spotlight
 const FRAG = `
 varying vec2 vUv;
 uniform sampler2D map, bg, body, lay, fTop, fBot;
 uniform vec2 uTopS, uBotS;
-uniform float uTopMode, uBotMode, uLay, uSway, uFlash, uSpot, uT, uA, uH, uWipe;
+uniform float uTopMode, uBotMode, uLay, uSway, uSpin, uZoom, uBob, uMove, uFlash, uSpot, uPulse, uA, uH;
 uniform vec3 uTopCol, uBotCol, uLayCol;
 vec4 at(sampler2D t, vec2 p){ return texture2D(t, vec2(clamp(p.x, 0.001, 0.999), 1.0 - clamp(p.y, 0.001, 0.999))); }
 float lum(vec3 c){ return dot(c, vec3(0.299, 0.587, 0.114)); }
 vec3 dressed(vec2 q){
   vec3 c = at(map, q).rgb; vec3 b = at(body, q).rgb; float L = lum(c);
-  // the top: keep the light and folds of her painted tee
   float sh = clamp(L / 0.66, 0.3, 1.25);
+  // the shirt: its mask, plus the tee's own shadowed fabric just beside it (under her arms, at the waist)
+  float gr = c.g / max(c.r, 0.01), br = c.b / max(c.r, 0.01);
+  float yel = smoothstep(0.6, 0.66, gr) * (1.0 - smoothstep(0.2, 0.26, br)) * step(0.15, c.r);        // clearly the yellow tee
+  float yelDim = smoothstep(0.5, 0.58, gr) * (1.0 - smoothstep(0.2, 0.3, br));                         // the tee in deep shadow
+  float skin = smoothstep(0.04, 0.09, c.r - c.b) * (1.0 - yel);                                         // warm and not yellow: her skin
+  float nearTop = 0.0, nearBot = 0.0;
+  if (b.b > 0.0 && b.r < 0.99 && b.g < 0.99) for (int i = 0; i < 8; i++) { float a = float(i) * 0.7854; vec2 o = vec2(cos(a), sin(a) / uH) * 0.014;
+    nearTop = max(nearTop, at(body, q + o).r); nearBot = max(nearBot, at(body, q + o).g); }
+  float topM = max(b.r, b.b * max(yel * smoothstep(0.45, 0.47, q.y) * (1.0 - smoothstep(0.75, 0.78, q.y)), yelDim * nearTop));
+  // the skirt: its mask but never her hands and wrists, plus the dark skirt just beside it (the painted skirt is neutral black)
+  float botM = max(b.g * (1.0 - skin), b.b * nearBot * smoothstep(0.22, 0.14, L) * (1.0 - skin)) * (1.0 - topM * step(q.y, 0.7));
   vec3 top = uTopMode > 1.5 ? texture2D(fTop, q * uTopS * vec2(1.0, uH)).rgb * (0.15 + 0.8 * sh) : uTopCol * sh;
-  if (uTopMode > 0.5) c = mix(c, top, b.r * step(q.y, uWipe));
-  // the skirt: her painted skirt is almost flat black, so add a gentle drape
-  float drape = 0.9 + 0.12 * sin(q.x * 95.0 + q.y * 9.0) * smoothstep(0.74, 0.95, q.y) + (L - 0.11) * 5.0;
+  if (uTopMode > 0.5) c = mix(c, top, topM);
+  float drape = 0.9 + 0.12 * sin(q.x * 95.0 + q.y * 9.0) * smoothstep(0.74, 0.95, q.y) + clamp((L - 0.11) * 5.0, -0.2, 0.25);
   vec3 bot = uBotMode > 1.5 ? texture2D(fBot, q * uBotS * vec2(1.0, uH)).rgb * drape : uBotCol * drape;
-  if (uBotMode > 0.5) c = mix(c, bot, b.g * step(q.y, uWipe));
-  // the blazer: dark tailoring with a back seam, shaded by the shirt's folds, and a white collar
+  if (uBotMode > 0.5) c = mix(c, bot, botM);
   vec3 l = at(lay, q).rgb;
   float seam = 1.0 - 0.35 * (1.0 - smoothstep(0.0, 0.004, abs(q.x - 0.508))) * step(0.5, q.y);
   vec3 jk = uLayCol * (0.75 + 0.35 * mix(1.0, sh, b.r)) * seam + 0.05 * smoothstep(0.62, 0.5, q.y);
   c = mix(c, jk, l.r * uLay);
   c = mix(c, vec3(0.96, 0.95, 0.92) * (0.85 + 0.15 * sh), l.g * uLay);
-  return c + uFlash * b.b * 0.55;
+  return c + uFlash * max(topM, botM) * 0.35;
 }
 void main(){
   vec2 p = vec2(vUv.x, 1.0 - vUv.y);
-  // where she stood, the wall shows through when she sways
-  vec3 base = mix(at(map, p).rgb, at(bg, p).rgb, at(body, p).b * step(0.0005, abs(uSway)));
-  vec2 piv = vec2(0.51, 1.04), d = (p - piv) * vec2(1.0, uH);
+  // where she stood, the wall shows through when she moves. The patch is widened and soft-edged, so no outline
+  // of the painted woman is left behind her, and it is dimmed like the rest of the wall.
+  float hole = at(body, p).b;
+  // (only look around where she might be: a quick check first keeps it light on phones)
+  if (hole + at(body, p + vec2(0.03, 0.0)).b + at(body, p - vec2(0.03, 0.0)).b + at(body, p + vec2(0.0, 0.03)).b + at(body, p - vec2(0.0, 0.03)).b > 0.0) {
+    for (int i = 0; i < 12; i++) { float a = float(i) * 0.5236; vec2 o = vec2(cos(a), sin(a) / uH);
+      hole += at(body, p + o * 0.012).b + at(body, p + o * 0.026).b; }
+    hole = clamp(hole / 25.0 * 2.2, 0.0, 1.0);
+  }
+  hole *= uMove;
+  vec3 wall = at(bg, p).rgb * mix(1.0, 0.62, max(uSpot, 1.0 - abs(uSpin)));
+  vec3 base = mix(at(map, p).rgb, wall, hole);
+  // her: lean (rotate about her feet), step towards you (zoom), bounce (bob), spin (squeeze and mirror)
+  vec2 piv = vec2(0.51, 1.04);
+  vec2 d = (p - piv + vec2(0.0, uBob)) * vec2(1.0, uH);
   float c = cos(-uSway), s = sin(-uSway);
-  vec2 q = piv + vec2(c * d.x - s * d.y, s * d.x + c * d.y) / vec2(1.0, uH);
-  float f = at(body, q).b;
-  vec3 col = mix(base, dressed(q), f);
-  // the runway: lights down, a spotlight on her
-  float r = length((p - vec2(0.51, 0.62)) * vec2(1.6, 0.95 * uH));
-  col *= mix(1.0, mix(1.0, 0.28, smoothstep(0.2, 0.42, r)), uSpot);
-  col += uSpot * 0.08 * vec3(1.0, 0.92, 0.8) * (1.0 - smoothstep(0.0, 0.4, r));
+  d = vec2(c * d.x - s * d.y, s * d.x + c * d.y) / uZoom;
+  float sx = uSpin, edge = smoothstep(0.03, 0.12, abs(sx));
+  d.x /= (abs(sx) < 0.03 ? 0.03 : sx);
+  vec2 q = piv + d / vec2(1.0, uH);
+  float f = at(body, q).b * edge * step(0.0, q.x) * step(q.x, 1.0);
+  vec3 col = base;
+  if (f > 0.0) col = mix(base, dressed(q) * (0.55 + 0.45 * abs(sx)), f);
+  // the runway: lights down, a spotlight on her that pulses with the beat
+  float r = length((p - vec2(0.51, 0.6)) * vec2(1.6, 0.95 * uH));
+  col *= mix(1.0, mix(1.0, 0.26, smoothstep(0.2, 0.44, r)), uSpot);
+  col += uSpot * (0.07 + 0.09 * uPulse) * vec3(1.0, 0.92, 0.8) * (1.0 - smoothstep(0.0, 0.42, r));
   gl_FragColor = vec4(col, uA);
 }`;
 
 export function styleTheDreamGame() {
   let G = null;
+  const client = () => CLIENTS[G.ci];
+  const lookNow = () => (G.li >= 0 ? client().looks[G.li] : null);
+  // speak a line once whatever is talking has finished (so the client's words are never cut off)
+  function after(fn, min = 0.3) { G.queue = { fn, t: 0, min }; }
 
   // ── the outfit ──
-  // colours go to the shader as plain 0–1 numbers, the same as the painting's pixels
   const raw = (c, hex) => { const n = parseInt(hex.slice(1), 16); c.r = (n >> 16 & 255) / 255; c.g = (n >> 8 & 255) / 255; c.b = (n & 255) / 255; };
-  const piece = (slot, id) => RACK[slot].find(p => p.id === id);
-  const cur = slot => piece(slot, G.fit[slot]);
-  function colorOf(slot) { return C(G.col[slot] || cur(slot).color || 'black'); }
-  function tagsOf() {
-    const t = new Set();
-    for (const slot of ['top', 'bottom', 'layer']) {
-      const p = cur(slot); p.tags.forEach(x => t.add(x));
-      if (p.mode === 1 || (slot === 'layer' && p.id !== 'none')) colorOf(slot).tags.forEach(x => t.add(x));
-    }
-    return t;
+  function dress(look, { twirl = true } = {}) {
+    if (twirl) { G.pending = { look }; G.spinV = Math.PI * 2; G.spin = G.spin % (Math.PI * 2); }
+    else putOn(look);
+    K.tone(784, 0.1, { vol: 0.06 }); K.tone(1175, 0.16, { vol: 0.05, delay: 0.08 });
   }
-  function describe() {
-    const bits = [];
-    const one = slot => { const p = cur(slot); return (p.mode === 1 || (slot === 'layer' && p.id !== 'none')) ? `the ${p.name} in ${colorOf(slot).name}` : `the ${p.name}`; };
-    if (G.fit.top === 'floral' && G.fit.bottom === 'floral') bits.push('the floral dress');
-    else if (G.fit.top === 'pink' && G.fit.bottom === 'pink') bits.push('the hot pink dress');
-    else { bits.push(one('top')); bits.push(one('bottom')); }
-    if (G.fit.layer !== 'none') bits.push(one('layer'));
-    return 'She’s wearing ' + (bits.length > 1 ? bits.slice(0, -1).join(', ') + ' and ' + bits[bits.length - 1] : bits[0]) + '.';
-  }
-  function apply() {
-    const u = G.uni, t = cur('top'), b = cur('bottom'), l = cur('layer');
-    u.uTopMode.value = t.mode; u.uBotMode.value = b.mode; u.uLay.value = l.id === 'none' ? 0 : 1;
-    if (t.mode === 1) raw(u.uTopCol.value, colorOf('top').hex);
-    if (b.mode === 1) raw(u.uBotCol.value, colorOf('bottom').hex);
-    if (l.id !== 'none') raw(u.uLayCol.value, colorOf('layer').hex);
-    if (t.fab) { u.fTop.value = G.fab[t.fab]; u.uTopS.value.fromArray(FAB_SCALE[t.fab]); } if (b.fab) { u.fBot.value = G.fab[b.fab]; u.uBotS.value.fromArray(FAB_SCALE[b.fab]); }
-    G.uni.uWipe.value = 0; G.wipe = 0;   // the new look sweeps down her from the shoulders
+  function putOn(look) {
+    const u = G.uni, fit = look ? look.fit : { top: 'yellow', bottom: 'black', layer: 0 }, col = (look && look.col) || {};
+    const t = PIECE.top[fit.top], b = PIECE.bottom[fit.bottom];
+    u.uTopMode.value = t.mode; u.uBotMode.value = b.mode; u.uLay.value = fit.layer;
+    if (t.mode === 1) raw(u.uTopCol.value, COLORS[col.top].hex);
+    if (b.mode === 1) raw(u.uBotCol.value, COLORS[col.bottom].hex);
+    raw(u.uLayCol.value, COLORS.black.hex);
+    if (t.fab) { u.fTop.value = G.fab[t.fab]; u.uTopS.value.fromArray(FAB_SCALE[t.fab]); }
+    if (b.fab) { u.fBot.value = G.fab[b.fab]; u.uBotS.value.fromArray(FAB_SCALE[b.fab]); }
     G.flash = 0.8;
-    checklist(true);
-  }
-  // put something on (from the buttons or from the wall)
-  function wear(slot, id, { quiet = false } = {}) {
-    G.fit[slot] = id; G.slot = slot; G.changes++;
-    if (!quiet) { G.say(piece(slot, id).say); }
-    K.tone(660, 0.07, { vol: 0.05 }); K.tone(990, 0.09, { vol: 0.04, delay: 0.06 });
-    apply();
-  }
-  function nextIn(slot) { const list = RACK[slot], i = list.findIndex(p => p.id === G.fit[slot]); wear(slot, list[(i + 1) % list.length].id); buttons(); }
-  function nextColor() {
-    let slot = G.slot;
-    if (slot === 'layer' && G.fit.layer === 'none') slot = 'top';
-    const p = cur(slot);
-    // patterns can't be recoloured: switch to the plain one in that slot
-    if (slot !== 'layer' && p.mode !== 1) { G.fit[slot] = slot === 'top' ? 'tee' : 'skirt'; }
-    const list = COLORS.map(c => c.id), now = G.col[slot] || cur(slot).color, i = list.indexOf(now);
-    const c = C(list[(i + 1) % list.length]); G.col[slot] = c.id; G.slot = slot; G.changes++; G.colors.add(c.id);
-    // every colour has its own sound
-    K.tone(c.note, 0.45, { type: c.wave, vol: c.wave === 'square' || c.wave === 'sawtooth' ? 0.035 : 0.08 }); K.tone(c.note * 1.5, 0.35, { type: 'sine', vol: 0.03, delay: 0.08 });
-    G.say(`${c.name[0].toUpperCase() + c.name.slice(1)}: ${c.feel}.`);
-    apply(); buttons();
+    const [x, y] = G.S.P(0.51, 0.55); G.fx.add(x, y, '#ffffff', 14, 0.12); G.fx.add(x, y, '#f2cf1d', 10, 0.1);
   }
 
-  // ── the client's checklist ──
-  const client = () => CLIENTS[G.ci];
-  function checklist(speak) {
-    if (G.phase !== 'style') return;
-    const tags = tagsOf(), cl = client();
-    const chips = cl.want.map(w => `<span style="display:inline-block;margin:2px 8px 2px 0;color:${tags.has(w) ? '#fff' : '#777'}">${tags.has(w) ? '✓' : '○'} ${WORD[w]}</span>`).join('');
-    const bad = cl.avoid.filter(a => tags.has(a));
-    G.ui.panel(`Client ${G.ci + 1} of 3 · ${cl.name} · ${cl.job}`, chips, { sub: bad.length ? '✗ ' + bad.map(a => cl.no[a]).join(' ') : cl.brief, warn: false });
-    if (speak) {
-      // say each wish as it gets ticked off
-      const got = cl.want.filter(w => tags.has(w) && !G.met.has(w));
-      got.forEach((w, i) => { K.tone(1047 + i * 220, 0.12, { vol: 0.06, delay: 0.25 + i * 0.12 }); });
-      if (got.length) setTimeout(() => G && G.phase === 'style' && G.say(got.map(w => WORD[w][0].toUpperCase() + WORD[w].slice(1) + ': yes.').join(' ')), 1600);
-      G.met = new Set(cl.want.filter(w => tags.has(w)));
-    }
-  }
+  // ── styling: NEXT shows the next look, WEAR IT picks it ──
   function startClient() {
-    G.phase = 'style'; G.tries = 0; G.met = new Set(); G.colors = new Set();
+    G.phase = 'style'; G.li = -1; G.tries = 0; G.busyFly = 0;
     const cl = client();
-    G.ui.alert(cl.name, cl.job, 2.2, 'black'); checklist(false); buttons();
-    G.say(`Client ${G.ci + 1}: ${cl.name}. ${cl.brief}`);
-    G.met = new Set(cl.want.filter(w => tagsOf().has(w)));
+    dress(null, { twirl: false });
+    G.ui.alert(cl.name, cl.job, 2.4, 'black'); panel();
+    G.say(cl.brief.join(' ') + (G.ci === 0 ? ' ' + LINES.first : ''));
+    buttons();
   }
-  function done() {
+  function panel() {
+    const cl = client(), lk = lookNow(), n = cl.looks.length;
+    const sub = !lk ? 'Press NEXT to see the first look.' : `Look ${G.li + 1} of ${n}: ${lk.short}`;
+    G.ui.panel(`Client ${G.ci + 1} of 3 · ${cl.name} · ${cl.job}`, `<span style="font-size:.8em">${cl.want}</span>`, { segs: [G.ci, 3], sub });
+  }
+  function next() {
+    if (G.phase !== 'style' || G.busyFly > 0) return;
+    const cl = client(); G.li = (G.li + 1) % cl.looks.length;
+    const lk = lookNow();
+    K.noise(0.25, { vol: 0.1, freq: 900, sweepTo: 2600, q: 0.8 });   // a swish
+    if (lk.colour) { const c = COLORS[lk.colour]; K.tone(c.note, 0.45, { type: c.wave, vol: c.wave === 'square' || c.wave === 'sawtooth' ? 0.035 : 0.08 }); K.tone(c.note * 1.5, 0.35, { vol: 0.03, delay: 0.08 }); }
+    if (lk.wall) fly(lk); else dress(lk);
+    G.say(lk.say.join(' '));
+    panel();
+  }
+  function wear() {
     if (G.phase !== 'style') return;
-    const tags = tagsOf(), cl = client(), miss = cl.want.filter(w => !tags.has(w)), bad = cl.avoid.filter(a => tags.has(a));
+    const cl = client(), lk = lookNow();
+    if (!lk) { G.say(LINES.first); K.tone(330, 0.1, { vol: 0.05 }); return; }
+    if (G.busyFly > 0) return;
     G.tries++;
-    if ((miss.length === 0 && bad.length === 0) || (G.tries >= 3 && miss.length <= 1 && bad.length === 0) || G.tries >= 4) {
-      G.stars += miss.length === 0 && bad.length === 0 ? 3 : 2;
-      G.ui.alert('She loves it', cl.name, 1.8, 'red'); K.sfx.win && K.sfx.win();
-      G.say(miss.length === 0 && bad.length === 0 ? cl.yes : 'Close enough. I love it! Let’s go.'); runway();
+    if (lk.ok) {
+      const stars = Math.max(1, 4 - G.tries); G.stars += stars;
+      G.ui.alert('She loves it', cl.name, 2, 'red'); K.sfx.win && K.sfx.win(); G.buzz([40, 30, 80]);
+      G.say(cl.yes); G.phase = 'loved'; buttons();
+      after(runway, 0.6);
     } else {
-      const why = bad.length ? cl.no[bad[0]] : `Hmm. I need it to be more ${WORD[miss[0]]}.`;
-      G.ui.alert('Not quite', why, 2.4, 'blue'); G.say(why + ' ' + hint(miss[0] || null, bad[0] || null)); G.buzz([40, 60, 40]);
+      G.ui.alert('Not quite', lk.no, 2.6, 'blue'); G.buzz([40, 60, 40]);
+      K.tone(294, 0.14, { type: 'triangle', vol: 0.07 }); K.tone(247, 0.2, { type: 'triangle', vol: 0.07, delay: 0.12 });
+      G.say(lk.no + (lk.hint ? ' ' + lk.hint : ''));
     }
   }
-  function hint(miss, bad) {
-    if (bad === 'dark') return 'Try a brighter skirt.';
-    if (bad === 'structured') return 'Take the jacket off: press Layer.';
-    if (bad === 'bold' || bad === 'party') return 'Try something calmer, like the beige shirt.';
-    if (bad === 'smart') return 'Try the pink dress.';
-    return { comfy: 'The tee and the long skirt are the comfiest.', bright: 'Try a bright colour.', bold: 'Try a bold colour, like hot pink or cherry red.', chic: 'The blazer is very chic.',
-      smart: 'The beige shirt is smart.', calm: 'Try a calm colour, like navy or sand.', party: 'Pink is a party colour.' }[miss] || '';
+  // a look from the wall: the garment lifts off its hanger and flies onto her
+  function fly(lk) {
+    const [x0, y0, x1, y1] = WALL[lk.wall], [cx, cy] = G.S.P((x0 + x1) / 2, (y0 + y1) / 2), [tx, ty] = G.S.P(0.51, 0.55);
+    const tex = G.wallTex[lk.wall];
+    if (!tex) { dress(lk); return; }
+    const m = K.plane(tex, x1 - x0, (y1 - y0) * G.h, { order: 25 });
+    m.position.set(cx, cy, 0.07); G.root.add(m);
+    G.fly.push({ m, t: 0, from: [cx, cy], to: [tx, ty], lk }); G.busyFly++;
   }
 
   // ── the runway ──
   function runway() {
-    G.phase = 'runway'; G.ui.hidePanel(); G.beat = -2; G.beatT = 0; G.hits = 0; G.lastPose = -9; G.posed = false;
-    G.music.level(1);
-    buttons();
-    setTimeout(() => G && G.phase === 'runway' && G.say('Runway! Press Pose on the beat.'), 1200);
+    G.phase = 'runway'; G.ui.hidePanel(); G.hits = 0; G.rb = -1; G.lastBeat = null; G.posedOn = null; G.endAt = null;
+    G.music.level(1); buttons();
+    G.say(LINES.runway);
+    G.ui.panel(`Runway · ${client().name}`, 'Pose on the beat', { segs: [0, POSES] });
   }
   function pose() {
     if (G.phase !== 'runway') return;
-    const into = G.beatT, from = 60 / BPM - G.beatT, off = Math.min(into, from);
-    if (off < 0.17 && G.beat >= 0 && !G.posed) {
-      G.posed = true; G.hits++; G.dir = -G.dir; G.swayTo = 0.03 * G.dir;
-      G.flash = 1; cameraFlash(3); K.noise(0.07, { vol: 0.2, freq: 3500, q: 0.7 }); K.tone(1319, 0.08, { vol: 0.05 }); G.buzz(25);
-      G.ui.pop(['Fierce!', 'Yes!', 'Work it!', 'Iconic!', 'Stunning!'][G.hits % 5]);
-    } else { K.tone(220, 0.06, { vol: 0.04 }); }
+    const ph = G.music.beat(), near = Math.round(ph), off = Math.abs(ph - near) * SPB;
+    if (off < 0.19 && G.rb >= 1 && G.posedOn !== near && G.hits < POSES) {
+      G.posedOn = near; G.hits++;
+      const mv = MOVES[(G.hits - 1) % MOVES.length];
+      if (mv === 'lean') { G.dir = -G.dir; G.swayTo = 0.05 * G.dir; }
+      if (mv === 'spin') G.spinV = Math.PI * 2;
+      if (mv === 'step') { G.zoomTo += 0.05; G.bobV = 0.02; }
+      if (mv === 'hip') { G.dir = -G.dir; G.swayTo = 0.045 * G.dir; G.bobV = -0.015; }
+      G.flash = 1; cameraFlash(4); K.noise(0.07, { vol: 0.22, freq: 3500, q: 0.7 }); K.noise(0.05, { vol: 0.15, freq: 5000, q: 0.7, delay: 0.09 });
+      K.tone(1319, 0.08, { vol: 0.05 }); G.buzz(25);
+      G.ui.pop(POPS[(G.hits - 1) % POPS.length], innerWidth * (G.hits % 2 ? 0.3 : 0.7), innerHeight * 0.34);
+      G.ui.panel(`Runway · ${client().name}`, `${G.hits} of ${POSES} poses`, { segs: [G.hits, POSES] });
+      if (G.hits >= POSES && G.endAt === null) G.endAt = G.rb + 2;
+    } else { K.tone(196, 0.08, { type: 'triangle', vol: 0.05 }); }
   }
   function cameraFlash(n) {
     for (let i = 0; i < n; i++) {
-      // flashes pop from the photos on the wall
       let u, v; do { u = 0.06 + Math.random() * 0.88; v = 0.06 + Math.random() * 0.86; } while (u > 0.33 && u < 0.69 && v > 0.22);
-      const [x, y] = G.S.P(u, v), s = K.sprite(K.glowTex, 0.06 + Math.random() * 0.06, { color: '#ffffff', additive: true, order: 30, opacity: 1 });
+      const [x, y] = G.S.P(u, v), s = K.sprite(K.glowTex, 0.07 + Math.random() * 0.07, { color: '#ffffff', additive: true, order: 30, opacity: 1 });
       s.position.set(x, y, 0.06); G.root.add(s); G.flashes.push({ s, life: 0.25 + Math.random() * 0.15, t: 0 });
     }
   }
+  function onBeat() {
+    G.rb++;
+    G.pulse = 1;
+    if (G.poseBtn) { G.poseBtn.style.transform = 'scale(1.06)'; setTimeout(() => { if (G && G.poseBtn) G.poseBtn.style.transform = ''; }, 140); }
+    if (G.rb >= 1) { G.bobV = Math.max(G.bobV, 0.008); G.zoomTo = Math.min(1.3, G.zoomTo + 0.006); if (Math.random() < 0.5) cameraFlash(1); }   // she struts towards you
+    if (G.rb >= WALL_END() || (G.endAt !== null && G.rb >= G.endAt)) endRunway();
+  }
+  const WALL_END = () => WALK + 1;
   function endRunway() {
-    G.ci++;
-    G.swayTo = 0; G.music.level(0.35);
-    if (G.ci >= CLIENTS.length) return finish();
-    G.uni.uSpot.value = 0;
-    setTimeout(() => { if (G && !G.over) startClient(); }, 1400);
-    G.phase = 'between'; buttons();
+    G.poses += G.hits; G.ci++;
+    G.phase = 'between'; G.swayTo = 0; G.zoomTo = 1; G.music.level(0.35); buttons(); G.ui.hidePanel();
+    if (G.ci >= CLIENTS.length) { G.spinV = Math.PI * 2; cameraFlash(8); return setTimeout(() => G && finish(), 900); }
+    setTimeout(() => { if (G && !G.over) startClient(); }, 1500);
   }
   function finish() {
     G.phase = 'done';
-    K.finale(G, { won: true, kicker: 'Style the dream', title: 'Three looks, three happy clients', line: G.work && G.work.quote,
-      cells: [{ k: 'Stars', v: `${G.stars}/9` }, { k: 'Poses', v: G.poses + G.hits }],
-      say: 'Three looks, three happy clients. You styled the dream. ' + ((G.work && G.work.quote) || '') });
+    K.finale(G, { won: true, kicker: 'Style the dream', title: 'Three looks, three happy clients', line: (G.work && G.work.quote) || QUOTE,
+      cells: [{ k: 'Stars', v: `${G.stars}/9` }, { k: 'Poses', v: `${G.poses}/${POSES * 3}` }], say: LINES.end });
+    G.endT = 0;
   }
 
-  // ── buttons ──
+  // ── buttons: two while styling, one on the runway ──
   function buttons() {
-    if (G.phase === 'style') {
-      const el = G.ui.buttons([
-        { label: 'Top', icon: '👚', aria: 'Next top. Now: ' + cur('top').name, press: () => nextIn('top') },
-        { label: 'Bottom', icon: '👗', aria: 'Next skirt. Now: ' + cur('bottom').name, press: () => nextIn('bottom') },
-        { label: 'Layer', icon: '🧥', aria: 'Jacket on or off. Now: ' + cur('layer').name, press: () => nextIn('layer') },
-        { label: 'Colour', icon: '🎨', kind: 'black', aria: 'Next colour for the ' + cur(G.slot).name, press: () => nextColor() },
-        { label: 'Done', icon: '✓', kind: 'red', aria: 'Done: show the client', press: () => done() },
-      ]);
-      if (el) el.forEach(b => Object.assign(b.style, { flex: '1 1 0', minWidth: '0', fontSize: '11px', padding: '0 4px', flexDirection: 'column', gap: '4px' }));
-    } else if (G.phase === 'runway') G.ui.buttons([{ label: 'Pose', icon: '✨', kind: 'red', aria: 'Pose: press on the beat', press: () => pose() }]);
+    G.poseBtn = null;
+    if (G.phase === 'style') G.ui.buttons([
+      { label: 'Next', icon: '▶', kind: 'black', aria: 'Next look', press: () => next() },
+      { label: 'Wear it', icon: '✓', kind: 'red', aria: 'Wear it: show the client', press: () => wear() },
+    ]);
+    else if (G.phase === 'runway') { const el = G.ui.buttons([{ label: 'Pose', icon: '★', kind: 'red', aria: 'Pose: press on the beat', press: () => pose() }]); G.poseBtn = el && el[0]; if (G.poseBtn) G.poseBtn.style.transition = 'transform .12s'; }
     else G.ui.buttons([]);
   }
 
-  // ── a boutique groove that becomes a runway beat ──
+  // ── a boutique groove that becomes a runway beat (the kick is the beat you pose on) ──
   function makeMusic(ac) {
     const out = ac.createGain(); out.gain.value = 0; out.connect(ac.destination);
     const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1400; lp.connect(out);
-    let next = 0, step = 0, timer = null, lvl = 0.35;
-    const spb = 60 / BPM / 2;   // eighth notes
+    let next = 0, step = 0, timer = null, lvl = 0.35, t0 = 0, on = true;
+    const spe = SPB / 2;   // eighth notes
     const BASS = [55, 55, 65.4, 73.4, 55, 55, 82.4, 73.4], CH = [[220, 261.6, 329.6], [196, 246.9, 293.7], [174.6, 220, 261.6], [196, 246.9, 329.6]];
     function hit(t, f, dur, type, vol, to = lp) { const o = ac.createOscillator(), g = ac.createGain(); o.type = type; o.frequency.setValueAtTime(f, t); g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0008, t + dur); o.connect(g).connect(to); o.start(t); o.stop(t + dur + 0.02); return o; }
-    function noiseAt(t, dur, vol, f) { const n = ac.sampleRate * dur, b = ac.createBuffer(1, n, ac.sampleRate), d = b.getChannelData(0); for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
-      const s = ac.createBufferSource(), g = ac.createGain(), bp = ac.createBiquadFilter(); bp.type = 'highpass'; bp.frequency.value = f; s.buffer = b; g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur); s.connect(bp).connect(g).connect(out); s.start(t); }
+    function noiseAt(t, dur, vol, f, type = 'highpass') { const n = Math.floor(ac.sampleRate * dur), b = ac.createBuffer(1, n, ac.sampleRate), d = b.getChannelData(0); for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+      const s = ac.createBufferSource(), g = ac.createGain(), bp = ac.createBiquadFilter(); bp.type = type; bp.frequency.value = f; s.buffer = b; g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur); s.connect(bp).connect(g).connect(out); s.start(t); }
     function schedule() {
       while (next < ac.currentTime + 0.15) {
         const s = step % 16, bar = Math.floor(step / 16) % 4, run = lvl > 0.6;
-        if (s % 4 === 0) { const k = hit(next, 120, 0.22, 'sine', run ? 0.5 : 0.22, out); k.frequency.exponentialRampToValueAtTime(45, next + 0.18); }
-        if (s % 8 === 4) noiseAt(next, run ? 0.14 : 0.08, run ? 0.22 : 0.06, 1200);
-        if (s % 2 === 1 || run) noiseAt(next, 0.03, run ? 0.07 : 0.035, 7000);
+        if (s % 2 === 0) { const k = hit(next, 120, 0.22, 'sine', run ? 0.6 : 0.2, out); k.frequency.exponentialRampToValueAtTime(45, next + 0.18); }   // kick on every beat
+        if (run && s % 2 === 0) noiseAt(next, 0.06, 0.12, 1800, 'bandpass');                                                                         // a clap on every beat on the runway
+        if (s % 8 === 4) noiseAt(next, run ? 0.14 : 0.08, run ? 0.2 : 0.06, 1200);
+        if (s % 2 === 1 || run) noiseAt(next, 0.03, run ? 0.06 : 0.03, 7000);
         if (s % 2 === 0) hit(next, BASS[(s / 2) % 8] * (bar === 2 ? 0.89 : 1), 0.25, 'triangle', 0.16);
         if (s === 0 || s === 6 || (run && s === 10)) CH[bar].forEach(f => hit(next, f * 2, 0.5, 'sine', 0.025));
-        next += spb; step++;
+        next += spe; step++;
       }
     }
     return {
-      start() { if (timer) return; next = ac.currentTime + 0.1; timer = setInterval(schedule, 30); schedule(); this.level(lvl); },
-      level(v) { lvl = v; out.gain.setTargetAtTime(v * 0.5, ac.currentTime, 0.3); lp.frequency.setTargetAtTime(v > 0.6 ? 5000 : 1400, ac.currentTime, 0.3); },
+      start() { if (timer) return; next = t0 = ac.currentTime + 0.1; timer = setInterval(schedule, 30); schedule(); this.level(lvl); },
+      level(v) { lvl = v; if (on) out.gain.setTargetAtTime(v * 0.5, ac.currentTime, 0.3); lp.frequency.setTargetAtTime(v > 0.6 ? 5000 : 1400, ac.currentTime, 0.3); },
+      mute(m) { on = !m; out.gain.setTargetAtTime(m ? 0 : lvl * 0.5, ac.currentTime, 0.2); },
+      hush() { lvl = 0.2; out.gain.setTargetAtTime(0.05, ac.currentTime, 0.6); },
+      beat() { return timer ? (ac.currentTime - t0) / SPB : 0; },   // beats since the music started (the kick lands on whole numbers)
       stop() { clearInterval(timer); timer = null; try { out.gain.setTargetAtTime(0, ac.currentTime, 0.1); } catch (e) {} },
     };
   }
 
-  // tap a garment on the wall: it lifts off its hanger and flies onto her
-  function fromWall(w) {
-    if (G.phase !== 'style') return;
-    const [x0, y0, x1, y1] = w.box, [cx, cy] = G.S.P((x0 + x1) / 2, (y0 + y1) / 2), [tx, ty] = G.S.P(0.51, 0.6);
-    const m = K.plane(G.wallTex[w.id], x1 - x0, (y1 - y0) * G.h, { order: 25 });
-    m.position.set(cx, cy, 0.07); G.root.add(m);
-    G.fly.push({ m, t: 0, from: [cx, cy], to: [tx, ty], w });
-    G.say(w.say); K.noise(0.3, { vol: 0.12, freq: 900, sweepTo: 2600, q: 0.8 });
-  }
-  function land(w) {
-    for (const [slot, id] of Object.entries(w.put)) { G.fit[slot] = id; G.slot = slot; }
-    G.changes++; apply(); buttons();
-    const [x, y] = G.S.P(0.51, 0.6); G.fx.add(x, y, '#ffffff', 14, 0.12); G.fx.add(x, y, '#f2cf1d', 10, 0.1);
-    K.tone(784, 0.1, { vol: 0.06 }); K.tone(1175, 0.16, { vol: 0.05, delay: 0.08 });
+  // the robot stylist (…&bot=1): tries a wrong look first so every line is heard, then picks right, then poses on the beat
+  const BOT = [['next', 'wear', 'next', 'wear', 'next', 'wear'], ['next', 'wear', 'next', 'wear'], ['next', 'wear', 'next', 'wear', 'next', 'wear', 'next', 'wear']];
+  function botStep(dt) {
+    if (G.phase === 'style') {
+      G.botT += dt;
+      if (G.botT > 1.6 && !(G.say.busy && G.say.busy() && G.botT < 6)) { G.botT = 0; const a = BOT[G.ci][G.botI++]; if (a === 'next') next(); else if (a === 'wear') wear(); }
+    } else G.botI = 0;
+    if (G.phase === 'runway') { const ph = G.music.beat(), fr = ph - Math.floor(ph); if (G.rb >= 1 && fr < 0.08 && G.posedOn !== Math.round(ph)) pose(); }
   }
 
   return {
@@ -322,83 +347,88 @@ export function styleTheDreamGame() {
     start(ctx) {
       if (G) this.stop();
       G = K.makeBase(ctx);
-      Object.assign(G, { ci: 0, phase: 'intro', fit: { top: 'yellow', bottom: 'black', layer: 'none' }, col: {}, slot: 'top', changes: 0, stars: 0, poses: 0, hits: 0, tries: 0,
-        met: new Set(), colors: new Set(), fly: [], flashes: [], flash: 0, wipe: 1, sway: 0, swayTo: 0, dir: 1, beat: 0, beatT: 0, botT: 0 });
+      Object.assign(G, { ci: 0, li: -1, phase: 'intro', stars: 0, poses: 0, hits: 0, tries: 0, rb: -1, busyFly: 0, queue: null, endT: 0, artist: null,
+        fly: [], flashes: [], flash: 0, pending: null, pulse: 0, sway: 0, swayTo: 0, dir: 1, spin: 0, spinV: 0, zoom: 1, zoomTo: 1, bob: 0, bobV: 0, botT: 0, botI: 0, poseBtn: null });
       G.music = makeMusic(K.audio());
-      const v3 = () => ({ value: new THREE.Color() });
-      G.uni = { map: { value: null }, bg: { value: null }, body: { value: null }, lay: { value: null }, fTop: { value: null }, fBot: { value: null },
-        uTopS: { value: new THREE.Vector2(8, 8) }, uBotS: { value: new THREE.Vector2(8, 8) }, uTopMode: { value: 0 }, uBotMode: { value: 0 }, uLay: { value: 0 }, uSway: { value: 0 }, uFlash: { value: 0 }, uSpot: { value: 0 }, uT: { value: 0 }, uA: { value: 0 }, uH: { value: G.h }, uWipe: { value: 1 },
-        uTopCol: v3(), uBotCol: v3(), uLayCol: v3() };
+      // stop Shardasia's clip if the player opens her story video, so two voices don't overlap
+      const story = G.story; G.story = () => { if (G && G.artist) G.artist.pause(); story && story(); };
+      const v3 = () => ({ value: new THREE.Color() }), f = v => ({ value: v });
+      G.uni = { map: f(null), bg: f(null), body: f(null), lay: f(null), fTop: f(null), fBot: f(null),
+        uTopS: f(new THREE.Vector2(8, 8)), uBotS: f(new THREE.Vector2(8, 8)), uTopMode: f(0), uBotMode: f(0), uLay: f(0), uSway: f(0), uSpin: f(1), uZoom: f(1), uBob: f(0), uMove: f(1),
+        uFlash: f(0), uSpot: f(0), uPulse: f(0), uA: f(0), uH: f(G.h), uTopCol: v3(), uBotCol: v3(), uLayCol: v3() };
       G.face = new THREE.Mesh(new THREE.PlaneGeometry(1.002, G.h + 0.002), new THREE.ShaderMaterial({ uniforms: G.uni, vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: false }));
       G.face.position.z = 0.03; G.face.renderOrder = 12; G.root.add(G.face); G.face.visible = false;
-      const L = new THREE.TextureLoader(); let need = 4; const ok = () => { if (--need === 0 && G) G.face.visible = true; };
-      const raw = (url, key) => L.load(url, t => { if (!G) return; t.colorSpace = THREE.NoColorSpace; G.uni[key].value = t; ok(); });
-      const src = ctx.work && ctx.work.image; if (src) raw(src, 'map');
-      raw(ART + 'backdrop.jpg', 'bg'); raw(ART + 'body.png', 'body'); raw(ART + 'layer.png', 'lay');
-      G.fab = {}; for (const f of ['floral', 'pink', 'beige']) L.load(ART + 'fab-' + f + '.jpg', t => { if (!G) return; t.colorSpace = THREE.NoColorSpace; t.wrapS = t.wrapT = THREE.MirroredRepeatWrapping; G.fab[f] = t; });
-      G.wallTex = {}; for (const w of WALL) L.load(ART + 'wall-' + w.id + '.png', t => { if (!G) return; t.colorSpace = THREE.SRGBColorSpace; G.wallTex[w.id] = t; });
+      const TL = new THREE.TextureLoader(); let need = 4; const ok = () => { if (--need === 0 && G) G.face.visible = true; };
+      const load = (url, key) => TL.load(url, t => { if (!G) return; t.colorSpace = THREE.NoColorSpace; G.uni[key].value = t; ok(); });
+      load((ctx.work && ctx.work.image) || 'targets/haute-couture-dreams.jpg', 'map');
+      load(ART + 'backdrop.jpg', 'bg'); load(ART + 'body.png', 'body'); load(ART + 'layer.png', 'lay');
+      G.fab = {}; for (const fb of ['floral', 'pink', 'beige']) TL.load(ART + 'fab-' + fb + '.jpg', t => { if (!G) return; t.colorSpace = THREE.NoColorSpace; t.wrapS = t.wrapT = THREE.MirroredRepeatWrapping; G.fab[fb] = t; });
+      G.wallTex = {}; for (const w of Object.keys(WALL)) TL.load(ART + 'wall-' + w + '.png', t => { if (!G) return; t.colorSpace = THREE.SRGBColorSpace; G.wallTex[w] = t; });
       G.onGo = () => { G.music.start(); startClient(); };
-      K.intro(G, { title: 'Style the dream', how: 'You’re Shardasia’s stylist. Tap the clothes on the wall, or use the buttons, to dress her for each client. Then take her down the runway.',
-        say: 'Style the dream. Shardasia loves fashion, and today you are her stylist. Three clients will tell you what they need. Tap the clothes on the wall and they fly onto her, or use the buttons: Top, Bottom and Layer go through the rack, and Colour changes the colour. Every colour has its own sound. When the look is right, press Done, then take her down the runway.' });
+      K.intro(G, { title: 'Style the dream', how: 'Press NEXT to see each look. Press WEAR IT when it fits the client. Then pose on the beat!',
+        say: 'Style the dream. Shardasia loves fashion, and today you are her stylist. Three clients will tell you what they need. Press Next to see each look, and Wear It when it fits. Then take her down the runway, and press Pose on the beat.' });
     },
     update(dt) {
       if (!G || G.paused) return;
       G.t += dt; G.ui.update(dt); G.fx.update(dt); K.introUpdate(G, dt); K.finaleUpdate(G, dt);
-      const u = G.uni; u.uT.value = G.t; u.uA.value += ((G.over ? 0 : 1) - u.uA.value) * Math.min(1, dt * 2);
-      // the new look sweeps down her, with a shimmer
-      G.wipe = Math.min(1.2, G.wipe + dt * 1.6); u.uWipe.value = 0.44 + G.wipe * 0.62;
+      const u = G.uni; u.uA.value += ((G.over ? 0 : 1) - u.uA.value) * Math.min(1, dt * 2);
+      // a line waiting for the last one to finish
+      if (G.queue) { const q = G.queue; q.t += dt; if (q.t > q.min && (!(G.say.busy && G.say.busy()) || q.t > 7)) { G.queue = null; q.fn(); } }
+      // a shimmer when the new look goes on
       G.flash = Math.max(0, G.flash - dt * 2.5); u.uFlash.value = G.flash * 0.6;
+      G.pulse = Math.max(0, G.pulse - dt * 4); u.uPulse.value = G.pulse;
       // flying clothes
       for (let i = G.fly.length - 1; i >= 0; i--) {
-        const f = G.fly[i]; f.t += dt / 0.75; const k = Math.min(1, f.t), e = k * k * (3 - 2 * k);
-        f.m.position.x = f.from[0] + (f.to[0] - f.from[0]) * e; f.m.position.y = f.from[1] + (f.to[1] - f.from[1]) * e + Math.sin(k * Math.PI) * 0.08;
-        f.m.rotation.z = Math.sin(k * Math.PI) * 0.25 * (f.from[0] < 0 ? -1 : 1); const s = 1 + Math.sin(k * Math.PI) * 0.25 - k * 0.4; f.m.scale.set(s, s, 1);
-        f.m.material.opacity = k < 0.8 ? 1 : 1 - (k - 0.8) / 0.2;
-        if (k >= 1) { G.root.remove(f.m); f.m.material.dispose(); G.fly.splice(i, 1); land(f.w); }
+        const fl = G.fly[i]; fl.t += dt / 0.7; const k = Math.min(1, fl.t), e = k * k * (3 - 2 * k);
+        fl.m.position.x = fl.from[0] + (fl.to[0] - fl.from[0]) * e; fl.m.position.y = fl.from[1] + (fl.to[1] - fl.from[1]) * e + Math.sin(k * Math.PI) * 0.08;
+        fl.m.rotation.z = Math.sin(k * Math.PI) * 0.25 * (fl.from[0] < 0 ? -1 : 1); const s = 1 + Math.sin(k * Math.PI) * 0.25 - k * 0.4; fl.m.scale.set(s, s, 1);
+        fl.m.material.opacity = k < 0.8 ? 1 : 1 - (k - 0.8) / 0.2;
+        if (k >= 1) { G.root.remove(fl.m); fl.m.material.dispose(); G.fly.splice(i, 1); G.busyFly = Math.max(0, G.busyFly - 1); if (G.phase === 'style') dress(fl.lk); }
       }
-      for (let i = G.flashes.length - 1; i >= 0; i--) { const f = G.flashes[i]; f.t += dt; const k = f.t / f.life; f.s.material.opacity = 1 - k; f.s.scale.setScalar(f.s.scale.x * (1 + dt * 2));
-        if (k >= 1) { G.root.remove(f.s); f.s.material.dispose(); G.flashes.splice(i, 1); } }
-      // the runway: count the beats, pose on them
+      for (let i = G.flashes.length - 1; i >= 0; i--) { const fl = G.flashes[i]; fl.t += dt; const k = fl.t / fl.life; fl.s.material.opacity = 1 - k; fl.s.scale.setScalar(fl.s.scale.x * (1 + dt * 2));
+        if (k >= 1) { G.root.remove(fl.s); fl.s.material.dispose(); G.flashes.splice(i, 1); } }
+      // the runway: lights down, count the beats from the music's own clock
       if (G.phase === 'runway') {
         u.uSpot.value += (1 - u.uSpot.value) * Math.min(1, dt * 2);
-        G.beatT += dt; const spb = 60 / BPM;
-        if (G.beatT >= spb) { G.beatT -= spb; G.beat++; G.posed = false;
-          if (G.beat >= 0 && G.beat < BEATS) { K.tone(G.beat % 4 === 0 ? 1568 : 1175, 0.05, { vol: 0.035 }); if (Math.random() < 0.6) cameraFlash(1); G.ui.pop(String(BEATS - G.beat), innerWidth / 2, innerHeight * 0.3); }
-          if (G.beat >= BEATS) { G.poses += G.hits; G.hits = 0; endRunway(); }
-        }
-        // the robot poses right on the beat
-        if (G.bot && G.beat >= 0 && !G.posed && G.beatT > 0.02 && G.beatT < 0.1) pose();
-      } else u.uSpot.value += (0 - u.uSpot.value) * Math.min(1, dt * 2);
-      // she sways gently to the music, and snaps into poses
-      const groove = G.phase === 'runway' ? Math.sin(G.t * Math.PI * BPM / 60) * 0.006 : Math.sin(G.t * 1.1) * 0.0025;
-      G.sway += (G.swayTo + groove - G.sway) * Math.min(1, dt * (G.phase === 'runway' ? 9 : 3)); u.uSway.value = G.sway;
-      if (G.phase === 'runway' && G.beatT > 0.35) G.swayTo *= Math.pow(0.2, dt);
-      // the robot stylist: dresses each client right, then poses
-      if (G.bot && G.phase === 'style') {
-        G.botT += dt;
-        const plan = [
-          [() => fromWall(WALL[1]), () => done(), () => { G.fit.top = 'yellow'; G.fit.bottom = 'skirt'; G.col.bottom = 'coral'; apply(); }, () => done()],
-          [() => fromWall(WALL[2]), () => { G.fit.bottom = 'black'; apply(); }, () => nextIn('layer'), () => nextIn('layer'), () => done()],
-          [() => fromWall(WALL[3]), () => { G.fit.bottom = 'skirt'; G.col.bottom = 'hotpink'; apply(); }, () => done(), () => done()],
-        ][G.ci];
-        G.botI = G.botI || 0;
-        if (G.botT > 1.4 && plan[G.botI]) { G.botT = 0; plan[G.botI](); G.botI++; }
-      } else if (G.bot) { G.botI = 0; }
+        const b = Math.floor(G.music.beat());
+        if (G.lastBeat === null) G.lastBeat = b; else if (b !== G.lastBeat) { G.lastBeat = b; onBeat(); }
+      } else u.uSpot.value += (0 - u.uSpot.value) * Math.min(1, dt * 1.5);
+      // she moves: a gentle sway to the groove, twirls when she changes, leans, spins, steps and bounces on the runway
+      const run = G.phase === 'runway';
+      const groove = run ? Math.sin(G.music.beat() * Math.PI) * 0.012 : Math.sin(G.t * 1.3) * 0.006;
+      G.sway += (G.swayTo + groove - G.sway) * Math.min(1, dt * (run ? 9 : 3)); u.uSway.value = G.sway;
+      if (run) G.swayTo *= Math.pow(0.25, dt); else G.swayTo *= Math.pow(0.05, dt);
+      if (G.spinV > 0) { const st = Math.min(G.spinV, dt * Math.PI * 2 / 0.55); G.spin += st; G.spinV -= st; if (G.spinV <= 0) G.spin = 0; }
+      if (G.pending && (G.spinV <= 0 || Math.cos(G.spin) < 0.1)) { const pl = G.pending; G.pending = null; putOn(pl.look); }   // the new look goes on as she turns side-on
+      u.uSpin.value = Math.cos(G.spin);
+      G.zoom += (G.zoomTo - G.zoom) * Math.min(1, dt * (run ? 4 : 1.5)); u.uZoom.value = G.zoom;
+      G.bob += (G.bobV - G.bob) * Math.min(1, dt * 18); G.bobV *= Math.pow(0.001, dt); u.uBob.value = G.bob + (run ? Math.abs(Math.sin(G.music.beat() * Math.PI)) * 0.004 : Math.sin(G.t * 1.3 + 1) * 0.0015);
+      // the finale: wait for the last line, then Shardasia reads her own words
+      if (G.over && !G.artist) {
+        G.endT += dt;
+        if (G.endT > 2.5 && (!(G.say.busy && G.say.busy()) || G.endT > 6)) { G.artist = new Audio(ARTIST); G.artist.play().catch(() => {}); G.music.hush(); }
+      }
+      if (G.bot) botStep(dt);
     },
     pointer(kind, ev) {
       if (!G || kind !== 'down' || G.phase !== 'style') return;
       const p = G.S.toBoard(ev, G.root); if (!p) return;
-      // her: say what she's wearing
-      if (p.u > 0.34 && p.u < 0.68 && p.v > 0.22) { G.say(describe()); return; }
-      let best = null, bd = 9;
-      for (const w of WALL) { const [x0, y0, x1, y1] = w.box; if (p.u > x0 && p.u < x1 && p.v > y0 && p.v < y1) { const d = Math.hypot(p.u - (x0 + x1) / 2, p.v - (y0 + y1) / 2); if (d < bd) { bd = d; best = w; } } }
-      if (best) fromWall(best);
+      // tap her: hear what she's wearing again (or the client's brief)
+      if (p.u > 0.34 && p.u < 0.68 && p.v > 0.22) { const lk = lookNow(); G.say(lk ? lk.say.join(' ') : client().brief.slice(1).join(' ')); return; }
+      // tap a garment on the wall: if it's one of this client's looks, it flies onto her
+      for (const [id, [x0, y0, x1, y1]] of Object.entries(WALL)) {
+        if (p.u > x0 && p.u < x1 && p.v > y0 && p.v < y1) {
+          const i = client().looks.findIndex(l => l.wall === id);
+          if (i >= 0 && G.busyFly === 0) { G.li = i - 1; next(); } else K.tone(330, 0.08, { vol: 0.04 });
+          return;
+        }
+      }
     },
-    pause() { if (G) { G.paused = true; G.music.level(0); } },
-    resume() { if (G) { G.paused = false; G.music.level(G.phase === 'runway' ? 1 : 0.35); } },
+    pause() { if (G) { G.paused = true; G.music.mute(true); if (G.artist) G.artist.pause(); } },
+    resume() { if (G) { G.paused = false; G.music.mute(false); if (G.artist && G.over) G.artist.play().catch(() => {}); } },
     get over() { return !!(G && G.over); },
-    get debug() { return G && { engine: 'style', playing: G.playing, over: G.over, phase: G.phase, client: G.ci, fit: { ...G.fit }, col: { ...G.col }, tags: [...tagsOf()], tries: G.tries,
-      stars: G.stars, poses: G.poses, hits: G.hits, beat: G.beat, sway: +G.sway.toFixed(3), t: +G.t.toFixed(1) }; },
-    stop() { if (G) G.music.stop(); K.cleanup(G); G = null; },
+    get debug() { return G && { engine: 'style', playing: G.playing, over: G.over, phase: G.phase, client: G.ci, look: G.li, tries: G.tries, stars: G.stars, poses: G.poses, hits: G.hits, rb: G.rb,
+      sway: +G.sway.toFixed(3), spin: +Math.cos(G.spin).toFixed(2), zoom: +G.zoom.toFixed(3), artist: G.artist ? +G.artist.currentTime.toFixed(1) : null, t: +G.t.toFixed(1) }; },
+    stop() { if (G) { try { if (G.artist) { G.artist.pause(); G.artist = null; } } catch (e) {} try { G.music.stop(); } catch (e) {} } K.cleanup(G); G = null; },
   };
 }

@@ -1,0 +1,40 @@
+VOICE LINES TO RECORD: CURATING HOPE (Ben Fox) - "Light memory" (polished)
+
+Save each line as its own mp3 with the file name shown, in AR/media/voice/.
+Say it just as written (the game matches the words exactly).
+Lines marked NEW need recording. The rest you already have; keep those files.
+(Your quote at the end plays from your own clip, art_2.mp3, so it isn't recorded here.)
+
+
+Intro
+memory-intro-1        Light memory.
+memory-intro-2        The people under the tree sing a song together, a few notes at a time.
+memory-intro-3        Listen, then sing it back by tapping them in the same order.
+memory-intro-4        Low notes are on the left, high notes on the right, and you can tap anywhere across the screen.
+
+Each round starts (the round, then "Listen.")
+memory-round-1        Round 1.                                  NEW
+memory-round-2        Round 2.                                  NEW
+memory-round-3        Round 3.                                  NEW
+memory-round-4        Round 4.                                  NEW
+memory-round-5        Round 5.                                  NEW
+memory-last-round     The last round. The whole song.           NEW
+memory-listen         Listen.
+
+After the song
+memory-your-turn      Your turn.
+
+You got the round right
+memory-remembered     Remembered!                               NEW
+
+A wrong note (the song is sung again)
+memory-again          Let's sing it again, together.
+
+The whole song remembered
+memory-whole-song     You remembered the whole song. Now everyone sings it, together.
+
+The end (then your own clip reads the quote)
+memory-end            A memory we share.
+
+
+No longer used (you can keep or delete the file): memory-intro-5  "Each round you remember fills the tree with light."

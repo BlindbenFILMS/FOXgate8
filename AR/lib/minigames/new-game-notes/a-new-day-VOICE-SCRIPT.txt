@@ -1,0 +1,46 @@
+VOICE LINES TO RECORD: A NEW DAY (Raquel Alim) - "Light the glass"
+
+Save each line as its own mp3 with the file name shown, in AR/media/voice/. Say it just as written.
+Raquel's quote at the end is her own recording (art_12.mp3): don't record it. All 26 lines are recorded (Ben, 5 Nov) and included in AR/media/voice/
+
+A NEW DAY - "Light the glass"  (26 lines)
+
+Intro
+glass-intro-1     Light the glass.
+glass-intro-2     It's night.
+glass-intro-3     Rub the dark glass to light it.
+glass-intro-4     Follow the hum.
+
+Each pane's name, said when it lights up
+glass-pane-arch      The orange arch.
+glass-pane-sunset    The sunset.
+glass-pane-blue      The blue arches.
+glass-pane-white     The white arch.
+glass-pane-sea       The sea.
+glass-pane-round     The round window.
+glass-pane-tiles     The blue tiles.
+glass-pane-floating  The floating glass.
+
+The count, said right after the pane's name
+glass-num-1       1 of 8.
+glass-num-2       2 of 8.
+glass-num-3       3 of 8.
+glass-num-4       4 of 8.
+glass-num-5       5 of 8.
+glass-num-6       6 of 8.
+glass-num-7       7 of 8.
+glass-num-8       8 of 8.
+
+The down moment (a cloud darkens two panes)
+glass-down-1      A down moment.
+glass-down-2      That's okay.
+glass-down-3      Light it again.
+
+If nothing gets lit for a while
+glass-hint        Rub where it hums.
+
+The end (then Raquel speaks)
+glass-morning     Good morning.
+glass-end         A new day.
+
+

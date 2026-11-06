@@ -7,8 +7,15 @@
 // shimmer that leads you to the next piece gets louder and clearer. When all eight are found, shine on the mirror:
 // it lights up the whole desert, the two men meet, and Morten's words close the game.
 // A lofi song (keys, vinyl, a soft beat, bass, a glockenspiel tune) grows with every piece. Hint says which way to go.
+// POLISH: each piece is an icon of that part of you on a shard of mirror (mirror-things.js), shown only in your light.
+// Found pieces fly to the mirror and STAY there with their word, so the mirror slowly carries all eight. At the end
+// they gather in a ring round the crack, the mirror heals in light, and Morten reads his own words.
 import * as THREE from 'three';
 import * as K from './kit.js';
+import { pieceTex } from './mirror-things.js';
+import { dockBanner, note, noteOn } from './morten-banner.js';
+
+const ARTIST = new URL('../../../3D/gallery/audio/art_61.mp3', import.meta.url).href;   // Morten, in his own words
 // (Textures read by a custom shader stay in their own colours: NoColorSpace, so they match the painting exactly.)
 
 const PIECES = [
@@ -23,6 +30,9 @@ const PIECES = [
 ];
 const MIRROR = { u: 0.48, v: 0.45 };
 const R0 = 0.15, R1 = 0.065, FIND_R = 0.07, DWELL = 0.6;
+const ICON = 0.1, DOCK = 0.072;   // a piece's size in the dark, and once it's home on the mirror
+// where each found piece rests on the mirror: a ring round the crack, "Still me" in the middle
+const SLOT = (i) => i === 7 ? { u: 0.49, v: 0.47 } : { u: 0.49 + 0.2 * Math.cos(-Math.PI / 2 + i * Math.PI * 2 / 7), v: 0.47 + 0.27 * Math.sin(-Math.PI / 2 + i * Math.PI * 2 / 7) };
 
 /* ───────────────────────── the lofi band: dreamy, a little bittersweet ───────────────────────── */
 const midi = m => 440 * Math.pow(2, (m - 69) / 12);
@@ -111,9 +121,12 @@ export function piecesOfMeGame() {
   let G = null;
   const N = PIECES.length;
   const dist = (a, b) => Math.hypot(a.u - b.u, (a.v - b.v) * G.h);
-  const nextTarget = () => (G.found >= N ? (G.mirrorDone ? null : MIRROR) : PIECES.filter(s => !s.got).sort((a, b) => dist(a, G.beam) - dist(b, G.beam))[0]);
+  // "Still me" is always the last piece: it only shows once the other seven are home, and it rests in the middle of the mirror
+  const findable = (s) => !s.got && (s.word !== 'Still me' || G.found >= N - 1);
+  const nextTarget = () => (G.found >= N ? (G.mirrorDone ? null : MIRROR) : PIECES.filter(findable).sort((a, b) => dist(a, G.beam) - dist(b, G.beam))[0]);
 
-  function hud() { G.ui.panel('Pieces of me', `${G.found}<small>of ${N} pieces</small>`, { segs: [G.found, N], sub: G.found < N ? (G.found ? 'Your sight is changing. Listen for the glass.' : 'Hold the light on a glint of glass') : 'Now shine your light on the mirror' }); }
+  function hud() { const n = noteOn(G); if (n) { G.ui.panel('Pieces of me', n.title, { segs: [G.found, N], sub: n.sub, warn: n.kind === 'red' }); return; }
+    G.ui.panel('Pieces of me', `${G.found}<small>of ${N} pieces</small>`, { segs: [G.found, N], sub: G.found < N ? (G.found ? 'Your sight is changing. Listen for the glass.' : 'Hold the light on a glint of glass') : 'Now shine your light on the mirror' }); }
   function find(s) {
     s.got = true; G.found++;
     const k = G.found / N;
@@ -122,11 +135,15 @@ export function piecesOfMeGame() {
     const [x, y] = G.S.P(s.u, s.v), pan = Math.max(-1, Math.min(1, (s.u - 0.5) * 1.8));
     G.music.glock([75, 77, 79, 82, 84, 87, 89, 91][G.found - 1], 0.09); K.tone(2093, 0.6, { vol: 0.04, pan, delay: 0.05 });
     G.fx.add(x, y, '#dff1ff', 22, 0.25); G.buzz([30, 40, 60]);
-    // the word flies home to the mirror
-    const tag = K.plane(K.wordTex(s.word), 0.3, 0.075, { order: 31 }); tag.position.set(x, y, 0.07); G.root.add(tag); G.tags.push({ tag, t: 0, x, y });
+    // the word shows on screen (the painting can be wider than the phone, so a word drawn on it could be cut off),
+    // then the piece flies home to the mirror and stays there with its word
+    if (G.found < N) note(G, s.word, 'A piece of who you are', 1.8, 'black');
+    const i = PIECES.indexOf(s), [hx, hy] = G.S.P(SLOT(G.found - 1).u, SLOT(G.found - 1).v);
+    const label = K.plane(K.wordTex(s.word.toUpperCase(), { bg: 'rgba(0,0,0,.6)', fg: '#ffe7a8' }), 0.13, 0.0325, { order: 33, opacity: 0 }); label.position.set(hx, hy - DOCK * 0.66, 0.08); G.root.add(label);
+    G.home.push({ m: G.pieces[i], label, x, y, hx, hy, t: 0 });
     const L = G.music.layers, add = { 1: 'hats', 3: 'beat', 5: 'bass', 7: 'lead' }[G.found]; if (add) L[add] = 1;
     hud();
-    if (G.found === N) { G.ui.alert('Now look in the mirror', 'Shine your light on it.', 2.6, 'blue'); G.say(`${s.word}. That's every piece. Now shine your light on the mirror.`); }
+    if (G.found === N) { note(G, 'Now look in the mirror', 'Shine your light on it', 2.6, 'blue'); hud(); G.say(`${s.word}. That's every piece. Now shine your light on the mirror.`); }
     else {
       const extra = { 2: 'Your light is getting smaller. Listen closer.', 4: 'Things are getting blurry. Your ears are getting sharper.', 6: 'Your light is fading. Trust the sound.' }[G.found];
       G.say(`You found a piece of yourself: ${s.word.toLowerCase()}. ${extra ? extra + ' ' : ''}${N - G.found} to go.`);
@@ -136,8 +153,8 @@ export function piecesOfMeGame() {
     G.mirrorDone = true; G.allT = 0; G.blur = 0; G.pale = 0; G.R = R0 * 1.5; G.buzz([40, 60, 120]);   // in the mirror's light, everything is clear again
     [63, 67, 70, 75, 79].forEach((m, i) => setTimeout(() => G && G.music.glock(m + 12, 0.08), i * 160));
     const [x, y] = G.S.P(MIRROR.u, MIRROR.v); G.fx.add(x, y, '#ffffff', 44, 0.45);
-    G.ui.alert('The man in the mirror', 'Every piece of him, still him.', 3, 'red'); G.say('The man in the mirror is still you. Every piece.');
-    G.settle = 4.5;
+    note(G, 'The man in the mirror', 'Every piece of him, still him', 4.5, 'red'); hud(); G.say('The man in the mirror is still you. Every piece.');
+    G.settle = 4.5; G.healT = 0;
   }
   function hint() {
     const s = nextTarget(); if (!s) return;
@@ -146,7 +163,7 @@ export function piecesOfMeGame() {
     const h = Math.abs(du) > 0.08 ? (du < 0 ? 'left' : 'right') : '', v = Math.abs(dv) > 0.08 ? (dv < 0 ? 'up' : 'down') : '';
     const way = [v, h].filter(Boolean).join(' and ') || 'just a little';
     const near = d < 0.18 ? 'Very close. ' : d < 0.35 ? 'Getting warm. ' : '';
-    G.ui.alert(near + 'Move ' + way, s === MIRROR ? 'The mirror is in the middle' : '', 1.6, 'blue'); G.say(near + 'Move ' + way + '.');
+    note(G, near + 'Move ' + way, s === MIRROR ? 'The mirror is in the middle' : 'Look for a shard of glass', 1.8, 'blue'); hud(); G.say(near + 'Move ' + way + '.');
   }
 
   return {
@@ -155,7 +172,7 @@ export function piecesOfMeGame() {
       if (G) this.stop();
       G = K.makeBase(ctx);
       Object.assign(G, { found: 0, beam: { u: 0.5, v: 0.5 }, aim: { u: 0.5, v: 0.5 }, dwell: 0, twinkleT: 0, touch: null, touchT: 0, mirrorDone: false, allT: -1, settle: 0, t0: 0,
-        R: R0, blur: 0, pale: 0, hear: 1, outT: 0, outNext: 9, tags: [] });
+        R: R0, blur: 0, pale: 0, hear: 1, outT: 0, outNext: 9, tags: [], home: [], healT: -1, artist: null, overT: 0 });
       PIECES.forEach(s => { s.got = false; });
       G.uni = { map: { value: null }, uBeam: { value: new THREE.Vector2(0.5, 0.5) }, uR: { value: R0 }, uH: { value: G.h }, uDark: { value: 0 }, uOn: { value: 0 }, uT: { value: 0 },
         uBlur: { value: 0 }, uPale: { value: 0 }, uAll: { value: 0 }, uMend: { value: 0 }, uA: { value: 0 } };
@@ -164,18 +181,22 @@ export function piecesOfMeGame() {
       const src = ctx.work && ctx.work.image;
       if (src) new THREE.TextureLoader().load(src, t => { if (!G) return; t.colorSpace = THREE.NoColorSpace; G.uni.map.value = t; G.ready = true; });
       // a glint of glass at each piece (it only shows in your light)
-      G.glints = PIECES.map(s => { const g = K.sprite(glintTex, 0.05, { additive: true, opacity: 0, order: 14 }); const [x, y] = G.S.P(s.u, s.v); g.position.set(x, y, 0.05); G.root.add(g); return g; });
+      G.pieces = PIECES.map(s => { const m = K.plane(pieceTex(s.word), ICON, ICON, { order: 15, opacity: 0 }); const [x, y] = G.S.P(s.u, s.v); m.position.set(x, y, 0.05); G.root.add(m); return m; });
+      G.glints = PIECES.map(s => { const g = K.sprite(glintTex, 0.05, { additive: true, opacity: 0, order: 16 }); const [x, y] = G.S.P(s.u, s.v); g.position.set(x + ICON * 0.3, y + ICON * 0.3, 0.06); G.root.add(g); return g; });
       G.music = K.audio() ? band(K.audio()) : new Proxy({ layers: {} }, { get: (o, k) => (k in o ? o[k] : () => {}) });
       G.music.start();
       G.ui.buttons([{ label: 'Hint', icon: '?', kind: 'red', aria: 'Hint: which way to move the light', press: () => G.playing && hint() }]);
       hud();
       G.onGo = () => { G.t0 = G.t; G.say('Lights out. Move your phone to shine the light.'); };
-      K.intro(G, { title: 'Pieces of me', how: 'The mirror is broken and the desert is dark. Shine your light to find 8 pieces of who you are. Your sight will change as you go: listen for the glass.',
-        say: 'Pieces of me. The mirror is broken, and the desert has gone dark. Your phone is a flashlight: move it across the painting, or drag a finger, and find eight pieces of the mirror. Each one holds a piece of who you are. Hold the light on a glint of glass to find it. As you go, your sight will change, and your light will get smaller and blurrier. But your hearing gets sharper: follow the shimmer of the glass.' });
+      // the artist's story video: stop Morten's clip so two voices don't overlap
+      const story = G.story; G.story = () => { if (G && G.artist) G.artist.pause(); story && story(); };
+      K.intro(G, { title: 'Pieces of me', how: 'The desert is dark. Shine your light to find 8 pieces of the mirror, each one a piece of who you are. Hold the light on a shard to find it.',
+        say: 'Pieces of me. Your phone is a flashlight: move it across the painting, or drag a finger, and find eight pieces of the mirror. Each one holds a piece of who you are. Hold the light on a glint of glass to find it.' });
     },
     update(dt) {
       if (!G || G.paused) return;
       G.t += dt; G.ui.update(dt); G.fx.update(dt); K.introUpdate(G, dt); K.finaleUpdate(G, dt);
+      dockBanner(G); if (G.note && !noteOn(G) && !G.over) hud();   // the banner sits above the painting; a message ends
       const U = G.uni; U.uT.value = G.t;
       U.uA.value += ((G.ready && !G.over ? 1 : 0) - U.uA.value) * Math.min(1, dt * 2);
       U.uDark.value += (0.96 - U.uDark.value) * Math.min(1, dt * 1.5);
@@ -194,18 +215,32 @@ export function piecesOfMeGame() {
       const k = Math.min(1, dt * 14); G.beam.u += (G.aim.u - G.beam.u) * k; G.beam.v += (G.aim.v - G.beam.v) * k;
       U.uBeam.value.set(G.beam.u, G.beam.v);
       // glints show only in the light
-      PIECES.forEach((s, i) => { const d = dist(s, G.beam), g = G.glints[i]; g.material.opacity = s.got ? Math.max(0, g.material.opacity - dt * 3) : U.uOn.value * Math.max(0, 1 - d / (U.uR.value * 0.9)) * (0.6 + 0.4 * Math.sin(G.t * 5 + i)) * (1 - U.uAll.value); g.scale.setScalar(0.04 + 0.015 * Math.sin(G.t * 3 + i)); });
+      PIECES.forEach((s, i) => { const d = dist(s, G.beam), g = G.glints[i], lit = U.uOn.value * Math.max(0, Math.min(1, (U.uR.value * 1.05 - d) / (U.uR.value * 0.5)));
+        g.material.opacity = s.got ? Math.max(0, g.material.opacity - dt * 3) : lit * (0.5 + 0.5 * Math.sin(G.t * 5 + i)) * (1 - U.uAll.value); g.scale.setScalar(0.04 + 0.015 * Math.sin(G.t * 3 + i));
+        const m = G.pieces[i]; if (!findable(s)) g.material.opacity = 0; if (!s.got) { m.material.opacity = findable(s) ? lit * (1 - U.uPale.value * 0.5) : 0; m.rotation.z = Math.sin(G.t * 0.8 + i) * 0.12; m.scale.setScalar(1 + 0.04 * Math.sin(G.t * 2 + i)); } });
+      // found pieces fly home to the mirror and stay there, glowing, with their word
+      G.home.forEach((H, j) => { H.t += dt; const e = Math.min(1, Math.max(0, (H.t - 0.9) / 1.3)), ee = e * e * (3 - 2 * e), m = H.m;
+        if (G.healT < 0) { m.position.set(H.x + (H.hx - H.x) * ee, H.y + (H.hy - H.y) * ee + Math.sin(ee * Math.PI) * 0.06, 0.075); m.scale.setScalar((1 + 0.25 * Math.sin(Math.min(1, H.t / 0.9) * Math.PI)) * (1 + (DOCK / ICON - 1) * ee) * (1 + 0.04 * Math.sin(G.t * 2 + j)));
+          m.rotation.z *= 0.95; m.material.opacity = 1; H.label.material.opacity = Math.max(0, (H.t - 2.2) * 2) > 1 ? 1 : Math.max(0, (H.t - 2.2) * 2); } });
+      // the mirror heals: every piece gathers in a ring round the crack and turns slowly, glowing
+      if (G.healT >= 0) { G.healT += dt; const e = Math.min(1, G.healT / 1.6), ee = e * e * (3 - 2 * e), [cx, cy] = G.S.P(MIRROR.u, 0.47);
+        G.home.forEach((H, j) => { const a = -Math.PI / 2 + j * Math.PI * 2 / N + G.healT * 0.25, rx = cx + Math.cos(a) * 0.2, ry = cy + Math.sin(a) * 0.2;
+          H.m.position.set(H.hx + (rx - H.hx) * ee, H.hy + (ry - H.hy) * ee, 0.08); H.m.scale.setScalar(DOCK / ICON * (1 + 0.3 * ee) * (1 + 0.06 * Math.sin(G.t * 3 + j)));
+          H.label.position.set(H.m.position.x, H.m.position.y - DOCK * 0.86, 0.085); });
+        if (G.healT - dt < 1.6 && G.healT >= 1.6) { G.fx.add(cx, cy, '#fff4cf', 50, 0.5); G.buzz([60]); } }
       // words fly back to the mirror
       const [mx, my] = G.S.P(MIRROR.u, MIRROR.v);
       for (let i = G.tags.length - 1; i >= 0; i--) { const T = G.tags[i]; T.t += dt; const e = Math.min(1, Math.max(0, (T.t - 1.0) / 1.2)), ee = e * e * (3 - 2 * e);
-        T.tag.position.set(T.x + (mx - T.x) * ee, T.y + (my - T.y) * ee + Math.sin(ee * Math.PI) * 0.05, 0.07); T.tag.scale.setScalar(1 - 0.6 * ee); T.tag.material.opacity = T.t < 1.8 ? 1 : Math.max(0, 1 - (T.t - 1.8) * 2.5);
+        T.tag.position.set(T.x, T.y + ee * 0.03, 0.07); T.tag.material.opacity = T.t < 1.4 ? 1 : Math.max(0, 1 - (T.t - 1.4) * 2.5);
         if (T.t > 2.3) { G.root.remove(T.tag); G.tags.splice(i, 1); } }
       if (G.allT >= 0) { G.allT += dt; U.uAll.value = Math.min(1, G.allT / 2.4); U.uPale.value *= Math.max(0, 1 - dt * 1.2); U.uBlur.value *= Math.max(0, 1 - dt * 1.2); }
       if (G.settle > 0) { G.settle -= dt; if (G.settle <= 0 && G.mirrorDone && !G.over) {
         const t = Math.round(G.t - G.t0), r = K.best('the-mirror:pieces', t, 'lower');
-        K.finale(G, { won: true, title: 'Still you', line: G.work && G.work.quote, best: r.isBest,
+        K.finale(G, { won: true, title: 'Still you', kicker: 'Pieces of me', line: G.work && G.work.quote, best: r.isBest, say: 'Still you.',
           cells: [{ k: 'Pieces', v: `${N}/${N}` }, { k: 'Time', v: Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0') }] });
-        G.music.volume(0.6); } }
+        G.music.volume(0.6); G.overT = 0; } }
+      // the finale: after "Still you.", Morten reads his own words over the soft song
+      if (G.over && !G.artist) { G.overT += dt; if (G.overT > 2.5) { G.artist = new Audio(ARTIST); G.artist.play().catch(() => {}); G.music.volume(0.25); } }
       if (!G.playing || G.mirrorDone) return;
       // searching: hold the light on a glint; the shimmer of glass leads you there, louder as your hearing sharpens
       const s = nextTarget(); if (!s) return;
@@ -227,10 +262,10 @@ export function piecesOfMeGame() {
       if (kind === 'up') { G.touch = null; G.touchT = 0.8; return; }
       if (kind === 'down' || (kind === 'move' && G.touch)) { const p = G.S.toBoard(ev, G.root); if (p) G.touch = { u: p.u, v: p.v }; }
     },
-    pause() { if (G) { G.paused = true; G.music && G.music.volume(0); } },
-    resume() { if (G) { G.paused = false; G.music && G.music.volume(G.mirrorDone ? 0.6 : 0.9); } },
+    pause() { if (G) { G.paused = true; G.music && G.music.volume(0); if (G.artist) G.artist.pause(); } },
+    resume() { if (G) { G.paused = false; G.music && G.music.volume(G.artist ? 0.25 : G.mirrorDone ? 0.6 : 0.9); if (G.artist && G.over) G.artist.play().catch(() => {}); } },
     get over() { return !!(G && G.over); },
-    get debug() { return G && { engine: 'pieces-of-me', playing: G.playing, over: G.over, found: G.found, mirror: G.mirrorDone, R: +G.uni.uR.value.toFixed(3), beam: [+G.beam.u.toFixed(2), +G.beam.v.toFixed(2)], t: +G.t.toFixed(1) }; },
-    stop() { if (G && G.music) G.music.stop(); K.cleanup(G); G = null; },
+    get debug() { return G && { engine: 'pieces-of-me', playing: G.playing, over: G.over, found: G.found, mirror: G.mirrorDone, R: +G.uni.uR.value.toFixed(3), beam: [+G.beam.u.toFixed(2), +G.beam.v.toFixed(2)], t: +G.t.toFixed(1), artist: G.artist ? +G.artist.currentTime.toFixed(1) : null }; },
+    stop() { if (G && G.music) G.music.stop(); if (G && G.artist) { G.artist.pause(); G.artist = null; } K.cleanup(G); G = null; },
   };
 }

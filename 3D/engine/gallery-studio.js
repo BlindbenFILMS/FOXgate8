@@ -68,6 +68,7 @@ export function setupStudio({ G, at = { x: 5.0, z: 8.2 }, face = Math.PI, backin
     }
   });
   g.updateMatrixWorld(true);
+  try { if (G.world.merge) G.world.merge(g); } catch (e) { console.warn('studio merge', e); }   // (29 Oct) phones: the booth's still parts in a few draws
 
   // ---- step on the mat
   G.world.addNear(pl => Math.hypot(pl.x - at.x, pl.z - at.z) < R + 0.25 && Math.abs(pl.y - Y) < 1.5 ? { kind: 'studio', item: null, label: 'Choose your shirt · dress your fox' } : null);

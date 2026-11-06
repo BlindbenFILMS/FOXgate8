@@ -57,7 +57,9 @@ export function setupSound({ getState, inside, filmPlaying, chair, zone = () => 
   { const src = loop(noiseBuf(3, 'brown')), bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 300; src.connect(bp).connect(roll); }
 
   // phones only let sound start from a tap: try again on the next touch or key
-  for (const ev of ['pointerdown', 'keydown', 'touchend']) addEventListener(ev, () => { if (on && ctx.state !== 'running') ctx.resume().catch(() => {}); }, { passive: true });
+  // (29 Oct) any tap, click or key (caught on the way down, so nothing on the page can swallow it) wakes the sound if the phone paused it
+  for (const ev of ['pointerdown', 'pointerup', 'touchend', 'click', 'keydown']) addEventListener(ev, () => { if (on && ctx.state !== 'running') ctx.resume().catch(() => {}); }, { passive: true, capture: true });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && on && ctx.state !== 'running') ctx.resume().catch(() => {}); });
   // (28 Oct) Meditate with Morten: the trickle of the bamboo spout near the pond, and the soft knock of the shishi-odoshi
   const trickle = ctx.createGain(); trickle.gain.value = 0; trickle.connect(master);
   { const src = loop(noiseBuf(4, 'white')), bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2400; bp.Q.value = 0.9; src.connect(bp).connect(trickle); }

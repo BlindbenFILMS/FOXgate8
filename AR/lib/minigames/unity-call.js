@@ -98,7 +98,7 @@ export function callAndAnswerGame() {
   function hint() {
     const p = G.target; if (!p) return;
     const h = p.u < 0.38 ? 'on the left' : p.u > 0.62 ? 'on the right' : 'in the middle', v = p.v < 0.4 ? 'up high' : 'lower down';
-    G.ui.alert('Listen ' + h, (p.v < 0.4 ? 'Up high' : 'Lower down') + ', in the crowd', 1.8, 'blue'); G.say(`${p.call.replace(/^my /, 'Her ')} is ${h}, ${v}.`);
+    G.ui.alert('Listen ' + h, (p.v < 0.4 ? 'Up high' : 'Lower down') + ', in the crowd', 1.8, 'blue'); G.say(`Look ${h}, ${v}.`);   // (six fixed lines, so Ben can record each one)
     p.reveal = Math.min(1, p.reveal + 0.5); answer();
   }
 

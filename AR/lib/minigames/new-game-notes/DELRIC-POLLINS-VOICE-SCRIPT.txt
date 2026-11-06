@@ -1,0 +1,141 @@
+VOICE LINES TO RECORD: DELRIC POLLINS - THE THREE NEW ARTISTS WING GAMES
+(Beauty in the Blurry · Everything in Its Place · The Temperature Setter)
+
+Save each line as its own mp3 with the file name shown, in AR/media/voice/.
+One sentence per file. Say it just as written (the game matches the words exactly).
+Anything not recorded keeps using the computer voice, so you can record a few at a time.
+(Delric's own quotes at the end of each game stay in his words, so they're not in this script.)
+
+78 lines in all: 29 + 39 + 10.
+
+
+═══════════════════════════════════════════════════════════════
+BEAUTY IN THE BLURRY - "Bring the blur to life"   (29 lines)
+═══════════════════════════════════════════════════════════════
+
+Intro (calm, warm, a little hushed - the street is asleep)
+blur-intro-1      Bring the blur to life.
+blur-intro-2      Delric’s night street is asleep.
+blur-intro-3      Drag your finger across the painting to wake it up.
+blur-intro-4      When you are close to a sleeping light, you will hear it call.
+blur-intro-5      Hold your finger there, and it wakes up.
+blur-intro-6      Wake all 7 lights, and the whole street will sing.
+blur-intro-7      You can also press Glow.
+
+Each light as it wakes (bright, pleased)
+blur-awake-neon       The neon sign is awake.
+blur-awake-winl       The shop windows are awake.
+blur-awake-lamps      The street lamps are awake.
+blur-awake-sign       The billboard is awake.
+blur-awake-cars       The cars are awake.
+blur-awake-winr       The windows on the right are awake.
+blur-awake-road       The wet road is awake.
+
+How many are left (said right after the line above)
+blur-more-6       6 more.
+blur-more-5       5 more.
+blur-more-4       4 more.
+blur-more-3       3 more.
+blur-more-2       2 more.
+blur-more-1       1 more.
+
+"Where next?" hints
+blur-try-neon     Try on the left, up high.
+blur-try-winl     Try on the left, in the middle.
+blur-try-lamps    Try up top, a little left.
+blur-try-sign     Try up top, in the middle.
+blur-try-cars     Try in the middle, a little right.
+blur-try-winr     Try on the right.
+blur-try-road     Try down low.
+
+The end
+blur-alive        The whole street is alive.
+blur-end-title    The street is alive.
+
+
+═══════════════════════════════════════════════════════════════
+EVERYTHING IN ITS PLACE - "Put it back"   (39 lines)
+═══════════════════════════════════════════════════════════════
+
+Intro
+place-intro-1     Put it back.
+place-intro-2     Everything on Delric’s desk has its place.
+place-intro-3     When a wave knocks things into the sea, pick them up, and put each one back in its place.
+place-intro-4     Tap a thing, then tap its place on the desk.
+place-intro-5     Or press Pick up, and Help.
+
+The desk, left to right (said slowly, one thing at a time - each thing lights up as you name it)
+place-desk        This is Delric’s desk.
+place-watch       The watch.
+place-wallet      The wallet.
+place-cologne     The cologne.
+place-pencup      The pen cup.
+place-glass       The glass.
+place-books       The books.
+   (These six are also used whenever you pick a thing up out of the sea.)
+
+The waves (building up, a little urgent)
+place-wave        Here comes a wave!
+place-wave-2      Wave 2.
+place-wave-3      Wave 3.
+place-pick        Pick something up from the sea.
+
+Picking up (the first time only)
+place-where       Where does it go?
+place-tap         Tap its place on the desk.
+
+Putting it in the wrong place (friendly, not a telling-off)
+place-not-watch     That’s the watch’s place.
+place-not-wallet    That’s the wallet’s place.
+place-not-cologne   That’s the cologne’s place.
+place-not-pencup    That’s the pen cup’s place.
+place-not-glass     That’s the glass’s place.
+place-not-books     That’s the books’ place.
+
+Help: where the thing you're holding goes
+place-help-watch    It goes at the far left, next to the jar.
+place-help-wallet   It goes between the watch and the cologne.
+place-help-cologne  It goes between the wallet and the pen cup.
+place-help-pencup   It goes between the cologne and the glass.
+place-help-glass    It goes between the pen cup and the books.
+place-help-books    It goes at the far right, after the glass.
+
+Putting it back
+place-back        Back in its place.
+place-more-5      5 more.
+place-more-4      4 more.
+place-more-3      3 more.
+place-more-2      2 more.
+place-more-1      1 more.
+   (Same words as the blur-more lines: you can record them once and save a copy under each name.)
+
+The end of each wave, and the end of the game (calm, satisfied)
+place-all         Everything is in its place.
+place-calm        The sea is calm.
+place-end-title   Everything in its place.
+
+
+═══════════════════════════════════════════════════════════════
+THE TEMPERATURE SETTER - "Hands up, hands down"   (10 lines)
+═══════════════════════════════════════════════════════════════
+
+Intro
+heat-intro-1      Hands up, hands down.
+heat-intro-2      You are Delric, on stage.
+heat-intro-3      Listen for the call, then press hands up, or hands down, on the next beat.
+heat-intro-4      The crowd moves with you.
+heat-intro-5      Grow the crowd from 50 to 5,000.
+
+The calls (HYPE MAN energy! Short and punchy - each one has to land in time with the beat,
+so keep them tight: under about half a second, no breath before)
+heat-up           Hands up!
+heat-down         Hands down!
+   (These two come up a LOT, maybe 15 to 20 times a game. Record a few takes and pick the punchiest.)
+
+A wrong move (playful)
+heat-other        Other way!
+
+The end (go big!)
+heat-5000         5,000 people!
+heat-fire         The room is on fire!
+   ("The room is on fire" is also the title on the end screen: one recording covers both.)

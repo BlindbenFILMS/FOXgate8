@@ -1,0 +1,35 @@
+TELEPHONE POLES (Craig Ellis): Straight as an arrow — VOICE SCRIPT (polished 5 Nov 2026)
+Every line is NEW: this game had no recordings before. Record each line as its own file, named as shown (e.g. poles-intro.mp3),
+into AR/media/voice/.
+Craig's quote at the end is his own clip: don't record it.
+
+== Start ==
+poles-intro    Straight as an arrow. When Craig’s sight began to change, the telephone poles looked like they bent over at the top. Drive his highway at dusk. Hold the Go button to drive. When the poles bend over the road, let go, and wait. When they stand up, drive on.
+poles-hold    Hold the Go button to drive.
+
+== The poles bend over the road (one line each time, in this order) ==
+poles-down-1    The poles are bending over the road. Let go!
+poles-down-2    Here they come again. Let go.
+poles-down-3    Slow down, Dad!
+poles-down-4    They’re bending again. Ease off.
+poles-down-5    Careful, here they come.
+poles-down-6    Last one. Let go and wait.
+
+== Too fast while the poles are bent ==
+poles-whoa    Whoa! Too fast.
+
+== The poles stand up again ==
+poles-up-1    They’re up. Go!
+poles-up-2    Clear. Go!
+poles-up-3    Up again. Go!
+
+== How many are left ==
+poles-left-5    5 to go.
+poles-left-4    4 to go.
+poles-left-3    3 to go.
+poles-left-2    2 to go.
+poles-left-1    1 to go.
+
+== Home (then Craig tells it in his own voice) ==
+poles-home    Home. And your son says, Dad, those things are straight as an arrow.
+poles-end    Home safe.

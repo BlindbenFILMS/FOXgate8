@@ -290,7 +290,7 @@ export function buildWing({ dim = 1, scene, wing, O, rotY = 0, doorW = 0, wood, 
       const posterT = panelTex(640, 360, (c, w, h) => { c.fillStyle = '#1d1c1b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ec3013'; c.fillRect(0, 0, w, 8); c.fillStyle = '#ff9783'; c.font = `800 22px ${FONT}`; c.fillText(A.videoKicker || videoKicker, 34, 150); c.fillStyle = '#fff'; c.font = `800 46px ${FONT}`; wrap(c, A.name.toUpperCase(), w - 68).forEach((l, i) => c.fillText(l, 34, 205 + i * 50)); });
       const posterMat = new THREE.MeshBasicMaterial({ map: posterT }); tv.material[face] = posterMat;
       const z0 = s.side < 0 ? -HW : 0, z1 = s.side < 0 ? 0 : HW;
-      screens.push({ u: A.video, local: A.video, box: tv, faces: [face], posterMat, vol: 0.8, dist: 16, p: toW(new THREE.Vector3(s.x, 2.35, 0)).toArray(),
+      screens.push({ u: A.video, local: A.video, box: tv, faces: [face], posterMat, vol: 0.8, dist: 16, interview: true, p: toW(new THREE.Vector3(s.x, 2.35, 0)).toArray(),
         zone: boxW(new THREE.Vector3(s.x - bayW / 2 + 0.1, -1, z0), new THREE.Vector3(s.x + bayW / 2 - 0.1, 6, z1)) });
     }
     const zf = s.side * (HW - 0.05);   // wall face

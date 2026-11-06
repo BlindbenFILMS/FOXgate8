@@ -2,9 +2,12 @@
 //   "You wake up one day; you saw yesterday the thing that you're going to trip over this morning." — Ben Fox
 // Press Play: the painted figure steps onto a bridge of light that runs into the painting, and becomes yours to walk
 // toward the light. Each morning you get a few seconds of clear sight to memorise where the wet floor signs are, then
-// your sight closes into a tunnel around you. Hold and drag anywhere (or use the arrow keys) to walk: up is forward.
+// your sight closes into a tunnel around you. Walk with the joystick (bottom left), or hold and drag anywhere, or the
+// arrow keys: up is forward.
 // Tap the cane to hear what's ahead: each sign answers from its own side, sooner when it's close. Bump into one and
-// you'll feel it. Five mornings, each with a smaller tunnel and a shorter look. Then Ben tells his story.
+// you'll feel it: he falls over, then gets back up. Three mornings, each with a smaller tunnel and a shorter look.
+// Your sight keeps closing in and opening back up while you walk (it never stays still). Then Ben tells his story,
+// and his own clip reads the quote.
 // Playable by ear: Ben's own recorded voice tells you what's happening, the light chimes from where it is, the cane
 // echoes, and every bump and step has a sound.
 //
@@ -28,12 +31,15 @@ const VDIR = DIR + 'voice/';
 const VX = 512, VY = 610;
 const P = (t, u) => ({ x: VX + u * (35 + 477 * t) * 0.5, y: VY + 414 * t, s: (35 + 215 * t) / 250 });
 const START_T = 0.93, FINISH_T = 0.045, U_MAX = 1.7;
-const SIGHT = [5, 4.5, 4, 3.5, 3];                      // seconds of clear sight each morning
-const TUN = [230, 200, 170, 145, 120];                  // tunnel radius: TUN·s + 40 px
-const SIGNS = [2, 2, 3, 3, 4];                          // wet floor signs each morning (Design: 2; a little more later on)
+const SIGHT = [5, 4.5, 4];                              // seconds of clear sight each morning (three mornings)
+const TUN = [150, 125, 100];                            // tunnel radius at its widest: TUN·s + 40 px
+const SQUEEZE = 0.45, PULSE = 6;                        // the tunnel closes in by this much and opens back up, every PULSE seconds
+const SIGNS = [2, 3, 4];                                // wet floor signs each morning
 const FWD = 0.1, SIDE = 1.1;                            // walking speed: depth / s, across / s
 const LIGHT_Y = 596;                                     // the glow at the far end of the bridge
-const WORDS = ['one', 'two', 'three', 'four', 'five'];
+const WORDS = ['one', 'two', 'three'];
+const ARTIST = new URL('../../../3D/gallery/audio/art_1.mp3', import.meta.url).href;   // Ben, reading his quote in his own words
+const QUOTE = '“It’s important to talk about almost blindness — about people on their journey to total blindness. You wake up one day; you saw yesterday the thing that you’re going to trip over this morning. The way you find out your vision dropped last night is your stubbed toe or your bloody shin.” — Ben Fox';
 
 /* ── sound ── */
 let ac = null;
@@ -223,6 +229,32 @@ function echoMaterial() {
   });
 }
 const unit = new THREE.PlaneGeometry(1, 1);
+/* the wet floor signs, brighter: their gold turned into bright safety yellow (the black print and outline stay) */
+const YEL = new Map();
+function yellow(t) {
+  if (!t || !t.image || t.isCanvasTexture) return t;
+  if (YEL.has(t)) return YEL.get(t);
+  let out = t;
+  try {
+    const im = t.image, w = im.naturalWidth || im.width, h = im.naturalHeight || im.height, c = document.createElement('canvas'); c.width = w; c.height = h;
+    const g = c.getContext('2d'); g.drawImage(im, 0, 0); const d = g.getImageData(0, 0, w, h), p = d.data;
+    for (let i = 0; i < p.length; i += 4) {
+      if (!p[i + 3]) continue;
+      const r = p[i] / 255, gg = p[i + 1] / 255, b = p[i + 2] / 255, mx = Math.max(r, gg, b), mn = Math.min(r, gg, b), dl = mx - mn;
+      if (!dl) continue;
+      let hu = mx === r ? ((gg - b) / dl) % 6 : mx === gg ? (b - r) / dl + 2 : (r - gg) / dl + 4; hu /= 6; if (hu < 0) hu += 1;
+      let sa = dl / mx, v = mx;
+      if (hu > 0.06 && hu < 0.2 && sa > 0.3 && v > 0.25) {          // the sign's gold
+        sa = Math.min(1, sa * 1.15 + 0.1); v = Math.min(1, v * 1.25 + 0.08);
+        const H = 0.142 * 6, f = H - Math.floor(H), P = v * (1 - sa), Q = v * (1 - sa * f), T = v * (1 - sa * (1 - f));   // hue 51°: between the cases 0 and 1
+        p[i] = Q * 255; p[i + 1] = v * 255; p[i + 2] = P * 255;
+        if (Math.floor(H) === 0) { p[i] = v * 255; p[i + 1] = T * 255; }
+      }
+    }
+    g.putImageData(d, 0, 0); out = new THREE.CanvasTexture(c); out.colorSpace = THREE.SRGBColorSpace;
+  } catch (e) { out = t; }
+  YEL.set(t, out); return out;
+}
 
 export function almostBlindnessGame() {
   let G = null;
@@ -262,12 +294,36 @@ export function almostBlindnessGame() {
     let b = document.getElementById('mgCane');
     if (!b && show) {
       b = document.createElement('button'); b.id = 'mgCane'; b.type = 'button'; b.setAttribute('aria-label', 'Tap the cane: hear what is ahead of you');
-      b.innerHTML = '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 21 17 5"/><path d="M17 5c1-1.6 3.4-1 3 1"/><path d="M7.6 18.7 9 16.7" stroke="#ec3013" stroke-width="3"/></svg><span>CANE</span>';
+      b.innerHTML = '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 21 18 3"/><path d="M7.6 18.6 9 16.5" stroke="#ec3013" stroke-width="3"/></svg><span>CANE</span>';
       b.style.cssText = 'position:fixed;right:calc(14px + env(safe-area-inset-right));bottom:calc(76px + env(safe-area-inset-bottom));z-index:12;width:92px;height:92px;border-radius:50%;box-sizing:border-box;padding:0;' +
         'background:#000;color:#fff;border:5px solid #ec3013;box-shadow:0 0 0 3px #fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font:900 15px/1 Archivo,Arial,sans-serif;letter-spacing:.06em;cursor:pointer';
       b.onclick = () => cane(); document.body.appendChild(b);
     }
     if (b) b.style.display = show ? 'flex' : 'none';
+  }
+
+  /* the joystick, bottom left: push the knob the way you want to walk (up is forward). It works in screen space, so it
+     never depends on where the painting is on the screen. The cane stays bottom right. */
+  function joystick(show) {
+    let j = document.getElementById('abJoy');
+    if (!j && show) {
+      j = document.createElement('div'); j.id = 'abJoy'; j.setAttribute('role', 'application'); j.setAttribute('aria-label', 'Joystick: push up to walk forward, left or right to step aside. Arrow keys work too.');
+      j.style.cssText = 'position:fixed;left:calc(14px + env(safe-area-inset-left));bottom:calc(66px + env(safe-area-inset-bottom));z-index:12;width:132px;height:132px;border-radius:50%;box-sizing:border-box;' +
+        'background:rgba(0,0,0,.72);border:4px solid #fff;box-shadow:0 0 0 3px #ec3013;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab';
+      j.innerHTML = '<svg width="124" height="124" viewBox="0 0 124 124" style="position:absolute;inset:0;pointer-events:none" aria-hidden="true" fill="#fff" opacity=".75"><path d="M62 10l9 12H53zM62 114l-9-12h18zM10 62l12-9v18zM114 62l-12 9V53z"/></svg>' +
+        '<div style="position:absolute;left:50%;top:50%;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;background:#ec3013;border:4px solid #fff;box-sizing:border-box;pointer-events:none"></div>';
+      const knob = j.lastChild, R = 46;
+      let id = null, cx = 0, cy = 0;
+      const set = (x, y) => { let dx = x - cx, dy = y - cy; const d = Math.hypot(dx, dy); if (d > R) { dx *= R / d; dy *= R / d; }
+        knob.style.transform = `translate(${dx}px,${dy}px)`; const m = Math.hypot(dx, dy) / R;
+        G && (G.joy = m < 0.15 ? null : [dx / R, -dy / R]); };
+      const end = () => { id = null; knob.style.transform = ''; if (G) G.joy = null; };
+      j.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); audio(); id = e.pointerId; try { j.setPointerCapture(id); } catch (x) {} const r = j.getBoundingClientRect(); cx = r.left + r.width / 2; cy = r.top + r.height / 2; set(e.clientX, e.clientY); });
+      j.addEventListener('pointermove', e => { if (e.pointerId !== id) return; e.preventDefault(); e.stopPropagation(); set(e.clientX, e.clientY); });
+      for (const k of ['pointerup', 'pointercancel', 'lostpointercapture']) j.addEventListener(k, e => { if (e.pointerId === id) { e.stopPropagation(); end(); } });
+      document.body.appendChild(j); j.end = end;
+    }
+    if (j) { j.style.display = show ? 'block' : 'none'; if (!show && j.end) j.end(); }
   }
 
   /* ── Ben's voice: play his recorded lines instead of the phone's speech for the same words ── */
@@ -299,7 +355,7 @@ export function almostBlindnessGame() {
     const r = rng(G.seed + day * 7919), n = SIGNS[day];
     const ids = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(i => [r(), i]).sort((p, q) => p[0] - q[0]).map(p => p[1]).slice(0, n);
     let side = r() < 0.5 ? -1 : 1;
-    return ids.map((id, i) => { const t = 0.14 + 0.7 * (i + 0.5) / n + (r() - 0.5) * 0.05, u = side * (0.3 + r() * 0.9); side = -side; return { id, t, u }; });
+    return ids.map((id, i) => { const t = 0.14 + 0.7 * (i + 0.5) / n + (r() - 0.5) * 0.05, u = side * (0.6 + r() * 0.8); side = -side; return { id, t, u }; });
   }
   function clearSigns() { for (const o of G.signs) { G.root.remove(o.m); G.root.remove(o.echo); G.root.remove(o.ring); o.m.material.dispose(); o.echo.material.dispose(); o.ring.material.dispose(); } G.signs = []; }
   function buildSigns() {
@@ -307,9 +363,9 @@ export function almostBlindnessGame() {
     for (const L of G.layout) {
       const p = P(L.t, L.u), size = 210 * p.s, cx = bx(p.x), cy = by(p.y - size * 0.47);   // Design: top = y − 0.97·size
       const mat = new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false });
-      skin(SIGN(L.id), fb.sign, t => { mat.map = t; mat.needsUpdate = true; });
+      skin(SIGN(L.id), fb.sign, t => { mat.map = yellow(t); mat.needsUpdate = true; });
       const m = new THREE.Mesh(unit, mat); m.scale.set(bs(size), bs(size) * G.h, 1); m.position.set(cx, cy, 0.012); m.renderOrder = 10 + L.t; G.root.add(m);
-      const em = echoMaterial(); skin(SIGN(L.id), fb.sign, t => { em.uniforms.map.value = t; });
+      const em = echoMaterial(); skin(SIGN(L.id), fb.sign, t => { em.uniforms.map.value = yellow(t); });
       const echo = new THREE.Mesh(unit, em); echo.scale.copy(m.scale); echo.position.set(cx, cy, 0.045); echo.renderOrder = 30; G.root.add(echo);
       const ring = new THREE.Sprite(new THREE.SpriteMaterial({ map: ringTex, transparent: true, depthWrite: false, opacity: 0 }));
       ring.position.set(cx, by(p.y - size * 0.42), 0.046); ring.renderOrder = 31; G.root.add(ring);
@@ -330,13 +386,13 @@ export function almostBlindnessGame() {
   }
   function lightsFade() {
     G.phase = 'walk'; G.fadeTo = 1; G.caneCD = 0;
-    big('Your sight closes in', 'Hold and drag to walk to the light. Tap the cane to listen.', 3);
+    big('Your sight closes in', 'Use the joystick to walk to the light. Tap the cane to listen.', 3);
     voice(['sight_closes_in'], 'Your sight closes in. Hold and drag to walk to the light. Tap the cane to listen.', { queue: true });   // never cut Ben off mid-line
     noise(1.4, { vol: 0.25, freq: 220, q: 0.6 }); tone(330, 1.4, { type: 'sine', vol: 0.1, slide: -180 });
-    caneButton(true); G.buzz(60);
+    caneButton(true); joystick(true); G.buzz(60);
   }
   function reachLight() {
-    G.phase = 'done'; G.walkDir = null; G.fadeTo = 0; caneButton(false); G.mornings++;
+    G.phase = 'done'; G.walkDir = null; G.fadeTo = 0; caneButton(false); joystick(false); G.mornings++;
     [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.5, { type: 'triangle', vol: 0.16, delay: i * 0.1 }));
     G.buzz([40, 40, 40, 40, 120]);
     const n = G.day + 1;
@@ -347,41 +403,42 @@ export function almostBlindnessGame() {
       G.nextT = Math.max(3.6, dur + 0.6);
     } else {
       big('Morning ' + n + ' done', ouch + ' The week is over.', 2.6);
-      const dur = voice(['morning_5_done'], 'Morning five done.');
+      const dur = voice(['morning_3_last'], 'Morning three done.');   // NEW line for Ben (27_morning_3_last.mp3); the phone reads it until then
       G.endT = Math.max(2.4, dur + 0.5);
     }
   }
   function finale() {
-    G.phase = 'over'; G.walkDir = null; G.keys = {}; caneButton(false); hideBig();
+    G.phase = 'over'; G.walkDir = null; G.keys = {}; caneButton(false); joystick(false); hideBig();
     const w = G.total, rec = bestBruises === null || w < bestBruises;
     if (rec) { bestBruises = w; try { localStorage.setItem('almost-blindness-best', String(w)); } catch (e) {} }
     for (const id of ['mgHud', 'abFlash']) { const e = document.getElementById(id); if (e) e.style.display = 'none'; }
     // the painting's own animation fades in over the game, with the end panel (Play again is the Stop button's other face)
     K.finale(G, {
-      kicker: 'Five mornings done', title: 'This is almost blindness',
+      kicker: 'Three mornings done', title: 'This is almost blindness',
       cells: [{ k: 'Bruises this week', v: String(w) }, { k: 'Mornings', v: SIGHT.length + ' of ' + SIGHT.length }],
-      best: rec, line: 'You wake up one day; you saw yesterday the thing that you’re going to trip over this morning. — Ben Fox',
+      best: rec, line: (G.work && G.work.quote) || QUOTE,
       say: ' ',                                           // Ben says it himself, just below
     });
     const N = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'];
     const said = 'This is almost blindness. ' + (w > 10 ? 'More than ten' : N[w]) + (w === 1 ? ' bruise' : ' bruises') + ' this week.' + (rec ? ' Best week yet!' : '');
     const ids = ['almost_blindness', w > 10 ? 'bruises_more_than_10' : 'bruises_' + w].concat(rec ? ['best_week_yet'] : []);
-    const story = 'Press Ben’s story to hear it from him.';
-    if (ids.every(id => VBUF.has(id)) && ac && ac.state === 'running') voice(ids, said, { then: () => { if (G && G.over) G.say(story); } });
-    else voice(ids, said + ' ' + story);
+    // then Ben reads his quote himself, from his own clip
+    voice(ids, said, { then: () => { if (G && G.over) G.artistT = 0.7; } });
   }
   function bump(o) {
     G.bruises++; G.total++; o.known = true; o.cool = 1.5; o.a = 1.8; o.mix = 1; o.ra = 0;
     noise(0.18, { vol: 0.45, freq: 160, q: 0.8 }); tone(180, 0.35, { type: 'sawtooth', vol: 0.12, slide: -90, delay: 0.05 });
     G.buzz([90, 40, 140]); G.flash = 0.5;
     G.d = Math.min(0.97, o.t + 0.07);                   // step back
-    G.walkDir = null; G.phase = 'ow'; G.owT = 1.6; G.rough = G.bruises >= 3;
+    G.walkDir = null; G.phase = 'ow'; G.owT = 2.5; G.rough = G.bruises >= 3;
+    // he trips and falls over sideways (away from the sign), lies there a moment, then gets back up; the sign wobbles
+    const me = P(G.d, G.u).x; G.fall = { t: 0, dir: o.x < me ? -1 : 1, landed: false }; o.wob = 1;
     big('Ow! A wet floor sign', 'You saw it yesterday.', 1.6);
     voice(['ow_wet_floor_sign'], 'Ow! A wet floor sign. You saw it yesterday.');
   }
   function afterOw() {
     if (!G.rough) { G.phase = 'walk'; return; }
-    G.phase = 'done'; caneButton(false); G.fadeTo = 0;
+    G.phase = 'done'; caneButton(false); joystick(false); G.fadeTo = 0;
     big('Rough morning', 'Three bruises. Take a breath and try this morning again.', 0);
     const dur = voice(['rough_morning_retry'], 'Rough morning. Three bruises. Try this morning again.', { queue: true });
     G.retryT = Math.max(1.8, dur + 0.5);
@@ -481,8 +538,10 @@ export function almostBlindnessGame() {
       G.light = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0xfff4d6, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
       G.light.position.set(bx(VX), by(LIGHT_Y), 0.04); G.light.renderOrder = 25; G.root.add(G.light);
       G.onKey = onKey; addEventListener('keydown', onKey); addEventListener('keyup', onKey);
-      big('Yesterday I saw it', 'Five mornings. Look, remember, then walk to the light.', 0);
-      G.say('Yesterday I saw it. Five mornings. Look, remember, then walk to the light.');
+      big('Yesterday I saw it', 'Three mornings. Look, remember, then walk to the light.', 0);
+      G.introSaid = false;   // the title line is said as soon as Ben's recording of it has loaded (see update)
+      // stop Ben's clip if the player opens his story video
+      const story = G.story; G.story = () => { if (G && G.artist) G.artist.pause(); story && story(); };
     },
     update(dt) {
       if (!G || G.paused) return;
@@ -491,6 +550,7 @@ export function almostBlindnessGame() {
     },
     tick(dt) {
       G.t += dt; G.tunnel.material.uniforms.uT.value = G.t; G.ui.update(dt); K.finaleUpdate(G, dt);
+      if (G.artistT > 0) { G.artistT -= dt; if (G.artistT <= 0 && G.over && !G.artist) { G.artist = new Audio(ARTIST); G.artist.play().catch(() => {}); musicLevel(MUSIC_VOL * 0.35, 0.6); } }   // Ben's own clip, with the music soft under him
       if (G.bigT > 0) { G.bigT -= dt; if (G.bigT <= 0) hideBig(); }
       if (G.caneCD > 0) G.caneCD -= dt;
       const V = G.V;
@@ -503,7 +563,9 @@ export function almostBlindnessGame() {
         G.introT += dt;                                    // let the title finish, and give the art and Ben's voice a moment (≤ ~3 s) to arrive
         const speaking = !G.bot && window.speechSynthesis && speechSynthesis.speaking;
         const ready = VBUF.size >= vCount && [EMPTY, BRIDGE, FIGURE].every(settled);
-        if (G.introT >= (G.bot ? 0.8 : 1.6) && ((!speaking && ready) || G.introT > (G.bot ? 2.5 : 4.6))) { G.playing = true; newMorning(false); }
+        // Ben says the title (28_intro.mp3) once it has loaded; the phone reads it if it isn't there after 2.5 s
+        if (!G.introSaid && (VBUF.has('intro') || (vCount && VBUF.size >= vCount) || G.introT > 2.5)) { G.introSaid = true; G.introT = Math.min(G.introT, 0.2); voice(['intro'], 'Yesterday I saw it. Three mornings. Look, remember, then walk to the light.'); }
+        if (G.introSaid && G.introT >= (G.bot ? 0.8 : 1.6) && ((!speaking && !talking() && ready) || G.introT > (G.bot ? 2.5 : 8))) { G.playing = true; newMorning(false); }
       } else if (G.phase === 'look') {
         G.lookT -= dt; if (G.timerBar) G.timerBar.style.width = Math.max(0, G.lookT / SIGHT[G.day] * 100) + '%';
         if (G.lookT <= 0) lightsFade();
@@ -520,6 +582,7 @@ export function almostBlindnessGame() {
       if (G.phase === 'walk') {
         let fx = 0, fy = 0;
         if (G.walkDir) { const [dx, dy, s] = G.walkDir; fx = dx * s * 1.4; fy = dy * s; }
+        if (G.joy) { fx = G.joy[0] * 1.2; fy = G.joy[1]; }
         if (G.keys.ArrowUp) fy = 1; if (G.keys.ArrowDown) fy = -0.4; if (G.keys.ArrowLeft) fx = -1; if (G.keys.ArrowRight) fx = 1;
         fx = Math.max(-1, Math.min(1, fx)); fy = Math.max(-0.4, Math.min(1, fy));
         if (Math.abs(fx) > 0.02 || Math.abs(fy) > 0.02) {
@@ -544,20 +607,33 @@ export function almostBlindnessGame() {
       if (!G.bridge.visible && (settled(BRIDGE) || G.t > 2)) G.bridge.visible = true;   // the fallback only if the art is clearly late
       G.mistPivot.rotation.z = Math.sin(G.t * 0.12) * 4 * Math.PI / 180; G.mistPivot.scale.setScalar(1.03 + Math.sin(G.t * 0.2) * 0.02);
       const p = P(G.d, G.u), H = 330 * p.s, W = H * 210 / 414;   // Design: the figure is 330·s tall, feet on the bridge
+      // falling over: tip onto his side from the feet (0.35 s), a little bounce, lie still, then get back up (1 s)
+      let fallA = 0;
+      if (G.fall) { const F = G.fall; F.t += dt; const t = F.t, DOWN = 1.42;
+        if (t < 0.35) fallA = DOWN * Math.pow(t / 0.35, 2);
+        else if (t < 1.3) { fallA = DOWN - 0.1 * Math.sin((t - 0.35) * 16) * Math.exp(-(t - 0.35) * 7);
+          if (!F.landed) { F.landed = true; noise(0.22, { vol: 0.5, freq: 120, q: 0.7 }); G.buzz([120]); } }
+        else if (t < 2.3) { const k = (t - 1.3) / 1.0, e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; fallA = DOWN * (1 - e); }
+        else G.fall = null;
+        fallA *= F.dir; }
       if (moving) G.walkT = (G.walkT || 0) + dt;
       const bob = moving ? Math.abs(Math.sin(G.walkT * 7.5)) * 6 * p.s : 0, sway = moving ? Math.sin(G.walkT * 7.5) * 1.5 * Math.PI / 180 : 0;
       if (G.phase === 'done' && !G.rough && G.d <= FINISH_T + 0.01) G.figA = Math.max(0, G.figA - dt);   // Ben walks into the light
       const figA = G.over ? G.layerA * G.figA : G.figA;
       G.me.visible = G.halo.visible = figA > 0.01 && G.phase !== 'intro';
       G.me.scale.set(bs(W), bs(H) * G.h, 1); G.me.position.set(bx(p.x), by(p.y - H / 2 - bob), 0.013); G.me.rotation.z = -sway; G.me.renderOrder = 10 + G.d + 0.0005;
+      if (fallA) { const a = -fallA, hh = bs(H / 2) * G.h; G.me.rotation.z = a; G.me.position.set(bx(p.x) - Math.sin(a) * hh, by(p.y) + Math.cos(a) * hh, 0.013); }
       G.me.material.opacity = figA;
-      G.halo.scale.setScalar(bs(H) * 0.75); G.halo.position.set(bx(p.x), by(p.y - H * 0.5), 0.0125); G.halo.renderOrder = 10 + G.d + 0.0004; G.halo.material.opacity = 0.45 * figA;
+      G.halo.scale.setScalar(bs(H) * 0.75); G.halo.position.set(fallA ? G.me.position.x : bx(p.x), fallA ? G.me.position.y : by(p.y - H * 0.5), 0.0125); G.halo.renderOrder = 10 + G.d + 0.0004; G.halo.material.opacity = 0.45 * figA;
       G.light.scale.setScalar(0.15 + Math.sin(G.t * 2.2) * 0.018); G.light.material.opacity = G.over ? G.layerA : 1;
       // the tunnel closes to this morning's size, centred on you (Design: TUN·s + 40 px)
-      const dark = G.phase === 'walk' || G.phase === 'ow', targetR = dark ? bs(TUN[Math.min(G.day, TUN.length - 1)] * p.s + 40) : 0.9;
+      const dark = G.phase === 'walk' || G.phase === 'ow';
+      if (dark) G.pulseT = (G.pulseT || 0) + dt; else G.pulseT = 0;
+      const squeeze = 1 - SQUEEZE * (0.5 - 0.5 * Math.cos(G.pulseT * 2 * Math.PI / PULSE));   // closes in, then opens back to this morning's size
+      const targetR = dark ? bs(TUN[Math.min(G.day, TUN.length - 1)] * p.s + 40) * squeeze : 0.9;
       G.tunnelR += (targetR - G.tunnelR) * Math.min(1, dt * (dark ? 2.2 : 3));
       G.fade += ((G.over ? 0 : G.fadeTo) - G.fade) * Math.min(1, dt * 2);
-      const cx = bx(p.x), cy = by(p.y - H * 0.45);
+      const cx = fallA ? G.me.position.x : bx(p.x), cy = fallA ? G.me.position.y : by(p.y - H * 0.45);   // the sight stays on him while he's down
       const U = G.tunnel.material.uniforms; U.uC.value.set(cx, cy); U.uR.value = G.tunnelR; U.uFade.value = G.fade;
       const S = G.swirl.material.uniforms; S.uC.value.set(cx, cy); S.uR.value = G.tunnelR; S.uA.value = -G.t * 9 * Math.PI / 180;
       S.uOp.value = Math.max(0, Math.min(0.6, (1400 - G.tunnelR * 1024) / 1400)) * G.fade;
@@ -569,6 +645,7 @@ export function almostBlindnessGame() {
         o.ring.material.opacity = o.ra; o.ring.scale.setScalar(bs(o.size * 0.8) * (1 + (1 - o.ra) * 0.8));
         o.ring.material.color.set(o.known ? 0xff6a4a : 0xffffff);
         o.m.material.opacity = G.over ? G.layerA : 1;
+        if (o.wob > 0) { o.wob = Math.max(0, o.wob - dt * 0.9); o.m.rotation.z = Math.sin(G.t * 22) * 0.22 * o.wob; o.echo.rotation.z = o.m.rotation.z; }   // knocked: it wobbles
       }
       if (G.flash > 0) G.flash -= dt;
       flashEl().style.display = G.flash > 0 && !G.over ? 'block' : 'none';
@@ -576,20 +653,19 @@ export function almostBlindnessGame() {
     },
     pointer(kind, ev) {
       if (!G || G.paused) return;
-      if (kind === 'down') { audio(); G.drag = { x: ev.clientX, y: ev.clientY, b: toBoard(ev.clientX, ev.clientY) }; return; }
+      if (kind === 'down') { audio(); G.drag = { x: ev.clientX, y: ev.clientY }; return; }
       if (!G.drag) return;
       if (kind === 'up') { G.drag = null; G.walkDir = null; return; }
-      const px = Math.hypot(ev.clientX - G.drag.x, ev.clientY - G.drag.y); if (px < 12) { G.walkDir = null; return; }
-      const b = toBoard(ev.clientX, ev.clientY); if (!b || !G.drag.b) return;
-      const dx = b.x - G.drag.b.x, dy = b.y - G.drag.b.y, d = Math.hypot(dx, dy) || 1;
-      G.walkDir = [dx / d, dy / d, Math.min(1, px / 70)];
+      // drag anywhere still works: measured on the screen (up is forward), so it doesn't matter if the painting moves under your finger
+      const dx = ev.clientX - G.drag.x, dy = G.drag.y - ev.clientY, px = Math.hypot(dx, dy); if (px < 12) { G.walkDir = null; return; }
+      G.walkDir = [dx / px, dy / px, Math.min(1, px / 70)];
     },
-    pause() { if (G) { G.paused = true; G.walkDir = null; G.drag = null; G.keys = {}; musicLevel(0.0001, 0.2); } },
-    resume() { if (G) { G.paused = false; musicLevel(MUSIC_VOL, 0.4); } },
+    pause() { if (G) { G.paused = true; G.walkDir = null; G.drag = null; G.keys = {}; G.joy = null; musicLevel(0.0001, 0.2); if (G.artist) G.artist.pause(); } },
+    resume() { if (G) { G.paused = false; musicLevel(G.artist ? MUSIC_VOL * 0.35 : MUSIC_VOL, 0.4); if (G.artist && G.over) G.artist.play().catch(() => {}); } },
     get over() { return !!(G && G.over); },
     get debug() {
       return G && { engine: 'almost-blindness', secs: +G.t.toFixed(1), playing: !!G.playing && !G.over, over: !!G.over, phase: G.phase, morning: G.day + 1, mornings: G.mornings, depth: +G.d.toFixed(3), u: +G.u.toFixed(2),
-        bruises: G.bruises, total: G.total, retries: G.retries, canes: G.canes, tunnelPx: Math.round(G.tunnelR * 1024),
+        bruises: G.bruises, total: G.total, retries: G.retries, canes: G.canes, falling: !!G.fall, artist: G.artist ? +G.artist.currentTime.toFixed(1) : null, tunnelPx: Math.round(G.tunnelR * 1024),
         signs: G.signs.map(o => [o.id, +o.t.toFixed(2), +o.u.toFixed(2)]),
         voice: { loaded: VBUF.size, of: vCount, played: G.V.played, spoken: G.V.spoken, ctx: ac ? ac.state : 'none' },
         art: { loaded: [...ART.values()].filter(r => r.tex).length, failed: [...ART.entries()].filter(([, r]) => r.fail).map(([u]) => u.split('/').pop()) } };
@@ -597,13 +673,14 @@ export function almostBlindnessGame() {
     cane: () => cane(),
     stop() {
       if (!G) return;
+      try { if (G.artist) { G.artist.pause(); G.artist = null; } } catch (e) {}
       hush(); stopMusic();
       removeEventListener('keydown', G.onKey); removeEventListener('keyup', G.onKey);
       clearSigns();
       for (const m of [G.empty, G.bridge, G.mist, G.tunnel, G.swirl, G.me]) if (m && m.material) m.material.dispose();
       for (const s of [G.halo, G.light]) if (s) s.material.dispose();
       K.cleanup(G);                                         // the finale's video, the root group, the end panel
-      for (const id of ['mgHud', 'abBig', 'mgCane', 'abFlash']) { const e = document.getElementById(id); if (e) e.style.display = 'none'; }
+      for (const id of ['mgHud', 'abBig', 'mgCane', 'abFlash', 'abJoy']) { const e = document.getElementById(id); if (e) e.style.display = 'none'; }
       G = null;
     },
   };

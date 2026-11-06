@@ -10,6 +10,10 @@
 // By ear: the cool side has wind and a minor pad, the warm side a crackle and a major pad, mixed by how much of each
 // you see; soft ticks from the line's side tell you where it is, and a chime rings while you're in the target zone.
 // No tilt sensor? Hold the arrow buttons, or drag left and right.
+// Tilting the phone often swings the camera off the painting, so the game never stops for that: when the painting is out
+// of view, a live picture of it appears on screen (the two worlds, the moving line, the target zone and the embers and
+// mist), and everything keeps going. Point back at the painting and the picture slides away. Tilt is measured from how
+// you held the phone when the game started, so any comfortable way of holding it is "straight".
 import * as THREE from 'three';
 import * as K from './kit.js';
 // (Textures read by a custom shader stay in their own colours: NoColorSpace, so they match the painting exactly.)
@@ -118,6 +122,42 @@ function worlds(ac) {
 export function tidesOfDecisionGame() {
   let G = null;
 
+  /* ── the painting, on screen, for when the camera is off it ── */
+  function screenView() {
+    const el = G.viewEl = document.createElement('div'); el.className = 'mgk'; el.setAttribute('aria-hidden', 'true');
+    Object.assign(el.style, { left: '50%', top: 'calc(214px + env(safe-area-inset-top))', width: 'min(calc(100vw - 24px), 44vh)', transform: 'translateX(-50%) translateY(12px)', opacity: '0', transition: 'opacity .35s, transform .35s',
+      border: '3px solid #fff', boxShadow: '0 8px 0 #000', background: '#000', pointerEvents: 'none' });
+    el.innerHTML = `<canvas width="480" height="${Math.round(480 * G.h)}" style="display:block;width:100%;height:auto"></canvas>
+      <div style="position:absolute;left:0;right:0;bottom:-32px;text-align:center;font:900 12px Archivo,Arial,sans-serif;letter-spacing:.12em;color:#fff;text-transform:uppercase;text-shadow:0 2px 4px #000">Painting out of view · keep going!</div>`;
+    document.body.appendChild(el); G.viewCv = el.querySelector('canvas'); G.viewG = G.viewCv.getContext('2d');
+    G.viewImg = new Image(); G.viewImg.crossOrigin = 'anonymous'; if (G.work && G.work.image) G.viewImg.src = G.work.image;
+  }
+  function drawView() {
+    const c = G.viewG, W = G.viewCv.width, H = G.viewCv.height, d = G.d * W, t = G.t;
+    if (G.viewImg.complete && G.viewImg.naturalWidth) c.drawImage(G.viewImg, 0, 0, W, H); else { c.fillStyle = '#123'; c.fillRect(0, 0, W, H); }
+    // the dividing line, wavy like a tide
+    const edge = (y) => d + Math.sin(y / H * 9 + t * 2.2) * (6 + G.push * 16) + Math.sin(y / H * 23 - t * 3.1) * 3;
+    c.save(); c.beginPath(); c.moveTo(0, 0); for (let y = 0; y <= H; y += 8) c.lineTo(edge(y), y); c.lineTo(0, H); c.closePath();
+    c.globalCompositeOperation = 'soft-light'; c.fillStyle = '#1d5cff'; c.fill(); c.globalCompositeOperation = 'source-over'; c.fillStyle = 'rgba(40,90,220,.22)'; c.fill(); c.restore();
+    c.save(); c.beginPath(); c.moveTo(W, 0); for (let y = 0; y <= H; y += 8) c.lineTo(edge(y), y); c.lineTo(W, H); c.closePath();
+    c.globalCompositeOperation = 'soft-light'; c.fillStyle = '#ff7a1a'; c.fill(); c.globalCompositeOperation = 'source-over'; c.fillStyle = 'rgba(255,120,30,.18)'; c.fill(); c.restore();
+    // mist on the cool side, embers on the warm side
+    for (const w of G.wisps) { const x = Math.min(d - 10, (w.cu * G.d / 0.5 + Math.cos(w.a) * w.r * 0.6) * W), y = (w.cv + Math.sin(w.a * 1.3) * w.r * 0.4) * H;
+      if (x > 0) { const g = c.createRadialGradient(x, y, 0, x, y, 40); g.addColorStop(0, 'rgba(200,220,255,.35)'); g.addColorStop(1, 'rgba(200,220,255,0)'); c.fillStyle = g; c.fillRect(x - 40, y - 40, 80, 80); } }
+    for (const e of G.embers) if (e.u * W > d + 6) { c.fillStyle = `rgba(255,${180 + (e.ph * 10 | 0) % 60},90,${0.5 + 0.5 * Math.sin(t * 6 + e.ph)})`; c.beginPath(); c.arc(e.u * W, e.v * H, 2.5, 0, Math.PI * 2); c.fill(); }
+    // the line itself, glowing
+    c.save(); c.beginPath(); for (let y = 0; y <= H; y += 8) y ? c.lineTo(edge(y), y) : c.moveTo(edge(y), y);
+    c.lineWidth = 6; c.strokeStyle = 'rgba(255,255,255,.35)'; c.stroke(); c.lineWidth = 2.5; c.strokeStyle = '#fff'; c.stroke(); c.restore();
+    // the target zone: brackets at the top and bottom, filling as you hold it
+    const C = CHAPTERS[G.ch];
+    if (C && !G.balanced && G.next === 0) {
+      const z = zoneOf(C), x0 = z[0] * W, x1 = z[1] * W, k = Math.min(1, G.held / C.hold), col = G.inZ ? '#7dff9a' : '#ffe27a';
+      for (const y of [0, H - 14]) { c.fillStyle = 'rgba(0,0,0,.45)'; c.fillRect(x0, y, x1 - x0, 14); c.fillStyle = col; c.fillRect(x0, y, (x1 - x0) * k, 14); c.strokeStyle = col; c.lineWidth = 2; c.strokeRect(x0 + 1, y + 1, x1 - x0 - 2, 12); }
+      c.globalAlpha = G.inZ ? 0.18 + 0.08 * Math.sin(t * 8) : 0.08; c.fillStyle = col; c.fillRect(x0, 0, x1 - x0, H); c.globalAlpha = 1;
+    }
+    if (G.balanced) { const g = c.createRadialGradient(W * SUN.u, H * SUN.v, 0, W * SUN.u, H * SUN.v, W * 0.6); g.addColorStop(0, `rgba(255,244,208,${Math.min(0.8, G.endT * 0.3)})`); g.addColorStop(1, 'rgba(255,244,208,0)'); c.fillStyle = g; c.fillRect(0, 0, W, H); }
+  }
+
   /* ── tilt (the same way the robot dance reads it: works on iPhone and Android, any way up) ── */
   function sensors() {
     const M = G.mot = { ok: false, g: [0, 0, 0], s: 0, roll: 0, n: 0 };
@@ -139,7 +179,7 @@ export function tidesOfDecisionGame() {
   function hud() {
     const C = CHAPTERS[G.ch];
     if (!C) { G.ui.panel('Decision divide', 'Balance', { segs: [CHAPTERS.length, CHAPTERS.length], sub: 'The two worlds meet in the light' }); return; }
-    G.ui.panel(C.kicker, C.name, { segs: [G.ch, CHAPTERS.length], sub: C.how + (G.inZ ? ' · hold it!' : '') });
+    G.ui.panel(C.kicker, C.name, { segs: [G.ch, CHAPTERS.length], sub: G.inZ ? `Hold it! ${Math.round(Math.min(1, G.held / C.hold) * 100)}%` : C.how });
   }
   function startChapter(i) {
     G.ch = i; G.ct = 0; G.held = 0; G.gustT = 2.5;
@@ -161,7 +201,7 @@ export function tidesOfDecisionGame() {
     start(ctx) {
       if (G) this.stop();
       G = K.makeBase(ctx);
-      Object.assign(G, { d: 0.5, vel: 0, ch: -1, ct: 0, held: 0, inZ: false, next: 0, balanced: false, endT: -1, flash: 0, push: 0, tongue: 0, gust: 0, gustT: 0, tickT: 0, stars: 0, btn: 0, drag: null, waveT: 0, bannerT: 0, t0: 0, embers: [], wisps: [] });
+      Object.assign(G, { d: 0.5, vel: 0, ch: -1, ct: 0, held: 0, inZ: false, next: 0, balanced: false, endT: -1, flash: 0, push: 0, tongue: 0, gust: 0, gustT: 0, tickT: 0, stars: 0, btn: 0, drag: null, waveT: 0, bannerT: 0, t0: 0, embers: [], wisps: [], zero: null, lost: false, viewA: 0, hudT: 0 });
       G.uni = { map: { value: null }, uT: { value: 0 }, uD: { value: 0.5 }, uAmp: { value: 0.006 }, uTongue: { value: 0 }, uDir: { value: 1 }, uZ0: { value: 0 }, uZ1: { value: 0 }, uZone: { value: 0 }, uA: { value: 0 }, uBlend: { value: 0 }, uGlow: { value: 1 }, uSwirl: { value: 1 }, uFlash: { value: 0 }, uH: { value: G.h } };
       G.plane = new THREE.Mesh(new THREE.PlaneGeometry(1.002, G.h + 0.002), new THREE.ShaderMaterial({ uniforms: G.uni, vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: false }));
       G.plane.position.z = 0.03; G.plane.renderOrder = 12; G.root.add(G.plane);
@@ -174,10 +214,12 @@ export function tidesOfDecisionGame() {
       G.sun = K.sprite(K.glowTex, 0.3, { color: '#fff4d0', additive: true, opacity: 0, order: 15 }); { const [x, y] = G.S.P(SUN.u, SUN.v); G.sun.position.set(x, y, 0.045); } G.root.add(G.sun);
       G.snd = K.audio() ? worlds(K.audio()) : new Proxy({}, { get: () => () => {} });
       sensors();
-      G.ui.buttons([
-        { label: 'Cool', icon: '◀', kind: 'red', aria: 'Give the cool side strength (hold)', press: () => { G.btn = -1; }, release: () => { if (G.btn < 0) G.btn = 0; } },
-        { label: 'Warm', icon: '▶', kind: 'red', aria: 'Give the warm side strength (hold)', press: () => { G.btn = 1; }, release: () => { if (G.btn > 0) G.btn = 0; } },
+      const bt = G.ui.buttons([
+        { label: 'Cool', icon: '◀', aria: 'Give the cool side strength (hold)', press: () => { G.btn = -1; }, release: () => { if (G.btn < 0) G.btn = 0; } },
+        { label: 'Warm', icon: '▶', aria: 'Give the warm side strength (hold)', press: () => { G.btn = 1; }, release: () => { if (G.btn > 0) G.btn = 0; } },
       ]);
+      if (bt && bt.length === 2) { Object.assign(bt[0].style, { background: 'linear-gradient(135deg,#1c3f9e,#4f8dff)', color: '#fff' }); Object.assign(bt[1].style, { background: 'linear-gradient(135deg,#ff9a2a,#d8361a)', color: '#fff' }); bt[0].style.flexDirection = 'row-reverse'; }
+      screenView();
       hud();
       G.onGo = () => { G.t0 = G.t; G.snd.volume(1); startChapter(0); };
       K.intro(G, { title: 'Tides of decision', how: 'Two worlds battle down the middle of Will’s painting. Tilt your phone to give one side strength and push it across, like waves. Five steps, one choice.',
@@ -187,10 +229,14 @@ export function tidesOfDecisionGame() {
       if (!G || G.paused) return;
       G.t += dt; G.ui.update(dt); G.fx.update(dt); K.introUpdate(G, dt); K.finaleUpdate(G, dt);
       if (G.bannerT > 0) { G.bannerT -= dt; if (G.bannerT <= 0) G.ui.hideBanner(); }
+      // the on-screen picture: in when the painting is out of view (and the game is on), out when it's back
+      G.viewA += (((G.lost || G.screenOnly) && G.playing && !G.over ? 1 : 0) - G.viewA) * Math.min(1, dt * 6);
+      if (G.viewEl) { G.viewEl.style.opacity = G.viewA.toFixed(2); G.viewEl.style.transform = `translateX(-50%) translateY(${(1 - G.viewA) * 12}px)`; if (G.viewA > 0.02) drawView(); }
       G.uni.uA.value += ((G.ready && !G.over ? 1 : 0) - G.uni.uA.value) * Math.min(1, dt * 2);
       // the push: your tilt (or the buttons, or a drag), plus the weather's gusts
       const C = CHAPTERS[G.ch], live = G.playing && C && G.next === 0 && !G.balanced;
-      let roll = G.mot && G.mot.ok ? G.mot.roll : 0;
+      if (G.mot && G.mot.ok && G.zero === null && G.playing) G.zero = G.mot.roll;   // how you held it when it started is "straight"
+      let roll = G.mot && G.mot.ok ? G.mot.roll - (G.zero || 0) : 0;
       if (G.btn) roll = G.btn * 28; if (G.drag) roll = G.drag.roll;
       if (G.bot && live) { const z = zoneOf(C), c = (z[0] + z[1]) / 2; roll = Math.max(-30, Math.min(30, (G.d - c) * 160 + G.gust * 25)); }
       roll = Math.max(-35, Math.min(35, roll));
@@ -222,7 +268,7 @@ export function tidesOfDecisionGame() {
           const z = zoneOf(C); U.uZ0.value = z[0]; U.uZ1.value = z[1]; U.uZone.value += (1 - U.uZone.value) * Math.min(1, dt * 4);
           const was = G.inZ; G.inZ = G.d > z[0] && G.d < z[1];
           if (G.inZ) G.held += dt; else G.held = Math.max(0, G.held - dt * 0.5);
-          if (was !== G.inZ) hud();
+          G.hudT -= dt; if (was !== G.inZ || (G.inZ && G.hudT <= 0)) { G.hudT = 0.2; hud(); }
           G.tickT -= dt; if (G.tickT <= 0) { G.tickT = G.inZ ? 0.3 : 0.55; G.snd.tick((G.d - 0.5) * 2, G.inZ); if (G.inZ) G.buzz(8); }
           if (G.held >= C.hold) chapterDone(false); else if (G.ct > MAX_T) chapterDone(true);
         }
@@ -246,10 +292,11 @@ export function tidesOfDecisionGame() {
       else if (kind === 'move' && G.drag) G.drag.roll = Math.max(-30, Math.min(30, ((ev.clientX - G.drag.x0) / (innerWidth * 0.3)) * 30));   // drag right = tilt right
       else if (kind === 'up') G.drag = null;
     },
-    pause() { if (G) { G.paused = true; G.snd.volume(0); } },
-    resume() { if (G) { G.paused = false; G.snd.volume(G.over ? 0.45 : 1); } },
+    // the painting left the camera (tilting does that): keep playing, and show the painting on screen instead
+    pause() { if (G) G.lost = true; },
+    resume() { if (G) G.lost = false; },
     get over() { return !!(G && G.over); },
-    get debug() { return G && { engine: 'tides', playing: G.playing, over: G.over, ch: G.ch, d: +G.d.toFixed(3), held: +G.held.toFixed(2), inZ: G.inZ, stars: G.stars, sensor: !!(G.mot && G.mot.ok), balanced: G.balanced, t: +G.t.toFixed(1) }; },
-    stop() { if (G) { G.offMotion && G.offMotion(); G.snd && G.snd.stop && G.snd.stop(); } K.cleanup(G); G = null; },
+    get debug() { return G && { engine: 'tides', playing: G.playing, over: G.over, ch: G.ch, d: +G.d.toFixed(3), held: +G.held.toFixed(2), inZ: G.inZ, stars: G.stars, sensor: !!(G.mot && G.mot.ok), balanced: G.balanced, lost: G.lost, view: +G.viewA.toFixed(2), t: +G.t.toFixed(1) }; },
+    stop() { if (G) { G.offMotion && G.offMotion(); G.snd && G.snd.stop && G.snd.stop(); G.viewEl && G.viewEl.remove(); } K.cleanup(G); G = null; },
   };
 }

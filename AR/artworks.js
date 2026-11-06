@@ -92,7 +92,7 @@ export const ARTWORKS = [
     target: 'targets/5-weeks-on-my-side.mind',
     image: 'targets/5-weeks-on-my-side.jpg',
     width: 576, height: 576,
-    quote: "",
+    quote: "“I had the first of four eye surgeries at the age of 18. Docs put a gas bubble in my eye to hold stitches on my retina. If I moved my head the gas bubble could tear the stitches out. So for 5 weeks I was on 1 side, in bed and watching movies. Friends visited me often, and brought me every VHS tape they had. Watching movies with friends wondering about the future. Those were actually good times.” — Ben Fox",
     description: "5 WEEKS ON MY SIDE. By Ben Fox. \"I had the first of four eye surgeries at the age of 18. Docs put a gas bubble in my eye to hold stitches on my retina. If I moved my head the gas bubble could tear the stitches out. So FOR 5 WEEKS I WAS ON 1 SIDE, in bed and watching movies. / Friends visited me often, and brought me every VHS tape they had. Watching movies with friends wondering about the future. Those were actually good times.\" - BEN FOX \t\t\t\t\t\t\t\t/IMAGE DESCRIPTION/ Image shows a young man wearing an eye patch in bed with video tapes in large stacks all around him, tehre is a tv in the center of the image that says, \"Blind Canvas Project\".",
     overlay: { type: 'story', anim: null, clip: "media/clips/5-weeks-on-my-side.mp4", audio: null },
     hotspots: []
@@ -404,7 +404,7 @@ export const ARTWORKS = [
     target: 'targets/seeing-the-world-together.mind',
     image: 'targets/seeing-the-world-together.jpg',
     width: 512, height: 512,
-    quote: "",
+    quote: "“My wife and I have been married for eight years. The blindness journey with her has been nothing but amazing because she is my eyes and I help her out in the ways that I do. But we both get to see the world together and I am grateful for it.” — Ricky Ruzicka",
     description: "SEEING THE WORLD TOGETHER. By Ricky Ruzicka. “My wife and I have been married for eight years. The blindness journey with her has been nothing but amazing because she is my eyes and I help her out in the ways that I do. But we both get to see the world together and I am grateful for it.” = RICKY RUZICKA   /IMAGE DESCRIPTION/  This lively image depicts a visionary utopia set in the distant future. It captures a scene that integrates the splendor of nature with the potential marvels of advanced technology. The centerpiece of the illustration consists of two silhouettes, Ricky and his wife, standing side by side, exuding a contemplative air as they gaze upon the breathtaking landscape before them. The pair is immersed within lush flora, with towering plants and foliage enveloping their surroundings. A serene body of water occupies the midground, its surface mirroring the sky and the surrounding futuristic buildings. The sky is a tapestry of vibrant colors, encompassing gradients of orange, pink, and yellow, suggesting a time of dawn or dusk. Wisps of clouds are scattered across this celestial canvas, accentuating the luminosity of the piece. Hovering within the sky is a planet resembling Saturn in that it is enclosed within a ring.  The themes of this image are rooted in Ricky’s well founded, reliable relationship with his wife. He expresses that despite his visual impairment, she has been able to help him “see” through continuing to guide and support him unconditionally. One of the most significant features in the illustration is the directions in which Ricky and his wife are looking – Ricky is looking out into the distance while his wife is gazing at him. Her unwavering focus on Ricky, even in the face of a breathtaking view, reveals her undying dedication to supporting her husband through his journey. They see the world together, but Ricky is her world.",
     overlay: { type: 'story', anim: "../3D/gallery/anim/ricky_r_seeing_world_optimized_269676270.mp4", clip: "media/clips/seeing-the-world-together.mp4", audio: null },
     hotspots: []
@@ -416,7 +416,7 @@ export const ARTWORKS = [
     target: 'targets/hope-is-not-lost.mind',
     image: 'targets/hope-is-not-lost.jpg',
     width: 512, height: 512,
-    quote: "",
+    quote: "“Hope is not lost. There is a difference between your eyesight and vision, right? You have to have a vision for hope in the future and what you can still do through those challenges that you may have now. You are losing something, but just because you lose something doesn’t mean that there’s nothing to be gained from it.” — Ricky Ruzicka",
     description: "HOPE IS NOT LOST. By Ricky Ruzicka. “Hope is not lost. There is a difference between your eyesight and vision, right? You have to have a vision for hope in the future and what you can still do through those challenges that you may have now. You are losing something, but just because you lose something doesn’t mean that there’s nothing to be gained from it.” = RICKY RUZICKA   /IMAGE DESCRIPTION/  The image portrays an ethereal, surreal scene of a floating island suspended in the sky amidst a sea of fluffy, white clouds. The island is an isolated, rocky plateau with steep cliffs descending into the mist below it. Upon the island is a serene oasis, featuring a peaceful, circular pond surrounded by sparsely scattered plants and rock formations that evoke a sense of tranquility and beauty. A solitary figure, presumably Ricky, stands near the edge of the pond, observing the terrain around him. Ricky’s presence adds a contemplative and human element to the scene. The sky above and around the floating island is a mesmerizing blend of soft blues and oranges, accompanied by a mass of fluffy, cumulonimbus clouds. Two faraway crescent moons are faintly visible, adding to the celestial, surrealistic tone of the piece.  The isolation of the island represents Ricky’s feelings of solidarity on his journey of navigating blindness. Though he has support from loved ones, he is the only one who can truly fight this battle for himself. A path of isolation, though, can be one of great beauty, and because Ricky is lonesome on this journey, he is the only one who can reap the benefits of this beautiful island for one. He has held onto a strong sense of vision despite his lack of sight, which has provided him with the most important thing of all: hope.",
     overlay: { type: 'story', anim: "../3D/gallery/anim/ricky_r_hope_optimized_269676271.mp4", clip: "media/clips/hope-is-not-lost.mp4", audio: null },
     hotspots: []
@@ -476,7 +476,7 @@ export const ARTWORKS = [
     target: 'targets/goalball-is.mind',
     image: 'targets/goalball-is.jpg',
     width: 512, height: 512,
-    quote: "",
+    quote: "“Goalball is probably the greatest sport, and not many people have heard of it. I found it about four years into the rehabilitation and the new journey of blindness and I was so grateful at the time to be exposed to friends in the community who were thriving and who were so passionate about something.” — Ricky Ruzicka",
     description: "GOALBALL IS.... By Ricky Ruzicka. “Goalball is probably the greatest sport, and not many people have heard of it. I found it about four years into the rehabilitation and the new journey of blindness and I was so grateful at the time to be exposed to friends in the community who were thriving and who were so passionate about something.” = RICKY RUZICKA   /IMAGE DESCRIPTION/  This piece is a vibrant and dynamic illustration that captures the essence of athleticism and motion. The composition is similar in structure to a kaleidoscope; geometric shapes and bold colors are arranged to depict a moment of intense action in the sport of goalball. At the heart of the piece is an abstract representation of a goalball player in mid-action. The player’s form is composed of geometric segments, each section painted in a different color. The player’s limbs are extended, suggesting a dramatic leap or dive. The player’s contours are defined by sharp angles and contrasting tones which convey the fluidity and tension of the movement at hand. A ball is captured in the player’s outstretched hand, revealing a climactic moment in the game. The scene’s background is composed of angular forms, creating an environment that suggests boundaries similar to those of a soccer field. Lines and shapes in varying shades of blue, green, red, and yellow dominate the piece.  The thrilling and spirited essence of this image suggests the amount of liveliness that has been restored in Ricky’s life since he began playing goalball. After enduring a difficult period during rehabilitation, goalball served as a light in Ricky’s world of darkness, reminding him of the joys that life has to offer.",
     overlay: { type: 'story', anim: "../3D/gallery/anim/ricky_r_goalball_optimized_269676269.mp4", clip: "media/clips/goalball-is.mp4", audio: null },
     hotspots: []
@@ -672,6 +672,260 @@ export const ARTWORKS = [
     description: "Decision Divide. By Will Hollimon. The striking visual depicts a bridge spanning two vastly contrasting worlds, serving as a profound metaphor for the process of making impactful decisions. On the left, the landscape is cool, serene, and bathed in a calming blue hue — the familiar comfort of the current reality. Conversely, the right side is aflame with fiery oranges and reds, an intense representation of the unpredictable outcome of undergoing treatment or surgery. The bridge connecting the two realms embodies the impending decision. It’s narrow, seemingly fragile, and represents a path of no return — encapsulating the dichotomy of hope and fear, the known and unknown, as the viewer stands at the precipice of a life-altering decision.",
     overlay: { type: 'story', anim: "../3D/gallery/anim/wix_will_stuck.mp4", clip: "media/clips/decision-divide.mp4", audio: null },
     hotspots: []
+  },
+
+  // ── the New Artists Wing (added 3 Nov 2026, from the 3D gallery's images, animations and the artists' voice clips) ──
+  {
+    id: "the-button-is-to-the-left",
+    title: "The Button is to the Left",
+    artist: "Anthony Ferraro",
+    target: 'targets/the-button-is-to-the-left.mind',
+    image: 'targets/the-button-is-to-the-left.jpg',
+    width: 900, height: 900,
+    quote: "“Sometimes independence is knowing when to advocate for help.” — Anthony Ferraro",
+    description: "The Button is to the Left. By Anthony Ferraro. This image shows a street-level view from a city curb, where a crosswalk leads to a large, complex city building. To the left, there is a crosswalk button mounted on a pole. The large glass-and-steel structure in the background stacks walkways, bridges, and stairs in overlapping directions, creating a space that feels visually complex and hard to map. In the middle of that complexity, the crossing button becomes a small but essential point of access. It is a practical object, but in this image it carries a much larger meaning. By placing the viewer directly at the curb, facing a crosswalk button before an overwhelming maze of stairs, glass, and circulation systems, the image makes a larger truth immediate: the built world is often designed to be understood visually, and even beginning the journey can depend on locating one small point of access. Anthony’s insight rings true — that freedom is not about doing everything alone, but about being able to ask for the information you need to move through the world.",
+    overlay: { type: 'story', anim: "../3D/gallery/anim/wix_anthony_button.mp4", clip: "media/clips/the-button-is-to-the-left.mp4", audio: "../3D/gallery/audio/wing_0_0.mp3" },
+    hotspots: []
+  },
+  {
+    id: "light-on-the-other-side",
+    title: "Light on the Other Side",
+    artist: "Anthony Ferraro",
+    target: 'targets/light-on-the-other-side.mind',
+    image: 'targets/light-on-the-other-side.jpg',
+    width: 878, height: 878,
+    quote: "“You’re faced with these situations in life. And the two options are: do I give up or do I keep going? Giving up is just not an option, ever. So you have to keep going. When you step through that madness and darkness, there’s always going to be light on the other side. The dark helps you enjoy those light moments.” — Anthony Ferraro",
+    description: "Light on the Other Side. By Anthony Ferraro. This painting shows a figure skateboarding with a white cane through a vast, dark tunnel or wave of deep blue and black. The figure is small in the composition, leaning forward as he moves along a narrow path of warm light. Ahead of him, the darkness opens into a bright burst of white, gold, and orange, spilling across the ground like an illuminated passage. The scale of the image is important. The darkness feels enormous, almost like a storm or a force of nature, while the figure continues forward through it. The image does not pretend the darkness is small or easy. It makes the darkness real, but it also shows motion through it. The light becomes something reached through persistence, not something handed over easily. The piece reflects Anthony’s idea that life gives you moments where the choice is to give up or keep going. The figure’s movement becomes a physical expression of perseverance. The dark is not the end of the story — it is part of what makes the light on the other side feel so meaningful.",
+    overlay: { type: 'story', anim: "../3D/gallery/anim/wix_anthony_light.mp4", clip: "media/clips/light-on-the-other-side.mp4", audio: "../3D/gallery/audio/wing_0_1.mp3" },
+    hotspots: []
+  },
+  {
+    id: "one-love",
+    title: "One Love",
+    artist: "Anthony Ferraro",
+    target: 'targets/one-love.mind',
+    image: 'targets/one-love.jpg',
+    width: 900, height: 900,
+    quote: "“I just want to help other people. That’s all I’ve ever wanted to do. I’m just trying to spread positivity around the world and use my platform to help others.” — Anthony Ferraro",
+    description: "One Love. By Anthony Ferraro. This image shows the outline of a large hand making a peace sign against a light, minimal background. Across the hand, the words ONE LOVE appear in bold red letters. Inside the shape of the hand is a black-and-white landscape made of trees, flowers, birds, open sky, and a small walking figure. From a distance, the image reads like a poster: simple, direct, and iconic. Up close, it becomes more layered. The landscape inside the hand gives the symbol emotional depth. The small figure walking through the scene adds a sense of humility and purpose, as if the message is not just being declared, but lived. The piece reflects Anthony’s desire to help other people, spread positivity, and use his platform in service of others. “One Love” becomes more than a phrase — it becomes a visual philosophy. The peace sign reaches outward as a gesture of connection, while the landscape inside it suggests that love is also carried internally, shaped by experience, and offered back to the world.",
+    overlay: { type: 'story', anim: "../3D/gallery/anim/wix_anthony_onelove.mp4", clip: "media/clips/one-love.mp4", audio: "../3D/gallery/audio/wing_0_2.mp3" },
+    hotspots: []
+  },
+  {
+    id: "art-raised-me-up",
+    title: "Art Raised Me Up",
+    artist: "Deborah Tramentozzi",
+    target: 'targets/art-raised-me-up.mind',
+    image: 'targets/art-raised-me-up.jpg',
+    width: 800, height: 800,
+    quote: "“Art has raised me up so many times. When I touch a sculpture or feel the texture of a painting described to me, I am lifted out of the dark and into something luminous.” — Deborah Tramentozzi",
+    description: "Art Raised Me Up. By Deborah Tramentozzi. The image presents a grand, shadowed museum hall lined with ornate gilded frames. A single powerful beam of light pierces the darkness from above, lifting several framed paintings out of the gloom so they appear to float in mid-air, glowing. The polished floor mirrors the light, doubling its glow. The darkness of the hall speaks to a world that is often experienced without sight, while the beam of light becomes art itself — reaching in, illuminating, and lifting what matters into view. The floating frames suggest that beauty is not fixed to the wall but can rise to meet us. For Deborah, who has been blind since birth, art is not about seeing with the eyes but about being raised up — carried into meaning, dignity, and wonder by the works and the people who describe them.",
+    overlay: { type: 'story', anim: "../3D/gallery/anim/wix_deborah_raisedup.mp4", clip: "media/clips/art-raised-me-up.mp4", audio: "../3D/gallery/audio/wing_1_0.mp3" },
+    hotspots: []
+  },
+  {
+    id: "live-the-beauty",
+    title: "Live the Beauty",
+    artist: "Deborah Tramentozzi",
+    target: 'targets/live-the-beauty.mind',
+    image: 'targets/live-the-beauty.jpg',
+    width: 900, height: 897,
+    quote: "“You don’t have to see beauty to live it. Beauty is something you move through, something you breathe — it surrounds you whether or not your eyes can catch it.” — Deborah Tramentozzi",
+    description: "Live the Beauty. By Deborah Tramentozzi. The image is a vast, dreamlike landscape of billowing clouds that swirl around a radiant opening of warm light at its center. Classical figures, mountains, rivers, and forests fill the scene in rich, painterly detail, arranged like a great spiral drawing the eye — and the spirit — toward the glowing heart of the composition. The swirling clouds and luminous center evoke a world experienced not as a flat picture but as an immersive, surrounding presence. Beauty here is atmospheric and total, something you are inside of rather than something you look at. It reflects Deborah’s conviction that beauty is lived through every sense — sound, touch, scent, and feeling — and that a full, vivid inner world is open to everyone, sighted or not.",
+    overlay: { type: 'story', anim: "../3D/gallery/anim/wix_deborah_livebeauty.mp4", clip: "media/clips/live-the-beauty.mp4", audio: "../3D/gallery/audio/wing_1_1.mp3" },
+    hotspots: []
+  },
+  {
+    id: "a-different-way-to-see",
+    title: "A Different Way to See",
+    artist: "Deborah Tramentozzi",
+    target: 'targets/a-different-way-to-see.mind',
+    image: 'targets/a-different-way-to-see.jpg',
+    width: 800, height: 800,
+    quote: "“Being blind is not the absence of seeing — it is a different way to see. I build the world from details, from voices, from memory and imagination, and the picture is whole.” — Deborah Tramentozzi",
+    description: "A Different Way to See. By Deborah Tramentozzi. The image is an intricate collage of many small framed paintings — classical scenes of people, architecture, and landscapes — connected by fine lines and overlapping at different angles across a bright wall. Together the scattered fragments assemble into a single larger composition. The many separate frames represent the pieces of information a blind person gathers — a described detail here, a remembered texture there, a fragment of conversation — each one partial on its own. The connecting lines show how the mind weaves them into a coherent whole. It embodies Deborah’s insight that perception is an act of construction for everyone. Her way of seeing simply assembles the picture from different materials — and the result is no less complete, no less beautiful.",
+    overlay: { type: 'story', anim: "../3D/gallery/anim/wix_deborah_diffway.mp4", clip: "media/clips/a-different-way-to-see.mp4", audio: "../3D/gallery/audio/wing_1_2.mp3" },
+    hotspots: []
+  },
+  {
+    id: "beauty-in-the-blurry",
+    title: "Beauty in the Blurry",
+    artist: "Delric Pollins",
+    target: 'targets/beauty-in-the-blurry.mind',
+    image: 'targets/beauty-in-the-blurry.jpg',
+    width: 960, height: 960,
+    quote: "“There’s beauty in the blurry. When the details fade, you start to feel the world instead of just seeing it.” — Delric Pollins",
+    description: "Beauty in the Blurry. By Delric Pollins. This image shows a city street at night rendered in soft, smeared light. Headlights, neon signs, and reflections on wet pavement dissolve into glowing streaks of blue and amber. Nothing holds a hard edge — the whole scene shimmers and moves. For someone with Stargardt disease, the sharp center of vision is what fades first, leaving a world of color, light, and motion without crisp detail. Rather than mourn that loss, the painting celebrates it: the blur becomes its own kind of beauty. It is an invitation to find wonder in impressionistic light — to recognize that a life lived through softened vision is still vivid, still full, still worth seeing.",
+    overlay: { type: 'story', anim: "../3D/gallery/anim/wix_delric_blurry.mp4", clip: "media/clips/beauty-in-the-blurry.mp4", audio: "../3D/gallery/audio/wing_2_0.mp3" },
+    hotspots: []
+  },
+  {
+    id: "everything-in-its-place",
+    title: "Everything in Its Place",
+    artist: "Delric Pollins",
+    target: 'targets/everything-in-its-place.mind',
+    image: 'targets/everything-in-its-place.jpg',
+    width: 960, height: 960,
+    quote: "“When you can’t rely on your eyes, everything has to have its place. Order becomes a kind of freedom.” — Delric Pollins",
+    description: "Everything in Its Place. By Delric Pollins. This image shows an everyday desk — a watch, a wallet, pens, a glass of water, a stack of books — resting on a surface that drops away into a churning ocean, as if the edge of the table is a cliff above a vast sea. For a person navigating sight loss, keeping each object in a known, fixed place is what makes daily life possible. The calm, ordered objects above contrast with the turbulent water below, capturing how a small act of organization holds back a sense of chaos. It is a meditation on control and trust — on building a reliable world by touch and memory, so that the unknown depths beneath never have to be faced unprepared.",
+    overlay: { type: 'story', anim: "../3D/gallery/anim/wix_delric_place.mp4", clip: "media/clips/everything-in-its-place.mp4", audio: "../3D/gallery/audio/wing_2_1.mp3" },
+    hotspots: []
+  },
+  {
+    id: "the-temperature-setter",
+    title: "The Temperature Setter",
+    artist: "Delric Pollins",
+    target: 'targets/the-temperature-setter.mind',
+    image: 'targets/the-temperature-setter.jpg',
+    width: 960, height: 960,
+    quote: "“As a performer, you set the temperature in the room. That’s the one thing my eyes could never take from me.” — Delric Pollins",
+    description: "The Temperature Setter. By Delric Pollins. This image shows a performer standing on a stage, microphone raised, silhouetted against a blaze of golden light. A sea of hands reaches up from the crowd below, the whole scene glowing with heat and energy. For Delric — a hip-hop artist and performer — the stage is where vision matters least and presence matters most. He cannot see every face, but he can feel the room, and he can move it. The painting captures that exchange of energy: the artist as the one who sets the emotional temperature of a space, turning a crowd into a single, electric moment. It is a portrait of power that has nothing to do with sight.",
+    overlay: { type: 'story', anim: "../3D/gallery/anim/wix_delric_temp.mp4", clip: "media/clips/the-temperature-setter.mp4", audio: "../3D/gallery/audio/wing_2_2.mp3" },
+    hotspots: []
+  },
+  {
+    id: "how-not-who",
+    title: "How, Not Who",
+    artist: "Doreen Holmes",
+    target: 'targets/how-not-who.mind',
+    image: 'targets/how-not-who.jpg',
+    width: 768, height: 768,
+    quote: "“You don’t have to change anything about you, you’ve got to change the things you do and how you do them.” — Doreen Holmes",
+    description: "How, Not Who. By Doreen Holmes. This image shows three stages of transformation arranged from left to right on a clean white background. On the left is a caterpillar, detailed with green, yellow, and blue patterns. In the center is a transitional form with green wings beginning to open. On the right is a fully formed butterfly with blue and gold wings. The three forms feel connected, like one life moving through different ways of being. The transformation does not suggest becoming someone else. It shows the same self adapting into new forms. The title How, Not Who gets to the heart of that idea. What changes is not identity, value, or purpose. What changes is the method, the approach, the way forward. The piece honors adaptation without self-erasure, and shows change as something that can preserve the person while opening a new way to live.",
+    overlay: { type: 'story', anim: "../3D/gallery/anim/wix_doreen_metamorphosis.mp4", clip: "media/clips/how-not-who.mp4", audio: "../3D/gallery/audio/wing_3_0.mp3" },
+    hotspots: []
+  },
+  {
+    id: "invisibly-ours",
+    title: "Invisibly, Ours",
+    artist: "Doreen Holmes",
+    target: 'targets/invisibly-ours.mind',
+    image: 'targets/invisibly-ours.jpg',
+    width: 768, height: 774,
+    quote: "“There are those who say, ’Well, you don’t look blind,’ or ’you don’t act blind.’ I hear it all the time. We must remember that disabilities are not always visible.” — Doreen Holmes",
+    description: "Invisibly, Ours. By Doreen Holmes. This image shows a large crowd made up of hundreds of small painted figures. The people are simplified, colorful, and varied. Some wear bright colors, others darker tones. Some appear close together, while others are separated by small spaces. No single person stands at the center — the entire image is a field of human presence. From a distance, the crowd looks like a pattern of color and shape. Up close, each figure suggests an individual life. Because the figures are stylized, their inner lives are not visible. The viewer cannot know from the outside what each person may be living with. The image connects to Doreen’s quote about invisible disability. It pushes back against statements like ’you don’t look blind’ or ’you don’t act blind.’ The crowd reminds us that appearance does not reveal everything. The title “Invisibly, Ours” suggests both hidden experience and shared belonging. The piece asks the viewer to look with more humility, and to remember that what cannot be seen is still real.",
+    overlay: { type: 'story', anim: "../3D/gallery/anim/wix_doreen_invisibility.mp4", clip: "media/clips/invisibly-ours.mp4", audio: "../3D/gallery/audio/wing_3_1.mp3" },
+    hotspots: []
+  },
+  {
+    id: "unstoppable",
+    title: "Unstoppable",
+    artist: "Doreen Holmes",
+    target: 'targets/unstoppable.mind',
+    image: 'targets/unstoppable.jpg',
+    width: 768, height: 768,
+    quote: "“He said, ’When you walked into this office, what did you want to do before I gave you the news?’ I said I wanted to be a yoga teacher. He said, ’What’s stopping you?’” — Doreen Holmes",
+    description: "Unstoppable. By Doreen Holmes. This image shows the silhouette of a woman in a yoga pose, balanced on one leg with her hands lifted in front of her. Behind her is a large, translucent pink flower, almost like a lotus, opening outward around her body. The background is warm and soft, filled with peach, rose, and golden tones. The image reflects the moment in Doreen’s quote when a difficult diagnosis is met with a simple question: “What’s stopping you?” She wanted to become a yoga teacher, and that question helped return the possibility to her. The flower suggests growth, renewal, and inner strength, while the yoga pose speaks to balance, focus, and embodiment. The image does not show someone being stopped by the news she received. It shows someone still rising, still centered, and still moving toward the life she wanted.",
+    overlay: { type: 'story', anim: "../3D/gallery/anim/wix_doreen_unstoppable.mp4", clip: "media/clips/unstoppable.mp4", audio: "../3D/gallery/audio/wing_3_2.mp3" },
+    hotspots: []
+  },
+  {
+    id: "comfort-in-the-uncomfortable",
+    title: "Comfort in the Uncomfortable",
+    artist: "Michael Tubiak",
+    target: 'targets/comfort-in-the-uncomfortable.mind',
+    image: 'targets/comfort-in-the-uncomfortable.jpg',
+    width: 900, height: 900,
+    quote: "“I’ve learned to get comfortable being uncomfortable. That’s where the growth happens — pushing into the stuff that scares you.” — Michael Tubiak",
+    description: "Comfort in the Uncomfortable. By Michael Tubiak. This image shows a lone mountain biker dropping into a vast, sculpted canyon of sunlit rock. The rider is tiny against the towering ridges and deep troughs that fall away on either side, the trail a thin ribbon winding down through the immense terrain. The scale is dizzying, and the path ahead demands total commitment. The composition places the viewer right at the edge of the descent, where the only way through is down and forward. The smallness of the rider against the enormity of the landscape captures both the fear and the freedom of the moment. For Mike, the image embodies his belief in getting comfortable being uncomfortable. The canyon is every daunting challenge; the rider is the choice to drop in anyway. Growth, the piece suggests, lives on the far side of fear.",
+    overlay: { type: 'story', anim: "../3D/gallery/anim/wix_mike_comfort.mp4", clip: "media/clips/comfort-in-the-uncomfortable.mp4", audio: "../3D/gallery/audio/wing_4_0.mp3" },
+    hotspots: []
+  },
+  {
+    id: "spectrum-of-sight",
+    title: "Spectrum of Sight",
+    artist: "Michael Tubiak",
+    target: 'targets/spectrum-of-sight.mind',
+    image: 'targets/spectrum-of-sight.jpg',
+    width: 900, height: 900,
+    quote: "“Blindness isn’t black and white. It’s a whole spectrum — there are so many different ways of seeing, and so many of us living somewhere in between.” — Michael Tubiak",
+    description: "Spectrum of Sight. By Michael Tubiak. This image shows a bold, graphic eye set against a vivid red background. The iris is built from concentric rings of rainbow color spiraling inward to a deep black pupil, while the upper and lower lids fold in like halves of a circle. It reads at once as an eye, a target, and a color wheel. The design is clean and symbolic rather than literal. The bands of color moving from bright to dark suggest a range — a continuum of vision rather than a single fixed state. The black center anchors the spectrum, a reminder that sight and its loss exist on a scale. The piece reflects Mike’s insistence that blindness is not all-or-nothing. “Spectrum of Sight” challenges the language around vision, honoring the many gradations of how people see and the wide community living across that spectrum.",
+    overlay: { type: 'story', anim: "../3D/gallery/anim/wix_mike_spectrum.mp4", clip: "media/clips/spectrum-of-sight.mp4", audio: "../3D/gallery/audio/wing_4_1.mp3" },
+    hotspots: []
+  },
+  {
+    id: "wet-floor-signs-beware",
+    title: "Wet Floor Signs, Beware!",
+    artist: "Michael Tubiak",
+    target: 'targets/wet-floor-signs-beware.mind',
+    image: 'targets/wet-floor-signs-beware.jpg',
+    width: 857, height: 857,
+    quote: "“I turned myself into a comic book superhero — the Tubiak Maniak. Humor is how I take the power back from the hard stuff.” — Michael Tubiak",
+    description: "Wet Floor Signs, Beware!. By Michael Tubiak. This image is a vivid comic-book panel. A caped superhero — the Tubiak Maniak — launches through the air mid-action, white cane swinging like a weapon, as a bold “SHWAK!” sound effect explodes across the scene and a hapless wet-floor sign goes flying. The style is pure comic energy: dynamic angles, saturated color, motion lines, and exaggerated impact. The humor is front and center, turning an everyday hazard for a blind person — the unexpected wet-floor sign — into a worthy nemesis for a caped hero. The piece captures Mike’s playful, defiant spirit. By casting himself as a superhero whose cane is a force to be reckoned with, he reclaims the obstacles of daily life with humor and bravado, transforming frustration into triumph.",
+    overlay: { type: 'story', anim: "../3D/gallery/anim/wix_mike_comic.mp4", clip: "media/clips/wet-floor-signs-beware.mp4", audio: "../3D/gallery/audio/wing_4_2.mp3" },
+    hotspots: []
+  },
+  {
+    id: "fellowship",
+    title: "Fellowship",
+    artist: "Nikki Jeffords",
+    target: 'targets/fellowship.mind',
+    image: 'targets/fellowship.jpg',
+    width: 900, height: 900,
+    quote: "“I feel like there is a sacred brotherhood, sisterhood in the blind community — having people that I can commiserate with. Because blindness itself is usually not the problem. The problem is the attitudes of people that I encounter, and the world not being truly accessible. So having that fellowship is really important to me.” — Nikki Jeffords",
+    description: "Fellowship. By Nikki Jeffords. This image is an abstract gathering of overlapping human figures, rendered in translucent layers of color. There is no traditional background — just a soft neutral field that allows the figures themselves to become the entire environment. The figures are simplified and stylized, built from rounded shapes and curved silhouettes rather than detailed anatomy. The palette moves through deep blues, teals, amber, ochre, coral, rose, black, and smoky gray. Because the shapes are semi-transparent, colors blend where figures overlap, creating a sense of layering, closeness, and shared presence. The image brings the quote to life by showing fellowship as mutual presence and recognition — the blind community as a brotherhood and sisterhood, a space where people do not need to explain themselves because others already understand the texture of that experience. It becomes a portrait of solidarity, refuge, and emotional recognition.",
+    overlay: { type: 'story', anim: "../3D/gallery/anim/wix_nikki_fellowship.mp4", clip: "media/clips/fellowship.mp4", audio: "../3D/gallery/audio/wing_5_0.mp3" },
+    hotspots: []
+  },
+  {
+    id: "move-the-needle",
+    title: "Move the Needle",
+    artist: "Nikki Jeffords",
+    target: 'targets/move-the-needle.mind',
+    image: 'targets/move-the-needle.jpg',
+    width: 900, height: 900,
+    quote: "“If you can take away some of the pain that comes with the loss of vision, then that’s a beautiful thing. Researchers may think that moving that needle — just a little bit — to give a little more vision is not a big deal. But it is a big deal. It is a big deal.” — Nikki Jeffords",
+    description: "Move the Needle. By Nikki Jeffords. This image features a clean black background with hundreds of brilliantly colored oval marks clustered around a central axis of white lines. They form both an abstract pattern and something like a chart — densest near the middle, gradually thinning out toward the edges in white, pale blue, yellow, orange, and red. On one level it evokes the language of vision science: measurement, fields of vision. But it does not feel cold. The concentration of marks at the center, and the way they thin into darkness, suggests the fragile and uneven nature of sight itself — how vision can narrow, scatter, and diminish. That is where it connects to Nikki’s deeper point: vision loss is not only physiological, but psychological. The image becomes a map of the visible and the invisible — a visual argument for why small gains in vision are not small at all, but deeply meaningful in a person’s life.",
+    overlay: { type: 'story', anim: "../3D/gallery/anim/wix_nikki_needle.mp4", clip: "media/clips/move-the-needle.mp4", audio: "../3D/gallery/audio/wing_5_1.mp3" },
+    hotspots: []
+  },
+  {
+    id: "self-worth-a-new-understanding",
+    title: "Self-Worth: A New Understanding",
+    artist: "Nikki Jeffords",
+    target: 'targets/self-worth-a-new-understanding.mind',
+    image: 'targets/self-worth-a-new-understanding.jpg',
+    width: 900, height: 900,
+    quote: "“A blind woman said to me, ’Nikki, you need to know that blindness is respectable.’ That was a profound statement, and it altered my life in a huge way. It helped me realize that I did have worth. I didn’t have to be embarrassed anymore. That’s when my life started moving forward.” — Nikki Jeffords",
+    description: "Self-Worth: A New Understanding. By Nikki Jeffords. This image shows a woman facing away from the viewer, walking through a freestanding doorway set in the middle of a surreal, vividly colored landscape. Around her, the land rises in soft, textured bands of deep blue, purple, olive, rust, orange, and red under a clear teal sky. The door, placed alone in this open landscape, becomes symbolic — less an object than a threshold. The composition feels calm, deliberate, and full of forward motion. What makes it so resonant is the way it turns an internal shift into something spatial and visible. The doorway stands for that pivotal conversation, where Nikki heard “blindness is respectable.” The image presents her journey as one of recognition and release — a passage into a fuller, more confident sense of self.",
+    overlay: { type: 'story', anim: "../3D/gallery/anim/wix_nikki_selfworth.mp4", clip: "media/clips/self-worth-a-new-understanding.mp4", audio: "../3D/gallery/audio/wing_5_2.mp3" },
+    hotspots: []
+  },
+  {
+    id: "strengths-limitations",
+    title: "Strengths & Limitations",
+    artist: "Sophia Dunn-Walker",
+    target: 'targets/strengths-limitations.mind',
+    image: 'targets/strengths-limitations.jpg',
+    width: 768, height: 768,
+    quote: "“Having a visual impairment and working in a medium that’s highly visual, you have to rely on your key collaborators — finding people I really trust, who understand both my strengths and limitations. It really boils down to communication. Anyone who’s different can contribute a lot to a creative field, and a good leader knows how to incorporate that person.” — Sophia Dunn-Walker",
+    description: "Strengths & Limitations. By Sophia Dunn-Walker. This image shows a woman’s face in profile, looking toward the right side of the composition. Her face is calm, almost sculptural, while the left side is built from a dense collage of film equipment, camera lenses, reels, mechanical parts, and layered visual forms. Bright blocks of orange, teal, purple, and blue move through the composition. The image feels like a portrait of creativity built through collaboration. The woman’s face remains clear and focused, while the tools of filmmaking surround and intersect with her. The camera equipment represents the highly visual medium Sophia works in, and the layered forms suggest the many people, skills, and systems that help bring a creative vision to life. It shows that making visual work while visually impaired is not about working alone or hiding what is difficult. It is about communication, trust, and surrounding yourself with collaborators who understand both what you can bring and what support you need — collaboration not as a compromise, but as part of the creative process itself.",
+    overlay: { type: 'story', anim: "../3D/gallery/anim/wix_sophia_collab.mp4", clip: "media/clips/strengths-limitations.mp4", audio: "../3D/gallery/audio/wing_6_0.mp3" },
+    hotspots: []
+  },
+  {
+    id: "where-people-are",
+    title: "Where People Are",
+    artist: "Sophia Dunn-Walker",
+    target: 'targets/where-people-are.mind',
+    image: 'targets/where-people-are.jpg',
+    width: 768, height: 768,
+    quote: "“My main message would be to let the individual tell you what they need and let them tell you what their condition is like. I really try to see people on an individual basis, because there’s such a range in what people need and where people are.” — Sophia Dunn-Walker",
+    description: "Where People Are. By Sophia Dunn-Walker. This image shows an aerial view of a monumental, layered circular structure. The form descends inward in wide rings, almost like a vast amphitheater or civic space seen from above. Each level is filled with people — some standing alone, others moving in small groups, many gathered along the curved pathways at different heights. The scale gives the image a sense of complexity and humanity. There are many people here, but they are not all in the same place or moving in the same way. Some are close to the center, others remain near the edges. The structure suggests a world with many different needs, positions, and ways of moving through it. The image reflects Sophia’s message about letting each individual tell you what they need and where they are. Rather than one universal kind of support, the piece shows a layered human environment. It suggests that empathy begins by paying attention to the person in front of you — listening first, and shaping support around what people actually need.",
+    overlay: { type: 'story', anim: "../3D/gallery/anim/wix_sophia_meeting.mp4", clip: "media/clips/where-people-are.mp4", audio: "../3D/gallery/audio/wing_6_1.mp3" },
+    hotspots: []
+  },
+  {
+    id: "full-immersion",
+    title: "Full Immersion",
+    artist: "Sophia Dunn-Walker",
+    target: 'targets/full-immersion.mind',
+    image: 'targets/full-immersion.jpg',
+    width: 768, height: 768,
+    quote: "“Full immersion in a different culture can be even richer for a visually impaired person, because everything is different. The cobblestones feel different. The way it smells is different. The lighting is different. The languages you hear are different. It’s a very, very rich experience.” — Sophia Dunn-Walker",
+    description: "Full Immersion. By Sophia Dunn-Walker. This image shows a narrow city street viewed from above, as if the viewer is looking down into a canyon of buildings. The sides of the street are dark and steep, with tall structures rising on both sides and closing in around the center. Light pours down from above in long, soft streaks, and small figures move through the scene. The image feels blurred, layered, and sensory rather than sharply detailed. The buildings, people, light, and movement blend together, creating the feeling of being inside a place rather than simply looking at it from a distance. The composition pulls the viewer downward and inward, into the street itself, where sound, smell, texture, light, and motion all seem to exist at once. The piece reflects Sophia’s idea that travel and cultural immersion can be especially rich for a visually impaired person. It is not focused on a postcard view, but on the full experience of being there — the feel of the street, the shifting light, the atmosphere of an unfamiliar place. A place is not only seen, but experienced in so many ways.",
+    overlay: { type: 'story', anim: "../3D/gallery/anim/wix_sophia_travel.mp4", clip: "media/clips/full-immersion.mp4", audio: "../3D/gallery/audio/wing_6_2.mp3" },
+    hotspots: []
   }
 
   // Paste new artworks here, separated by commas. add.html writes them for you.
@@ -730,7 +984,24 @@ export const EXHIBITIONS = [
       'the-visions-that-we-share', 'flow-state', 'lighthouse-of-hope', 'telephone-poles', 'back-of-a-harley',
       'joyride', 'haute-couture-dreams', 'embracing-unity', 'a-bright-future', 'the-harmony-of-vision',
       'the-power-within', 'the-gray-zone', 'inner-peace-in-outer-chaos', 'the-mirror', 'walk-through-fear',
-      'decision-divide'
+      'decision-divide',
+      // the New Artists Wing
+      'the-button-is-to-the-left', 'light-on-the-other-side', 'one-love', 'art-raised-me-up', 'live-the-beauty',
+      'a-different-way-to-see', 'beauty-in-the-blurry', 'everything-in-its-place', 'the-temperature-setter', 'how-not-who',
+      'invisibly-ours', 'unstoppable', 'comfort-in-the-uncomfortable', 'spectrum-of-sight', 'wet-floor-signs-beware',
+      'fellowship', 'move-the-needle', 'self-worth-a-new-understanding', 'strengths-limitations', 'where-people-are',
+      'full-immersion'
+    ]
+  },
+  {
+    id: 'new-artists-wing',
+    title: 'Blind Canvas · New Artists Wing',
+    artworks: [
+      'the-button-is-to-the-left', 'light-on-the-other-side', 'one-love', 'art-raised-me-up', 'live-the-beauty',
+      'a-different-way-to-see', 'beauty-in-the-blurry', 'everything-in-its-place', 'the-temperature-setter', 'how-not-who',
+      'invisibly-ours', 'unstoppable', 'comfort-in-the-uncomfortable', 'spectrum-of-sight', 'wet-floor-signs-beware',
+      'fellowship', 'move-the-needle', 'self-worth-a-new-understanding', 'strengths-limitations', 'where-people-are',
+      'full-immersion'
     ]
   }
 

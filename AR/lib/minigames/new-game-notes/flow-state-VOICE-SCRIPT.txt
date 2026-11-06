@@ -1,0 +1,44 @@
+VOICE LINES TO RECORD: FLOW STATE (Raquel Alim) - "What should I paint?"
+
+Save each line as its own mp3 with the file name shown, in AR/media/voice/. Say it just as written.
+Raquel's quote at the end is her own recording (art_44.mp3): don't record it. All 24 lines are recorded (Ben, 5 Nov) and included in AR/media/voice/
+
+FLOW STATE - "What should I paint?"  (24 lines)
+
+Intro
+paint-intro-1     What should I paint?
+paint-intro-2     Raquel always has art flowing through her.
+paint-intro-3     Wake her up, and tell her what to paint.
+paint-intro-4     Talk, type, or pick an idea.
+
+Each round
+paint-ask-1       Raquel opens her eyes.
+paint-ask-2       What should she paint?
+paint-ask-3       What else should she paint?
+paint-ask-4       One more idea.
+paint-paints      She closes her eyes and paints it.
+
+When you press Pick
+paint-pick        Pick an idea.
+
+The idea cards (the game reads the one you pick)
+paint-idea-ocean      The ocean, from inside a wave.
+paint-idea-sunflowers A field of sunflowers at night.
+paint-idea-grandma    My grandma dancing in the kitchen.
+paint-idea-city       A city made of music.
+paint-idea-snow       The first snow of winter.
+paint-idea-dragon     A dragon made of flowers.
+paint-idea-rain       The sound of rain.
+paint-idea-fox        A fox in a golden forest.
+paint-idea-moon       The moon having a picnic.
+
+Help lines
+paint-nomic-1     The microphone isn't on.
+paint-nomic-2     Press Type or Pick.
+paint-again       Try again.
+paint-hint        Press Talk, Type or Pick.
+
+The end (then Raquel speaks)
+paint-end         Three new paintings, flowing through her.
+
+(Not recorded: when a player talks or types their own idea, the game plays back THEIR words.)

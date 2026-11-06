@@ -1,0 +1,164 @@
+VOICE LINES TO RECORD: ALAYNA LOPEZ (narrator lines for the AR games)
+
+Save each line as its own mp3 with the file name shown (for example cane-intro-1.mp3), in AR/media/voice/.
+One sentence per file. Say it just as written: the game matches the words exactly, so keep every word and
+the ending (. ! ?) the same.
+Anything not recorded keeps using the computer voice, so you can record a few at a time.
+Leave a tiny bit of silence at the start and end of each clip; the game strings sentences together.
+(Alayna's own quote at the end of each game is her own recording. Don't record it.)
+
+3 games, 99 lines in all: Cane Beat 27, Pick Your Track 38, Still Me 34.
+
+
+MUSIC ON THE STREETS (Alayna Lopez) - "Cane Beat"
+
+Intro
+cane-intro-1     Cane Beat.
+cane-intro-2     Alayna feels the city through her cane.
+cane-intro-3     The stripes and the domes sound like music.
+cane-intro-4     Her cane taps on every beat.
+cane-intro-5     Tap with it, and the cane plays the song.
+cane-intro-6     Six crossings.
+cane-intro-7     Ready?
+
+Each crossing begins
+cane-num-1       Crossing 1.
+cane-num-2       Crossing 2.
+cane-num-3       Crossing 3.
+cane-num-4       Crossing 4.
+cane-num-5       Crossing 5.
+cane-num-6       Crossing 6.
+cane-last        The last crossing.
+
+A new instrument joins the band (crossings 2 to 6)
+cane-join-bass     The bass joins in.
+cane-join-keys     The keys join in.
+cane-join-horns    The horns join in.
+cane-join-bongos   The bongos join in.
+cane-join-strings  The strings join in.
+
+She's across (one of these, by how many notes you played)
+cane-across-great  The street is singing!
+cane-across-good   Beautiful!
+cane-across-keep   Keep tapping with the cane.
+
+If you haven't tapped yet (once)
+cane-tap         Tap on every beat.
+
+The Help button
+cane-help-1      Listen for the cane.
+cane-help-2      Tap every time it touches the ground.
+
+The end
+cane-party       The whole street is singing!
+cane-end         Your cane played the street's song!
+
+
+ROLLER COASTER OF EMOTIONS (Alayna Lopez) - "Pick Your Track"
+
+Intro
+track-intro-1    Pick Your Track.
+track-intro-2    Alayna is riding a roller coaster of emotions.
+track-intro-3    At every fork, two tracks call out.
+track-intro-4    One says a wrong idea about blind people.
+track-intro-5    One tells the truth.
+track-intro-6    Steer onto the true track.
+track-intro-7    Six forks.
+track-intro-8    Ready?
+
+Each fork begins
+track-fork-1     Fork 1.
+track-fork-2     Fork 2.
+track-fork-3     Fork 3.
+track-fork-4     Fork 4.
+track-fork-5     Fork 5.
+track-fork-6     Fork 6.
+
+Which side (said before each billboard)
+track-left       Left track.
+track-right      Right track.
+track-which      Which track is true?
+
+The billboards: the wrong ideas (read them plainly, they're being shown up)
+track-no-1       Blind people can't go out on their own.
+track-no-2       Blind people only see darkness.
+track-no-3       Blind people can't make art.
+track-no-4       Blind people have to give up the things they love.
+track-no-5       Blind people always need help.
+track-no-6       Being blind changes who you are.
+
+The billboards: the truths (read them warm and proud)
+track-yes-1      I go everywhere with my cane.
+track-yes-2      Lots of blind people see some light and color.
+track-yes-3      I paint, and so do lots of blind artists.
+track-yes-4      I still love the things I always loved.
+track-yes-5      I ask for help when I want it.
+track-yes-6      Being blind is just one part of me.
+
+After you pick
+track-true       True!
+track-not        That one's not true.
+track-truth      Here's the truth.
+
+If you wait a long time (once a fork): "Which track is true?" (track-which, above), then
+track-hint       Left, or right?
+
+The Help button
+track-help-1     Tap the left side or the right side.
+track-help-2     Pick the track that tells the truth.
+
+The end
+track-party-1    The storm is over.
+track-party-2    Alayna is herself again.
+track-end        You rode all the way to the truth!
+
+
+I AM BLIND, LIKE MY HAIR IS BROWN (Alayna Lopez) - "Still Me"
+
+Intro
+still-intro-1    Still Me.
+still-intro-2    Alayna's face breaks into pieces.
+still-intro-3    But her brown hair stays right where it is.
+still-intro-4    Each empty spot hums from where it is.
+still-intro-5    Tap the spot, and its piece flies home.
+still-intro-6    Eight pieces.
+still-intro-7    Ready?
+
+Each piece (said as its spot starts to hum)
+still-forehead   Her forehead.
+still-nose       Her nose.
+still-cheek-1    One cheek.
+still-cheek-2    The other cheek.
+still-mouth      Her smile.
+still-chin       Her chin.
+still-last       Last of all, her brown eyes.
+still-eye-1      One eye.
+still-eye-2      And the other eye.
+
+A piece flies home
+still-home       Home!
+still-there      There it is.
+
+A tap that misses: which way to go (one of these; "So close!" can come first)
+still-up         Up.
+still-down       Down.
+still-left       Left.
+still-right      Right.
+still-up-left    Up and left.
+still-up-right   Up and right.
+still-down-left  Down and left.
+still-down-right Down and right.
+still-close      So close!
+
+If you wait a long time (once a piece)
+still-listen     Listen for the hum.
+
+The Help button: "Listen for the hum." (still-listen, above), then
+still-help-1     It comes from where the piece belongs.
+still-help-2     Tap there, or drag the glowing piece there.
+still-help-3     Slide your finger and listen: the pings get faster when you are close.
+
+The end
+still-party-1    Every piece is home.
+still-party-2    She was there all along.
+still-end        Still Alayna, all along!

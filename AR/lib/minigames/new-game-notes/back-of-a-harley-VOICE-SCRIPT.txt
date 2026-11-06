@@ -1,0 +1,29 @@
+BACK OF A HARLEY (Craig Ellis): Ride by feel — VOICE SCRIPT (polished 5 Nov 2026)
+Every line is NEW: this game had no recordings before. Record each line as its own file, named as shown (e.g. harley-intro.mp3),
+into AR/media/voice/.
+Craig's quote at the end is his own clip: don't record it.
+
+== Start ==
+harley-intro    Ride by feel. Craig has seen a whole lot of this country on the back of a Harley, and he still rides by feel. Your buddy rides out front and calls each curve, and you’ll hear his bike from that side. Hold Left or Right to lean that way. That’s all. Enjoy the ride.
+
+== The four places (one at the start of each) ==
+harley-desert    The desert. Hot wind on your face, and the smell of sage.
+harley-coast    The coast. Cool salt spray, and gulls overhead.
+harley-rain    A summer storm. Warm rain on your arms, and thunder rolling.
+harley-sunset    Sunset. The air cools, and the whole sky glows.
+
+== Your buddy calls each curve ==
+harley-left    Curve left!
+harley-right    Curve right!
+
+== The last stop ==
+harley-stop    Last stop. A diner at sunset. Kick back and listen: cars and bikes are going by. Tap when you hear the Harley, the one with the right pipes.
+harley-car    That was a car.
+harley-scooter    That was a scooter.
+harley-truck    That was a truck.
+harley-again    Let’s listen again. The Harley has a low, lumpy rumble: potato, potato.
+harley-yes    That’s it. The right pipes.
+harley-reveal    That was the Harley, the low potato potato rumble.
+
+== The end (then Craig reads his quote in his own voice) ==
+harley-end    Coast to coast.

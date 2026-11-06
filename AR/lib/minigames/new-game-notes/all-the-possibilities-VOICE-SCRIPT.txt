@@ -1,0 +1,29 @@
+VOICE LINES TO RECORD: ALL THE POSSIBILITIES (Raquel Alim) - "Show her"
+
+Save each line as its own mp3 with the file name shown, in AR/media/voice/.
+One sentence per file. Say it just as written (the game matches the words exactly).
+Anything not recorded keeps using the computer voice, so you can record a few at a time.
+Raquel's quote at the end is her own recording (art_11.mp3): don't record it.
+All 14 lines are recorded (Ben, 5 Nov) and included in AR/media/voice/
+
+Intro
+show-intro-1      Show her.
+show-intro-2      Raquel sits beside her 12-year-old self.
+show-intro-3      Tap to show the girl what she could do one day.
+
+Each window (one per tap, in this order)
+show-music        She could make music.
+show-dance        She could dance.
+show-paint        She could paint.
+show-sports       She could play sports.
+show-bike         She could ride a bike.
+show-fashion      She could design fashion.
+show-world        She could see the world.
+show-power        She could find her power.
+show-dreams       And anything she dreams.
+
+If nobody taps for a while
+show-hint         Tap to show her more.
+
+The end (then Raquel speaks)
+show-end          So many options.

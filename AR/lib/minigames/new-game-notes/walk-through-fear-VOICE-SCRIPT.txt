@@ -1,0 +1,64 @@
+VOICE LINES TO RECORD: WALK THROUGH FEAR (Ben Fox) - "See it my way" (polished)
+
+Save each line as its own mp3 with the file name shown, in AR/media/voice/.
+Say it just as written (the game matches the words exactly).
+Lines marked NEW need recording. The rest you already have; keep those files.
+(Your quote at the end plays from your own clip, art_63.mp3, so it isn't recorded here.)
+
+
+Intro
+see-intro-1           See it my way.
+see-intro-2           Words are hidden in Ben's painting, Walk Through Fear.
+see-intro-3b          You'll look for them through four kinds of low vision.
+see-intro-4           Move your phone to look around, and tap each word you find.
+see-intro-5           A soft hum means you're close.
+
+Each round starts (round, condition, then how many words)
+see-k1                Round 1 of 4.
+see-how-ben           How Ben sees.
+see-k2                Round 2 of 4.
+see-k3                Round 3 of 4.
+see-k4                Round 4 of 4.
+see-cond-rp           Retinitis pigmentosa. Ben's own diagnosis: a narrowing tunnel of sight, and night blindness. Sweep slowly, like a cane.
+see-cond-cat          Cataracts. The eye's lens clouds over: a milky haze, faded colour and contrast. Look for shapes, not details.
+see-cond-mac          Macular degeneration. The centre goes dark and blurry, right where you look. The edges stay. Look just beside a word to see it.
+see-cond-gla          Glaucoma. The edges fade into a foggy frame that closes in. Move your phone to look around.
+see-find-2            Find 2 hidden words.
+see-find-3            Find 3 hidden words.
+
+A word is found
+see-word-breathe      Breathe.
+see-word-step         Step.
+see-word-trust        Trust.
+see-word-listen       Listen.
+see-word-courage      Courage.
+see-word-forward      Forward.
+see-word-walk         Walk.
+see-word-through      Through.
+see-word-fear         Fear.
+
+A round is cleared (the filter lifts)
+see-ben-every-day     That's how Ben sees. Every day.           NEW   (after your RP round)
+see-cleared           Round cleared.                            NEW   (after the other rounds)
+see-no-filter         Here it is without the filter.            NEW   (after every round)
+
+Hints (Hint button, or on its own when stuck)
+see-hint-right-there  It's right around where you're looking. Tap it.
+see-close             Close.
+see-look-up           Look up.
+see-look-down         Look down.
+see-look-left         Look left.
+see-look-right        Look right.
+see-look-up-left      Look up and left.
+see-look-up-right     Look up and right.
+see-look-down-left    Look down and left.
+see-look-down-right   Look down and right.
+
+Every word found
+see-all-words         Walk through fear. You found every word. Now see it clearly.
+
+The end (then your own clip reads the quote)
+see-end               You walked through fear.
+
+
+No longer used (you can keep or delete the files): see-intro-3, see-round-1, see-round-2, see-round-3, see-round-4

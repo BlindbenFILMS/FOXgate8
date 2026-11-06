@@ -1,23 +1,25 @@
-// RHYTHM OF LIFE (Will Hollimon): GLOW IT BRIGHT, a singing game.
-// The music faded and the painting went dim. Your voice is the light: sing, hum or "ooh", and a glowing orb rises and
-// falls with your pitch (low notes down by the drums, high notes up by the light bulb and the planets); louder glows
-// brighter. Hold the orb on the glowing ring to light each thing, and Will's drum groove comes back a piece at a time.
-// Clap for a flash of light. No microphone (or prefer not)? Touch the screen and slide up and down: your finger is the voice.
-// By ear: each thing to light is named, with "sing low / middle / high"; a buzz pulses while you're on it, and a rising
-// shimmer fills as it lights. The first thing to light (Will) is in the middle, and while you hum it the game learns
-// your comfortable note, so any voice works: deep, high, kid or grown-up.
+// RHYTHM OF LIFE (Will Hollimon): HUM IT BACK, a call-and-response singing game.
+// The music faded and the painting went dim. Will hums a little tune, and glowing notes appear in the air for each note
+// (higher notes higher up); then you hum it back. Any note, any voice: it only listens for how many notes you hum, so
+// "mm, mm, mm" works. Each hum lights the next glowing note, and when they're all lit the next thing in the painting
+// lights up and a piece of Will's drum groove comes back. The tunes grow from 2 notes to 5. Six tunes, then the whole
+// painting glows and the band plays.
+// No microphone (or prefer not)? Tap the screen, or the Tap a note button, once for each note.
+// By ear: Will's hum, a chime for every note you hum, "Your turn!", and "Listen again" if a note was missed.
 import * as THREE from 'three';
 import * as K from './kit.js';
 
+// what lights up, in order, and the tune for each (notes: 0 low · 1 middle · 2 high)
 const TARGETS = [
-  { name: 'Will', u: 0.50, v: 0.44, where: 'middle', say: 'Hum any comfortable note to light Will.' },
-  { name: 'the bass drum', u: 0.505, v: 0.80, where: 'low', say: 'Now sing low, deep down, to light the bass drum.' },
-  { name: 'the light bulb', u: 0.50, v: 0.135, where: 'high', say: 'Now sing high to light the light bulb.' },
-  { name: 'the little drummer', u: 0.11, v: 0.70, where: 'low', say: 'Sing a little low to light the little drummer.' },
-  { name: 'the old radio', u: 0.38, v: 0.30, where: 'high', say: 'A little high now, for the old radio.' },
-  { name: 'the planets', u: 0.885, v: 0.075, where: 'highest', say: 'Last one: sing your highest note to light the planets!' },
+  { name: 'Will', u: 0.50, v: 0.44, tune: [1, 2] },
+  { name: 'the bass drum', u: 0.505, v: 0.80, tune: [0, 1] },
+  { name: 'the light bulb', u: 0.50, v: 0.135, tune: [0, 1, 2] },
+  { name: 'the little drummer', u: 0.11, v: 0.70, tune: [2, 1, 0] },
+  { name: 'the old radio', u: 0.38, v: 0.30, tune: [1, 0, 1, 2] },
+  { name: 'the planets', u: 0.885, v: 0.075, tune: [0, 1, 2, 1, 2] },
 ];
-const HOLD = 1.5, NEAR = 0.095, OCT = 0.40;   // seconds to light one; how close counts; how far one octave moves the orb
+const PITCH = [60, 64, 67];          // Will's hum: do, mi, so
+const NOTE_GAP = 0.62, QUIET = 2.6;  // seconds between Will's notes; how long a pause ends your turn
 
 /* ── Will's drum kit, made in WebAudio ── */
 function drums(ac, onHit) {
@@ -76,8 +78,17 @@ function drums(ac, onHit) {
       next += beat / 4; step++;
     }
   }
+  // Will's hum: a soft, round "mmm" with a little vibrato, over the quiet chords
+  function hum(t, m, d) {
+    const o = ac.createOscillator(), o2 = ac.createOscillator(), f = ac.createBiquadFilter(), g = ac.createGain(), v = ac.createOscillator(), vg = ac.createGain();
+    o.type = 'triangle'; o2.type = 'sine'; o.frequency.value = midi(m); o2.frequency.value = midi(m) * 2; f.type = 'lowpass'; f.frequency.value = 900; f.Q.value = 2;
+    v.frequency.value = 5.5; vg.gain.value = 8; v.connect(vg); vg.connect(o.detune); vg.connect(o2.detune);
+    const g2 = ac.createGain(); g2.gain.value = 0.25; o2.connect(g2).connect(f); o.connect(f); f.connect(g).connect(bus);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.32, t + 0.07); g.gain.setValueAtTime(0.3, t + d - 0.12); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+    for (const x of [o, o2, v]) { x.start(t); x.stop(t + d + 0.05); }
+  }
   return {
-    layers, crash, snare,
+    layers, crash, snare, hum,
     duck(on) { if (on === ducked) return; ducked = on; padBus.gain.cancelScheduledValues(ac.currentTime); padBus.gain.setTargetAtTime(on ? 0.08 : 1, ac.currentTime, on ? 0.06 : 0.5); },
     get padLoud() { return padBus.gain.value > 0.3; },
     start() { next = ac.currentTime + 0.1; timer = setInterval(schedule, 30); bus.gain.setTargetAtTime(0.7, ac.currentTime, 0.5); },
@@ -129,141 +140,145 @@ void main(){
 export function rhythmOfLifeGame() {
   let G = null;
   const N = TARGETS.length;
-  const colFor = v => new THREE.Color().setHSL(0.08 + (1 - v) * 0.12, 0.95, 0.55 + (1 - v) * 0.25);   // low: deep orange · high: bright gold-white
+  const colFor = lvl => new THREE.Color(['#ff9a3c', '#ffc94a', '#fff3b8'][lvl]);
 
   function hud() {
-    const t = TARGETS[G.i];
-    G.ui.panel('Glow it bright', `${G.lit}<small>of ${N} lit</small>`, { segs: [G.lit, N], sub: t ? `Sing ${t.where} for ${t.name}` : 'Everything is glowing!' });
+    const t = TARGETS[G.i], sub = !t ? 'Everything is glowing!' : G.phase === 'listen' ? 'Listen to Will hum…' : G.phase === 'you' ? `Your turn: hum ${t.tune.length} notes (${G.got} of ${t.tune.length})` : 'Get ready…';
+    G.ui.panel('Hum it back', `${G.lit}<small>of ${N} lit</small>`, { segs: [G.lit, N], sub });
   }
   function deaf(secs) { G.deafUntil = Math.max(G.deafUntil, G.t + secs); }
-  function say(text) { G.say(text); deaf(Math.min(5, 0.6 + text.split(/\s+/).length * 0.33)); }   // don't hear our own voice as singing
-  function announce() { const t = TARGETS[G.i]; if (!t) return; say(t.say); G.ring.visible = true; const [x, y] = G.S.P(t.u, t.v); G.ring.position.set(x, y, 0.06); G.prog = 0; hud(); }
-
+  function say(text) { G.say(text); deaf(Math.min(5, 0.6 + text.split(/\s+/).length * 0.33)); }   // don't hear our own voice as humming
+  // the glowing notes in the air for this tune: a little arc over the thing to light, higher notes higher up
+  function makeDots() {
+    G.dots.forEach(d => { G.root.remove(d.glow); G.root.remove(d.core); }); G.dots = [];
+    const t = TARGETS[G.i], n = t.tune.length, span = Math.min(0.5, 0.12 * n);
+    const cu = Math.max(span / 2 + 0.06, Math.min(1 - span / 2 - 0.06, t.u)), base = Math.max(0.2, Math.min(0.86, t.v + (t.v < 0.3 ? 0.17 : -0.1)));
+    t.tune.forEach((lvl, k) => {
+      const u = cu - span / 2 + (n > 1 ? k / (n - 1) : 0.5) * span, v = base - (lvl - 1) * 0.07, [x, y] = G.S.P(u, v);
+      const glow = K.sprite(K.glowTex, 0.11, { color: colFor(lvl), additive: true, opacity: 0, order: 18 }); glow.position.set(x, y, 0.06); G.root.add(glow);
+      const core = K.sprite(G.noteTex, 0.05, { color: '#ffffff', opacity: 0, order: 19 }); core.position.set(x, y, 0.065); G.root.add(core);
+      G.dots.push({ u, v, lvl, glow, core, played: 0, lit: 0 });
+    });
+  }
+  function listen(again) {
+    G.phase = 'listen'; G.got = 0; G.dots.forEach(d => { d.lit = 0; d.played = 0; });
+    const t = TARGETS[G.i], ac = K.audio(), t0 = ac.currentTime + (again ? 0.9 : 1.3);
+    say(again ? 'Listen again.' : G.i === 0 ? 'Listen to Will hum.' : 'Listen.');
+    t.tune.forEach((lvl, k) => G.band.hum(t0 + k * NOTE_GAP, PITCH[lvl], NOTE_GAP * 0.85));
+    G.cues = t.tune.map((lvl, k) => ({ k, at: t0 + k * NOTE_GAP }));
+    G.turnAt = t0 + t.tune.length * NOTE_GAP + 0.15;
+    deaf((G.turnAt - ac.currentTime) + 0.5);   // don't hear Will's hum as yours
+    hud();
+  }
+  function yourTurn() { G.phase = 'you'; G.lastHum = G.t; G.ui.alert('Your turn!', 'Hum it back', 1.1, 'blue'); G.say('Your turn!'); deaf(0.7); hud(); }
+  // one note hummed (or tapped): the next glowing note lights up, with a chime
+  function hummed() {
+    if (G.phase !== 'you') return;
+    const d = G.dots[G.got]; if (!d) return;
+    d.lit = 1; G.got++; G.lastHum = G.t; G.orbTo = d;
+    K.tone(440 * Math.pow(2, (PITCH[d.lvl] + 12 - 69) / 12), 0.35, { type: 'triangle', vol: 0.07 }); G.buzz(15);
+    const [x, y] = G.S.P(d.u, d.v); G.fx.add(x, y, '#ffe9a0', 10, 0.2);
+    if (G.got >= G.dots.length) { G.phase = 'lit'; G.wait = 0.6; }
+    hud();
+  }
   function lightIt() {
     const t = TARGETS[G.i]; t.lit = 0.001; G.lit++; G.i++;
     const [x, y] = G.S.P(t.u, t.v); G.fx.add(x, y, '#ffd25a', 34, 0.4); G.buzz([40, 40, 90]);
     K.chord([392, 494, 587, 784].map(f => f * (0.75 + (1 - t.v) * 0.6)), 1.1, { vol: 0.06 }); deaf(1.3);
     G.ui.pop(t.name.replace(/^the /, '').toUpperCase() + '!');
+    G.dots.forEach(d => { d.fade = true; });
     const L = G.band.layers; ({ 1: () => L.kick = 1, 2: () => L.snare = 1, 3: () => L.bass = 1, 4: () => L.toms = 1, 5: () => L.ride = 1 })[G.lit]?.();
-    if (G.lit >= N) { G.ring.visible = false; G.done = true; G.settle = 3.4; G.band.fill(); if (G.ear) { G.ear.stop(); G.ear = null; } G.band.duck(false); setTimeout(() => G && (G.band.layers.lead = 1), 1800); G.ui.alert('Glowing bright!', 'Will’s band is back.', 2.8, 'red'); say('Everything is glowing. Will’s band is back!'); hud(); return; }
+    if (G.lit >= N) { G.done = true; G.settle = 3.4; G.band.fill(); if (G.ear) { G.ear.stop(); G.ear = null; } G.band.duck(false); setTimeout(() => G && (G.band.layers.lead = 1), 1800); G.ui.alert('Glowing bright!', 'Will’s band is back.', 2.8, 'red'); say('Everything is glowing. Will’s band is back!'); hud(); return; }
     G.ui.alert(['The kick is back!', 'Here’s the snare!', 'The bass is in!', 'Toms rolling!', 'Cymbals!'][G.lit - 1] || 'Lit!', `${N - G.lit} to go`, 1.5, 'black');
-    G.ring.visible = false; G.wait = 1.4; hud();
-  }
-  function clap() {
-    G.claps++; G.flash = 1; G.band.crash(K.audio().currentTime + 0.01); deaf(0.35);
-    TARGETS.forEach(t => { if (t.lit) { const [x, y] = G.S.P(t.u, t.v); G.fx.add(x, y, '#fff3b0', 8, 0.3); } });
-    G.ui.pop('CLAP!', innerWidth * (0.3 + Math.random() * 0.4), innerHeight * 0.55); G.buzz(30);
+    G.phase = 'next'; G.wait = 1.8; hud();
   }
 
   return {
-    title: 'Glow it bright',
+    title: 'Hum it back',
     start(ctx) {
       if (G) this.stop();
       G = K.makeBase(ctx);
-      Object.assign(G, { i: 0, lit: 0, prog: 0, orb: { v: 0.5, s: 0 }, center: 0, calib: [], deafUntil: 0, wait: 0, settle: 0, done: false, flash: 0, claps: 0, touch: null, micOK: false, slow: 0.02, lastClap: 0, ownHits: [], t0: 0, onFor: 0 });
+      Object.assign(G, { i: 0, lit: 0, phase: 'intro', got: 0, dots: [], cues: [], turnAt: 0, lastHum: 0, orb: { u: 0.5, v: 0.5, s: 0 }, orbTo: null, deafUntil: 0, wait: 0, settle: 0, done: false,
+        voiced: 0, quiet: 1, micOK: false, misses: 0, t0: 0, botT: 0 });
       TARGETS.forEach(t => t.lit = 0);
+      G.noteTex = K.canvasTex(96, 96, (g) => { g.font = '900 76px Georgia, serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#fff'; g.fillText('♪', 48, 52); });
       G.uni = { uOrb: { value: new THREE.Vector3(0.5, 0.5, 0) }, uOrbCol: { value: new THREE.Color(1, 0.7, 0.3) }, uH: { value: G.h }, uDim: { value: 0 }, uAll: { value: 0 }, uT: { value: 0 }, uFlash: { value: 0 },
         uSpots: { value: Array.from({ length: 6 }, () => new THREE.Vector3()) } };
       G.dark = new THREE.Mesh(new THREE.PlaneGeometry(1.004, G.h + 0.004), new THREE.ShaderMaterial({ uniforms: G.uni, vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: false }));
       G.dark.position.z = 0.03; G.dark.renderOrder = 12; G.root.add(G.dark);
       G.orbS = K.sprite(K.glowTex, 0.2, { additive: true, opacity: 0, order: 16 }); G.orbS.position.z = 0.05; G.root.add(G.orbS);
-      G.core = K.sprite(K.dotTex, 0.05, { additive: true, opacity: 0, order: 17 }); G.core.position.z = 0.055; G.root.add(G.core);
-      G.ring = K.sprite(K.ringTex, 0.16, { color: '#ffd25a', order: 15, opacity: 0.9 }); G.ring.visible = false; G.root.add(G.ring);
-      G.halo = K.sprite(K.glowTex, 0.24, { color: '#ffd25a', additive: true, opacity: 0, order: 14 }); G.halo.position.z = 0.045; G.root.add(G.halo);
       const ac = K.audio();
-      G.band = drums(ac, t => G && G.ownHits.push(t));
-      // the microphone (asked for inside the Play tap). Echo cancelling keeps the game from hearing its own drums.
+      G.band = drums(ac, () => {});
+      // the microphone (asked for inside the Play tap). Echo cancelling keeps the game from hearing its own music.
       if (!G.bot && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: false, autoGainControl: false } })
+        navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: false } })
           .then(st => { if (!G) { st.getTracks().forEach(t => t.stop()); return; } G.ear = ear(K.audio(), st); G.micOK = true; })
-          .catch(() => { if (G) { G.micNo = true; } });
+          .catch(() => { if (G) G.micNo = true; });
       } else G.micNo = !G.bot;
-      G.ui.buttons([{ label: 'Clap', icon: '👏', kind: 'red', aria: 'Clap: a flash of light', press: () => G.playing && clap() }]);
+      G.ui.buttons([
+        { label: 'Hear it again', icon: '↻', kind: 'black', aria: 'Hear Will hum the tune again', press: () => { if (G.playing && (G.phase === 'you' || G.phase === 'listen')) listen(true); } },
+        { label: 'Tap a note', icon: '♪', kind: 'red', aria: 'Tap once for each note, instead of humming', press: () => G.playing && hummed() },
+      ]);
       hud();
       G.onGo = () => {
-        G.t0 = G.t; G.band.start();
-        if (G.micNo) { G.ui.alert('No microphone?', 'Touch the screen and slide up and down to sing.', 3, 'blue'); say('No microphone. Touch the screen and slide up and down instead.'); setTimeout(() => G && G.playing && announce(), 3500); }
-        else announce();
+        G.t0 = G.t; G.band.start(); G.band.duck(true); makeDots();
+        if (G.micNo) { G.ui.alert('No microphone?', 'Tap the screen once for each note.', 3, 'blue'); say('No microphone. Tap the screen once for each note instead.'); setTimeout(() => G && G.playing && listen(), 3500); }
+        else listen();
       };
-      K.intro(G, { title: 'Glow it bright', how: 'The music faded. Sing or hum: your voice is the light. Low notes glow by the drums, high notes up in the sky. Light 6 things to bring Will’s band back.',
-        say: 'Glow it bright. The music faded and the painting went dim. Your voice is the light. Sing or hum: low notes glow down by the drums, high notes up in the sky, and louder glows brighter. Light six things to bring Will’s band back. Clap for a flash. No microphone? Touch the screen and slide up and down.' });
+      K.intro(G, { title: 'Hum it back', how: 'Will hums a little tune. Hum it back: any note works, just one hum for each note. Each tune lights up the painting and brings Will’s band back.',
+        say: 'Hum it back. The music faded and the painting went dim. Will hums a little tune, and you hum it back. Any note, any voice: just one hum for each note, like mm, mm. Each tune lights up the painting and brings Will’s band back, piece by piece. No microphone? Tap the screen once for each note.' });
     },
     update(dt) {
       if (!G || G.paused) return;
       G.t += dt; G.ui.update(dt); G.fx.update(dt); K.introUpdate(G, dt); K.finaleUpdate(G, dt);
       G.uni.uT.value = G.t; G.uni.uDim.value += (0.72 - G.uni.uDim.value) * Math.min(1, dt * 1.2);
-      G.flash = Math.max(0, G.flash - dt * 3); G.uni.uFlash.value = G.flash;
       if (G.done) G.uni.uAll.value = Math.min(1, G.uni.uAll.value + dt * 0.5);
       TARGETS.forEach((t, i) => { if (t.lit > 0 && t.lit < 1) t.lit = Math.min(1, t.lit + dt * 1.5); G.uni.uSpots.value[i].set(t.u, t.v, t.lit || 0); });
-
-      // ── the voice: where the orb wants to be (v) and how bright (s) ──
-      let wantV = null, wantS = 0;
       const ac = K.audio(), now = ac.currentTime;
-      G.ownHits = G.ownHits.filter(x => x > now - 0.3);
-      if (G.playing && !G.done) {
-        if (G.bot) { const t = TARGETS[G.i]; if (t && G.wait <= 0) { wantV = t.v + Math.sin(G.t * 3) * 0.02; wantS = 0.8; } }
-        else if (G.touch) { wantV = G.touch; wantS = 0.85; }
-        else if (G.ear) {
-          const { rms, f } = G.ear.read(), heard = G.t >= G.deafUntil;
-          G.slow += (rms - G.slow) * Math.min(1, dt * 2);
-          // a clap: a sudden, loud, un-pitched burst that isn't one of our own drum hits
-          if (heard && !f && rms > 0.09 && rms > G.slow * 3.2 && G.t - G.lastClap > 0.25 && !G.ownHits.some(x => Math.abs(x - now) < 0.12)) { G.lastClap = G.t; clap(); }
-          const strict = G.band.padLoud && G.t - (G.sangAt || -9) > 0.7;   // the chords are playing: only a clear, close voice counts
-          if (heard && f > 70 && f < 1000 && rms > (strict ? 0.03 : 0.012)) {
-            G.sangAt = G.t;
-            const lf = Math.log2(f);
-            if (!G.center) { G.calib.push(lf); if (G.calib.length > 25) { const s = [...G.calib].sort((a, b) => a - b); G.center = s[Math.floor(s.length / 2)]; } }
-            const c = G.center || (G.calib.length ? G.calib.reduce((a, b) => a + b, 0) / G.calib.length : lf);
-            wantV = Math.max(0.03, Math.min(0.97, 0.47 - (lf - c) * OCT)); wantS = Math.max(0.25, Math.min(1, (20 * Math.log10(rms) + 42) / 24));
-          }
-        }
+      // Will's notes appear as he hums them, and the orb sings along with them
+      for (const c of G.cues) if (!c.done && now >= c.at) { c.done = true; const d = G.dots[c.k]; if (d) { d.played = 1; G.orbTo = d; } }
+      if (G.phase === 'listen' && now >= G.turnAt && G.cues.every(c => c.done)) yourTurn();
+      // your hums: each voiced stretch after a little quiet is one note (any pitch counts)
+      if (G.phase === 'you' && G.ear && G.t >= G.deafUntil) {
+        const { rms, f } = G.ear.read(), on = rms > 0.014 && (f > 60 || rms > 0.04);
+        if (on) { G.voiced += dt; if (G.voiced > 0.1 && G.quiet > 0.12) { G.quiet = 0; hummed(); } }
+        else { G.voiced = 0; G.quiet += dt; }
       }
-      const o = G.orb;
-      if (!G.done) G.band.duck(wantV !== null || (G.sangAt !== undefined && G.t - G.sangAt < 0.6));
-      if (wantV !== null) { o.v += (wantV - o.v) * Math.min(1, dt * 9); o.s += (wantS - o.s) * Math.min(1, dt * 8); G.onFor += dt; }
-      else { o.s = Math.max(0, o.s - dt * 1.8); o.v += (0.92 - o.v) * dt * 0.25; G.onFor = 0; }   // silence: it dims and sinks
-      const tgt = TARGETS[G.i];
-      o.u = (o.u ?? 0.5) + ((tgt && G.wait <= 0 ? tgt.u : 0.5) - (o.u ?? 0.5)) * Math.min(1, dt * 3);
-      const [x, y] = G.S.P(o.u, o.v), col = colFor(o.v);
-      G.uni.uOrb.value.set(o.u, o.v, o.s); G.uni.uOrbCol.value.copy(col);
-      G.orbS.position.set(x, y, 0.05); G.orbS.material.color.copy(col); G.orbS.material.opacity = o.s * 0.75 * (1 - G.uni.uAll.value); G.orbS.scale.setScalar(0.14 + o.s * 0.2);
-      G.core.position.set(x, y, 0.055); G.core.material.opacity = Math.min(1, o.s * 1.4) * (1 - G.uni.uAll.value); G.core.scale.setScalar(0.03 + o.s * 0.03);
-      if (G.ring.visible) { G.ring.material.opacity = 0.55 + Math.sin(G.t * 5) * 0.3; G.ring.scale.setScalar(0.15 + G.prog / HOLD * 0.06);
-        G.halo.position.copy(G.ring.position); G.halo.material.opacity = G.prog / HOLD * 0.8; } else G.halo.material.opacity = 0;
-
+      if (G.phase === 'you') {
+        if (G.bot) { G.botT -= dt; if (G.botT <= 0) { G.botT = 0.5; hummed(); } }
+        if (G.got > 0 && G.t - G.lastHum > QUIET) { G.misses++; G.ui.alert('Almost!', `That was ${G.got} of ${G.dots.length}. Listen again.`, 1.6, 'black'); listen(true); }
+        else if (G.got === 0 && G.t - G.lastHum > 7) { G.lastHum = G.t; say('Hum it back: mm, mm.'); }
+      }
+      if (G.wait > 0) { G.wait -= dt; if (G.wait <= 0) { if (G.phase === 'lit') lightIt(); else if (G.phase === 'next') { makeDots(); listen(); } } }
+      // the notes in the air: faint until played, bright when Will hums them, golden when you hum them back
+      G.dots.forEach(d => {
+        const want = d.fade ? 0 : d.lit ? 1 : G.phase === 'listen' && d.played ? 0.85 : G.phase === 'you' ? 0.4 : 0.2;
+        d.a = (d.a || 0) + (want - (d.a || 0)) * Math.min(1, dt * 6);
+        d.glow.material.opacity = d.a * 0.9; d.core.material.opacity = Math.min(1, d.a * 1.3);
+        d.glow.scale.setScalar(0.11 + d.a * 0.11 + (d.lit ? Math.sin(G.t * 6) * 0.012 : 0)); d.core.scale.setScalar(0.05 + d.a * 0.04);
+      });
+      // the orb: drifts to whichever note is sounding, glowing with it
+      const o = G.orb, to = G.orbTo;
+      if (to) { o.u += (to.u - o.u) * Math.min(1, dt * 10); o.v += (to.v - o.v) * Math.min(1, dt * 10); o.s = Math.min(1, o.s + dt * 6); }
+      o.s = Math.max(0, o.s - dt * (to ? 0.6 : 1.5)); if (o.s < 0.05) G.orbTo = null;
+      const [x, y] = G.S.P(o.u, o.v);
+      G.uni.uOrb.value.set(o.u, o.v, o.s * 0.8);
+      G.orbS.position.set(x, y, 0.05); G.orbS.material.color.copy(colFor(to ? to.lvl : 1)); G.orbS.material.opacity = o.s * 0.7 * (1 - G.uni.uAll.value); G.orbS.scale.setScalar(0.12 + o.s * 0.12);
       if (G.settle > 0) { G.settle -= dt; if (G.settle <= 0 && !G.over) {
-        const t = Math.round(G.t - G.t0), r = K.best('rhythm-of-life:glow', t, 'lower');
+        const t = Math.round(G.t - G.t0), r = K.best('rhythm-of-life:hum', G.misses, 'lower');
         G.band.volume(0.45);
         K.finale(G, { won: true, title: 'Will’s band is back', line: G.work && G.work.quote, best: r.isBest,
-          cells: [{ k: 'Lit', v: `${N}/${N}` }, { k: 'Time', v: Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0') }, { k: 'Claps', v: G.claps }] });
+          cells: [{ k: 'Tunes', v: `${N}/${N}` }, { k: 'Do-overs', v: G.misses }, { k: 'Time', v: Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0') }] });
       } }
-      if (!G.playing || G.done || !tgt) return;
-      if (G.wait > 0) { G.wait -= dt; if (G.wait <= 0) announce(); return; }
-      // on the ring: fill it up (louder fills faster)
-      const on = o.s > 0.2 && Math.abs(o.v - tgt.v) < NEAR;
-      if (on) {
-        G.prog += dt * (0.75 + o.s * 0.5);
-        G.pulse = (G.pulse || 0) - dt; if (G.pulse <= 0) { G.pulse = 0.25; G.buzz(12); }
-        if (G.prog >= HOLD) lightIt();
-      } else {
-        G.prog = Math.max(0, G.prog - dt * 0.6);
-        // a gentle spoken nudge if someone is singing but missing for a while
-        G.nudgeT = (G.nudgeT || 0) + (o.s > 0.2 ? dt : 0);
-        if (G.nudgeT > 5) { G.nudgeT = 0; say(o.v > tgt.v ? 'Go higher.' : 'Go lower.'); }
-      }
     },
     pointer(kind, ev) {
-      if (!G || !G.playing || G.paused) return;
-      if (kind === 'up') { G.touch = null; return; }
-      if (kind === 'down' || (kind === 'move' && G.touch !== null)) {
-        // finger height on the SCREEN is the "pitch" (top = high), so it works even when the painting is small
-        G.touch = Math.max(0.03, Math.min(0.97, (ev.clientY / innerHeight - 0.18) / 0.62));
-      }
+      if (!G || !G.playing || G.paused || kind !== 'down') return;
+      hummed();   // a tap is a note, for anyone not using the microphone
     },
     pause() { if (G) { G.paused = true; G.band && G.band.volume(0); } },
     resume() { if (G) { G.paused = false; G.band && G.band.volume(G.done ? 0.45 : 0.7); } },
     get over() { return !!(G && G.over); },
-    get debug() { return G && { engine: 'glow', playing: G.playing, over: G.over, lit: G.lit, i: G.i, orbV: +G.orb.v.toFixed(3), orbS: +G.orb.s.toFixed(2), center: G.center ? +Math.pow(2, G.center).toFixed(1) : 0, mic: G.micOK, claps: G.claps, prog: +G.prog.toFixed(2) }; },
+    get debug() { return G && { engine: 'hum-back', playing: G.playing, over: G.over, lit: G.lit, i: G.i, phase: G.phase, got: G.got, notes: G.dots.length, misses: G.misses, mic: G.micOK }; },
     stop() { if (G) { G.band && G.band.stop(); G.ear && G.ear.stop(); } K.cleanup(G); G = null; },
   };
 }

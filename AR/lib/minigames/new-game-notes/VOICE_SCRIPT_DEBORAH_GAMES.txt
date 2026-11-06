@@ -1,0 +1,122 @@
+VOICE LINES TO RECORD: ART RAISED ME UP + A DIFFERENT WAY TO SEE (Deborah Tramentozzi)
+(narrator lines for the two new games, in Ben's voice)
+
+Save each line as its own mp3 with the file name shown, in AR/media/voice/
+(for example AR/media/voice/raise-intro-1.mp3).
+One sentence per file. Say it exactly as written: the game matches the words exactly.
+Anything not recorded keeps using the computer voice, so you can record a few at a time.
+Deborah's quote and her own voice clip at the end stay as they are: don't record those.
+
+Total: 43 lines for Raise Them Up, 30 lines for Follow the Lines.
+
+
+==================================================================
+ART RAISED ME UP (Deborah Tramentozzi) - "Raise them up"
+==================================================================
+
+Intro (calm, welcoming: the hall is dark and quiet)
+raise-intro-1          Raise them up.
+raise-intro-2          Eight paintings hang in the dark hall.
+raise-intro-3          Each one makes its own sound, from its side, louder as your light gets close.
+raise-intro-4          Drag your finger, or point your phone, to move the beam of light.
+raise-intro-5          Hold the light on a painting, and it rises up into the light.
+
+A painting is raised (first the name, with a little wonder)
+raise-raised-sea       You raised the sea.
+raise-raised-bird      You raised the songbird.
+raise-raised-violin    You raised the violin.
+raise-raised-flowers   You raised the sunflowers.
+raise-raised-stars     You raised the night sky.
+raise-raised-hands     You raised the hands.
+raise-raised-dancer    You raised the dancer.
+raise-raised-sunrise   You raised the sunrise.
+
+Then what it shows (describe it warmly, like you're telling a friend)
+raise-about-sea        Waves roll in under a golden sky.
+raise-about-bird       A robin sings on a branch.
+raise-about-violin     A violin waits for its bow.
+raise-about-flowers    Three sunflowers stand in a blue vase.
+raise-about-stars      The moon and stars swirl over a sleeping village.
+raise-about-hands      Two marble hands hold a little light.
+raise-about-dancer     A dancer spins on her toes.
+raise-about-sunrise    The sun rises between snowy mountains.
+
+How many are left
+raise-more-7           7 more.
+raise-more-6           6 more.
+raise-more-5           5 more.
+raise-more-4           4 more.
+raise-more-3           3 more.
+raise-more-2           2 more.
+raise-more-1           1 more.
+
+The Listen button (helpful, clear)
+raise-here-1           It’s right here.
+raise-here-2           Hold the light still.
+raise-dir-left         A painting is to the left.
+raise-dir-right        A painting is to the right.
+raise-dir-up           A painting is up.
+raise-dir-down         A painting is down.
+raise-dir-up-left      A painting is up and to the left.
+raise-dir-up-right     A painting is up and to the right.
+raise-dir-down-left    A painting is down and to the left.
+raise-dir-down-right   A painting is down and to the right.
+raise-dir-here         A painting is here.
+
+The end (big, joyful, then gentle as you hand over to Deborah)
+raise-end-1            Every painting is raised up.
+raise-end-2            The whole hall is full of light.
+raise-end-3            The hall is full of light.
+raise-end-4            Here is Deborah, in her own words.
+
+
+==================================================================
+A DIFFERENT WAY TO SEE (Deborah Tramentozzi) - "Follow the lines"
+==================================================================
+
+Intro (curious, inviting)
+diffway-intro-1        Follow the lines.
+diffway-intro-2        Deborah builds a picture one detail at a time.
+diffway-intro-3        Your spark starts in the middle of the painting.
+diffway-intro-4        Listen for a sound, and steer the spark toward it along the lines: up, down, left or right.
+diffway-intro-5        Each place you reach fills with colour, and you hear what is there.
+
+Each scene you reach (describe it, like painting a picture with words)
+diffway-tree           A tall fir tree stands over golden hills.
+diffway-fruit          Ripe fruit sits on a table.
+diffway-sketch         Sketches of buildings are pinned to the wall.
+diffway-crowd          A crowd bends over a sleeping man.
+diffway-travel         Two travellers talk under the olive trees.
+diffway-books          A man rests in a sunny room full of books.
+diffway-riders         Riders cross a wide green field.
+diffway-fountain       People meet beside a stone fountain.
+
+How many are left (same words as the Raise lines, but record them again for this game)
+diffway-more-7         7 more.
+diffway-more-6         6 more.
+diffway-more-5         5 more.
+diffway-more-4         4 more.
+diffway-more-3         3 more.
+diffway-more-2         2 more.
+diffway-more-1         1 more.
+
+Steering help (friendly, never scolding)
+diffway-no-line        No line that way.
+diffway-wrong-1        Not that way.
+diffway-wrong-2        Listen.
+diffway-hint-up        The sound is up.
+diffway-hint-down      The sound is down.
+diffway-hint-left      The sound is to the left.
+diffway-hint-right     The sound is to the right.
+
+The end (warm and complete, then hand over to Deborah)
+diffway-end-1          Every detail is in place.
+diffway-end-2          The picture is whole.
+diffway-end-3          Here is Deborah, in her own words.
+
+
+------------------------------------------------------------------
+For the main chat at merge time: add each recorded line to voice-lines.js as
+  "raise-intro-1": "Raise them up.",
+and the prefixes to voice.js PREFIX:
+  'art-raised-me-up': 'raise-',  'a-different-way-to-see': 'diffway-',

@@ -8,6 +8,8 @@
 // Game API (used by AR/index.html, see lib/minigames/index.js):
 //   start({ group, h, camera, renderer, say, buzz }) · update(dt) · pointer(kind, event) · pause() · resume() · stop()
 import * as THREE from 'three';
+import { voiceFor } from './voice.js';   // Ben's recorded lines (media/voice/napkin-*.mp3), the computer voice for anything else
+import { audio as kitAudio } from './kit.js';
 
 // (found from this file, so the game also works from other pages, like the 3D gallery)
 const EMPTY = new URL('../../media/games/napkin-please-empty.jpg', import.meta.url).href;
@@ -155,7 +157,8 @@ export function napkinsGame() {
 
   return {
     title: 'Napkin Please',
-    start({ group, h, camera, renderer, say, buzz }) {
+    start({ group, h, camera, renderer, say: ttsSay, buzz, work }) {
+      const say = voiceFor({ say: ttsSay, work: work || { id: 'napkin-please' } }, kitAudio);
       if (G) this.stop();
       audio();
       G = { group, h, camera, renderer, say, buzz, root: new THREE.Group(), stack: [], flying: [], t: 0, spawnT: 0.6, score: 0, playing: false, over: false, bigT: 0, beatT: 0, path: null, countdown: 1.6, paused: false };
@@ -220,6 +223,7 @@ export function napkinsGame() {
     get debug() { return G && { engine: 'napkins', playing: G.playing, over: G.over, score: G.score, stack: G.stack.length, top: +((towerTop() - BASE_Y) / (G.h / 2 - BASE_Y)).toFixed(2) }; },
     stop() {
       if (!G) return;
+      if (G.say && G.say.stop) G.say.stop();
       G.group.remove(G.root); G.root.traverse(o => { if (o.material && o.material !== G.empty.material) o.material.dispose(); });
       const h = document.getElementById('mgHud'); if (h) h.style.display = 'none'; hideBig();
       G = null;

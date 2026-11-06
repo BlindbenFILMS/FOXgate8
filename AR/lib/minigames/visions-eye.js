@@ -1,8 +1,9 @@
 // THE VISIONS THAT WE SHARE (Dave Steele): CATCH THE WORDS.
 // The great eye comes alive: it blinks, and its iris looks left and right. Dave lives with Retinitis Pigmentosa: a
 // bright centre ringed by darkness, a tunnel of light. Words of a shared poem drift in through that darkness, from the
-// left and the right; each one is spoken, from its side. Turn the eye toward a word (tilt the phone, drag, or hold the
-// Left and Right buttons) and blink (the Blink button, or tap where the word is) while it's in view to catch it.
+// left and the right; each one is spoken, from its side. Press Left or Right to turn the eye (it stays looking that way
+// until you press the other one) and Blink while the word is on that side to catch it. Words in the dark are dim and
+// blurry, pulsing; inside the clear circle of sight they're big and sharp.
 // Caught words fly into the poem; each finished line is read out and the tunnel of light grows wider: sharing a story
 // widens the view. Miss one and it drifts back later. Four lines, then the whole poem, and the eye can see it all.
 import * as THREE from 'three';
@@ -19,7 +20,7 @@ const POEM = [
 ];
 const LINES = POEM.map(l => ({ text: l.replace(/[[\]]/g, ''), words: [...l.matchAll(/\[([^\]]+)\]/g)].map(m => m[1]) }));
 const IRIS = [0.522, 0.457], IRIS_R = 0.112, LOOK = 0.085;   // where the iris sits, its size, how far it can look
-const STAY = 7.5;   // seconds a word drifts before fading back into the dark
+const STAY = 8.5;   // seconds a word drifts before fading back into the dark
 
 const VERT = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
 // the eye: the iris slides left and right inside the eye's opening, the lids close in a blink, and the darkness of
@@ -55,6 +56,19 @@ void main(){
   col *= mix(0.12, 1.0, 1.0 - smoothstep(uTunnel * 0.6, uTunnel, r));
   gl_FragColor = vec4(col, uA);
 }`;
+
+// a word, big and bold: sharp (for inside the circle of sight) or blurred (for out in the dark)
+function wordCard(text, blur) {
+  const W = 640, H = 180;
+  return K.canvasTex(W, H, (g) => {
+    const t = text.toUpperCase(); let fs = 118; const font = () => `900 ${fs}px Archivo, "Arial Black", Arial, sans-serif`; g.font = font();
+    while (g.measureText(t).width > W - 70 && fs > 40) { fs -= 4; g.font = font(); }
+    if (blur) g.filter = 'blur(9px)';
+    g.fillStyle = 'rgba(0,0,0,.7)'; g.fillRect(14, 14, W - 28, H - 40); g.fillStyle = '#4aa3c8'; g.fillRect(14, H - 30, W - 28, 12);
+    g.fillStyle = '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(t, W / 2, (H - 30) / 2 + 10);
+  });
+}
+const WORD_W = 0.34;   // how wide a word is on the painting
 
 /* ───────────────────────── lofi, for looking ───────────────────────── */
 const midi = m => 440 * Math.pow(2, (m - 69) / 12);
@@ -95,7 +109,9 @@ function band(ac) {
     volume(v) { bus.gain.setTargetAtTime(v, ac.currentTime, 0.25); fx.gain.setTargetAtTime(v ? 1 : 0, ac.currentTime, 0.25); },
     open(v) { tape.frequency.setTargetAtTime(1600 + v * 3200, ac.currentTime, 0.6); },   // the music opens up as the view does
     word(p) { const t = ac.currentTime + 0.01; tone(t, midi(84), 0.5, { vol: 0.05, p, out: fx }); tone(t + 0.08, midi(91), 0.6, { vol: 0.035, p, out: fx }); },
-    blink() { noise(ac.currentTime + 0.01, 0.07, { freq: 1200, q: 1.5, vol: 0.05, out: fx }); },
+    look(d) { noise(ac.currentTime + 0.01, 0.16, { freq: 700, q: 1.2, vol: 0.05, p: d * 0.8, out: fx, sweep: 1400, att: 0.04 }); },
+    // a blink: the soft swish of the lid coming down and a gentle tap as it closes
+    blink() { const t = ac.currentTime + 0.01; noise(t, 0.12, { freq: 2600, q: 0.9, vol: 0.09, out: fx, sweep: 900, att: 0.02 }); tone(t + 0.09, 260, 0.12, { vol: 0.12, out: fx, slide: 150, att: 0.004 }); noise(t + 0.16, 0.1, { freq: 1500, q: 0.8, vol: 0.05, out: fx, sweep: 3200, att: 0.02 }); },
     catch(p, n) { const t = ac.currentTime + 0.01; [0, 4, 7, 12].forEach((d, i) => tone(t + i * 0.06, midi(72 + d + (n % 5) * 2), 0.7, { type: 'triangle', vol: 0.06, p, out: fx })); },
     miss(p) { tone(ac.currentTime + 0.01, 300, 0.4, { vol: 0.04, p, slide: 180, out: fx }); },
     line() { const t = ac.currentTime + 0.05; [60, 64, 67, 72, 76].forEach((m, i) => tone(t + i * 0.12, midi(m), 2.5, { type: 'triangle', vol: 0.05, att: 0.05, out: fx })); },
@@ -105,23 +121,6 @@ function band(ac) {
 
 export function catchTheWordsGame() {
   let G = null;
-
-  /* ── tilt to look (works on iPhone and Android, any way up) ── */
-  function sensors() {
-    const M = G.mot = { ok: false, g: [0, 0, 0], s: 0, roll: 0, n: 0 };
-    const on = (ev) => {
-      const a = ev.accelerationIncludingGravity; if (!a || a.x == null) return;
-      M.ok = true; M.n++;
-      const ang = (((screen.orientation && screen.orientation.angle) ?? window.orientation ?? 0) * Math.PI) / 180, ca = Math.cos(ang), sa = Math.sin(ang);
-      const x = a.x * ca - a.y * sa, y = a.x * sa + a.y * ca, z = a.z || 0, k = M.n < 4 ? 1 : 0.2;
-      M.g[0] += (x - M.g[0]) * k; M.g[1] += (y - M.g[1]) * k; M.g[2] += (z - M.g[2]) * k;
-      const [gx, gy, gz] = M.g;
-      if (Math.abs(gy) > 6) M.s = Math.sign(gy); else if (!M.s && Math.abs(gz) > 6) M.s = Math.sign(gz);
-      M.roll = (Math.atan2(-(M.s || 1) * gx, Math.hypot(gy, gz)) * 180) / Math.PI;
-    };
-    addEventListener('devicemotion', on); G.offMotion = () => removeEventListener('devicemotion', on);
-    try { const D = window.DeviceMotionEvent; if (D && typeof D.requestPermission === 'function') D.requestPermission().catch(() => {}); } catch (e) {}
-  }
 
   // the poem so far, shown at the bottom
   function poemBox() {
@@ -145,10 +144,11 @@ export function catchTheWordsGame() {
   // a word drifts in through the dark, from the left or the right
   function spawn() {
     const L = LINES[G.line], w = L.words[G.caught], side = Math.random() < 0.5 ? -1 : 1;
-    const u = 0.5 + side * (0.15 + Math.random() * 0.12), v = 0.22 + Math.random() * 0.5;
-    const s = K.sprite(K.wordTex(w, { bg: 'rgba(0,0,0,.65)', fg: '#ffffff', bar: '#4aa3c8', w: 384, h: 112 }), 0.2, { order: 26, opacity: 0 });
-    s.scale.set(0.17, 0.17 * 112 / 384, 1); const [x, y] = G.S.P(u, v); s.position.set(x, y, 0.06); G.root.add(s);
-    G.word = { s, w, u, v, side, t: 0, du: side * 0.004 };
+    const u = 0.5 + side * (0.2 + Math.random() * 0.06), v = 0.36 + Math.random() * 0.22;
+    // two copies of the word: blurred for the dark, sharp for the clear circle of sight
+    const mk = blur => { const s = K.sprite(wordCard(w, blur), 1, { order: blur ? 26 : 27, opacity: 0 }); s.scale.set(WORD_W, WORD_W * 180 / 640, 1); G.root.add(s); return s; };
+    const s = mk(false), sb = mk(true); const [x, y] = G.S.P(u, v); s.position.set(x, y, 0.06); sb.position.set(x, y, 0.059);
+    G.word = { s, sb, w, u, v, side, t: 0, du: side * 0.003, clear: 0 };
     G.band.word(side * 0.9);
     G.say(`${w[0].toUpperCase() + w.slice(1)}. On your ${side < 0 ? 'left' : 'right'}.`);
   }
@@ -156,13 +156,13 @@ export function catchTheWordsGame() {
   function blink(atU) {
     if (G.blinkT !== undefined && G.blinkT < 0.12) return;
     G.blinkT = 0; G.band.blink(); G.blinks++;
-    if (atU !== undefined) G.target = Math.max(-1, Math.min(1, (atU - 0.5) / 0.25));
+    if (atU !== undefined) look(atU < 0.5 ? -1 : 1);
     if (G.phase !== 'play' || !G.word) return;
-    const wd = G.word, inView = atU !== undefined ? Math.abs(wd.u - atU) < 0.17 : Math.abs(wd.u - gazeU()) < 0.17 && Math.sign(G.look) === wd.side;
+    const wd = G.word, inView = atU !== undefined ? Math.sign(atU - 0.5) === wd.side : G.target === wd.side;   // looking to the word's side
     if (inView) caught(); else { G.band.miss(wd.side * 0.9); G.ui.pop('Look ' + (wd.side < 0 ? 'left ◀' : 'right ▶')); }
   }
   function caught() {
-    const wd = G.word; G.word = null; G.score++; G.glow = 1;
+    const wd = G.word; G.word = null; G.score++; G.glow = 1; G.root.remove(wd.sb); wd.sb.material.dispose();
     G.band.catch(wd.side * 0.9, G.score); G.buzz(25);
     G.fly.push({ s: wd.s, from: [wd.s.position.x, wd.s.position.y], to: G.S.P(0.5, 0.95), t: 0 });
     G.caught++; poemBox();
@@ -183,16 +183,18 @@ export function catchTheWordsGame() {
       say: 'You caught every word. Shared, the view is wide. ' + ((G.work && G.work.quote) || '') });
     if (G.poemEl) G.poemEl.style.bottom = 'calc(12px + env(safe-area-inset-bottom))';
   }
+  // the eye turns to that side and stays there until you press the other button
+  function look(d) {
+    G.target = d; G.band.look(d);
+    if (G.lookBtns) G.lookBtns.forEach((b, i) => { const on = (i ? 1 : -1) === d; b.style.outline = on ? '4px solid #4aa3c8' : ''; b.style.outlineOffset = on ? '-4px' : ''; b.setAttribute('aria-pressed', on); });
+  }
   function buttons() {
     const el = G.ui.buttons([
-      { label: 'Left', icon: '◀', aria: 'Look left (hold)', press: () => {} },
-      { label: 'Blink', icon: '👁', kind: 'red', aria: 'Blink: catch the word you are looking at', press: () => blink() },
-      { label: 'Right', icon: '▶', aria: 'Look right (hold)', press: () => {} },
+      { label: 'Left', icon: '◀', aria: 'Look left', press: () => look(-1) },
+      { label: 'Blink', icon: '👁', kind: 'red', aria: 'Blink: catch the word on the side you are looking', press: () => blink() },
+      { label: 'Right', icon: '▶', aria: 'Look right', press: () => look(1) },
     ]);
-    if (el) [el[0], el[2]].forEach((b, i) => {
-      const d = i ? 1 : -1, on = () => { G.hold = d; }, off = () => { if (G && G.hold === d) G.hold = 0; };
-      b.addEventListener('pointerdown', on); b.addEventListener('pointerup', off); b.addEventListener('pointerleave', off); b.addEventListener('pointercancel', off);
-    });
+    G.lookBtns = el ? [el[0], el[2]] : null;
   }
 
   return {
@@ -211,19 +213,15 @@ export function catchTheWordsGame() {
       const raw = (url, key) => L.load(url, t => { if (!G) return; t.colorSpace = THREE.NoColorSpace; G.uni[key].value = t; ok(); });
       const src = ctx.work && ctx.work.image; if (src) raw(src, 'map');
       raw(ART + 'eyeball.jpg', 'ball'); raw(ART + 'eye.png', 'eye');
-      sensors();
       G.onGo = () => { G.phase = 'play'; G.band.start(); buttons(); poemBox(); G.ui.panel('Catch the words', `0 <small>of ${LINES.reduce((n, l) => n + l.words.length, 0)} words</small>`, { segs: [0, 4] }); };
-      K.intro(G, { title: 'Catch the words', how: 'Words of a poem drift in through the dark. Turn the eye toward each one (tilt, drag, or hold Left and Right) and Blink to catch it.',
-        say: 'Catch the words. Dave lives with Retinitis Pigmentosa: a bright circle of sight, with darkness all around it. Words of a poem will drift in through the dark, from the left and the right. You’ll hear each one, and which side it’s on. Turn the eye toward it, by tilting your phone, dragging, or holding Left or Right, then press Blink to catch it. Every line you finish opens the view a little wider.' });
+      K.intro(G, { title: 'Catch the words', how: 'Look left or right and blink when the word is on that side.',
+        say: 'Catch the words. Look left or right and blink when the word is on that side.' });
     },
     update(dt) {
       if (!G || G.paused) return;
       G.t += dt; G.ui.update(dt); G.fx.update(dt); K.introUpdate(G, dt); K.finaleUpdate(G, dt);
       const u = G.uni; u.uT.value = G.t; u.uA.value += ((G.over ? 0 : 1) - u.uA.value) * Math.min(1, dt * 2);
-      // where the eye looks: tilt, a finger, or the buttons (the eye always comes back to rest a little)
-      if (G.mot && G.mot.ok && Math.abs(G.mot.roll) > 4) G.target = Math.max(-1, Math.min(1, G.mot.roll / 25));
-      else if (G.hold) G.target = Math.max(-1, Math.min(1, G.target + G.hold * dt * 2.2));
-      else if (!G.dragging && !G.bot) G.target *= Math.pow(0.6, dt);
+      // where the eye looks: it stays where the Left or Right button (or a tap) last sent it
       G.look += (G.target * LOOK - G.look) * Math.min(1, dt * 9); u.uLook.value = G.look; u.uGaze.value = G.look / LOOK;
       // blinking: on demand, and now and then by itself
       G.nextBlink -= dt; if (G.nextBlink <= 0) { G.nextBlink = 3 + Math.random() * 4; if (G.blinkT === undefined) G.blinkT = 0; }
@@ -236,10 +234,14 @@ export function catchTheWordsGame() {
         if (!G.word) { G.wait -= dt; if (G.wait <= 0) spawn(); }
         else {
           const wd = G.word; wd.t += dt; wd.u += wd.du * dt; wd.v += Math.sin(G.t * 0.9 + wd.u * 7) * 0.004 * dt;
-          const [x, y] = G.S.P(wd.u, wd.v); wd.s.position.set(x, y, 0.06);
-          const inView = Math.abs(wd.u - gazeU()) < 0.17 && Math.sign(G.look) === wd.side && Math.abs(G.look) > LOOK * 0.25;
-          wd.s.material.opacity = Math.min(1, wd.t * 2) * (inView ? 1 : 0.4) * (wd.t > STAY - 1 ? Math.max(0, STAY - wd.t) : 1);
-          if (wd.t >= STAY) { G.root.remove(wd.s); wd.s.material.dispose(); G.word = null; G.wait = 1.5; G.say('It drifted away. It’ll come back.'); }
+          const [x, y] = G.S.P(wd.u, wd.v); wd.s.position.set(x, y, 0.06); wd.sb.position.set(x, y, 0.059);
+          // how clearly it can be seen: sharp inside the circle of sight, dim, blurred and pulsing out in the dark
+          const gx = 0.5 + (G.look / LOOK) * 0.25, r = Math.hypot(wd.u - gx, (wd.v - 0.47) * G.h);
+          wd.clear += ((1 - Math.min(1, Math.max(0, (r - G.tunnel * 0.55) / (G.tunnel * 0.45)))) - (wd.clear || 0)) * Math.min(1, dt * 8);
+          const fade = Math.min(1, wd.t * 2) * (wd.t > STAY - 1 ? Math.max(0, STAY - wd.t) : 1), pulse = 0.22 + 0.16 * (0.5 + 0.5 * Math.sin(G.t * 3.2));
+          wd.s.material.opacity = fade * wd.clear; wd.sb.material.opacity = fade * (1 - wd.clear) * pulse * 1.6;
+          const sc = WORD_W * (1 + 0.04 * (1 - wd.clear) * Math.sin(G.t * 3.2)); wd.sb.scale.set(sc, sc * 180 / 640, 1);
+          if (wd.t >= STAY) { for (const q of [wd.s, wd.sb]) { G.root.remove(q); q.material.dispose(); } G.word = null; G.wait = 1.5; G.say('It drifted away. It’ll come back.'); }
         }
       }
       for (let i = G.fly.length - 1; i >= 0; i--) {
@@ -249,14 +251,14 @@ export function catchTheWordsGame() {
       }
       G.ui.panel('Catch the words', `${G.score} <small>of ${LINES.reduce((n, l) => n + l.words.length, 0)} words</small>`, { segs: [G.line, 4] });
       // the robot looks toward each word and blinks
-      if (G.bot && G.phase === 'play' && G.word) { G.target = G.word.side; G.botT += dt; if (G.botT > 1.6 && Math.abs(G.look) > LOOK * 0.8) { G.botT = 0; blink(); } }
+      if (G.bot && G.phase === 'play' && G.word) { if (G.target !== G.word.side) look(G.word.side); G.botT += dt; if (G.botT > 1.6 && Math.abs(G.look) > LOOK * 0.8) { G.botT = 0; blink(); } }
     },
     pointer(kind, ev) {
       if (!G || G.phase !== 'play') return;
       const p = G.S.toBoard(ev, G.root);
-      // drag to look; a quick tap looks there and blinks
+      // drag to a side to look that way; a quick tap looks to that side and blinks
       if (kind === 'down') { G.down = { x: ev.clientX, t: G.t, u: p && p.u }; }
-      if (kind === 'move' && G.down && Math.abs(ev.clientX - G.down.x) > 12) { G.dragging = true; if (p) G.target = Math.max(-1, Math.min(1, (p.u - 0.5) / 0.25)); }
+      if (kind === 'move' && G.down && Math.abs(ev.clientX - G.down.x) > 12) { G.dragging = true; if (p) { const d = p.u < 0.5 ? -1 : 1; if (d !== G.target) look(d); } }
       if (kind === 'up') { if (G.down && !G.dragging && G.t - G.down.t < 0.4 && G.down.u != null) blink(G.down.u); G.down = null; G.dragging = false; }
     },
     pause() { if (G) { G.paused = true; G.band.volume(0); } },
@@ -264,6 +266,6 @@ export function catchTheWordsGame() {
     get over() { return !!(G && G.over); },
     get debug() { return G && { engine: 'visions', playing: G.playing, over: G.over, phase: G.phase, line: G.line, caught: G.caught, score: G.score, look: +(G.look / LOOK).toFixed(2), blink: +G.blink.toFixed(2),
       word: G.word && G.word.w, side: G.word && G.word.side, t: +G.t.toFixed(1) }; },
-    stop() { if (G) { G.band.stop(); G.offMotion && G.offMotion(); G.poemEl && G.poemEl.remove(); } K.cleanup(G); G = null; },
+    stop() { if (G) { G.band.stop(); G.poemEl && G.poemEl.remove(); } K.cleanup(G); G = null; },
   };
 }

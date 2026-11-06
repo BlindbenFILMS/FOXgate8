@@ -1,7 +1,8 @@
 // ALL LIFE'S BEAUTY (Dave Steele): DANCE IN THE FLOWERS.
-// The girl in the garden becomes a puppet. Tilt the phone (or drag) and she sways with you; wave the phone (or swipe
-// back and forth fast) and she twirls, her dress flaring and her hair swinging, while the stream of flowers pouring
-// from her book swirls. A gentle lofi waltz plays, and on each bar a move is called: "Sway left", "Sway right",
+// The girl steps out of the painting and dances: she's cut out (media/games/beauty/girl.png) over the garden behind
+// her (garden.jpg, painted in where she stood). Tilt the phone (or drag) and she leans and sways with you; wave the
+// phone (or swipe back and forth fast) and she spins right round like a music-box dancer, her skirt flaring and her
+// hair swinging, while the stream of flowers pouring from her book swirls. She bobs on every beat of the waltz. A gentle lofi waltz plays, and on each bar a move is called: "Sway left", "Sway right",
 // "Twirl". Do it in time and flowers burst from her book and join a ring of blossoms spinning around her. Grey clouds
 // of worry ("the fear of tomorrow") drift in and dim the garden: wave them away so the beauty stays. Twelve moves,
 // then the whole garden dances. "Don't let the fear of tomorrow take away the beauty you can still find today."
@@ -11,7 +12,30 @@ import * as K from './kit.js';
 
 const ART = 'media/games/beauty/';
 const MOVES = 12, WINDOW = 2.6;   // moves in a dance; seconds to do each one
-const FEET = [0.375, 0.84];        // she sways from her feet
+// her cut-out: where it sits in the painting (pixels of the 1024 painting), and the line she spins around
+const GIRL = { x0: 244, y0: 255, x1: 560, y1: 850, axis: 393, feet: 842 }, SPIN = 0.85;   // seconds for one full turn
+// her own picture: it turns like a card (squeezing to a sliver and opening out mirrored), her skirt flares as she
+// spins, her hair swings, and she greys with worry and glows at the end like the garden does
+const GIRL_FRAG = `
+varying vec2 vUv;
+uniform sampler2D tex;
+uniform float uTurn, uFlare, uHair, uA, uGray, uBloom, uAX, uWide;
+void main(){
+  float skirt = smoothstep(0.69, 0.22, vUv.y) * step(0.12, vUv.y);       // waist to hem
+  float hair = smoothstep(0.72, 1.0, vUv.y);
+  float sgn = uTurn < 0.0 ? -1.0 : 1.0, turn = sgn * max(abs(uTurn), 0.06);
+  float x = uAX + (vUv.x - 0.5) * uWide / (turn * (1.0 + uFlare * 0.45 * skirt));
+  x += uHair * 0.05 * hair;
+  float y = vUv.y + uFlare * 0.012 * skirt * sin(vUv.x * 40.0);
+  if (x < 0.0 || x > 1.0) discard;
+  vec4 c = texture2D(tex, vec2(x, y));
+  if (c.a < 0.02) discard;
+  vec3 col = c.rgb * mix(0.72, 1.0, abs(uTurn)) * (sgn < 0.0 ? 0.88 : 1.0);   // a little shadow as she turns away
+  float l = dot(col, vec3(0.299, 0.587, 0.114));
+  col = mix(col, vec3(l) * 0.62 + 0.08, uGray * 0.75);
+  col = mix(col, col * 1.12 + vec3(0.05, 0.035, 0.0), uBloom);
+  gl_FragColor = vec4(col, c.a * uA);
+}`;
 
 const VERT = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
 // the painting: she sways from her feet, her dress flares and her hair swings when she twirls, the stream of flowers
@@ -21,7 +45,6 @@ varying vec2 vUv;
 uniform sampler2D map, info;
 uniform float uSway, uTwirl, uSwirl, uT, uA, uH, uGray, uBloom;
 vec3 at(sampler2D t, vec2 p){ return texture2D(t, vec2(clamp(p.x, 0.001, 0.999), 1.0 - clamp(p.y, 0.001, 0.999))).rgb; }
-const vec2 FEET = vec2(0.375, 0.84);
 void main(){
   vec2 p = vec2(vUv.x, 1.0 - vUv.y);
   // the stream of flowers from her book swirls
@@ -32,14 +55,7 @@ void main(){
     s = c + mat2(cos(a), -sin(a), sin(a), cos(a)) * d;
     s += vec2(sin(p.y * 40.0 + uT * 3.0), cos(p.x * 40.0 + uT * 2.5)) * 0.004 * (0.3 + uSwirl) * i0.r;
   }
-  // her: the whole space around her bends as she sways (no holes), and twirling flares her dress and swings her hair
-  float wx = exp(-pow((p.x - 0.39) / 0.17, 2.0));
-  float up = clamp((FEET.y - p.y) / 0.58, 0.0, 1.0);
-  s.x -= uSway * 0.6 * up * up * wx;
-  float wd = exp(-pow((p.x - 0.395) / 0.2, 2.0)) * smoothstep(0.48, 0.72, p.y) * (1.0 - smoothstep(0.84, 0.92, p.y));
-  s.x = mix(s.x, 0.395 + (s.x - 0.395) / (1.0 + 0.3 * uTwirl), wd);
-  s.y += sin(p.x * 55.0 + uT * 8.0) * 0.003 * uTwirl * wd;
-  s.x -= sin(uT * 7.0) * 0.01 * uTwirl * at(info, p).g;
+  // (she's drawn separately now, dancing on top of this garden)
   vec3 col = at(map, s);
   // worry dims and greys the garden
   float l = dot(col, vec3(0.299, 0.587, 0.114));
@@ -148,7 +164,7 @@ export function danceInTheFlowersGame() {
   // a move was made: does it match the call?
   function move(kind) {
     if (G.phase !== 'dance') return;
-    if (kind === 'twirl') { G.twirlT = 1.2; G.music.swoosh(0); }
+    if (kind === 'twirl') { G.twirlT = 1.2; G.music.swoosh(0); if (G.spinTo - G.spinA < Math.PI) G.spinTo += Math.PI * 2; }   // one full turn (a second twirl mid-spin adds one more)
     if (kind !== 'twirl') { G.swayKick = kind === 'left' ? -1 : 1; }
     if (G.worry && kind === 'twirl') { G.waveAmt += 1; if (G.waveAmt >= 2) clearWorry(); }
     if (!G.cue || G.cue.kind !== kind) return;
@@ -170,7 +186,7 @@ export function danceInTheFlowersGame() {
     G.fx.add(bx, by, '#ffd27a', 12, 0.08);
   }
   function finale() {
-    G.phase = 'finale'; G.cue = null; G.music.finale(); G.twirlT = 3;
+    G.phase = 'finale'; G.cue = null; G.music.finale(); G.twirlT = 3.4; G.spinTo = Math.max(G.spinTo, G.spinA) + Math.PI * 6;   // three spins to finish
     G.say('The whole garden is dancing with you. Today is beautiful.');
     setTimeout(() => {
       if (!G) return;
@@ -193,15 +209,24 @@ export function danceInTheFlowersGame() {
       if (G) this.stop();
       G = K.makeBase(ctx);
       Object.assign(G, { phase: 'intro', sway: 0, swayKick: 0, twirl: 0, twirlT: 0, swirl: 0, gray: 0, bloom: 0, done: 0, combo: 0, cue: null, lastKind: null, bar: 0, worry: null, worries: 0, cleared: 0, waveAmt: 0,
-        clouds: [], petals: [], drag: null, swipe: 0, rollWas: 0, botT: 0 });
+        clouds: [], petals: [], drag: null, swipe: 0, rollWas: 0, botT: 0, spinA: 0, spinTo: 0, hair: 0 });
       G.music = waltz(K.audio());
       G.uni = { map: { value: null }, info: { value: null }, uSway: { value: 0 }, uTwirl: { value: 0 }, uSwirl: { value: 0 }, uT: { value: 0 }, uA: { value: 0 }, uH: { value: G.h }, uGray: { value: 0 }, uBloom: { value: 0 } };
       G.face = new THREE.Mesh(new THREE.PlaneGeometry(1.002, G.h + 0.002), new THREE.ShaderMaterial({ uniforms: G.uni, vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: false }));
       G.face.position.z = 0.03; G.face.renderOrder = 12; G.root.add(G.face); G.face.visible = false;
-      const L = new THREE.TextureLoader(); let need = 2; const ok = () => { if (--need === 0 && G) G.face.visible = true; };
-      const raw = (url, key) => L.load(url, t => { if (!G) return; t.colorSpace = THREE.NoColorSpace; G.uni[key].value = t; ok(); });
-      const src = ctx.work && ctx.work.image; if (src) raw(src, 'map');
+      const L = new THREE.TextureLoader(); let need = 3; const ok = () => { if (--need === 0 && G) { G.face.visible = true; G.girl.visible = true; } };
+      const raw = (url, key, uni = G.uni) => L.load(url, t => { if (!G) return; t.colorSpace = THREE.NoColorSpace; uni[key].value = t; ok(); });
+      raw(ART + 'garden.jpg', 'map');   // the painting with the garden painted in where she stood
       raw(ART + 'info.png', 'info');
+      // her: a card that turns around the line through her body, hung from her feet so she leans and sways from them
+      const cw = (GIRL.x1 - GIRL.x0) / 1024, ch = (GIRL.y1 - GIRL.y0) / 1024 * G.h, WIDE = 1.7;
+      G.gu = { tex: { value: null }, uTurn: { value: 1 }, uFlare: { value: 0 }, uHair: { value: 0 }, uA: G.uni.uA, uGray: G.uni.uGray, uBloom: G.uni.uBloom,
+        uAX: { value: (GIRL.axis - GIRL.x0) / (GIRL.x1 - GIRL.x0) }, uWide: { value: WIDE } };
+      const gm = new THREE.Mesh(new THREE.PlaneGeometry(cw * WIDE, ch), new THREE.ShaderMaterial({ uniforms: G.gu, vertexShader: VERT, fragmentShader: GIRL_FRAG, transparent: true, depthWrite: false }));
+      gm.renderOrder = 14; gm.position.set(0, ch / 2 - (GIRL.y1 - GIRL.feet) / 1024 * G.h, 0);
+      G.girl = new THREE.Group(); G.girl.add(gm); G.girl.visible = false;
+      G.feet = G.S.P(GIRL.axis / 1024, GIRL.feet / 1024); G.girl.position.set(G.feet[0], G.feet[1], 0.035); G.root.add(G.girl);
+      raw(ART + 'girl.png', 'tex', G.gu);
       G.flowerTex = []; for (let i = 0; i < 12; i++) L.load(ART + 'flower-' + i + '.png', t => { if (!G) return; t.colorSpace = THREE.SRGBColorSpace; G.flowerTex.push(t); });
       // grey clouds of worry: lumpy and soft
       G.cloudTex = K.canvasTex(256, 140, (g) => {
@@ -231,6 +256,15 @@ export function danceInTheFlowersGame() {
       const swayTo = (lean * 0.06 + G.swayKick * 0.07) + Math.sin(G.t * Math.PI * 2 / G.music.bar) * 0.012;
       G.sway += (swayTo - G.sway) * Math.min(1, dt * 6); u.uSway.value = G.sway;
       G.twirlT = Math.max(0, G.twirlT - dt); G.twirl += ((G.twirlT > 0 ? 1 : 0) - G.twirl) * Math.min(1, dt * 4); u.uTwirl.value = G.twirl;
+      // her dance: she leans and steps with the sway, bobs on each beat, and spins right round on a twirl
+      G.spinA = Math.min(G.spinTo, G.spinA + dt * Math.PI * 2 / SPIN);
+      const spinning = G.spinTo - G.spinA > 0.01, beatPh = (G.t / (G.music.bar / 3)) % 1;
+      G.girl.rotation.z = -G.sway * 1.9;
+      G.girl.position.x = G.feet[0] + G.sway * 0.35;
+      G.girl.position.y = G.feet[1] + Math.abs(Math.sin(beatPh * Math.PI)) * 0.005 + (spinning ? 0.006 : 0);
+      G.gu.uTurn.value = Math.cos(G.spinA);
+      G.gu.uFlare.value = G.twirl;
+      G.hair += ((spinning ? -Math.sin(G.spinA) * 0.8 : 0) - G.sway * 6 - G.hair) * Math.min(1, dt * 5); G.gu.uHair.value = Math.max(-1, Math.min(1, G.hair));
       G.swirl += ((G.twirl * 0.8 + Math.min(1, G.done / MOVES) * 0.5) - G.swirl) * Math.min(1, dt * 2); u.uSwirl.value = G.swirl;
       // a called move waits a little while, then passes
       if (G.cue) { G.cue.t += dt; if (G.cue.t > WINDOW) { G.cue = null; G.combo = 0; G.ui.panel('Dance in the flowers', `${G.done} <small>of ${MOVES} moves</small>`, { segs: [G.done, MOVES] }); } }
@@ -248,7 +282,7 @@ export function danceInTheFlowersGame() {
         p.k = Math.min(1, p.k + dt * 0.8); p.a += dt * p.spin * (0.7 + G.twirl);
         const r = p.r * (0.6 + 0.4 * p.k), tx = fx + Math.cos(p.a) * r, ty = fy + (p.h - 0.45) * G.h * 0.6 + Math.sin(p.a) * r * 0.25 + Math.sin(G.t * 2 + p.a) * 0.01;
         p.s.position.x += (tx - p.s.position.x) * Math.min(1, dt * 3); p.s.position.y += (ty - p.s.position.y) * Math.min(1, dt * 3);
-        p.s.position.z = 0.04 + (Math.sin(p.a) > 0 ? 0.03 : 0); p.s.renderOrder = Math.sin(p.a) > 0 ? 26 : 11;   // behind her, then in front
+        p.s.position.z = 0.04 + (Math.sin(p.a) > 0 ? 0.03 : 0); p.s.renderOrder = Math.sin(p.a) > 0 ? 26 : 13;   // behind her, then in front
         p.s.material.rotation += dt * p.spin;
       }
       if (G.phase === 'finale') { G.bloom = Math.min(1, G.bloom + dt * 0.4); u.uBloom.value = G.bloom * 0.6; if (Math.random() < dt * 6) burst('twirl'); }
@@ -277,7 +311,7 @@ export function danceInTheFlowersGame() {
     resume() { if (G) { G.paused = false; G.music.volume(0.85); } },
     get over() { return !!(G && G.over); },
     get debug() { return G && { engine: 'beauty', playing: G.playing, over: G.over, phase: G.phase, done: G.done, cue: G.cue && G.cue.kind, worry: !!G.worry, worries: G.worries, cleared: G.cleared,
-      sway: +G.sway.toFixed(3), twirl: +G.twirl.toFixed(2), petals: G.petals.length, t: +G.t.toFixed(1) }; },
+      sway: +G.sway.toFixed(3), twirl: +G.twirl.toFixed(2), turn: +Math.cos(G.spinA).toFixed(2), petals: G.petals.length, t: +G.t.toFixed(1) }; },
     stop() { if (G) { G.music.stop(); G.offMotion && G.offMotion(); } K.cleanup(G); G = null; },
   };
 }

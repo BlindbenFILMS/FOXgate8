@@ -1,28 +1,29 @@
 // THE ONLY LIGHT WE'LL SEE (Dave Steele): LIGHT THE NIGHT.
 // A still lake under a full moon. The night starts very dark; the moon glows and slowly pulses, its reflection
 // shimmers on the water, and little waves lap against the shore. You carry a small light: point your phone across the
-// painting (or drag a finger). Eight things are hidden in the night: an owl, a canoe, fireflies, a deer, a jumping fish,
+// painting (or drag a finger). Eight things (big moonlit drawings that move gently: onlylight-things.js) are hidden in the night: an owl, a canoe, fireflies, a deer, a jumping fish,
 // a cabin's lantern, a heron and a loon. Each one makes its own sound, from its side and louder as you get close.
 // Hold your light on it to find it: it lights up in silver, a spark flies up and becomes a star, and the whole night
 // gets a little brighter. Find all eight and the stars join into a constellation, the moon's path blazes across the
 // water, and the whole painting is lit. "In the darkest of nights, we learn to find our own light."
 import * as THREE from 'three';
 import * as K from './kit.js';
+import { thing } from './onlylight-things.js';
 // (Textures read by a custom shader stay in their own colours: NoColorSpace, so they match the painting exactly.)
 
 const ART = 'media/games/onlylight/';
 // each hidden thing: where it might be (one spot is picked each game), its sound, and where its star goes
 const THINGS = [
-  { id: 'owl', emoji: '🦉', name: 'an owl in the trees', spots: [[0.12, 0.2], [0.27, 0.19], [0.32, 0.29]], size: 0.06, snd: 'owl', star: [0.46, 0.08] },
-  { id: 'canoe', emoji: '🛶', name: 'a canoe drifting on the lake', spots: [[0.76, 0.72], [0.47, 0.78], [0.86, 0.57]], size: 0.09, snd: 'paddle', star: [0.56, 0.12] },
-  { id: 'fireflies', emoji: '✨', name: 'fireflies over the grass', spots: [[0.2, 0.51], [0.36, 0.48], [0.08, 0.55]], size: 0.06, snd: 'fireflies', star: [0.68, 0.07] },
-  { id: 'deer', emoji: '🦌', name: 'a deer on the shore', spots: [[0.46, 0.505], [0.24, 0.47]], size: 0.07, snd: 'deer', star: [0.79, 0.13] },
-  { id: 'fish', emoji: '🐟', name: 'a fish jumping', spots: [[0.82, 0.82], [0.56, 0.7], [0.92, 0.64]], size: 0.06, snd: 'fish', star: [0.9, 0.22] },
-  { id: 'lantern', emoji: '🏮', name: 'a lantern at a cabin across the lake', spots: [[0.79, 0.425], [0.9, 0.43], [0.53, 0.415]], size: 0.04, snd: 'cabin', star: [0.82, 0.31] },
-  { id: 'heron', emoji: '🦢', name: 'a heron standing in the shallows', spots: [[0.3, 0.66], [0.39, 0.62], [0.14, 0.7]], size: 0.07, snd: 'heron', star: [0.44, 0.24] },
-  { id: 'loon', emoji: '🦆', name: 'a loon calling on the water', spots: [[0.7, 0.5], [0.95, 0.53], [0.4, 0.88]], size: 0.06, snd: 'loon', star: [0.38, 0.15] },
+  { id: 'owl', emoji: '🦉', name: 'an owl in the trees', spots: [[0.12, 0.2], [0.27, 0.19], [0.32, 0.29]], size: 0.13, snd: 'owl', star: [0.46, 0.08] },
+  { id: 'canoe', emoji: '🛶', name: 'a canoe drifting on the lake', spots: [[0.76, 0.72], [0.47, 0.78], [0.86, 0.57]], size: 0.17, snd: 'paddle', star: [0.56, 0.12] },
+  { id: 'fireflies', emoji: '✨', name: 'fireflies over the grass', spots: [[0.2, 0.51], [0.36, 0.48], [0.08, 0.55]], size: 0.15, snd: 'fireflies', star: [0.68, 0.07] },
+  { id: 'deer', emoji: '🦌', name: 'a deer on the shore', spots: [[0.46, 0.505], [0.24, 0.47]], size: 0.15, snd: 'deer', star: [0.79, 0.13] },
+  { id: 'fish', emoji: '🐟', name: 'a fish jumping', spots: [[0.82, 0.82], [0.56, 0.7], [0.88, 0.64]], size: 0.12, snd: 'fish', star: [0.9, 0.22] },
+  { id: 'lantern', emoji: '🏮', name: 'a lantern at a cabin across the lake', spots: [[0.79, 0.425], [0.9, 0.43], [0.53, 0.415]], size: 0.08, snd: 'cabin', star: [0.82, 0.31] },
+  { id: 'heron', emoji: '🦢', name: 'a heron standing in the shallows', spots: [[0.3, 0.66], [0.39, 0.62], [0.14, 0.7]], size: 0.14, snd: 'heron', star: [0.44, 0.24] },
+  { id: 'loon', emoji: '🦆', name: 'a loon calling on the water', spots: [[0.7, 0.5], [0.9, 0.53], [0.4, 0.88]], size: 0.13, snd: 'loon', star: [0.38, 0.15] },
 ];
-const FIND_R = 0.075, HOLD = 1.0;
+const FIND_R = 0.1, HOLD = 1.0;   // (the things are big now, so the light finds them from a little further away)
 
 const VERT = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
 // the night: dark except around your light, getting brighter with every find; the moon glows and pulses, its
@@ -131,20 +132,6 @@ function night(ac) {
   };
 }
 
-// a thing drawn as a moonlit silhouette: dark with a silver rim, which glows when found
-function silhouette(emoji) {
-  return K.canvasTex(128, 128, (g) => {
-    g.font = '92px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
-    g.filter = 'blur(3px)'; g.globalAlpha = 0.9; g.fillStyle = '#cfe0ff';
-    for (const [dx, dy] of [[-3, 0], [3, 0], [0, -3], [0, 3]]) g.fillText(emoji, 64 + dx, 68 + dy);
-    g.filter = 'none'; g.globalAlpha = 1; g.fillText(emoji, 64, 68);
-    // keep the shape, cool the colours to moonlight
-    const d = g.getImageData(0, 0, 128, 128), a = d.data;
-    for (let i = 0; i < a.length; i += 4) { const l = (a[i] * 0.3 + a[i + 1] * 0.59 + a[i + 2] * 0.11) / 255; a[i] = 60 + l * 170; a[i + 1] = 70 + l * 175; a[i + 2] = 95 + l * 160; }
-    g.putImageData(d, 0, 0);
-  });
-}
-
 export function lightTheNightGame() {
   let G = null;
   const dist = (a, b) => Math.hypot(a[0] - b[0], (a[1] - b[1]) * G.h);
@@ -158,7 +145,7 @@ export function lightTheNightGame() {
   function find(th) {
     th.found = true; G.found++; G.night.found(); G.buzz([30, 40, 80]);
     const [x, y] = G.S.P(...th.at); G.fx.add(x, y, '#dfe9ff', 18, 0.12);
-    th.sprite.material.opacity = 1;
+    th.view.opacity(1);
     G.say(`You found ${th.name}.` + (G.found < THINGS.length ? ` ${THINGS.length - G.found} more.` : ''));
     // a spark flies up and becomes a star
     const sp = K.sprite(K.glowTex, 0.05, { color: '#ffffff', additive: true, order: 30 }); sp.position.set(x, y, 0.06); G.root.add(sp);
@@ -224,8 +211,8 @@ export function lightTheNightGame() {
       // hide the eight things, each in one of its spots
       for (const t of THINGS) {
         const at = t.spots[Math.floor(Math.random() * t.spots.length)];
-        const sprite = K.sprite(silhouette(t.emoji), t.size, { order: 20, opacity: 0 }); const [x, y] = G.S.P(...at); sprite.position.set(x, y, 0.045); G.root.add(sprite);
-        G.things.push({ ...t, at, sprite, hold: 0, found: false, glint: 0 });
+        const view = thing(t.id, t.size); const [x, y] = G.S.P(...at); view.group.position.set(x, y, 0.045); G.root.add(view.group);
+        G.things.push({ ...t, at, view, hold: 0, found: false, glint: 0 });
       }
       // the light you carry
       G.ring = K.sprite(K.ringTex, 0.1, { color: '#dfe9ff', order: 28, opacity: 0 }); G.root.add(G.ring);
@@ -265,13 +252,17 @@ export function lightTheNightGame() {
           th.hold = inside ? th.hold + dt : Math.max(0, th.hold - dt * 2);
           // a faint glint when your light passes near, more as you hold it there
           th.glint = Math.max(th.glint - dt, 0);
-          th.sprite.material.opacity = Math.min(0.85, Math.max(th.glint * 0.6, (1 - Math.min(1, d / 0.14)) * 0.35 + th.hold / HOLD * 0.5));
-          th.sprite.scale.setScalar(th.size * (1 + th.hold / HOLD * 0.15));
+          th.view.opacity(Math.min(0.9, Math.max(th.glint * 0.6, (1 - Math.min(1, d / 0.2)) * 0.4 + th.hold / HOLD * 0.5)));
+          th.view.group.scale.setScalar(1 + th.hold / HOLD * 0.12);
           if (th.hold >= HOLD) find(th);
         }
       }
       // found things glow softly; sparks fly up to become stars
-      for (const th of G.things) if (th.found) { th.sprite.material.opacity = 0.85 + 0.15 * Math.sin(G.t * 2 + th.at[0] * 9); }
+      // every thing keeps moving gently; found things stay lit and glow softly
+      for (const th of G.things) {
+        if (th.found) { th.view.opacity(0.88 + 0.12 * Math.sin(G.t * 2 + th.at[0] * 9)); const k = th.view.group.scale.x; th.view.group.scale.setScalar(k + (1 - k) * Math.min(1, dt * 3)); }
+        th.view.tick(G.t + th.at[0] * 7, dt);
+      }
       for (let i = G.sparks.length - 1; i >= 0; i--) {
         const s = G.sparks[i]; s.t += dt / 1.6; const k = Math.min(1, s.t), e = 1 - Math.pow(1 - k, 3);
         s.s.position.x = s.from[0] + (s.to[0] - s.from[0]) * e; s.s.position.y = s.from[1] + (s.to[1] - s.from[1]) * e + Math.sin(k * Math.PI) * 0.05;

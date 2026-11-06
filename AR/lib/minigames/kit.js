@@ -165,13 +165,13 @@ function css() {
   .mgk-segs i.on{background:${RED}}
   .mgk-panel.warn .mgk-segs i.on{background:#000}
   .mgk-sub{font:700 14px/1.3 'Atkinson Hyperlegible',Arial,sans-serif;text-transform:none;letter-spacing:0;color:#d6d6d6;margin-top:6px}
-  .mgk-banner{left:calc(12px + env(safe-area-inset-left));right:calc(12px + env(safe-area-inset-right));top:calc(66px + env(safe-area-inset-top));background:#000;border-bottom:8px solid ${RED};padding:14px 20px 18px}
-  .mgk-banner .t{font-size:clamp(32px,11vw,54px);line-height:.95;margin-top:8px}
-  .mgk-banner .s{font:700 clamp(16px,4.6vw,21px)/1.3 'Atkinson Hyperlegible',Arial,sans-serif;text-transform:none;margin-top:10px;color:#fff}
-  .mgk-alert{left:calc(12px + env(safe-area-inset-left));right:calc(18px + env(safe-area-inset-right));top:calc(196px + env(safe-area-inset-top));background:${RED};border:3px solid #000;box-shadow:6px 6px 0 #000;padding:12px 18px 14px}
-  .mgk-alert.blue{background:${BLUE}} .mgk-alert.black{background:#000;border-color:#fff;box-shadow:6px 6px 0 ${RED}}
-  .mgk-alert .t{font-size:clamp(26px,8.6vw,42px);line-height:.98}
-  .mgk-alert .s{font:700 17px/1.3 'Atkinson Hyperlegible',Arial,sans-serif;text-transform:none;margin-top:6px}
+  .mgk-banner{left:calc(12px + env(safe-area-inset-left));right:calc(12px + env(safe-area-inset-right));top:calc(66px + env(safe-area-inset-top));background:#000;border-bottom:8px solid ${RED};padding:10px 16px 12px}
+  .mgk-banner .t{font-size:clamp(22px,7vw,34px);line-height:1.02;margin-top:6px}
+  .mgk-banner .s{font:700 15px/1.3 'Atkinson Hyperlegible',Arial,sans-serif;text-transform:none;margin-top:6px;color:#fff}
+  .mgk-alert{left:calc(12px + env(safe-area-inset-left));right:calc(12px + env(safe-area-inset-right));top:calc(66px + env(safe-area-inset-top));background:${RED};border:3px solid #000;padding:10px 16px 12px;z-index:12}
+  .mgk-alert.blue{background:${BLUE}} .mgk-alert.black{background:#000;border-color:#fff;border-bottom:8px solid ${RED}}
+  .mgk-alert .t{font-size:clamp(22px,7vw,34px);line-height:1.02}
+  .mgk-alert .s{font:700 15px/1.3 'Atkinson Hyperlegible',Arial,sans-serif;text-transform:none;margin-top:6px}
   .mgk-count{left:calc(12px + env(safe-area-inset-left));top:calc(300px + env(safe-area-inset-top));min-width:132px;height:132px;padding:0 24px;background:${RED};border:3px solid #000;box-shadow:6px 6px 0 #000;
     display:flex;align-items:center;font-size:104px;line-height:1}
   .mgk-pop{background:#000;border-bottom:4px solid ${RED};padding:4px 10px 3px;font-size:30px;transform:translate(-50%,-50%)}
@@ -196,7 +196,7 @@ function css() {
   .mgk-end .best i{width:14px;height:14px;background:${RED};display:inline-block}
   .mgk-end button{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:58px;margin-top:10px;padding:0 18px;border:2px solid #000;background:#fff;color:#000;cursor:pointer;
     font:900 20px/1 Archivo,'Arial Black',Arial,sans-serif;letter-spacing:.04em;text-transform:uppercase}
-  @media (max-height:640px){.mgk-alert{top:calc(150px + env(safe-area-inset-top))}.mgk-count{top:calc(190px + env(safe-area-inset-top))}}
+  @media (max-height:640px){.mgk-count{top:calc(190px + env(safe-area-inset-top))}}
   `;
   document.head.appendChild(s);
 }
@@ -215,14 +215,14 @@ export function ui() {
       panelEl.innerHTML = `<div class="mgk-k">${esc(kicker)}</div><div class="mgk-v">${value}</div>` +
         (segs ? `<div class="mgk-segs">${Array.from({ length: segs[1] }, (_, i) => `<i class="${i < segs[0] ? 'on' : ''}"></i>`).join('')}</div>` : '') +
         (sub ? `<div class="mgk-sub">${esc(sub)}</div>` : '');
-      panelEl.style.display = 'block';
+      panelEl.style.display = 'block'; if (U._G) dock(0);
     },
     hidePanel() { if (panelEl) panelEl.style.display = 'none'; },
     // the start banner ("MINI GAME" / title / instruction)
     banner(title, sub, secs = 0, kicker = 'Mini game') {
       if (!bannerEl) bannerEl = make('mgk-banner');
       bannerEl.innerHTML = `<div class="mgk-k">${esc(kicker)}</div><div class="t">${esc(title)}</div>${sub ? `<div class="s">${esc(sub)}</div>` : ''}`;
-      bannerEl.style.display = 'block'; bannerT = secs; if (panelEl) panelEl.style.visibility = 'hidden';
+      bannerEl.style.display = 'block'; bannerT = secs; if (panelEl) panelEl.style.visibility = 'hidden'; if (U._G) dock(0);
     },
     hideBanner() { if (bannerEl) bannerEl.style.display = 'none'; if (panelEl) panelEl.style.visibility = ''; bannerT = 0; },
     // a loud alert block (kind: red | blue | black), for warnings, hits, combos
@@ -230,9 +230,9 @@ export function ui() {
       if (!alertEl) alertEl = make('mgk-alert');
       alertEl.className = 'mgk mgk-alert ' + kind;
       alertEl.innerHTML = `<div class="t">${esc(title)}</div>${sub ? `<div class="s">${esc(sub)}</div>` : ''}`;
-      alertEl.style.display = 'block'; alertT = secs;
+      alertEl.style.display = 'block'; alertT = secs; if (panelEl) panelEl.style.visibility = 'hidden'; if (U._G) dock(0);
     },
-    hideAlert() { if (alertEl) alertEl.style.display = 'none'; alertT = 0; },
+    hideAlert() { if (alertEl) alertEl.style.display = 'none'; alertT = 0; if (panelEl && !(bannerEl && bannerEl.style.display === 'block')) panelEl.style.visibility = ''; },
     // 3 · 2 · 1 · GO! (0.7 s each), then onGo()
     countdown(onGo, { from = 3, step = 0.7 } = {}) {
       if (!countEl) countEl = make('mgk-count');
@@ -284,9 +284,56 @@ export function ui() {
       if (U._count) U._count(dt);
       if (alertT > 0) { alertT -= dt; if (alertT <= 0) U.hideAlert(); }
       if (bannerT > 0) { bannerT -= dt; if (bannerT <= 0) U.hideBanner(); }
+      if (U._G) dock(dt);
     },
-    destroy() { for (const e of els) e.remove(); els.clear(); panelEl = bannerEl = alertEl = countEl = frameEl = btnEl = endEl = null; U._count = null; },
+    // the top banners (score panel, start banner, alerts) sit just ABOVE the painting and exactly as wide as it, following
+    // it as it moves in the camera (makeBase turns this on for every game)
+    follow(G) { U._G = G; },
+    destroy() { for (const e of els) e.remove(); els.clear(); panelEl = bannerEl = alertEl = countEl = frameEl = btnEl = endEl = null; U._count = null; U._G = null; },
   };
+  // ── docking the top banners to the painting ──
+  const TOP_MIN = 66, GAP = 8, MIN_W = 260;            // clear of the viewer's own top line; a gap over the painting; readable
+  const vv = new THREE.Vector3(); let sm = null;       // sm: the painting's rectangle on screen, smoothed against hand shake
+  function paintRect(G) {
+    if (!G.root || !G.camera || !G.renderer) return null;
+    G.camera.updateMatrixWorld(); G.root.updateWorldMatrix(true, false);
+    const r = G.renderer.domElement.getBoundingClientRect(), h = G.h || 1;
+    let x0 = Infinity, x1 = -Infinity, y0 = Infinity;
+    for (const [x, y] of [[-0.5, -h / 2], [0.5, -h / 2], [-0.5, h / 2], [0.5, h / 2]]) {
+      vv.set(x, y, 0).applyMatrix4(G.root.matrixWorld).project(G.camera);
+      if (!Number.isFinite(vv.x) || vv.z > 1) return null;
+      const px = r.left + (vv.x + 1) / 2 * r.width, py = r.top + (1 - vv.y) / 2 * r.height;
+      x0 = Math.min(x0, px); x1 = Math.max(x1, px); y0 = Math.min(y0, py);
+    }
+    return { left: x0, right: x1, top: y0 };
+  }
+  let satEl = null;   // the phone's top safe-area inset, in px (the notch)
+  const satProbe = () => { if (!satEl) { satEl = document.createElement('div'); satEl.style.cssText = 'position:fixed;top:0;left:0;width:0;visibility:hidden;pointer-events:none;height:env(safe-area-inset-top,0px)'; document.body.appendChild(satEl); els.add(satEl); } return satEl.offsetHeight || 0; };
+  const undock = e => { for (const k of ['left', 'right', 'bottom', 'width', 'top', 'min-height', 'box-sizing']) e.style.removeProperty(k); };
+  function dock(dt) {
+    const list = [panelEl, bannerEl, alertEl].filter(Boolean);
+    const R = U._G.group && U._G.group.visible === false ? null : paintRect(U._G);
+    if (!R || R.right - R.left < 60) { sm = null; list.forEach(undock); return; }
+    if (!sm) sm = { ...R }; else { const k = Math.min(1, (dt || 0.016) * 14); for (const key in sm) sm[key] += (R[key] - sm[key]) * k; }
+    const W = innerWidth, safeTop = satProbe();
+    const w = Math.round(Math.min(W - 16, Math.max(Math.min(MIN_W, W - 16), sm.right - sm.left)));   // (8 px from the screen edges at most, like Craig's and Morten's games)
+    const left = Math.round(Math.max(8, Math.min(W - 8 - w, (sm.left + sm.right) / 2 - w / 2)));
+    if (U._G.bot) window.__mgkDock = { paint: [Math.round(sm.left), Math.round(sm.right), Math.round(sm.top)], left, w };   // for the robot tests
+    // (set as !important, so this wins over any game's own banner placement: every game's banners go in the same place)
+    const set = (e, k, v) => e.style.setProperty(k, v, 'important');
+    const place = (e) => { set(e, 'box-sizing', 'border-box'); set(e, 'left', left + 'px'); set(e, 'right', 'auto'); set(e, 'bottom', 'auto'); set(e, 'width', w + 'px'); };
+    const shown = e => e && e.style.display !== 'none' && e.offsetHeight > 0;
+    const above = (h, min) => Math.round(Math.max(min + safeTop, sm.top - GAP - h));
+    let pTop = null, pH = 0;
+    if (shown(panelEl)) { place(panelEl); pH = panelEl.offsetHeight; pTop = above(pH, TOP_MIN); set(panelEl, 'top', pTop + 'px'); }
+    if (shown(alertEl)) {   // an alert covers the score panel exactly (at least as tall), so the panel never peeks out; a tall one rises
+      place(alertEl);
+      if (pTop !== null) set(alertEl, 'min-height', pH + 'px'); else alertEl.style.removeProperty('min-height');
+      const h = alertEl.offsetHeight;
+      set(alertEl, 'top', Math.min(pTop !== null ? pTop : Infinity, above(h, h > sm.top - GAP - TOP_MIN - safeTop ? 12 : TOP_MIN)) + 'px');
+    }
+    if (shown(bannerEl)) { place(bannerEl); set(bannerEl, 'top', above(bannerEl.offsetHeight, 12) + 'px'); }
+  }
   return U;
 }
 
@@ -299,7 +346,15 @@ export function intro(G, { title, how, say }) {
   G._introGo = () => { G.ui.hideBanner(); G.ui.countdown(() => { G.playing = true; G.onGo && G.onGo(); }, G.bot ? { from: 1, step: 0.2 } : undefined); };
 }
 export function introUpdate(G, dt) {
-  if (G._introT > 0) { G._introT -= dt; if (G._introT <= 0) G._introGo(); }
+  if (G._introT > 0) {
+    G._introT -= dt;
+    if (G._introT <= 0) {
+      // wait until the intro has been spoken all the way through, so the game's first line never cuts it off (at most 45 s)
+      G._introHold = (G._introHold || 0) + dt;
+      if (!G.bot && G.say && G.say.busy && G.say.busy() && G._introHold < 45) G._introT = 0.0001;
+      else G._introGo();
+    }
+  }
 }
 // Ends the game: win chord, the painting's own animation fades in over it, and the end panel.
 export function finale(G, { won = true, title, kicker, cells = [], line, best = false, say }) {
@@ -310,9 +365,14 @@ export function finale(G, { won = true, title, kicker, cells = [], line, best = 
   // "Wayne's story"; "April & Melissa's story"; a group name like "Academy of Music for the Blind" → "Their story"
   const words = artist.trim().split(/\s+/);
   const first = /&| and /.test(artist) ? artist : words.length > 3 ? null : words[0];
+  const clip = G.work && G.work.quote && QUOTE_CLIPS[G.work.id];
   G.ui.end({ kicker: kicker || (won ? 'You did it' : 'Game over'), title, cells, line, best,
-    storyLabel: first ? first + '’s story' : 'Their story', onStory: () => G.story && G.story() });
-  G.say(say || (title + '. ' + (line || '')));
+    storyLabel: first ? first + '’s story' : 'Their story', onStory: () => { quoteStop(G); G.story && G.story(); } });
+  let spoken = say || (title + '. ' + (line || ''));
+  // the artist's own recording reads the quote, so the voice only says the rest
+  if (clip) spoken = spoken.split(G.work.quote).join('').trim() || title;
+  G.say(spoken);
+  if (clip) quotePlay(G, clip);
   const src = G.work && G.work.overlay && G.work.overlay.anim;
   if (src) {
     const v = document.createElement('video'); Object.assign(v, { src, loop: true, muted: true, playsInline: true, crossOrigin: 'anonymous', preload: 'auto' });
@@ -325,12 +385,51 @@ export function finale(G, { won = true, title, kicker, cells = [], line, best = 
     setTimeout(() => v.play().catch(() => {}), 900);
   }
 }
+// The artist's own recorded quote (3D/gallery/audio) for the games that don't play it themselves: it starts once the
+// voice has finished, the game's music stops under it (and comes back after), and it pauses with the game.
+const QUOTE_CLIPS = {
+  'beauty-in-the-blurry': 'wing_2_0', 'everything-in-its-place': 'wing_2_1', 'the-temperature-setter': 'wing_2_2',   // Delric
+  'how-not-who': 'wing_3_0',                                                                                         // Doreen
+  'strengths-limitations': 'wing_6_0', 'where-people-are': 'wing_6_1', 'full-immersion': 'wing_6_2',               // Sophia
+  'all-lifes-beauty': 'art_7', 'the-only-light-well-see': 'art_8', 'the-visions-that-we-share': 'art_43',           // Dave
+  'moment-of-communion': 'art_23', 'the-scope-of-communication': 'art_25', 'rhapsody-in-blue': 'art_26',            // Marcus
+  'midnight-melodies': 'art_22', 'fearless-request': 'art_24',                                                       // Wayne
+  'harmonious-gathering': 'art_28', 'rhythm-of-life': 'art_40', 'decision-divide': 'art_64',                         // Will
+  'joyride': 'art_49', 'embracing-unity': 'art_51',                                                                  // Shardasia
+};
+function quotePlay(G, name) {
+  const q = G._quote = { a: null, wait: 0, done: false, held: false, hushed: false };
+  const src = new URL('../../../3D/gallery/audio/' + name + '.mp3', import.meta.url).href;
+  const finish = () => { if (q.done) return; q.done = true; if (q.hushed && ac && ac.state === 'suspended') ac.resume(); };
+  const iv = setInterval(() => {
+    if (q.done || G._quote !== q) { clearInterval(iv); return; }
+    if (!q.a) {
+      if (G.paused) return;
+      if (G.say && G.say.busy && G.say.busy()) { q.wait = 0; return; }
+      if ((q.wait += 0.25) < 1) return;
+      try {
+        q.a = new Audio(src); q.a.onended = finish; q.a.onerror = finish;
+        if (ac && ac.state === 'running') { ac.suspend(); q.hushed = true; }
+        q.a.play().catch(finish);
+      } catch (e) { finish(); }
+      return;
+    }
+    if (G.paused && !q.a.paused) { q.a.pause(); q.held = true; }
+    else if (!G.paused && q.held) { q.held = false; q.a.play().catch(finish); }
+  }, 250);
+}
+function quoteStop(G) {
+  const q = G && G._quote; if (!q) return;
+  try { if (q.a) q.a.pause(); } catch (e) {}
+  if (!q.done) { q.done = true; if (q.hushed && ac && ac.state === 'suspended') ac.resume(); }
+}
 export function finaleUpdate(G, dt) {
   if (G._anim && G._anim.m.visible) { G._anim.t += dt; G._anim.m.material.opacity = Math.min(1, G._anim.t * 0.7); }
 }
 export function cleanup(G) {
   if (!G) return;
   if (G.say && G.say.stop) G.say.stop();
+  quoteStop(G);
   if (G._anim) { G._anim.v.pause(); G._anim.v.removeAttribute('src'); G._anim.v.load(); }
   if (G.root && G.group) G.group.remove(G.root);
   if (G.root) G.root.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material && o.material.map && !o.material.map._shared) { /* textures are shared caches; leave them */ } });
@@ -351,6 +450,7 @@ export function makeBase(ctx) {
   audio();
   const G = { ...ctx, bot: ctx.bot ?? isBot(), root: new THREE.Group(), ui: ui(), t: 0, playing: false, over: false, paused: false };
   G.say = voiceFor(ctx, audio);
+  G.ui.follow(G);
   ctx.group.add(G.root);
   G.S = space(ctx); G.fx = bursts(G.root);
   return G;

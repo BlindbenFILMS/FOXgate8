@@ -1,0 +1,65 @@
+VOICE LINES TO RECORD: LIVE THE BEAUTY (Deborah Tramentozzi) - "Breathe the Beauty"   (prefix breathe-, 25 lines)
+
+Save each line as its own mp3 with the file name shown, in AR/media/voice/  (e.g. AR/media/voice/breathe-in.mp3).
+One sentence per file. Say it just as written (the game matches the words exactly; punctuation doesn't matter).
+Anything not recorded keeps using the computer voice, so you can record a few at a time.
+Deborah's own words at the end (her clip and her quote) stay in her own voice (never re-recorded).
+
+HOW TO SAY THEM: this is the calm, peaceful game. Slow, soft and warm, like a guided breathing exercise.
+Leave a little breath of silence at the start and end of each file. "Breathe in." and "Breathe out." are heard
+8 times each, so make them extra gentle.
+
+
+Intro (played in order at the start)
+breathe-intro-1      Breathe the beauty.
+breathe-intro-2      Hold the button to breathe in.
+breathe-intro-3      Let go to breathe out.
+breathe-intro-4      Each breath wakes up the world around you.
+
+Every breath
+breathe-in           Breathe in.
+breathe-out          Breathe out.
+breathe-longer       A little longer.
+
+Breath 1: the sun  (also says how to touch things)
+breathe-sun-1        The warm sun.
+breathe-sun-2        Feel it on your face.
+breathe-touch        Touch it on the painting to play it.
+
+Breath 2: the river
+breathe-river-1      The river.
+breathe-river-2      Hear it flowing.
+
+Breath 3: the trees
+breathe-wind-1       Wind in the trees.
+breathe-wind-2       Hear the leaves.
+
+Breath 4: the birds
+breathe-birds-1      Birds above you.
+breathe-birds-2      Hear them sing.
+
+Breath 5: the bell
+breathe-bell-1       The temple bell.
+breathe-bell-2       Far away, on your left.
+
+Breath 6: the flowers
+breathe-flowers-1    Flowers.
+breathe-flowers-2    Breathe in their scent.
+
+Breath 7: the sky figures
+breathe-song         The figures in the clouds are singing.
+
+Breath 8: the light
+breathe-light-1      The light opens.
+breathe-light-2      You are inside the beauty.
+
+The ending
+breathe-deborah      Listen to Deborah.
+breathe-end          You lived the beauty.
+
+(If nobody presses for a while, the game repeats "Hold the button to breathe in." That uses breathe-intro-2,
+so there's nothing extra to record.)
+
+
+FOR THE MAIN CHAT AT MERGE TIME: add these 25 lines to voice-lines.js, and 'live-the-beauty': 'breathe-' to the
+PREFIX list in voice.js.
