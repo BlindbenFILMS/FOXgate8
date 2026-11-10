@@ -72,6 +72,7 @@ import { showHerGame } from './possible-window.js';
 import { crossTheStreetGame } from './button-cross.js';
 import { keepRollingGame } from './roll-keep.js';
 import { lightUpOneLoveGame } from './onelove-light.js';
+import { oneLoveBandGame } from './onelove-band.js';
 import { raiseThemUpGame } from './raised-up.js';
 import { followTheLinesGame } from './diffway-lines.js';
 import { breatheBeautyGame } from './live-breathe.js';
@@ -112,6 +113,7 @@ export const CLASSIC = {
   'almost-blindness': almostBlindnessGame,
   'walk-through-fear': walkThroughFearGame,
   'curating-hope': curatingHopeGame,
+  'one-love': lightUpOneLoveGame,
 };
 const ENGINES = { catch: catchGame, rhythm: rhythmGame, runner: runnerGame, reveal: revealGame, beam: beamGame, balance: balanceGame, echo: echoGame, connect: connectGame, pop: popGame, stack: stackGame, sort: sortGame };
 for (const set of [CATCH, RHYTHM, RUNNER, REVEAL, BEAM, BALANCE, ECHO, CONNECT, POP, STACK, SORT]) for (const [id, cfg] of Object.entries(set)) {
@@ -128,7 +130,7 @@ export const SPECIAL = {
   //    'painting-id': theGameFunction, // Game name: one line on what it is
   'the-button-is-to-the-left': crossTheStreetGame, // Cross the street: press the button, wait for WALK, hold to cross with your white cane, stop for the car that runs the red light (Anthony Ferraro)
   'light-on-the-other-side': keepRollingGame, // Keep rolling: skate through the dark wave; jump when the cane hits something; fall, get back up, reach the light (Anthony Ferraro)
-  'one-love': lightUpOneLoveGame, // Light up ONE LOVE: a reggae one-drop groove; a bird sings two notes on each dark letter, tap on the drop to light it (Anthony Ferraro)
+  'one-love': oneLoveBandGame,    // The One Love bird band: three birds on drums play a tune, tap it back Simon Says style to light each letter (Anthony Ferraro) (its first game: &classic=1)
   'art-raised-me-up': raiseThemUpGame, // Raise them up: steer the beam of light, lift Deborah's 8 frames off the dark walls; each turns into a clear picture as it rises (Deborah Tramentozzi)
   'a-different-way-to-see': followTheLinesGame, // Follow the lines: steer a spark along the collage's lines to each scene's sound; each scene fills with colour (Deborah Tramentozzi)
   'live-the-beauty': breatheBeautyGame, // Breathe the beauty: hold to breathe in, let go to breathe out; each breath wakes the world in the painting (Deborah Tramentozzi)

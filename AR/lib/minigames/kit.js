@@ -13,7 +13,8 @@
 // ctx = { group, h, camera, renderer, say, buzz, work, story, bot }. When ctx.bot is true (…&bot=1 in the link),
 // the game plays itself so it can be tested from start to finale.
 import * as THREE from 'three';
-import { voiceFor } from './voice.js';   // Ben's recorded voice lines, used whenever a game says words he recorded
+import { voiceFor, plan } from './voice.js';   // Ben's recorded voice lines, used whenever a game says words he recorded
+import { QUICK } from './quick-intros.js';     // the one-line intros (used once Ben has recorded them)
 
 export const RED = '#ec3013', BLUE = '#1f4fd8';
 export const isBot = () => /[?&]bot=1\b/.test(location.search);
@@ -234,8 +235,13 @@ export function ui() {
     },
     hideAlert() { if (alertEl) alertEl.style.display = 'none'; alertT = 0; if (panelEl && !(bannerEl && bannerEl.style.display === 'block')) panelEl.style.visibility = ''; },
     // 3 · 2 · 1 · GO! (0.7 s each), then onGo()
-    countdown(onGo, { from = 3, step = 0.7 } = {}) {
+    countdown(onGo, { from = 3, step = 0.7, quick = false } = {}) {
       if (!countEl) countEl = make('mgk-count');
+      if (quick) {   // straight in: GO! and the go sound, and the game starts at once
+        countEl.textContent = 'GO!'; countEl.style.display = 'flex'; sfx.go(); let t = 0;
+        U._count = dt => { t += dt; if (t > 0.6) { countEl.style.display = 'none'; U._count = null; } };
+        onGo(); return;
+      }
       let n = from, t = 0; countEl.textContent = n; countEl.style.display = 'flex'; sfx.tick();
       U._count = (dt) => {
         t += dt; if (t < step) return; t = 0; n--;
@@ -338,12 +344,27 @@ export function ui() {
 }
 
 /* ───────────────────────── intro + finale ───────────────────────── */
-// Shows the start banner, speaks the instructions, waits, counts down, then calls go().
+// Shows the start banner, speaks a short intro, then GO! (no 3-2-1). Tap anywhere, or press a key, to start straight away.
+//   First time: the one-line quick intro once Ben has recorded it (quick-intros.js), otherwise the game's own intro.
+//   Played before (on this phone): only the quick intro, or nothing at all until it's recorded.
+const PLAYED = 'aa-games-played';
+function playedBefore(id) { try { return !!(JSON.parse(localStorage.getItem(PLAYED) || '{}'))[id]; } catch (e) { return false; } }
+function markPlayed(id) { try { const m = JSON.parse(localStorage.getItem(PLAYED) || '{}'); m[id] = 1; localStorage.setItem(PLAYED, JSON.stringify(m)); } catch (e) {} }
 export function intro(G, { title, how, say }) {
-  G.ui.banner(title, how, 0);
-  G.say(say || (title + '. ' + how));
-  G._introT = G.bot ? 0.3 : 2.4;
-  G._introGo = () => { G.ui.hideBanner(); G.ui.countdown(() => { G.playing = true; G.onGo && G.onGo(); }, G.bot ? { from: 1, step: 0.2 } : undefined); };
+  const id = G.work && G.work.id, again = !!id && playedBefore(id), quick = id && QUICK[id];
+  const quickReady = !!quick && plan(quick).every(x => x.clip);
+  G.ui.banner(title, (how ? how + ' ' : '') + 'Tap anywhere to start.', 0);
+  const line = quickReady ? quick : again ? '' : (say || (title + '. ' + how));
+  if (line) G.say(line);
+  G._introT = G.bot ? 0.3 : line ? 1 : 0.8;
+  const skip = () => { if (!(G._introT > 0)) return; if (G.say && G.say.stop) G.say.stop(); G._introT = 0.0001; G._introHold = 99; };
+  addEventListener('pointerdown', skip, true); addEventListener('keydown', skip, true);
+  G._introSkipOff = () => { removeEventListener('pointerdown', skip, true); removeEventListener('keydown', skip, true); };
+  G._introGo = () => {
+    if (G._introDone) return; G._introDone = true;
+    G._introSkipOff(); G.ui.hideBanner(); if (id && !G.bot) markPlayed(id);
+    G.ui.countdown(() => { G.playing = true; G.onGo && G.onGo(); }, G.bot ? { from: 1, step: 0.2 } : { quick: true });
+  };
 }
 export function introUpdate(G, dt) {
   if (G._introT > 0) {
@@ -429,6 +450,7 @@ export function finaleUpdate(G, dt) {
 export function cleanup(G) {
   if (!G) return;
   if (G.say && G.say.stop) G.say.stop();
+  if (G._introSkipOff) G._introSkipOff();
   quoteStop(G);
   if (G._anim) { G._anim.v.pause(); G._anim.v.removeAttribute('src'); G._anim.v.load(); }
   if (G.root && G.group) G.group.remove(G.root);

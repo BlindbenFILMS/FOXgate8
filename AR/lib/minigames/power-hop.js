@@ -171,7 +171,7 @@ export function heroHopGame() {
       hud();
       G.onGo = () => { G.t0 = G.t; G.band.music(true); G.band.lift(); G.from = { u: G.hu, v: G.hv, s: G.hs }; setPhase('lift'); };
       K.intro(G, { title: L.title, how: L.how, say: L.intro.join(' ') });
-      if (!G.bot) G._introT = INTRO;   // wait for the whole spoken intro (tap the screen to skip it)
+      // (the kit waits for the spoken intro to finish; tap the screen to skip it)
       G.band.start();
     },
     update(dt) {

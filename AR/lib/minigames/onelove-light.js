@@ -12,16 +12,17 @@
 // letter's side; early/late is spoken; the window gets wider after misses; phones buzz on the drop.
 // Art: media/games/onelove/ clean.jpg (the painting with the letters and birds taken out) and info.png
 // (R = the letters, G = inside the hand). Props: onelove-things.js.
+// (The painting shader, the band and the letters are shared with the bird band game, onelove-band.js.)
 import * as THREE from 'three';
 import * as K from './kit.js';
 import { birdTex, heartTex, heartTexC, noteTex, burstTex } from './onelove-things.js';
 // each letter's own colour, for its glow, its burst, its notes and hearts
-const PAL = ['#ff3b52', '#ffc83d', '#2fbf71', '#ff7ab8', '#ffa63d', '#9b6bff', '#36c5f0'];
+export const PAL = ['#ff3b52', '#ffc83d', '#2fbf71', '#ff7ab8', '#ffa63d', '#9b6bff', '#36c5f0'];
 
-const ART = new URL('../../media/games/onelove/', import.meta.url).href;
-const CLIP = new URL('../../../3D/gallery/audio/wing_0_2.mp3', import.meta.url).href;   // Anthony, in his own words
+export const ART = new URL('../../media/games/onelove/', import.meta.url).href;
+export const CLIP = new URL('../../../3D/gallery/audio/wing_0_2.mp3', import.meta.url).href;   // Anthony, in his own words
 // the seven letters: their box in the painting (u0, v0, u1, v1, from the top-left), what the narrator says
-const LETTERS = [
+export const LETTERS = [
   { ch: 'O', box: [0.0911, 0.2656, 0.1944, 0.3656], say: 'O.' },
   { ch: 'N', box: [0.2189, 0.2678, 0.3078, 0.3633], say: 'N.' },
   { ch: 'E', box: [0.3367, 0.2678, 0.4156, 0.3633], say: 'E. One.' },
@@ -30,17 +31,17 @@ const LETTERS = [
   { ch: 'V', box: [0.7011, 0.2678, 0.7967, 0.3633], say: 'V.' },
   { ch: 'E', box: [0.8200, 0.2678, 0.8989, 0.3633], say: 'E. One Love!' },
 ];
-const BAND = ['Bass', 'Guitar', 'Organ', 'Melodica', 'Horns', 'Drums', 'Choir'];
+export const BAND = ['Bass', 'Guitar', 'Organ', 'Melodica', 'Horns', 'Drums', 'Choir'];
 // the three birds, where they fly in the painting (u, v)
 const NESTS = [[0.522, 0.204], [0.561, 0.249], [0.640, 0.246]];
-const BPM = 74, BEAT = 60 / BPM, BAR = BEAT * 4, STEP = BEAT / 4;
+export const BPM = 74, BEAT = 60 / BPM, BAR = BEAT * 4, STEP = BEAT / 4;
 const WIN0 = 0.2, WIN_MAX = 0.36, PERFECT = 0.09, BIRD = 0.11;
 const LATE = 0.16;          // the letter pulses on the drop: an extra moment to catch it just after
 const HOP = 0.022, JUMP = 0.044;   // the bird hops on beat 1, then jumps twice as high on beat 2 and lands on the drop
-const midi = m => 440 * Math.pow(2, (m - 69) / 12);
+export const midi = m => 440 * Math.pow(2, (m - 69) / 12);
 
-const VERT = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
-const FRAG = `
+export const VERT = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
+export const FRAG = `
 varying vec2 vUv;
 uniform sampler2D map, clean, info;
 uniform vec4 uBox[7];
@@ -96,7 +97,7 @@ void main(){
 }`;
 
 /* ───────────────────────── the band: an original reggae one-drop groove, built up one instrument per letter ───────────────────────── */
-function band(ac) {
+export function band(ac) {
   const master = ac.createGain(); master.gain.value = 0.0001;
   const comp = ac.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 4;
   master.connect(comp).connect(ac.destination);
