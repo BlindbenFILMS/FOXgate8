@@ -226,7 +226,7 @@ export function rideByFeelGame() {
     if (ok) { G.smooth++; G.road.swoosh(c.dir * 0.6); G.ui.alert(['Smooth!', 'Nice line!', 'Like butter.', 'Beautiful.'][G.smooth % 4], '', 1.2, 'blue'); G.flare = 0.6; G.buzz([20]); }
     else { G.road.gravel(c.dir * 0.8); G.ui.alert('A little gravel', c.dir < 0 ? 'That one went left' : 'That one went right', 1.6, 'black'); G.buzz([30, 30, 30]); }
     G.ui.panel('Smooth curves', `${G.smooth} <small>of ${STRETCHES.length * PER}</small>`, { segs: [G.curves, STRETCHES.length * PER] });
-    if (G.curves % PER === 0) { if (G.si + 1 < STRETCHES.length) setTimeout(() => G && G.phase === 'ride' && stretch(G.si + 1), 1200); else setTimeout(() => G && lastStop(), 1500); }
+    if (G.curves % PER === 0) { if (G.si + 1 < STRETCHES.length) K.later(G, 1.2, () => G && G.phase === 'ride' && stretch(G.si + 1)); else K.later(G, 1.5, () => G && lastStop()); }   // (game time: it waits while paused)
     G.nextCurve = 2.2 + Math.random() * 1.5;
   }
   // the last stop: things go by; tap for the Harley
@@ -284,7 +284,7 @@ export function rideByFeelGame() {
       G.signGlow = K.sprite(glowTex, 0.48, { additive: true, order: 24, opacity: 0 }); G.root.add(G.signGlow);
       G.sign = K.sprite(curveLeftTex, 0.26, { order: 25, opacity: 0 }); G.root.add(G.sign); G.signDir = -1; G.signK = 0;
       const story = G.story; G.story = () => { if (G && G.artist) G.artist.pause(); story && story(); };
-      G.onGo = () => { G.phase = 'ride'; G.road.start(); buttons(); G.ui.panel('Smooth curves', `0 <small>of ${STRETCHES.length * PER}</small>`, { segs: [0, STRETCHES.length * PER] }); setTimeout(() => G && stretch(0), 1800); };
+      G.onGo = () => { G.phase = 'ride'; G.road.start(); buttons(); G.ui.panel('Smooth curves', `0 <small>of ${STRETCHES.length * PER}</small>`, { segs: [0, STRETCHES.length * PER] }); K.later(G, 1.8, () => G && stretch(0)); };
       K.intro(G, { title: 'Ride by feel', how: 'Craig rides by feel now. Your buddy out front calls each curve. Hold Left or Right to lean that way.', say: L.intro });
     },
     update(dt) {

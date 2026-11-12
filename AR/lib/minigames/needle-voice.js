@@ -194,14 +194,15 @@ export function needleVoiceGame() {
   function finale() {
     G.phase = 'finale'; G.finT = 0; G.ui.buttons([]); G.band.hum(0, false); G.band.swell(); G.band.lit(N + 2); G.meter.zone('all');
     G.ui.alert('Your voice moved the needle', 'Listen: that was you', 3.5, 'red'); G.say('Your voice moved the needle.');
-    setTimeout(() => { if (G && !G.over) playback(); }, G.bot ? 300 : 2200);
-    setTimeout(() => {
+    // (game time, not the clock: the ending waits while the painting is out of the camera's view)
+    K.later(G, G.bot ? 0.3 : 2.2, () => { if (G && !G.over) playback(); });
+    K.later(G, G.bot ? 2.5 : 6.5, () => {
       if (!G) return;
       const t = Math.round(G.t - G.t0);
       K.finale(G, { won: true, kicker: 'Move the needle', title: 'You moved the needle', line: G.work && G.work.quote,
         cells: [{ k: 'Rounds', v: `${N}/${N}` }, { k: 'Time', v: Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0') }], say: 'It is a big deal.' });
-      if (!G.bot) setTimeout(() => G && playClip(), 2600);
-    }, G.bot ? 2500 : 6500);
+      if (!G.bot) K.later(G, 2.6, () => G && playClip());
+    });
   }
 
   // every frame: how loud (0..1) and how high (−1 low … 1 high) the player is, from the mic, the Hum buttons or the robot

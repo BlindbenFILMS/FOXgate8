@@ -370,7 +370,7 @@ export function putItBackGame() {
         if (G.moved && t.state === 'held' && v < DESK_V + 0.04) tryPlace(t, nearestHome(u));
       }
     },
-    pause() { if (G) { G.paused = true; G.drag = null; } },
+    pause() { if (G) { G.paused = true; G.drag = null; if (G.sea) { try { const a = K.audio(); G.sea.g.gain.setTargetAtTime(0, a.currentTime, 0.12); } catch (e) {} } } },   // the sea goes quiet too (update brings it back)
     resume() { if (G) G.paused = false; },
     get over() { return !!(G && G.over); },
     get debug() { return G && { engine: 'put-it-back', playing: G.playing, over: G.over, wave: G.wave, waveP: G.waveT > 0 ? +G.waveP.toFixed(2) : null, held: G.held && G.held.id, floating: G.things.filter(t => t.state === 'float' || t.state === 'held').map(t => t.id), t: +G.t.toFixed(1) }; },

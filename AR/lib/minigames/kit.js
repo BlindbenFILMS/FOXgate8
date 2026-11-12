@@ -20,12 +20,26 @@ export const RED = '#ec3013', BLUE = '#1f4fd8';
 export const isBot = () => /[?&]bot=1\b/.test(location.search);
 
 /* ───────────────────────── sound ───────────────────────── */
-let ac = null;
+let ac = null, master = null, mLevel = 1, mPaused = false;
 export function audio() {
-  if (!ac) { const C = window.AudioContext || window.webkitAudioContext; if (C) ac = new C(); }
+  if (!ac) {
+    const C = window.AudioContext || window.webkitAudioContext; if (C) ac = new C();
+    // Everything the games play reaches the speakers through one master volume, so the artist's own recorded words at the
+    // end can hush the game's music, and it comes back after. The games keep using ac.destination, exactly as before.
+    // (Spoken lines go straight to the speakers, past this volume: ac.__real. A sentence is never hushed half way.)
+    if (ac) try { const real = ac.destination, m = ac.createGain(); m.connect(real); Object.defineProperty(ac, 'destination', { value: m, configurable: true }); if (ac.destination === m) { master = m; ac.__real = real; } else m.disconnect(); } catch (e) { master = null; }
+  }
   if (ac && ac.state === 'suspended') ac.resume();
   return ac;
 }
+// turn everything the games play down (0) or back up (1), smoothly. (While the game is paused it stays down, whatever is asked.)
+export function masterVolume(v, secs = 0.3) { mLevel = v; setMaster(secs); }
+function setMaster(secs) {
+  if (!ac || !master) return;
+  try { const t = ac.currentTime; master.gain.cancelScheduledValues(t); master.gain.setTargetAtTime(Math.max(0.0001, mPaused ? 0 : mLevel), t, Math.max(0.01, secs / 3)); } catch (e) {}
+}
+// The painting has left the camera's view and the game is paused: its music and sounds go quiet until the painting is back.
+export function masterPause(on) { on = !!on; if (on === mPaused) return; mPaused = on; setMaster(on ? 0.25 : 0.4); }
 function out(pan) {
   const a = audio(); if (!a) return null;
   if (a.createStereoPanner) { const p = a.createStereoPanner(); p.pan.value = Math.max(-1, Math.min(1, pan || 0)); p.connect(a.destination); return p; }
@@ -69,9 +83,15 @@ export const sfx = {
 };
 
 /* ───────────────────────── pictures ───────────────────────── */
+const drawn = [];   // every picture drawn here, held loosely (so one that is no longer used can still be forgotten)
 export function canvasTex(w, h, draw) {
   const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h);
-  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  if (typeof WeakRef === 'function') drawn.push(new WeakRef(t));
+  return t;
+}
+function freeTextures() {
+  for (let i = drawn.length - 1; i >= 0; i--) { const t = drawn[i].deref(); if (t) t.dispose(); else drawn.splice(i, 1); }
 }
 export const glowTex = canvasTex(128, 128, (g) => { const r = g.createRadialGradient(64, 64, 0, 64, 64, 64); r.addColorStop(0, 'rgba(255,255,255,1)'); r.addColorStop(0.3, 'rgba(255,255,255,.55)'); r.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = r; g.fillRect(0, 0, 128, 128); });
 export const ringTex = canvasTex(128, 128, (g) => { g.strokeStyle = '#fff'; g.lineWidth = 9; g.beginPath(); g.arc(64, 64, 54, 0, Math.PI * 2); g.stroke(); });
@@ -207,10 +227,11 @@ export function ui() {
   css();
   const els = new Set();
   const make = (cls, html = '') => { const e = document.createElement('div'); e.className = 'mgk ' + cls; e.setAttribute('aria-hidden', 'true'); e.innerHTML = html; document.body.appendChild(e); els.add(e); return e; };
-  let panelEl = null, bannerEl = null, alertEl = null, countEl = null, frameEl = null, btnEl = null, endEl = null, alertT = 0, bannerT = 0;
+  let panelEl = null, bannerEl = null, alertEl = null, countEl = null, frameEl = null, btnEl = null, endEl = null, alertT = 0, bannerT = 0, pops = [];
   const U = {
     // the score panel: kicker (small red), value (big), optional segments [filled, total] and a sub line
     panel(kicker, value, { segs, sub, warn = false } = {}) {
+      if (endEl && endEl.style.display === 'block') return;   // the game is over: the end panel has taken its place
       if (!panelEl) panelEl = make('mgk-panel');
       panelEl.classList.toggle('warn', !!warn);
       panelEl.innerHTML = `<div class="mgk-k">${esc(kicker)}</div><div class="mgk-v">${value}</div>` +
@@ -252,8 +273,17 @@ export function ui() {
     },
     // a small "+1" tag that rises and fades at a screen point (or the middle)
     pop(text, x = innerWidth / 2, y = innerHeight * 0.45) {
-      const e = make('mgk-pop'); e.textContent = text; e.style.left = x + 'px'; e.style.top = y + 'px';
-      let t = 0; const id = setInterval(() => { t += 0.03; e.style.top = (y - t * 60) + 'px'; e.style.opacity = String(Math.max(0, 1 - t / 0.8)); if (t > 0.8) { clearInterval(id); e.remove(); els.delete(e); } }, 30);
+      const e = make('mgk-pop'); e.textContent = text;
+      // keep it on the screen, below the top banners (it rises about 50 px), and off a tag that has only just popped
+      const w = e.offsetWidth || 60, h = e.offsetHeight || 40, now = performance.now();
+      const under = () => { let top = 0; for (const b of [panelEl, bannerEl, alertEl]) if (b && b.style.display !== 'none' && b.style.visibility !== 'hidden') top = Math.max(top, b.getBoundingClientRect().bottom); return top + h / 2 + 6; };
+      x = Math.max(w / 2 + 6, Math.min(innerWidth - w / 2 - 6, x));
+      y = Math.max(under() + 48, Math.min(innerHeight - h / 2 - 6, y));
+      pops = pops.filter(p => now - p.t < 700);
+      for (let n = 0; n < 4 && pops.some(p => Math.abs(p.x - x) < (p.w + w) / 2 && Math.abs(p.y - y) < (p.h + h) / 2 + 2); n++) y += h + 6;
+      pops.push({ x, y, w, h, t: now });
+      e.style.left = x + 'px'; e.style.top = y + 'px';
+      let t = 0; const id = setInterval(() => { t += 0.03; e.style.top = Math.max(under(), y - t * 60) + 'px'; e.style.opacity = String(Math.max(0, 1 - t / 0.8)); if (t > 0.8) { clearInterval(id); e.remove(); els.delete(e); } }, 30);
     },
     frame(on) { if (!frameEl) frameEl = make('mgk-frame'); frameEl.style.display = on ? 'block' : 'none'; },
     // a row of big buttons above the Stop button: [{ label, icon, kind, aria, press(), release() }]
@@ -261,11 +291,12 @@ export function ui() {
       if (btnEl) { btnEl.remove(); els.delete(btnEl); btnEl = null; }
       if (!list || !list.length) return [];
       btnEl = make('mgk-btns'); btnEl.removeAttribute('aria-hidden');
-      return list.map(b => {
+      const made = list.map(b => {
         const e = document.createElement('button'); e.type = 'button'; e.className = b.kind || '';
         e.innerHTML = `<span>${esc(b.label)}</span>${b.icon ? `<span aria-hidden="true">${b.icon}</span>` : ''}`;
         if (b.aria) e.setAttribute('aria-label', b.aria);
-        const down = (ev) => { ev.preventDefault(); e.classList.add('down'); audio(); b.press && b.press(); };
+        // (while the game is paused, because the painting has left the camera, a press does nothing: no accidental moves or misses)
+        const down = (ev) => { ev.preventDefault(); if (U._G && U._G.paused) return; e.classList.add('down'); audio(); b.press && b.press(); };
         const up = () => { if (!e.classList.contains('down')) return; e.classList.remove('down'); b.release && b.release(); };
         e.addEventListener('pointerdown', down); for (const k of ['pointerup', 'pointercancel', 'pointerleave']) e.addEventListener(k, up);
         e.addEventListener('contextmenu', ev => ev.preventDefault());
@@ -273,6 +304,10 @@ export function ui() {
         e.addEventListener('keyup', ev => { if (ev.key === ' ' || ev.key === 'Enter') up(); });
         btnEl.appendChild(e); return e;
       });
+      // a word too long for its button (three buttons side by side on a small phone) shrinks until it fits inside
+      const row = btnEl, fit = () => { if (btnEl !== row) return; for (const e of row.children) { e.style.fontSize = ''; let fs = parseFloat(getComputedStyle(e).fontSize) || 16; while (e.scrollWidth > e.clientWidth + 1 && fs > 11) { fs -= 0.5; e.style.fontSize = fs + 'px'; } } };
+      fit(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit).catch(() => {});
+      return made;
     },
     // the end panel: red top (kicker + title), score cells, a line (the artist's words), NEW BEST row, story button
     end({ kicker = 'Game over', title, cells = [], line, best = false, storyLabel, onStory }) {
@@ -288,6 +323,8 @@ export function ui() {
     },
     update(dt) {
       if (U._count) U._count(dt);
+      // the game's own timers (see later(), below): they count here, so they wait while the game is paused
+      const L = U._G && U._G._later; if (L && L.length) for (let i = L.length - 1; i >= 0; i--) { const w = L[i]; if ((w.t -= dt) <= 0) { L.splice(i, 1); try { w.fn(); } catch (e) { console.warn(e); } } }
       if (alertT > 0) { alertT -= dt; if (alertT <= 0) U.hideAlert(); }
       if (bannerT > 0) { bannerT -= dt; if (bannerT <= 0) U.hideBanner(); }
       if (U._G) dock(dt);
@@ -298,7 +335,7 @@ export function ui() {
     destroy() { for (const e of els) e.remove(); els.clear(); panelEl = bannerEl = alertEl = countEl = frameEl = btnEl = endEl = null; U._count = null; U._G = null; },
   };
   // ── docking the top banners to the painting ──
-  const TOP_MIN = 66, GAP = 8, MIN_W = 260;            // clear of the viewer's own top line; a gap over the painting; readable
+  const TOP_MIN = 66, TALL_MIN = 58, GAP = 8, MIN_W = 260;   // clear of the viewer's own top line (a tall banner may sit a little closer to it); a gap over the painting; readable
   const vv = new THREE.Vector3(); let sm = null;       // sm: the painting's rectangle on screen, smoothed against hand shake
   function paintRect(G) {
     if (!G.root || !G.camera || !G.renderer) return null;
@@ -318,7 +355,8 @@ export function ui() {
   const undock = e => { for (const k of ['left', 'right', 'bottom', 'width', 'top', 'min-height', 'box-sizing']) e.style.removeProperty(k); };
   function dock(dt) {
     const list = [panelEl, bannerEl, alertEl].filter(Boolean);
-    const R = U._G.group && U._G.group.visible === false ? null : paintRect(U._G);
+    let seen = true; for (let o = U._G.group; o; o = o.parent) if (o.visible === false) { seen = false; break; }   // (the AR page hides the painting's anchor while it is lost)
+    const R = seen ? paintRect(U._G) : null;
     if (!R || R.right - R.left < 60) { sm = null; list.forEach(undock); return; }
     if (!sm) sm = { ...R }; else { const k = Math.min(1, (dt || 0.016) * 14); for (const key in sm) sm[key] += (R[key] - sm[key]) * k; }
     const W = innerWidth, safeTop = satProbe();
@@ -336,9 +374,9 @@ export function ui() {
       place(alertEl);
       if (pTop !== null) set(alertEl, 'min-height', pH + 'px'); else alertEl.style.removeProperty('min-height');
       const h = alertEl.offsetHeight;
-      set(alertEl, 'top', Math.min(pTop !== null ? pTop : Infinity, above(h, h > sm.top - GAP - TOP_MIN - safeTop ? 12 : TOP_MIN)) + 'px');
+      set(alertEl, 'top', Math.min(pTop !== null ? pTop : Infinity, above(h, h > sm.top - GAP - TOP_MIN - safeTop ? TALL_MIN : TOP_MIN)) + 'px');
     }
-    if (shown(bannerEl)) { place(bannerEl); set(bannerEl, 'top', above(bannerEl.offsetHeight, 12) + 'px'); }
+    if (shown(bannerEl)) { place(bannerEl); set(bannerEl, 'top', above(bannerEl.offsetHeight, TALL_MIN) + 'px'); }
   }
   return U;
 }
@@ -386,10 +424,10 @@ export function finale(G, { won = true, title, kicker, cells = [], line, best = 
   // "Wayne's story"; "April & Melissa's story"; a group name like "Academy of Music for the Blind" → "Their story"
   const words = artist.trim().split(/\s+/);
   const first = /&| and /.test(artist) ? artist : words.length > 3 ? null : words[0];
-  const clip = G.work && G.work.quote && QUOTE_CLIPS[G.work.id];
+  let spoken = say || (title + '. ' + (line || ''));
+  const clip = G.work && G.work.quote ? quoteFile(G.work, spoken.includes(G.work.quote)) : null;
   G.ui.end({ kicker: kicker || (won ? 'You did it' : 'Game over'), title, cells, line, best,
     storyLabel: first ? first + '’s story' : 'Their story', onStory: () => { quoteStop(G); G.story && G.story(); } });
-  let spoken = say || (title + '. ' + (line || ''));
   // the artist's own recording reads the quote, so the voice only says the rest
   if (clip) spoken = spoken.split(G.work.quote).join('').trim() || title;
   G.say(spoken);
@@ -418,10 +456,18 @@ const QUOTE_CLIPS = {
   'harmonious-gathering': 'art_28', 'rhythm-of-life': 'art_40', 'decision-divide': 'art_64',                         // Will
   'joyride': 'art_49', 'embracing-unity': 'art_51',                                                                  // Shardasia
 };
-function quotePlay(G, name) {
+// where the artist's own recording of the quote is: the clip listed above, or (for a game that would otherwise read the quote
+// aloud in the computer voice) the sound or the clip the AR page plays as the painting's story
+function quoteFile(work, read) {
+  try {
+    if (QUOTE_CLIPS[work.id]) return new URL('../../../3D/gallery/audio/' + QUOTE_CLIPS[work.id] + '.mp3', import.meta.url).href;
+    const o = work.overlay || {}, f = read ? (o.audio || o.clip) : null;
+    return f ? new URL(f, document.baseURI).href : null;
+  } catch (e) { return null; }
+}
+function quotePlay(G, src) {
   const q = G._quote = { a: null, wait: 0, done: false, held: false, hushed: false };
-  const src = new URL('../../../3D/gallery/audio/' + name + '.mp3', import.meta.url).href;
-  const finish = () => { if (q.done) return; q.done = true; if (q.hushed && ac && ac.state === 'suspended') ac.resume(); };
+  const finish = () => { if (q.done) return; q.done = true; if (q.hushed) masterVolume(1, 1.2); };
   const iv = setInterval(() => {
     if (q.done || G._quote !== q) { clearInterval(iv); return; }
     if (!q.a) {
@@ -429,12 +475,13 @@ function quotePlay(G, name) {
       if (G.say && G.say.busy && G.say.busy()) { q.wait = 0; return; }
       if ((q.wait += 0.25) < 1) return;
       try {
-        q.a = new Audio(src); q.a.onended = finish; q.a.onerror = finish;
-        if (ac && ac.state === 'running') { ac.suspend(); q.hushed = true; }
+        q.a = new Audio(src); q.a.onended = finish; q.a.onerror = finish; q.a.muted = !!window.__muted;
+        masterVolume(0, 0.4); q.hushed = true;
         q.a.play().catch(finish);
       } catch (e) { finish(); }
       return;
     }
+    q.a.muted = !!window.__muted;   // the page's Sound button turns the artist's words off and on as well
     if (G.paused && !q.a.paused) { q.a.pause(); q.held = true; }
     else if (!G.paused && q.held) { q.held = false; q.a.play().catch(finish); }
   }, 250);
@@ -442,19 +489,29 @@ function quotePlay(G, name) {
 function quoteStop(G) {
   const q = G && G._quote; if (!q) return;
   try { if (q.a) q.a.pause(); } catch (e) {}
-  if (!q.done) { q.done = true; if (q.hushed && ac && ac.state === 'suspended') ac.resume(); }
+  if (!q.done) { q.done = true; if (q.hushed) masterVolume(1, 0.2); }
 }
 export function finaleUpdate(G, dt) {
   if (G._anim && G._anim.m.visible) { G._anim.t += dt; G._anim.m.material.opacity = Math.min(1, G._anim.t * 0.7); }
 }
 export function cleanup(G) {
   if (!G) return;
+  clearInterval(G._pauseWatch);
   if (G.say && G.say.stop) G.say.stop();
   if (G._introSkipOff) G._introSkipOff();
   quoteStop(G);
   if (G._anim) { G._anim.v.pause(); G._anim.v.removeAttribute('src'); G._anim.v.load(); }
   if (G.root && G.group) G.group.remove(G.root);
-  if (G.root) G.root.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material && o.material.map && !o.material.map._shared) { /* textures are shared caches; leave them */ } });
+  // Free the game's shapes and pictures on the graphics card. (A picture that is used again, by this game or another, is
+  // simply sent again. Left there, every game played in a visit keeps its pictures until the phone runs out of room.)
+  if (G.root) G.root.traverse(o => {
+    if (o.geometry) o.geometry.dispose();
+    for (const m of (Array.isArray(o.material) ? o.material : o.material ? [o.material] : [])) {
+      for (const k in m) { const t = m[k]; if (t && t.isTexture) t.dispose(); }
+      if (m.uniforms) for (const k in m.uniforms) { const t = m.uniforms[k] && m.uniforms[k].value; if (t && t.isTexture) t.dispose(); }
+    }
+  });
+  freeTextures();
   if (G.ui) G.ui.destroy();
 }
 
@@ -468,9 +525,27 @@ export function best(key, value, better = 'higher') {
 
 /* ───────────────────────── base game ───────────────────────── */
 // Most engines start like this: makeBase(ctx) → G with root group, ui, painting space, bursts; then add their own state.
+// A game timer: like setTimeout, but it counts game time, so it waits while the game is paused (the painting out of the
+// camera's view) and never fires once the game has stopped. Use it for "a moment later, say the next thing".
+export function later(G, secs, fn) { if (G) (G._later || (G._later = [])).push({ t: secs, fn }); }
+
 export function makeBase(ctx) {
-  audio();
-  const G = { ...ctx, bot: ctx.bot ?? isBot(), root: new THREE.Group(), ui: ui(), t: 0, playing: false, over: false, paused: false };
+  audio(); mPaused = false; masterVolume(1, 0.05);
+  const G = { ...ctx, bot: ctx.bot ?? isBot(), root: new THREE.Group(), ui: ui(), t: 0, playing: false, over: false };
+  // G.paused (each game sets it when the painting leaves the camera's view, and clears it when the painting is back). Besides
+  // what a game does for itself: everything it plays goes quiet, and a recording it is playing (the artist's own words at the
+  // end) waits, then carries on from the same place.
+  let paused = false, held = [];
+  Object.defineProperty(G, 'paused', { enumerable: true, configurable: true, get: () => paused, set(v) {
+    v = !!v; if (v === paused) return; paused = v; masterPause(v);
+    try {
+      if (typeof HTMLMediaElement === 'undefined') return;
+      const hold = () => { for (const k of Object.keys(G)) { const m = k === 'paused' ? null : G[k]; if (m instanceof HTMLMediaElement && !m.paused && !m.ended) { m.pause(); if (!held.includes(m)) held.push(m); } } };
+      clearInterval(G._pauseWatch);
+      if (v) { held = []; hold(); G._pauseWatch = setInterval(() => { if (paused) try { hold(); } catch (e) {} }, 250); }   // (a recording that a timer starts during the pause waits too)
+      else { const now = Object.values(G); for (const m of held) if (m.paused && !m.ended && now.includes(m)) m.play().catch(() => {}); held = []; }
+    } catch (e) {}
+  } });
   G.say = voiceFor(ctx, audio);
   G.ui.follow(G);
   ctx.group.add(G.root);

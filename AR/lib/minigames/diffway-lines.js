@@ -195,7 +195,7 @@ export function followTheLinesGame() {
     for (let i = 0; i < G.path.length - 1; i++) { const k = [G.path[i], G.path[i + 1]].sort().join('-'); if (G.lines[k]) G.lines[k].gold = true; }
     G.say(sc.say + (G.found < SCENES.length ? ' ' + MORE[SCENES.length - G.found] : ''));
     G.ui.panel('Follow the lines', `${G.found} <small>of ${SCENES.length} details</small>`, { segs: [G.found, SCENES.length] });
-    if (G.found === SCENES.length) { G.phase = 'done'; setTimeout(() => G && finale(), 3800); return; }
+    if (G.found === SCENES.length) { G.phase = 'done'; K.later(G, 3.8, () => G && finale()); return; }   // (game time: the ending waits while the painting is out of view)
     // the spark glides back to the middle, and the next scene starts to call
     G.phase = 'back'; G.backRoute = route(sc.node, 'S'); G.backI = 0; G.backT = -1.2;
   }
@@ -203,7 +203,7 @@ export function followTheLinesGame() {
     G.phase = 'finale'; G.finT = 0; G.band.whole(); G.ui.buttons([]);
     G.say('Every detail is in place. The picture is whole.');
     for (const k in G.lines) G.lines[k].gold = true;
-    setTimeout(() => {
+    K.later(G, 6, () => {   // (game time, like the wait before it: the ending never plays while the painting is out of view)
       if (!G) return;
       K.finale(G, { won: true, kicker: 'Follow the lines', title: 'The picture is whole', line: G.work && G.work.quote,
         cells: [{ k: 'Details', v: `${G.found}/${SCENES.length}` }, { k: 'Wrong turns', v: G.wrong }],
@@ -211,8 +211,8 @@ export function followTheLinesGame() {
       // the music fades away as the card appears, and once the narrator has finished, Deborah speaks in her own voice
       G.musicOff = true; G.band.fadeOut();
       try { G.deb = new Audio((G.work && G.work.artistAudio) || DEBORAH); G.deb.preload = 'auto'; } catch (e) {}
-      setTimeout(() => { if (!G || G.bot || !G.deb) return; G.debStarted = true; G.deb.play().catch(() => {}); }, 5600);
-    }, 6000);
+      K.later(G, 5.6, () => { if (!G || G.bot || !G.deb) return; G.debStarted = true; G.deb.play().catch(() => {}); });
+    });
   }
   function hint() {
     const d = rightWay(); if (!d) return;

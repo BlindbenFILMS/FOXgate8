@@ -48,7 +48,7 @@ function loadArt() {
 const art = n => (ART[n] && ART[n].ok ? ART[n].tex : null);
 const artSettled = () => ART_NAMES.every(n => ART[n] && (ART[n].ok || ART[n].failed));
 const warmLeafTexs = () => ART_NAMES.filter(n => n.startsWith('warm-leaf')).map(art).filter(Boolean);
-setTimeout(loadArt, 2500);                                   // preload soon after the gallery opens (the game also asks on start)
+// (they load when this game is opened: it is only played with &classic=1, so the gallery no longer fetches them for everyone)
 
 /* ── sound ── */
 const audio = K.audio;

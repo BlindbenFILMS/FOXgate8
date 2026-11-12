@@ -188,7 +188,7 @@ export function lightUpOneLoveGame() {
       // a little breathing room for every text box: the finish card, its score cells, the quote, the panel, alerts and pop-ups
       '.mgk.mgk-end{left:calc(18px + env(safe-area-inset-left))!important;right:calc(18px + env(safe-area-inset-right))!important}' +
       '.mgk-end .top{padding:14px 20px 16px!important;height:auto!important;min-height:0!important;overflow:visible!important}.mgk-end .top .t{line-height:1.02!important}.mgk-end .cells div{padding:10px 12px 12px!important;min-width:0}' +
-      '.mgk-end .cells b{font-size:11px!important;letter-spacing:.1em!important;line-height:1.25!important}' +
+      '.mgk-end .cells b{font-size:12px!important;letter-spacing:.1em!important;line-height:1.25!important}' +
       '.mgk-end .cells span{font-size:clamp(22px,7vw,38px)!important;overflow-wrap:normal;word-break:normal}.mgk-end .cells div:first-child{flex:1.4}' +
       '.mgk-end .line{padding:12px 20px 14px!important}.mgk-end .best{padding:8px 20px!important}.mgk-end button{padding:0 20px!important}' +
       '.mgk.mgk-alert{left:calc(18px + env(safe-area-inset-left))!important;right:calc(24px + env(safe-area-inset-right))!important;padding:14px 20px 16px!important}' +

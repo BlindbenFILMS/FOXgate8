@@ -134,7 +134,7 @@ export function danceInTheFlowersGame() {
 
   // each bar of the waltz: maybe call the next move, and sometimes send a cloud of worry
   function onBar(bar) {
-    if (!G || G.phase !== 'dance') return;
+    if (!G || G.phase !== 'dance' || G.paused) return;   // (the waltz keeps its own time: no new move is called while the painting is out of view)
     G.bar = bar;
     if (!G.cue && bar % 2 === 0 && G.done < MOVES) {
       const prev = G.lastKind, opts = ['left', 'right', 'twirl'].filter(k => k !== prev);

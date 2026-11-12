@@ -171,7 +171,7 @@ export function catchTheWordsGame() {
       const L = LINES[G.line]; G.line++; G.caught = 0; G.band.line();
       G.say(L.text); G.wait = 4.2;
       G.tunnelTo = [0.34, 0.48, 0.64, 0.82, 1.4][G.line];
-      if (G.line >= LINES.length) { G.phase = 'end'; setTimeout(() => G && finish(), 4500); }
+      if (G.line >= LINES.length) { G.phase = 'end'; K.later(G, 4.5, () => G && finish()); }
       poemBox();
     } else G.wait = 1.2;
   }
@@ -181,7 +181,7 @@ export function catchTheWordsGame() {
     K.finale(G, { won: true, kicker: 'The visions that we share', title: 'You caught every word', line: G.work && G.work.quote,
       cells: [{ k: 'Words', v: G.score }, { k: 'Blinks', v: G.blinks }],
       say: 'You caught every word. Shared, the view is wide. ' + ((G.work && G.work.quote) || '') });
-    if (G.poemEl) G.poemEl.style.bottom = 'calc(12px + env(safe-area-inset-bottom))';
+    if (G.poemEl) G.poemEl.style.bottom = 'calc(76px + env(safe-area-inset-bottom))';   // above the page's own row of buttons
   }
   // the eye turns to that side and stays there until you press the other button
   function look(d) {

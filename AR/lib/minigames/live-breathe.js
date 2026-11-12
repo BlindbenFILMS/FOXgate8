@@ -394,7 +394,7 @@ export function breatheBeautyGame() {
           if (G.clip) { G.clip.pause(); } G.ui.hideAlert();
           G.band.volume(0.8);
           const t = Math.round(G.t - G.t0);
-          K.finale(G, { won: true, kicker: 'Beautiful', title: LINES.end, line: G.work && G.work.quote,
+          K.finale(G, { won: true, kicker: 'Beautiful', title: LINES.end, line: G.work && G.work.quote, say: LINES.end + '.',   // (Deborah has just said her words herself: they aren't read out again)
             cells: [{ k: 'Breaths', v: `${SENSES.length}/${SENSES.length}` }, { k: 'Awake', v: SENSES.length - 1 }, { k: 'Time', v: fmt(t) }] });
         }
       }

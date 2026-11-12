@@ -254,15 +254,15 @@ export function sunsetJoyrideGame() {
     Object.assign(el.style, { left: 'calc(12px + env(safe-area-inset-left))', right: 'calc(12px + env(safe-area-inset-right))', bottom: 'calc(160px + env(safe-area-inset-bottom))', pointerEvents: 'auto',
       background: 'linear-gradient(#2b2230,#120d16)', border: '3px solid #000', borderRadius: '16px', boxShadow: '0 6px 0 #000', padding: '10px 12px', display: 'flex', alignItems: 'center', gap: '12px' });
     el.innerHTML = `<div style="flex:1;min-width:0">
-        <div style="font:900 11px Archivo,Arial,sans-serif;letter-spacing:.16em;color:#ff7a5a">📻 FM RADIO</div>
+        <div style="font:900 12px Archivo,Arial,sans-serif;letter-spacing:.16em;color:#ff7a5a">📻 FM RADIO</div>
         <div class="jr-lcd" aria-live="polite" style="margin-top:4px;background:#1b2a14;border:2px solid #000;border-radius:8px;padding:6px 10px;color:#b8ff6a;font:700 13px/1.15 'Courier New',monospace;text-shadow:0 0 6px #7dff2a">
           <div class="jr-f" style="font-size:26px;font-weight:900">88.1</div><div class="jr-n" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">SUNSET LOFI</div></div>
         <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <button type="button" class="jr-dn" aria-label="Tune down to the previous station" style="flex:none;width:44px;height:36px;border:2px solid #000;border-radius:8px;background:#fff;font:900 16px Arial;cursor:pointer">◀</button>
+        <button type="button" class="jr-dn" aria-label="Tune down to the previous station" style="flex:none;width:48px;height:44px;border:2px solid #000;border-radius:8px;background:#fff;font:900 17px Arial;cursor:pointer">◀</button>
         <div class="jr-band" style="position:relative;flex:1;height:16px;border-radius:4px;background:#0c0910">
           ${STATIONS.map((s, i) => `<i data-i="${i}" style="position:absolute;top:4px;width:8px;height:8px;margin-left:-4px;border-radius:50%;border:2px solid #555;left:${(s.freq - FM[0]) / (FM[1] - FM[0]) * 100}%"></i>`).join('')}
           <b class="jr-needle" style="position:absolute;top:-2px;width:3px;height:20px;margin-left:-1px;background:#ff3b2f;box-shadow:0 0 6px #ff3b2f"></b></div>
-        <button type="button" class="jr-up" aria-label="Tune up to the next station" style="flex:none;width:44px;height:36px;border:2px solid #000;border-radius:8px;background:#fff;font:900 16px Arial;cursor:pointer">▶</button></div></div>
+        <button type="button" class="jr-up" aria-label="Tune up to the next station" style="flex:none;width:48px;height:44px;border:2px solid #000;border-radius:8px;background:#fff;font:900 17px Arial;cursor:pointer">▶</button></div></div>
       <div class="jr-dial" role="slider" tabindex="0" aria-label="Tuning dial" aria-valuemin="${FM[0]}" aria-valuemax="${FM[1]}" style="flex:none;width:92px;height:92px;border-radius:50%;touch-action:none;cursor:grab;position:relative;
         background:radial-gradient(circle at 35% 30%,#fff 0,#d9d4cc 18%,#8d8578 60%,#3e3830 100%);border:3px solid #000;box-shadow:0 4px 0 #000,inset 0 0 0 6px rgba(0,0,0,.15)">
         <span class="jr-knob" style="position:absolute;inset:0;border-radius:50%;background:repeating-conic-gradient(rgba(0,0,0,.18) 0 4deg,transparent 4deg 12deg)">

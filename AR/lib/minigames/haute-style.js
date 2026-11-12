@@ -279,7 +279,7 @@ export function styleTheDreamGame() {
   function endRunway() {
     G.poses += G.hits; G.ci++;
     G.phase = 'between'; G.swayTo = 0; G.zoomTo = 1; G.music.level(0.35); buttons(); G.ui.hidePanel();
-    if (G.ci >= CLIENTS.length) { G.spinV = Math.PI * 2; cameraFlash(8); return setTimeout(() => G && finish(), 900); }
+    if (G.ci >= CLIENTS.length) { G.spinV = Math.PI * 2; cameraFlash(8); return K.later(G, 0.9, () => G && finish()); }
     setTimeout(() => { if (G && !G.over) startClient(); }, 1500);
   }
   function finish() {

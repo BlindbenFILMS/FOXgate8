@@ -72,15 +72,18 @@
   #topBar{position:fixed;left:0;right:0;bottom:0;z-index:12;display:none;gap:6px;
     padding:0 calc(8px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(8px + env(safe-area-inset-left))}
   #topBar.on{display:flex}
-  #topBar button{flex:1 1 0;min-width:0;height:52px;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 6px;
-    border:2px solid #fff;border-radius:0;background:#000;color:#fff;cursor:pointer;white-space:nowrap;line-height:1;text-align:center;
-    font-family:Archivo,'Atkinson Hyperlegible',Arial,sans-serif;font-weight:900;font-size:clamp(12px,3.7vw,16px);letter-spacing:.04em;text-transform:uppercase}
-  #topBar button .l{display:block;line-height:1;padding-top:.08em}     /* capitals sit optically centred */
-  #topBar button .i{display:block;font-size:.95em;line-height:1}
+  #topBar button{flex:1 1 0;min-width:0;height:56px;display:flex;align-items:center;justify-content:center;gap:clamp(6px,2vw,9px);padding:0 8px;
+    border:2px solid #fff;border-radius:0;background:#000;color:#fff;cursor:pointer;white-space:nowrap;line-height:1;text-align:left;
+    font-family:Archivo,'Atkinson Hyperlegible',Arial,sans-serif;font-weight:900;font-size:clamp(13px,4.2vw,18px);letter-spacing:.03em;text-transform:uppercase}
+  /* each label is one or two short words, stacked ("PLAY" over "GAME"): big letters that always sit well inside their box,
+     on the narrowest phone too. The pictures are drawn here (not letters from a font), so they look the same on every phone. */
+  #topBar button .l{display:block;line-height:1.04;padding-top:.07em}     /* capitals sit optically centred */
+  #topBar button .i{flex:none;display:block;width:1.3em;height:1.3em;fill:currentColor}
+  @media (min-width:640px){#topBar button{font-size:18px;word-spacing:.14em} #topBar button .l br{display:none}}     /* a wide screen has room for one line */
   #filterBtn{position:fixed;left:0;right:0;top:0;z-index:12;display:none;width:100%;align-items:center;justify-content:center;gap:10px;
     min-height:calc(48px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 12px 0;border:0;border-bottom:4px solid #ec3013;border-radius:0;
     background:#1f4fd8;color:#fff;cursor:pointer;line-height:1;
-    font-family:Archivo,'Atkinson Hyperlegible',Arial,sans-serif;font-weight:900;font-size:clamp(13px,3.9vw,17px);letter-spacing:.05em;text-transform:uppercase}
+    font-family:Archivo,'Atkinson Hyperlegible',Arial,sans-serif;font-weight:900;font-size:clamp(13px,3.9vw,17px);letter-spacing:.05em;text-transform:uppercase;text-wrap:balance}
   #filterBtn.on{display:flex}
   #filterBtn:focus-visible{outline:3px solid #fff;outline-offset:-6px}
   #topBar #gameBtn{background:#ec3013;border-color:#ec3013}
@@ -115,7 +118,7 @@
     font-family:Archivo,'Atkinson Hyperlegible',Arial,sans-serif;font-weight:900;font-size:14px;letter-spacing:.05em;text-transform:uppercase}
   #eyeBtn:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
   #scan .cue{background:#000;color:#fff;padding:10px 18px 9px;font-family:Archivo,'Atkinson Hyperlegible',Arial,sans-serif;
-    font-weight:900;font-size:clamp(22px,6.4vw,30px);line-height:1.1;letter-spacing:.04em;text-align:center}
+    font-weight:900;font-size:clamp(18px,5.9vw,30px);line-height:1.1;letter-spacing:.04em;text-align:center;text-wrap:balance}
   #scan .box{width:min(70vw,360px,40vh);aspect-ratio:3/4;border-radius:22px;position:relative}
   /* while searching, the big cue does the talking; the status pill stays for screen readers only */
   #status:not(.found){position:absolute;width:1px;height:1px;padding:0;border:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
@@ -152,9 +155,9 @@
 <div id="visionLayer"></div>
 <button id="filterBtn" type="button" aria-label="Enable the Blindness Spectrum filter: see through the eyes of someone with a vision condition">Enable Blindness Spectrum filter</button>
 <nav id="topBar" aria-label="Controls">
-  <button id="gameBtn" type="button" disabled><span class="i" aria-hidden="true">&#9654;</span><span class="l">Play game</span></button>
-  <button id="artistBtn" type="button" disabled><span class="i" aria-hidden="true">&#8599;</span><span class="l">Artist</span></button>
-  <button id="muteBtn" type="button" aria-pressed="false"><span class="l">Sound on</span></button>
+  <button id="gameBtn" type="button" disabled><svg class="i" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 2.5v19l17-9.5z"/></svg><span class="l">Play <br>game</span></button>
+  <button id="artistBtn" type="button" disabled><svg class="i" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 4h11v11h-3.6v-4.9L6.6 19.9l-2.5-2.5 9.8-9.8H9z"/></svg><span class="l">Artist</span></button>
+  <button id="muteBtn" type="button" aria-pressed="false"><svg class="i" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M1.5 8.5H6L11.5 4v16L6 15.5H1.5z"/><path d="M15 8.4a5 5 0 0 1 0 7.2M18.3 5.2a9.4 9.4 0 0 1 0 13.6" fill="none" stroke="currentColor" stroke-width="2.6"/></svg><span class="l">Sound <br>on</span></button>
 </nav>
 <div id="scan" aria-hidden="true"><div class="cue">CENTER ART IN CAMERA</div><div class="box"></div></div>
 
@@ -194,7 +197,11 @@ import * as THREE from 'three';
 import { MindARThree } from 'mindar-image-three';
 import * as DATA from './artworks.js';
 import { visionOverlay } from './lib/gallery-vision.js';
-import { GAMES } from './lib/minigames/index.js';
+// The painting games (about 130 files) load in the background once the page is up, so the gallery opens sooner and a
+// hiccup loading one game can't stop the camera view. The Play game button wakes up as soon as they are in.
+const GAMES = {};
+import('./lib/minigames/index.js').then(m => { Object.assign(GAMES, m.GAMES); if (current && current.found) setNowShowing(current); })
+  .catch(e => console.warn('The games did not load', e));
 import { follower } from './lib/lk-follow.js';
 const ARTWORKS = DATA.ARTWORKS, EXHIBITIONS = DATA.EXHIBITIONS || [];
 
@@ -298,9 +305,18 @@ const ARTIST_PAGES = {
   'academy of music for the blind': 'series',      // the Academy's paintings are the site's Series page
 };
 const artistLink = w => w && (w.link || (ARTIST_PAGES[(w.artist || '').trim().toLowerCase()] != null ? BCP + ARTIST_PAGES[(w.artist || '').trim().toLowerCase()] : null));
+// the buttons' pictures (drawn, so they look the same on every phone) and words (two-word labels stack: "PLAY" over "GAME")
+const icon = d => '<svg class="i" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' + d + '</svg>';
+const ICONS = {
+  play: icon('<path d="M5 2.5v19l17-9.5z"/>'),
+  stop: icon('<path d="M4 4h16v16H4z"/>'),
+  again: icon('<path d="M19.3 12.6a7.4 7.4 0 1 1-2.7-6.3" fill="none" stroke="currentColor" stroke-width="3.2"/><path d="M21.6 2.2v8h-8z"/>'),
+  sound: icon('<path d="M1.5 8.5H6L11.5 4v16L6 15.5H1.5z"/><path d="M15 8.4a5 5 0 0 1 0 7.2M18.3 5.2a9.4 9.4 0 0 1 0 13.6" fill="none" stroke="currentColor" stroke-width="2.6"/>'),
+  muted: icon('<path d="M1.5 8.5H6L11.5 4v16L6 15.5H1.5z"/><path d="M15 8.2l7.6 7.6M22.6 8.2L15 15.8" fill="none" stroke="currentColor" stroke-width="3"/>'),
+};
 function setGameBtn(state) {   // 'play' | 'stop' | 'again'
-  const b = $('gameBtn'), t = { play: ['&#9654;', 'Play game'], stop: ['&#9632;', 'Stop'], again: ['&#8635;', 'Play again'] }[state];
-  b.innerHTML = '<span class="i" aria-hidden="true">' + t[0] + '</span><span class="l">' + t[1] + '</span>';
+  const b = $('gameBtn'), t = { play: ['play', 'Play <br>game'], stop: ['stop', 'Stop'], again: ['again', 'Play <br>again'] }[state];
+  b.innerHTML = ICONS[t[0]] + '<span class="l">' + t[1] + '</span>';
   b.classList.toggle('stop', state === 'stop');
 }
 function setNowShowing(sc) {   // the painting the buttons act on (null: nothing in view)
@@ -321,7 +337,7 @@ $('artistBtn').onclick = () => {
 function setMuted(on) {
   window.__muted = on;
   $('muteBtn').setAttribute('aria-pressed', on);
-  $('muteBtn').innerHTML = '<span class="l">' + (on ? 'Muted' : 'Sound on') + '</span>';
+  $('muteBtn').innerHTML = ICONS[on ? 'muted' : 'sound'] + '<span class="l">' + (on ? 'Muted' : 'Sound <br>on') + '</span>';
   $('muteBtn').setAttribute('aria-label', on ? 'Sound is off. Tap to turn sound on' : 'Sound is on. Tap to mute');
   for (const c of window.__acs) (on ? c.suspend() : c.resume()).catch(() => {});
   if (on) { stopTalking(); for (const m of document.querySelectorAll('video,audio')) if (!m.muted) { m.muted = true; m.dataset.unmute = '1'; } }
@@ -333,6 +349,7 @@ function setMuted(on) {
   buzz(20);
 }
 $('muteBtn').onclick = () => setMuted(!window.__muted);
+if (params.get('debug')) window.__ui = { setGameBtn, setMuted };   // (for testing)
 
 function showExplore(scene) {
   const box = $('explore'); box.innerHTML = '';
@@ -915,7 +932,15 @@ async function startAR() {
   });
 
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) { stopTalking(); scenes.forEach(s => { for (const v of [s.video, s.anim, s.clip, s.audio]) if (v) v.pause(); }); }
+    if (document.hidden) {
+      stopTalking(); scenes.forEach(s => { for (const v of [s.video, s.anim, s.clip, s.audio]) if (v) v.pause(); });
+      // a game waits, and goes quiet, while the page is out of sight (another app, a locked phone)
+      if (game) game.pause();
+      for (const c of window.__acs) c.suspend().catch(() => {});
+    } else {
+      if (!window.__muted) for (const c of window.__acs) c.resume().catch(() => {});
+      if (game && gameScene && gameScene.found) game.resume();
+    }
   });
 }
 </script>

@@ -160,7 +160,7 @@ export function reachOutGame() {
     st.textContent = '.mgk.mgk-alert,.mgk.mgk-count{top:auto!important;bottom:calc(152px + env(safe-area-inset-bottom))!important}' +
       '.mgk.mgk-end{left:calc(18px + env(safe-area-inset-left))!important;right:calc(18px + env(safe-area-inset-right))!important}' +
       '.mgk-end .top{padding:14px 20px 16px!important}.mgk-end .cells div{padding:10px 12px 12px!important;min-width:0}' +
-      '.mgk-end .cells b{font-size:11px!important;letter-spacing:.1em!important;line-height:1.25!important}.mgk-end .cells span{font-size:clamp(22px,7vw,38px)!important}' +
+      '.mgk-end .cells b{font-size:12px!important;letter-spacing:.1em!important;line-height:1.25!important}.mgk-end .cells span{font-size:clamp(22px,7vw,38px)!important}' +
       '.mgk-end .line{padding:12px 20px 14px!important}.mgk-end button{padding:0 20px!important}' +
       '.mgk.mgk-alert{left:calc(18px + env(safe-area-inset-left))!important;right:calc(24px + env(safe-area-inset-right))!important;padding:14px 20px 16px!important}' +
       '.mgk.mgk-panel{padding:10px 20px 12px!important}.mgk.mgk-pop{padding:6px 14px 5px!important;white-space:nowrap}';

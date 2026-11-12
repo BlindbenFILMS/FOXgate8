@@ -37,7 +37,7 @@ add('Missed it', 'dance-missed'); add('Too wiggly', 'dance-too-wiggly');
 
 const sentences = text => (String(text).match(/[^.!?]+[.!?]*["”’]?\s*/g) || []).map(s => s.trim()).filter(Boolean);
 
-let ctxAC = null;
+let ctxAC = null, owner = 0;   // owner: the game whose voice was made last
 const cache = new Map();
 function load(ac, name, dir = '') {
   const key = dir + name;
@@ -62,16 +62,30 @@ export function plan(text, prefix = '') {
 export function voiceFor(ctx, audio) {
   const ttsSay = ctx.say || (() => {});
   const id = ctx.work && ctx.work.id, prefix = PREFIX[id] || 'mosaic-', dir = FAST[id] || '';
-  let token = 0, src = null, running = 0, ttsUntil = 0;
+  // One game's recordings are kept at a time. (Each game's lines are 5 to 50 MB once opened up for playing; kept for a whole
+  // visit they add up until the phone reloads the page. The last game's are let go here; replaying a game keeps its own.)
+  for (const k of [...cache.keys()]) if (!k.startsWith(dir + prefix)) cache.delete(k);
+  const me = ++owner;
+  let token = 0, cur = null, running = 0, ttsUntil = 0;   // cur: the clip playing now { s, g, end }
   // roughly how long the computer voice takes to read some text (about 2.6 words a second)
   const ttsTime = t => { const w = String(t || '').trim().split(/\s+/).filter(Boolean).length; return w ? 0.6 + w / 2.6 : 0; };
   const tts = t => { ttsUntil = performance.now() + ttsTime(t) * 1000; ttsSay(t); };
   const ac = () => { try { return ctxAC || (ctxAC = audio()); } catch (e) { return null; } };
   // load this game's clips right away, a few at a time
-  const mine = Object.keys(LINES).filter(n => n.startsWith(prefix));
-  (async () => { const a = ac(); if (!a) return; for (let i = 0; i < mine.length; i += 4) { await Promise.all(mine.slice(i, i + 4).map(n => load(a, n, dir).catch(() => {}))); } })();
-  function stop() { token++; running = 0; ttsUntil = 0; if (src) { try { src.stop(); } catch (e) {} src = null; } }
-  async function run(items, my) {
+  // (the one-line intro first: it is the first thing said. A newer game's voice stops this one's loading.)
+  const quick = n => (/-quick$/.test(n) ? 0 : 1);
+  const mine = Object.keys(LINES).filter(n => n.startsWith(prefix)).sort((a, b) => quick(a) - quick(b));
+  (async () => { const a = ac(); if (!a) return; for (let i = 0; i < mine.length && me === owner; i += 4) { await Promise.all(mine.slice(i, i + 4).map(n => load(a, n, dir).catch(() => {}))); } })();
+  // stop a clip without a click: a very quick fade, then off
+  function hush(c) {
+    try {
+      const a = c.s.context, t = a.currentTime;
+      if (a.state !== 'running') { c.s.stop(); return; }
+      c.g.gain.cancelScheduledValues(t); c.g.gain.setValueAtTime(c.g.gain.value, t); c.g.gain.linearRampToValueAtTime(0.0001, t + 0.05); c.s.stop(t + 0.07);
+    } catch (e) { try { c.s.stop(); } catch (e2) {} }
+  }
+  function stop() { token++; running = 0; ttsUntil = 0; if (cur) { hush(cur); cur = null; } }
+  async function run(items, my, notBefore = 0) {
     const a = ac();
     for (let k = 0; k < items.length; k++) {
       if (my !== token) return;
@@ -80,21 +94,32 @@ export function voiceFor(ctx, audio) {
       let buf = null; try { buf = await load(a, it.clip, dir); } catch (e) { buf = null; }
       if (my !== token) return;
       if (!buf) { tts(items.slice(k).map(x => x.text || LINES[x.clip]).join(' ')); if (running === my) running = 0; return; }
+      let c = null;
       await new Promise(done => {
-        const s = a.createBufferSource(), g = a.createGain(); s.buffer = buf; g.gain.value = 1.15; s.connect(g).connect(a.destination);
-        s.onended = done; src = s; s.start(); setTimeout(done, buf.duration * 1000 + 400);   // (in case "ended" never comes)
+        const s = a.createBufferSource(), g = a.createGain(); s.buffer = buf; g.gain.value = 1.15; s.connect(g).connect(a.__real || a.destination);   // (past the games' master volume: a spoken line is never hushed)
+        const at = Math.max(a.currentTime, k === 0 ? notBefore : 0);
+        c = cur = { s, g, end: at + buf.duration };
+        s.onended = done; s.start(at);
+        // In case "ended" never comes. And a line the phone has silenced meanwhile (Sound off, the artist's own words, another
+        // app) is dropped here, so it can't come out late, on top of the next thing, when the sound comes back.
+        setTimeout(() => { if (a.state !== 'running' && my === token) stop(); done(); }, (at - a.currentTime + buf.duration) * 1000 + 400);
       });
-      if (src && my === token) src = null;
+      if (cur === c) cur = null;
     }
     if (running === my) running = 0;
   }
+  const TAIL = 0.45;   // a line with less than this left to play is allowed to finish
   const say = (text) => {
-    if (window.__muted) { tts(text); return; }
+    if (window.__muted) { stop(); tts(text); return; }
     const items = plan(text, prefix);
     if (!items.some(x => x.clip) || !ac()) { stop(); tts(text); return; }
-    stop(); ttsSay('');                                    // quiet whatever was talking
+    // quiet whatever was talking; but a line that is almost over finishes its last word, and the new line follows it
+    const a = ac(), left = cur && a.state === 'running' ? cur.end - a.currentTime : 0;
+    let notBefore = 0;
+    if (left > 0.03 && left <= TAIL) { notBefore = cur.end; token++; cur = null; } else stop();
+    ttsSay('');
     if (window.__voiceLog) window.__voiceLog.push(items.map(x => x.clip || '[tts] ' + x.text).join(' + '));
-    running = ++token; run(items, token);
+    running = ++token; run(items, token, notBefore);
   };
   say.stop = stop;
   // true while a line is still being spoken (Ben's clips, or the computer voice by estimate): the intro waits for it

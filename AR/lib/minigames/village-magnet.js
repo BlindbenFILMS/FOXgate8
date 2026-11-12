@@ -219,7 +219,8 @@ export function villageMagnetGame() {
         const falling = G.people.filter(p => p.state === 'fall'), pulling = G.people.some(p => p.state === 'pull');
         G.gap -= dt;
         const allowTwo = G.found >= 4 && falling.length === 1 && falling[0].v > 0.42;
-        if (G.queue.length && G.gap <= 0 && !pulling && (falling.length === 0 || allowTwo)) { spawn(); G.gap = 1.2; }
+        const naming = G.gap > -2.2 && G.say.busy && G.say.busy();   // let "A painter found you." finish before the next friend is called
+        if (G.queue.length && G.gap <= 0 && !naming && !pulling && (falling.length === 0 || allowTwo)) { spawn(); G.gap = 1.2; }
       }
       const [ox, oy] = G.S.P(LANE_U[0] + (LANE_U[2] - LANE_U[0]) * G.laneX / 2, ROW_V);
       for (let i = G.people.length - 1; i >= 0; i--) {
