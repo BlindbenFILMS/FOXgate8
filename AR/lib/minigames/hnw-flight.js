@@ -48,13 +48,14 @@ export function firstFlightGame() {
     const W = SPOT.w, H = SPOT.h, bf = new THREE.Group(), pivot = new THREE.Group(), wings = new THREE.Group();
     // one picture, shown as two pieces (the wings and the body) so the wings can beat
     let tw = null, tb = null;
-    const t = new THREE.TextureLoader().load(ART + 'butterfly.png', () => { tw.needsUpdate = true; tb.needsUpdate = true; });
+    const t = new THREE.TextureLoader().load(ART + 'butterfly.png', () => { tw.needsUpdate = true; tb.needsUpdate = true; pivot.visible = true; });
     t.colorSpace = THREE.SRGBColorSpace;
     tw = t.clone(); tw.repeat.set(WING, 1); tw.offset.set(0, 0);
     tb = t.clone(); tb.repeat.set(1 - WING, 1); tb.offset.set(WING, 0);
     const wm = quad(tw, W * WING, H, 40); wm.position.x = -W * WING / 2; wings.add(wm);
     const bm = quad(tb, W * (1 - WING), H, 41); bm.position.x = W * (1 - WING) / 2;
     pivot.add(wings, bm); pivot.position.x = W * (WING - 0.5); bf.add(pivot);
+    pivot.visible = false;   // shown as soon as her picture has arrived (so three.js is never asked to draw a picture it doesn't have yet)
     bf.position.z = 0.06; G.root.add(bf);
     G.bf = bf; G.wings = wings;
     // a soft patch of the white wall that covers her empty spot once she flies

@@ -253,3 +253,20 @@ Every Blind Canvas painting has a "Play the game" button. Each game is about a m
 - **napkins.js, almost-blindness.js, walk-through-fear.js, curating-hope.js**: the four hand-built games, now using Claude Design's art from **media/games/** (and Ben's recorded voice for Almost Blindness). Every picture has a drawn-in fallback, so a missing file never breaks a game.
 
 Test links: `?art=<painting-id>` plays one painting. Add `&bot=1&debug=1` and a robot plays the game by itself.
+
+## The games in the 3D gallery
+
+The 3D gallery (`../3D/gallery.html`) plays these same games right on its paintings. It finds them in **lib/minigames/gallery-games.json**: one entry for each of the 70 paintings, with the gallery's key for the painting, its AR id, the game's file and function, a short name for the button, the title, artist and quote, the painting's picture, what the story button plays, and whether a Play again button makes sense.
+
+- **lib/minigames/in-world.js**: `playOnPainting()` puts a game on a painting in any three.js room.
+- **world-test.html**: a small 3D test room that starts a game the way the gallery does. With no painting in the link it lists all 70. `world-test.html?art=<AR id or gallery key>` opens one. Add `&bot=1` and the game plays itself.
+- **GAMES_HANDOFF.md**: what was handed to the gallery on 12 Nov 2026, and how it was tested.
+
+When a painting gets a different game in `index.js`, change its entry in `gallery-games.json` too.
+
+A game has to work from any page, not only this one:
+
+- It loads its pictures and sounds with `new URL('…', import.meta.url)`, never with an address written from the AR page.
+- It imports only `three` by name. Everything else is a relative import.
+- `stop()` takes away everything the game made: screen boxes, sounds, timers and listeners.
+- It makes no renderer and no animation loop of its own, and leaves the camera, the scene and the page alone.

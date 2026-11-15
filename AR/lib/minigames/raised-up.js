@@ -14,7 +14,7 @@ import * as K from './kit.js';
 import { PAINTINGS, painting } from './raised-things.js';
 
 // Deborah's own words for this painting (the 3D gallery's clip): "I could say that art saved my life…"
-const ART = 'media/games/raised/';
+const ART = new URL('../../media/games/raised/', import.meta.url).href;   // from this file, so it works on any page (AR, 3D gallery)
 const DEBORAH = new URL('../../../3D/gallery/audio/wing_1_0.mp3', import.meta.url).href;
 
 // Deborah's own frames on the dark walls, in the painting's pixels (x0, y0, x1, y1 of 800 × 800): left wall, then right wall.

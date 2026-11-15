@@ -151,7 +151,10 @@ export function handsUpGame() {
       // the mic's glint on the beat, and the big call sign above the stage
       G.glint = K.sprite(K.glowTex, 0.12, { additive: true, opacity: 0, order: 22, color: '#fff1c0' }); G.glint.position.set(...G.S.P(...MIC), 0.04); G.root.add(G.glint);
       const sign = (text) => K.canvasTex(512, 128, g => { g.fillStyle = '#000'; g.fillRect(0, 0, 512, 128); g.fillStyle = '#ec3013'; g.fillRect(0, 118, 512, 10);
-        g.fillStyle = '#fff'; g.font = '900 78px Archivo, "Arial Black", Arial, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, 256, 62); });
+        // (the words shrink until the whole call fits on the sign: "HANDS DOWN ↓" was losing its first and last letters)
+        let fs = 78; const font = () => { g.font = `900 ${fs}px Archivo, "Arial Black", Arial, sans-serif`; }; font();
+        while (g.measureText(text).width > 480 && fs > 30) { fs -= 2; font(); }
+        g.fillStyle = '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, 256, 62); });
       G.texUp = sign('HANDS UP ↑'); G.texDown = sign('HANDS DOWN ↓');
       G.callSpr = K.sprite(G.texUp, 0.5, { order: 30, opacity: 0 }); G.callSpr.scale.set(0.56, 0.14, 1); G.callSpr.position.set(...G.S.P(0.5, 0.1), 0.06); G.root.add(G.callSpr);
       // the crowd's hands move: a wave out from the stage

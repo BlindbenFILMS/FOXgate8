@@ -182,7 +182,7 @@ export function pinTheMemoriesGame() {
         uT: { value: 0 }, uA: { value: 0 }, uBase: { value: 0.12 }, uAll: { value: 0 }, uBand: { value: BAND }, uBandH: { value: BAND_H0 }, uBandOn: { value: 0 } };
       G.face = new THREE.Mesh(new THREE.PlaneGeometry(1.002, G.h + 0.002), new THREE.ShaderMaterial({ uniforms: G.uni, vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: false }));
       G.face.position.z = 0.03; G.face.renderOrder = 12; G.face.visible = false; G.root.add(G.face);
-      new THREE.TextureLoader().load((ctx.work && ctx.work.image) || 'targets/reasons-for-a-cure.jpg', t => { if (!G) return; t.colorSpace = THREE.NoColorSpace; G.uni.map.value = t; G.face.visible = true; });
+      new THREE.TextureLoader().load((ctx.work && ctx.work.image) || new URL('../../targets/reasons-for-a-cure.jpg', import.meta.url).href, t => { if (!G) return; t.colorSpace = THREE.NoColorSpace; G.uni.map.value = t; G.face.visible = true; });
       // the ten memories (hidden until they float in) and a soft glow behind each
       G.mem = MEMORIES.map((_, i) => {
         const mesh = K.plane(memoryTex(i), MW, MH, { order: 30 + i }); mesh.visible = false; mesh.position.z = 0.06; G.root.add(mesh);

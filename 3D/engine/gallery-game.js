@@ -4,13 +4,15 @@
 import * as THREE from '../vendor/three/three.module.js';
 import { GLTFLoader } from '../vendor/three/addons/GLTFLoader.js';
 import { MeshBVH } from '../vendor/three/three-mesh-bvh.js';
+import { setupFoxes } from './gallery-foxes.js';
+import { buildMobility } from './gallery-mobility.js';   // (13 Nov, Ben) the Ora-VNC™ mobility course building   // (13 Nov, Ben) every visitor is the 8 GATES game's fox
 import { mergeGeometries } from '../vendor/three/addons/BufferGeometryUtils.js';
 import { rr, pick, clamp, smooth, damp, makeGradient } from '../village-game.js';
 import { foxKit, PLAYER_MALE, PLAYER_FEMALE } from '../fox-kit.js';
 import { crestTex } from './textures.js';
 import { buildGuides } from './gallery-guides.js';
 import { buildWorld } from './gallery-world.js';
-import { GARDEN, RING, CAMPUS, planGarden } from './gallery-garden-plan.js';
+import { GARDEN, RING, CAMPUS, SKATE, planGarden } from './gallery-garden-plan.js';
 import { makePlant, makeBench } from './gallery-props.js';
 import { caneKit, loadCane, CANE_DEFAULTS } from './avatars/cane.js';
 import { chairKit, loadChair, CHAIR_DEFAULTS } from './avatars/chair.js';
@@ -47,6 +49,8 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const W = () => container.clientWidth || 1, H = () => container.clientHeight || 1;
   renderer.setSize(W(), H());
   const scene = new THREE.Scene();
+  // (13 Nov, Ben) THE GAME'S FOX for every visitor (Design's hand-back, made light for phones in gallery-foxes.js): it loads while the gallery builds. ?oldfox brings back the gallery's own fox.
+  const FXP = new URLSearchParams(location.search).has('oldfox') ? Promise.resolve(null) : setupFoxes({ THREE, scene }).catch(e => { console.warn('[foxes] the game fox did not load: keeping the gallery fox', e); return null; });
   // draw-call saver: a mesh with a material array draws once per geometry group (a box = 6). Join neighbouring groups that use
   // the same material object, and point every face at the first copy, so a canvas or screen box draws 2-3 times, not 6.
   function compactGroups(mesh) {
@@ -188,6 +192,30 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   const rooms = buildRooms({ scene, data, wood, resolveImg: RES, buildWing });
   // the park campus: BLIND CAN CINEMA, the WHY House, the AMB building's outside, and the museum's signs pointing to them
   const campus = NOWORLD ? null : buildCampus({ scene, wood, woodify, vids: data.vids, resolveImg: RES, lowEnd, camera, sky: () => outdoors.sky ? outdoors.sky() : 'golden' });
+  // (13 Nov, Ben) FOX SKATING: Design's skate park between BLIND CAN CINEMA and the WHY House, its big screen playing the White Cane commercial
+  const FX = await FXP;
+  let park = null, makeSkaterFn = null, parkScreen = null; const parkCol = [], SK = { on: false, busy: false, sk: null, board: null, inp: { x: 0, z: 0, jump: false, trick: false } };
+  if (FX && campus) try {
+    const SP = await import('../gamefox/skate-park.js'); makeSkaterFn = SP.makeSkater;
+    const L = k => RES('gallery/img/' + k + '.webp');
+    park = SP.setupSkatePark({ THREE, scene, GF: FX.GF, at: { x: SKATE.x, z: SKATE.z }, face: 0, ground: () => 0,
+      logos: [{ url: L('blind_canvas_project_logo__270692239'), u: 0, v: -10.6, w: 7, h: 3.2 },   // the Blind Canvas Project logo at the front (path side)
+        ...[[-4.6, -3], [4.6, -3], [0, 3.2]].map(([u, v]) => ({ url: L('ora_card_16x9_black_269773142'), u, v, w: 3.6, h: 2 })),   // ORA on the pad
+        ...[-3.2, 0, 3.2].map(u => ({ url: L('ora_card_16x9_black_269773142'), u, v: 15.12, w: 2.4, h: 0.8, y: 2.25 }))] });   // ORA on the white board under the screen
+    park.group.updateMatrixWorld(true);
+    park.group.traverse(o => { if (o.isMesh && o !== park.tv && !o.material.transparent && o.geometry.type !== 'CylinderGeometry') parkCol.push(o); });
+    // the big screen joins the gallery's own films: the White Cane commercial plays (with sound) while you're at the park
+    park.tv.visible = false;
+    const pcv = document.createElement('canvas'); pcv.width = 960; pcv.height = 540; { const g = pcv.getContext('2d'); g.fillStyle = '#1d1c1b'; g.fillRect(0, 0, 960, 540); g.fillStyle = '#ec3013'; g.fillRect(48, 70, 120, 10); g.font = '800 40px Archivo, Arial, sans-serif'; g.fillText('BLIND CAN', 48, 140); g.fillStyle = '#f3f2f2'; g.font = '800 100px Archivo, Arial, sans-serif'; g.fillText('THE WHITE CANE', 44, 290); g.fillText('COMMERCIAL', 44, 400); g.font = '600 36px Archivo, Arial, sans-serif'; g.fillText('Step into the skate park to watch', 48, 470); }
+    const ptx = new THREE.CanvasTexture(pcv); ptx.colorSpace = THREE.SRGBColorSpace;
+    const scrPos = park.tvPos, posterMat = new THREE.MeshBasicMaterial({ map: ptx }), dark = new THREE.MeshBasicMaterial({ color: 0x151515 });
+    const scr = new THREE.Mesh(new THREE.BoxGeometry(9.6, 5.4, 0.04), [dark, dark, dark, dark, dark, posterMat]); scr.position.copy(scrPos); scr.position.z -= 0.02; scr.userData.dyn = true; scene.add(scr);
+    const zone = new THREE.Box3(new THREE.Vector3(SKATE.x0 - 2, -1, SKATE.z0 - 4), new THREE.Vector3(SKATE.x1 + 2, 12, SKATE.z1 + 3));
+    parkScreen = ({ u: 'skate:white_cane', local: (window.GMEDIA || (u => u))(BASE + 'video/white_cane.mp4'), box: scr, faces: [5], posterMat, vol: 0.85, dist: 16, reach: 34, minVol: 0.08, p: [scrPos.x, scrPos.y, scrPos.z], zone, skate: true });
+  } catch (e) { console.warn('[skate] park skipped', e); park = null; }
+  // (13 Nov, Ben) THE MOBILITY COURSE: Design's course room in its own building between the Academy of Music and the cinema
+  let MOB = null;
+  if (campus) try { MOB = await buildMobility({ THREE, scene, ground: () => 0, RES }); } catch (e) { console.warn('[mobility] course skipped', e); MOB = null; }
   // comment spots (11 Oct): the only places a floating note can be left: a raised yellow pad and a YOUR COMMENTS HERE sign
   const comments = NOWORLD ? null : buildCommentSpots({ THREE, scene });
   const braille = buildBraille({ scene, resolveImg: RES });   // 'Hope Floating in Braille': an island on the welcome plaza, at the end away from the museum
@@ -246,7 +274,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       const c = new THREE.Mesh(new THREE.BoxGeometry(W, H, 0.2)); c.position.set(cx, cy, w.z); c.updateMatrixWorld(true); winCol.push(c);
     }
   }
-  for (const [lab, list] of Object.entries({ entrance: entrance.col, rooms: rooms.col, kiosks: kiosks.col, bioWalls: bioWalls.col, braille: braille.col, lift: lift.col, skywalk: skywalk.col, simKiosks: simCol, ringLow: ringGlass.col, zen: zen.col, edges: edgeCol, props: propCol, funProps: fun.col, windows: winCol, campus: campus ? campus.col : [], comments: comments ? comments.col : [] })) for (const m of list) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); g.userData.lab = (m.userData.see ? 'see:' : '') + lab + (m.name ? ':' + m.name : ''); colGeos.push(g); }   // (28 Oct: see = a window's blocker: solid, but rays see past it)
+  for (const [lab, list] of Object.entries({ entrance: entrance.col, rooms: rooms.col, kiosks: kiosks.col, bioWalls: bioWalls.col, braille: braille.col, lift: lift.col, skywalk: skywalk.col, simKiosks: simCol, ringLow: ringGlass.col, zen: zen.col, edges: edgeCol, props: propCol, funProps: fun.col, windows: winCol, campus: campus ? campus.col : [], comments: comments ? comments.col : [], skate: parkCol, mobility: MOB ? MOB.col : [] })) for (const m of list) { const g = m.geometry.clone(); g.applyMatrix4(m.matrixWorld); g.userData.lab = (m.userData.see ? 'see:' : '') + lab + (m.name ? ':' + m.name : ''); colGeos.push(g); }   // (28 Oct: see = a window's blocker: solid, but rays see past it)
   // one position-only collision mesh with a BVH (fast rays on phones)
   let total = 0; for (const g of colGeos) total += (g.index ? g.index.count : g.attributes.position.count);
   const P = new Float32Array(total * 3); let k = 0;
@@ -546,6 +574,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   }
   vids.push(...rooms.screens);
   if (campus) vids.push(...campus.screens);
+  if (parkScreen) vids.push(parkScreen);   // (13 Nov) the skate park's big screen
   for (const v of vids) compactGroups(v.box);   // a screen box draws 2 times, not 6   // a two-sided interview screen in the middle of each bay of the New Artists Wing
   // living paintings: the animated version of an artwork fades in over the still while you stand in front of it
   const ANIMS = new Set(data.anims || []);
@@ -677,6 +706,10 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   function M(geo, mat, x = 0, y = 0, z = 0, parent, outline = 0.04, radius) { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); if (outline) addOutline(m, outline, radius); (parent || scene).add(m); return m; }
   const { makeFox, animFox } = foxKit({ THREE, scene, toon, M, grad, outlineMat, crestTex, rr, pick, clamp, smooth, damp });
   const FOX_SCALE = 0.62;   // kit foxes are ~2.7 units; the gallery is in metres
+  // (13 Nov, Ben) THE GAME'S FOX for every visitor (Design's hand-back, made light for phones in gallery-foxes.js). ?oldfox brings back the gallery's own fox.
+  const GEAR_OF = { glasses: 'sun', sun: 'sun', cane: 'cane', chair: 'chair' }, SHIRT_OF = { suit: 'suit', wrap: 'sweat', wraptee: 'tee' };
+  const gameLook = (lk, ex, st = {}) => ({ head: st.head || (lk === 'female' ? 'playerF' : 'player'), shirt: st.shirt || SHIRT_OF[lk] || 'suit', art: st.art || DEFAULT_ART, gear: GEAR_OF[ex] || 'none' });
+  function animVisitor(f, dt, speed, air) { if (f.userData.gameFox) FX.tick(f, dt, speed); else animFox(f, dt, speed / FOX_SCALE * 0.6, air); }   // speed in metres a second
   let player = null, look = 'male', extra = 'none', guitarHold = null;
   // the player's merch: Blind Canvas Project logo on the black tee, "Walk Through Fear" on the back of the hoodie
   const printTex = (w, h, draw) => { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const c = cv.getContext('2d'); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; draw(c, w, h, () => { t.needsUpdate = true; }); return t; };
@@ -827,6 +860,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     f.scale.setScalar(FOX_SCALE); return f;
   }
   function makeVisitorFox(lk, ex, st = { pal: 0, art: DEFAULT_ART }) {   // every visitor wears the BCP tee
+    if (FX) { try { return FX.make(gameLook(lk, ex, st)); } catch (e) { console.warn('[foxes] game fox failed for this look, using the gallery fox', e); } }
     if (lk === 'wraptee') { try { return makeSuitFox(ex, st, 'short'); } catch (e) { console.warn('art tee avatar failed, using the BCP tee', e); } }   // (27 Oct) short sleeves
     if (lk === 'wrap') { try { return makeSuitFox(ex, st, true); } catch (e) { console.warn('wrap tee avatar failed, using the BCP tee', e); } }
     if (lk === 'suit') { try { return makeSuitFox(ex, st); } catch (e) { console.warn('suit avatar failed, using the BCP tee', e); } }
@@ -838,6 +872,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     bakeLocal(f); skinFox(f); f.scale.setScalar(FOX_SCALE); return f;
   }
   function buildPlayer() {
+    if (SK.on) skateOff();   // (a new outfit mid-ride: off the board first)
     const pos = player ? player.position.clone() : null;
     if (player) scene.remove(player);
     const old = player; player = makeVisitorFox(look, extra, style); if (pos) player.position.copy(pos);
@@ -932,18 +967,18 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     let r = remotes.get(id);
     if (!r) { r = { id, prof: { name: 'Visitor', look: 'male', extra: 'none' }, fox: null, tag: null, x: 0, y: 0, z: 0, face: 0, tx: 0, ty: 0, tz: 0, tface: 0, speed: 0, air: false, last: performance.now(), placed: false }; remotes.set(id, r); }
     if (prof) {
-      const changed = !r.fox || prof.look !== r.prof.look || prof.extra !== r.prof.extra || prof.pal !== r.prof.pal || prof.art !== r.prof.art;
+      const changed = !r.fox || prof.look !== r.prof.look || prof.extra !== r.prof.extra || prof.pal !== r.prof.pal || prof.art !== r.prof.art || prof.head !== r.prof.head || prof.shirt !== r.prof.shirt;
       const renamed = prof.name !== r.prof.name;
       r.prof = { ...r.prof, ...prof };
-      if (changed) { if (r.fox) scene.remove(r.fox); r.fox = makeVisitorFox(r.prof.look, r.prof.extra, { pal: r.prof.pal | 0, art: r.prof.art }); r.fox.visible = r.placed; scene.add(r.fox); }
+      if (changed) { if (r.fox) { if (r.fox.userData.skateRemote && r.fox.userData.skateRemote.board) scene.remove(r.fox.userData.skateRemote.board); scene.remove(r.fox); } r.fox = makeVisitorFox(r.prof.look, r.prof.extra, { pal: r.prof.pal | 0, art: r.prof.art, head: r.prof.head, shirt: r.prof.shirt }); r.fox.visible = r.placed; scene.add(r.fox); }
       if (renamed || !r.tag) { if (r.tag) { scene.remove(r.tag); r.tag.material.map.dispose(); } r.tag = tagSprite(r.prof.name || 'Visitor'); r.tag.visible = r.placed; scene.add(r.tag); }
     }
     if (st) {
-      [r.tx, r.ty, r.tz, r.tface, r.speed] = st; r.air = !!st[5]; r.sit = !!st[6]; r.last = performance.now();   // (st[6]: sitting on a bench or a cinema seat)
+      [r.tx, r.ty, r.tz, r.tface, r.speed] = st; r.air = !!st[5]; r.sit = !!st[6]; r.sk = st[7] | 0; r.last = performance.now();   // (st[6]: sitting on a bench or a cinema seat)
       if (!r.placed || Math.hypot(r.tx - r.x, r.tz - r.z) > 8 || Math.abs(r.ty - r.y) > 4) { r.x = r.tx; r.y = r.ty; r.z = r.tz; r.face = r.tface; }
       r.placed = true;
     }
-    if (!r.fox) { r.fox = makeVisitorFox(r.prof.look, r.prof.extra, { pal: r.prof.pal | 0, art: r.prof.art }); scene.add(r.fox); }
+    if (!r.fox) { r.fox = makeVisitorFox(r.prof.look, r.prof.extra, { pal: r.prof.pal | 0, art: r.prof.art, head: r.prof.head, shirt: r.prof.shirt }); scene.add(r.fox); }
     if (!r.tag) { r.tag = tagSprite(r.prof.name || 'Visitor'); scene.add(r.tag); }
     return r;
   }
@@ -988,7 +1023,15 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     }
     hide.forEach(o => { o.visible = false; }); head.add(g); fox.userData.camObj = g; fox.userData.camHidden = hide;
   }
-  function remoteRemove(id) { setCam(id, null); const r = remotes.get(id); if (!r) return; if (campus && campus.band.guitar && campus.band.guitar.heldBy === id) { const Gt = campus.band.guitar; Gt.rest.parent.add(Gt.group); Gt.group.position.copy(Gt.rest.pos); Gt.group.rotation.copy(Gt.rest.rot); Gt.heldBy = null; } if (r.fox) scene.remove(r.fox); if (r.tag) scene.remove(r.tag); remotes.delete(id); }
+  // (13 Nov) another visitor on a skateboard: their board under their fox, side-on, doing the move they're doing
+  function remoteSkate(r) {
+    const f = r.fox, u = f.userData, on = r.sk > 0 && u.gameFox && FX;
+    if (!on) { if (u.skateRemote) { if (u.skateRemote.board) scene.remove(u.skateRemote.board); u.skateRemote = null; } return; }
+    if (!u.skateRemote) { const R = u.skateRemote = { board: null, name: null, t: 0 }; FX.GF.skateboard().then(b => { if (u.skateRemote === R && r.fox === f) R.board = b; else scene.remove(b); }).catch(() => {}); }
+    const R = u.skateRemote, name = SKN[r.sk] && SKN[r.sk] !== 'ride' ? SKN[r.sk] : null; if (name !== R.name) { R.name = name; R.t = 0; }
+    f.position.y = 0; f.rotation.y = r.face - Math.PI / 2;
+  }
+  function remoteRemove(id) { setCam(id, null); const r = remotes.get(id); if (!r) return; if (campus && campus.band.guitar && campus.band.guitar.heldBy === id) { const Gt = campus.band.guitar; Gt.rest.parent.add(Gt.group); Gt.group.position.copy(Gt.rest.pos); Gt.group.rotation.copy(Gt.rest.rot); Gt.heldBy = null; } if (r.fox) { if (r.fox.userData.skateRemote && r.fox.userData.skateRemote.board) scene.remove(r.fox.userData.skateRemote.board); scene.remove(r.fox); } if (r.tag) scene.remove(r.tag); remotes.delete(id); }
   function updateRemotes(dt) {
     const now = performance.now();
     for (const r of remotes.values()) {
@@ -1002,7 +1045,10 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       if (r.fox.userData.hop > 0) r.fox.userData.hop = r.fox.userData.hop;
       wearCam(r.fox, camHeads.get(r.id));
       r.fox.userData.sit = !!r.sit && r.prof.extra !== 'chair';   // friends sitting together: the same seated pose you see on your own fox
-      animFox(r.fox, dt, r.sit ? 0 : (r.speed || 0) / FOX_SCALE * 0.6, r.air && !r.sit);
+      if (r.emote && r.fox.userData.gameFox) { FX.emote(r.fox, r.emote); r.emote = null; }
+      remoteSkate(r);
+      animVisitor(r.fox, dt, r.sit ? 0 : (r.speed || 0), r.air && !r.sit);
+      if (r.fox.userData.skateRemote) { const B = r.fox.userData.skateRemote.board; r.fox.position.y += r.y; if (B) B.position.y += r.y; }
       r.tag.position.set(r.x, r.y + 2.15, r.z);
     }
     for (let i = waves.length - 1; i >= 0; i--) { const b = waves[i]; b.userData.t -= dt; const f = b.userData.fox; b.position.set(f.position.x, f.position.y + 2.6 + (2.4 - b.userData.t) * 0.15, f.position.z); b.material.opacity = Math.min(1, b.userData.t * 2); if (b.userData.t <= 0) { scene.remove(b); waves.splice(i, 1); } }
@@ -1039,6 +1085,79 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   // ---------------------------------------------------------------- follow a friend (tours): walk the breadcrumb trail of their positions
   const F = { id: null, crumbs: [], best: 1e9, stuckT: 0, onEnd: null };
   const nearProviders = [Pl => lift.near(Pl)], tickers = [];
+  // ---------------------------------------------------------------- (13 Nov, Ben) THE MOBILITY COURSE: step inside and the camera changes to the course's own
+  // (Design's BEHIND STEVE view: on an arc behind the walker, looking down the path ahead); your fox fades while it stands between the camera and the path
+  // further on; an ABOUT THIS COURSE button opens the course's page. Walking back out through the door puts everything back.
+  const MC = { on: false, cam: new THREE.Vector3(), aim: new THREE.Vector3(), fov: 60, fade: 1, btn: null, pos: { x: 0, z: 0 } };
+  const mcA = new THREE.Vector3(), mcB = new THREE.Vector3(), mcD = new THREE.Vector3(), mcHit = new THREE.Vector3(), mcRay = new THREE.Ray(), mcT = new THREE.Vector3(), mcAim = new THREE.Vector3();
+  function mobilityTick(dt) {
+    const inside = !!player && MOB.inRoom(Pl.x, Pl.z) && Math.abs(Pl.y - MOB.y) < 2;
+    if (inside !== MC.on) { MC.on = inside; mobilityUI(inside);
+      if (inside) { MC.cam.copy(camera.position); camera.getWorldDirection(mcAim); MC.aim.copy(camera.position).addScaledVector(mcAim, 3); MC.fov = camera.fov; { const lv = document.getElementById('live'); if (lv) lv.textContent = 'The Ora-VNC mobility course. Walk the white tiles from the START pad to the END pad, stay on the tiles and keep clear of the cubes. About this course: the button at the top left.'; } }
+      else { foxFade(1); MC.fade = 1; camera.fov = camera.aspect < 1 ? 70 : 60; camera.updateProjectionMatrix(); camera.up.set(0, 1, 0); } }
+    if (!inside) return;
+    if (MOB.inRoom(Pl.x, Pl.z, 0.45)) { MC.pos.x = Pl.x; MC.pos.z = Pl.z; MOB.course.step(dt, MC.pos, Pl.face); Pl.x = MC.pos.x; Pl.z = MC.pos.z; }   // the cubes + the clock (not in the doorway, so you can walk back out)
+  }
+  function courseCam(dt) {   // the preview's BEHIND STEVE numbers (look.behind = 0.26)
+    const a = 0.26, t = (a - 0.05) / 1.1, R = 2.9, ah = 1.3 - 0.8 * t, fx = Math.sin(Pl.face), fz = Math.cos(Pl.face), y0 = Pl.y;
+    mcT.set(Pl.x - fx * R * Math.cos(a), y0 + 1.3 + R * Math.sin(a), Pl.z - fz * R * Math.cos(a)); mcAim.set(Pl.x + fx * ah, y0 + 1.05 - 0.75 * t, Pl.z + fz * ah);
+    const q = 1 - Math.exp(-8 * dt); MC.cam.lerp(mcT, q); MC.aim.lerp(mcAim, q); camera.position.copy(MC.cam); camera.up.set(0, 1, 0); camera.lookAt(MC.aim);
+    const fov = clamp(2 * Math.atan(Math.tan(0.698) / camera.aspect) * 57.296, 58, 85); MC.fov = damp(MC.fov, fov, 8, dt); if (Math.abs(camera.fov - MC.fov) > 0.02) { camera.fov = MC.fov; camera.updateProjectionMatrix(); }
+    St.yaw = Pl.face + Math.PI; St.camDist = R; player.visible = true;
+    // does the fox stand between the camera and a tile further on? then it fades (see-through, still coloured), as Steve does in the course preview
+    mcA.set(Pl.x, Pl.y + 0.3, Pl.z); mcB.set(Pl.x, Pl.y + 1.7, Pl.z); let covers = false; const C = camera.position;
+    for (const tp of MOB.course.tiles) { if (Math.hypot(tp.x - Pl.x, tp.z - Pl.z) < 0.5) continue; mcD.copy(tp).sub(C); const L = mcD.length(); mcRay.origin.copy(C); mcRay.direction.copy(mcD).divideScalar(L); if (mcRay.distanceSqToSegment(mcA, mcB, mcHit) < 0.09 && mcHit.distanceTo(C) < L - 0.3) { covers = true; break; } }
+    MC.fade = damp(MC.fade, covers ? 0.32 : 1, 9, dt); foxFade(MC.fade > 0.99 ? 1 : MC.fade);
+  }
+  // the fox's own see-through: it gets its own copies of its materials (others share some), then they fade together
+  function foxFade(k) {
+    if (!player) return; const u = player.userData; if (k >= 1 && !u.faded) return;
+    if (!u.fadeMats) { u.fadeMats = []; const seen = new Map(); player.traverse(o => { if (!o.isMesh || !o.layers.isEnabled(0)) return; const ms = Array.isArray(o.material) ? o.material : [o.material]; const nm = ms.map(m => { if (!seen.has(m)) { const c = m.clone(); c.userData.op = m.opacity; c.userData.tr = m.transparent; c.userData.dw = m.depthWrite; seen.set(m, c); u.fadeMats.push(c); } return seen.get(m); }); o.material = Array.isArray(o.material) ? nm : nm[0]; }); }
+    for (const m of u.fadeMats) { const on = k < 1; m.transparent = on || m.userData.tr; m.opacity = on ? m.userData.op * k : m.userData.op; m.depthWrite = on ? false : m.userData.dw; m.needsUpdate = true; }
+    u.faded = k < 1;
+  }
+  function mobilityUI(on) {
+    if (on && !MC.btn) {
+      const b = MC.btn = document.createElement('button'); b.type = 'button'; b.textContent = 'ABOUT THIS COURSE ↗'; b.setAttribute('aria-label', 'About this course: opens the Ora-VNC mobility course page in a new tab');
+      b.style.cssText = 'position:absolute;left:calc(14px + env(safe-area-inset-left));top:calc(132px + env(safe-area-inset-top));z-index:6;min-height:52px;padding:0 16px;border:2px solid #f3f2f2;background:#1d1c1b;color:#f3f2f2;font:800 15px/1 Archivo,Arimo,sans-serif;letter-spacing:.06em;cursor:pointer;border-radius:0;box-shadow:inset 0 -4px 0 #ec3013';
+      b.addEventListener('click', e => { e.stopPropagation(); window.open(new URL('Mobility Course - About.html', location.href).href, '_blank', 'noopener'); });
+      container.appendChild(b);
+    }
+    if (MC.btn) MC.btn.style.display = on ? 'block' : 'none';
+  }
+  // ---------------------------------------------------------------- (13 Nov, Ben) FOX SKATING at the skate park: a board under your fox, ridden on the map itself
+  const SKN = ['', 'sk_push', 'sk_ollie', 'sk_kickflip', 'sk_grind', 'sk_manual', 'sk_bail', 'ride'];
+  const inPark = (x, z, m = 0) => !!park && x > SKATE.x0 - m && x < SKATE.x1 + m && z > SKATE.z0 - m && z < SKATE.z1 + m;
+  async function skateOn() {
+    if (!park || SK.on || SK.busy || !player || !player.userData.gameFox) return false;
+    if (extra === 'chair') return 'chair';
+    SK.busy = true;
+    try {
+      if (Pl.sit) standUp();
+      const board = await FX.GF.skateboard(); player.position.set(Pl.x, Pl.y, Pl.z); player.rotation.y = Pl.face;
+      SK.board = board; SK.sk = makeSkaterFn({ THREE, GF: FX.GF, fox: player, board, heightAt: park.heightAt, rails: park.rails });
+      SK.inp.x = SK.inp.z = 0; SK.inp.jump = SK.inp.trick = false; player.userData.skate = { sk: SK.sk, inp: SK.inp }; FX.emote(player, null); SK.on = true; skateUI(true);
+      return true;
+    } catch (e) { console.warn('[skate] no board', e); return false; } finally { SK.busy = false; }
+  }
+  function skateOff() {
+    if (!SK.on) return; SK.on = false; skateUI(false);
+    if (SK.board) { scene.remove(SK.board); SK.board = null; } if (player) player.userData.skate = null; SK.sk = null;
+    const gy = groundAt(Pl.x, Pl.y + 1, Pl.z); if (gy > -100) Pl.y = gy; Pl.vy = 0; Pl.ground = true;
+  }
+  let skateBtns = null;
+  function skateUI(on) {
+    if (on && !skateBtns) {
+      skateBtns = document.createElement('div'); skateBtns.style.cssText = 'position:absolute;right:calc(14px + env(safe-area-inset-right));bottom:calc(214px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px;z-index:6';
+      const mk = (t, aria, f) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = t; b.setAttribute('aria-label', aria); b.style.cssText = 'min-width:96px;min-height:56px;padding:0 14px;border:2px solid #f3f2f2;background:#ec3013;color:#fff;font:800 16px/1 Archivo,Arimo,sans-serif;letter-spacing:.06em;cursor:pointer;border-radius:0'; b.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); f(); }); b.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); f(); } }); skateBtns.appendChild(b); return b; };
+      mk('OLLIE', 'Ollie: jump on the board (space)', () => { SK.inp.jump = true; });
+      mk('TRICK', 'Trick: a kickflip in the air, a manual on the ground (K)', () => { SK.inp.trick = true; });
+      container.appendChild(skateBtns);
+    }
+    if (skateBtns) skateBtns.style.display = on ? 'flex' : 'none';
+  }
+  addEventListener('keydown', e => { if (!SK.on || (e.target.closest && e.target.closest('input,textarea'))) return; if (e.code === 'KeyK') SK.inp.trick = true; });
+  if (park) nearProviders.push(Pl => (SK.on || inPark(Pl.x, Pl.z, 0.5)) && Math.abs(Pl.y - park.heightAt(Pl.x, Pl.z)) < 3 ? { kind: 'skate', item: { on: SK.on }, label: SK.on ? 'Get off the skateboard' : 'Grab a skateboard · the skate park' } : null);
   if (campus) nearProviders.push(...campus.near);
   function placeNear(r, slot) {
     // behind them, or (slot n, when the host gathers everyone) round them in a ring; the first clear spot with floor wins
@@ -1133,6 +1252,12 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       if (St.moveYaw == null || !held || looked) St.moveYaw = St.yaw;
       else { let d = St.yaw - St.moveYaw; d = Math.atan2(Math.sin(d), Math.cos(d)); if (Math.abs(d) > 2.4) St.moveYaw = St.yaw; else St.moveYaw += d * Math.min(1, dt * 0.55); } }
     const fx = -Math.sin(St.moveYaw), fz = -Math.cos(St.moveYaw);   // forward on the ground
+    if (SK.on && SK.sk) {   // (13 Nov) on the skateboard: the stick steers and pushes the rider (gallery-foxes ticks it), the gallery follows the fox
+      SK.inp.x = fx * iz - fz * ix; SK.inp.z = fz * iz + fx * ix; if (input.jump) { SK.inp.jump = true; input.jump = 0; }
+      const p = player.position, st = SK.sk.state; Pl.x = p.x; Pl.z = p.z; Pl.y = st.y; Pl.face = st.head; Pl.ground = !st.air; Pl.speed = Math.abs(st.v); Pl.vx = Pl.vz = Pl.vy = 0;
+      if (!inPark(p.x, p.z, 1.2)) skateOff();
+      return;
+    }
     let dx = (fx * iz + -fz * ix) * sp * dt, dz = (fz * iz + fx * ix) * sp * dt;
     // following a friend: walk their path behind them; moving yourself stops it
     if (AW.pts) {
@@ -1234,12 +1359,13 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     if (!SHOT.pos && !SHOT.out) return;
     SHOT.k = Math.min(1, SHOT.k + dt / 0.9); const k = SHOT.k, e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
     if (SHOT.out) { SHOT.toP.copy(camera.position); camera.getWorldDirection(SHOT.tmp); SHOT.toA.copy(camera.position).addScaledVector(SHOT.tmp, 3); if (k >= 1) { SHOT.out = false; return; } }
-    else { SHOT.toP.copy(SHOT.pos); SHOT.toA.copy(SHOT.at); player.visible = true; }
+    else { SHOT.toP.copy(SHOT.pos); SHOT.toA.copy(SHOT.at); player.visible = !HOLD; }   /* (12 Nov) no fox in front of a painting game */
     camera.position.lerpVectors(SHOT.fP, SHOT.toP, e); SHOT.look.lerpVectors(SHOT.fA, SHOT.toA, e); camera.lookAt(SHOT.look);
   }
   St.lastLook = 0;
   const camRay = new THREE.Vector3(), camSide = new THREE.Vector3(), camUp = new THREE.Vector3();
   function updateCamera(dt) {
+    if (MC.on && !St.fp) { courseCam(dt); return; }   // (13 Nov) inside the mobility course: the course's own camera behind the walker
     // first person (tap the eye button): the camera at the fox's eyes; walking turns you the way you go, as usual
     if (St.fp) {
       const cp = Math.cos(St.pitch), dir = new THREE.Vector3(Math.sin(St.yaw) * cp, Math.sin(St.pitch), Math.cos(St.yaw) * cp);
@@ -1297,7 +1423,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   // the LOOK AROUND eye, always in the bottom right corner: tap = first person on/off; press (and drag) = look around, and on
   // letting go the view swings back to the normal camera angle
   St.fp = false;
-  const lookBtn = document.createElement('div');
+  const lookBtn = document.createElement('div'); lookBtn.id = 'lookBtn';
   lookBtn.setAttribute('role', 'button'); lookBtn.setAttribute('tabindex', '0'); lookBtn.setAttribute('aria-pressed', 'false');
   lookBtn.setAttribute('aria-label', 'Look around. Tap for first person view, press and drag to look around');
   lookBtn.style.cssText = 'position:fixed;right:calc(12px + env(safe-area-inset-right));bottom:calc(16px + env(safe-area-inset-bottom));z-index:9;display:flex;align-items:center;gap:8px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer;';
@@ -1485,10 +1611,11 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       St.dist = studio.dist || 3.2; St.lastLook = performance.now(); }
     else if (Pl.sit) { Pl.speed = 0; if (Math.abs(input.jx) + Math.abs(input.jy) + input.f + input.b + input.l + input.r > 0.35) standUp(); }   // sitting: push the stick to get up
     else if (!V.spot && !(lift.moving() && lift.riding())) move(dt);   // riding the lift: hold still
-    player.position.set(Pl.x, Pl.y + (extra === 'chair' ? 0 : 0.02), Pl.z); player.rotation.y = Pl.face;
+    if (MOB) mobilityTick(dt);
+    if (!SK.on) { player.position.set(Pl.x, Pl.y + (extra === 'chair' ? 0 : 0.02), Pl.z); player.rotation.y = Pl.face; }
     if (faceLocal) player.userData.faceCtl = faceLocal;
     wearCam(player, camHeads.get('me'));
-    animFox(player, dt, Pl.speed / FOX_SCALE * 0.6, !Pl.ground);
+    animVisitor(player, dt, Pl.speed, !Pl.ground);
     for (const st of staff) { const far = Math.hypot(st.s.x - Pl.x, st.s.z - Pl.z) > 60; st.f.visible = !far; if (far) continue; st.t += dt;
       if (st.s.role === 'snacks' && snackJob) { snackJob(st, dt); continue; }
       if (st.s.role === 'audience') { animFox(st.f, dt, 0, false); continue; }
@@ -1602,11 +1729,20 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       return c.toDataURL('image/webp', 0.88);
     },
     // multiplayer hooks (the page wires these to engine/gallery-net.js)
-    localState: () => [+Pl.x.toFixed(2), +Pl.y.toFixed(2), +Pl.z.toFixed(2), +Pl.face.toFixed(2), +Math.min(9, Pl.speed).toFixed(1), Pl.ground ? 0 : 1, Pl.sit ? 1 : 0],   // [x, y, z, face, speed, air, sitting]
-    remote: { upsert: remoteUpsert, remove: remoteRemove, count: () => remotes.size, arts: () => [...remotes.values()].map(r => r.prof && r.prof.art).filter(Boolean), names: () => [...remotes.values()].map(r => r.prof.name), list: () => [...remotes.values()].map(r => ({ id: r.id, name: r.prof.name || 'Visitor', placed: r.placed, x: r.tx, y: r.ty, z: r.tz })), wave: id => { const r = remotes.get(id); if (r && r.fox) showWave(r.fox); } },
-    wave() { showWave(player); },
+    localState: () => [+Pl.x.toFixed(2), +Pl.y.toFixed(2), +Pl.z.toFixed(2), +Pl.face.toFixed(2), +Math.min(9, Pl.speed).toFixed(1), Pl.ground ? 0 : 1, Pl.sit ? 1 : 0, SK.on ? (SKN.indexOf((SK.sk && SK.sk.state.name) || 'ride') > 0 ? SKN.indexOf(SK.sk.state.name || 'ride') : 7) : 0],   // [x, y, z, face, speed, air, sitting, skating (13 Nov: which skate move, 7 = riding)]
+    skate: { toggle: async () => SK.on ? (skateOff(), false) : skateOn(), on: () => SK.on, ollie: () => { SK.inp.jump = true; }, trick: () => { SK.inp.trick = true; }, here: () => inPark(Pl.x, Pl.z, 0.5) },
+    remote: { upsert: remoteUpsert, remove: remoteRemove, count: () => remotes.size, arts: () => [...remotes.values()].map(r => r.prof && r.prof.art).filter(Boolean), names: () => [...remotes.values()].map(r => r.prof.name), list: () => [...remotes.values()].map(r => ({ id: r.id, name: r.prof.name || 'Visitor', placed: r.placed, x: r.tx, y: r.ty, z: r.tz })), wave: id => { const r = remotes.get(id); if (r && r.fox) { showWave(r.fox); r.emote = 'wave'; } }, emote: (id, name) => { const r = remotes.get(id); if (r) r.emote = name; },
+      looks: () => [...remotes.values()].map(r => r.prof ? { head: r.prof.head, art: r.prof.art } : null).filter(Boolean) },
+    wave() { showWave(player); if (FX && player.userData.gameFox) FX.emote(player, 'wave'); },
+    emote(name) { if (FX && player && player.userData.gameFox) FX.emote(player, name); },   // (13 Nov) the game fox's emotes: FX.EMOTES
+    foxes: FX,
     style: () => ({ ...style }),
-    setStyle(st) { style = { pal: st.pal | 0, art: st.art || DEFAULT_ART }; buildPlayer(); },
+    setStyle(st) { style = { pal: st.pal | 0, art: st.art || DEFAULT_ART }; if (st.head) style.head = st.head; if (st.shirt) style.shirt = st.shirt; buildPlayer(); },
+    // (13 Nov, Ben) the shirt studio: the visitor's look as the game fox reads it, and setting it in one rebuild
+    gameLook: () => gameLook(look, extra, style),
+    setGameLook(l) { const ex = { sun: 'glasses', cane: 'cane', chair: 'chair' }[l.gear] || 'none'; style = { ...style, art: l.art || style.art || DEFAULT_ART, head: l.head || style.head, shirt: l.shirt || style.shirt }; look = 'suit'; extra = ex; buildPlayer(); return { look, extra, style: { ...style } }; },
+    // (13 Nov, Ben) arrival: alone in the room you are PLAYER MALE / FEMALE in the ART SUIT (Walk Through Fear); after that a random head + a painting nobody here wears
+    arrivalStyle(taken = []) { if (!FX) return randomStyle(taken.map(t => t.art)); const GF = FX.GF, l = taken.length ? GF.randomLook(taken) : GF.firstLook(Math.random() < 0.5 ? 'm' : 'f'); return { pal: 0, art: l.art, head: l.head, shirt: l.shirt }; },
     randomStyle,
     jump() { input.jump = 1; },
     setRun(v) { input.run = v ? 1 : 0; },
@@ -1663,9 +1799,22 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     goWing() { const d = doors.find(x => x.wing); if (d) travel(d); },
     // (28 Oct, Ben) the museum map: fade straight to a room. t = { x, y, z, face, wing? }
     goSpot(t) { if (V.spot) exitVision(); if (Pl.sit) standUp(); if (AW.pts) walkStop('moved'); if (F.id) followStop('moved'); travel({ to: t, wing: !!t.wing }); },
+    // (13 Nov, Ben) the host's approvals screen: "Go there" for a note. In front of the artwork if it's on one, else a clear spot beside the place, facing it.
+    goNear(p) {
+      const P = new THREE.Vector3(p[0], p[1], p[2]); let a = null, bd = 1.6;
+      for (const x of arts) { const d = x.ctr.distanceTo(P); if (d < bd) { bd = d; a = x; } }
+      if (a && a.n && Math.hypot(a.n.x, a.n.z) > 0.5) {
+        const L = Math.hypot(a.n.x, a.n.z), wingArt = !!(wing && wing.arts.includes(a));
+        for (const s of [1, -1]) { const nx = a.n.x / L * s, nz = a.n.z / L * s, x = a.ctr.x + nx * 2.4, z = a.ctr.z + nz * 2.4, y = groundAt(x, a.ctr.y, z);
+          if (y > a.ctr.y - 4 && !cast(a.ctr.x + nx * 0.15, a.ctr.y, a.ctr.z + nz * 0.15, nx, 0, nz, 2.3)) { this.goSpot({ x, y, z, face: Math.atan2(-nx, -nz), wing: wingArt }); return true; } }
+      }
+      for (let k = 0; k < 8; k++) { const ang = k * Math.PI / 4, dx = Math.sin(ang), dz = Math.cos(ang), x = P.x + dx * 1.7, z = P.z + dz * 1.7, y = groundAt(x, P.y + 1.5, z);
+        if (y > P.y - 2.5 && y < P.y + 1.5 && !cast(P.x, P.y + 0.9, P.z, dx, 0, dz, 1.9)) { this.goSpot({ x, y, z, face: Math.atan2(-dx, -dz), wing: P.x < -58 && P.x > -81 && Math.abs(P.z) > 22 }); return true; } }
+      const y = groundAt(P.x, P.y + 1.5, P.z); this.goSpot({ x: P.x, y: y > -1e8 ? y : P.y, z: P.z, face: Pl.face, wing: P.x < -58 && P.x > -81 && Math.abs(P.z) > 22 }); return true;
+    },
     // add-ons (notes, guest book): draw into the scene, add things you can walk up to, run each frame
     chess: fun.chess || null,
-    hold(on) { HOLD = !!on; if (on) { input.jx = input.jy = 0; Pl.vx = Pl.vz = 0; } joyBase.style.visibility = joyKnob.style.visibility = on ? 'hidden' : ''; },   // (29 Oct) painting games: hold the fox still
+    hold(on) { HOLD = !!on; if (on) { input.jx = input.jy = 0; Pl.vx = Pl.vz = 0; } joyBase.style.visibility = joyKnob.style.visibility = on ? 'hidden' : ''; if (player) player.visible = !on; },   // (29 Oct) painting games: hold the fox still; (12 Nov) and step it out of view, so it never stands in front of the game
     camShot(pos, at) { shotFrom(); SHOT.pos = new THREE.Vector3(...pos); SHOT.at = new THREE.Vector3(...at); SHOT.out = false; },   // (27 Oct) hold the camera on a view
     camSave() { SHOT.saved = { yaw: St.yaw, pitch: St.pitch, camDist: St.camDist, fp: St.fp }; },   // remember the view before a shot (camRelease goes back to it)
     camRelease() { if (!SHOT.pos) return; shotFrom(); SHOT.pos = null; SHOT.out = true; const s = SHOT.saved; if (s) { SHOT.saved = null; St.yaw = s.yaw; St.pitch = s.pitch; St.camDist = s.camDist; St.fp = s.fp; St.lastLook = performance.now(); } },

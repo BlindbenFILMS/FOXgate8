@@ -239,7 +239,7 @@ export function pickTrackGame() {
         uL: { value: [318, 314, 318, 336, 334, 333, 333, 335, 342, 382, 392, 396] }, uR: { value: [684, 688, 702, 716, 727, 732, 732, 732, 730, 712, 682, 680] } };
       G.face = new THREE.Mesh(new THREE.PlaneGeometry(1.002, G.h + 0.002), new THREE.ShaderMaterial({ uniforms: G.uni, vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: false }));
       G.face.position.z = 0.015; G.face.renderOrder = 11; G.face.visible = false; G.root.add(G.face);
-      new THREE.TextureLoader().load((ctx.work && ctx.work.image) || 'targets/roller-coaster-of-emotions.jpg', t => { if (!G) return; t.colorSpace = THREE.NoColorSpace; G.uni.map.value = t; G.face.visible = true; });
+      new THREE.TextureLoader().load((ctx.work && ctx.work.image) || new URL('../../targets/roller-coaster-of-emotions.jpg', import.meta.url).href, t => { if (!G) return; t.colorSpace = THREE.NoColorSpace; G.uni.map.value = t; G.face.visible = true; });
       // storm clouds drifting over the sky
       for (const [x, y, s] of [[250, 120, 0.28], [700, 70, 0.32], [480, 40, 0.22], [120, 230, 0.2], [880, 200, 0.24]]) {
         const m = K.sprite(cloudTex(), s, { order: 12 }); m.scale.set(s, s / 2, 1); const [bx, by] = B(x, y); m.position.set(bx, by, 0.02); m.userData = { x0: bx, ph: Math.random() * 6 }; G.root.add(m); G.clouds.push(m);

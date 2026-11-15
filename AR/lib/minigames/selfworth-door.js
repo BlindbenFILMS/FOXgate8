@@ -105,11 +105,11 @@ export function selfWorthDoorGame() {
   const chime = () => { [1046.5, 1318.5, 1568, 2093].forEach((f, i) => K.tone(f, 1.6, { vol: 0.06, delay: i * 0.18 })); K.chord([220, 277.2, 329.6, 440, 554.4], 3.2, { vol: 0.045, type: 'triangle', spread: 0.08, delay: 0.4 }); };
 
   function hud() {
+    G.ui.panel('Set it down', `${G.dropped}<small>of 6 let go</small>`, { segs: [G.dropped, 6], sub: G.phase === 'door' ? 'Through the door' : 'Press LET GO, or tap the painting' });
     if (!G.panelFix) {   // the panel at 0.999 opacity (looks identical): stops some renderers (headless SwiftShader) from
       G.panelFix = true;  // punching a mirrored gray hole through the painting canvas behind the buttons
-      requestAnimationFrame(() => { const e = document.querySelector('.mgk-panel'); if (e) e.style.opacity = '0.999'; });
+      const e = document.querySelector('.mgk-panel'); if (e) e.style.opacity = '0.999';
     }
-    G.ui.panel('Set it down', `${G.dropped}<small>of 6 let go</small>`, { segs: [G.dropped, 6], sub: G.phase === 'door' ? 'Through the door' : 'Press LET GO, or tap the painting' });
   }
   function next() {
     if (G.dropped >= 6) return toDoor();

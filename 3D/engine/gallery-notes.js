@@ -46,14 +46,18 @@ export async function setupNotes({ G, net, cfg, myName, announce, esc, readAloud
   if (!sk) { sk = generateSecretKey(); try { localStorage.setItem('8gates.gallery.notekey', bytesToHex(sk)); } catch (e) {} }
   const me = getPublicKey(sk);
   // the admin link: ?admin=<passphrase> (remembered for this tab only)
-  let adminSk = null;
-  try {
-    const pass = qs.get('admin') || sessionStorage.getItem('8gates.gallery.admin');
-    if (pass && crypto.subtle) {
+  // (13 Nov) the same passphrase can also be typed into Host mode in the menu (unlockAdmin), so no special link is needed
+  let adminSk = null, booted = false;
+  async function unlockAdmin(pass, quiet) {
+    try {
+      pass = String(pass || '').trim(); if (!pass || !crypto.subtle) return false;
       const h = new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode('bcp-notes-admin:' + pass)));
-      if (admins.has(getPublicKey(h))) { adminSk = h; sessionStorage.setItem('8gates.gallery.admin', pass); setTimeout(() => announce('Admin mode: you can hide any note for everyone.'), 1500); }
-    }
-  } catch (e) {}
+      if (!admins.has(getPublicKey(h))) return false;
+      adminSk = h; try { sessionStorage.setItem('8gates.gallery.admin', pass); } catch (e) {}
+      changed(); if (!quiet) setTimeout(() => { const k = waiting().length; announce('Admin mode: you can approve or hide any note for everyone.' + (k ? ' ' + k + (k === 1 ? ' upload is' : ' uploads are') + ' waiting for approval: ☰ → Host mode → Approvals.' : '')); }, 1500);
+      return true;
+    } catch (e) { return false; }
+  }
 
   // ------------------------------------------------ the notes we know about
   const notes = new Map();      // id -> { id, pubkey, at, text, name, type, p, art, title }
@@ -63,6 +67,8 @@ export async function setupNotes({ G, net, cfg, myName, announce, esc, readAloud
   const isHidden = n => hiddenForGood.has(n.id) || localHidden.has(n.id) || hides.some(h => h.target === n.id && (h.pubkey === n.pubkey || admins.has(h.pubkey)));
   const pending = n => n.media && !approved.has(n.id);
   const visible = type => [...notes.values()].filter(n => (!type || n.type === type) && !isHidden(n) && (!pending(n) || n.pubkey === me || adminSk)).sort((a, b) => b.at - a.at);
+  const waiting = () => [...notes.values()].filter(n => pending(n) && !isHidden(n)).sort((a, b) => a.at - b.at);   // oldest first
+  const inboxWatch = new Set();   // things to redraw when notes change (the approvals screen, the menu count)
   const perAuthor = new Map();
   function ingest(e) {
     if (!e || typeof e !== 'object' || notes.has(e.id)) return false;
@@ -80,7 +86,9 @@ export async function setupNotes({ G, net, cfg, myName, announce, esc, readAloud
     const type = ['spot', 'art', 'book', 'why'].includes(c.type) ? c.type : 'spot';
     if (type !== 'book' && type !== 'why' && !p) return false;
     notes.set(e.id, { id: e.id, pubkey: e.pubkey, at: e.created_at, text, name: String(c.name || 'A visitor').slice(0, 20), type, p, art: typeof c.art === 'string' ? c.art.slice(0, 80) : null, title: typeof c.title === 'string' ? c.title.slice(0, 80) : '', img, au, secs: Math.min(AU_SECS + 1, +c.secs || 0), media: !!(img || au) });
-    changed(); return true;
+    changed();
+    if (adminSk && booted && notes.get(e.id).media && !approved.has(e.id) && e.pubkey !== me) announce('New upload waiting for approval from ' + notes.get(e.id).name + '. ☰ → Host mode → Approvals.');
+    return true;
   }
 
   // ------------------------------------------------ relays
@@ -164,7 +172,7 @@ export async function setupNotes({ G, net, cfg, myName, announce, esc, readAloud
       setCard(m, m.open);
     }
   }
-  let dirty = true; function changed() { dirty = true; }
+  let dirty = true; function changed() { dirty = true; if (inboxWatch.size) { clearTimeout(changed.t); changed.t = setTimeout(() => inboxWatch.forEach(f => { try { f(); } catch (e) {} }), 250); } }
   let spoke = 0;
   W.onTick(dt => {
     if (dirty) { dirty = false; placeMarks(); drawBook(); drawWhy(); W.refreshNear(); if (bookOpen) openBook(); }
@@ -413,7 +421,62 @@ export async function setupNotes({ G, net, cfg, myName, announce, esc, readAloud
     draw(); return sec;
   }
 
+  // ------------------------------------------------ (13 Nov, Ben) APPROVALS: the host's inbox, so nobody has to walk the map to find new uploads
+  // Lists every photo / voice note waiting for approval (oldest first), with where it was left, Approve, Hide for everyone and Go there.
+  // The Recent tab lists everything left in this room, newest first, so a text note can be hidden from here too.
+  function whereOf(n) {
+    if (n.type === 'book') return 'Guest book';
+    if (n.type === 'why') return 'WHY House story';
+    if (n.type === 'art') return 'On the artwork: ' + (n.title || 'an artwork');
+    const L = G.comments && G.comments.list; let best = null, bd = 6;
+    if (L && n.p) for (const S of L) { const d = Math.hypot(S.x - n.p[0], S.z - n.p[2]); if (d < bd) { bd = d; best = S; } }
+    return best ? 'Comment spot at ' + best.name : 'A comment spot';
+  }
+  function goThere(n) {
+    if (n.type === 'spot' && G.comments && G.comments.list && n.p) { let best = null, bd = 6; for (const S of G.comments.list) { const d = Math.hypot(S.x - n.p[0], S.z - n.p[2]); if (d < bd) { bd = d; best = S; } } if (best) { G.comments.go(best.id); return; } }
+    const at = n.type === 'book' && bookPos ? [bookPos.x, bookPos.y, bookPos.z] : n.type === 'why' && whyCfg ? (() => { const C = whyCards.find(C => C.n && C.n.id === n.id); return C ? C.S.p : [whyCfg.station.x, W.pos()[1], whyCfg.station.z]; })() : n.p;
+    if (at && G.goNear) G.goNear(at);
+  }
+  let inboxTab = 'wait';
+  function openInbox() {
+    if (!adminSk) { announce('Approvals need the gallery admin passphrase: type it into Host mode in the menu.'); return; }
+    const wrap = el('div');
+    const draw = () => {
+      const keep = wrap.isConnected ? (document.activeElement && document.activeElement.dataset && document.activeElement.dataset.k) : null;
+      wrap.replaceChildren();
+      const w = waiting(), all = visible();
+      const tabs = el('div', 'display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px'); tabs.setAttribute('role', 'tablist');
+      for (const [k, label] of [['wait', 'Waiting (' + w.length + ')'], ['all', 'Everything (' + all.length + ')']]) {
+        const b = el('button', BTN + (inboxTab === k ? ';background:#ec3013;border-color:#ec3013;color:#fff' : ''), label); b.dataset.k = 'tab' + k;
+        b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', String(inboxTab === k)); b.onclick = () => { inboxTab = k; draw(); }; tabs.appendChild(b);
+      }
+      wrap.appendChild(tabs);
+      const list = inboxTab === 'wait' ? w : all;
+      if (inboxTab === 'wait') {
+        wrap.appendChild(el('p', 'margin:0 0 6px;font:400 15px/1.5 ' + FONT, w.length ? 'Photos and voice notes stay hidden from everyone else until you approve them. Look and listen, then Approve or Hide for everyone.' : 'Nothing is waiting. New photos and voice notes show up here the moment they are left, and you will hear an alert.'));
+        if (w.length > 1) { const all2 = el('button', BTN + ';background:#1f8a4c;border-color:#1f8a4c;color:#fff;margin:4px 0', 'Approve all ' + w.length); all2.dataset.k = 'all';
+          let armed = false; all2.onclick = async () => { if (!armed) { armed = true; all2.textContent = 'Tap again to approve all ' + w.length; announce('Tap again to approve all ' + w.length + '. Make sure you have looked at each one.'); setTimeout(() => { if (armed && all2.isConnected) { armed = false; all2.textContent = 'Approve all ' + w.length; } }, 5000); return; }
+            all2.disabled = true; for (const n of w) await approve(n); announce('Approved ' + w.length + '. Everyone can see them now.'); draw(); };
+          wrap.appendChild(all2); }
+      } else wrap.appendChild(el('p', 'margin:0 0 6px;font:400 15px/1.5 ' + FONT, 'Everything visitors have left in this room, newest first: comments, notes on artworks, the guest book and WHY House stories.'));
+      list.slice(0, 80).forEach(n => {
+        const box = el('div', 'border-top:1px solid #3a3735;padding-top:8px;margin-top:8px');
+        const top = el('div', 'display:flex;gap:8px;align-items:center;flex-wrap:wrap');
+        top.appendChild(el('div', 'flex:1;min-width:150px;font:800 11px/1.3 ' + FONT + ';letter-spacing:.1em;text-transform:uppercase;color:#ff9783', whereOf(n)));
+        const go = el('button', BTN + ';min-height:36px', 'Go there'); go.setAttribute('aria-label', 'Go to where ' + n.name + ' left this: ' + whereOf(n)); go.onclick = () => { const x = document.getElementById('px'); if (x) x.click(); goThere(n); announce('Going to ' + whereOf(n) + '.'); }; top.appendChild(go);
+        box.appendChild(top); box.appendChild(noteRow(n, draw)); wrap.appendChild(box);
+      });
+      if (keep) { const f = wrap.querySelector('[data-k="' + keep + '"]'); if (f) f.focus(); }
+    };
+    draw(); inboxWatch.add(draw);
+    showPanel('Approvals', (waiting().length ? waiting().length + ' waiting' : 'All caught up') + (room !== 'lobby' ? ' · room ' + room : ''), wrap, () => inboxWatch.delete(draw));
+  }
+
+  await unlockAdmin(qs.get('admin') || (() => { try { return sessionStorage.getItem('8gates.gallery.admin'); } catch (e) { return null; } })());
+  setTimeout(() => { booted = true; }, 10000);   // notes already saved arrive in the first few seconds: only alert for ones left after that
+
   return {
+    unlockAdmin, openInbox, waitingCount: () => adminSk ? waiting().length : 0, watch: f => { inboxWatch.add(f); return () => inboxWatch.delete(f); },
     onEvent: (id, d) => { if (d && d.k === 'note') ingest(d.e); },
     openBook, openCompose, openSpot, openWhy, artSection, countFor: a => forArt(a).length,
     admin: () => !!adminSk, count: () => visible().length, relaysOpen: () => relays.filter(r => r.open).length, me, room, okCount: () => okCount,

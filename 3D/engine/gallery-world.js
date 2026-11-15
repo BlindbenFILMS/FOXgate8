@@ -7,7 +7,8 @@
 import * as THREE from '../vendor/three/three.module.js';
 import { buildEye } from './gallery-eye.js';
 import { setStainedNight } from './gallery-stained.js';
-import { GARDEN, RING, CAMPUS, inBuilding as onCampus, planGarden } from './gallery-garden-plan.js';
+import { GARDEN, RING, CAMPUS, SKATE, MOBILITY, inBuilding as onCampus, planGarden } from './gallery-garden-plan.js';
+const inSkate = (x, z, m = 0) => (x > SKATE.x0 - m && x < SKATE.x1 + m && z > SKATE.z0 - m && z < SKATE.z1 + 2.2 + m) || (x > MOBILITY.x0 - m && x < MOBILITY.x1 + m && z > MOBILITY.z0 - m && z < MOBILITY.z1 + m) || (Math.abs(x - MOBILITY.path.x) < MOBILITY.path.w / 2 + m && z > MOBILITY.path.z0 - m && z < MOBILITY.path.z1 + m);   // (and the mobility course building + its tile path)   // (13 Nov) the skate park's ground: no grass or flowers on it
 import { toCreasedNormals } from '../vendor/three/addons/BufferGeometryUtils.js';
 
 const rnd = (() => { let s = 20261002; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; })();
@@ -393,7 +394,7 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
         for (const s of [-1, 1]) for (let i = 0; i < f.length - 1; i++) { const A = f[i], B = f[i + 1], L = Math.hypot(B[0] - A[0], B[1] - A[1]), steps = Math.max(1, Math.round(L / 1.2));
           for (let j = 0; j < steps; j++) { const P = t => [A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t, A[3] + (B[3] - A[3]) * t], u = P(j / steps), v = P((j + 1) / steps);
             const mx = (u[0] + v[0]) / 2 + (u[2] + v[2]) / 2 * s * (h + KW / 2), mz = (u[1] + v[1]) / 2 + (u[3] + v[3]) / 2 * s * (h + KW / 2);
-            if (inOther(mx, mz, self, 0.15) || mx < 9 && Math.abs(mz) < 15.5 || onCampus(mx, mz, 0.2)) continue;
+            if (inOther(mx, mz, self, 0.15) || mx < 9 && Math.abs(mz) < 15.5 || onCampus(mx, mz, 0.2) || inSkate(mx, mz, 0.2)) continue;
             const e = (q, o) => [q[0] + q[2] * s * o, q[1] + q[3] * s * o], i0 = e(u, h), o0 = e(u, h + KW), i1 = e(v, h), o1 = e(v, h + KW);
             const quad = (a, b, c, d) => kp.push(...a, ...b, ...c, ...a, ...c, ...d);
             const T = (q, y) => [q[0], y, q[1]];
@@ -420,7 +421,7 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
       cross.setAttribute('position', new THREE.Float32BufferAttribute(CP, 3)); cross.setAttribute('uv', new THREE.Float32BufferAttribute(CU, 2)); cross.setIndex(CI);
       cross.setAttribute('normal', new THREE.Float32BufferAttribute(new Array(CP.length / 3).fill(0).flatMap(() => [0, 1, 0]), 3));
       const spots = (n, pick) => { const out = []; for (let tries = 0; out.length < n && tries < n * 30; tries++) { const x = G.x0 + 1.5 + r2() * (gw - 3), z = G.z0 + 1.5 + r2() * (gd - 3);
-        if (x < 9 && Math.abs(z) < 15.5 || onCampus(x, z, 0.6) || Math.hypot(x - RING.x, z - RING.z) < 7.2 || plan.riverDist(x, z) < 1.8) continue; const d = plan.pathDist(x, z); if (d < 0.25 || !pick(d, x, z)) continue; out.push([x, z]); } return out; };
+        if (x < 9 && Math.abs(z) < 15.5 || onCampus(x, z, 0.6) || inSkate(x, z, 0.4) || Math.hypot(x - RING.x, z - RING.z) < 7.2 || plan.riverDist(x, z) < 1.8) continue; const d = plan.pathDist(x, z); if (d < 0.25 || !pick(d, x, z)) continue; out.push([x, z]); } return out; };
       const tuftSet = (cv, pts, size) => { const tx = new THREE.CanvasTexture(cv); tx.colorSpace = THREE.SRGBColorSpace;
         const m = new THREE.MeshLambertMaterial({ map: tx, alphaTest: 0.5, side: THREE.DoubleSide });
         m.onBeforeCompile = sh => { sh.uniforms.uT = uWind; sh.vertexShader = 'uniform float uT;\n' + sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>

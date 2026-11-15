@@ -11,7 +11,7 @@ import * as K from './kit.js';
 import { thing } from './onlylight-things.js';
 // (Textures read by a custom shader stay in their own colours: NoColorSpace, so they match the painting exactly.)
 
-const ART = 'media/games/onlylight/';
+const ART = new URL('../../media/games/onlylight/', import.meta.url).href;   // from this file, so it works on any page (AR, 3D gallery)
 // each hidden thing: where it might be (one spot is picked each game), its sound, and where its star goes
 const THINGS = [
   { id: 'owl', emoji: '🦉', name: 'an owl in the trees', spots: [[0.12, 0.2], [0.27, 0.19], [0.32, 0.29]], size: 0.13, snd: 'owl', star: [0.46, 0.08] },

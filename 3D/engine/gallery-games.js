@@ -1,12 +1,16 @@
-// PAINTING GAMES IN THE GALLERY (Ben, 29 Oct). Five paintings have their own Blind Canvas game (made for the AR page,
-// AR/lib/minigames/*). Walk up to one, open it (VIEW), and PLAY THE GAME replaces the living puzzle for that painting.
+// PAINTING GAMES IN THE GALLERY (Ben, 29 Oct; all 70 paintings from 12 Nov). Every painting has its own Blind Canvas game
+// (made for the AR page, AR/lib/minigames/*). Walk up to one, open it (VIEW), and PLAY THE GAME replaces the living puzzle.
+// The list of games is AR/lib/minigames/gallery-games.json (one entry per painting: key, id, file, fn, name, title, artist,
+// quote, image, story, again), read once when the gallery loads; the five below are the fallback if it can't be read.
+// A painting's game file starts loading as soon as its VIEW panel opens, so PLAY starts it right inside the tap (phones
+// only allow tilt and sound to be switched on inside a tap).
 // The game plays right on the painting in the 3D room: the camera squares up in front of it, the fox holds still, the
 // gallery's buttons step aside and the room film pauses, and LEAVE THE GAME (or Esc) gives everything back.
 // The games themselves are untouched: they live in AR/lib/minigames and are loaded only when someone presses play.
 const AR = new URL('../../AR/', import.meta.url).href;            // the 8GATES-SITE/AR folder, beside 3D
 const M = (u) => (window.GMEDIA || (x => x))(u);                    // gallery media (films, audio) from the live site when testing
 const BEN = 'gallery/video/ben_fox.mp4';
-export const GAMES = {
+export const GAMES = {   // the fallback five; replaced by gallery-games.json when it loads
   wix_walk_through_fear: { file: 'walk-through-fear-see.js', fn: 'seeItMyWayGame', name: 'See it my way',
     work: { id: 'walk-through-fear', title: 'Walk Through Fear', artist: 'Ben Fox', image: AR + 'targets/walk-through-fear.jpg',
       quote: '“… when you walk through the fear, you are the only thing that is left.” — Ben Fox', overlay: { anim: 'gallery/anim/wix_walk_through_fear.mp4' } }, story: BEN },
@@ -27,6 +31,14 @@ export const GAMES = {
       quote: '“One of those stereotypes is blind people are just inadvertently messy eaters and they’re going to need tons of napkins. I’ll ask, can I have some napkins? And they’ll bring me like a whole Bible’s worth of them. And I’m thinking, who do you think I am?” — Wayne Pearcy',
       overlay: { anim: 'gallery/anim/wix_wayne_napkins.mp4' } } },
 };
+// the full list: AR/lib/minigames/gallery-games.json -> the same shape as the five above
+export const LIST = fetch(AR + 'lib/minigames/gallery-games.json').then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(list => {
+  const A = u => new URL(u, AR).href, out = {};
+  for (const e of list) if (e && e.key && e.file && e.fn) out[e.key] = { file: e.file, fn: e.fn, name: e.name || 'Play', again: !!e.again, story: e.story ? A(e.story) : null,
+    work: { id: e.id, title: e.title, artist: e.artist, quote: e.quote, image: A(e.image || ('targets/' + e.id + '.jpg')), overlay: { anim: 'gallery/anim/' + e.key + '.mp4' } } };
+  if (Object.keys(out).length) { for (const k of Object.keys(GAMES)) delete GAMES[k]; Object.assign(GAMES, out); }
+  return GAMES;
+}).catch(e => { console.warn('games list', e); return GAMES; });
 const keyOf = a => { const m = /([^/]+)\.\w+$/.exec((a && a.img) || ''); return m ? m[1] : null; };
 
 export function setupGames({ G, announce = () => {} }) {
@@ -62,10 +74,16 @@ export function setupGames({ G, announce = () => {} }) {
     const l = document.createElement('button'); l.textContent = over ? 'Leave the game' : '✕ Leave'; l.style.cssText = btnCss + (over && !(cur && cur.g.again) ? `;background:${red};border-color:${red}` : ''); l.onclick = leave; ui.appendChild(l);
     if (over) l.focus();
   }
+  const ready = {}, loading = {};   // key -> [in-world module, game module], once loaded
+  function prep(key) {   // start loading a painting's game (when its VIEW panel opens)
+    const g = GAMES[key]; if (!g) return Promise.reject(new Error('no game'));
+    return loading[key] || (loading[key] = Promise.all([import(AR + 'lib/minigames/in-world.js'), import(AR + 'lib/minigames/' + g.file)])
+      .then(m => (ready[key] = m)).catch(e => { delete loading[key]; throw e; }));
+  }
   async function start(a, key) {
     if (busy || play) return; const g = GAMES[key]; if (!g) return; busy = true;
     const P = picture(key, a); if (!P) { busy = false; announce('Walk a little closer to the painting, then try again.'); return; }
-    let mods; try { mods = await Promise.all([import(AR + 'lib/minigames/in-world.js'), import(AR + 'lib/minigames/' + g.file)]); }
+    let mods = ready[key]; if (!mods) try { mods = await prep(key); }   // already loaded (the usual case): no wait, so the game starts inside the tap
     catch (e) { busy = false; console.warn('game', e); announce('Sorry, the game didn’t load. Try again in a moment.'); return; }
     const pc = document.getElementById('px'); if (pc && pc.click) try { pc.click(); } catch (e) {}   // close the VIEW ART panel
     if (window.PUZZLE && window.PUZZLE.isOpen && window.PUZZLE.isOpen()) window.PUZZLE.close();
@@ -96,7 +114,7 @@ export function setupGames({ G, announce = () => {} }) {
   addEventListener('resize', () => { if (cur) shoot(); });
   // in the VIEW ART panel: PLAY THE GAME, in place of the living puzzle, for the paintings that have a game
   function button(a, host) {
-    const key = keyOf(a); if (!GAMES[key] || !host) return false; if (host.querySelector('[data-game]')) return true;
+    const key = keyOf(a); if (!GAMES[key] || !host) return false; prep(key).catch(() => {}); if (host.querySelector('[data-game]')) return true;
     const b = document.createElement('button'); b.dataset.game = '1'; b.textContent = 'PLAY THE GAME · ' + GAMES[key].name.toUpperCase() + ' →';
     b.style.cssText = `min-height:48px;padding:0 14px;border:2px solid ${red};background:${red};color:#fff;font:700 15px Archivo,sans-serif;text-align:left;letter-spacing:.04em;cursor:pointer;border-radius:0;margin:12px 0;width:100%`;
     b.onclick = () => start(a, key); host.prepend(b); return true;

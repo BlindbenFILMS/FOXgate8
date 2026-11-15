@@ -11,7 +11,7 @@ import * as THREE from 'three';
 import * as K from './kit.js';
 // (Textures read by a custom shader stay in their own colours: NoColorSpace, so they match the painting exactly.)
 
-const ART = 'media/games/possible/';
+const ART = new URL('../../media/games/possible/', import.meta.url).href;   // from this file, so it works on any page (AR, 3D gallery)
 const ARTIST = new URL('../../../3D/gallery/audio/art_11.mp3', import.meta.url).href;   // Raquel, in her own words
 // what the window shows: a painting from the gallery, what it says she could do, and the colour of her light
 const SHOW = [

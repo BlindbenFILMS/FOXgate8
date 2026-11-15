@@ -75,7 +75,7 @@ export function napkinsGame() {
   function hud() {
     let el = document.getElementById('mgHud');
     if (!el) {
-      el = document.createElement('div'); el.id = 'mgHud'; el.setAttribute('aria-hidden', 'true');
+      el = document.createElement('div'); el.id = 'mgHud'; el.dataset.byGame = '1'; el.setAttribute('aria-hidden', 'true');
       el.style.cssText = 'position:fixed;left:calc(10px + env(safe-area-inset-left));top:calc(68px + env(safe-area-inset-top));z-index:11;background:#000;color:#fff;' +
         'padding:8px 16px 7px;border-bottom:4px solid #ec3013;font:900 20px/1.1 Archivo,Arial,sans-serif;letter-spacing:.05em;text-transform:uppercase;text-align:left;pointer-events:none;max-width:52vw';
       document.body.appendChild(el);
@@ -84,7 +84,7 @@ export function napkinsGame() {
   }
   function big(text, sub, secs) {
     let el = document.getElementById('mgBig');
-    if (!el) { el = document.createElement('div'); el.id = 'mgBig'; el.setAttribute('aria-hidden', 'true');
+    if (!el) { el = document.createElement('div'); el.id = 'mgBig'; el.dataset.byGame = '1'; el.setAttribute('aria-hidden', 'true');
       el.style.cssText = 'position:fixed;left:0;right:0;top:36%;z-index:11;display:flex;justify-content:center;pointer-events:none';
       document.body.appendChild(el); }
     el.innerHTML = '<div style="background:#000;color:#fff;padding:12px 22px 11px;border-bottom:6px solid #ec3013;text-align:center;font:900 clamp(28px,9vw,52px)/1 Archivo,Arial,sans-serif;text-transform:uppercase;letter-spacing:.04em"></div>';
@@ -226,6 +226,7 @@ export function napkinsGame() {
       if (G.say && G.say.stop) G.say.stop();
       G.group.remove(G.root); G.root.traverse(o => { if (o.material && o.material !== G.empty.material) o.material.dispose(); });
       const h = document.getElementById('mgHud'); if (h) h.style.display = 'none'; hideBig();
+      for (const id of ['mgHud', 'mgBig']) { const e = document.getElementById(id); if (e && e.dataset.byGame) e.remove(); }   // the boxes this game made itself (on a page without its own) go with it
       G = null;
     },
   };

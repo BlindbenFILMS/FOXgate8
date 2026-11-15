@@ -67,6 +67,7 @@ export function voiceFor(ctx, audio) {
   for (const k of [...cache.keys()]) if (!k.startsWith(dir + prefix)) cache.delete(k);
   const me = ++owner;
   let token = 0, cur = null, running = 0, ttsUntil = 0;   // cur: the clip playing now { s, g, end }
+  const safety = new Set();   // the "in case ended never comes" timers of the clips still playing (put away with stop(), so nothing fires after a game has stopped)
   // roughly how long the computer voice takes to read some text (about 2.6 words a second)
   const ttsTime = t => { const w = String(t || '').trim().split(/\s+/).filter(Boolean).length; return w ? 0.6 + w / 2.6 : 0; };
   const tts = t => { ttsUntil = performance.now() + ttsTime(t) * 1000; ttsSay(t); };
@@ -84,7 +85,7 @@ export function voiceFor(ctx, audio) {
       c.g.gain.cancelScheduledValues(t); c.g.gain.setValueAtTime(c.g.gain.value, t); c.g.gain.linearRampToValueAtTime(0.0001, t + 0.05); c.s.stop(t + 0.07);
     } catch (e) { try { c.s.stop(); } catch (e2) {} }
   }
-  function stop() { token++; running = 0; ttsUntil = 0; if (cur) { hush(cur); cur = null; } }
+  function stop() { token++; running = 0; ttsUntil = 0; for (const t of safety) clearTimeout(t); safety.clear(); if (cur) { hush(cur); cur = null; } }
   async function run(items, my, notBefore = 0) {
     const a = ac();
     for (let k = 0; k < items.length; k++) {
@@ -99,10 +100,11 @@ export function voiceFor(ctx, audio) {
         const s = a.createBufferSource(), g = a.createGain(); s.buffer = buf; g.gain.value = 1.15; s.connect(g).connect(a.__real || a.destination);   // (past the games' master volume: a spoken line is never hushed)
         const at = Math.max(a.currentTime, k === 0 ? notBefore : 0);
         c = cur = { s, g, end: at + buf.duration };
-        s.onended = done; s.start(at);
         // In case "ended" never comes. And a line the phone has silenced meanwhile (Sound off, the artist's own words, another
         // app) is dropped here, so it can't come out late, on top of the next thing, when the sound comes back.
-        setTimeout(() => { if (a.state !== 'running' && my === token) stop(); done(); }, (at - a.currentTime + buf.duration) * 1000 + 400);
+        const tm = setTimeout(() => { safety.delete(tm); if (a.state !== 'running' && my === token) stop(); done(); }, (at - a.currentTime + buf.duration) * 1000 + 400);
+        safety.add(tm);
+        s.onended = () => { clearTimeout(tm); safety.delete(tm); done(); }; s.start(at);
       });
       if (cur === c) cur = null;
     }

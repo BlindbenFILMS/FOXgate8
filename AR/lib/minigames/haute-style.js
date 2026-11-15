@@ -12,7 +12,7 @@
 import * as THREE from 'three';
 import * as K from './kit.js';
 
-const ART = 'media/games/haute/';
+const ART = new URL('../../media/games/haute/', import.meta.url).href;   // from this file, so it works on any page (AR, 3D gallery)
 const ARTIST = new URL('../../../3D/gallery/audio/art_50.mp3', import.meta.url).href;   // Shardasia, in her own words
 const QUOTE = '“I’m into fashion at the moment. I like finding new and different styles of clothing, whether it be chic or kind of baggy. I like being comfortable. And I like trying out certain colors to see how they look on me.” — Shardasia Hadley';
 
@@ -360,7 +360,7 @@ export function styleTheDreamGame() {
       G.face.position.z = 0.03; G.face.renderOrder = 12; G.root.add(G.face); G.face.visible = false;
       const TL = new THREE.TextureLoader(); let need = 4; const ok = () => { if (--need === 0 && G) G.face.visible = true; };
       const load = (url, key) => TL.load(url, t => { if (!G) return; t.colorSpace = THREE.NoColorSpace; G.uni[key].value = t; ok(); });
-      load((ctx.work && ctx.work.image) || 'targets/haute-couture-dreams.jpg', 'map');
+      load((ctx.work && ctx.work.image) || new URL('../../targets/haute-couture-dreams.jpg', import.meta.url).href, 'map');
       load(ART + 'backdrop.jpg', 'bg'); load(ART + 'body.png', 'body'); load(ART + 'layer.png', 'lay');
       G.fab = {}; for (const fb of ['floral', 'pink', 'beige']) TL.load(ART + 'fab-' + fb + '.jpg', t => { if (!G) return; t.colorSpace = THREE.NoColorSpace; t.wrapS = t.wrapT = THREE.MirroredRepeatWrapping; G.fab[fb] = t; });
       G.wallTex = {}; for (const w of Object.keys(WALL)) TL.load(ART + 'wall-' + w + '.png', t => { if (!G) return; t.colorSpace = THREE.SRGBColorSpace; G.wallTex[w] = t; });

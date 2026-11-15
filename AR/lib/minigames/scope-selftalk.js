@@ -12,7 +12,7 @@ import * as THREE from 'three';
 import * as K from './kit.js';
 // (Textures read by a custom shader stay in their own colours: NoColorSpace, so they match the painting exactly.)
 
-const ART = 'media/games/scope/';   // glow-l.png / glow-r.png: R = tight outline glow, G = wide halo, B = the head itself
+const ART = new URL('../../media/games/scope/', import.meta.url).href;   // (from this file, so it works on any page: AR, 3D gallery) glow-l.png / glow-r.png: R = tight outline glow, G = wide halo, B = the head itself
 const ROUNDS = [
   [{ k: 'Voice 1: the worry', p: 'Say something you tell yourself when things get hard.', sub: 'Like: “I’m not good enough.” or “What if I mess up?” Use a low, grumbly voice.', say: 'Voice 1, the worry. Say something you tell yourself when things get hard. Use a low, grumbly voice.' },
    { k: 'Voice 2: the answer', p: 'Now answer it back, like your best friend would.', sub: 'Change your voice! Make it bright and warm. Kind, and true.', say: 'Voice 2, the answer. Now answer it back, like your best friend would. Change your voice! Make it bright and warm.' }],

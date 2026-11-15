@@ -268,7 +268,7 @@ export function caneBeatGame() {
       G.uni = { map: { value: null }, rev: { value: G.revTex }, uA: { value: 1 }, uDrain: { value: 0 }, uFull: { value: 0 }, uBeat: { value: 0 } };
       G.face = new THREE.Mesh(new THREE.PlaneGeometry(1.002, G.h + 0.002), new THREE.ShaderMaterial({ uniforms: G.uni, vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: false }));
       G.face.position.z = 0.02; G.face.renderOrder = 12; G.face.visible = false; G.root.add(G.face);
-      new THREE.TextureLoader().load((ctx.work && ctx.work.image) || 'targets/music-on-the-streets.jpg', t => { if (!G) return; t.colorSpace = THREE.NoColorSpace; G.uni.map.value = t; G.face.visible = true; });
+      new THREE.TextureLoader().load((ctx.work && ctx.work.image) || new URL('../../targets/music-on-the-streets.jpg', import.meta.url).href, t => { if (!G) return; t.colorSpace = THREE.NoColorSpace; G.uni.map.value = t; G.face.visible = true; });
       // the curb pads, the stripe glows, the cane and Alayna
       const pad = () => { const m = K.plane(domesTex(false), 0.065, 0.065, { order: 14 }); m.position.z = 0.03; m.visible = false; m.userData.k = []; G.root.add(m); return m; };
       G.padA = pad(); G.padB = pad();

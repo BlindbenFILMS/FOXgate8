@@ -262,7 +262,7 @@ export function reachOutGame() {
         uT: { value: 0 }, uA: { value: 0 }, uBase: { value: 0.16 }, uRusty: { value: 0.55 }, uAll: { value: 0 }, uKick: { value: 0 } };
       G.face = new THREE.Mesh(new THREE.PlaneGeometry(1.002, G.h + 0.002), new THREE.ShaderMaterial({ uniforms: G.uni, vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: false }));
       G.face.position.z = 0.03; G.face.renderOrder = 12; G.face.visible = false; G.root.add(G.face);
-      new THREE.TextureLoader().load((ctx.work && ctx.work.image) || 'targets/reaching-past-blindness.jpg', t => { if (!G) return; t.colorSpace = THREE.NoColorSpace; G.uni.map.value = t; G.face.visible = true; });
+      new THREE.TextureLoader().load((ctx.work && ctx.work.image) || new URL('../../targets/reaching-past-blindness.jpg', import.meta.url).href, t => { if (!G) return; t.colorSpace = THREE.NoColorSpace; G.uni.map.value = t; G.face.visible = true; });
       // the eight listeners, their rays, and a ring that pulses round the one you're reaching
       G.L = SPOTS.map(([u, v], i) => {
         const mesh = K.plane(listenerTex(ORDER_KIND[i], 'wait'), LW, LH, { order: 30 }); const [x, y] = G.S.P(u, v); mesh.position.set(x, y, 0.06); G.root.add(mesh);

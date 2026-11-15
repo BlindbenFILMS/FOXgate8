@@ -10,7 +10,7 @@ import * as THREE from 'three';
 import * as K from './kit.js';
 // (Textures read by a custom shader stay in their own colours: NoColorSpace, so they match the painting exactly.)
 
-const ART = 'media/games/visions/';
+const ART = new URL('../../media/games/visions/', import.meta.url).href;   // from this file, so it works on any page (AR, 3D gallery)
 // an original little poem; the words in [brackets] are the ones you catch
 const POEM = [
   'Through my [eyes], the [world] is [small],',

@@ -17,6 +17,11 @@ export const CAMPUS = {
   flags: [[22.32, -17.68, 'bcp'], [22.32, 17.68, 'ora']],   // (11 Oct: just outside the ring path, not on it)
   oldFlags: [[25.15, -14.85], [25.15, 14.85]],   // (where they stood: the trees and lanterns were laid out round these; kept so that layout doesn't reshuffle)
 };
+// (13 Nov, Ben) FOX SKATING: the skate park (Design's, 24 x 28 m) between BLIND CAN CINEMA and the WHY House; its big screen (north end) faces the walk
+// (13 Nov, Ben) THE MOBILITY COURSE (the Ora-VNC™ course room) between the Academy of Music and the cinema: a 6 x 10 m building, its door facing the walk,
+// and a path of white foam tiles from the east walk to the door
+export const MOBILITY = { x: 62.5, z: -23, x0: 59.2, x1: 65.8, z0: -28.4, z1: -17.6, path: { x: 62.5, z0: -17.6, z1: -1.7, w: 1.25 } };
+export const SKATE = { x: 62.5, z: 34.5, w: 24, d: 28, x0: 50.5, x1: 74.5, z0: 20.5, z1: 48.5 };   // (north of the ring path, which crossed its first spot)
 const inRect = (x, z, r, m = 0) => x > r.x0 - m && x < r.x1 + m && z > r.z0 - m && z < r.z1 + m;
 export const onCampus = (x, z, m = 0) => inRect(x, z, CAMPUS.why, m) || inRect(x, z, CAMPUS.amb, m) || inRect(x, z, { x0: CAMPUS.cinema.x0 - 3.2, x1: CAMPUS.cinema.x1, z0: CAMPUS.cinema.z0, z1: CAMPUS.cinema.z1 }, m)
   || CAMPUS.pools.some(p => Math.abs(x - p.x) < 4.2 + m && Math.abs(z - p.z) < 0.6 + 2.8 + m && Math.sign(z) === Math.sign(p.z));
@@ -90,6 +95,11 @@ export function planGarden() {
   // (27 Oct, Ben) the little grey stone lanterns REMOVED for a calmer park (still placed above so trees + poles keep their spots)
   // (s22, Ben) a straight walk from the start platform west to the main walkway (added last, so nothing already placed moves)
   paths.push({ w: 3.6, pts: [[RING.x - RING.r, 0], [RING.x - 6.0, 0]] });
+  // (13 Nov, Ben) the SKATE PARK between the cinema and the WHY House: the trees, poles and benches on its ground come out
+  { const S = SKATE, inS = (x, z, m) => x > S.x0 - m && x < S.x1 + m && z > S.z0 - m && z < S.z1 + 2.2 + m;
+    for (const [arr, m] of [[trees, 3.2], [poles, 1.2], [benches, 1.5]]) for (let i = arr.length - 1; i >= 0; i--) if (inS(arr[i][0], arr[i][1], m)) arr.splice(i, 1); }
+  { const M = MOBILITY, inM = (x, z, m) => (x > M.x0 - m && x < M.x1 + m && z > M.z0 - m && z < M.z1 + m) || (Math.abs(x - M.path.x) < M.path.w / 2 + m && z > M.path.z0 - m && z < M.path.z1 + m);
+    for (const [arr, m] of [[trees, 3.2], [poles, 0.9], [benches, 1.5]]) for (let i = arr.length - 1; i >= 0; i--) if (inM(arr[i][0], arr[i][1], m)) arr.splice(i, 1); }
   cache = { paths, river, lanterns: [], benches, trees, poles, pathDist, riverDist };
   return cache;
 }

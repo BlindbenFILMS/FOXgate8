@@ -10,7 +10,7 @@ import * as THREE from 'three';
 import * as K from './kit.js';
 // (Textures read by a custom shader stay in their own colours: NoColorSpace, so they match the painting exactly.)
 
-const ART = 'media/games/beauty/';
+const ART = new URL('../../media/games/beauty/', import.meta.url).href;   // from this file, so it works on any page (AR, 3D gallery)
 const MOVES = 12, WINDOW = 2.6;   // moves in a dance; seconds to do each one
 // her cut-out: where it sits in the painting (pixels of the 1024 painting), and the line she spins around
 const GIRL = { x0: 244, y0: 255, x1: 560, y1: 850, axis: 393, feet: 842 }, SPIN = 0.85;   // seconds for one full turn

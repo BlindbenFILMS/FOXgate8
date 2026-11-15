@@ -199,7 +199,7 @@ export function stillMeGame() {
         });
         G.ready = true;
       };
-      img.src = (ctx.work && ctx.work.image) || 'targets/i-am-blind-like-my-hair-is-brown.jpg';
+      img.src = (ctx.work && ctx.work.image) || new URL('../../targets/i-am-blind-like-my-hair-is-brown.jpg', import.meta.url).href;
       G.ui.buttons([
         { label: 'Hear it', kind: 'red', aria: 'Hear the piece and its hum again', press: () => hearIt() },
         { label: 'Help', kind: 'black', aria: 'Help: how to find the spot', press: () => help() },

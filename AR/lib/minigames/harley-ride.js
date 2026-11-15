@@ -14,7 +14,7 @@ import { curveLeftTex, curveRightTex, glowTex, SCENES } from './harley-things.js
 const ARTIST = new URL('../../../3D/gallery/audio/art_47.mp3', import.meta.url).href;   // Craig, in his own words
 // (Textures read by a custom shader stay in their own colours: NoColorSpace, so they match the painting exactly.)
 
-const ART = 'media/games/harley/';
+const ART = new URL('../../media/games/harley/', import.meta.url).href;   // from this file, so it works on any page (AR, 3D gallery)
 const STRETCHES = [
   { id: 'desert', name: 'The desert', say: 'The desert. Hot wind on your face, and the smell of sage.', tint: [1.12, 0.96, 0.78] },
   { id: 'coast', name: 'The coast', say: 'The coast. Cool salt spray, and gulls overhead.', tint: [0.86, 1.0, 1.1] },

@@ -13,7 +13,7 @@ import * as THREE from 'three';
 import * as K from './kit.js';
 // (Textures read by a custom shader stay in their own colours: NoColorSpace, so they match the painting exactly.)
 
-const ART = 'media/games/communion/';
+const ART = new URL('../../media/games/communion/', import.meta.url).href;   // from this file, so it works on any page (AR, 3D gallery)
 // the people: where they were cut from (u0, v0, u1, v1), where they start, where they meet
 const PEOPLE = [
   { id: 'p1', box: [0.3, 0.545, 0.338, 0.592], from: 0.17, to: 0.395, dir: 1 },

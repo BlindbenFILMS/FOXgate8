@@ -14,7 +14,7 @@ import * as THREE from 'three';
 import * as K from './kit.js';
 // (Textures read by a custom shader stay in their own colours: NoColorSpace, so they match the painting exactly.)
 
-const ART = 'media/games/fearless/';
+const ART = new URL('../../media/games/fearless/', import.meta.url).href;   // from this file, so it works on any page (AR, 3D gallery)
 // where each cut-out part sits in the painting: [u0, v0, u1, v1]
 const BOX = {
   body: [0.4561, 0.1729, 0.9531, 0.9307], head: [0.4629, 0.0283, 0.7451, 0.3232], armR: [0.7168, 0.2773, 0.8838, 0.7061],

@@ -105,6 +105,7 @@ window.GMEDIA = u => (typeof u === 'string' && !/^(https?:|blob:|data:)/.test(u)
   #menu button:hover { background:#3a2723; } #menu button:active { background:#5c2c22; }
   #menu button:focus-visible, #topCam:focus-visible, #micBtn:focus-visible, #camPop button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
   #menu button.on { background:var(--ink); color:#201e1d; }
+  #menuBtn.alert { box-shadow: inset 0 0 0 4px #ec3013; } #menu #apprBtn.on { background:#ec3013 !important; border-color:#ec3013 !important; color:#fff !important; }
   #menu button.big { min-height:56px; background:var(--accent); border-color:var(--accent); color:#fff; font-size:13px; }
   #menu .tg { display:flex; justify-content:space-between; align-items:center; gap:10px; }
   #menu .tg::after { content:'OFF'; font-size:10px; letter-spacing:.14em; padding:3px 6px; border:2px solid currentColor; flex:none; }
@@ -124,6 +125,12 @@ window.GMEDIA = u => (typeof u === 'string' && !/^(https?:|blob:|data:)/.test(u)
   #topCam { width:52px; border:2px solid var(--ink); border-left:0; background:var(--bg); color:var(--ink); font:800 11px/1.15 var(--font); letter-spacing:.06em; text-align:center; padding:0; white-space:pre-line; }
   #topCam.on { background:var(--accent); color:#fff; }
   #camPop { position:fixed; z-index:21; left:12px; top:calc(70px + env(safe-area-inset-top)); width:min(320px,calc(100vw - 24px)); display:none; background:#201e1d; padding:12px 14px 14px; }
+  body.studio-open #actBtn, body.studio-open #lookBtn, body.studio-open #act { display:none !important; }
+  #emotePop { position:fixed; z-index:21; left:12px; right:12px; top:calc(70px + env(safe-area-inset-top)); max-width:520px; margin-left:auto; display:none; background:#201e1d; padding:12px 14px 14px; border:2px solid var(--ink); }
+  #emotePop .lab { font-size:11px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; margin:0 0 8px; color:#ff9783; }
+  #emotePop .opts { display:grid; grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:6px; }
+  #emotePop button { min-height:52px; padding:8px 10px; border:2px solid var(--ink); background:transparent; color:var(--ink); font:800 13px/1.2 var(--font); letter-spacing:.06em; text-transform:uppercase; border-radius:0; cursor:pointer; }
+  #emotePop button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
   #camPop .lab { font-size:11px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; margin:0 0 8px; color:#ff9783; }
   #camPop .opts { display:grid; gap:6px; }
   #camPop button { min-height:52px; padding:8px 12px; border:2px solid var(--ink); background:transparent; color:var(--ink); font:800 12px/1.2 var(--font); letter-spacing:.06em; text-transform:uppercase; }
@@ -224,7 +231,7 @@ OFF</button><button id="menuBtn" aria-label="Menu">☰</button></div>
   <div class="sec host" id="hostSec"><div class="lab">Host mode</div>
     <div class="opts one" id="hostLock"><button id="hostOpen">🔒 I'm hosting this visit</button></div>
     <div id="hostPw" style="display:none"><div class="row2"><input id="hostIn" type="password" autocomplete="off" aria-label="Host password" placeholder="Password"><button id="hostGo">Unlock</button></div><div class="err" id="hostErr" aria-live="polite"></div></div>
-    <div class="opts one" id="hostOpts" style="display:none"><button id="hostBtn">Host this visit</button><button id="tourBtn">Lead a tour</button></div></div>
+    <div class="opts one" id="hostOpts" style="display:none"><button id="hostBtn">Host this visit</button><button id="tourBtn">Lead a tour</button><button id="apprBtn" hidden>📥 Approvals</button></div></div>
   <div class="sec"><button class="fold" id="sndFold" aria-expanded="false" aria-controls="sndBody">🔊 Sounds</button>
     <div id="sndBody" class="foldBody" hidden>
     <div class="opts one"><button id="voices" class="tg">Artist's voice when I open art</button><button id="autoRead" class="tg">Read art aloud</button><button id="readNotes" class="tg">Read notes aloud as I pass</button><button id="big" class="tg">Larger text</button><button id="ambBtn" class="tg">Ambient sounds</button></div>
@@ -312,6 +319,7 @@ import('./engine/gallery-roof.js').then(({ buildRoof }) => { try { window.ROOF =
 
 if (pref.look || pref.extra) G.setLook(pref.look || 'male', pref.extra || 'none');
 if (pref.style) G.setStyle(pref.style);   // your fur and shirt art from the Fox Studio
+const STUDIO_AT = { x: -61.29, z: 12.21 };   // (13 Nov) the new shirt studio: the foot of the entry hall's north wall, 3 m west of the old booth so its left mirror clears the tall banner
 const SKY_NEXT = { golden: 'night', night: 'day', day: 'golden' }, SKY_LABEL = { golden: '🌅 Golden hour', night: '🌙 Night', day: '☀️ Afternoon' };
 const skyNow = () => pref.sky || (pref.night ? 'night' : 'golden');
 if (G.setSky) G.setSky(skyNow()); else if (pref.night) G.setNight(true);
@@ -361,6 +369,7 @@ function actionWords(n) {
     case 'vision': return ['TRY IT', 'Vision simulator · see through their eyes'];
     case 'simctl': return ['SET SEVERITY', 'The six views wall'];
     case 'studio': return ['DRESS UP', 'Choose your shirt'];
+    case 'skate': return n.item && n.item.on ? ['GET OFF', 'Skateboard'] : ['SKATEBOARD', 'The skate park'];
     case 'braille': return ['LEARN', 'Braille and brilliance'];
     case 'elevator': return [n.busy ? 'WAIT' : /down/.test(l) ? 'GO DOWN' : /call/.test(l) ? 'CALL ELEVATOR' : 'GO UP', L];
     case 'sit': return [n.item && n.item.up ? 'STAND UP' : 'SIT', (n.item && n.item.name) || 'Bench'];
@@ -406,6 +415,7 @@ function open(n) {
   if (n.kind === 'vision') { $('act').style.display = 'none'; G.vision.enter(n.item); return; }
   if (n.kind === 'guestbook') { if (window.NOTES) window.NOTES.openBook(); return; }
   if (n.kind === 'studio') { if (window.STUDIO) window.STUDIO.open(); return; }
+  if (n.kind === 'skate') { G.skate.toggle().then(r => { $('live').textContent = r === 'chair' ? 'The skateboard is for foxes on their feet for now: change your gear in the shirt studio to ride.' : r === true ? 'On the board. The stick steers and pushes. OLLIE (space) jumps, TRICK (K) does a kickflip in the air or a manual on the ground. Land on a yellow rail to grind.' : r === false && !G.skate.on() ? 'Off the board.' : ''; }); return; }
   if (n.kind === 'braille') { openBraille(); return; }
   if (n.kind === 'elevator') { G.elevator.act(n); return; }
   if (n.kind === 'sit') { G.sit(n.item); return; }
@@ -682,10 +692,18 @@ $('placeBox').onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.pre
 $('menuBtn').onclick = () => { const m = $('menu'); $('camToast').style.display = 'none'; m.style.display = m.style.display === 'block' ? 'none' : 'block'; syncMenu(); syncHost(); };
 // (28 Oct, Ben) host mode is locked: password BCP (any case). Unlocked for this tab only. Hosting controls stay hidden until then.
 let HOST_OK = (() => { try { return sessionStorage.getItem('bcp.hostOk') === '1'; } catch (e) { return false; } })();
-function syncHost() { const me = window.TOG && window.TOG.host() === 'me';
-  $('hostLock').style.display = HOST_OK || me ? 'none' : ''; $('hostOpts').style.display = HOST_OK || me ? '' : 'none'; if (HOST_OK || me) $('hostPw').style.display = 'none'; }
+function syncHost() { const me = window.TOG && window.TOG.host() === 'me', adm = !!(window.NOTES && window.NOTES.admin());
+  $('hostLock').style.display = HOST_OK || me || adm ? 'none' : ''; $('hostOpts').style.display = HOST_OK || me || adm ? '' : 'none'; if (HOST_OK || me || adm) $('hostPw').style.display = 'none';
+  // (13 Nov, Ben) APPROVALS: the gallery admin sees every photo / voice note waiting for approval in one list (no walking the map to find them)
+  const k = adm ? window.NOTES.waitingCount() : 0; $('apprBtn').hidden = !adm;
+  $('apprBtn').textContent = '📥 Approvals' + (k ? ' · ' + k + ' waiting' : ''); $('apprBtn').classList.toggle('on', k > 0); $('apprBtn').setAttribute('aria-label', 'Approvals: ' + (k ? k + ' waiting for approval' : 'nothing waiting')); }
+$('apprBtn').onclick = () => { if (window.NOTES) window.NOTES.openInbox(); };
 $('hostOpen').onclick = () => { $('hostPw').style.display = ''; $('hostLock').style.display = 'none'; $('hostErr').textContent = ''; $('hostIn').value = ''; setTimeout(() => $('hostIn').focus(), 30); };
-const hostTry = () => { if ($('hostIn').value.trim().toUpperCase() === 'BCP') { HOST_OK = true; try { sessionStorage.setItem('bcp.hostOk', '1'); } catch (e) {} $('hostErr').textContent = ''; syncHost(); $('live').textContent = 'Host mode unlocked.'; }
+const hostTry = async () => { const v = $('hostIn').value.trim();
+  // the admin passphrase works here too: it unlocks host mode AND approvals (approve or hide anything visitors leave)
+  const adm = v.toUpperCase() !== 'BCP' && window.NOTES && await window.NOTES.unlockAdmin(v, true);
+  if (v.toUpperCase() === 'BCP' || adm) { HOST_OK = true; try { sessionStorage.setItem('bcp.hostOk', '1'); } catch (e) {} $('hostErr').textContent = ''; syncHost();
+    const k = adm ? window.NOTES.waitingCount() : 0; $('live').textContent = adm ? 'Host mode and approvals unlocked.' + (k ? ' ' + k + ' waiting for approval.' : ' Nothing is waiting for approval.') : 'Host mode unlocked.'; }
   else { $('hostErr').textContent = 'That password is not right.'; $('hostIn').select(); } };
 $('hostGo').onclick = hostTry; $('hostIn').onkeydown = e => { e.stopPropagation(); if (e.key === 'Enter') hostTry(); if (e.key === 'Escape') { $('hostPw').style.display = 'none'; syncHost(); } };
 $('hostIn').onkeyup = e => e.stopPropagation();
@@ -748,7 +766,7 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
     onState: (id, st, prof) => { if (prof && !prof.name) prof = null; if (!prof && !names.has(id) && !st) return; const isNew = !names.has(id) && prof; G.remote.upsert(id, st, prof); if (prof) { names.set(id, prof.name); if (isNew) { announce(prof.name + ' joined the gallery'); if (entered) { net && net.hello(me()); if (window.TOG) window.TOG.onNewPeer(id); if (window.VOICE) window.VOICE.onNewPeer(id); if (window.LIVE) window.LIVE.onNewPeer(id); if (window.CAMHEAD) window.CAMHEAD.onNewPeer(id); } } } refresh(); },
     onEvent: (id, d) => { window.GSES.onEvent(id, d); if (window.BINGO) window.BINGO.onEvent(id, d); if (window.HUNT) window.HUNT.onEvent(id, d); if (window.PAINT) window.PAINT.onEvent(id, d); if (window.PUZZLE) window.PUZZLE.onEvent(id, d); if (window.CHESS) window.CHESS.onEvent(id, d); if (window.PIANO) window.PIANO.onEvent(id, d); if (window.BAND) window.BAND.onEvent(id, d); if (window.CAMHEAD) window.CAMHEAD.onEvent(id, d); if (window.LIVE) window.LIVE.onEvent(id, d); if (window.FACE) window.FACE.onEvent(id, d); if (window.TOG) window.TOG.onEvent(id, d); if (window.VOICE) window.VOICE.onEvent(id, d); if (window.NOTES) window.NOTES.onEvent(id, d); },
     onStream: (id, stream, meta) => { if (window.CAMHEAD) window.CAMHEAD.onStream(id, stream, meta); if (window.LIVE) window.LIVE.onStream(id, stream, meta); if (window.VOICE) window.VOICE.onStream(id, stream); },
-    onEmote: (id, e) => { if (e === 'wave') { G.remote.wave(id); const nm = names.get(id); if (nm) announce(nm + ' waves'); } },
+    onEmote: (id, e) => { const nm = names.get(id); if (e === 'wave') { G.remote.wave(id); if (nm) announce(nm + ' waves'); return; } const E = G.foxes && G.foxes.EMOTES.find(x => x[0] === e); if (E) { G.remote.emote(id, e); if (nm) announce(nm + ': ' + E[2].toLowerCase()); } },
     onStatus: s => { status = s; refresh(); },
   });
   const { setupTogether } = await import('./engine/gallery-together.js');
@@ -765,6 +783,8 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
   if (G.campus) import('./engine/gallery-band.js').then(({ setupBand }) => { window.BAND = setupBand({ G, net, announce, nameOf: id => names.get(id) || 'Someone' }); });
   import('./engine/gallery-notes.js').then(async ({ setupNotes }) => {
     window.NOTES = await setupNotes({ G, net, cfg: G.notesConfig, myName: () => pref.name, announce, esc, readAloud: () => !pref.quietNotes, showPanel });
+    const apprDot = () => { const k = window.NOTES.waitingCount(); $('menuBtn').classList.toggle('alert', k > 0); $('menuBtn').setAttribute('aria-label', k ? 'Menu, ' + k + ' waiting for approval' : 'Menu'); if ($('menu').style.display === 'block') syncHost(); };
+    window.NOTES.watch(apprDot); setTimeout(apprDot, 6000);
   }).catch(e => console.warn('notes unavailable', e));
   $('noteBtn').onclick = () => { if (!window.NOTES) return; if (G.comments && G.comments.here()) window.NOTES.openCompose(); else openCommentSpots(); };   // comments only go on the comment spots (yellow pads)
   const [{ setupLive }, { setupFace }] = await Promise.all([import('./engine/gallery-live.js'), import('./engine/gallery-face.js')]);
@@ -788,16 +808,32 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
   await ENTERED; entered = true;
   // the first visitor in the room is Ben's fox; everyone after gets their own fur colours and a different artwork on their shirt
   // (28 Oct, Ben) every visit: a new shirt artwork that no other fox in the gallery is wearing (checked again once everyone's arrived)
-  pref.style = G.randomStyle(G.remote.arts()); G.setStyle(pref.style); savePref();
+  // (13 Nov, Ben) the game's fox: alone you are PLAYER MALE / FEMALE in the ART SUIT; after that a random head + a painting nobody here wears (G.arrivalStyle)
+  pref.style = G.arrivalStyle(G.remote.looks()); G.setStyle(pref.style); savePref();
   net.hello(me()); refresh(); net.event({ k: 'ses', a: 'ask' });
-  setTimeout(() => { if (G.remote.arts().includes(G.style().art)) { pref.style = G.randomStyle(G.remote.arts()); G.setStyle(pref.style); savePref(); net.hello(me()); } }, 3500);
+  setTimeout(() => { const L = G.remote.looks(), s0 = G.style(); if (L.some(l => l.art === s0.art || (s0.head && l.head === s0.head)) || (L.length && G.foxes && /^player/.test(s0.head || ''))) { pref.style = G.arrivalStyle(L); G.setStyle(pref.style); savePref(); net.hello(me()); } }, 3500);
   // send where we are: 10 times a second while moving, once a second while standing still
   let lastSent = '', lastT = 0;
   setInterval(() => { const st = G.localState(), k = st.join(','); const now = performance.now(); if (k !== lastSent || now - lastT > 1000) { net.send(st); lastSent = k; lastT = now; } }, 100);
   const sendProfile = () => net.hello(me());
   document.querySelectorAll('#looks button, #extras button, #who button').forEach(b => b.addEventListener('click', sendProfile));
-  // the Fox Studio on the plaza: dress your fox (look, shirt art, gear, fur, camera)
-  import('./engine/gallery-studio.js').then(({ setupStudio }) => {
+  // (13 Nov, Ben) CHOOSE YOUR SHIRT, the new studio (Design's): a sign board, three mannequins, a mirror each side and three mats. Step on a mat:
+  // the mirror shows your fox turning in the outfit and the panel opens (fox, face, shirt, painting, gear). The ONLY place to change your fox.
+  // Where the old booth stood: in the entry hall, its back to the north wall; the step-and-repeat and the tall banner keep their ink backings.
+  if (G.foxes) import('./gamefox/shirt-studio.js').then(({ setupStudio }) => {
+    const { THREE, scene } = G.world, ink = new THREE.MeshLambertMaterial({ color: 0x1d1c1b });
+    for (const b of [{"x":-47.733,"z":14.482,"y":-0.808,"w":8.35,"h":5.1,"d":0.12,"ry":-0.1616},{"x":-54.033,"z":13.455,"y":-0.19,"w":3.66,"h":6.42,"d":0.06,"ry":-0.1616}]) { const m = new THREE.Mesh(new THREE.BoxGeometry(b.w, b.h, b.d), ink); m.position.set(b.x, b.y, b.z); m.rotation.y = b.ry; scene.add(m); }
+    const fy = G.world.groundAt(STUDIO_AT.x, 2, STUDIO_AT.z - 1.5);
+    const S = setupStudio({ THREE, scene, renderer: G.debug.renderer, GF: G.foxes.GF, at: STUDIO_AT, y: fy > -50 ? fy : 0, layer: G.foxes.LAYER, face: 2.98, onOpen: () => document.body.classList.add('studio-open'), onClose: () => document.body.classList.remove('studio-open'), scale: G.foxes.SCALE, ui: document.body, announce,
+      getLook: () => G.gameLook(),
+      setLook: l => { const r = G.setGameLook(l); pref.look = r.look; pref.extra = r.extra; pref.style = r.style; savePref(); sendProfile(); syncMenu(); } });
+    { const mq = []; S.group.traverse(o => { if (o.userData && o.userData.gf && o.userData.P) mq.push(o); }); mq.forEach(o => G.foxes.lightenStill(o)); }   // the three mannequins: a few draws each, not ~125
+    S.group.traverse(o => { if (o.isMesh && o.layers.isEnabled(0)) o.layers.enable(G.foxes.LAYER); });
+    scene.traverse(o => { if (o.isLight) o.layers.enable(G.foxes.LAYER); });   // (lights obey layers: the mirrors need them too)
+    const P = new THREE.Vector3(); G.world.onTick(dt => { const p = G.world.pos(); P.set(p[0], p[1], p[2]); S.update(dt, G.debug.camera, P); });
+    window.STUDIO = { open: () => S.open(), close: () => S.close(), isOpen: () => S.isOpen(), S };
+  }).catch(e => console.warn('studio unavailable', e));
+  else import('./engine/gallery-studio.js').then(({ setupStudio }) => {
     // (27 Oct, Ben) CHOOSE YOUR SHIRT: moved to the middle of the entry hall's north wall, turned to the wall's angle; the
     // step-and-repeat (left) and the tall BCP banner (right, standing on the floor) beside it get ink backings
     // (27 Oct, Ben, s13) the whole group slides west along the north wall's foot, into the empty stretch, so you see it ahead of you
@@ -816,7 +852,12 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
   }).catch(e => console.warn('studio unavailable', e));
   $('rename').onclick = () => { const n = prompt('Your name', pref.name); if (n && n.trim()) { pref.name = n.trim().slice(0, 20); savePref(); sendProfile(); refresh(); } };
   $('invite').onclick = async () => { const room = new URLSearchParams(location.search).get('room') || ('bcp-' + Math.random().toString(36).slice(2, 7)); const url = location.origin + location.pathname + '?room=' + room; try { await navigator.clipboard.writeText(url); $('invite').textContent = 'Link copied ✓'; } catch (e) { prompt('Share this link', url); } if (!new URLSearchParams(location.search).get('room')) setTimeout(() => location.href = url, 600); };
-  $('waveBtn').onclick = () => { G.wave(); net.emote('wave'); };
+  // (13 Nov, Ben) the game's fox: WAVE opens the moves (wave, high five, dance, sit and more), seen by everyone here
+  const emotePop = document.createElement('div'); emotePop.id = 'emotePop'; emotePop.setAttribute('role', 'dialog'); emotePop.setAttribute('aria-label', 'Moves');
+  if (G.foxes) { emotePop.innerHTML = '<p class="lab">Moves · everyone here sees them</p><div class="opts">' + G.foxes.EMOTES.map(([k, lab, say]) => '<button type="button" data-e="' + k + '" aria-label="' + say + '">' + lab + '</button>').join('') + '</div>'; document.body.appendChild(emotePop);
+    emotePop.addEventListener('click', e => { const b = e.target.closest('button[data-e]'); if (!b) return; const k = b.dataset.e; if (k === 'wave') G.wave(); else G.emote(k); net.emote(k); emotePop.style.display = 'none'; $('live').textContent = b.getAttribute('aria-label'); $('waveBtn').focus(); });
+    addEventListener('keydown', e => { if (e.key === 'Escape' && emotePop.style.display === 'block') { emotePop.style.display = 'none'; $('waveBtn').focus(); } }); }
+  $('waveBtn').onclick = () => { if (!G.foxes) { G.wave(); net.emote('wave'); return; } const open = emotePop.style.display === 'block'; emotePop.style.display = open ? 'none' : 'block'; if (!open) { const f = emotePop.querySelector('button'); if (f) f.focus(); } };
   window.NET = net;
 });
 // one tap to enter: this tap is what lets the room videos (and read-aloud) play with sound from then on
@@ -826,6 +867,7 @@ $('nameRow').style.display = 'block'; $('nameIn').value = pref.name || '';
 // (28 Oct, Ben) no avatar choice: every visit you're given Joe or Jane at random (more looks in ☰ and the Fox Studio)
 // (28 Oct, Ben) every fox starts as a cane fox in the ART SUIT (the art square on the front, the BCP logo on the back, a different art per fox); the chair is in ☰ later
 pref.look = 'suit'; WHO('joe');
+if (G.foxes) { pref.extra = 'none'; savePref(); G.setLook('suit', 'none'); }   // (13 Nov, Ben) the game's fox arrives in the ART SUIT with no gear (gear is chosen in the shirt studio)
 $('enter').style.display = 'block'; $('enter').focus();
 await new Promise(res => $('enter').addEventListener('click', () => {
   pref.name = ($('nameIn').value || '').trim().slice(0, 20) || ('Fox ' + Math.floor(100 + Math.random() * 900)); savePref();

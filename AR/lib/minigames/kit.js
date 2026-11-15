@@ -116,7 +116,7 @@ export function wordTex(text, { bg = '#000', fg = '#fff', bar = RED, w = 512, h 
   });
 }
 export function sprite(tex, size, { color, additive = false, opacity = 1, order = 10 } = {}) {
-  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, color: color ? new THREE.Color(color) : undefined, transparent: true, depthWrite: false, opacity,
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, ...(color ? { color: new THREE.Color(color) } : {}), transparent: true, depthWrite: false, opacity,
     blending: additive ? THREE.AdditiveBlending : THREE.NormalBlending }));
   s.scale.set(size, size, 1); s.renderOrder = order; return s;
 }
@@ -225,7 +225,7 @@ const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 
 export function ui() {
   css();
-  const els = new Set();
+  const els = new Set(), popT = new Set();   // popT: the timers of the "+1" tags that are still rising
   const make = (cls, html = '') => { const e = document.createElement('div'); e.className = 'mgk ' + cls; e.setAttribute('aria-hidden', 'true'); e.innerHTML = html; document.body.appendChild(e); els.add(e); return e; };
   let panelEl = null, bannerEl = null, alertEl = null, countEl = null, frameEl = null, btnEl = null, endEl = null, alertT = 0, bannerT = 0, pops = [];
   const U = {
@@ -283,7 +283,8 @@ export function ui() {
       for (let n = 0; n < 4 && pops.some(p => Math.abs(p.x - x) < (p.w + w) / 2 && Math.abs(p.y - y) < (p.h + h) / 2 + 2); n++) y += h + 6;
       pops.push({ x, y, w, h, t: now });
       e.style.left = x + 'px'; e.style.top = y + 'px';
-      let t = 0; const id = setInterval(() => { t += 0.03; e.style.top = Math.max(under(), y - t * 60) + 'px'; e.style.opacity = String(Math.max(0, 1 - t / 0.8)); if (t > 0.8) { clearInterval(id); e.remove(); els.delete(e); } }, 30);
+      let t = 0; const id = setInterval(() => { t += 0.03; e.style.top = Math.max(under(), y - t * 60) + 'px'; e.style.opacity = String(Math.max(0, 1 - t / 0.8)); if (t > 0.8) { clearInterval(id); popT.delete(id); e.remove(); els.delete(e); } }, 30);
+      popT.add(id);
     },
     frame(on) { if (!frameEl) frameEl = make('mgk-frame'); frameEl.style.display = on ? 'block' : 'none'; },
     // a row of big buttons above the Stop button: [{ label, icon, kind, aria, press(), release() }]
@@ -304,8 +305,18 @@ export function ui() {
         e.addEventListener('keyup', ev => { if (ev.key === ' ' || ev.key === 'Enter') up(); });
         btnEl.appendChild(e); return e;
       });
-      // a word too long for its button (three buttons side by side on a small phone) shrinks until it fits inside
-      const row = btnEl, fit = () => { if (btnEl !== row) return; for (const e of row.children) { e.style.fontSize = ''; let fs = parseFloat(getComputedStyle(e).fontSize) || 16; while (e.scrollWidth > e.clientWidth + 1 && fs > 11) { fs -= 0.5; e.style.fontSize = fs + 'px'; } } };
+      // A row too wide for the screen (three wide buttons side by side on a small phone used to push the last one off the
+      // edge): all its words shrink together until the row fits. If even the smallest size is not enough (five buttons on a
+      // phone), the row goes onto two lines at full size instead. Then a word still too long for its own button shrinks by itself.
+      const row = btnEl, fit = () => {
+        if (btnEl !== row) return;
+        row.style.flexWrap = ''; for (const e of row.children) e.style.fontSize = '';
+        const wide = () => row.scrollWidth > row.clientWidth + 1;
+        let all = parseFloat(getComputedStyle(row.children[0]).fontSize) || 16;
+        while (wide() && all > 11) { all -= 0.5; for (const e of row.children) e.style.fontSize = all + 'px'; }
+        if (wide()) { for (const e of row.children) e.style.fontSize = ''; row.style.flexWrap = 'wrap'; }
+        for (const e of row.children) { let fs = parseFloat(getComputedStyle(e).fontSize) || 16; while (e.scrollWidth > e.clientWidth + 1 && fs > 11) { fs -= 0.5; e.style.fontSize = fs + 'px'; } }
+      };
       fit(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit).catch(() => {});
       return made;
     },
@@ -320,6 +331,21 @@ export function ui() {
         (onStory ? `<button type="button"><span>${esc(storyLabel || 'The artist’s story')}</span><span aria-hidden="true">▶</span></button>` : '');
       if (onStory) endEl.querySelector('button').onclick = onStory;
       endEl.style.display = 'block';
+      // The row of score cells always fits inside the panel. (Four cells, or three long scores, on a phone used to push
+      // the last one off the edge of the screen.) First a little less air round each score, then smaller scores, all together.
+      const row = endEl.querySelector('.cells');
+      const fitRow = () => {
+        if (!row || !row.isConnected) return;
+        const big = [...row.querySelectorAll('span')], boxes = [...row.children], wide = () => row.scrollWidth > row.clientWidth + 1;
+        const air = px => { for (const d of boxes) d.style.paddingLeft = d.style.paddingRight = px; };
+        for (const e of big) e.style.fontSize = ''; air('');
+        if (!wide()) return;
+        air('10px');
+        let fs = big.length ? parseFloat(getComputedStyle(big[0]).fontSize) || 30 : 0;
+        while (wide() && fs > 18) { fs -= 1; for (const e of big) e.style.fontSize = fs + 'px'; }
+        if (wide()) air('6px');
+      };
+      fitRow(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitRow).catch(() => {});
     },
     update(dt) {
       if (U._count) U._count(dt);
@@ -332,7 +358,7 @@ export function ui() {
     // the top banners (score panel, start banner, alerts) sit just ABOVE the painting and exactly as wide as it, following
     // it as it moves in the camera (makeBase turns this on for every game)
     follow(G) { U._G = G; },
-    destroy() { for (const e of els) e.remove(); els.clear(); panelEl = bannerEl = alertEl = countEl = frameEl = btnEl = endEl = null; U._count = null; U._G = null; },
+    destroy() { for (const id of popT) clearInterval(id); popT.clear(); for (const e of els) e.remove(); els.clear(); panelEl = bannerEl = alertEl = countEl = frameEl = btnEl = endEl = null; U._count = null; U._G = null; },
   };
   // ── docking the top banners to the painting ──
   const TOP_MIN = 66, TALL_MIN = 58, GAP = 8, MIN_W = 260;   // clear of the viewer's own top line (a tall banner may sit a little closer to it); a gap over the painting; readable
@@ -440,8 +466,7 @@ export function finale(G, { won = true, title, kicker, cells = [], line, best = 
     const m = new THREE.Mesh(new THREE.PlaneGeometry(1, G.h), new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0, depthWrite: false }));
     m.position.z = 0.09; m.renderOrder = 60; m.visible = false; G.root.add(m);
     v.addEventListener('playing', () => { m.visible = true; });
-    G._anim = { m, v, t: 0 };
-    setTimeout(() => v.play().catch(() => {}), 900);
+    G._anim = { m, v, t: 0, timer: setTimeout(() => v.play().catch(() => {}), 900) };
   }
 }
 // The artist's own recorded quote (3D/gallery/audio) for the games that don't play it themselves: it starts once the
@@ -455,6 +480,7 @@ const QUOTE_CLIPS = {
   'midnight-melodies': 'art_22', 'fearless-request': 'art_24',                                                       // Wayne
   'harmonious-gathering': 'art_28', 'rhythm-of-life': 'art_40', 'decision-divide': 'art_64',                         // Will
   'joyride': 'art_49', 'embracing-unity': 'art_51',                                                                  // Shardasia
+  'almost-blindness': 'art_1',   // Ben (the same words as the AR page's clip. Listed here so the game needs nothing from its host: in the 3D gallery the computer voice was reading his quote)
 };
 // where the artist's own recording of the quote is: the clip listed above, or (for a game that would otherwise read the quote
 // aloud in the computer voice) the sound or the clip the AR page plays as the painting's story
@@ -485,9 +511,11 @@ function quotePlay(G, src) {
     if (G.paused && !q.a.paused) { q.a.pause(); q.held = true; }
     else if (!G.paused && q.held) { q.held = false; q.a.play().catch(finish); }
   }, 250);
+  q.iv = iv;
 }
 function quoteStop(G) {
   const q = G && G._quote; if (!q) return;
+  clearInterval(q.iv);
   try { if (q.a) q.a.pause(); } catch (e) {}
   if (!q.done) { q.done = true; if (q.hushed) masterVolume(1, 0.2); }
 }
@@ -500,7 +528,7 @@ export function cleanup(G) {
   if (G.say && G.say.stop) G.say.stop();
   if (G._introSkipOff) G._introSkipOff();
   quoteStop(G);
-  if (G._anim) { G._anim.v.pause(); G._anim.v.removeAttribute('src'); G._anim.v.load(); }
+  if (G._anim) { clearTimeout(G._anim.timer); G._anim.v.pause(); G._anim.v.removeAttribute('src'); G._anim.v.load(); }
   if (G.root && G.group) G.group.remove(G.root);
   // Free the game's shapes and pictures on the graphics card. (A picture that is used again, by this game or another, is
   // simply sent again. Left there, every game played in a visit keeps its pictures until the phone runs out of room.)
