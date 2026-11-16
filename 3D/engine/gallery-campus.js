@@ -46,8 +46,8 @@ export const CAMPUS_STOPS = {
   museum: { x: -10, z: 0, face: -Math.PI / 2, name: 'The Museum' },
   chess: { x: -5.6, z: 50.2, face: 0, name: 'Talking Chess' },   // (28 Oct, Ben) the end of the walk north of the WHY House
   paint: { x: -5.4, z: -49.6, face: -2.36, name: 'Paint Together' },   // (28 Oct, Ben) the end of the walk north of the Academy of Music
-  skate: { x: 62.5, z: 18.4, face: 0, name: 'The Skate Park' },
-  mobility: { x: 62.5, z: -15.6, face: Math.PI, name: 'The Mobility Course' },   // (13 Nov, Ben) between the Academy of Music and the cinema: outside its door, facing it   // (13 Nov, Ben) between the cinema and the WHY House: at its front, facing the big screen
+  skate: { x: 62.5, z: 21.2, face: 0, name: 'The Skate Park' },
+  mobility: { x: 73.4, z: 16.8, face: Math.PI / 2, name: 'The Mobility Course' },   // (15 Nov, Ben) north of the cinema, its door facing west: in front of the door, facing it   // (13 Nov, Ben) between the Academy of Music and the cinema: outside its door, facing it   // (13 Nov, Ben) between the cinema and the WHY House: at its front, facing the big screen
 };
 // the signpost by the big tree, and the walks it sends you on (along the paths, round the tree; the last point is the door)
 export const SIGNPOST = { x: 29.6, z: 2.1 };   // just ahead of where you start, a little to the left: the first thing you see
@@ -58,8 +58,8 @@ export const SIGN_DEST = [
   { to: 'amb', label: 'ACADEMY OF MUSIC', icon: '🎹', sub: 'for the Blind', route: [[33, -5.5], [36.5, -9], [40, -14.5], [40, -21.4], [40, -23]] },
   { to: 'chess', label: 'TALKING CHESS', icon: '♞', sub: 'Two tables at the end of the walk', route: [[33, 5.5], [30, 13], [29.5, 18.2], [25, 27], [18, 40], [8, 46], [-5.6, 50.2]] },
   { to: 'paint', label: 'PAINT TOGETHER', icon: '🖌', sub: 'A big shared canvas', route: [[33, -5.5], [30, -13], [29.5, -18.2], [25, -27], [18, -40], [8, -46], [-5.4, -49.6]] },
-  { to: 'skate', label: 'SKATE PARK', icon: '🛹', sub: 'Fox skating · the White Cane film', route: [[33, -5], [37, -6.5], [46, -6], [56, -1], [61, 0], [62.5, 8], [62.5, 18.4]] },
-  { to: 'mobility', label: 'MOBILITY COURSE', icon: '◼', sub: 'The Ora-VNC™ course · walk it', route: [[33, -5], [37, -6.5], [46, -6], [56, -1], [61, 0], [62.5, -1.7], [62.5, -15.6]] },
+  { to: 'skate', label: 'SKATE PARK', icon: '🛹', sub: 'Fox skating · the White Cane film', route: [[33, -5], [37, -6.5], [46, -6], [56, -1], [61, 0], [62.5, 8], [62.5, 21.2]] },
+  { to: 'mobility', label: 'MOBILITY COURSE', icon: '◼', sub: 'The Ora-VNC™ course · walk it', route: [[33, -5], [37, -6.5], [46, -6], [56, -1], [61, 0], [70, 0], [70, 16.8], [73.4, 16.8]] },
 ];
 
 const texLive = (w, h, draw, rep) => { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; draw(cv.getContext('2d'), w, h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; if (rep) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(...rep); } return t; };   // (one that's drawn on again later)

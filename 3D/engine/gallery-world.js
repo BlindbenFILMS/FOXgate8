@@ -7,8 +7,8 @@
 import * as THREE from '../vendor/three/three.module.js';
 import { buildEye } from './gallery-eye.js';
 import { setStainedNight } from './gallery-stained.js';
-import { GARDEN, RING, CAMPUS, SKATE, MOBILITY, inBuilding as onCampus, planGarden } from './gallery-garden-plan.js';
-const inSkate = (x, z, m = 0) => (x > SKATE.x0 - m && x < SKATE.x1 + m && z > SKATE.z0 - m && z < SKATE.z1 + 2.2 + m) || (x > MOBILITY.x0 - m && x < MOBILITY.x1 + m && z > MOBILITY.z0 - m && z < MOBILITY.z1 + m) || (Math.abs(x - MOBILITY.path.x) < MOBILITY.path.w / 2 + m && z > MOBILITY.path.z0 - m && z < MOBILITY.path.z1 + m);   // (and the mobility course building + its tile path)   // (13 Nov) the skate park's ground: no grass or flowers on it
+import { GARDEN, RING, CAMPUS, SKATE, MOBILITY, inMobility, inBuilding as onCampus, planGarden } from './gallery-garden-plan.js';
+const inSkate = (x, z, m = 0) => (x > SKATE.x0 - m && x < SKATE.x1 + m && z > SKATE.z0 - m && z < SKATE.z1 + 2.2 + m) || inMobility(x, z, m);   // (and the mobility course building + its tile path)   // (13 Nov) the skate park's ground: no grass or flowers on it
 import { toCreasedNormals } from '../vendor/three/addons/BufferGeometryUtils.js';
 
 const rnd = (() => { let s = 20261002; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; })();
@@ -340,8 +340,8 @@ export function buildWorld({ scene, camera, renderer, groundAt, resolveImg, lowE
     const petals = (x, z, r, n, a = 0.75) => { for (let i = 0; i < n; i++) { const an = rnd() * 6.283, d = Math.sqrt(rnd()) * r; c.fillStyle = ['#f7c3d6', '#f4aac6', '#ffd6e6', '#fbe3ee'][(rnd() * 4) | 0]; c.globalAlpha = a * (0.4 + rnd() * 0.6); c.beginPath(); c.ellipse(U(x + Math.cos(an) * d), V(z + Math.sin(an) * d), PX * (0.07 + rnd() * 0.08), PX * (0.05 + rnd() * 0.05), rnd() * 3, 0, 6.283); c.fill(); } c.globalAlpha = 1; };
     for (const [x, z, sc] of plan.trees) petals(x, z, sc * 0.42, Math.round(sc * 60 * (TS / 2048)));
     c.lineCap = c.lineJoin = 'round';
-    c.strokeStyle = '#f2b9cf'; c.lineWidth = PX * 3.4; c.beginPath(); plan.river.forEach(([x, z], i) => i ? c.lineTo(U(x), V(z)) : c.moveTo(U(x), V(z))); c.stroke();
-    for (let i = 0; i < plan.river.length - 1; i++) { const [x, z] = plan.river[i]; petals(x, z, 2.2, Math.round(160 * TS / 2048), 0.95); }
+    c.strokeStyle = '#f2b9cf'; c.lineWidth = PX * 3.4; c.beginPath(); (plan.riverPaint || plan.river).forEach(([x, z], i) => i ? c.lineTo(U(x), V(z)) : c.moveTo(U(x), V(z))); c.stroke();
+    { const rp = plan.riverPaint || plan.river, st = Math.max(1, Math.round(rp.length / plan.river.length)); for (let i = 0; i < rp.length - 1; i += st) { const [x, z] = rp[i]; petals(x, z, 2.2, Math.round(160 * TS / 2048), 0.95); } }   // (15 Nov) round the mobility course, not under it
     // gravel walks with a darker edge
     for (const [col, extra] of [['#9c8f78', 0.5], ['#d9cdb4', 0]]) { c.strokeStyle = col; for (const p of plan.paths) { c.lineWidth = PX * (p.w + extra); c.beginPath(); p.pts.forEach(([x, z], i) => i ? c.lineTo(U(x), V(z)) : c.moveTo(U(x), V(z))); c.stroke(); } }
     for (let i = 0; i < TS * 3; i++) { const x = G.x0 + rnd() * gw, z = G.z0 + rnd() * gd; if (plan.pathDist(x, z) < 0) { c.fillStyle = `rgba(${120 + rnd() * 80},${110 + rnd() * 70},${90 + rnd() * 60},0.5)`; c.fillRect(U(x), V(z), 2, 2); } }

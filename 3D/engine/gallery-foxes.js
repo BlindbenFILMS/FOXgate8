@@ -86,7 +86,7 @@ export async function setupFoxes({ THREE, scene }) {
   function make(look) {
     const f = GF.make(look); if (f.parent) f.parent.remove(f);
     try { lighten(f); } catch (e) { console.warn('[foxes] merge skipped', e); }
-    f.scale.setScalar(FOX_SCALE_GAME); f.userData.gameFox = true; f.userData.look = { ...look };
+    f.scale.setScalar(FOX_SCALE_GAME); f.userData.gameFox = true; f.userData.galLook = { ...look };   // (15 Nov, Ben: no ears) not userData.look: the game kit keeps its eye-look number there, and an object made the ears NaN
     f.traverse(o => { if (o.isMesh && o.layers.isEnabled(0)) o.layers.enable(MIRROR_LAYER); });   // the shirt studio's mirrors see foxes
     return f;
   }

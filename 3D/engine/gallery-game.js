@@ -4,6 +4,7 @@
 import * as THREE from '../vendor/three/three.module.js';
 import { GLTFLoader } from '../vendor/three/addons/GLTFLoader.js';
 import { MeshBVH } from '../vendor/three/three-mesh-bvh.js';
+import { FILM as MOB_FILM } from './gallery-mobility.js';
 import { setupFoxes } from './gallery-foxes.js';
 import { buildMobility } from './gallery-mobility.js';   // (13 Nov, Ben) the Ora-VNC™ mobility course building   // (13 Nov, Ben) every visitor is the 8 GATES game's fox
 import { mergeGeometries } from '../vendor/three/addons/BufferGeometryUtils.js';
@@ -85,6 +86,11 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   // (22 Oct) and every painting has a tiny copy (gallery/img-s/, 192 px): shown first, from far away, so walls are never bare
   // as you walk up; the sharp copy replaces it as you come near, and goes back to the tiny one when you walk away
   const TINY = u => (u && u.startsWith('gallery/img/')) ? 'gallery/img-s/' + u.slice(12) : u;
+  // (15 Nov, Ben) the entry hall's north wall, re-hung east so the shirt studio can start where the tall banner stood: the step-and-repeat
+  // keeps the corner but shows five columns of logos (same size, a shorter wall), the tall BLIND CANVAS PROJECT banner hangs right after it
+  for (const s of data.signs) { const y0 = s.c[0][1], y1 = s.c[2][1];
+    if (/stepandrepeat_/.test(s.img || '')) { s.c = [[-43.828, y0, 15.0479], [-48.2695, y0, 14.3238], [-48.2695, y1, 14.3238], [-43.828, y1, 15.0479]]; s.uv = [0.211, 0.768]; }
+    else if (/bcp_virtual_gallary_posters_01_/.test(s.img || '')) s.c = s.c.map(([x, y, z]) => [+(x + 3.705).toFixed(3), y, +(z + 0.6035).toFixed(3)]); }
   data.signs.forEach(s => { if (s.img) { s.key = s.img; s.imgTiny = TINY(s.img); s.img = RES(s.img); } }); data.vids.forEach(v => { v.poster = RES(v.poster); });
   const IMGURL = {}; try { for (const k of Object.keys(await (await fetch(BASE + 'img.index.json')).json())) IMGURL[k] = RES(k); } catch (e) { console.warn('image list', e); }   // (the list of art, for the shirt picker)
   const gltf = await new Promise((res, rej) => new GLTFLoader().load((window.GMEDIA || (u => u))(BASE + 'gallery.glb'), res, e => e.total && onProgress(e.loaded / e.total), rej));
@@ -216,6 +222,8 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   // (13 Nov, Ben) THE MOBILITY COURSE: Design's course room in its own building between the Academy of Music and the cinema
   let MOB = null;
   if (campus) try { MOB = await buildMobility({ THREE, scene, ground: () => 0, RES }); } catch (e) { console.warn('[mobility] course skipped', e); MOB = null; }
+  // (15 Nov, Ben) the course's film plays on the lobby wall (with sound, while you're in the lobby or the course) once its .mp4 is in gallery/video/
+  let mobScreen = null; if (MOB && MOB.screen) try { const url = (window.GMEDIA || (u => u))(BASE + MOB_FILM.file); const r = await fetch(url, { method: 'HEAD' }); if (r.ok && /video|octet/.test(r.headers.get('content-type') || 'video')) { const S = MOB.screen; mobScreen = { u: 'mobility:film', local: url, box: S.box, faces: [5], posterMat: S.posterMat, vol: 0.9, dist: 6, reach: 14, minVol: 0.1, p: S.p, zone: S.zone }; MOB.filmOnWall = true; } } catch (e) {}
   // comment spots (11 Oct): the only places a floating note can be left: a raised yellow pad and a YOUR COMMENTS HERE sign
   const comments = NOWORLD ? null : buildCommentSpots({ THREE, scene });
   const braille = buildBraille({ scene, resolveImg: RES });   // 'Hope Floating in Braille': an island on the welcome plaza, at the end away from the museum
@@ -246,6 +254,14 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     // (27 Oct) the start platform where the big tree stood: two round steps you walk up (ground + collision)
     for (const [r, h] of [[6.2, 0.2], [5.3, 0.4]]) { const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, 32)); m.position.set(RING.x, G.y + h / 2, RING.z); m.updateMatrixWorld(true); edgeCol.push(m); }
     // (27 Oct) the name sign + the two tall flags are gone: no colliders for them
+    // (15 Nov, Ben) entry hall: the reflecting pool's low ledge (x -43.9) had no collider, so you walked into the pool and the
+    // lake rule sent you back to the start. An invisible wall along the ledge, each side of the railed bridge, up the curved shell.
+    for (const s of [1, -1]) B(0.3, 6.4, 16.4, -43.85, -0.2, s * (2.7 + 8.2));
+    // (15 Nov, Ben) and no slipping in behind the step-and-repeat and the tall banner: one solid block from their faces back
+    // into the sloping shell behind them, from the banner's west edge to the pool ledge
+    { const ry = -0.1616, ux = Math.cos(ry), uz = -Math.sin(ry), nx = Math.sin(ry), nz = Math.cos(ry), L = 8.74, D = 4;
+      const s0x = -50.328 - ux * 1.83, s0z = 14.0585 - uz * 1.83;   // the banner's west edge, on the signs' plane
+      B(L, 5.4, D, s0x + ux * L / 2 + nx * (D / 2 - 0.02), -0.7, s0z + uz * L / 2 + nz * (D / 2 - 0.02), ry); }
   }
   // furnishings: plants at the plaza corners and the main hall entrance, benches on the plaza looking out over the lake
   const propCol = [];
@@ -451,7 +467,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
 
   // ---------------------------------------------------------------- signs & artworks (PlayCanvas UI elements, rebuilt as planes, streamed in near you)
   const texLoader = new THREE.TextureLoader();
-  const quad = c => { const g = new THREE.BufferGeometry(); const [a, b, cc, d] = c; g.setAttribute('position', new THREE.Float32BufferAttribute([...a, ...b, ...cc, ...a, ...cc, ...d], 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute([0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1], 2)); return g; };
+  const quad = (c, uv = [0, 1]) => { const g = new THREE.BufferGeometry(); const [a, b, cc, d] = c, [u0, u1] = uv; g.setAttribute('position', new THREE.Float32BufferAttribute([...a, ...b, ...cc, ...a, ...cc, ...d], 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute([u0, 0, u1, 0, u1, 1, u0, 0, u1, 1, u0, 1], 2)); return g; };   // uv: a slice of the picture across (15 Nov: the shorter step-and-repeat)
   function wrapLines(ctx, text, maxW) {
     const out = [];
     for (const para of String(text).split('\n')) {
@@ -521,7 +537,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     let mat;
     if (s.k === 't') mat = new THREE.MeshBasicMaterial({ map: textTexture(s), transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2, fog: true });
     else { mat = new THREE.MeshBasicMaterial({ color: new THREE.Color(...s.col), transparent: true, opacity: s.op ?? 1, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }); if (s.img) texLoader.load(s.img, t => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; mat.map = t; mat.needsUpdate = true; if (!sg.mesh) t.dispose(); }); }
-    sg.mesh = new THREE.Mesh(quad(s.c), mat); sg.mesh.renderOrder = s.k === 't' ? 3 : 2; scene.add(sg.mesh); occAdd(sg.mesh);
+    sg.mesh = new THREE.Mesh(quad(s.c, s.uv), mat); sg.mesh.renderOrder = s.k === 't' ? 3 : 2; scene.add(sg.mesh); occAdd(sg.mesh);
   }
   function hideSign(sg) { if (!sg.mesh) return; occRemove(sg.mesh); scene.remove(sg.mesh); sg.mesh.geometry.dispose(); for (const m of [].concat(sg.mesh.material)) { if (m.map) m.map.dispose(); if (m !== sideShared) m.dispose(); } sg.mesh = null; }
   const sideShared = null;
@@ -575,6 +591,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   vids.push(...rooms.screens);
   if (campus) vids.push(...campus.screens);
   if (parkScreen) vids.push(parkScreen);   // (13 Nov) the skate park's big screen
+  if (mobScreen) vids.push(mobScreen);   // (15 Nov) the mobility course's film, on the lobby wall
   for (const v of vids) compactGroups(v.box);   // a screen box draws 2 times, not 6   // a two-sided interview screen in the middle of each bay of the New Artists Wing
   // living paintings: the animated version of an artwork fades in over the still while you stand in front of it
   const ANIMS = new Set(data.anims || []);
@@ -1088,15 +1105,28 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   // ---------------------------------------------------------------- (13 Nov, Ben) THE MOBILITY COURSE: step inside and the camera changes to the course's own
   // (Design's BEHIND STEVE view: on an arc behind the walker, looking down the path ahead); your fox fades while it stands between the camera and the path
   // further on; an ABOUT THIS COURSE button opens the course's page. Walking back out through the door puts everything back.
-  const MC = { on: false, cam: new THREE.Vector3(), aim: new THREE.Vector3(), fov: 60, fade: 1, btn: null, pos: { x: 0, z: 0 } };
+  const MC = { ui: false, film: null, on: false, cam: new THREE.Vector3(), aim: new THREE.Vector3(), fov: 60, fade: 1, btn: null, pos: { x: 0, z: 0 } };
   const mcA = new THREE.Vector3(), mcB = new THREE.Vector3(), mcD = new THREE.Vector3(), mcHit = new THREE.Vector3(), mcRay = new THREE.Ray(), mcT = new THREE.Vector3(), mcAim = new THREE.Vector3();
   function mobilityTick(dt) {
     const inside = !!player && MOB.inRoom(Pl.x, Pl.z) && Math.abs(Pl.y - MOB.y) < 2;
-    if (inside !== MC.on) { MC.on = inside; mobilityUI(inside);
+    { const near = inside || (!!player && MOB.inLobby && MOB.inLobby(Pl.x, Pl.z) && Math.abs(Pl.y - MOB.y) < 2); if (near !== MC.ui) { MC.ui = near; mobilityUI(near); } }   // (15 Nov) the ABOUT + FILM buttons: in the lobby too
+    if (inside !== MC.on) { MC.on = inside;
       if (inside) { MC.cam.copy(camera.position); camera.getWorldDirection(mcAim); MC.aim.copy(camera.position).addScaledVector(mcAim, 3); MC.fov = camera.fov; { const lv = document.getElementById('live'); if (lv) lv.textContent = 'The Ora-VNC mobility course. Walk the white tiles from the START pad to the END pad, stay on the tiles and keep clear of the cubes. About this course: the button at the top left.'; } }
       else { foxFade(1); MC.fade = 1; camera.fov = camera.aspect < 1 ? 70 : 60; camera.updateProjectionMatrix(); camera.up.set(0, 1, 0); } }
     if (!inside) return;
     if (MOB.inRoom(Pl.x, Pl.z, 0.45)) { MC.pos.x = Pl.x; MC.pos.z = Pl.z; MOB.course.step(dt, MC.pos, Pl.face); Pl.x = MC.pos.x; Pl.z = MC.pos.z; }   // the cubes + the clock (not in the doorway, so you can walk back out)
+  }
+  // (15 Nov, Ben) the shirt studio's camera: straight on to the mirror, the mirror fitted into the part of the screen the panel leaves free
+  // (a phone: between the top bar and the bottom sheet). spec = { c, n, w, h } in metres + band() → { top, bottom, left, right } px of the canvas
+  let CH = null; const chT = new THREE.Vector3(), chAim = new THREE.Vector3(), chCam = new THREE.Vector3(), chLook = new THREE.Vector3();
+  function holdCam(dt) {
+    const Wd = W(), Hd = H(), b = CH.band ? CH.band() : { top: 0, bottom: Hd, left: 0, right: Wd }, bw = Math.max(80, b.right - b.left), bh = Math.max(80, b.bottom - b.top);
+    const fov = camera.aspect < 1 ? 70 : 60; if (camera.fov !== fov) { camera.fov = fov; camera.updateProjectionMatrix(); }
+    const tv = Math.tan(fov * Math.PI / 360), d = Math.max(CH.h * Hd / (2 * tv * bh), CH.w * Wd / (2 * tv * camera.aspect * bw), 1.2);
+    chT.copy(CH.c).addScaledVector(CH.n, d); chAim.copy(CH.c);
+    const q = CH.snap || chCam.distanceTo(chT) > 9 ? 1 : 1 - Math.exp(-6 * dt); CH.snap = false; chCam.lerp(chT, q); chLook.lerp(chAim, q); camera.position.copy(chCam); camera.up.set(0, 1, 0); camera.lookAt(chLook);
+    camera.setViewOffset(Wd, Hd, Math.round(Wd / 2 - (b.left + b.right) / 2), Math.round(Hd / 2 - (b.top + b.bottom) / 2), Wd, Hd);
+    player.visible = true;
   }
   function courseCam(dt) {   // the preview's BEHIND STEVE numbers (look.behind = 0.26)
     const a = 0.26, t = (a - 0.05) / 1.1, R = 2.9, ah = 1.3 - 0.8 * t, fx = Math.sin(Pl.face), fz = Math.cos(Pl.face), y0 = Pl.y;
@@ -1122,8 +1152,23 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       b.style.cssText = 'position:absolute;left:calc(14px + env(safe-area-inset-left));top:calc(132px + env(safe-area-inset-top));z-index:6;min-height:52px;padding:0 16px;border:2px solid #f3f2f2;background:#1d1c1b;color:#f3f2f2;font:800 15px/1 Archivo,Arimo,sans-serif;letter-spacing:.06em;cursor:pointer;border-radius:0;box-shadow:inset 0 -4px 0 #ec3013';
       b.addEventListener('click', e => { e.stopPropagation(); window.open(new URL('Mobility Course - About.html', location.href).href, '_blank', 'noopener'); });
       container.appendChild(b);
+      // (15 Nov, Ben) WATCH THE FILM: Ora's film of the course, in a player over the gallery (Vimeo); close it to walk on
+      const f = MC.film = b.cloneNode(); f.textContent = 'WATCH THE FILM ▶'; f.setAttribute('aria-label', 'Watch the film about the mobility course'); f.style.top = 'calc(192px + env(safe-area-inset-top))';
+      f.addEventListener('click', e => { e.stopPropagation(); filmOpen(); }); container.appendChild(f);
     }
-    if (MC.btn) MC.btn.style.display = on ? 'block' : 'none';
+    if (MC.btn) { MC.btn.style.display = on ? 'block' : 'none'; MC.film.style.display = on ? 'block' : 'none'; }
+    if (!on) filmClose();
+  }
+  let filmBox = null, filmBack = null;
+  function filmClose() { if (!filmBox) return; filmBox.remove(); filmBox = null; if (filmBack) { try { filmBack.focus(); } catch (e) {} filmBack = null; } }
+  function filmOpen() {
+    if (filmBox) return; filmBack = document.activeElement; const d = filmBox = document.createElement('div'); d.setAttribute('role', 'dialog'); d.setAttribute('aria-label', 'The mobility course film');
+    d.style.cssText = 'position:fixed;inset:0;z-index:40;background:rgba(10,10,10,.86);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:12px';
+    const fr = document.createElement('iframe'); fr.src = MOB_FILM.vimeo + '?autoplay=1&title=0&byline=0&portrait=0'; fr.title = 'Ora-VNC mobility course film'; fr.allow = 'autoplay; fullscreen; picture-in-picture'; fr.allowFullscreen = true;
+    fr.style.cssText = 'width:min(100%,960px);aspect-ratio:16/9;border:2px solid #f3f2f2;background:#000';
+    const x = document.createElement('button'); x.type = 'button'; x.textContent = 'CLOSE ✕'; x.style.cssText = 'min-height:52px;padding:0 22px;border:2px solid #f3f2f2;background:#ec3013;color:#fff;font:800 16px/1 Archivo,Arimo,sans-serif;letter-spacing:.06em;cursor:pointer;border-radius:0';
+    x.addEventListener('click', e => { e.stopPropagation(); filmClose(); }); d.addEventListener('keydown', e => { if (e.key === 'Escape') filmClose(); }); d.addEventListener('pointerdown', e => e.stopPropagation());
+    d.append(fr, x); document.body.appendChild(d); x.focus();
   }
   // ---------------------------------------------------------------- (13 Nov, Ben) FOX SKATING at the skate park: a board under your fox, ridden on the map itself
   const SKN = ['', 'sk_push', 'sk_ollie', 'sk_kickflip', 'sk_grind', 'sk_manual', 'sk_bail', 'ride'];
@@ -1140,7 +1185,8 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       return true;
     } catch (e) { console.warn('[skate] no board', e); return false; } finally { SK.busy = false; }
   }
-  function skateOff() {
+  function skateOff(byHand) {
+    if (byHand) SK.noAuto = true;   // (15 Nov) got off on purpose: no new board until you walk out of the park and back in
     if (!SK.on) return; SK.on = false; skateUI(false);
     if (SK.board) { scene.remove(SK.board); SK.board = null; } if (player) player.userData.skate = null; SK.sk = null;
     const gy = groundAt(Pl.x, Pl.y + 1, Pl.z); if (gy > -100) Pl.y = gy; Pl.vy = 0; Pl.ground = true;
@@ -1148,13 +1194,13 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   let skateBtns = null;
   function skateUI(on) {
     if (on && !skateBtns) {
-      skateBtns = document.createElement('div'); skateBtns.style.cssText = 'position:absolute;right:calc(14px + env(safe-area-inset-right));bottom:calc(214px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px;z-index:6';
+      skateBtns = document.createElement('div'); skateBtns.style.cssText = 'position:fixed;right:calc(12px + env(safe-area-inset-right));bottom:calc(222px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px;z-index:9';   /* (15 Nov, Ben) TRICK just above the ACTIONS button, which becomes OLLIE while you ride */
       const mk = (t, aria, f) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = t; b.setAttribute('aria-label', aria); b.style.cssText = 'min-width:96px;min-height:56px;padding:0 14px;border:2px solid #f3f2f2;background:#ec3013;color:#fff;font:800 16px/1 Archivo,Arimo,sans-serif;letter-spacing:.06em;cursor:pointer;border-radius:0'; b.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); f(); }); b.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); f(); } }); skateBtns.appendChild(b); return b; };
-      mk('OLLIE', 'Ollie: jump on the board (space)', () => { SK.inp.jump = true; });
       mk('TRICK', 'Trick: a kickflip in the air, a manual on the ground (K)', () => { SK.inp.trick = true; });
       container.appendChild(skateBtns);
     }
     if (skateBtns) skateBtns.style.display = on ? 'flex' : 'none';
+    nearKey = null; document.body.classList.toggle('skating', !!on); try { dispatchEvent(new CustomEvent('gallery:skate', { detail: { on: !!on } })); } catch (e) {}
   }
   addEventListener('keydown', e => { if (!SK.on || (e.target.closest && e.target.closest('input,textarea'))) return; if (e.code === 'KeyK') SK.inp.trick = true; });
   if (park) nearProviders.push(Pl => (SK.on || inPark(Pl.x, Pl.z, 0.5)) && Math.abs(Pl.y - park.heightAt(Pl.x, Pl.z)) < 3 ? { kind: 'skate', item: { on: SK.on }, label: SK.on ? 'Get off the skateboard' : 'Grab a skateboard · the skate park' } : null);
@@ -1258,6 +1304,8 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
       if (!inPark(p.x, p.z, 1.2)) skateOff();
       return;
     }
+    // (15 Nov, Ben) walk into the skate park and a board is under your fox at once (not in the wheelchair; not again after you got off, until you leave and come back)
+    if (park && !SK.busy) { const inside = inPark(Pl.x, Pl.z, -0.6); if (!inPark(Pl.x, Pl.z, 0.4)) SK.noAuto = false; else if (inside && !SK.noAuto && extra !== 'chair' && player && player.userData.gameFox && Math.abs(Pl.y - park.heightAt(Pl.x, Pl.z)) < 1.5) { SK.noAuto = true; skateOn().then(r => { if (r === true) { SK.noAuto = false; const lv = document.getElementById('live'); if (lv) lv.textContent = 'On a skateboard. The stick steers and pushes. OLLIE jumps, TRICK does a kickflip in the air or a manual on the ground. Walk out of the park to get off.'; } }); } }
     let dx = (fx * iz + -fz * ix) * sp * dt, dz = (fz * iz + fx * ix) * sp * dt;
     // following a friend: walk their path behind them; moving yourself stops it
     if (AW.pts) {
@@ -1365,6 +1413,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
   St.lastLook = 0;
   const camRay = new THREE.Vector3(), camSide = new THREE.Vector3(), camUp = new THREE.Vector3();
   function updateCamera(dt) {
+    if (CH && !MC.on) { holdCam(dt); return; }   // (15 Nov) the shirt studio: the mirror is the picture
     if (MC.on && !St.fp) { courseCam(dt); return; }   // (13 Nov) inside the mobility course: the course's own camera behind the walker
     // first person (tap the eye button): the camera at the fox's eyes; walking turns you the way you go, as usual
     if (St.fp) {
@@ -1730,7 +1779,7 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     },
     // multiplayer hooks (the page wires these to engine/gallery-net.js)
     localState: () => [+Pl.x.toFixed(2), +Pl.y.toFixed(2), +Pl.z.toFixed(2), +Pl.face.toFixed(2), +Math.min(9, Pl.speed).toFixed(1), Pl.ground ? 0 : 1, Pl.sit ? 1 : 0, SK.on ? (SKN.indexOf((SK.sk && SK.sk.state.name) || 'ride') > 0 ? SKN.indexOf(SK.sk.state.name || 'ride') : 7) : 0],   // [x, y, z, face, speed, air, sitting, skating (13 Nov: which skate move, 7 = riding)]
-    skate: { toggle: async () => SK.on ? (skateOff(), false) : skateOn(), on: () => SK.on, ollie: () => { SK.inp.jump = true; }, trick: () => { SK.inp.trick = true; }, here: () => inPark(Pl.x, Pl.z, 0.5) },
+    skate: { toggle: async () => SK.on ? (skateOff(true), false) : (SK.noAuto = false, skateOn()), on: () => SK.on, ollie: () => { SK.inp.jump = true; }, trick: () => { SK.inp.trick = true; }, here: () => inPark(Pl.x, Pl.z, 0.5) },
     remote: { upsert: remoteUpsert, remove: remoteRemove, count: () => remotes.size, arts: () => [...remotes.values()].map(r => r.prof && r.prof.art).filter(Boolean), names: () => [...remotes.values()].map(r => r.prof.name), list: () => [...remotes.values()].map(r => ({ id: r.id, name: r.prof.name || 'Visitor', placed: r.placed, x: r.tx, y: r.ty, z: r.tz })), wave: id => { const r = remotes.get(id); if (r && r.fox) { showWave(r.fox); r.emote = 'wave'; } }, emote: (id, name) => { const r = remotes.get(id); if (r) r.emote = name; },
       looks: () => [...remotes.values()].map(r => r.prof ? { head: r.prof.head, art: r.prof.art } : null).filter(Boolean) },
     wave() { showWave(player); if (FX && player.userData.gameFox) FX.emote(player, 'wave'); },
@@ -1754,6 +1803,8 @@ export async function createGallery({ container, onProgress = () => {}, onNear =
     follow: (id, onEnd) => followStart(id, onEnd), unfollow: () => followStop('stopped'), following: () => F.id,
     goTo(id, slot) { const r = remotes.get(id); if (!r || !r.placed) return false; if (V.spot) exitVision(); if (F.id) followStop('gathered'); placeNear(r, slot); return true; },
     live: { show: (i, st) => liveShow(i, st), clear: () => liveClear(), nearest: (x, y, z) => nearestScreen(x, y, z), active: () => LIVE.idx, pos: i => screenPos(i).toArray() },
+    camHold(spec) { if (spec) { const first = !CH; CH = { ...spec }; if (first) { chCam.copy(camera.position); const dv = new THREE.Vector3(); camera.getWorldDirection(dv); chLook.copy(camera.position).addScaledVector(dv, 4); } if (St.fp) setFP(false); }
+      else if (CH) { CH = null; camera.clearViewOffset(); St.yaw = Pl.face + Math.PI; St.pitch = REST_PITCH; fit(); } },   // (15 Nov, Ben) the shirt studio: hold the camera on its mirror; null lets go
     studioCam(v) { if (v && !studio && v.face != null) { Pl.face = v.face; } if (v && studio) v.t = studio.t; studio = v || null; if (!v) { St.pitch = REST_PITCH; fit(); } else studioView(); },   // facing the fox's front first
     wrapArt: k => wrapArt(k), sleeveArt: (k, s) => sleeveArt(k, s),   // (27 Oct) the shirt studio's mannequins wear the same prints
     shirtArts() {   // every artwork that can go on a shirt, Walk Through Fear first, with titles where the gallery has them

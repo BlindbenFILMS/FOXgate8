@@ -319,7 +319,7 @@ import('./engine/gallery-roof.js').then(({ buildRoof }) => { try { window.ROOF =
 
 if (pref.look || pref.extra) G.setLook(pref.look || 'male', pref.extra || 'none');
 if (pref.style) G.setStyle(pref.style);   // your fur and shirt art from the Fox Studio
-const STUDIO_AT = { x: -61.29, z: 12.21 };   // (13 Nov) the new shirt studio: the foot of the entry hall's north wall, 3 m west of the old booth so its left mirror clears the tall banner
+const STUDIO_AT = { x: -57.784, z: 12.773 };   // (15 Nov, Ben) moved 3.6 m east along the wall: it starts where the tall banner stood (the banner and the step-and-repeat moved east too)
 const SKY_NEXT = { golden: 'night', night: 'day', day: 'golden' }, SKY_LABEL = { golden: '🌅 Golden hour', night: '🌙 Night', day: '☀️ Afternoon' };
 const skyNow = () => pref.sky || (pref.night ? 'night' : 'golden');
 if (G.setSky) G.setSky(skyNow()); else if (pref.night) G.setNight(true);
@@ -369,7 +369,7 @@ function actionWords(n) {
     case 'vision': return ['TRY IT', 'Vision simulator · see through their eyes'];
     case 'simctl': return ['SET SEVERITY', 'The six views wall'];
     case 'studio': return ['DRESS UP', 'Choose your shirt'];
-    case 'skate': return n.item && n.item.on ? ['GET OFF', 'Skateboard'] : ['SKATEBOARD', 'The skate park'];
+    case 'skate': return n.item && n.item.on ? ['OLLIE', touch ? 'Skateboard · walk out of the park to get off' : 'Space jumps too · E gets off'] : ['SKATEBOARD', 'The skate park'];   // (15 Nov, Ben) riding: this button is OLLIE (TRICK sits above it)
     case 'braille': return ['LEARN', 'Braille and brilliance'];
     case 'elevator': return [n.busy ? 'WAIT' : /down/.test(l) ? 'GO DOWN' : /call/.test(l) ? 'CALL ELEVATOR' : 'GO UP', L];
     case 'sit': return [n.item && n.item.up ? 'STAND UP' : 'SIT', (n.item && n.item.name) || 'Bench'];
@@ -390,10 +390,11 @@ function setAction(n) {
   const b = $('actBtn'); if (!b) return;
   if (!n) { b.classList.remove('on'); $('actVerb').textContent = 'ACTIONS'; $('actSub').textContent = ''; b.setAttribute('aria-label', 'Actions: nothing here yet. Walk up to art, a bench, a screen or a sign.'); return; }
   const [verb, sub] = actionWords(n);
-  b.classList.add('on'); $('actVerb').textContent = verb + (touch ? '' : ' (E)'); $('actSub').textContent = sub || '';
+  b.classList.add('on'); $('actVerb').textContent = verb + (touch || verb === 'OLLIE' ? '' : ' (E)'); $('actSub').textContent = sub || '';
   b.setAttribute('aria-label', verb.toLowerCase() + (sub ? ': ' + sub : ''));
 }
-$('actBtn').addEventListener('click', e => { e.stopPropagation(); if (near) open(near); else { $('live').textContent = 'Nothing to do right here. Walk up to art, a bench, a screen or a sign and this button changes.'; const v = $('actVerb'); v.textContent = 'WALK UP TO SOMETHING'; setTimeout(() => { if (!near) v.textContent = 'ACTIONS'; }, 1800); } });
+$('actBtn').addEventListener('pointerdown', e => { if (G && G.skate && G.skate.on()) { e.preventDefault(); G.skate.ollie(); } });   // (15 Nov) riding: OLLIE the moment it's touched
+$('actBtn').addEventListener('click', e => { e.stopPropagation(); if (G && G.skate && G.skate.on()) { if (e.detail === 0) G.skate.ollie(); return; } if (near) open(near); else { $('live').textContent = 'Nothing to do right here. Walk up to art, a bench, a screen or a sign and this button changes.'; const v = $('actVerb'); v.textContent = 'WALK UP TO SOMETHING'; setTimeout(() => { if (!near) v.textContent = 'ACTIONS'; }, 1800); } });
 addEventListener('keydown', e => { if (e.code === 'KeyE' && near && $('panel').style.display !== 'flex' && !(window.STUDIO && window.STUDIO.isOpen())) open(near); if (e.code === 'Escape') { if (window.STUDIO && window.STUDIO.isOpen()) { window.STUDIO.close(); return; } if (G && G.vision && G.vision.overlay.learnOpen()) { G.vision.overlay.closeLearn(); return; } if (G && G.vision && G.vision.locked()) G.vision.exit(); close(); } });
 
 // ------------------------------------------------ speech
@@ -822,9 +823,13 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
   // Where the old booth stood: in the entry hall, its back to the north wall; the step-and-repeat and the tall banner keep their ink backings.
   if (G.foxes) import('./gamefox/shirt-studio.js').then(({ setupStudio }) => {
     const { THREE, scene } = G.world, ink = new THREE.MeshLambertMaterial({ color: 0x1d1c1b });
-    for (const b of [{"x":-47.733,"z":14.482,"y":-0.808,"w":8.35,"h":5.1,"d":0.12,"ry":-0.1616},{"x":-54.033,"z":13.455,"y":-0.19,"w":3.66,"h":6.42,"d":0.06,"ry":-0.1616}]) { const m = new THREE.Mesh(new THREE.BoxGeometry(b.w, b.h, b.d), ink); m.position.set(b.x, b.y, b.z); m.rotation.y = b.ry; scene.add(m); }
+    for (const b of [{"x":-46.06,"z":14.755,"y":-0.808,"w":4.77,"h":5.1,"d":0.12,"ry":-0.1616},{"x":-50.328,"z":14.0585,"y":-0.19,"w":3.66,"h":6.42,"d":0.06,"ry":-0.1616}]) { const m = new THREE.Mesh(new THREE.BoxGeometry(b.w, b.h, b.d), ink); m.position.set(b.x, b.y, b.z); m.rotation.y = b.ry; scene.add(m); }
+    // (15 Nov, Ben) while the panel is open the camera looks straight at the mirror, fitted between the top bar and the panel (a phone: the mirror IS the picture)
+    const band = () => { const cv = G.debug.renderer.domElement.getBoundingClientRect(), top = $('place') ? $('place').getBoundingClientRect().bottom : cv.top, pn = document.querySelector('[role="dialog"][aria-label="Choose your shirt"]'), pr = pn && pn.style.display !== 'none' ? pn.getBoundingClientRect() : null;
+      const wide = pr && pr.left > cv.left + 40;   /* the side panel (a bottom sheet starts at the left edge) */ return { top: Math.max(0, top - cv.top) + 8, bottom: (pr && !wide ? pr.top : cv.bottom) - cv.top - 8, left: 8, right: (wide ? pr.left : cv.right) - cv.left - 8 }; };
+    let S = null; const studioCam = on => { if (!on || !S) { G.camHold(null); return; } const f = S.frame(innerWidth < 760); G.camHold({ c: f.c, n: f.n, w: f.w, h: f.h, band }); };
     const fy = G.world.groundAt(STUDIO_AT.x, 2, STUDIO_AT.z - 1.5);
-    const S = setupStudio({ THREE, scene, renderer: G.debug.renderer, GF: G.foxes.GF, at: STUDIO_AT, y: fy > -50 ? fy : 0, layer: G.foxes.LAYER, face: 2.98, onOpen: () => document.body.classList.add('studio-open'), onClose: () => document.body.classList.remove('studio-open'), scale: G.foxes.SCALE, ui: document.body, announce,
+    S = setupStudio({ topInset: () => $('place') ? $('place').getBoundingClientRect().bottom : 0, THREE, scene, renderer: G.debug.renderer, GF: G.foxes.GF, at: STUDIO_AT, y: fy > -50 ? fy : 0, layer: G.foxes.LAYER, face: 2.98, onOpen: () => { document.body.classList.add('studio-open'); studioCam(true); }, onClose: () => { document.body.classList.remove('studio-open'); studioCam(false); }, scale: G.foxes.SCALE, ui: document.body, announce,
       getLook: () => G.gameLook(),
       setLook: l => { const r = G.setGameLook(l); pref.look = r.look; pref.extra = r.extra; pref.style = r.style; savePref(); sendProfile(); syncMenu(); } });
     { const mq = []; S.group.traverse(o => { if (o.userData && o.userData.gf && o.userData.P) mq.push(o); }); mq.forEach(o => G.foxes.lightenStill(o)); }   // the three mannequins: a few draws each, not ~125
@@ -839,7 +844,7 @@ const NETREADY = import('./engine/gallery-net.js').then(async ({ connectGallery 
     // (27 Oct, Ben, s13) the whole group slides west along the north wall's foot, into the empty stretch, so you see it ahead of you
     // coming down the ramp: step-and-repeat, then the tall banner, then CHOOSE YOUR SHIRT (board standing on the floor, mannequins out front)
     window.STUDIO = setupStudio({ G, announce, at: { x: -57.831, z: 9.625 }, face: 2.9800, lay: { bz: -3.05, by: 0.25, BH: 3.6, mz: -1.75 },
-      backings: [{"x":-47.733,"z":14.482,"y":-0.808,"w":8.35,"h":5.1,"d":0.12,"ry":-0.1616},{"x":-54.033,"z":13.455,"y":-0.19,"w":3.66,"h":6.42,"d":0.06,"ry":-0.1616}],
+      backings: [{"x":-46.06,"z":14.755,"y":-0.808,"w":4.77,"h":5.1,"d":0.12,"ry":-0.1616},{"x":-50.328,"z":14.0585,"y":-0.19,"w":3.66,"h":6.42,"d":0.06,"ry":-0.1616}],
       getPrefs: () => ({ look: pref.look || 'male', extra: pref.extra || 'none', style: G.style() }),
       apply: ({ look, extra, style }) => {
         if (look) pref.look = look; if (extra) pref.extra = extra;
